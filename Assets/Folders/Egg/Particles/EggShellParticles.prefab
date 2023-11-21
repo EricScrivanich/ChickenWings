@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3951697312071953132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4309425836048168030}
+  - component: {fileID: 5965278152729565650}
+  m_Layer: 0
+  m_Name: EggShellParticles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4309425836048168030
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3951697312071953132}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.1800003, y: -4.32316, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5965278152729565650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3951697312071953132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee5d86a3e14c64208a01866293423ff0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particlePrefabs:
+  - {fileID: 6844608942176624856, guid: 995b13bbc290a42c8bff5d2e262175b7, type: 3}
+  - {fileID: 2151656024950482911, guid: 2fd5383945da7409b8bb41a9355d07e1, type: 3}
+  - {fileID: 7639802659820788988, guid: d8bb5afef3b9a4adeb2e636b1c85fa78, type: 3}
+  - {fileID: 7995827308264746830, guid: d3d60433cc5e2479fbb0edc0d4d22c8e, type: 3}
+  - {fileID: 23013864412501828, guid: fef6e34053b6b4cbcbc5bec1e3e50ebd, type: 3}
+  - {fileID: 8756052109173092674, guid: 4617788b54e5049efa02de486220745d, type: 3}
+  poolSizePerPrefab: 15
+  minParticles: 10
+  maxParticles: 11
+  minSpawnForce: {x: -8, y: 2}
+  maxSpawnForce: {x: -1, y: 6}
