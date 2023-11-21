@@ -4,56 +4,25 @@ using UnityEngine;
 
 public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 {
-    [SerializeField] private float speed;
-    [SerializeField] private float speedOffset;  //Randomizes speed by either adding or subtracting this variable
-    private float speedOffsetVar;  
-    [SerializeField] private float planeSinFrequency;
-    [SerializeField] private float planeSinAmplitude;
-
-    
-
-    [SerializeField] private float minSpawn;
-    [SerializeField] private float maxSpawn;
-
+    public PlaneData Data;
     private float planeHeightRandom;
-
-    private bool resetBool;
     private bool stopSpawn;
-
-    [SerializeField] private float planeTime;
     private float planeTimeVar;
-    [SerializeField] private float planeTimeOffset;
     private float planeTimeOffsetVar;
-    private float planeTimer;
-
     private float planeSpeed;
-
     private bool planeHitBool;
-
-    [SerializeField] private int lives;
-
-    
-
-    
-
-    
-
-   
-   void Start()
-   {
-     
-   }
+    private int lives;
 
     void Awake()
     {
-        resetBool = false;
+        
         stopSpawn = false;
         
-        planeHeightRandom = Random.Range(minSpawn,maxSpawn);
-        speedOffsetVar = Random.Range(-speedOffset,speedOffset);
-        planeTimeOffsetVar = Random.Range(-planeTimeOffset,planeTimeOffset);
-        planeTimeVar = planeTime + planeTimeOffsetVar;
-        planeSpeed = speed + speedOffsetVar;
+        planeHeightRandom = Random.Range(Data.minSpawn,Data.maxSpawn);
+        
+        planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset,Data.planeTimeOffset);
+        planeTimeVar = Data.planeTime + planeTimeOffsetVar;
+        planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
         planeHitBool = false;
        
         
@@ -63,30 +32,20 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     
         transform.position += Vector3.left * planeSpeed * Time.deltaTime;
         float x = transform.position.x;
-        float y = Mathf.Sin(x * planeSinFrequency) * planeSinAmplitude + planeHeightRandom; // Calculate y position using sine function
+        float y = Mathf.Sin(x * Data.planeSinFrequency) * Data.planeSinAmplitude + planeHeightRandom; 
         transform.position = new Vector3(x, y, 0); // Update position
-
-    
-
         Restart();
-
-        Timer();
-
-        
-        
-        
-
     }
 
     void Restart()
     {
         if ((transform.position.x < -13 || planeHitBool))
         {
-            resetBool = true;
-            planeHeightRandom = Random.Range(minSpawn,maxSpawn);
+            planeHeightRandom = Random.Range(Data.minSpawn,Data.maxSpawn);
             transform.position = new Vector3 (BoundariesManager.rightBoundary,planeHeightRandom,0);
             planeSpeed = 0;
             planeHitBool = false;
+            StartCoroutine(ResetTimer());
         }
     }
 
@@ -96,13 +55,11 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
         {
             gameObject.SetActive(false);
         }
-        
     }
 
     void OnEnable()
     {
         PlayerManager.onPlayerDeath += StopSpawn;
-
     }
 
      void OnDisable()
@@ -110,23 +67,16 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
         PlayerManager.onPlayerDeath -= StopSpawn;
     }
 
-    void Timer()
-    {
-        if (resetBool)
-        {
-            planeTimer += Time.deltaTime;
-        }
+   
 
-        if (planeTimer > planeTimeVar)
-        {
-            resetBool = false;
-            speedOffsetVar = Random.Range(-speedOffset,speedOffset);
-            planeSpeed = speed + speedOffsetVar;
-            planeTimeOffsetVar = Random.Range(-planeTimeOffset,planeTimeOffset);
-            planeTimeVar = planeTime + planeTimeOffsetVar;
-            planeTimer = 0;
+    private IEnumerator ResetTimer()
+    {
+        
+        yield return new WaitForSeconds(planeTimeVar);
+        planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
             
-        }
+        planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset,Data.planeTimeOffset);
+        planeTimeVar = Data.planeTime + planeTimeOffsetVar;
     }
 
     public void Hit(int damageAmount)
@@ -137,8 +87,6 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
         {
             planeHitBool = true;
         }
-        
-
     }
 
     public void Damage(int damageAmount)
