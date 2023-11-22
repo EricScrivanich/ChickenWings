@@ -13,27 +13,26 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     private bool planeHitBool;
     private int lives;
 
-    void Awake()
-    {
+    
+    // void Awake()
+    // {
         
-        stopSpawn = false;
+    //     stopSpawn = false;
         
-        planeHeightRandom = Random.Range(Data.minSpawn,Data.maxSpawn);
+    //     planeHeightRandom = Random.Range(Data.minSpawn,Data.maxSpawn);
         
-        planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset,Data.planeTimeOffset);
-        planeTimeVar = Data.planeTime + planeTimeOffsetVar;
-        planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
-        planeHitBool = false;
+    //     planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset,Data.planeTimeOffset);
+    //     planeTimeVar = Data.planeTime + planeTimeOffsetVar;
+    //     planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
+    //     planeHitBool = false;
        
         
-    }
+    // }
     void Update()
     {
-    
+     
         transform.position += Vector3.left * planeSpeed * Time.deltaTime;
-        float x = transform.position.x;
-        float y = Mathf.Sin(x * Data.planeSinFrequency) * Data.planeSinAmplitude + planeHeightRandom; 
-        transform.position = new Vector3(x, y, 0); // Update position
+      
         Restart();
     }
 
@@ -41,11 +40,12 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     {
         if ((transform.position.x < -13 || planeHitBool))
         {
-            planeHeightRandom = Random.Range(Data.minSpawn,Data.maxSpawn);
-            transform.position = new Vector3 (BoundariesManager.rightBoundary,planeHeightRandom,0);
-            planeSpeed = 0;
-            planeHitBool = false;
-            StartCoroutine(ResetTimer());
+            gameObject.SetActive(false);
+            // planeHeightRandom = Random.Range(Data.minSpawn,Data.maxSpawn);
+            // transform.position = new Vector3 (BoundariesManager.rightBoundary,planeHeightRandom,0);
+            // planeSpeed = 0;
+            // planeHitBool = false;
+            // StartCoroutine(ResetTimer());
         }
     }
 
@@ -59,12 +59,16 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 
     void OnEnable()
     {
-        PlayerManager.onPlayerDeath += StopSpawn;
+        planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset,Data.planeTimeOffset);
+        planeTimeVar = Data.planeTime + planeTimeOffsetVar;
+        planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
+        planeHitBool = false;
+        
+        
     }
 
      void OnDisable()
     {
-        PlayerManager.onPlayerDeath -= StopSpawn;
     }
 
    

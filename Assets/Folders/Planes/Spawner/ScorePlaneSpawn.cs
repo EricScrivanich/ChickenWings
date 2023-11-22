@@ -16,8 +16,7 @@ public class ScorePlaneSpawn : MonoBehaviour
     private float maxY;
     private float yPos;
 
-    private StatsManager statsMan; // reference to the ScoreManager
-   
+
     [SerializeField] private int[] spawnScores;
 
     private Transform topBoundryTransform;
@@ -26,8 +25,8 @@ public class ScorePlaneSpawn : MonoBehaviour
     void Awake()
     {
         planeAmount = 0;
-        statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
-        statsMan.OnScoreChanged += CheckScore; // Subscribe to the OnScoreChanged event
+
+        StatsManager.OnScoreChanged += CheckScore; // Subscribe to the OnScoreChanged event
     }
 
     void Start()
@@ -60,10 +59,8 @@ public class ScorePlaneSpawn : MonoBehaviour
 
     private void OnDestroy() // When this object is destroyed
     {
-        if (statsMan != null)
-        {
-            statsMan.OnScoreChanged -= CheckScore; // Unsubscribe from the OnScoreChanged event to avoid null reference errors
-        }
+        StatsManager.OnScoreChanged -= CheckScore; // Unsubscribe from the OnScoreChanged event to avoid null reference errors
     }
+
 }
 

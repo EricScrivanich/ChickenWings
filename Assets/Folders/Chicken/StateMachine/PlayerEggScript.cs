@@ -57,7 +57,7 @@ public class PlayerEggScript : MonoBehaviour
 
     
 
-    private void EggDrop()
+    private void EggDrop() 
 {
     if (ammo > 0)
     {

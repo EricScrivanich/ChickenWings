@@ -22,11 +22,11 @@ public class StatsDisplay : MonoBehaviour
             scoreText = statsPanel.Find("ScoreText")?.GetComponent<TextMeshProUGUI>();
             ammoText = statsPanel.Find("AmmoText")?.GetComponent<TextMeshProUGUI>();
         }
-      
+
 
         // Subscribe to events
-        statsMan.OnScoreChanged += UpdateScore;
-        statsMan.OnAmmoChanged += UpdateAmmo;
+        StatsManager.OnScoreChanged += UpdateScore;
+        StatsManager.OnAmmoChanged += UpdateAmmo;
     }
 
     void UpdateScore(int score)
@@ -43,8 +43,8 @@ public class StatsDisplay : MonoBehaviour
 
     private void OnDestroy()
     {
-        statsMan.OnScoreChanged -= UpdateScore;
-        statsMan.OnAmmoChanged -= UpdateAmmo;
+        StatsManager.OnScoreChanged -= UpdateScore;
+        StatsManager.OnAmmoChanged -= UpdateAmmo;
     }
 
     private void OnEnable() 

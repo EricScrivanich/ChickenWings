@@ -14,18 +14,22 @@ public class PlayerManager : MonoBehaviour
 
 
     public static event Action onPlayerDeath;
-    private StatsManager statsMan;
+   
 
     void Awake()
     {
-     
+        StatsManager.OnLivesChanged += UpdateLives;
        
+    }
+    private void OnDisable() {
+        StatsManager.OnLivesChanged -= UpdateLives;
+        
     }
 
     void Start()
     {
-        statsMan = GetComponent<StatsManager>();
-        statsMan.OnLivesChanged += UpdateLives;
+        
+       
         
        
         

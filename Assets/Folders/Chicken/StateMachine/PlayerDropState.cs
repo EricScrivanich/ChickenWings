@@ -10,7 +10,7 @@ public class PlayerDropState : PlayerBaseState
         player.ID.events.FloorCollsion.Invoke(false);
         AudioManager.instance.PlayDownJumpSound();
         player.maxFallSpeed = -50;
-        player.anim.SetBool("DropBool",true);
+        player.anim.SetTrigger("DropBool");
         player.disableButtons = true;
         player.rb.velocity = new Vector2 (0,dropPower);
 

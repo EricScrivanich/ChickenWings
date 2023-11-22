@@ -6,9 +6,9 @@ using System;
 public class StatsManager : MonoBehaviour
 {
     // Define events for changes in stats
-    public event Action<int> OnScoreChanged;
-    public event Action<int> OnAmmoChanged;
-    public event Action<int> OnLivesChanged;
+    public static event Action<int> OnScoreChanged;
+    public static event Action<int> OnAmmoChanged;
+    public static event Action<int> OnLivesChanged;
 
     [SerializeField] private int score;
     private int initialScore;
