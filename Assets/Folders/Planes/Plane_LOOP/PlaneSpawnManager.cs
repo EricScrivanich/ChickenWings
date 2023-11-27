@@ -15,6 +15,7 @@ public class PlaneSpawnManager : MonoBehaviour
     private List<GameObject> cropPlanePool = new List<GameObject>();
     private List<GameObject> cargoPlanePool = new List<GameObject>();
     private List<GameObject> jetPlanePool = new List<GameObject>();
+    
 
     // Define initial pool sizes for each plane type
     private int cropPoolSize = 5;
@@ -82,7 +83,7 @@ public class PlaneSpawnManager : MonoBehaviour
 
         while (true)
         {
-            GetCrop();
+            GetCargo();
             yield return new WaitForSeconds(1.5f); // Spawn interval
         }
     }
@@ -96,26 +97,25 @@ public class PlaneSpawnManager : MonoBehaviour
             return;
         }
 
-        float spawnYPosition = CalculateSpawnPosition(CropData, upperRegion, lowerRegion, createSpace);
-
-        crop.transform.position = new Vector2(BoundariesManager.rightBoundary, spawnYPosition);
+        
+        float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnCrop);
+        crop.transform.position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
         crop.SetActive(true);
     }
 
-    private void GetCargo()
+   private void GetCargo()
+{
+    GameObject cargo = GetPooledPlane(cargoPlanePool);
+    if (cargo == null)
     {
-        GameObject cargo = GetPooledPlane(cargoPlanePool);
-        if (cargo == null)
-        {
-            Debug.LogError("No cargo plane available in the pool.");
-            return;
-        }
-
-        float spawnYPosition = CalculateSpawnPosition(CargoData, upperRegion, lowerRegion, createSpace);
-
-        cargo.transform.position = new Vector2(BoundariesManager.rightBoundary, spawnYPosition);
-        cargo.SetActive(true);
+        Debug.LogError("No cargo plane available in the pool.");
+        return;
     }
+
+    float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnCargo);
+    cargo.transform.position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
+    cargo.SetActive(true);
+}
 
     private void GetJet()
     {
@@ -126,35 +126,62 @@ public class PlaneSpawnManager : MonoBehaviour
             return;
         }
 
-        float spawnYPosition = CalculateSpawnPosition(JetData, upperRegion, lowerRegion, createSpace);
 
-        jet.transform.position = new Vector2(BoundariesManager.rightBoundary, spawnYPosition);
+        
+        float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnJet);
+        jet.transform.position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
         jet.SetActive(true);
     }
 
-    private float CalculateSpawnPosition(PlaneData planeData, float upperBound, float lowerBound, bool createSpace)
-    {
-        if (!createSpace)
-        {
-            return Random.Range(planeData.minSpawn, planeData.maxSpawn);
-        }
-        else
-        {
-            float upperRegionSize = planeData.maxSpawn - upperBound;
-            float lowerRegionSize = lowerBound - planeData.minSpawn;
-            float totalSpawnableArea = upperRegionSize + lowerRegionSize;
+//     private void SpawnCargoPlane()
+// {
+//     List<SpawnPoint> validSpawnPoints = new List<SpawnPoint>();
 
-            float upperRegionWeight = upperRegionSize / totalSpawnableArea;
+//     for (int i = 0; i < SpawnPointManager.SpawnPoints.Count; i++)
+//     {
+//         if (SpawnPointManager.SpawnPoints[i].canSpawn && SpawnPointManager.SpawnPoints[i].canSpawnCargo)
+//         {
+//             validSpawnPoints.Add(SpawnPointManager.SpawnPoints[i]);
+//         }
+//     }
 
-            if (Random.value < upperRegionWeight)
-            {
-                return Random.Range(upperBound, planeData.maxSpawn);
-            }
-            else
-            {
-                return Random.Range(planeData.minSpawn, lowerBound);
-            }
-        }
-    }
+//     if (validSpawnPoints.Count == 0)
+//     {
+//         Debug.LogError("No valid spawn points for cargo planes.");
+//         return;
+//     }
+
+//     int randomIndex = Random.Range(0, validSpawnPoints.Count);
+//     float spawnPositionY = validSpawnPoints[randomIndex].transform.position.y;
+//     return spawnPositionY;
+
+//     // Instantiate or activate your cargo plane at spawnPosition
+// }
+
+
+    // private float CalculateSpawnPosition(PlaneData planeData, float upperBound, float lowerBound, bool createSpace)
+    // {
+    //     if (!createSpace)
+    //     {
+    //         return Random.Range(planeData.minSpawn, planeData.maxSpawn);
+    //     }
+    //     else
+    //     {
+    //         float upperRegionSize = planeData.maxSpawn - upperBound;
+    //         float lowerRegionSize = lowerBound - planeData.minSpawn;
+    //         float totalSpawnableArea = upperRegionSize + lowerRegionSize;
+
+    //         float upperRegionWeight = upperRegionSize / totalSpawnableArea;
+
+    //         if (Random.value < upperRegionWeight)
+    //         {
+    //             return Random.Range(upperBound, planeData.maxSpawn);
+    //         }
+    //         else
+    //         {
+    //             return Random.Range(planeData.minSpawn, lowerBound);
+    //         }
+    //     }
+    // }
 
 }

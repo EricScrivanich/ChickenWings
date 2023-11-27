@@ -12,6 +12,8 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     private float planeSpeed;
     private bool planeHitBool;
     private int lives;
+    private float initialY;
+    private bool initialized;
 
     
     // void Awake()
@@ -30,8 +32,18 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     // }
     void Update()
     {
-     
+       
+        if (initialized)
+        {
         transform.position += Vector3.left * planeSpeed * Time.deltaTime;
+        float x = transform.position.x;
+        float y = Mathf.Sin(x * Data.planeSinFrequency) * Data.planeSinAmplitude + initialY;
+        transform.position = new Vector2(x, y);
+
+        }
+       
+     
+        
       
         Restart();
     }
@@ -63,12 +75,15 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
         planeTimeVar = Data.planeTime + planeTimeOffsetVar;
         planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
         planeHitBool = false;
+        initialY = transform.position.y;
+        initialized = true;
         
         
     }
 
      void OnDisable()
     {
+        initialized = false;
     }
 
    
