@@ -8,7 +8,7 @@ public class PlayerIdleState :PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.rb.gravityScale = player.originalGravityScale;
-        player.ID.AddEggVelocity = 0;
+       
        
     }
 

@@ -10,7 +10,6 @@ public class PlayerJumpState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.rb.velocity = new Vector2(0, jumpForce);
-        player.ID.AddEggVelocity = 0;
         AudioManager.instance.PlayCluck();
         player.anim.SetTrigger("JumpTrigger");
     }

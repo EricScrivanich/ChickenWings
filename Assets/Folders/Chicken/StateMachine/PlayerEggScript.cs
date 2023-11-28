@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerEggScript : MonoBehaviour
 {
     public PlayerID ID;
+    private Rigidbody2D rb;
     [SerializeField] private GameObject egg_Regular;
     // [SerializeField] private GameObject egg_Bullet;
     // [SerializeField] private GameObject eggYolkPrefab;
@@ -19,7 +20,9 @@ public class PlayerEggScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         ammo = ID.Ammo;
+        rb = GetComponent<Rigidbody2D>();
         
 
         // Initialize eggPool and yolkPool
@@ -29,6 +32,7 @@ public class PlayerEggScript : MonoBehaviour
         for (int i = 0; i < eggPoolAmount; i++)
         {
             GameObject egg = Instantiate(egg_Regular);
+            
             egg.SetActive(false);
             eggPool.Add(egg);
         }
@@ -65,6 +69,7 @@ public class PlayerEggScript : MonoBehaviour
 
         if (egg != null)
         {
+            ID.AddEggVelocity = rb.velocity.x / 2.7f;
             egg.transform.position = new Vector2(transform.position.x, transform.position.y - .25f);
             
             

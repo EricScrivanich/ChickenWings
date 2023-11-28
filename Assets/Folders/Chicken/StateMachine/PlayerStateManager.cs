@@ -8,7 +8,7 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerID ID;
     public BoxCollider2D slashBox;
     public float maxFallSpeed;
-    public float originalGravityScale {get; private set;}
+    public float originalGravityScale { get; private set; }
     PlayerBaseState currentState;
     PlayerBaseState previousState;
     public PlayerStartingState StartingState = new PlayerStartingState();
@@ -26,9 +26,9 @@ public class PlayerStateManager : MonoBehaviour
 
     public bool hasFlippedRight = false;
     public bool hasFlippedLeft = false;
-    
 
-    
+
+
 
     private bool canDash;
     public bool canDrop;
@@ -37,7 +37,7 @@ public class PlayerStateManager : MonoBehaviour
     private float dropCooldownTime = 3f;
     public bool jumpHeld;
 
-     private float jumpForce = 11.3f;
+    private float jumpForce = 11.3f;
     public int rotationLerpSpeed = 20;
     public int jumpRotSpeed = 200;
     private int frozenRotSpeed = 350;
@@ -46,37 +46,39 @@ public class PlayerStateManager : MonoBehaviour
     private float rotZ;
     private float frozenRotZ;
     private float totalRotation = 0.0f; // Total rotation done so far
-    private float targetRotation = 0.0f; 
+    private float targetRotation = 0.0f;
     private float currentRotation = 0;
     private int remainingLeftFlips = 0;
     private int remainingRightFlips = 0;
-    public float addEggVelocity = 2f;
+    public float addEggVelocity { get; private set; } = 2.5f;
     public bool disableButtons;
-    
 
-    
+
+
     public Rigidbody2D rb;
-    public Animator anim {get; private set;}
-  
-    private void Awake() {
+    public Animator anim { get; private set; }
+
+    private void Awake()
+    {
         jumpHeld = false;
         canDash = true;
         canDrop = true;
-        disableButtons = false;
-        ID.AddEggVelocity = 0;
+        disableButtons = true;
+       
     }
     // Start is called before the first frame update
     void Start()
     {
         
+
         maxFallSpeed = ID.MaxFallSpeed;
         rb = GetComponent<Rigidbody2D>();
-        
+
         slashBox.enabled = false;
         originalGravityScale = rb.gravityScale;
 
         anim = GetComponent<Animator>();
-        
+
         currentState = StartingState;
 
         currentState.EnterState(this);
@@ -84,19 +86,20 @@ public class PlayerStateManager : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         currentState.OnCollisionEnter2D(this, collision);
-        
+
     }
     void FixedUpdate()
     {
         currentState.FixedUpdateState(this);
-        
+
         MaxFallSpeed();
     }
-  
+
 
     // Update is called once per frame
     void Update()
     {
+        
         currentState.UpdateState(this);
         currentState.RotateState(this);
         if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
@@ -124,15 +127,17 @@ public class PlayerStateManager : MonoBehaviour
         // {
 
         // }
-        
-        else {
+
+        else
+        {
             newState.EnterState(this);
         }
-       
-
-        
 
     }
+
+    
+
+
 
     public void FlipStateChanges()
     {
@@ -140,34 +145,34 @@ public class PlayerStateManager : MonoBehaviour
     }
     public void HoldJumpStateChanges()
     {
-        
+
 
     }
-    
+
 
     public void MaxFallSpeed()
     {
-         if (rb.velocity.y < maxFallSpeed)
-    {
-        // If it does, limit it to the max fall speed
-        rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
+        if (rb.velocity.y < maxFallSpeed)
+        {
+            // If it does, limit it to the max fall speed
+            rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
+        }
     }
-    }
-   
+
     public void BaseRotationLogic()
     {
-            if (rb.velocity.y > 0 && rotZ < maxRotUp)
-            {
-                // Calculate the new rotation
-                rotZ += jumpRotSpeed * Time.deltaTime;
-            }
-            // If the object is moving downwards, rotate it downwards
-            else if (rb.velocity.y < 0 && rotZ > maxRotDown)
-            {
-                // Calculate the new rotation
-                rotZ -= jumpRotSpeed * Time.deltaTime;
-            }
-             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0,0, rotZ), Time.deltaTime* rotationLerpSpeed);
+        if (rb.velocity.y > 0 && rotZ < maxRotUp)
+        {
+            // Calculate the new rotation
+            rotZ += jumpRotSpeed * Time.deltaTime;
+        }
+        // If the object is moving downwards, rotate it downwards
+        else if (rb.velocity.y < 0 && rotZ > maxRotDown)
+        {
+            // Calculate the new rotation
+            rotZ -= jumpRotSpeed * Time.deltaTime;
+        }
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, rotZ), Time.deltaTime * rotationLerpSpeed);
 
     }
     void HandleJump()
@@ -176,20 +181,20 @@ public class PlayerStateManager : MonoBehaviour
         {
             SwitchState(JumpState);
         }
-       
+
     }
 
     void HandleSlash()
     {
-         if (!disableButtons)
+        if (!disableButtons)
         {
             SwitchState(SlashState);
         }
 
     }
 
-   
-   
+
+
     void HandleRightFlip()
     {
         if (!disableButtons)
@@ -201,33 +206,33 @@ public class PlayerStateManager : MonoBehaviour
 
     void HandleLeftFlip()
     {
-         if (!disableButtons)
+        if (!disableButtons)
         {
             SwitchState(FlipLeftState);
         }
-        
+
     }
 
     void HandleDash()
     {
         if (canDash && !disableButtons)
         {
-            
+
             SwitchState(DashState);
             StartCoroutine(DashCooldown());
-           
+
         }
-       
+
     }
 
-      void HandleDrop()
+    void HandleDrop()
     {
         if (!disableButtons && canDrop)
         {
             SwitchState(DropState);
             StartCoroutine(DropCooldown());
         }
-       
+
     }
 
     void HandleHoldJump()
@@ -236,7 +241,7 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-     void HandleReleaseJump()
+    void HandleReleaseJump()
     {
 
         jumpHeld = false;
@@ -246,28 +251,29 @@ public class PlayerStateManager : MonoBehaviour
     {
         canDash = false;
 
-       yield return new WaitForSeconds(dashCooldownTime);
-       canDash = true;
+        yield return new WaitForSeconds(dashCooldownTime);
+        canDash = true;
     }
-     IEnumerator DropCooldown()
+    IEnumerator DropCooldown()
     {
         canDrop = false;
 
-       yield return new WaitForSeconds(dropCooldownTime);
-       canDrop = true;
+        yield return new WaitForSeconds(dropCooldownTime);
+        canDrop = true;
     }
 
     IEnumerator WaitForAnim()
     {
         yield return new WaitForSeconds(.3f);
-        anim.SetBool("JumpHeld",false);
+        anim.SetBool("JumpHeld", false);
     }
 
-    
 
-    
 
-     private void OnEnable() {
+
+
+    private void OnEnable()
+    {
         ID.events.OnJump += HandleJump;
         ID.events.OnFlipRight += HandleRightFlip;
         ID.events.OnFlipLeft += HandleLeftFlip;
@@ -275,19 +281,19 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDrop += HandleDrop;
         ID.events.OnJumpHeld += HandleHoldJump;
         ID.events.OnJumpReleased += HandleReleaseJump;
-        
+
         // ID.events.OnAttack += HandleSlash;
     }
-    private void OnDisable() 
+    private void OnDisable()
     {
         ID.events.OnJump -= HandleJump;
         ID.events.OnFlipRight -= HandleRightFlip;
         ID.events.OnFlipLeft -= HandleLeftFlip;
         ID.events.OnDash -= HandleDash;
         ID.events.OnDrop -= HandleDrop;
-         ID.events.OnJumpHeld -= HandleHoldJump;
+        ID.events.OnJumpHeld -= HandleHoldJump;
         ID.events.OnJumpReleased -= HandleReleaseJump;
         // ID.events.OnAttack -= HandleSlash;
-       
+
     }
 }

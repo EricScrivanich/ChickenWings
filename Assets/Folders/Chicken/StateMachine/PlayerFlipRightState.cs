@@ -10,14 +10,16 @@ public class PlayerFlipRightState : PlayerBaseState
     private float flipForceX = 6.5f;
     private float flipForceY = 10f; 
     private float rotationSpeedVar = -400;
+  
     
     public override void EnterState(PlayerStateManager player)
     {
         totalRotation = 0;
+        
         currentRotation = player.transform.rotation.eulerAngles.z;
         player.rb.velocity = new Vector2(flipForceX, flipForceY);
         AudioManager.instance.PlayCluck();
-        player.ID.AddEggVelocity = player.addEggVelocity;
+        
       
        
     }
@@ -43,6 +45,7 @@ public class PlayerFlipRightState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+       
          if (totalRotation > 420)
         {
             player.SwitchState(player.IdleState);
