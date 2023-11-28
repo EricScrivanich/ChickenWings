@@ -22,55 +22,68 @@ public class PlaneSpawnManager : MonoBehaviour
     private int cargoPoolSize = 3;
     private int jetPoolSize = 5;
 
+    private float spawnInterval;
+
     // Variables used to create a space within a plane's spawn
     private bool createSpace = false;
     private float upperRegion;
     private float lowerRegion;
 
+    private float cropSpawnRatio;
+    private float jetSpawnRatio;
+
     private void Awake()
     {
         upperRegion = 3f;
+        
         lowerRegion = -2f;
         createSpace = true;
 
         InitializePool(cropPlanePool, cropPlanePrefab, cropPoolSize);
         InitializePool(cargoPlanePool, cargoPlanePrefab, cargoPoolSize);
         InitializePool(jetPlanePool, jetPlanePrefab, jetPoolSize);
+        
+        SetSpawnRatio(.85f,.15f);
 
-        StatsManager.OnScoreChanged += CheckScore;
+
+       
     }
 
     void Start()
     {
-        StartCoroutine(SpawnRandomCoroutine());
+        StatsManager.OnScoreChanged += CheckScore;
+        // StartCoroutine(SpawnRandomCoroutine());
+    }
+    private void OnDestroy() {
+        StatsManager.OnScoreChanged -= CheckScore;
     }
 
-     private IEnumerator SpawnCropCoroutine()
-    {
-        yield return new WaitForSeconds(3f); // Initial delay
+    //  private IEnumerator SpawnCropCoroutine()
+    // {
+    //     yield return new WaitForSeconds(3f); // Initial delay
 
-        while (true)
-        {
-            GetCrop();
-            GetCrop();
-            yield return new WaitForSeconds(1.5f); // Spawn interval
-        }
-    }
+    //     while (true)
+    //     {
+    //         GetCrop();
+    //         GetCrop();
+    //         yield return new WaitForSeconds(1.5f); // Spawn interval
+    //     }
+    // }
 
     private IEnumerator SpawnRandomCoroutine()
 {
-    yield return new WaitForSeconds(3f); // Initial delay
+     // Initial delay
 
     while (true)
     {
         float randomValue = UnityEngine.Random.value; // Generates a random number between 0.0 and 1.0
 
         // Decide which method to call based on randomValue
-        if (randomValue < 0.50f) // 50% chance
+        if (randomValue < cropSpawnRatio) // 50% chance
         {
             GetCrop();
         }
-        else if (randomValue < 0.85f) // 35% chance (50% to 85%)
+        else if (randomValue < jetSpawnRatio) // 35% chance (50% to 85%)
         {
             GetJet();
         }
@@ -79,12 +92,40 @@ public class PlaneSpawnManager : MonoBehaviour
             GetCargo();
         }
 
-        yield return new WaitForSeconds(1.5f); // Spawn interval
+        yield return new WaitForSeconds(spawnInterval); // Spawn interval
     }
 }
 
+void SetSpawnRatio(float cropRat, float jetRat)
+{
+    cropSpawnRatio = cropRat;
+    jetSpawnRatio = cropRat + jetRat;
+    
+}
     void CheckScore(int newScore)
     {
+        if (newScore == 1)
+        {
+            StartCoroutine(SpawnRandomCoroutine());
+            spawnInterval = 7f;
+        }
+    
+        else if (newScore > 3 && newScore < 6)
+        {
+            spawnInterval = 4f;
+            SetSpawnRatio(.70f, .30f);
+        }
+        else if (newScore > 5 && newScore < 9)
+        {
+            spawnInterval = 2f;
+            SetSpawnRatio(.60f, .30f);
+        }
+        else if (newScore > 8 && newScore < 14)
+        {
+            spawnInterval = 1f;
+            SetSpawnRatio(.40f, .40f);
+        }
+        
         
 
     }
@@ -213,5 +254,6 @@ public class PlaneSpawnManager : MonoBehaviour
     //         }
     //     }
     // }
+
 
 }
