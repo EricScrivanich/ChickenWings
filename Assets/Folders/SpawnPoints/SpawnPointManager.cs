@@ -35,7 +35,7 @@ public class SpawnPointManager : MonoBehaviour
         }
     }
 
-     public void SetSpawningForRange(int startIndex, int endIndex, bool canSpawn)
+     public void SetSpawningForRange(int startIndex, int endIndex, bool value)
     {
         if (startIndex < 0 || endIndex >= SpawnPoints.Count || startIndex > endIndex)
         {
@@ -45,7 +45,7 @@ public class SpawnPointManager : MonoBehaviour
 
         for (int i = startIndex; i <= endIndex; i++)
         {
-            SpawnPoints[i].SetCanSpawn(canSpawn);
+            SpawnPoints[i].SetCanSpawn(value);
         }
     }
 

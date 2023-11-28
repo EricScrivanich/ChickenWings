@@ -259,7 +259,7 @@ public class PlayerStateManager : MonoBehaviour
 
     IEnumerator WaitForAnim()
     {
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(.3f);
         anim.SetBool("JumpHeld",false);
     }
 

@@ -42,8 +42,47 @@ public class PlaneSpawnManager : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(SpawnCropCoroutine());
+        StartCoroutine(SpawnRandomCoroutine());
     }
+
+     private IEnumerator SpawnCropCoroutine()
+    {
+        yield return new WaitForSeconds(3f); // Initial delay
+
+        while (true)
+        {
+            GetCrop();
+            GetCrop();
+            yield return new WaitForSeconds(1.5f); // Spawn interval
+        }
+    }
+
+    private IEnumerator SpawnRandomCoroutine()
+{
+    yield return new WaitForSeconds(3f); // Initial delay
+
+    while (true)
+    {
+        float randomValue = UnityEngine.Random.value; // Generates a random number between 0.0 and 1.0
+
+        // Decide which method to call based on randomValue
+        if (randomValue < 0.50f) // 50% chance
+        {
+            GetCrop();
+        }
+        else if (randomValue < 0.85f) // 35% chance (50% to 85%)
+        {
+            GetJet();
+        }
+        else // 15% chance (85% to 100%)
+        {
+            GetCargo();
+        }
+
+        yield return new WaitForSeconds(1.5f); // Spawn interval
+    }
+}
+
     void CheckScore(int newScore)
     {
         
@@ -77,16 +116,7 @@ public class PlaneSpawnManager : MonoBehaviour
         return null;
     }
 
-    private IEnumerator SpawnCropCoroutine()
-    {
-        yield return new WaitForSeconds(3f); // Initial delay
-
-        while (true)
-        {
-            GetCargo();
-            yield return new WaitForSeconds(1.5f); // Spawn interval
-        }
-    }
+   
 
     private void GetCrop()
     {
