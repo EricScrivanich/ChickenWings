@@ -74,6 +74,9 @@ public class PlaneSpawnManager : MonoBehaviour
         // StartCoroutine(SpawnRandomCoroutine());
     }
 
+
+    /// Add another timer if plane count is above a certain number to avoid long lines of planes
+
     IEnumerator SpawnCropPlanes()
     {
         while (true) // Main game loop
