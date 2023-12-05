@@ -2666,6 +2666,18 @@ MonoBehaviour:
   CropData: {fileID: 11400000, guid: 48af6dd414deb4e9691e35766a2e0656, type: 2}
   CargoData: {fileID: 11400000, guid: 2b07855d1607442fe8d0a9a89906d330, type: 2}
   JetData: {fileID: 11400000, guid: 045520bfef6784831b98fa13cd6f6033, type: 2}
+  minCropOffset: 0
+  maxCropOffset: 3
+  minCropIterationDelay: 4
+  maxCropIterationDelay: 6
+  minJetOffset: 0
+  maxJetOffset: 2
+  minJetIterationDelay: 2
+  maxJetIterationDelay: 4
+  minCargoOffset: 3
+  maxCargoOffset: 5
+  minCargoIterationDelay: 5
+  maxCargoIterationDelay: 7
 --- !u!1 &1825511549
 GameObject:
   m_ObjectHideFlags: 0
@@ -3658,7 +3670,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: frozenTime
-      value: 1
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: fadeDuration
@@ -3710,7 +3722,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3336118132710116098, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3768211166917770389, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_SizeDelta.x
