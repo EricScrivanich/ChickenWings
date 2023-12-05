@@ -5,18 +5,23 @@ using UnityEngine;
 public class PlayerFrozenState : PlayerBaseState
 {
     private float frozenRotZ;
-    private float frozenRotationSpeed = 400f;
+    private float frozenRotationSpeed = 380f;
+    private float waitAtTopDuration = .45f;
+    private float time;
+    private bool rotate;
     // Start is called before the first frame update
     public override void EnterState(PlayerStateManager player)
     {
+        time = 0;
+        rotate = false;
         player.ID.globalEvents.Frozen.Invoke();
         AudioManager.instance.PlayFrozenSound();
         player.anim.SetBool("FrozenBool",true);
         player.disableButtons = true;
         player.rb.velocity = new Vector2 (0,0);
+        player.maxFallSpeed = 0;
+        player.transform.rotation = Quaternion.Euler(0, 0, 0);
         frozenRotZ = 0;
-        player.maxFallSpeed = -5.2f;
-        
        
     }
 
@@ -29,16 +34,28 @@ public class PlayerFrozenState : PlayerBaseState
     {
         
     }
-
+   
     public override void RotateState(PlayerStateManager player)
     {
-        frozenRotZ += frozenRotationSpeed * Time.deltaTime;
-        player.transform.rotation = Quaternion.Euler(0,0, frozenRotZ);
+        // if (rotate)
+        // {
+        //     frozenRotZ += frozenRotationSpeed * Time.deltaTime;
+        //     player.transform.rotation = Quaternion.Euler(0,0, frozenRotZ);
+
+        // }
+        
     }
 
     public override void UpdateState(PlayerStateManager player)
     {
-        if (player.transform.position.y < 1.2f)
+        time += Time.deltaTime;
+        if (time > waitAtTopDuration)
+        {
+            player.maxFallSpeed = -4.5f;
+            rotate = true; 
+
+        }
+        if (player.transform.position.y < 1)
         {
             player.disableButtons = false;
             player.anim.SetBool("FrozenBool",false);
