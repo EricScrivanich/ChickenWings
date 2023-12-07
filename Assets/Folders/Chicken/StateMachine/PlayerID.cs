@@ -2,8 +2,10 @@
 using UnityEngine;
 
 [CreateAssetMenu]
+
 public class PlayerID : ScriptableObject
 {
+    
     public int Lives;
     public int Ammo;
     public float MaxFallSpeed;

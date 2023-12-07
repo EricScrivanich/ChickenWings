@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
 {
-
+    [ExposedScriptableObject]
     public PlayerID ID;
     public BoxCollider2D slashBox;
     public float maxFallSpeed;

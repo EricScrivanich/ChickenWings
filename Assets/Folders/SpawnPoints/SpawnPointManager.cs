@@ -1,13 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
 
 public class SpawnPointManager : MonoBehaviour
 {
     public static List<SpawnPoint> SpawnPoints = new List<SpawnPoint>();
 
+    public int numberOfPointsToDeactivate = 3;
+    private bool useSequential = true;
+    private bool isActive = true;
+    [SerializeField] private float interval;
+
+    private float timer;
+    private List<SpawnPoint> lastDeactivatedPoints = new List<SpawnPoint>();
+
     void Awake()
+    {
+        InitializeSpawnPoints();
+    }
+    private void Start() {
+        int startIndex = UnityEngine.Random.Range(0, SpawnPoints.Count - numberOfPointsToDeactivate);
+        SetSpawnPointsActiveInRange(startIndex, startIndex + numberOfPointsToDeactivate, false);
+    }
+
+    void Update()
+    {
+        if (!isActive)
+        {
+            SetAllSpawnPointsActive();
+            return;
+        }
+
+        timer += Time.deltaTime;
+        if (timer >= interval)
+        {
+            if (useSequential)
+            {
+                int startIndex = UnityEngine.Random.Range(0, (SpawnPoints.Count + 1) - numberOfPointsToDeactivate);
+                Debug.Log(startIndex);
+                SetSpawnPointsActiveInRange(startIndex, startIndex + numberOfPointsToDeactivate, false);
+            }
+            else
+            {
+                var randomPoints = GetRandomSpawnPoints(numberOfPointsToDeactivate);
+                SetSpawnPointsActive(randomPoints, false);
+            }
+
+            timer = 0;
+        }
+    }
+
+    private void InitializeSpawnPoints()
     {
         SpawnPoints.Clear();
         foreach (Transform child in transform)
@@ -19,35 +63,64 @@ public class SpawnPointManager : MonoBehaviour
             }
         }
     }
-    public void DisableSpawningAtPoint(int index)
+
+    public void SetSpawnPointsActiveInRange(int startIndex, int endIndex, bool active)
     {
-        if (index >= 0 && index < SpawnPoints.Count)
+        ReactivateLastDeactivatedPoints();
+
+        for (int i = startIndex; i < endIndex && i < SpawnPoints.Count; i++)
         {
-            SpawnPoints[index].SetCanSpawn(false);
+            SpawnPoints[i].SetCanSpawn(active);
+            if (!active) lastDeactivatedPoints.Add(SpawnPoints[i]);
         }
     }
 
-    public void EnableSpawningAtPoint(int index)
+    public List<SpawnPoint> GetRandomSpawnPoints(int count)
     {
-        if (index >= 0 && index < SpawnPoints.Count)
+        HashSet<int> selectedIndexes = new HashSet<int>();
+        while (selectedIndexes.Count < count)
         {
-            SpawnPoints[index].SetCanSpawn(true);
+            int randomIndex = UnityEngine.Random.Range(0, SpawnPoints.Count);
+            selectedIndexes.Add(randomIndex);
+        }
+
+        List<SpawnPoint> randomPoints = new List<SpawnPoint>();
+        foreach (int index in selectedIndexes)
+        {
+            randomPoints.Add(SpawnPoints[index]);
+        }
+
+        return randomPoints;
+    }
+
+    public void SetSpawnPointsActive(List<SpawnPoint> points, bool active)
+    {
+        ReactivateLastDeactivatedPoints();
+
+        foreach (var point in points)
+        {
+            point.SetCanSpawn(active);
+            if (!active) lastDeactivatedPoints.Add(point);
         }
     }
 
-     public void SetSpawningForRange(int startIndex, int endIndex, bool value)
+    private void ReactivateLastDeactivatedPoints()
     {
-        if (startIndex < 0 || endIndex >= SpawnPoints.Count || startIndex > endIndex)
+        foreach (var point in lastDeactivatedPoints)
         {
-            Debug.LogError("Invalid range for setting spawn points.");
-            return;
+            point.SetCanSpawn(true);
         }
+        lastDeactivatedPoints.Clear();
+    }
 
-        for (int i = startIndex; i <= endIndex; i++)
+    private void SetAllSpawnPointsActive()
+    {
+        foreach (var point in SpawnPoints)
         {
-            SpawnPoints[i].SetCanSpawn(value);
+            point.SetCanSpawn(true);
         }
     }
+
 
 
 public static float GetRandomSpawnPointY(Func<SpawnPoint, bool> spawnCondition)

@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class PlaneSpawnManager : MonoBehaviour
 {
+    [ExposedScriptableObject]
+    public PlaneData CropData;
+
+    [ExposedScriptableObject]
+    public PlaneData CargoData;
+
+    [ExposedScriptableObject]
+    public PlaneData JetData;
+
     [SerializeField] private GameObject cropPlanePrefab;
     [SerializeField] private GameObject cargoPlanePrefab;
     [SerializeField] private GameObject jetPlanePrefab;
-
-    public PlaneData CropData;
-    public PlaneData CargoData;
-    public PlaneData JetData;
-
     private List<GameObject> cropPlanePool = new List<GameObject>();
     private List<GameObject> cargoPlanePool = new List<GameObject>();
     private List<GameObject> jetPlanePool = new List<GameObject>();

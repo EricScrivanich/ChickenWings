@@ -5,57 +5,60 @@ using UnityEngine.UI;
 public class PopUpsDisplay : MonoBehaviour
 {
     public PlayerID ID;
-    [SerializeField] private GameObject frozen;
+    [SerializeField] private GameObject Frozen;
+    [SerializeField] private GameObject FrozenOverlay;
     private PlayerMovement playerMove;
-    [SerializeField] private float lerpTime = 1f; // Time taken for the lerp
-    private float currentLerpTime = 0f; // Current time of the lerp
+    [SerializeField] private float lerpTime = 1f;
+    private float currentLerpTime = 0f;
     private GameObject player;
-    [SerializeField] private Image gameoverImage; // Reference to the gameover image component
+    [SerializeField] private Image gameoverImage;
     private Vector2 initialPosition;
     private Vector2 targetPosition;
-    private float positionArrivalThreshold = 1f; // Threshold to determine when the image has reached the target position
+    private float positionArrivalThreshold = 1f;
     private PlayerManager playerMan;
     private ScoreManager scoreMan;
-    [SerializeField] private Material frozenMaterial; // Material for the frozen UI
-    [SerializeField] private float fadeInDuration = .9f; // Duration for fade effect
-    [SerializeField] private float fadeOutDuration = .2f; // Duration for fade effect
-    [SerializeField] private float frozenTime = .2f; // Duration for fade effect
+    [SerializeField] private Material frozenMaterial;
+    [SerializeField] private Material frozenOverlayMaterial;
 
+    [SerializeField] private float fadeInDuration = .9f;
+    [SerializeField] private float fadeOutDuration = .2f;
+    [SerializeField] private float frozenTime = .2f;
+
+    // New variable for fade amount of frozenOverlayMaterial
+    [SerializeField] private float frozenOverlayFadeAmount = 0.5f;
 
     void Start()
     {
-        gameoverImage.gameObject.SetActive(false); // Disable the gameover image at the start
-        frozen.SetActive(false);
+        frozenOverlayMaterial.SetFloat("_FadeAmount", 1);
+        gameoverImage.gameObject.SetActive(false);
+        Frozen.SetActive(false);
+        FrozenOverlay.SetActive(false);
         initialPosition = gameoverImage.transform.position;
     }
 
     void Update()
     {
-        // Existing update logic can go here
+        // Existing update logic
     }
 
     void OnEnable()
     {
-        ID.globalEvents.Frozen += Frozen;
+        ID.globalEvents.Frozen += FrozenEvent;
     }
 
     void OnDisable()
     {
-        ID.globalEvents.Frozen -= Frozen;
+        ID.globalEvents.Frozen -= FrozenEvent;
     }
 
     public void GameOver()
     {
-        // Set the initial position above the screen
         initialPosition = new Vector2(initialPosition.x, Screen.height * 1.5f);
         gameoverImage.transform.position = initialPosition;
-        gameoverImage.gameObject.SetActive(true); // Enable the gameover image
-        targetPosition = new Vector2(Screen.width / 2, Screen.height / 2); // Center of the screen
+        gameoverImage.gameObject.SetActive(true);
+        targetPosition = new Vector2(Screen.width / 2, Screen.height / 2);
 
-        // Reset the lerp time
         currentLerpTime = 0f;
-
-        // Start the coroutine to handle the lerp
         StartCoroutine(MoveGameOverImage());
     }
 
@@ -73,27 +76,27 @@ public class PopUpsDisplay : MonoBehaviour
         }
     }
 
-    private void Frozen()
-    { 
+    private void FrozenEvent()
+    {
         StartCoroutine(FadeInFrozenUI());
     }
 
     private IEnumerator FadeInFrozenUI()
     {
-        frozen.SetActive(true);
+        Frozen.SetActive(true);
+        FrozenOverlay.SetActive(true);
         float elapsedTime = 0;
         while (elapsedTime < fadeInDuration)
         {
             float fadeAmount = Mathf.Lerp(1, 0, elapsedTime / fadeInDuration);
             frozenMaterial.SetFloat("_FadeAmount", fadeAmount);
+            frozenOverlayMaterial.SetFloat("_FadeAmount", Mathf.Lerp(frozenOverlayFadeAmount, 0, elapsedTime / fadeInDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
         yield return new WaitForSeconds(frozenTime);
         StartCoroutine(FadeOutFrozenUI());
     }
-
-   
 
     private IEnumerator FadeOutFrozenUI()
     {
@@ -102,9 +105,10 @@ public class PopUpsDisplay : MonoBehaviour
         {
             float fadeAmount = Mathf.Lerp(0, 1, elapsedTime / fadeOutDuration);
             frozenMaterial.SetFloat("_FadeAmount", fadeAmount);
+            frozenOverlayMaterial.SetFloat("_FadeAmount", Mathf.Lerp(0, frozenOverlayFadeAmount, elapsedTime / fadeOutDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        frozen.SetActive(false);
+        Frozen.SetActive(false);
     }
 }
