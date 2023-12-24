@@ -8,6 +8,7 @@ public class SpawnPointManager : MonoBehaviour
     public static List<SpawnPoint> SpawnPoints = new List<SpawnPoint>();
 
     public int numberOfPointsToDeactivate = 3;
+    public static bool doRandom = true;
     private bool useSequential = true;
     private bool isActive = true;
     [SerializeField] private float interval;
@@ -32,7 +33,9 @@ public class SpawnPointManager : MonoBehaviour
             return;
         }
 
-        timer += Time.deltaTime;
+        if (doRandom)
+        {
+            timer += Time.deltaTime;
         if (timer >= interval)
         {
             if (useSequential)
@@ -49,6 +52,10 @@ public class SpawnPointManager : MonoBehaviour
 
             timer = 0;
         }
+
+        }
+
+        
     }
 
     private void InitializeSpawnPoints()
