@@ -84,7 +84,7 @@ public class PopUpsDisplay : MonoBehaviour
     private IEnumerator FadeInFrozenUI()
     {
         Frozen.SetActive(true);
-        FrozenOverlay.SetActive(true);
+        // FrozenOverlay.SetActive(true);
         float elapsedTime = 0;
         while (elapsedTime < fadeInDuration)
         {
