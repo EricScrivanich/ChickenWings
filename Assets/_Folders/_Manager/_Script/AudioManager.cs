@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioSource musicSource;
+    [SerializeField] private AudioSource ringPassSource;
     [SerializeField] private AudioClip[] cluckSounds;
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private AudioClip damageSound;
@@ -32,6 +33,14 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float scoreVolume = 0.7f;
     [SerializeField] private float frozenVolume = 0.7f;
 
+    [SerializeField] private AudioClip ringSuccess;
+    [SerializeField] private float ringSuccessVolume = 0.7f;
+    [SerializeField] private AudioClip ringPassSound; // Assign in Unity Editor
+    [SerializeField] private float ringPassVolume = 0.7f;
+  
+    float semitoneRatio = Mathf.Pow(2, 1f / 12f);
+    private float ringPassPitch = 1f; // Default pitch
+
     private void Awake()
     {
         if (instance == null)
@@ -50,6 +59,22 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         PlayMusic();
+    }
+
+
+    public void PlayRingPassSound() 
+    {
+            ringPassSource.PlayOneShot(ringPassSound, ringPassVolume);
+            ringPassSource.pitch *= semitoneRatio;
+    }
+
+    public void ResetRingPassPitch()
+    {
+        ringPassSource.pitch = 1f; // Reset to default pitch
+    }
+    public void PlayRingSuccessSound()
+    {
+        audioSource.PlayOneShot(ringSuccess, ringSuccessVolume);
     }
 
     public void PlayMusic()

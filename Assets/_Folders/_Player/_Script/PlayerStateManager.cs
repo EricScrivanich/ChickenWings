@@ -19,10 +19,13 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerDropState DropState = new PlayerDropState();
     public PlayerBounceState BounceState = new PlayerBounceState();
     public PlayerSlashState SlashState = new PlayerSlashState();
-
+    
     public PlayerIdleState IdleState = new PlayerIdleState();
     public PlayerFrozenState FrozenState = new PlayerFrozenState();
     public PlayerHoldJumpState HoldJumpState = new PlayerHoldJumpState();
+    public BucketCollisionState BucketState = new BucketCollisionState();
+    public BucketScript bucket;
+
 
     public bool hasFlippedRight = false;
     public bool hasFlippedLeft = false;
@@ -99,7 +102,7 @@ public class PlayerStateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+         
         currentState.UpdateState(this);
         currentState.RotateState(this);
         if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
@@ -246,7 +249,7 @@ public class PlayerStateManager : MonoBehaviour
 
         jumpHeld = false;
     }
-
+ 
     IEnumerator DashCooldown()
     {
         canDash = false;
@@ -268,6 +271,13 @@ public class PlayerStateManager : MonoBehaviour
         anim.SetBool("JumpHeld", false);
     }
 
+    private void BucketCompletion(BucketScript bucketScript)
+    {
+        bucket = bucketScript;
+        SwitchState(BucketState);
+
+    }
+
 
 
 
@@ -281,6 +291,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDrop += HandleDrop;
         ID.events.OnJumpHeld += HandleHoldJump;
         ID.events.OnJumpReleased += HandleReleaseJump;
+        ID.events.OnCompletedRingSequence += BucketCompletion;
 
         // ID.events.OnAttack += HandleSlash;
     }
@@ -293,6 +304,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDrop -= HandleDrop;
         ID.events.OnJumpHeld -= HandleHoldJump;
         ID.events.OnJumpReleased -= HandleReleaseJump;
+        ID.events.OnCompletedRingSequence -= BucketCompletion;
         // ID.events.OnAttack -= HandleSlash;
 
     }

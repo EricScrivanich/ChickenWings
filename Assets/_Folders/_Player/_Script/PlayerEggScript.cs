@@ -78,7 +78,7 @@ public class PlayerEggScript : MonoBehaviour
         }
         ammo -= 1;
         ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
-    }
+    } 
 }
 private void getPlayerVelocity()
 {

@@ -70,7 +70,16 @@ public class ColliderEnemy : MonoBehaviour
                 ring.CheckOrder();
 
             }
+            else
+            {
+                BucketScript bucket = collider.GetComponent<BucketScript>();
+                Debug.Log("bucket");
+                ID.events.OnCompletedRingSequence?.Invoke(bucket);
+                bucket.Completed();
+            }
         }
+
+       
 
          
     }

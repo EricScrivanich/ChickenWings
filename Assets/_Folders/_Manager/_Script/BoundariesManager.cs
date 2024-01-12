@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class BoundariesManager : MonoBehaviour
 {
-    public static int rightBoundary = 15;
-    public static int leftBoundary = -15;
+    public static int rightBoundary = 13;
+    public static int leftBoundary = -13;
+    public static float rightViewBoundary = 10.8f;
+    public static float leftViewBoundary = -10.8f;
     public static float rightPlayerBoundary = 11.3f; 
     public static float TopPlayerBoundary = 6.3f; 
     public static float leftPlayerBoundary = -11.3f;
