@@ -7,6 +7,7 @@ public class PlayerStateManager : MonoBehaviour
     [ExposedScriptableObject] 
     public PlayerID ID;
     public BoxCollider2D slashBox;
+    public bool bucketIsExploded = false;
     public float maxFallSpeed;
     public float originalGravityScale { get; private set; }
     PlayerBaseState currentState;
@@ -274,7 +275,14 @@ public class PlayerStateManager : MonoBehaviour
     private void BucketCompletion(BucketScript bucketScript)
     {
         bucket = bucketScript;
+        print("BUCKKY");
         SwitchState(BucketState);
+
+    }
+
+    private void BucketExplosion()
+    {
+        bucketIsExploded = true;
 
     }
 
@@ -292,6 +300,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnJumpHeld += HandleHoldJump;
         ID.events.OnJumpReleased += HandleReleaseJump;
         ID.events.OnCompletedRingSequence += BucketCompletion;
+        ID.globalEvents.OnBucketExplosion += BucketExplosion;
 
         // ID.events.OnAttack += HandleSlash;
     }
@@ -305,6 +314,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnJumpHeld -= HandleHoldJump;
         ID.events.OnJumpReleased -= HandleReleaseJump;
         ID.events.OnCompletedRingSequence -= BucketCompletion;
+        ID.globalEvents.OnBucketExplosion -= BucketExplosion;
+
         // ID.events.OnAttack -= HandleSlash;
 
     }

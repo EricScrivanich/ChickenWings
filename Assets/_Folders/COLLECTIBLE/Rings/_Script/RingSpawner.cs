@@ -1,21 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
+
 
 public class RingSpawner : MonoBehaviour
 {
     public static RingSpawner Instance;
-
+    [ExposedScriptableObject]
     public RingID ID;
     public static int currentRing;
     private int correctRing;
+    private int correctTrigger = 0;
+
+    private int currentMaxOrder = 0;
     [SerializeField] private GameObject BallMaterial;
     private GameObject BallObject;
     private BallMaterialMovement ballMovement;
     [SerializeField] private float fadeRingsDuration;
 
     [SerializeField] private GameObject ringPrefab;
-    
+
 
     private List<GameObject> ringPool;
     private List<RingMovement> ringScripts;
@@ -25,6 +30,7 @@ public class RingSpawner : MonoBehaviour
 
     private const int ringPoolSize = 20;
     [SerializeField] private float spawnInterval = 5f;
+
 
     private Dictionary<Transform, PlaceholderRing> placeholderReferences = new Dictionary<Transform, PlaceholderRing>();
     private GameObject currentRingSetupInstance;
@@ -38,6 +44,7 @@ public class RingSpawner : MonoBehaviour
     private void Start()
     {
         ResetRingMaterialFade();
+
         BallObject = Instantiate(BallMaterial);
         ballMovement = BallObject.GetComponent<BallMaterialMovement>();
         BallObject.SetActive(false);
@@ -64,6 +71,34 @@ public class RingSpawner : MonoBehaviour
 
     }
 
+
+
+    private void AssignOrderByPosition(int correctTrig)
+    {
+        // Create a local list of placeholder Transforms from the dictionary
+        List<Transform> sortedPlaceholders = new List<Transform>(placeholderReferences.Keys);
+       
+
+        // Sort the placeholders by their x position (left to right)
+        sortedPlaceholders.Sort((transform1, transform2) => transform1.position.x.CompareTo(transform2.position.x));
+
+        // Assign order based on sorted positions
+        for (int i = 0; i < sortedPlaceholders.Count; i++)
+        {
+            // The order is assigned starting from 1, going left to right
+            
+            if (placeholderReferences[sortedPlaceholders[i]].getsTriggeredInt == correctTrig)
+            {
+                
+                ID.triggeredRingOrder++;
+                placeholderReferences[sortedPlaceholders[i]].order = ID.triggeredRingOrder;
+
+            }
+
+            
+            
+        }
+    }
     // private GameObject InstantiateRandomSetup()
     // {
     //     int randomIndex = Random.Range(0, ringSetups.Count);
@@ -78,6 +113,10 @@ public class RingSpawner : MonoBehaviour
         ID.placeholderCount = 0;
 
         PopulateRecursive(parentTransform);
+
+        
+
+
     }
 
     private void PopulateRecursive(Transform currentTransform)
@@ -98,12 +137,18 @@ public class RingSpawner : MonoBehaviour
             if (child.childCount > 0)
             {
                 PopulateRecursive(child);
+
             }
         }
+
+
     }
 
     public void TriggeredSpawn(int triggerValue)
     {
+        
+        AssignOrderByPosition(triggerValue);
+
         foreach (var placeholder in placeholderReferences)
         {
             if (placeholder.Value.getsTriggeredInt == triggerValue)
@@ -111,7 +156,7 @@ public class RingSpawner : MonoBehaviour
                 SpawnRingAtPlaceholder(placeholder.Key, placeholder.Value);
             }
         }
-        
+
         ID.ringEvent.OnCheckOrder?.Invoke();
     }
 
@@ -120,7 +165,6 @@ public class RingSpawner : MonoBehaviour
         RingMovement ring = GetRingFromPool();
         if (ring != null && placeholderScript.order != ID.placeholderCount)
         {
-            ring.order = placeholderScript.order;
             ring.speed = placeholderScript.speed;
             ring.doesTriggerInt = placeholderScript.doesTriggerInt;
             ring.xCordinateTrigger = placeholderScript.xCordinateTrigger;
@@ -129,11 +173,20 @@ public class RingSpawner : MonoBehaviour
             ring.transform.localScale = placeholderTransform.localScale;
 
 
+
+            ring.order = placeholderScript.order;
+
+
+
+
             ring.gameObject.SetActive(true);
         }
-        else 
+        else
         {
-            ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
+            Debug.Log("Starting Bucket Get");
+            BucketScript bucketScript = ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
+            bucketScript.gameObject.SetActive(true);
+
         }
 
     }
@@ -165,13 +218,13 @@ public class RingSpawner : MonoBehaviour
         }
         else
         {
-            SpawnRings(1.5f);
-            print("spawn");
+            SpawnRings(4f);
+          
 
         }
 
-        
-        
+
+
 
     }
 
@@ -214,6 +267,7 @@ public class RingSpawner : MonoBehaviour
 
     private void SpawnRings(float time)
     {
+        ID.triggeredRingOrder = 0;
         StartCoroutine(SpawnRingsCourintine(time));
     }
     private IEnumerator SpawnRingsCourintine(float time)
@@ -222,7 +276,7 @@ public class RingSpawner : MonoBehaviour
         ID.CorrectRing = 1;
         AudioManager.instance.ResetRingPassPitch();
         // currentRingSetupInstance = InstantiateRandomSetup();
-        
+
         yield return new WaitForSeconds(time);
         TriggeredSpawn(0);
     }
@@ -242,7 +296,7 @@ public class RingSpawner : MonoBehaviour
 
 
 
-  
+
 
 
 
@@ -265,7 +319,7 @@ public class RingSpawner : MonoBehaviour
         // ID.ringEvent.OnPassRing -= CheckOrder;
         ID.ringEvent.OnRingTrigger -= TriggeredSpawn;
         StatsManager.OnScoreChanged -= CheckScore;
-     
+
 
     }
 

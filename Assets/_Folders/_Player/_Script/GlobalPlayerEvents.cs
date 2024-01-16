@@ -8,6 +8,8 @@ public struct GlobalPlayerEvents
    public Action<int> OnAddAmmo;
    public Action<float> EggVelocity;
    public Action Frozen;
-   
-   
+
+    public Action OnBucketExplosion;
+
+
 }

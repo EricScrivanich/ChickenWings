@@ -10,7 +10,13 @@ public class ActivatePlaceholders : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        RedID.ringEvent.OnSpawnRings?.Invoke(true);
+        if (!RedID.Testing)
+        {
+            ResetSetups();
+        }
+        ChooseSetup(true);
+
+
 
 
     }

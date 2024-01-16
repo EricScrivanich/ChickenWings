@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class BucketCollisionState : PlayerBaseState
 {
+    private float xForce;
+    private float yForce;
     public override void EnterState(PlayerStateManager player)
     {
+        Debug.Log("Entered Buckyyy");
+
         player.disableButtons = true;
         player.rb.velocity = new Vector2(0, 0);
+        player.maxFallSpeed = player.ID.MaxFallSpeed;
         player.rb.simulated = false;
+        player.ID.events.FloorCollsion.Invoke(true);
+        player.anim.SetTrigger("ResetTrigger");
+        
 
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
+       
 
 
     }
@@ -30,7 +39,33 @@ public class BucketCollisionState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
-        player.transform.position = player.bucket.transform.position;
+        if (!player.bucketIsExploded)
+        {
+            player.transform.position = player.bucket.transform.position;
+        }
+        else
+        {
+            if (player.transform.position.y > 4)
+            {
+                yForce = 1.5f;
+            }
+            else if (player.transform.position.y > 3)
+            {
+                yForce = 3f;
+            }
+            else{
+                yForce = 9f;
+            }
+
+            player.rb.simulated = true;
+            player.rb.velocity = new Vector2(player.transform.position.x * -.25f, yForce);
+            player.disableButtons = false;
+            player.bucketIsExploded = false;
+            player.SwitchState(player.IdleState);
+
+
+        }
+       
         // // Debug.Log("Bukcet Transform" +player.bucket.transform.position);
         // Debug.Log("Player Transform" +player.transform.position);
 
