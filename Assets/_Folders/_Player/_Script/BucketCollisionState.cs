@@ -41,7 +41,7 @@ public class BucketCollisionState : PlayerBaseState
     {
         if (!player.bucketIsExploded)
         {
-            player.transform.position = player.bucket.transform.position;
+            player.transform.position = player.bucket.baseTransform.position;
         }
         else
         {

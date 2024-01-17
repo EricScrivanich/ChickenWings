@@ -34,9 +34,12 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float frozenVolume = 0.7f;
 
     [SerializeField] private AudioClip ringSuccess;
+    [SerializeField] private AudioClip bucketBurstSound;
+
     [SerializeField] private float ringSuccessVolume = 0.7f;
     [SerializeField] private AudioClip ringPassSound; // Assign in Unity Editor
     [SerializeField] private float ringPassVolume = 0.7f;
+    [SerializeField] private float bucketBurstSoundVolume = 0.7f;
   
     float semitoneRatio = Mathf.Pow(2, 1f / 12f);
     private float ringPassPitch = 1f; // Default pitch
@@ -66,6 +69,11 @@ public class AudioManager : MonoBehaviour
     {
             ringPassSource.PlayOneShot(ringPassSound, ringPassVolume);
             ringPassSource.pitch *= semitoneRatio;
+    }
+
+    public void PlayBucketBurstSound()
+    {
+        audioSource.PlayOneShot(bucketBurstSound, bucketBurstSoundVolume);
     }
 
     public void ResetRingPassPitch()

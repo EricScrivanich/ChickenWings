@@ -16,10 +16,12 @@ public class PlaceholderRing : MonoBehaviour
 
     public float speed;
 
-    private void OnEnable() {
-        order = localOrder + addOrder;
-    }
+    // private void OnEnable() {
+    //     order = localOrder + addOrder;
+    // }
 
+
+ 
 
 
 }

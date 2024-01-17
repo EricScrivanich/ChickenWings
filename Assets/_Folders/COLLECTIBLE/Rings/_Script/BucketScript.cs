@@ -10,6 +10,7 @@ public class BucketScript : MonoBehaviour
     public float speed;
     private bool ready = false;
     private bool isExploded = false;
+    private bool isCorrect = false;
 
     [SerializeField] private float timeToSlow;
     
@@ -29,9 +30,11 @@ public class BucketScript : MonoBehaviour
     [SerializeField] private GameObject[] children;
 
     private Collider2D[] colliders;
+    public Transform baseTransform;
 
     [SerializeField] private GameObject RingRim;
     private Transform ringTransform;
+    private Vector2 ringTransformOriginal;
     private SpriteRenderer ringSprite;
     private Animator anim;
     private float slowDownDuration;
@@ -45,22 +48,37 @@ public class BucketScript : MonoBehaviour
         colliders = GetComponents<Collider2D>();
         coloredParticleSprite = ColoredParticles.GetComponent<SpriteRenderer>();
         whiteParticleSprite = WhiteParticles.GetComponent<SpriteRenderer>();
+        ringTransformOriginal = ringTransform.localPosition;
+
 
 
     }
     // Update is called once per frame
     void Update()
     {
-        transform.localPosition += Vector3.left * speed * Time.deltaTime;
+        transform.position += Vector3.left * speed * Time.deltaTime;
+
+        if (isCorrect)
+        {
+            if (speed > 0 && transform.position.x < BoundariesManager.leftBoundary)
+            {
+                ID.ringEvent.OnCreateNewSequence?.Invoke(false);
+
+            }
+            else if (speed < 0 && transform.position.x > BoundariesManager.rightBoundary)
+            {
+                ID.ringEvent.OnCreateNewSequence?.Invoke(false);
+            }
+        }
 
 
-        // if (isExploded)
-        // {
-        //     float angleInRadians = ringTransform.eulerAngles.z * Mathf.Deg2Rad; // Convert degrees to radians
-        //     Vector3 direction = new Vector3(-Mathf.Cos(angleInRadians), -Mathf.Sin(angleInRadians), 0);
-        //     ringTransform.localPosition += direction * Time.deltaTime * 40; // Move in the direction based on the rotation
+        if (isExploded)
+        {
+            float angleInRadians = ringTransform.eulerAngles.z * Mathf.Deg2Rad; // Convert degrees to radians
+            Vector3 direction = new Vector3(-Mathf.Cos(angleInRadians), -Mathf.Sin(angleInRadians), 0);
+            ringTransform.localPosition += direction * Time.deltaTime * 40; // Move in the direction based on the rotation
 
-        // }
+        }
 
     }
 
@@ -87,6 +105,7 @@ public class BucketScript : MonoBehaviour
         if (order == ID.CorrectRing)
         {
             ringSprite.material = ID.highlightedMaterial;
+            isCorrect = true;
 
         }
 
@@ -95,9 +114,17 @@ public class BucketScript : MonoBehaviour
     {
         if (correctSequence == false)
         {
-            DisableColliders();
-            StartCoroutine(FadeOut(1f));
+            ResetBucket();
+
         }
+
+    }
+
+    private void ResetBucket()
+    {
+        DisableColliders();
+        StartCoroutine(FadeOut(1.2f));
+
 
     }
 
@@ -143,28 +170,6 @@ public class BucketScript : MonoBehaviour
         speed = 0;
     }
 
-    private IEnumerator SlowDownNew(float slowSpeed)
-    {
-        float currentTime = 0;
-
-        while (slowDownDuration < anim.speed)
-        {
-            float lerpAnim = Mathf.Lerp(1.0f, 0.0f, currentTime / timeToSlow);
-
-            anim.speed = lerpAnim;
-
-
-            currentTime += Time.deltaTime;
-            yield return null; // Wait for the next frame
-        }
-
-
-
-        // Ensure all children are fully transparent after fading out
-
-    }
-
-
 
     public void StartSlowDown()
     {
@@ -179,8 +184,7 @@ public class BucketScript : MonoBehaviour
     public void StartExplosion()
     {
         anim.SetTrigger("ExplodeTrigger");
-        // anim.SetBool("RestartBool", false);
-        // anim.SetBool("RestartBool", false);
+        AudioManager.instance.PlayBucketBurstSound();
 
     }
 
@@ -223,7 +227,7 @@ public class BucketScript : MonoBehaviour
 
     private void ResetTrigger()
     {
-        print("PLeaseReset");
+       
         anim.SetTrigger("ResetTrigger");
         anim.SetBool("RestartBool", false);
 
@@ -241,10 +245,21 @@ public class BucketScript : MonoBehaviour
 
     public void Completed()
     {
-        ready = true;
-        DisableColliders();
-        AudioManager.instance.PlayRingSuccessSound();
-        StartCoroutine(SlowDown());
+        if (isCorrect)
+        {
+            ready = true;
+            DisableColliders();
+            // AudioManager.instance.PlayRingSuccessSound();
+            StartCoroutine(SlowDown());
+            isCorrect = false;
+
+        }
+        else 
+        {
+            ResetBucket();
+
+        }
+        
     }
 
 
@@ -262,19 +277,19 @@ public class BucketScript : MonoBehaviour
         }
     }
 
-    public void AnimCheck(int yer)
-    {
-        Debug.Log(yer);
-    }
 
     private void OnEnable()
     {
+        isCorrect = false;
         anim.SetBool("RestartBool", true);
         EnableColliders();
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
         EnableColliders();
         FadeChildren(1f);
+        ringTransform.localPosition = ringTransformOriginal;
+        
+
         coloredParticleSprite.color = ID.defaultMaterial.color;
         speedVar = speed;
 
@@ -292,6 +307,7 @@ public class BucketScript : MonoBehaviour
 
             }
         }
+        ringTransform.gameObject.SetActive(true);
 
 
     }
@@ -299,6 +315,8 @@ public class BucketScript : MonoBehaviour
 
     private void OnDisable()
     {
+        ringTransform.gameObject.SetActive(false);
+
         // Debug.Log("reset " + ResetCounter);
         ResetCounter++;
         ready = false;

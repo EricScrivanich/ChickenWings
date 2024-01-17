@@ -14,4 +14,6 @@ public struct RingEvents
     public Action<bool> OnSpawnRings;
 
     public Action<bool> OnCreateNewSequence;
+
+    public Action<int> OnCurrentTriggerEditedChanged;
 }

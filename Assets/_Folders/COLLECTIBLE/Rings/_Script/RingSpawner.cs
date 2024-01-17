@@ -9,6 +9,7 @@ public class RingSpawner : MonoBehaviour
     public static RingSpawner Instance;
     [ExposedScriptableObject]
     public RingID ID;
+    // private List<RingID> RingList = new List[Red_Ring, Pink_Ring];
     public static int currentRing;
     private int correctRing;
     private int correctTrigger = 0;
