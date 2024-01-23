@@ -13,7 +13,7 @@ public class BucketScript : MonoBehaviour
     private bool isCorrect = false;
 
     [SerializeField] private float timeToSlow;
-    
+
 
     [SerializeField] private GameObject WhiteParticles;
     [SerializeField] private GameObject ColoredParticles;
@@ -150,7 +150,7 @@ public class BucketScript : MonoBehaviour
             currentTime += Time.deltaTime;
             yield return null; // Wait for the next frame
         }
-
+        
         gameObject.SetActive(false);
     }
 
@@ -227,7 +227,7 @@ public class BucketScript : MonoBehaviour
 
     private void ResetTrigger()
     {
-       
+
         anim.SetTrigger("ResetTrigger");
         anim.SetBool("RestartBool", false);
 
@@ -248,18 +248,19 @@ public class BucketScript : MonoBehaviour
         if (isCorrect)
         {
             ready = true;
+            Player.events.OnCompletedRingSequence?.Invoke(this);
             DisableColliders();
             // AudioManager.instance.PlayRingSuccessSound();
             StartCoroutine(SlowDown());
             isCorrect = false;
 
         }
-        else 
+        else
         {
             ResetBucket();
 
         }
-        
+
     }
 
 
@@ -287,8 +288,9 @@ public class BucketScript : MonoBehaviour
         ID.ringEvent.OnCreateNewSequence += NewSetup;
         EnableColliders();
         FadeChildren(1f);
-        ringTransform.localPosition = ringTransformOriginal;
-        
+        StartCoroutine(ResetRing());
+
+
 
         coloredParticleSprite.color = ID.defaultMaterial.color;
         speedVar = speed;
@@ -307,22 +309,39 @@ public class BucketScript : MonoBehaviour
 
             }
         }
-        ringTransform.gameObject.SetActive(true);
 
+
+
+    }
+
+    private IEnumerator ResetRing()
+    {
+        ringTransform.gameObject.SetActive(false);
+        yield return new WaitForSeconds(.5f);
+        ringTransform.localPosition = ringTransformOriginal;
+        yield return new WaitForSeconds(.5f);
+        
+        ringTransform.gameObject.SetActive(true);
+        anim.SetBool("RestartBool", false);
 
     }
 
 
     private void OnDisable()
     {
-        ringTransform.gameObject.SetActive(false);
+        isExploded = false;
+       
+
+
+
 
         // Debug.Log("reset " + ResetCounter);
         ResetCounter++;
         ready = false;
-        isExploded = false;
+
         ID.ringEvent.OnCheckOrder -= SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence -= NewSetup;
+
 
     }
 }

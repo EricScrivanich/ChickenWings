@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AddDamage : MonoBehaviour
 {
+    public PlayerID ID;
     [SerializeField] private int damageAmount = 1;  // Amount of damage the slash does
 
     private void OnTriggerEnter2D(Collider2D collider) 
@@ -13,5 +14,10 @@ public class AddDamage : MonoBehaviour
         {
             damageableEntity.Damage(damageAmount);
         }
+    }
+
+    public void AttackFinished()
+    {
+        ID.events.OnAttack?.Invoke(false);
     }
 }

@@ -11,8 +11,7 @@ public class RingMovement : MonoBehaviour
     public int order;
     private bool isCorrect = false;
     [SerializeField] private Collider2D coll2D;
-    [SerializeField] private Material startingMaterial;
-    [SerializeField] private Material endMaterial;
+
     private Transform _transform;
 
     private bool isFaded = false;
@@ -25,7 +24,6 @@ public class RingMovement : MonoBehaviour
     private static readonly int BurstBoolHash = Animator.StringToHash("BurstBool");
     private static readonly int FadeCenterHash = Animator.StringToHash("FadeCenterBool");
 
-    public static event Action<int, Vector2, float> OnRingPassed; // Declare the event
 
     private void Awake()
     {
@@ -49,17 +47,17 @@ public class RingMovement : MonoBehaviour
 
 
             }
-           
+
         }
 
-        if (speed > 0 )
+        if (speed > 0)
         {
-            
+
             if (isCorrect && _transform.position.x < BoundariesManager.leftViewBoundary)
             {
                 ID.ringEvent.OnCreateNewSequence?.Invoke(false);
                 Debug.Log("TooLong" + order);
-                
+
 
                 isCorrect = false;
             }
@@ -91,12 +89,12 @@ public class RingMovement : MonoBehaviour
 
         }
 
-       
+
     }
 
     private void DisableColliders()
     {
-        
+
         foreach (var collider in colliders)
         {
             collider.enabled = false;
@@ -104,7 +102,7 @@ public class RingMovement : MonoBehaviour
     }
     private void EnableColliders()
     {
-        
+
         foreach (var collider in colliders)
         {
             collider.enabled = true;
@@ -122,18 +120,18 @@ public class RingMovement : MonoBehaviour
     }
     public void CheckOrder()
     {
-       
-      if (order == ID.CorrectRing)
+
+        if (order == ID.CorrectRing)
         {
 
             isCorrect = false;
             ID.CorrectRing++;
-            
+
             DisableColliders();
             isCorrect = false;
             AudioManager.instance.PlayRingPassSound();
             anim.SetBool(BurstBoolHash, true);
-            sprite.material = endMaterial;
+            sprite.material = ID.passedMaterial;
             Debug.Log(isCorrect);
             ID.ringEvent.OnCheckOrder?.Invoke();
 
@@ -151,25 +149,25 @@ public class RingMovement : MonoBehaviour
 
     public void FadeCenter()
     {
-        
-        
+
+
 
     }
 
     public void NewSetup(bool correctSequence)
     {
-        if(correctSequence == false)
+        if (correctSequence == false)
         {
             DisableColliders();
             isFaded = true;
             isCorrect = false;
             anim.SetBool(FadeCenterHash, true);
         }
-        
+
 
     }
 
-   
+
 
     public int GetOrder()
     {
@@ -178,7 +176,8 @@ public class RingMovement : MonoBehaviour
 
     private void OnEnable()
     {
-       
+        sprite.material = ID.defaultMaterial;
+
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
 
@@ -201,10 +200,10 @@ public class RingMovement : MonoBehaviour
             isFaded = false;
 
         }
-        
+
         if (sprite != null)
         {
-            sprite.material = startingMaterial;
+            
             coll2D.enabled = true;
         }
         isCorrect = false;

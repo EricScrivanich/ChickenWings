@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a22bdbbbc79540b596b806ebf7831a7, type: 3}
-  m_Name: Ring
+  m_Name: ID_Red
   m_EditorClassIdentifier: 
+  Pool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
   currentTriggerEdited: 0
   showAllPlaceholders: 0
+  IDIndex: 0
   Testing: 1
   ringParticles: {fileID: 6382690823405409865, guid: 7badea25152664a20bce33b8df679eb2, type: 3}
   CorrectRing: 1
@@ -21,6 +23,5 @@ MonoBehaviour:
   highlightedMaterial: {fileID: 2100000, guid: 8bc1acd4f7f5f402ca9ecc95553eb0a8, type: 2}
   passedMaterial: {fileID: 2100000, guid: b4e1b463e0b8349c8b2e5d6b5417fcf4, type: 2}
   ballMaterialSpeed: 0
-  triggeredRingOrder: 0
-  placeholderCount: 0
-  BucketPrefab: {fileID: 3424233773068356977, guid: 7a82eae978cf9466a92359a00a312d84, type: 3}
+  triggeredRingOrder: 3
+  placeholderCount: 3

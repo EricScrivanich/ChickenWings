@@ -19,7 +19,7 @@ public class PlayerSlash : MonoBehaviour
     }
     void Start()
     {
-        anim = GetComponent<Animator>();
+        anim = GetComponent<Animator>(); 
         
     }
 
@@ -55,12 +55,12 @@ public class PlayerSlash : MonoBehaviour
 
     private void OnEnable() {
        
-        ID.events.OnAttack += Attack;
+        // ID.events.OnAttack += Attack;
     }
     private void OnDisable() 
     {
         
-        ID.events.OnAttack -= Attack;
+        // ID.events.OnAttack -= Attack;
        
     }
 }

@@ -9,7 +9,7 @@ public class StateInputSystem : MonoBehaviour
     private const float swipeThreshold = 0.3f; // Adjust as needed
     private const float tapTimeThreshold = 0.2f; // Adjust as needed
     public PlayerID ID;
-    [SerializeField] private RectTransform touchButtonRectTransform;
+    [SerializeField] private RectTransform touchButtonRectTransform; 
 
     private void Awake()
     {
@@ -22,9 +22,9 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.Dash.performed += ctx => ID.events.OnDash?.Invoke();
         controls.Movement.Drop.performed += ctx => ID.events.OnDrop?.Invoke();
         controls.Movement.DropEgg.performed += ctx => ID.events.OnEggDrop?.Invoke();
-        controls.Movement.Jump.performed += ctx => ID.events.OnJumpHeld?.Invoke();
-        controls.Movement.Jump.canceled += ctx => ID.events.OnJumpReleased?.Invoke();
-        controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke();
+        controls.Movement.Jump.performed += ctx => ID.events.OnJumpHeld?.Invoke(true);
+        controls.Movement.Jump.canceled += ctx => ID.events.OnJumpHeld?.Invoke(false);
+        controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(true);
 
         // Bind touch input actions
         // if (touchButtonRectTransform)

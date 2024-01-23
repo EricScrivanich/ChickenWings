@@ -42,7 +42,7 @@ public class PlayerDashState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
-        player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.Euler(0,0, 0), Time.deltaTime* 1000);
+        player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.Euler(0,0, 0), Time.deltaTime* 900);
        
     }
 

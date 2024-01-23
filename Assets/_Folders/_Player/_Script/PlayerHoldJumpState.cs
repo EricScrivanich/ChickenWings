@@ -12,7 +12,7 @@ public class PlayerHoldJumpState :  PlayerBaseState
     {
         holdTime = 0;
         holdTimeBool = false;
-        player.anim.SetBool("JumpHeld",true);
+        player.anim.SetBool("JumpHeld",true); 
         player.rb.gravityScale -= .2f;
         player.maxFallSpeed = 2;
         
@@ -39,19 +39,25 @@ public class PlayerHoldJumpState :  PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
-        holdTime += Time.deltaTime;
-        if (holdTime >= holdDuration)
+        if (player.jumpHeld)
         {
-            holdTimeBool = true;
-        }
-        if (!player.jumpHeld || holdTimeBool)
-        {
-            
-            player.SwitchState(player.IdleState);
-            
+            player.UseStamina(0);
 
         }
+        
+    //     holdTime += Time.deltaTime;
+    //     if (holdTime >= holdDuration)
+    //     {
+    //         holdTimeBool = true;
+    //     }
+    //     if (!player.jumpHeld || holdTimeBool)
+    //     {
+
+        //         player.SwitchState(player.IdleState);
+
+
+        //     }
+        // }
     }
-
 
 }

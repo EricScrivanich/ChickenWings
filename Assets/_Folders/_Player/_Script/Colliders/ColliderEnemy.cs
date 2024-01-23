@@ -74,7 +74,7 @@ public class ColliderEnemy : MonoBehaviour
             {
                 BucketScript bucket = collider.GetComponent<BucketScript>();
                 Debug.Log("bucket");
-                ID.events.OnCompletedRingSequence?.Invoke(bucket);
+                // ID.events.OnCompletedRingSequence?.Invoke(bucket);
                 bucket.Completed();
             }
         }

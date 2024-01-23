@@ -7,6 +7,8 @@ public class PlayerID : ScriptableObject
 {
     
     public int Lives;
+    public float StaminaUsed;
+    public float MaxStamina;
     public int Ammo;
     public float MaxFallSpeed;
     public float AddEggVelocity;
