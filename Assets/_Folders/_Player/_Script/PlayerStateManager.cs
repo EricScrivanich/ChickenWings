@@ -128,7 +128,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private IEnumerator FillStamina()
     {
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(2.8f);
 
         while (ID.StaminaUsed > 0 && !jumpHeld)
         {
@@ -136,14 +136,14 @@ public class PlayerStateManager : MonoBehaviour
             ID.StaminaUsed -= staminaFill * Time.deltaTime;
             yield return null; // Wait for the next frame
         }
-        // Optional: Reset stamina to 0 and invoke UI update when not jumping
-        // if (!jumpHeld)
-        // {
-        //     ID.StaminaUsed = 0;
-        //     ID.globalEvents.OnUseStamina?.Invoke(false);
-        //     Debug.Log(ID.StaminaUsed + "Is False Amount");
-        //     Debug.Log("It is false");
-        // }
+        
+        if (!jumpHeld)
+        {
+            ID.StaminaUsed = 0;
+            ID.globalEvents.OnUseStamina?.Invoke(false);
+            Debug.Log(ID.StaminaUsed + "Is False Amount");
+            Debug.Log("It is false");
+        }
     }
 
 
@@ -155,34 +155,37 @@ public class PlayerStateManager : MonoBehaviour
         currentState.RotateState(this);
         if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
         {
+            ResetHoldJump();
             SwitchState(FrozenState);
         }
     }
     public void SwitchState(PlayerBaseState newState)
     {
-        previousState = currentState;
         currentState = newState;
+        newState.EnterState(this);
+        // previousState = currentState;
+        // currentState = newState;
 
-        if (previousState is PlayerHoldJumpState)
-        {
-            rb.gravityScale = originalGravityScale;
-            maxFallSpeed = ID.MaxFallSpeed;
-            newState.EnterState(this);
-            StartCoroutine(WaitForAnim());
-        }
-        // else if (previousState is PlayerFlipLeftState)
+        // if (previousState is PlayerHoldJumpState)
         // {
-
+        //     rb.gravityScale = originalGravityScale;
+        //     maxFallSpeed = ID.MaxFallSpeed;
+        //     newState.EnterState(this);
+        //     StartCoroutine(WaitForAnim());
         // }
-        // else if (previousState is PlayerFlipRightState)
+        // // else if (previousState is PlayerFlipLeftState)
+        // // {
+
+        // // }
+        // // else if (previousState is PlayerFlipRightState)
+        // // {
+
+        // // }
+
+        // else
         // {
-
+        //     newState.EnterState(this);
         // }
-
-        else
-        {
-            newState.EnterState(this);
-        }
 
     }
 
@@ -230,6 +233,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons)
         {
+            ResetHoldJump();
             SwitchState(JumpState);
         }
 
@@ -241,6 +245,7 @@ public class PlayerStateManager : MonoBehaviour
         {
             if (isAttacking)
             {
+                ResetHoldJump();
                 SwitchState(SlashState);
             }
             else
@@ -262,6 +267,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons)
         {
+            ResetHoldJump();
             SwitchState(FlipRightState);
         }
 
@@ -271,6 +277,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons)
         {
+            ResetHoldJump();
             SwitchState(FlipLeftState);
         }
 
@@ -280,7 +287,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (canDash && !disableButtons)
         {
-
+            ResetHoldJump();
             SwitchState(DashState);
             StartCoroutine(DashCooldown());
 
@@ -292,6 +299,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons && canDrop)
         {
+            ResetHoldJump();
             SwitchState(DropState);
             StartCoroutine(DropCooldown());
         }
@@ -308,8 +316,15 @@ public class PlayerStateManager : MonoBehaviour
         }
         else
         {
+            if (jumpHeld)
+            {
+                SwitchState(IdleState);
+            }
+           
             ResetHoldJump();
-            StartFillStaminaCoroutine();
+
+            
+            
 
         }
 
@@ -317,10 +332,14 @@ public class PlayerStateManager : MonoBehaviour
 
     private void ResetHoldJump()
     {
-        jumpHeld = false;
-        maxFallSpeed = ID.MaxFallSpeed;
-        anim.SetBool("JumpHeld", false);
-        SwitchState(IdleState);
+        if (jumpHeld)
+        {
+            jumpHeld = false;
+            anim.SetBool("JumpHeld", false);
+            maxFallSpeed = ID.MaxFallSpeed;
+            StartFillStaminaCoroutine();
+        }
+        
 
     }
 
@@ -351,7 +370,7 @@ public class PlayerStateManager : MonoBehaviour
     private void BucketCompletion(BucketScript bucketScript)
     {
         bucket = bucketScript;
-        print("BUCKKY");
+        ResetHoldJump();
         SwitchState(BucketState);
 
     }

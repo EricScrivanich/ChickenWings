@@ -356,6 +356,81 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c509238a6f1594b5ab751ff4c5ac2884, type: 3}
+--- !u!1 &357454600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 357454601}
+  - component: {fileID: 357454603}
+  - component: {fileID: 357454602}
+  m_Layer: 5
+  m_Name: Stamina (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &357454601
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357454600}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 4.6202893, y: 4.910641, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1701496067}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 4.8202, y: -217.11}
+  m_SizeDelta: {x: 119.9541, y: 27.6604}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &357454602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357454600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 760001d286edb4be38a494f8bfb2c29b, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &357454603
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357454600}
+  m_CullTransparentMesh: 1
 --- !u!4 &360429435 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4221757438314977936, guid: 0d55cb863a147442fa146288ae82c19c, type: 3}
@@ -985,8 +1060,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1, y: -181}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0.000036716, y: -216}
+  m_SizeDelta: {x: 110.3136, y: 25.4374}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1083579475
 MonoBehaviour:
@@ -1002,7 +1077,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: d1eebe092f21f4b6fa665f6a2915665b, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
   m_OnCullStateChanged:
@@ -1778,7 +1853,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -7385445529137914142, guid: 4d60310f404d6473c872d23c83b10116, type: 3}
       propertyPath: staminaFill
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: -7385445529137914142, guid: 4d60310f404d6473c872d23c83b10116, type: 3}
       propertyPath: attackObject
@@ -1786,7 +1861,7 @@ PrefabInstance:
       objectReference: {fileID: 926329130}
     - target: {fileID: -7385445529137914142, guid: 4d60310f404d6473c872d23c83b10116, type: 3}
       propertyPath: staminaDeplete
-      value: 50
+      value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 659940354089252431, guid: 4d60310f404d6473c872d23c83b10116, type: 3}
       propertyPath: ID
@@ -2131,6 +2206,26 @@ PrefabInstance:
       value: -345.61597
       objectReference: {fileID: 0}
     - target: {fileID: 4000236330787534884, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: lightRed.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000236330787534884, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: lightRed.b
+      value: 0.31910825
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000236330787534884, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: lightRed.g
+      value: 0.31910825
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000236330787534884, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: lightRed.r
+      value: 0.9528302
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000236330787534884, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: staminaBarFadeTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000236330787534884, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: staminaBarMaterial
       value: 
       objectReference: {fileID: 2100000, guid: d1eebe092f21f4b6fa665f6a2915665b, type: 2}
@@ -2300,6 +2395,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1083579474}
+    - targetCorrespondingSourceObject: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 357454601}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
 --- !u!1001 &994303970876639110
