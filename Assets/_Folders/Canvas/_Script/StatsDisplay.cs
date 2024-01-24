@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class StatsDisplay : MonoBehaviour
 {
     public PlayerID player;
+    private float maxStamina;
     private bool isUsingStamina;
     [SerializeField] private float staminaBarFadeTime;
     private TextMeshProUGUI scoreText;
@@ -18,7 +19,8 @@ public class StatsDisplay : MonoBehaviour
     void Start()
     {
         statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
-        staminaBarMaterial.SetFloat("_ClipUvRight", player.StaminaUsed);
+        maxStamina = player.MaxStamina;
+
 
 
 
@@ -52,8 +54,8 @@ public class StatsDisplay : MonoBehaviour
         if (isUsingStamina)
         {
             // float staminaPercentage = player.CurrentStamina / player.MaxStamina;
-            staminaBarMaterial.SetFloat("_ClipUvRight", player.StaminaUsed * .01f);
-            Color staminaColor = Color.Lerp(Color.white, lightRed, player.StaminaUsed * .01f);
+            staminaBarMaterial.SetFloat("_OffsetUvX", player.StaminaUsed/maxStamina);
+            Color staminaColor = Color.Lerp(Color.white, lightRed, player.StaminaUsed / maxStamina);
             staminaBarMaterial.SetColor("_Color", staminaColor);
             // Debug.Log(player.StaminaUsed * .01f);
         }
@@ -100,7 +102,7 @@ public class StatsDisplay : MonoBehaviour
     private void OnDisable()
     {
         staminaBarMaterial.SetColor("_Color", Color.white);
-        staminaBarMaterial.SetFloat("_ClipUvRight", 0);
+        staminaBarMaterial.SetFloat("_OffsetUvX", 0);
 
         StatsManager.OnScoreChanged -= UpdateScore;
         StatsManager.OnAmmoChanged -= UpdateAmmo;
