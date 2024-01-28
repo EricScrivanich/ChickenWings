@@ -11,6 +11,7 @@ public struct PlayerEvents
     public Action OnBounce;
     public Action<bool> OnJumpHeld; 
     public Action OnJumpReleased;
+    public Action<bool> OnParachute;
     public Action<bool> FloorCollsion;
     public Action OnEggDrop;
     public Action<bool> OnAttack;

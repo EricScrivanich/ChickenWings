@@ -85,6 +85,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Parachute",
+                    "type": "Button",
+                    "id": "267adbde-d536-4f69-acf1-6296c8214c71",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -261,6 +270,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "TouchPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6d3349ca-646a-426f-a376-dbb4c1bd7a64",
+                    "path": "<Keyboard>/#(C)",
+                    "interactions": "Hold(duration=0.1)",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Parachute",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

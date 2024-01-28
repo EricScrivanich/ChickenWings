@@ -7,6 +7,7 @@ public class PlayerStateManager : MonoBehaviour
     [ExposedScriptableObject]
     public PlayerID ID;
     private bool CanUseStamina = true;
+    public GameObject ParachuteObject;
     private Coroutine fillStaminaCoroutine;
     [SerializeField] private float staminaDeplete;
     [SerializeField] private float staminaFill;
@@ -29,6 +30,7 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerFrozenState FrozenState = new PlayerFrozenState();
     public PlayerHoldJumpState HoldJumpState = new PlayerHoldJumpState();
     public BucketCollisionState BucketState = new BucketCollisionState();
+    public PlayerParachuteState ParachuteState = new PlayerParachuteState();
     public BucketScript bucket;
 
 
@@ -111,7 +113,9 @@ public class PlayerStateManager : MonoBehaviour
         if (ID.StaminaUsed >= ID.MaxStamina)
         {
             ResetHoldJump();
-            StartFillStaminaCoroutine();
+            ID.globalEvents.OnZeroStamina?.Invoke();
+            SwitchState(IdleState);
+
         }
 
 
@@ -119,10 +123,10 @@ public class PlayerStateManager : MonoBehaviour
 
     private void StartFillStaminaCoroutine()
     {
-        // if (fillStaminaCoroutine != null)
-        // {
-        //     StopCoroutine(fillStaminaCoroutine);
-        // }
+        if (fillStaminaCoroutine != null)
+        {
+            StopCoroutine(fillStaminaCoroutine);
+        }
         fillStaminaCoroutine = StartCoroutine(FillStamina());
     }
 
@@ -132,17 +136,16 @@ public class PlayerStateManager : MonoBehaviour
 
         while (ID.StaminaUsed > 0 && !jumpHeld)
         {
-            Debug.Log("filling");
+
             ID.StaminaUsed -= staminaFill * Time.deltaTime;
             yield return null; // Wait for the next frame
         }
-        
+
         if (!jumpHeld)
         {
             ID.StaminaUsed = 0;
             ID.globalEvents.OnUseStamina?.Invoke(false);
-            Debug.Log(ID.StaminaUsed + "Is False Amount");
-            Debug.Log("It is false");
+
         }
     }
 
@@ -186,20 +189,6 @@ public class PlayerStateManager : MonoBehaviour
         // {
         //     newState.EnterState(this);
         // }
-
-    }
-
-
-
-
-
-    public void FlipStateChanges()
-    {
-
-    }
-    public void HoldJumpStateChanges()
-    {
-
 
     }
 
@@ -308,11 +297,18 @@ public class PlayerStateManager : MonoBehaviour
 
     void HandleHoldJump(bool isHolding)
     {
-        if (isHolding && (ID.StaminaUsed < ID.MaxStamina))
+        if (isHolding)
         {
-            ID.globalEvents.OnUseStamina?.Invoke(true);
-            jumpHeld = true;
-
+            if (ID.StaminaUsed < ID.MaxStamina)
+            {
+                ID.globalEvents.OnUseStamina?.Invoke(true);
+                jumpHeld = true;
+            }
+            else
+            {
+                StartFillStaminaCoroutine();
+                ID.globalEvents.OnZeroStamina?.Invoke();
+            }
         }
         else
         {
@@ -320,12 +316,22 @@ public class PlayerStateManager : MonoBehaviour
             {
                 SwitchState(IdleState);
             }
-           
             ResetHoldJump();
-
-            
-            
-
+        }
+    }
+    void HandleParachute(bool isPressing)
+    {
+        if (isPressing)
+        {
+            SwitchState(ParachuteState);
+        }
+        else
+        {
+            anim.SetBool("ParachuteBool", false);
+            // transform.position = new Vector2(transform.position.x + ID.parachuteXOffset, transform.position.y - ID.parachuteYOffset);
+            maxFallSpeed = ID.MaxFallSpeed;
+            disableButtons = false;
+            SwitchState(IdleState);
         }
 
     }
@@ -339,7 +345,7 @@ public class PlayerStateManager : MonoBehaviour
             maxFallSpeed = ID.MaxFallSpeed;
             StartFillStaminaCoroutine();
         }
-        
+
 
     }
 
@@ -394,6 +400,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDash += HandleDash;
         ID.events.OnDrop += HandleDrop;
         ID.events.OnJumpHeld += HandleHoldJump;
+        ID.events.OnParachute += HandleParachute;
         // ID.events.OnJumpReleased += HandleReleaseJump;
         ID.events.OnCompletedRingSequence += BucketCompletion;
         ID.globalEvents.OnBucketExplosion += BucketExplosion;
@@ -409,6 +416,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDash -= HandleDash;
         ID.events.OnDrop -= HandleDrop;
         ID.events.OnJumpHeld -= HandleHoldJump;
+        ID.events.OnParachute -= HandleParachute;
+
         // ID.events.OnJumpReleased -= HandleReleaseJump;
         ID.events.OnCompletedRingSequence -= BucketCompletion;
         ID.globalEvents.OnBucketExplosion -= BucketExplosion;

@@ -25,6 +25,8 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.Jump.performed += ctx => ID.events.OnJumpHeld?.Invoke(true);
         controls.Movement.Jump.canceled += ctx => ID.events.OnJumpHeld?.Invoke(false);
         controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(true);
+        controls.Movement.Parachute.performed += ctx => ID.events.OnParachute?.Invoke(true);
+        controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
 
         // Bind touch input actions
         // if (touchButtonRectTransform)
@@ -34,7 +36,7 @@ public class StateInputSystem : MonoBehaviour
         // controls.Movement.TouchPosition.performed += ctx => UpdateTouchPosition(ctx);
 
         // }
-       
+
     }
 
     // private void StartTouch(InputAction.CallbackContext context)

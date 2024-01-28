@@ -1,20 +1,22 @@
-
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerHoldJumpState : PlayerBaseState
+public class PlayerParachuteState : PlayerBaseState
 {
     private float rotZ = 0;
-    private bool holdTimeBool;
-    private float holdDuration = 1.2f;
+
+
     private float holdTime;
+    private float rotationSpeed = 50f;
     public override void EnterState(PlayerStateManager player)
     {
-        
-        holdTime = 0;
-        holdTimeBool = false;
-        player.anim.SetBool("JumpHeld", true);
+
+        player.disableButtons = true;
+        player.anim.SetBool("ParachuteBool", true);
+        // player.transform.position = new Vector2(player.transform.position.x - player.ID.parachuteXOffset, player.transform.position.y + player.ID.parachuteYOffset);
         // player.rb.gravityScale -= .2f;
-        player.maxFallSpeed = 2;
+        player.maxFallSpeed = -1;
 
 
     }
@@ -31,19 +33,19 @@ public class PlayerHoldJumpState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
+        player.transform.RotateAround(player.ParachuteObject.transform.position, new Vector3(0, 0, 1), rotationSpeed * Time.deltaTime);
 
-        player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.Euler(0, 0, 15), Time.deltaTime * 5);
+        // player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.Euler(0, 0, 15), Time.deltaTime * 5);
 
 
     }
 
     public override void UpdateState(PlayerStateManager player)
     {
-        if (player.jumpHeld)
-        {
-            player.UseStamina(0);
 
-        }
+        // player.UseStamina(0);
+
+
 
         //     holdTime += Time.deltaTime;
         //     if (holdTime >= holdDuration)

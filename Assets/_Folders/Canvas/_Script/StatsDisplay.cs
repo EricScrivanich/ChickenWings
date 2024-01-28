@@ -12,6 +12,15 @@ public class StatsDisplay : MonoBehaviour
     private TextMeshProUGUI scoreText;
     private TextMeshProUGUI ammoText;
     public Material staminaBarMaterial; // Reference to the stamina bar's material
+    public CanvasGroup StaminaGroup;
+
+    public Image StaminaBG; // Reference to the UI element you want to flash
+    private bool canFlashStaminaBG = true;
+    [SerializeField] private Color BGFlashColor; // The color to flash to
+    [SerializeField] private int numverOfBGFlashes; // Total number of flashes
+    [SerializeField] private float totalStaminaBGFlashDuration; //
+    private Color originalStaminaBGColor;
+
 
     private StatsManager statsMan;
     [SerializeField] private Color lightRed;
@@ -20,6 +29,7 @@ public class StatsDisplay : MonoBehaviour
     {
         statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
         maxStamina = player.MaxStamina;
+        originalStaminaBGColor = StaminaBG.color;
 
 
 
@@ -54,7 +64,7 @@ public class StatsDisplay : MonoBehaviour
         if (isUsingStamina)
         {
             // float staminaPercentage = player.CurrentStamina / player.MaxStamina;
-            staminaBarMaterial.SetFloat("_OffsetUvX", player.StaminaUsed/maxStamina);
+            staminaBarMaterial.SetFloat("_OffsetUvX", player.StaminaUsed / maxStamina);
             Color staminaColor = Color.Lerp(Color.white, lightRed, player.StaminaUsed / maxStamina);
             staminaBarMaterial.SetColor("_Color", staminaColor);
             // Debug.Log(player.StaminaUsed * .01f);
@@ -62,6 +72,37 @@ public class StatsDisplay : MonoBehaviour
 
 
     }
+    private IEnumerator FlashBG()
+    {
+        canFlashStaminaBG = false;
+        float flashDuration = totalStaminaBGFlashDuration / (numverOfBGFlashes * 2); // Calculate the duration of each flash
+
+        for (int i = 0; i < numverOfBGFlashes; i++)
+        {
+            // Change to the flash color
+            StaminaBG.color = BGFlashColor
+    ;
+            yield return new WaitForSeconds(flashDuration);
+
+            // Revert to the original color
+            StaminaBG.color = originalStaminaBGColor;
+            yield return new WaitForSeconds(flashDuration);
+        }
+        canFlashStaminaBG = true;
+    }
+
+    private void FlashStamimaBG()
+    {
+        if (canFlashStaminaBG)
+        {
+            StartCoroutine(FlashBG());
+        }
+        else{
+            return;
+        }
+
+    }
+
 
     private IEnumerator FadeStaminaBar(bool beingUsed)
     {
@@ -69,22 +110,28 @@ public class StatsDisplay : MonoBehaviour
 
         float startAlpha = beingUsed ? 0 : 1; // Starting alpha value
         float endAlpha = beingUsed ? 1 : 0; // Ending alpha value
+        Debug.Log(startAlpha);
+
 
         while (time < staminaBarFadeTime)
         {
             time += Time.deltaTime;
             float alpha = Mathf.Lerp(startAlpha, endAlpha, time / staminaBarFadeTime);
-            staminaBarMaterial.SetFloat("_Alpha", alpha);
+            // staminaBarMaterial.SetFloat("_Alpha", alpha);
+            StaminaGroup.alpha = alpha;
             yield return null;
         }
 
         // Ensure the final alpha is set correctly
-        staminaBarMaterial.SetFloat("_Alpha", endAlpha);
+        StaminaGroup.alpha = endAlpha;
     }
 
     private void HandleStaminaBar(bool usingStamina)
     {
-        Debug.Log("Invoked Use" + usingStamina);
+        if (isUsingStamina == usingStamina)
+        {
+            return;
+        }
 
         isUsingStamina = usingStamina;
         StartCoroutine(FadeStaminaBar(usingStamina));
@@ -93,20 +140,24 @@ public class StatsDisplay : MonoBehaviour
     }
     private void OnEnable()
     {
-        staminaBarMaterial.SetFloat("_Alpha", 0);
+        StaminaGroup.alpha = 0;
+
         StatsManager.OnScoreChanged += UpdateScore;
         StatsManager.OnAmmoChanged += UpdateAmmo;
         player.globalEvents.OnUseStamina += HandleStaminaBar;
+        player.globalEvents.OnZeroStamina += FlashStamimaBG;
 
     }
     private void OnDisable()
     {
         staminaBarMaterial.SetColor("_Color", Color.white);
+
         staminaBarMaterial.SetFloat("_OffsetUvX", 0);
 
         StatsManager.OnScoreChanged -= UpdateScore;
         StatsManager.OnAmmoChanged -= UpdateAmmo;
         player.globalEvents.OnUseStamina -= HandleStaminaBar;
+        player.globalEvents.OnZeroStamina -= FlashStamimaBG;
     }
 
 

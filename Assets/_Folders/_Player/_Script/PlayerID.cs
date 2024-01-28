@@ -14,5 +14,8 @@ public class PlayerID : ScriptableObject
     public float AddEggVelocity;
     public PlayerEvents events;
     public GlobalPlayerEvents globalEvents;
+    public float parachuteXOffset;
+    public float parachuteYOffset;
+
 
 }
