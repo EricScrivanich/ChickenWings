@@ -38,7 +38,7 @@ public class PlayerEggDrop : PlayerSystem
         //     yolkPool.Add(yolk);
         // }
     
-    player.ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
+   
     }
 
     public GameObject GetPooledObject(List<GameObject> pool)
@@ -55,7 +55,7 @@ public class PlayerEggDrop : PlayerSystem
 
     private void EggDrop()
 {
-    if (ammo > 0)
+    if (player.ID.Ammo > 0)
     {
         GameObject egg = GetPooledObject(eggPool);
 
@@ -67,8 +67,8 @@ public class PlayerEggDrop : PlayerSystem
             egg.SetActive(true);
             // player.ID.globalEvents.eggVelocity?.Invoke(rb.velocity.x);
         }
-        ammo -= 1;
-        player.ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
+            player.ID.Ammo -= 1;
+            player.ID.globalEvents.OnUpdateAmmo?.Invoke();
     }
 }
 private void getPlayerVelocity()
@@ -77,22 +77,22 @@ private void getPlayerVelocity()
 }
 
 
-    private void AddAmmo(int amount)
-    {
-        ammo += amount;
-        player.ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
-    }
+    // private void AddAmmo(int amount)
+    // {
+    //     ammo += amount;
+    //     player.ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
+    // }
 
     void OnEnable()
     {
         player.ID.events.OnEggDrop += EggDrop;
-        player.ID.globalEvents.OnAddAmmo += AddAmmo;
-        player.ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
+        // player.ID.globalEvents.OnAddAmmo += AddAmmo;
+        // player.ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
     }
 
     void OnDisable()
     {
         player.ID.events.OnEggDrop -= EggDrop;
-        player.ID.globalEvents.OnAddAmmo -= AddAmmo;
+        // player.ID.globalEvents.OnAddAmmo -= AddAmmo;
     }
 }

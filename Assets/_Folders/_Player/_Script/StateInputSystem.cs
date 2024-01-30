@@ -16,17 +16,24 @@ public class StateInputSystem : MonoBehaviour
         controls = new InputController();
 
         // Bind existing actions to methods
-        controls.Movement.Jump.started += ctx => ID.events.OnJump?.Invoke();
+        controls.Movement.Jump.performed += ctx => ID.events.OnJump?.Invoke();
         controls.Movement.JumpRight.performed += ctx => ID.events.OnFlipRight?.Invoke();
         controls.Movement.JumpLeft.performed += ctx => ID.events.OnFlipLeft?.Invoke();
         controls.Movement.Dash.performed += ctx => ID.events.OnDash?.Invoke();
         controls.Movement.Drop.performed += ctx => ID.events.OnDrop?.Invoke();
         controls.Movement.DropEgg.performed += ctx => ID.events.OnEggDrop?.Invoke();
-        controls.Movement.Jump.performed += ctx => ID.events.OnJumpHeld?.Invoke(true);
-        controls.Movement.Jump.canceled += ctx => ID.events.OnJumpHeld?.Invoke(false);
+        controls.Movement.JumpHold.performed += ctx => ID.events.OnJumpHeld?.Invoke(true);
+        controls.Movement.JumpHold.canceled += ctx => ID.events.OnJumpHeld?.Invoke(false);
         controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(true);
         controls.Movement.Parachute.performed += ctx => ID.events.OnParachute?.Invoke(true);
         controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
+        // controls.Movement.Parachute.performed += ctx =>
+// {
+//     // if (Input.touchCount == 2)
+//     // {
+//     //     ID.events.OnParachute?.Invoke(true);
+//     // }
+// };
 
         // Bind touch input actions
         // if (touchButtonRectTransform)
@@ -38,6 +45,16 @@ public class StateInputSystem : MonoBehaviour
         // }
 
     }
+    private void OnEnable()
+    {
+        controls.Movement.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Movement.Disable();
+    }
+}
 
     // private void StartTouch(InputAction.CallbackContext context)
     // {
@@ -97,13 +114,4 @@ public class StateInputSystem : MonoBehaviour
     // Add similar methods for other actions if needed
     // ...
 
-    private void OnEnable()
-    {
-        controls.Movement.Enable();
-    }
-
-    private void OnDisable()
-    {
-        controls.Movement.Disable();
-    }
-}
+    

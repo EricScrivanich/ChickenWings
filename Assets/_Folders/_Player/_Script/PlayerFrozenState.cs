@@ -60,8 +60,8 @@ public class PlayerFrozenState : PlayerBaseState
             player.disableButtons = false;
             player.anim.SetBool("FrozenBool",false);
             player.maxFallSpeed = player.ID.MaxFallSpeed;
-            
-            player.SwitchState(player.IdleState);
+
+            player.CheckIfIsTryingToParachute();
         }
         
     }

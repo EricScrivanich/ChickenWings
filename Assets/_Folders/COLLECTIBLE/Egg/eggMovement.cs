@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class eggMovement : MonoBehaviour
 {
-    public PlayerID player;
+    public PlayerID ID;
     private int amount = 1;
     private ammoParentScript parent;
     private float speed;
@@ -17,7 +17,7 @@ public class eggMovement : MonoBehaviour
     private float yPos;
     
 
-    private StatsManager statsMan;
+    // private StatsManager statsMan;
 
     [SerializeField] private float minAmmoSpeed;
     [SerializeField] private float maxAmmoSpeed;
@@ -51,7 +51,7 @@ public class eggMovement : MonoBehaviour
     {
         
        
-        statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
+        // statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
        
         
         
@@ -115,9 +115,9 @@ public class eggMovement : MonoBehaviour
     {
         
         ammoCollected = true;
-        
-        statsMan.AddAmmo(1);
-        player.globalEvents.OnAddAmmo?.Invoke(amount);
+
+        ID.Ammo += 1;
+        ID.globalEvents.OnUpdateAmmo?.Invoke();
         
         
     }

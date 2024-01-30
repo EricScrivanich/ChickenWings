@@ -7,7 +7,7 @@ public class AddDamage : MonoBehaviour
     public PlayerID ID;
     [SerializeField] private int damageAmount = 1;  // Amount of damage the slash does
 
-    private void OnTriggerEnter2D(Collider2D collider) 
+    private void OnTriggerEnter2D(Collider2D collider)
     {
         IDamageable damageableEntity = collider.gameObject.GetComponent<IDamageable>();
         if (damageableEntity != null)
@@ -18,6 +18,7 @@ public class AddDamage : MonoBehaviour
 
     public void AttackFinished()
     {
+        Debug.Log("finished");
         ID.events.OnAttack?.Invoke(false);
     }
 }

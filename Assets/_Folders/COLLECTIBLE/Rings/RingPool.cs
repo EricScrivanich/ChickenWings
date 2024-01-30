@@ -6,6 +6,10 @@ using UnityEngine;
 public class RingPool : ScriptableObject
 {
     public bool Testing;
+    [SerializeField] private int currentTriggerEdited;
+    private int lastCurrentTrigger;
+    [SerializeField] private bool showAllPlaceholders;
+    private bool lastShowAllPlaceholders;
     // Start is called before the first frame update
     public GameObject ringPrefab;
     public GameObject bucketPrefab;
@@ -13,12 +17,9 @@ public class RingPool : ScriptableObject
     private int ringAmount = 25;
     private int bucketAmount = 4;
 
-    [SerializeField] private int currentTriggerEdited;
-    private int lastCurrentTrigger;
-    [SerializeField] private bool showAllPlaceholders;
-    private bool lastShowAllPlaceholders;
 
-   
+
+
 
     // private Queue<GameObject> ringPool;
     private List<BucketScript> bucketPool;
@@ -33,7 +34,7 @@ public class RingPool : ScriptableObject
         ringPool = new List<RingMovement>();
         // if (ringPool == null || ringPool.Count == 0)
         // {
-            
+
         // }
 
         // if (ringPool.Count >= ringAmount)
@@ -49,14 +50,14 @@ public class RingPool : ScriptableObject
         while (ringPool.Count < ringAmount)
         {
             // GameObject obj = Instantiate(prefab, parent);
-            GameObject obj = Instantiate(ringPrefab,parent);
+            GameObject obj = Instantiate(ringPrefab, parent);
             obj.gameObject.SetActive(false);
             RingMovement ringScript = obj.GetComponent<RingMovement>();
             ringPool.Add(ringScript);
         }
     }
 
-    
+
     public RingMovement GetRing(RingID ID)
     {
         if (ringPool == null || ringPool.Count == 0)
@@ -121,7 +122,7 @@ public class RingPool : ScriptableObject
 
     private void OnEnable()
     {
-   
+
         if (showAllPlaceholders)
         {
             ShowAllPlaceholders();
@@ -181,7 +182,7 @@ public class RingPool : ScriptableObject
             }
             else
             {
-                placeholder.gameObject.layer = LayerMask.NameToLayer("UI");
+                placeholder.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             }
         }
         lastCurrentTrigger = currentTriggerEdited;

@@ -60,12 +60,12 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Jump",
+                    "name": "JumpHold",
                     "type": "Button",
                     "id": "7a1b2628-cdb6-44df-96c2-b30778de634d",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Hold(duration=0.2)",
+                    "interactions": "Hold(duration=0.5)",
                     "initialStateCheck": false
                 },
                 {
@@ -94,6 +94,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "6a7bb245-7739-4352-a7ae-757bdda03107",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -104,7 +113,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Jump",
+                    "action": "JumpHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -115,7 +124,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Mobile",
-                    "action": "Jump",
+                    "action": "JumpHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -281,6 +290,28 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "Parachute",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "71785b00-5b5a-4d60-a60a-bfe45c783bc6",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "Hold(duration=0.08,pressPoint=0.2),Tap(pressPoint=0.2)",
+                    "processors": "",
+                    "groups": "Mobile",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "47e0b5fe-6038-46bf-aba8-7552f7a46f65",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

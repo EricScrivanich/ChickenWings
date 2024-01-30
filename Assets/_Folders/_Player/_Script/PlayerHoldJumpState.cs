@@ -39,11 +39,10 @@ public class PlayerHoldJumpState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
-        if (player.jumpHeld)
-        {
-            player.UseStamina(0);
+        
+            player.UseStamina(60);
 
-        }
+        
 
         //     holdTime += Time.deltaTime;
         //     if (holdTime >= holdDuration)

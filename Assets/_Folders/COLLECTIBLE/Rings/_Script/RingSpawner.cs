@@ -24,7 +24,6 @@ public class RingSpawner : MonoBehaviour
 
     [SerializeField] private GameObject ringPrefab;
 
-
     private List<GameObject> ringPool;
     private List<RingMovement> ringScripts;
 
@@ -33,8 +32,6 @@ public class RingSpawner : MonoBehaviour
 
     // private const int ringPoolSize = 20;
     [SerializeField] private float spawnInterval = 5f;
-
-
 
     private Dictionary<Transform, PlaceholderRing> placeholderReferences = new Dictionary<Transform, PlaceholderRing>();
     private GameObject currentRingSetupInstance;
@@ -66,8 +63,6 @@ public class RingSpawner : MonoBehaviour
 
     }
 
-
-
     private void AssignOrderByPosition(int correctTrig)
     {
        
@@ -91,11 +86,8 @@ public class RingSpawner : MonoBehaviour
 
             }
 
-
-
         }
     }
-
 
     private void PopulatePlaceholderReferences(Transform parentTransform)
     {
@@ -178,22 +170,6 @@ public class RingSpawner : MonoBehaviour
 
 
     }
-
-    // private RingMovement GetRingFromPool()
-    // {
-    //     foreach (RingMovement ringScript in ringScripts)
-    //     {
-    //         if (!ringScript.gameObject.activeInHierarchy)
-    //         {
-    //             return ringScript;
-    //         }
-    //     }
-
-    //     return null;
-
-
-    // }
-
 
 
     #region Losing and Fading
@@ -293,14 +269,6 @@ public class RingSpawner : MonoBehaviour
 
     }
 
-
-
-
-
-
-
-
-
     private void OnEnable()
     {
 
@@ -336,8 +304,6 @@ public class RingSpawner : MonoBehaviour
 
 
     }
-
-
 
     private void CheckScore(int newScore)
     {

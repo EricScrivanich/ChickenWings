@@ -14,6 +14,9 @@ public class RingMovement : MonoBehaviour
 
     private Transform _transform;
 
+    [SerializeField] private SpriteRenderer centerSprite;
+    [SerializeField] private ParticleSystem particles;
+
     private bool isFaded = false;
     private Collider2D[] colliders;
 
@@ -177,6 +180,8 @@ public class RingMovement : MonoBehaviour
     private void OnEnable()
     {
         sprite.material = ID.defaultMaterial;
+        centerSprite.color = ID.CenterColor;
+        particles = ID.ringParticles;
 
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
@@ -192,7 +197,7 @@ public class RingMovement : MonoBehaviour
         ID.ringEvent.OnCreateNewSequence -= NewSetup;
         if (!isFaded)
         {
-            anim.SetBool(BurstBoolHash, false);
+            anim.SetBool(BurstBoolHash, false); 
         }
         else
         {

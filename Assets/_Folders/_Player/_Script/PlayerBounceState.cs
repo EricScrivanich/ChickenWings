@@ -10,28 +10,28 @@ public class PlayerBounceState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         bounceTime = 0;
-        
+
         player.anim.SetTrigger("BounceTrigger");
-        
-     
-        
-        
-        
+
+
+
+
+
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-       
+
     }
 
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
     {
-        
+
     }
 
     public override void RotateState(PlayerStateManager player)
     {
-        
+
     }
 
     public override void UpdateState(PlayerStateManager player)
@@ -41,19 +41,19 @@ public class PlayerBounceState : PlayerBaseState
         {
             // player.ID.events.OnBounce.Invoke();
             AudioManager.instance.PlayBounceSound();
-            player.rb.velocity = new Vector2(1,9.5f);
+            player.rb.velocity = new Vector2(1, 9.5f);
             player.disableButtons = false;
             player.ID.events.FloorCollsion.Invoke(true);
-            player.SwitchState(player.IdleState);
+            player.CheckIfIsTryingToParachute();
 
         }
-        
+
     }
     private IEnumerator ApplyBounceAfterDelay()
-{
-    yield return new WaitForSeconds(.1f);
-    bounce = true;
+    {
+        yield return new WaitForSeconds(.1f);
+        bounce = true;
 
-    
-}
+
+    }
 }

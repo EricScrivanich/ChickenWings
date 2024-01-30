@@ -14,7 +14,8 @@ public class PlayerSlashState : PlayerBaseState
     
     public override void EnterState(PlayerStateManager player)
     {
-        
+        player.disableButtons = true;
+
         player.anim.SetBool("AttackBool",true);
         player.attackObject.SetActive(true);
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class EggX3Movement : MonoBehaviour
 {
     
-    public PlayerID player;
+    public PlayerID ID;
     private float speed;
     private int amount = 3;
     private bool ammoBool;
@@ -32,7 +32,7 @@ public class EggX3Movement : MonoBehaviour
 
     [SerializeField] private bool eggX3Bool;
 
-  private StatsManager statsMan;
+  
    
 
 
@@ -59,14 +59,7 @@ public class EggX3Movement : MonoBehaviour
        
 
     }
-    void Start()
-    {
-        
-      
-         statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
-        
-        
-    }
+    
 
 
     void Update()
@@ -128,9 +121,9 @@ public class EggX3Movement : MonoBehaviour
     {
         
         ammoCollected = true;
-        statsMan.AddAmmo(3);
+        ID.Ammo += 3;
 
-        player.globalEvents.OnAddAmmo?.Invoke(amount);
+         ID.globalEvents.OnUpdateAmmo?.Invoke();
       
         
         

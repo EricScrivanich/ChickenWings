@@ -32,6 +32,7 @@ public class PlayerStateManager : MonoBehaviour
     public BucketCollisionState BucketState = new BucketCollisionState();
     public PlayerParachuteState ParachuteState = new PlayerParachuteState();
     public BucketScript bucket;
+    private bool isAttacking = false;
 
 
     public bool hasFlippedRight = false;
@@ -46,6 +47,8 @@ public class PlayerStateManager : MonoBehaviour
     private float dashCooldownTime = 1.5f;
     private float dropCooldownTime = 3f;
     public bool jumpHeld;
+    public bool isParachuting = false;
+    public bool isTryingToParachute = false;
 
     private float jumpForce = 11.3f;
     public int rotationLerpSpeed = 20;
@@ -108,11 +111,13 @@ public class PlayerStateManager : MonoBehaviour
 
     public void UseStamina(float amount)
     {
-        ID.StaminaUsed += staminaDeplete * Time.deltaTime;
+        ID.StaminaUsed += amount * Time.deltaTime;
 
         if (ID.StaminaUsed >= ID.MaxStamina)
         {
             ResetHoldJump();
+            ResetParachute();
+
             ID.globalEvents.OnZeroStamina?.Invoke();
             SwitchState(IdleState);
 
@@ -220,7 +225,7 @@ public class PlayerStateManager : MonoBehaviour
     }
     void HandleJump()
     {
-        if (!disableButtons)
+        if (!disableButtons && !ID.IsTwoTouchPoints)
         {
             ResetHoldJump();
             SwitchState(JumpState);
@@ -228,25 +233,29 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    void HandleAttack(bool isAttacking)
+    void HandleAttack(bool attacking)
     {
-        if (!disableButtons)
+
+        if (attacking && !disableButtons)
         {
-            if (isAttacking)
-            {
-                ResetHoldJump();
-                SwitchState(SlashState);
-            }
-            else
-            {
-                maxFallSpeed = ID.MaxFallSpeed;
-                attackObject.SetActive(false);
-                anim.SetBool("AttackBool", false);
-                SwitchState(IdleState);
-
-
-            }
+            ResetHoldJump();
+            isAttacking = true;
+            SwitchState(SlashState);
         }
+        else if (!attacking && isAttacking)
+        {
+            // invoked false by featherAnimation, called function on AddDamage()
+
+            maxFallSpeed = ID.MaxFallSpeed;
+            attackObject.SetActive(false);
+            anim.SetBool("AttackBool", false);
+            disableButtons = false;
+            isAttacking = false;
+            CheckIfIsTryingToParachute();
+
+
+        }
+
 
     }
 
@@ -297,44 +306,74 @@ public class PlayerStateManager : MonoBehaviour
 
     void HandleHoldJump(bool isHolding)
     {
-        if (isHolding)
+        if (!disableButtons)
+        {
+            if (isHolding)
+            {
+                if (ID.StaminaUsed < ID.MaxStamina)
+                {
+                    ID.globalEvents.OnUseStamina?.Invoke(true);
+                    jumpHeld = true;
+                }
+                else
+                {
+                    StartFillStaminaCoroutine();
+                    ID.globalEvents.OnZeroStamina?.Invoke();
+                }
+            }
+            else
+            {
+                if (jumpHeld)
+                {
+                    SwitchState(IdleState);
+                }
+                ResetHoldJump();
+            }
+        }
+    }
+    public void HandleParachute(bool isPressing)
+    {
+        isTryingToParachute = isPressing;
+
+        if (isPressing && !disableButtons)
         {
             if (ID.StaminaUsed < ID.MaxStamina)
             {
+
+                SwitchState(ParachuteState);
+                isParachuting = true;
                 ID.globalEvents.OnUseStamina?.Invoke(true);
-                jumpHeld = true;
             }
             else
             {
                 StartFillStaminaCoroutine();
+
                 ID.globalEvents.OnZeroStamina?.Invoke();
+
             }
+
         }
-        else
+        else if (!isPressing && isParachuting)
         {
-            if (jumpHeld)
-            {
-                SwitchState(IdleState);
-            }
-            ResetHoldJump();
+            ResetParachute();
+            SwitchState(IdleState);
         }
     }
-    void HandleParachute(bool isPressing)
+
+    public void CheckIfIsTryingToParachute()
     {
-        if (isPressing)
+        if (isTryingToParachute)
         {
-            SwitchState(ParachuteState);
+            HandleParachute(true);
         }
         else
         {
-            anim.SetBool("ParachuteBool", false);
-            // transform.position = new Vector2(transform.position.x + ID.parachuteXOffset, transform.position.y - ID.parachuteYOffset);
-            maxFallSpeed = ID.MaxFallSpeed;
-            disableButtons = false;
             SwitchState(IdleState);
         }
 
     }
+
+
 
     private void ResetHoldJump()
     {
@@ -346,6 +385,21 @@ public class PlayerStateManager : MonoBehaviour
             StartFillStaminaCoroutine();
         }
 
+
+    }
+
+    private void ResetParachute()
+    {
+        if (isParachuting)
+        {
+            isParachuting = false;
+            anim.SetBool("ParachuteBool", false);
+            StartFillStaminaCoroutine();
+            maxFallSpeed = ID.MaxFallSpeed;
+            disableButtons = false;
+
+
+        }
 
     }
 
@@ -377,6 +431,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         bucket = bucketScript;
         ResetHoldJump();
+        ResetParachute();
         SwitchState(BucketState);
 
     }

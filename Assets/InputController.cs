@@ -82,12 +82,12 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Jump"",
+                    ""name"": ""JumpHold"",
                     ""type"": ""Button"",
                     ""id"": ""7a1b2628-cdb6-44df-96c2-b30778de634d"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Hold(duration=0.2)"",
+                    ""interactions"": ""Hold(duration=0.5)"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -116,6 +116,15 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""6a7bb245-7739-4352-a7ae-757bdda03107"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -126,7 +135,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""Jump"",
+                    ""action"": ""JumpHold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -137,7 +146,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Mobile"",
-                    ""action"": ""Jump"",
+                    ""action"": ""JumpHold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -305,6 +314,28 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""action"": ""Parachute"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""71785b00-5b5a-4d60-a60a-bfe45c783bc6"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": ""Hold(duration=0.08,pressPoint=0.2),Tap(pressPoint=0.2)"",
+                    ""processors"": """",
+                    ""groups"": ""Mobile"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""47e0b5fe-6038-46bf-aba8-7552f7a46f65"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -392,10 +423,11 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_Movement_Drop = m_Movement.FindAction("Drop", throwIfNotFound: true);
         m_Movement_JumpRight = m_Movement.FindAction("JumpRight", throwIfNotFound: true);
         m_Movement_JumpLeft = m_Movement.FindAction("JumpLeft", throwIfNotFound: true);
-        m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
+        m_Movement_JumpHold = m_Movement.FindAction("JumpHold", throwIfNotFound: true);
         m_Movement_TouchPress = m_Movement.FindAction("TouchPress", throwIfNotFound: true);
         m_Movement_TouchPosition = m_Movement.FindAction("TouchPosition", throwIfNotFound: true);
         m_Movement_Parachute = m_Movement.FindAction("Parachute", throwIfNotFound: true);
+        m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
         // Special
         m_Special = asset.FindActionMap("Special", throwIfNotFound: true);
         m_Special_ResetGame = m_Special.FindAction("ResetGame", throwIfNotFound: true);
@@ -466,10 +498,11 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private readonly InputAction m_Movement_Drop;
     private readonly InputAction m_Movement_JumpRight;
     private readonly InputAction m_Movement_JumpLeft;
-    private readonly InputAction m_Movement_Jump;
+    private readonly InputAction m_Movement_JumpHold;
     private readonly InputAction m_Movement_TouchPress;
     private readonly InputAction m_Movement_TouchPosition;
     private readonly InputAction m_Movement_Parachute;
+    private readonly InputAction m_Movement_Jump;
     public struct MovementActions
     {
         private @InputController m_Wrapper;
@@ -480,10 +513,11 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         public InputAction @Drop => m_Wrapper.m_Movement_Drop;
         public InputAction @JumpRight => m_Wrapper.m_Movement_JumpRight;
         public InputAction @JumpLeft => m_Wrapper.m_Movement_JumpLeft;
-        public InputAction @Jump => m_Wrapper.m_Movement_Jump;
+        public InputAction @JumpHold => m_Wrapper.m_Movement_JumpHold;
         public InputAction @TouchPress => m_Wrapper.m_Movement_TouchPress;
         public InputAction @TouchPosition => m_Wrapper.m_Movement_TouchPosition;
         public InputAction @Parachute => m_Wrapper.m_Movement_Parachute;
+        public InputAction @Jump => m_Wrapper.m_Movement_Jump;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -511,9 +545,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @JumpLeft.started += instance.OnJumpLeft;
             @JumpLeft.performed += instance.OnJumpLeft;
             @JumpLeft.canceled += instance.OnJumpLeft;
-            @Jump.started += instance.OnJump;
-            @Jump.performed += instance.OnJump;
-            @Jump.canceled += instance.OnJump;
+            @JumpHold.started += instance.OnJumpHold;
+            @JumpHold.performed += instance.OnJumpHold;
+            @JumpHold.canceled += instance.OnJumpHold;
             @TouchPress.started += instance.OnTouchPress;
             @TouchPress.performed += instance.OnTouchPress;
             @TouchPress.canceled += instance.OnTouchPress;
@@ -523,6 +557,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @Parachute.started += instance.OnParachute;
             @Parachute.performed += instance.OnParachute;
             @Parachute.canceled += instance.OnParachute;
+            @Jump.started += instance.OnJump;
+            @Jump.performed += instance.OnJump;
+            @Jump.canceled += instance.OnJump;
         }
 
         private void UnregisterCallbacks(IMovementActions instance)
@@ -545,9 +582,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @JumpLeft.started -= instance.OnJumpLeft;
             @JumpLeft.performed -= instance.OnJumpLeft;
             @JumpLeft.canceled -= instance.OnJumpLeft;
-            @Jump.started -= instance.OnJump;
-            @Jump.performed -= instance.OnJump;
-            @Jump.canceled -= instance.OnJump;
+            @JumpHold.started -= instance.OnJumpHold;
+            @JumpHold.performed -= instance.OnJumpHold;
+            @JumpHold.canceled -= instance.OnJumpHold;
             @TouchPress.started -= instance.OnTouchPress;
             @TouchPress.performed -= instance.OnTouchPress;
             @TouchPress.canceled -= instance.OnTouchPress;
@@ -557,6 +594,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @Parachute.started -= instance.OnParachute;
             @Parachute.performed -= instance.OnParachute;
             @Parachute.canceled -= instance.OnParachute;
+            @Jump.started -= instance.OnJump;
+            @Jump.performed -= instance.OnJump;
+            @Jump.canceled -= instance.OnJump;
         }
 
         public void RemoveCallbacks(IMovementActions instance)
@@ -646,10 +686,11 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnDrop(InputAction.CallbackContext context);
         void OnJumpRight(InputAction.CallbackContext context);
         void OnJumpLeft(InputAction.CallbackContext context);
-        void OnJump(InputAction.CallbackContext context);
+        void OnJumpHold(InputAction.CallbackContext context);
         void OnTouchPress(InputAction.CallbackContext context);
         void OnTouchPosition(InputAction.CallbackContext context);
         void OnParachute(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
     }
     public interface ISpecialActions
     {

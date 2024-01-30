@@ -4,62 +4,77 @@ using UnityEngine;
 
 public class PlayerParachuteState : PlayerBaseState
 {
-    private float rotZ = 0;
+    private float amplitude = 300f; // Oscillation amplitude in degrees
+    private float frequency = 0.5f; // Oscillations per second
+    private float lerpSpeed = 30f; // Speed for lerp to 0
+    private bool startOscillation = false; // Flag to start oscillation
+    private float initialRotation;
+    private float time;
+    private float rotationSpeed = 360;
 
-
-    private float holdTime;
-    private float rotationSpeed = 50f;
     public override void EnterState(PlayerStateManager player)
     {
+        time = 0;
+        player.rb.velocity = new Vector2(player.rb.velocity.x / 3, player.rb.velocity.y);
+        initialRotation = player.transform.rotation.z;
+        player.transform.rotation = Quaternion.Euler(0, 0, 0);
 
+        Debug.Log("first" + initialRotation);
         player.disableButtons = true;
         player.anim.SetBool("ParachuteBool", true);
-        // player.transform.position = new Vector2(player.transform.position.x - player.ID.parachuteXOffset, player.transform.position.y + player.ID.parachuteYOffset);
-        // player.rb.gravityScale -= .2f;
         player.maxFallSpeed = -1;
 
-
-    }
-
-    public override void FixedUpdateState(PlayerStateManager player)
-    {
-
-    }
-
-    public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    {
-
+        startOscillation = false; // Reset the flag on state entry
     }
 
     public override void RotateState(PlayerStateManager player)
     {
-        player.transform.RotateAround(player.ParachuteObject.transform.position, new Vector3(0, 0, 1), rotationSpeed * Time.deltaTime);
-
-        // player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.Euler(0, 0, 15), Time.deltaTime * 5);
 
 
-    }
-
-    public override void UpdateState(PlayerStateManager player)
-    {
-
-        // player.UseStamina(0);
+        // // Rotate the player around the pivot by the angle difference
+        // player.transform.RotateAround(player.ParachuteObject.transform.position, Vector3.forward, -initialRotation * rotationSpeed * Time.fixedDeltaTime);
+        // if (Mathf.Abs(initialRotation + player.transform.rotation.z) < Mathf.Abs(initialRotation / 2))
+        // {
 
 
-
-        //     holdTime += Time.deltaTime;
-        //     if (holdTime >= holdDuration)
-        //     {
-        //         holdTimeBool = true;
-        //     }
-        //     if (!player.jumpHeld || holdTimeBool)
+        //     if (rotationSpeed < 0)
         //     {
 
-        //         player.SwitchState(player.IdleState);
-
+        //         initialRotation = player.transform.rotation.z;
+        //         Debug.Log("second" + initialRotation);
+        //         rotationSpeed = 360;
 
         //     }
         // }
     }
 
+
+
+    // Helper function to normalize angles to [-180, 180] range
+
+
+
+
+    public override void FixedUpdateState(PlayerStateManager player)
+    {
+        // Implement any physics-related updates here
+    }
+
+    public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
+    {
+        // Handle collision events here
+    }
+
+    public override void UpdateState(PlayerStateManager player)
+    {
+        player.UseStamina(65);
+        // Implement any frame-based updates here
+
+        // Example: Check for state transition conditions
+        // if (conditionToTransition)
+        // {
+        //     player.SwitchState(player.SomeOtherState);
+        // }
+    }
 }
+

@@ -50,13 +50,20 @@ public class StatsDisplay : MonoBehaviour
     void UpdateScore(int score)
     {
         if (scoreText != null)
+        {
             scoreText.text = "Score: " + score.ToString();
+
+        }
+
+
     }
 
-    void UpdateAmmo(int ammo)
+    void UpdateAmmo()
     {
         if (ammoText != null)
-            ammoText.text = "Ammo: " + ammo.ToString();
+        {
+            ammoText.text = "Ammo: " + player.Ammo.ToString();
+        }
     }
 
     void Update()
@@ -97,7 +104,8 @@ public class StatsDisplay : MonoBehaviour
         {
             StartCoroutine(FlashBG());
         }
-        else{
+        else
+        {
             return;
         }
 
@@ -108,8 +116,8 @@ public class StatsDisplay : MonoBehaviour
     {
         float time = 0;
 
-        float startAlpha = beingUsed ? 0 : 1; // Starting alpha value
-        float endAlpha = beingUsed ? 1 : 0; // Ending alpha value
+        float startAlpha = beingUsed ? 0 : .9f; // Starting alpha value
+        float endAlpha = beingUsed ? .9f : 0; // Ending alpha value
         Debug.Log(startAlpha);
 
 
@@ -140,24 +148,26 @@ public class StatsDisplay : MonoBehaviour
     }
     private void OnEnable()
     {
-        StaminaGroup.alpha = 0;
-
         StatsManager.OnScoreChanged += UpdateScore;
-        StatsManager.OnAmmoChanged += UpdateAmmo;
+        player.globalEvents.OnUpdateAmmo += UpdateAmmo;
         player.globalEvents.OnUseStamina += HandleStaminaBar;
         player.globalEvents.OnZeroStamina += FlashStamimaBG;
+
+        StaminaGroup.alpha = 0;
+
 
     }
     private void OnDisable()
     {
+        StatsManager.OnScoreChanged -= UpdateScore;
+        player.globalEvents.OnUpdateAmmo -= UpdateAmmo;
+        player.globalEvents.OnUseStamina -= HandleStaminaBar;
+        player.globalEvents.OnZeroStamina -= FlashStamimaBG;
         staminaBarMaterial.SetColor("_Color", Color.white);
 
         staminaBarMaterial.SetFloat("_OffsetUvX", 0);
 
-        StatsManager.OnScoreChanged -= UpdateScore;
-        StatsManager.OnAmmoChanged -= UpdateAmmo;
-        player.globalEvents.OnUseStamina -= HandleStaminaBar;
-        player.globalEvents.OnZeroStamina -= FlashStamimaBG;
+
     }
 
 
