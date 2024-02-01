@@ -112,13 +112,13 @@ public class StatsDisplay : MonoBehaviour
     }
 
 
-    private IEnumerator FadeStaminaBar(bool beingUsed)
+    private IEnumerator FadeStaminaBar(bool beingUsed) 
     {
         float time = 0;
 
         float startAlpha = beingUsed ? 0 : .9f; // Starting alpha value
         float endAlpha = beingUsed ? .9f : 0; // Ending alpha value
-        Debug.Log(startAlpha);
+        
 
 
         while (time < staminaBarFadeTime)
@@ -153,7 +153,7 @@ public class StatsDisplay : MonoBehaviour
         player.globalEvents.OnUseStamina += HandleStaminaBar;
         player.globalEvents.OnZeroStamina += FlashStamimaBG;
 
-        StaminaGroup.alpha = 0;
+        StaminaGroup.alpha = 1;
 
 
     }

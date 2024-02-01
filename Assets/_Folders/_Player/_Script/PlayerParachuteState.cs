@@ -19,7 +19,7 @@ public class PlayerParachuteState : PlayerBaseState
         initialRotation = player.transform.rotation.z;
         player.transform.rotation = Quaternion.Euler(0, 0, 0);
 
-        Debug.Log("first" + initialRotation);
+       
         player.disableButtons = true;
         player.anim.SetBool("ParachuteBool", true);
         player.maxFallSpeed = -1;

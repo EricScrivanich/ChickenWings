@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
+    [SerializeField] private bool DebogLogEnabled;
     public float slowdownFactor = 0.5f;
 
     // void Update()
@@ -17,4 +18,8 @@ public class TimeManager : MonoBehaviour
     //         Time.timeScale = 1f;
     //     }
     // }
+
+    private void Awake() {
+        Debug.unityLogger.logEnabled = DebogLogEnabled;
+    }
 }

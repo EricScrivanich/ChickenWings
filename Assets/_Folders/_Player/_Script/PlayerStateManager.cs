@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerStateManager : MonoBehaviour
 {
     [ExposedScriptableObject]
-    public PlayerID ID;
+    public PlayerID ID; 
     private bool CanUseStamina = true;
     public GameObject ParachuteObject;
     private Coroutine fillStaminaCoroutine;
@@ -306,6 +306,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void HandleHoldJump(bool isHolding)
     {
+        Debug.Log("yuh");
         if (!disableButtons)
         {
             if (isHolding)

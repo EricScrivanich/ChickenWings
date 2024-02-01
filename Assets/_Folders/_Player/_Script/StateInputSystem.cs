@@ -26,7 +26,7 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.JumpHold.canceled += ctx => ID.events.OnJumpHeld?.Invoke(false);
         controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(true);
         controls.Movement.Parachute.performed += ctx => ID.events.OnParachute?.Invoke(true);
-        controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
+        controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false); 
         // controls.Movement.Parachute.performed += ctx =>
 // {
 //     // if (Input.touchCount == 2)
