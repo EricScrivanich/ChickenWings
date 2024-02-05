@@ -9,6 +9,7 @@ public class RingSpawner : MonoBehaviour
     public static RingSpawner Instance;
     [ExposedScriptableObject]
     public RingPool Pool;
+    private int tracker = 0;
     private RingID ID;
     public int Index;
     public static int currentRing;
@@ -18,8 +19,8 @@ public class RingSpawner : MonoBehaviour
 
     private int currentMaxOrder = 0;
     [SerializeField] private GameObject BallMaterial;
-    private GameObject BallObject;
-    private BallMaterialMovement ballMovement;
+   
+  
     [SerializeField] private float fadeRingsDuration;
 
     [SerializeField] private GameObject ringPrefab;
@@ -52,20 +53,21 @@ public class RingSpawner : MonoBehaviour
 
     private void Start()
     {
-        ResetRingMaterialFade();
+        // ResetRingMaterialFade();
+        Pool.ResetAllMaterials();
 
-        BallObject = Instantiate(BallMaterial);
-        ballMovement = BallObject.GetComponent<BallMaterialMovement>();
-        BallObject.SetActive(false);
+
+
+        Pool.SpawnBallPool();
         Pool.SpawnBucketPool();
         Pool.SpawnRingPool();
-        SequenceFinished(true);
+        SpawnRings(.5f);
 
     }
 
     private void AssignOrderByPosition(int correctTrig)
     {
-       
+
         // Create a local list of placeholder Transforms from the dictionary
         List<Transform> sortedPlaceholders = new List<Transform>(placeholderReferences.Keys);
 
@@ -91,7 +93,7 @@ public class RingSpawner : MonoBehaviour
 
     private void PopulatePlaceholderReferences(Transform parentTransform)
     {
-       
+
         placeholderReferences.Clear();
         ID.placeholderCount = 0;
 
@@ -104,7 +106,7 @@ public class RingSpawner : MonoBehaviour
 
     private void PopulateRecursive(Transform currentTransform)
     {
-       
+
         foreach (Transform child in currentTransform)
         {
             if (child.gameObject.activeInHierarchy)
@@ -132,7 +134,7 @@ public class RingSpawner : MonoBehaviour
     public void TriggeredSpawn(int triggerValue)
     {
         Debug.Log("Triggered");
-       
+
 
         AssignOrderByPosition(triggerValue);
 
@@ -143,13 +145,13 @@ public class RingSpawner : MonoBehaviour
                 SpawnRingAtPlaceholder(placeholder.Key, placeholder.Value);
             }
         }
- 
+
         ID.ringEvent.OnCheckOrder?.Invoke();
     }
 
     private void SpawnRingAtPlaceholder(Transform placeholderTransform, PlaceholderRing placeholderScript)
     {
-       
+
         // RingMovement ring = GetRingFromPool();
         if (placeholderScript.order != ID.placeholderCount)
         {
@@ -173,11 +175,30 @@ public class RingSpawner : MonoBehaviour
 
 
     #region Losing and Fading
-    public void SequenceFinished(bool correctSequence)
+    public void SequenceFinished(bool correctSequence, int index)
     {
         if (!correctSequence)
         {
-            StartCoroutine(FadeOutRings());
+
+            switch (index)
+            {
+                case 0:
+                    StartCoroutine(Pool.FadeOutRed());
+                    break;
+                case 1:
+                    StartCoroutine(Pool.FadeOutPink());
+
+                    break;
+                case 2:
+
+                    StartCoroutine(Pool.FadeOutGold());
+                    break;
+                default:
+                    break;
+            }
+
+
+
             SpawnRings(3.4f);
         }
         else
@@ -191,52 +212,22 @@ public class RingSpawner : MonoBehaviour
     }
 
 
-    private void ResetRingMaterialFade()
-    {
-       
+    // 
 
-        // Reset fade effect
-        ID.defaultMaterial.SetFloat("_FadeAmount", 0);
-        ID.highlightedMaterial.SetFloat("_FadeAmount", 0);
-        ID.passedMaterial.SetFloat("_FadeAmount", 0);
-    }
-
-    private IEnumerator FadeOutRings()
-    {
-       
-
-        float time = 0;
-
-
-        while (time < fadeRingsDuration)
-        {
-            time += Time.deltaTime;
-            float fadeAmount = Mathf.Lerp(0, 1, time / fadeRingsDuration);
-            ID.defaultMaterial.SetFloat("_FadeAmount", fadeAmount);
-            ID.highlightedMaterial.SetFloat("_FadeAmount", fadeAmount);
-            ID.passedMaterial.SetFloat("_FadeAmount", fadeAmount);
-
-            yield return null;
-        }
-        ID.DisableRings();
-
-        ResetRingMaterialFade();
-
-
-    }
-
+   
     #endregion
 
     private void SpawnRings(float time)
     {
-       
-
+        tracker += 1;
+        Debug.Log("SpawningRings: " + tracker);
         ID.triggeredRingOrder = 0;
+        ID.CorrectRing = 1;
         StartCoroutine(SpawnRingsCourintine(time));
     }
     private IEnumerator SpawnRingsCourintine(float time)
     {
-       
+
 
         PopulatePlaceholderReferences(transform);
         ID.CorrectRing = 1;
@@ -282,12 +273,12 @@ public class RingSpawner : MonoBehaviour
         }
 
 
-        StatsManager.OnScoreChanged += CheckScore;
+
 
     }
     private void OnDisable()
     {
-        ResetRingMaterialFade();
+        
 
         foreach (var ringId in Pool.RingType)
         {
@@ -300,7 +291,7 @@ public class RingSpawner : MonoBehaviour
 
         // ID.ringEvent.OnPassRing -= CheckOrder;
 
-        StatsManager.OnScoreChanged -= CheckScore;
+
 
 
     }
@@ -477,6 +468,41 @@ public class RingSpawner : MonoBehaviour
 
 //     // SetSpecialRingEffect();
 // }
+
+// private IEnumerator FadeOutRings()
+// {
+
+
+//     float time = 0;
+
+
+//     while (time < fadeRingsDuration)
+//     {
+//         time += Time.deltaTime;
+//         float fadeAmount = Mathf.Lerp(0, 1, time / fadeRingsDuration);
+//         ID.defaultMaterial.SetFloat("_FadeAmount", fadeAmount);
+//         ID.highlightedMaterial.SetFloat("_FadeAmount", fadeAmount);
+//         ID.passedMaterial.SetFloat("_FadeAmount", fadeAmount);
+
+//         yield return null;
+//     }
+//     Pool.DisableRings(Index);
+
+//     ResetRingMaterialFade();
+
+
+// }
+
+// private void ResetRingMaterialFade()
+    // {
+
+
+//     // Reset fade effect
+//     ID.defaultMaterial.SetFloat("_FadeAmount", 0);
+//     ID.highlightedMaterial.SetFloat("_FadeAmount", 0);
+//     ID.passedMaterial.SetFloat("_FadeAmount", 0);
+// }
+
 
 #endregion
 

@@ -12,11 +12,11 @@ public class ActivatePlaceholders : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        if (!Pool.RingType[index].Testing)
+        if (!Pool.Testing)
         {
             ResetSetups();
         }
-        ChooseSetup(true);
+        ChooseSetup(true,1);
 
 
 
@@ -31,15 +31,15 @@ public class ActivatePlaceholders : MonoBehaviour
         }
     }
 
-    private void ChooseSetup(bool completedSequence)
+    private void ChooseSetup(bool completedSequence, int index)
     {
-        if (!Pool.RingType[index].Testing)
+        if (!Pool.Testing)
         {
         ResetSetups();
         int randomIndex = Random.Range(0, ringSetups.Count);
         ringSetups[randomIndex].SetActive(true);
         }
-        Pool.RingType[index].ringEvent.OnSpawnRings?.Invoke(completedSequence);
+        Pool.RingType[index].ringEvent.OnSpawnRings?.Invoke(completedSequence, index);
 
 
     }

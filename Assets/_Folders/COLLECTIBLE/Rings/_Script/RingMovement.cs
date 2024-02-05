@@ -4,6 +4,8 @@ using System;
 public class RingMovement : MonoBehaviour
 {
     public int doesTriggerInt;
+
+    public int index = -1;
     public float xCordinateTrigger;
     private bool hasNotTriggered;
     public RingID ID;
@@ -15,6 +17,7 @@ public class RingMovement : MonoBehaviour
     private Transform _transform;
 
     [SerializeField] private SpriteRenderer centerSprite;
+    [SerializeField] private SpriteRenderer centerCutout;
     [SerializeField] private ParticleSystem particles;
 
     private bool isFaded = false;
@@ -58,11 +61,13 @@ public class RingMovement : MonoBehaviour
 
             if (isCorrect && _transform.position.x < BoundariesManager.leftViewBoundary)
             {
-                ID.ringEvent.OnCreateNewSequence?.Invoke(false);
-                Debug.Log("TooLong" + order);
+                HandleCorrectRing();
+                ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
+                
 
 
-                isCorrect = false;
+
+                
             }
 
             else if (_transform.position.x < BoundariesManager.leftBoundary)
@@ -77,10 +82,14 @@ public class RingMovement : MonoBehaviour
         {
             if (isCorrect && _transform.position.x > BoundariesManager.rightViewBoundary)
             {
-                ID.ringEvent.OnCreateNewSequence?.Invoke(false);
-                Debug.Log("TooLong");
+                HandleCorrectRing();
 
-                isCorrect = false;
+                ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
+                
+
+
+
+                
             }
 
             else if (_transform.position.x > BoundariesManager.rightBoundary)
@@ -93,6 +102,17 @@ public class RingMovement : MonoBehaviour
         }
 
 
+    }
+
+    private void HandleCorrectRing()
+    {
+        if (isCorrect && index == 0)
+        {
+            isCorrect = false;
+            ID.ringEvent.OnGetBall?.Invoke(transform.position);
+            sprite.material = ID.passedMaterial;
+
+        }
     }
 
     private void DisableColliders()
@@ -142,7 +162,7 @@ public class RingMovement : MonoBehaviour
 
         else
         {
-            ID.ringEvent.OnCreateNewSequence?.Invoke(false);
+            ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
             isCorrect = false;
             Debug.Log("Resseting Rings");
         }
@@ -157,13 +177,16 @@ public class RingMovement : MonoBehaviour
 
     }
 
-    public void NewSetup(bool correctSequence)
+    public void NewSetup(bool correctSequence, int index)
     {
+
         if (correctSequence == false)
         {
+           
             DisableColliders();
             isFaded = true;
-            isCorrect = false;
+            HandleCorrectRing();
+
             anim.SetBool(FadeCenterHash, true);
         }
 
@@ -181,7 +204,9 @@ public class RingMovement : MonoBehaviour
     {
         sprite.material = ID.defaultMaterial;
         centerSprite.color = ID.CenterColor;
+        centerCutout.color = ID.CenterColor;
         particles = ID.ringParticles;
+        index = ID.IDIndex;
 
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
@@ -195,9 +220,10 @@ public class RingMovement : MonoBehaviour
     {
         ID.ringEvent.OnCheckOrder -= SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence -= NewSetup;
+        index = -1;
         if (!isFaded)
         {
-            anim.SetBool(BurstBoolHash, false); 
+            anim.SetBool(BurstBoolHash, false);
         }
         else
         {
@@ -208,7 +234,7 @@ public class RingMovement : MonoBehaviour
 
         if (sprite != null)
         {
-            
+
             coll2D.enabled = true;
         }
         isCorrect = false;

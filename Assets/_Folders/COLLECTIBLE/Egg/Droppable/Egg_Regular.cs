@@ -70,7 +70,7 @@ public class Egg_Regular : MonoBehaviour
         }
         if (collider.gameObject.CompareTag("Barn"))
         {
-
+            ID.Score += 1;
             gameObject.SetActive(false);
 
         }

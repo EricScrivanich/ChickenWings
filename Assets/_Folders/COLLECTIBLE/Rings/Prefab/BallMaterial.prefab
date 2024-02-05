@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 2839368252793041521}
   - component: {fileID: 8872736959828246579}
   - component: {fileID: 5877634076173632196}
-  m_Layer: 17
+  m_Layer: 11
   m_Name: BallMaterial
-  m_TagString: Untagged
+  m_TagString: Plane
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8bc1acd4f7f5f402ca9ecc95553eb0a8, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -108,7 +108,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8bc1acd4f7f5f402ca9ecc95553eb0a8, type: 2}
+  - {fileID: 2100000, guid: 9d17e8c82b76e44deaababb73a97e6ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -129,7 +129,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.3
+  m_Time: 0.24
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -139,13 +139,13 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.44627953
-        inSlope: -0.8074379
-        outSlope: -0.8074379
+        value: 0.42023277
+        inSlope: -0.6170597
+        outSlope: -0.6170597
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.0984556
+        outWeight: 0.13404894
       - serializedVersion: 3
         time: 0.98760724
         value: 0
@@ -161,7 +161,7 @@ TrailRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 0.15294118}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -185,7 +185,7 @@ TrailRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
@@ -212,9 +212,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2647e1ee6f294146babbea17423dc47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: {fileID: 0}
+  uiCutoff: 0.8
+  playerCutoff: 0.2
+  coll2D: {fileID: 5877634076173632196}
   speed: 7
   startPosition: {x: 0, y: 0}
-  targetRing: {fileID: 0}
+  targetPosition: {x: 0, y: 0}
+  targetObject: {fileID: 0}
+  minSpeed: 5
+  maxSpeed: 15
+  slowingRadius: 6
+  arcHeight: 0.05
 --- !u!61 &5877634076173632196
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -244,10 +253,10 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.07083079, y: 0.05811751}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -258,5 +267,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.4249845, y: 1.4261956}
   m_EdgeRadius: 0

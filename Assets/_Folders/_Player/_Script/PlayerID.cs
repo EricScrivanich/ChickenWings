@@ -11,6 +11,20 @@ public class PlayerID : ScriptableObject
     public float StaminaUsed;
     public float MaxStamina = 100;
     [SerializeField] private int startingAmmo;
+    [SerializeField] private int startingScore;
+    private int score;
+    public int Score
+    {
+        get
+        {
+            return score;
+        }
+        set
+        {
+            score = value;
+            globalEvents.OnUpdateScore?.Invoke(score);
+        }
+    }
 
     public int Ammo;
     public float MaxFallSpeed;
@@ -22,6 +36,7 @@ public class PlayerID : ScriptableObject
 
     public void ResetValues()
     {
+        Score = startingScore;
         Ammo = startingAmmo;
         globalEvents.OnUpdateAmmo?.Invoke();
     }

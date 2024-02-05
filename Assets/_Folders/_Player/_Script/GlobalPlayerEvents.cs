@@ -1,15 +1,16 @@
 
 using System;
 
-public struct GlobalPlayerEvents 
+public struct GlobalPlayerEvents
 {
-   public Action<int> LoseLife;
-   public Action OnUpdateAmmo;
-   public Action<int> OnAddAmmo;
-   public Action<float> EggVelocity;
-   public Action Frozen;
+    public Action<int> LoseLife;
+    public Action OnUpdateAmmo;
+    public Action<int> OnAddAmmo;
+    public Action<int> OnUpdateScore;
+    public Action<float> EggVelocity;
+    public Action Frozen;
 
-    public Action OnBucketExplosion;
+    public Action<int> OnBucketExplosion;
     public Action<bool> OnUseStamina;
     public Action OnZeroStamina;
 

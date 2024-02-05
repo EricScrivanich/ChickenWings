@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
 public class StatsDisplay : MonoBehaviour
 {
@@ -148,7 +149,7 @@ public class StatsDisplay : MonoBehaviour
     }
     private void OnEnable()
     {
-        StatsManager.OnScoreChanged += UpdateScore;
+        player.globalEvents.OnUpdateScore += UpdateScore;
         player.globalEvents.OnUpdateAmmo += UpdateAmmo;
         player.globalEvents.OnUseStamina += HandleStaminaBar;
         player.globalEvents.OnZeroStamina += FlashStamimaBG;
@@ -159,7 +160,7 @@ public class StatsDisplay : MonoBehaviour
     }
     private void OnDisable()
     {
-        StatsManager.OnScoreChanged -= UpdateScore;
+        player.globalEvents.OnUpdateScore -= UpdateScore;
         player.globalEvents.OnUpdateAmmo -= UpdateAmmo;
         player.globalEvents.OnUseStamina -= HandleStaminaBar;
         player.globalEvents.OnZeroStamina -= FlashStamimaBG;
@@ -170,7 +171,7 @@ public class StatsDisplay : MonoBehaviour
 
     }
 
-
+  
 }
 
 

@@ -6,6 +6,7 @@ public class PlaneSpawnManager : MonoBehaviour
 {
     [ExposedScriptableObject]
     public PlaneData CropData;
+    public PlayerID player;
 
     [ExposedScriptableObject]
     public PlaneData CargoData;
@@ -77,7 +78,7 @@ public class PlaneSpawnManager : MonoBehaviour
 
     void Start()
     {
-        StatsManager.OnScoreChanged += CheckScore;
+        player.globalEvents.OnUpdateScore += CheckScore;
         // StartCoroutine(SpawnRandomCoroutine());
     }
 
@@ -264,9 +265,11 @@ public class PlaneSpawnManager : MonoBehaviour
     }
     #endregion
 
-    private void OnDestroy()
+    
+    private void OnDisable()
     {
-        StatsManager.OnScoreChanged -= CheckScore;
+        player.globalEvents.OnUpdateScore -= CheckScore;
+
     }
 }
 

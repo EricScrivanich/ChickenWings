@@ -26,7 +26,7 @@ public class ScorePlaneSpawn : MonoBehaviour
     {
         planeAmount = 0;
 
-        StatsManager.OnScoreChanged += CheckScore; // Subscribe to the OnScoreChanged event
+        // StatsManager.OnScoreChanged += CheckScore; // Subscribe to the OnScoreChanged event
     }
 
     void Start()
@@ -59,7 +59,7 @@ public class ScorePlaneSpawn : MonoBehaviour
 
     private void OnDestroy() // When this object is destroyed
     {
-        StatsManager.OnScoreChanged -= CheckScore; // Unsubscribe from the OnScoreChanged event to avoid null reference errors
+        // StatsManager.OnScoreChanged -= CheckScore; // Unsubscribe from the OnScoreChanged event to avoid null reference errors
     }
 
 }

@@ -437,7 +437,7 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    private void BucketExplosion()
+    private void BucketExplosion(int index)
     {
         bucketIsExploded = true;
 

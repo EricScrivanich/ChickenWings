@@ -1,41 +1,95 @@
-
 using UnityEngine;
 
 public class BallMaterialMovement : MonoBehaviour
 {
-    
-    public float speed = 50f;
+    public RingID ID;
+    [SerializeField] private float uiCutoff;
+    [SerializeField] private float playerCutoff;
+    private SpriteRenderer sprite;
+    [SerializeField] private Collider2D coll2D;
+    private TrailRenderer trail;
+
+    public float speed = 200f;
     public Vector2 startPosition;
-    public GameObject targetRing;
+    public Vector2 targetPosition;
+    public GameObject targetObject;
+    [SerializeField] private float minSpeed = 7f;
+    [SerializeField] private float maxSpeed = 50f;
+    [SerializeField] private float slowingRadius = 5f;
+    [SerializeField] private float arcHeight = 5f; // Height of the arc for the parabolic movement
 
-    public void StartMoving()
+    private void Awake()
     {
-        gameObject.SetActive(true);
-    }
-
-    public void SetParameters(GameObject targetObject)
-    {
-        
-        targetRing = targetObject;
+        sprite = GetComponent<SpriteRenderer>();
+        trail = GetComponent<TrailRenderer>();
     }
 
     private void Update()
     {
-        if (targetRing != null)
+        Vector2 targetPos = targetObject != null ? targetObject.transform.position : targetPosition;
+        float distance = Vector2.Distance(transform.position, targetPos);
+        float highlightedAmount = distance < slowingRadius ? Mathf.Lerp(0f, 0.2f, 1 - (distance / slowingRadius)) : 0f;
+
+        // Apply the highlighted amount to the material
+       
+            ID.highlightedMaterial.SetFloat("_HitEffectBlend", highlightedAmount);
+        
+
+        // Calculate dynamic speed based on distance to target
+        float dynamicSpeed = distance < slowingRadius ? Mathf.Lerp(minSpeed, maxSpeed, distance / slowingRadius) : maxSpeed;
+
+        if (targetObject != null)
         {
-            transform.position = Vector2.MoveTowards(transform.position, targetRing.transform.position, speed * Time.deltaTime);
+            // Linear movement towards a moving target (GameObject)
+            MoveTowards(targetPos, dynamicSpeed);
+        }
+        else
+        {
+            // Arc movement towards a fixed position
+            MoveWithArc(targetPos, dynamicSpeed);
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void MoveTowards(Vector2 targetPos, float dynamicSpeed)
     {
-        if (collision.gameObject == targetRing)
+        transform.position = Vector2.MoveTowards(transform.position, targetPos, dynamicSpeed * Time.deltaTime);
+
+        // Deactivate when close to the target
+        if (Vector2.Distance(transform.position, targetPos) < playerCutoff)
         {
-            // Here, change the ring's material or trigger any effect
-            gameObject.SetActive(false); // Deactivate the ball
-            // RingSpawner.Instance.SetSpecialRingEffect();
+            gameObject.SetActive(false);
         }
     }
-  
+
+    private void MoveWithArc(Vector2 targetPos, float dynamicSpeed)
+    {
+        float distanceToTarget = Vector2.Distance(transform.position, targetPos);
+        Vector2 nextPosition = Vector2.MoveTowards(transform.position, targetPos, dynamicSpeed * Time.deltaTime);
+
+        // Calculate vertical offset for the arc
+        float arcRatio = Mathf.Sin(Mathf.PI * (1 - distanceToTarget / Vector2.Distance(startPosition, targetPos)));
+        nextPosition.y += arcHeight * arcRatio;
+
+        transform.position = nextPosition;
+
+        // Deactivate the ball when it's close enough to the target position
+        if (distanceToTarget < uiCutoff)
+        {
+            gameObject.SetActive(false);
+        }
     }
+
+    private void OnEnable()
+    {
+        coll2D.enabled = ID.IDIndex == 0;
+        if (ID != null)
+        {
+            sprite.material = ID.highlightedMaterial;
+            trail.material = ID.highlightedMaterial;
+        }
+    }
+}
+
+
+
 

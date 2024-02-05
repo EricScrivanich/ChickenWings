@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ScoreAdder : MonoBehaviour
 {
-    private StatsManager statsMan;
+    // private StatsManager statsMan;
     
     // Start is called before the first frame update
     void Start()
     {
-        statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
+        // statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
         
     }
 
@@ -25,7 +25,8 @@ public class ScoreAdder : MonoBehaviour
         {
             AudioManager.instance.PlayScoreSound();
             
-            statsMan.AddScore(1); // Use the IncreaseScore method to increase score and invoke the OnScoreChanged event
+            
+            // statsMan.AddScore(1); // Use the IncreaseScore method to increase score and invoke the OnScoreChanged event
         }
     }
 }

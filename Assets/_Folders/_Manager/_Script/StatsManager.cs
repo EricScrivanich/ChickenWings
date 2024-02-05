@@ -6,7 +6,7 @@ using System;
 public class StatsManager : MonoBehaviour
 {
     // Define events for changes in stats
-    public static event Action<int> OnScoreChanged;
+    // public static event Action<int> OnScoreChanged;
     public static event Action<int> OnAmmoChanged;
     public static event Action<int> OnLivesChanged;
 
@@ -20,7 +20,7 @@ public class StatsManager : MonoBehaviour
     
     void Start()
     {
-        OnScoreChanged?.Invoke(score);
+        // OnScoreChanged?.Invoke(score);
         OnAmmoChanged?.Invoke(ammo);
        
         initialLives = lives;
@@ -32,7 +32,7 @@ public class StatsManager : MonoBehaviour
     public void AddScore(int amount)
     {
         score += amount;
-        OnScoreChanged?.Invoke(score); // Notify subscribers
+        // OnScoreChanged?.Invoke(score); // Notify subscribers
     }
 
     public void UseAmmo(int amount)

@@ -8,6 +8,7 @@ public class BucketScript : MonoBehaviour
     private int ResetCounter = 0;
     public PlayerID Player;
     public float speed;
+    private int index;
     private bool ready = false;
     private bool isExploded = false;
     private bool isCorrect = false;
@@ -62,12 +63,17 @@ public class BucketScript : MonoBehaviour
         {
             if (speed > 0 && transform.position.x < BoundariesManager.leftBoundary)
             {
-                ID.ringEvent.OnCreateNewSequence?.Invoke(false);
+                HandleCorrectRing();
+                ID.ringEvent.OnCreateNewSequence?.Invoke(false,index);
 
             }
             else if (speed < 0 && transform.position.x > BoundariesManager.rightBoundary)
             {
-                ID.ringEvent.OnCreateNewSequence?.Invoke(false);
+                HandleCorrectRing();
+                ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
+                
+
+                
             }
         }
 
@@ -80,6 +86,17 @@ public class BucketScript : MonoBehaviour
 
         }
 
+    }
+
+    private void HandleCorrectRing()
+    {
+        if (isCorrect && index == 0)
+        {
+            isCorrect = false;
+            ID.ringEvent.OnGetBall?.Invoke(ringTransform.position);
+            ringSprite.material = ID.passedMaterial;
+
+        }
     }
 
 
@@ -110,15 +127,20 @@ public class BucketScript : MonoBehaviour
         }
 
     }
-    private void NewSetup(bool correctSequence)
+    private void NewSetup(bool correctSequence, int index)
     {
+        
         if (correctSequence == false)
         {
+
+            isCorrect = false;
             ResetBucket();
 
         }
 
     }
+
+
 
     private void ResetBucket()
     {
@@ -216,7 +238,7 @@ public class BucketScript : MonoBehaviour
     public void Explode()
     {
         anim.SetTrigger("ParticleTrigger");
-        Player.globalEvents.OnBucketExplosion?.Invoke();
+        Player.globalEvents.OnBucketExplosion?.Invoke(index);
         isExploded = true;
         // anim.ResetTrigger("ParticleTrigger");
         StartCoroutine(FadeOutParticles(0.35f));
@@ -239,7 +261,7 @@ public class BucketScript : MonoBehaviour
         yield return new WaitForSeconds(time);
         anim.SetBool("RestartBool", true);
         gameObject.SetActive(false);
-        ID.ringEvent.OnCreateNewSequence?.Invoke(true);
+        ID.ringEvent.OnCreateNewSequence?.Invoke(true, index);
     }
 
 
@@ -282,6 +304,7 @@ public class BucketScript : MonoBehaviour
     private void OnEnable()
     {
         isCorrect = false;
+        index = ID.IDIndex;
         anim.SetBool("RestartBool", true);
         EnableColliders();
         ID.ringEvent.OnCheckOrder += SetCorrectRing;

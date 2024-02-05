@@ -2,23 +2,36 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[CreateAssetMenu]
 public class RingID : ScriptableObject
 
 {
     [SerializeField] private RingPool Pool;
     public Color CenterColor;
     public ParticleSystem ringParticles;
-    [SerializeField] private int currentTriggerEdited;
-    private int lastCurrentTrigger;
-    [SerializeField] private bool showAllPlaceholders;
-    private bool lastShowAllPlaceholders;
+    
     public int IDIndex;
-
+ 
     private List<GameObject> activeRings;
 
-    public bool Testing;
-    
-    public int CorrectRing;
+ 
+
+    private int correctRing;
+    public int CorrectRing
+    {
+        get
+        {
+            return correctRing;
+        }
+        set{
+            correctRing = value;
+
+        if (correctRing > 1)
+            {
+                ringEvent.OnPassedCorrectRing?.Invoke();
+            }
+        }
+    }
     public Material defaultMaterial;
     public Material highlightedMaterial;
     public Material passedMaterial;
@@ -30,10 +43,10 @@ public class RingID : ScriptableObject
 
   
 
-    private void OnEnable() {
-        activeRings = new List<GameObject>();
+    // private void OnEnable() {
+    //     activeRings = new List<GameObject>();
         
-    }
+    // }
     public void GetBucket(Transform setTransform, int bucketOrder, float setSpeed)
     {
         BucketScript bucketScript = Pool.GetBucket(this);
@@ -70,6 +83,25 @@ public class RingID : ScriptableObject
         ringScript.gameObject.SetActive(true);
         activeRings.Add(ringScript.gameObject);
 
+    }
+
+    public void GetBall(Vector2 startPosition, GameObject obj = null, Vector2? targetPos = null)
+    {
+        BallMaterialMovement ballScript = Pool.GetBall(this);
+        ballScript.transform.position = startPosition;
+
+        if (targetPos.HasValue)
+        {
+            ballScript.targetPosition = targetPos.Value;
+        }
+        else
+        {
+            Debug.Log("Grabbiung");
+            ballScript.targetObject = obj;
+            Debug.Log("Got");
+
+        }
+        ballScript.gameObject.SetActive(true);
     }
 
     public void DisableRings()
