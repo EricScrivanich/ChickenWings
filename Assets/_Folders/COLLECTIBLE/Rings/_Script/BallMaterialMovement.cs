@@ -88,6 +88,10 @@ public class BallMaterialMovement : MonoBehaviour
             trail.material = ID.highlightedMaterial;
         }
     }
+    private void OnDisable()
+    {
+        ID.highlightedMaterial.SetFloat("_HitEffectBlend", 0);
+    }
 }
 
 
