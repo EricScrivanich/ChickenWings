@@ -6,7 +6,7 @@ public class PlayerBounceState : PlayerBaseState
 {
     private bool bounce = false;
     private float bounceTime;
-    private float bounceDuration = .15f;
+    private float bounceDuration = .25f;
     public override void EnterState(PlayerStateManager player)
     {
         bounceTime = 0;
@@ -19,7 +19,7 @@ public class PlayerBounceState : PlayerBaseState
 
     }
 
-    public override void FixedUpdateState(PlayerStateManager player)
+    public override void FixedUpdateState(PlayerStateManager player) 
     {
 
     }

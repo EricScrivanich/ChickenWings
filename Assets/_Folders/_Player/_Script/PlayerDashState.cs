@@ -54,6 +54,7 @@ public class PlayerDashState : PlayerBaseState
             player.disableButtons = false;
             player.rb.velocity = new Vector2(2, 0);
             player.maxFallSpeed = player.ID.MaxFallSpeed;
+            
             player.CheckIfIsTryingToParachute();
         }
 
