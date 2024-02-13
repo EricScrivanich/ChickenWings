@@ -27,6 +27,11 @@ public class PlayerSlashState : PlayerBaseState
 
 
     }
+    public override void ExitState(PlayerStateManager player)
+
+    {
+
+    }
 
     public override void UpdateState(PlayerStateManager player)
     {

@@ -9,9 +9,18 @@ public class PlayerJumpState : PlayerBaseState
      
     public override void EnterState(PlayerStateManager player)
     {
+        player.anim.SetTrigger("JumpTrigger");
         player.rb.velocity = new Vector2(0, jumpForce);
         AudioManager.instance.PlayCluck();
-        player.anim.SetTrigger("JumpTrigger");
+        
+        player.anim.SetBool("FlipRightBool", false);
+        player.anim.SetBool("FlipLeftBool", false);
+
+    }
+    public override void ExitState(PlayerStateManager player)
+
+    {
+
     }
 
     public override void FixedUpdateState(PlayerStateManager player)

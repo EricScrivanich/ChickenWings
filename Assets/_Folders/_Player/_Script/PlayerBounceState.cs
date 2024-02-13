@@ -6,7 +6,7 @@ public class PlayerBounceState : PlayerBaseState
 {
     private bool bounce = false;
     private float bounceTime;
-    private float bounceDuration = .25f;
+    private float bounceDuration = .4f;
     public override void EnterState(PlayerStateManager player)
     {
         bounceTime = 0;
@@ -18,8 +18,14 @@ public class PlayerBounceState : PlayerBaseState
 
 
     }
+    public override void ExitState(PlayerStateManager player)
 
-    public override void FixedUpdateState(PlayerStateManager player) 
+    {
+        Debug.Log("BOujce");
+
+    }
+
+    public override void FixedUpdateState(PlayerStateManager player)
     {
 
     }

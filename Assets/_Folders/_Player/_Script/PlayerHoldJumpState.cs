@@ -18,6 +18,11 @@ public class PlayerHoldJumpState : PlayerBaseState
 
 
     }
+    public override void ExitState(PlayerStateManager player)
+
+    {
+
+    }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {

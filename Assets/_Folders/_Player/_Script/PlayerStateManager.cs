@@ -169,6 +169,7 @@ public class PlayerStateManager : MonoBehaviour
     }
     public void SwitchState(PlayerBaseState newState)
     {
+        currentState.ExitState(this);
         currentState = newState;
         newState.EnterState(this);
         // previousState = currentState;

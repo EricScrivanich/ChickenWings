@@ -22,5 +22,6 @@ public class TimeManager : MonoBehaviour
     private void Awake() {
         Debug.unityLogger.logEnabled = DebogLogEnabled;
         Time.timeScale = slowdownFactor;
+        // Time.timeScale = slowdownFactor;
     }
 }

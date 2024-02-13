@@ -17,6 +17,7 @@ public class PlayerSlash : MonoBehaviour
     {
         canSlash = true;
     }
+    
     void Start()
     {
         anim = GetComponent<Animator>(); 

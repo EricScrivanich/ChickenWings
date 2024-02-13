@@ -9,11 +9,16 @@ public class PlayerFlipLeftState : PlayerBaseState
     private float flipForceX = -6.9f;
     private float flipForceY = 9.5f;
     private float rotationSpeedVar = 370;
+    private float rotationDelay = .1f;
+    private float rotationTime = 0;
     private float flipThreshold;
 
     public override void EnterState(PlayerStateManager player)
     {
+        rotationTime = 0;
         totalRotation = 0;
+        player.anim.SetTrigger("FlipTrigger");
+
         currentRotation = player.transform.rotation.eulerAngles.z;
         player.rb.velocity = new Vector2(flipForceX, flipForceY);
         AudioManager.instance.PlayCluck();
@@ -21,6 +26,11 @@ public class PlayerFlipLeftState : PlayerBaseState
         
         
        
+    }
+    public override void ExitState(PlayerStateManager player)
+
+    {
+
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
@@ -35,9 +45,18 @@ public class PlayerFlipLeftState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
-        currentRotation += rotationSpeedVar * Time.deltaTime;
-        totalRotation += rotationSpeedVar * Time.deltaTime;
-        player.transform.rotation = Quaternion.Euler(0, 0, currentRotation);
+        if (rotationTime < rotationDelay)
+        {
+            rotationTime += Time.deltaTime;
+        }
+        else{
+            currentRotation += rotationSpeedVar * Time.deltaTime;
+            totalRotation += rotationSpeedVar * Time.deltaTime;
+            player.transform.rotation = Quaternion.Euler(0, 0, currentRotation);
+
+        }
+       
+        
 
         
        
@@ -49,6 +68,8 @@ public class PlayerFlipLeftState : PlayerBaseState
       
         if (totalRotation > 370)
         {
+           
+
             player.SwitchState(player.IdleState);
         }
     }

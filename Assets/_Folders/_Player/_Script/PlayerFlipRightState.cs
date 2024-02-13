@@ -14,6 +14,7 @@ public class PlayerFlipRightState : PlayerBaseState
     
     public override void EnterState(PlayerStateManager player)
     {
+        player.anim.SetTrigger("FlipTrigger");
         totalRotation = 0;
         
         currentRotation = player.transform.rotation.eulerAngles.z;
@@ -22,6 +23,11 @@ public class PlayerFlipRightState : PlayerBaseState
         
       
        
+    }
+    public override void ExitState(PlayerStateManager player)
+
+    {
+
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
@@ -48,6 +54,8 @@ public class PlayerFlipRightState : PlayerBaseState
        
          if (totalRotation > 420)
         {
+            
+
             player.SwitchState(player.IdleState);
         }
         

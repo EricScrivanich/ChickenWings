@@ -26,6 +26,11 @@ public class PlayerParachuteState : PlayerBaseState
 
         startOscillation = false; // Reset the flag on state entry
     }
+    public override void ExitState(PlayerStateManager player)
+
+    {
+
+    }
 
     public override void RotateState(PlayerStateManager player)
     {
