@@ -21,7 +21,9 @@ public class PlayerParachuteState : PlayerBaseState
 
        
         player.disableButtons = true;
-        player.anim.SetBool("ParachuteBool", true);
+        // player.anim.SetBool("ParachuteBool", true);
+        player.anim.SetTrigger("ParachuteTrigger");
+
         player.maxFallSpeed = -1;
 
         startOscillation = false; // Reset the flag on state entry
@@ -29,6 +31,12 @@ public class PlayerParachuteState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
 
     {
+        player.isParachuting = false;
+        // player.anim.SetBool("ParachuteBool", false);
+        player.anim.SetTrigger("IdleTrigger");
+        player.StartFillStaminaCoroutine();
+        player.maxFallSpeed = player.ID.MaxFallSpeed;
+        player.disableButtons = false;
 
     }
 

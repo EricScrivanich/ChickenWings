@@ -7,6 +7,7 @@ public class PlayerDropState : PlayerBaseState
     private float dropPower = -15f;
     public override void EnterState(PlayerStateManager player)
     {
+        player.transform.rotation = Quaternion.Euler(0, 0, 0);
         player.ID.events.FloorCollsion.Invoke(false); 
         AudioManager.instance.PlayDownJumpSound();
         player.maxFallSpeed = -50;
@@ -46,7 +47,7 @@ public class PlayerDropState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
-       player.transform.rotation = Quaternion.Euler(0, 0, 0);
+       
     }
 
     public override void UpdateState(PlayerStateManager player)

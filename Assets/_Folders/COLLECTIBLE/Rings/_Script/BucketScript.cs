@@ -36,7 +36,9 @@ public class BucketScript : MonoBehaviour
     [SerializeField] private GameObject RingRim;
     private Transform ringTransform;
     private Vector2 ringTransformOriginal;
-    private SpriteRenderer ringSprite;
+    [SerializeField] private SpriteRenderer ringSpriteFront;
+    
+    [SerializeField] private SpriteRenderer ringSpriteBack;
     private Animator anim;
     private float slowDownDuration;
     // Start is called before the first frame update
@@ -44,7 +46,6 @@ public class BucketScript : MonoBehaviour
     void Awake()
     {
         anim = GetComponent<Animator>();
-        ringSprite = RingRim.GetComponent<SpriteRenderer>();
         ringTransform = RingRim.GetComponent<Transform>();
         colliders = GetComponents<Collider2D>();
         coloredParticleSprite = ColoredParticles.GetComponent<SpriteRenderer>();
@@ -94,7 +95,8 @@ public class BucketScript : MonoBehaviour
         {
             isCorrect = false;
             ID.ringEvent.OnGetBall?.Invoke(ringTransform.position);
-            ringSprite.material = ID.passedMaterial;
+            ringSpriteFront.material = ID.passedMaterial;
+            ringSpriteBack.material = ID.passedMaterial;
 
         }
     }
@@ -121,7 +123,8 @@ public class BucketScript : MonoBehaviour
     {
         if (order == ID.CorrectRing)
         {
-            ringSprite.material = ID.highlightedMaterial;
+            ringSpriteFront.material = ID.highlightedMaterial;
+            ringSpriteBack.material = ID.highlightedMaterial;
             isCorrect = true;
 
         }
@@ -318,11 +321,11 @@ public class BucketScript : MonoBehaviour
         coloredParticleSprite.color = ID.defaultMaterial.color;
         speedVar = speed;
 
-        if (ringSprite != null)
-        {
-            ringSprite.material = ID.defaultMaterial;
+     
+        ringSpriteFront.material = ID.defaultMaterial;
+        ringSpriteBack.material = ID.defaultMaterial;
 
-        }
+        
 
         foreach (SpriteRenderer strip in coloredObjects)
         {

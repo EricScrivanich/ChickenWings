@@ -97,7 +97,7 @@ public class RingSpawner : MonoBehaviour
         placeholderReferences.Clear();
         ID.placeholderCount = 0;
 
-        PopulateRecursive(parentTransform);
+        PopulateRecursive(parentTransform); 
 
 
 

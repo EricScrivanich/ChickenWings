@@ -13,7 +13,7 @@ public class BallMaterialMovement : MonoBehaviour
     public Vector2 startPosition;
     public Vector2 targetPosition;
     public GameObject targetObject;
-    [SerializeField] private float minSpeed = 7f;
+    [SerializeField] private float minSpeed = 7f; 
     [SerializeField] private float maxSpeed = 50f;
     [SerializeField] private float slowingRadius = 5f;
     [SerializeField] private float arcHeight = 5f; // Height of the arc for the parabolic movement
@@ -81,16 +81,21 @@ public class BallMaterialMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        coll2D.enabled = ID.IDIndex == 0;
+        
         if (ID != null)
         {
+            coll2D.enabled = ID.IDIndex == 0;
             sprite.material = ID.highlightedMaterial;
             trail.material = ID.highlightedMaterial;
         }
     }
     private void OnDisable()
     {
-        ID.highlightedMaterial.SetFloat("_HitEffectBlend", 0);
+        if (ID != null)
+        {
+            ID.highlightedMaterial.SetFloat("_HitEffectBlend", 0);
+        }
+       
     }
 }
 

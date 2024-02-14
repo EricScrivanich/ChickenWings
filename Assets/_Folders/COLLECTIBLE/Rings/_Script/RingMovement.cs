@@ -15,6 +15,7 @@ public class RingMovement : MonoBehaviour
     [SerializeField] private Collider2D coll2D;
 
     private Transform _transform;
+    [SerializeField] private SpriteRenderer backRing;
 
     [SerializeField] private SpriteRenderer centerSprite;
     [SerializeField] private SpriteRenderer centerCutout;
@@ -106,11 +107,18 @@ public class RingMovement : MonoBehaviour
 
     private void HandleCorrectRing()
     {
-        if (isCorrect && index == 0)
+        if (isCorrect)
         {
             isCorrect = false;
-            ID.ringEvent.OnGetBall?.Invoke(transform.position);
-            sprite.material = ID.passedMaterial;
+
+            if (index == 0)
+            {
+                ID.ringEvent.OnGetBall?.Invoke(transform.position);
+                sprite.material = ID.passedMaterial;
+            }
+
+
+          
 
         }
     }
@@ -137,6 +145,8 @@ public class RingMovement : MonoBehaviour
         if (order == ID.CorrectRing)
         {
             sprite.material = ID.highlightedMaterial;
+            backRing.material = ID.highlightedMaterial;
+
             isCorrect = true;
         }
 
@@ -155,6 +165,7 @@ public class RingMovement : MonoBehaviour
             AudioManager.instance.PlayRingPassSound();
             anim.SetBool(BurstBoolHash, true);
             sprite.material = ID.passedMaterial;
+            backRing.material = ID.passedMaterial;
             Debug.Log(isCorrect);
             ID.ringEvent.OnCheckOrder?.Invoke();
 
@@ -203,6 +214,7 @@ public class RingMovement : MonoBehaviour
     private void OnEnable()
     {
         sprite.material = ID.defaultMaterial;
+        backRing.material = ID.defaultMaterial;
         centerSprite.color = ID.CenterColor;
         centerCutout.color = ID.CenterColor;
         particles = ID.ringParticles;

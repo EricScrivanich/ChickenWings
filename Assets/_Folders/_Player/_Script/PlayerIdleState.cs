@@ -7,7 +7,7 @@ public class PlayerIdleState :PlayerBaseState
    
     public override void EnterState(PlayerStateManager player)
     {
-        player.anim.SetTrigger("IdleTrigger");
+        // player.anim.SetTrigger("IdleTrigger");
         player.rb.gravityScale = player.originalGravityScale;
        
        

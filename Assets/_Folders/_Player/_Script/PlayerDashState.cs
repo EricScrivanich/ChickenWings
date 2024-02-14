@@ -18,6 +18,7 @@ public class PlayerDashState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.disableButtons = true;
+        player.transform.rotation = Quaternion.Euler(0, 0, 0);
         player.anim.SetTrigger("DashTrigger");
         AudioManager.instance.PlayDashSound();
         dashingTime = 0;
@@ -47,7 +48,6 @@ public class PlayerDashState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
-        player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 900);
 
     }
 

@@ -115,8 +115,8 @@ public class PlayerStateManager : MonoBehaviour
 
         if (ID.StaminaUsed >= ID.MaxStamina)
         {
-            ResetHoldJump();
-            ResetParachute();
+            // ResetHoldJump();
+            // ResetParachute();
 
             ID.globalEvents.OnZeroStamina?.Invoke();
             SwitchState(IdleState);
@@ -126,7 +126,7 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    private void StartFillStaminaCoroutine()
+    public void StartFillStaminaCoroutine()
     {
         if (fillStaminaCoroutine != null)
         {
@@ -163,7 +163,7 @@ public class PlayerStateManager : MonoBehaviour
         currentState.RotateState(this);
         if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
         {
-            ResetHoldJump();
+            // ResetHoldJump();
             SwitchState(FrozenState);
         }
     }
@@ -228,7 +228,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons && !ID.IsTwoTouchPoints)
         {
-            ResetHoldJump();
+            // ResetHoldJump();
             SwitchState(JumpState);
         }
 
@@ -239,7 +239,7 @@ public class PlayerStateManager : MonoBehaviour
 
         if (attacking && !disableButtons)
         {
-            ResetHoldJump();
+            // ResetHoldJump();
             isAttacking = true;
             SwitchState(SlashState);
         }
@@ -266,7 +266,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons)
         {
-            ResetHoldJump();
+            // ResetHoldJump();
             SwitchState(FlipRightState);
         }
 
@@ -276,7 +276,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons)
         {
-            ResetHoldJump();
+            // ResetHoldJump();
             SwitchState(FlipLeftState);
         }
 
@@ -286,7 +286,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (canDash && !disableButtons)
         {
-            ResetHoldJump();
+            // ResetHoldJump();
             SwitchState(DashState);
             StartCoroutine(DashCooldown());
 
@@ -298,7 +298,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons && canDrop)
         {
-            ResetHoldJump();
+            // ResetHoldJump();
             SwitchState(DropState);
             StartCoroutine(DropCooldown());
         }
@@ -329,7 +329,7 @@ public class PlayerStateManager : MonoBehaviour
                 {
                     SwitchState(IdleState);
                 }
-                ResetHoldJump();
+                // ResetHoldJump();
             }
         }
     }
@@ -357,7 +357,7 @@ public class PlayerStateManager : MonoBehaviour
         }
         else if (!isPressing && isParachuting)
         {
-            ResetParachute();
+            // ResetParachute();
             SwitchState(IdleState);
         }
     }
@@ -377,33 +377,33 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-    private void ResetHoldJump()
-    {
-        if (jumpHeld)
-        {
-            jumpHeld = false;
-            anim.SetBool("JumpHeld", false);
-            maxFallSpeed = ID.MaxFallSpeed;
-            StartFillStaminaCoroutine();
-        }
+    // private void ResetHoldJump()
+    // {
+    //     if (jumpHeld)
+    //     {
+    //         jumpHeld = false;
+    //         anim.SetBool("JumpHeld", false);
+    //         maxFallSpeed = ID.MaxFallSpeed;
+    //         StartFillStaminaCoroutine();
+    //     }
 
 
-    }
+    // }
 
-    private void ResetParachute()
-    {
-        if (isParachuting)
-        {
-            isParachuting = false;
-            anim.SetBool("ParachuteBool", false);
-            StartFillStaminaCoroutine();
-            maxFallSpeed = ID.MaxFallSpeed;
-            disableButtons = false;
+    // private void ResetParachute()
+    // {
+    //     if (isParachuting)
+    //     {
+    //         isParachuting = false;
+    //         anim.SetBool("ParachuteBool", false);
+    //         StartFillStaminaCoroutine();
+    //         maxFallSpeed = ID.MaxFallSpeed;
+    //         disableButtons = false;
 
 
-        }
+    //     }
 
-    }
+    // }
 
 
 
@@ -432,8 +432,8 @@ public class PlayerStateManager : MonoBehaviour
     private void BucketCompletion(BucketScript bucketScript)
     {
         bucket = bucketScript;
-        ResetHoldJump();
-        ResetParachute();
+        // ResetHoldJump();
+        // ResetParachute();
         SwitchState(BucketState);
 
     }
