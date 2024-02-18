@@ -1,6 +1,6 @@
 
 using UnityEngine;
-using System.Collections.Generic;
+
 
 [CreateAssetMenu]
 public class RingID : ScriptableObject
@@ -8,30 +8,10 @@ public class RingID : ScriptableObject
 {
     [SerializeField] private RingPool Pool;
     public Color CenterColor;
-    public ParticleSystem ringParticles;
-    
+    public ParticleSystem ringParticles; 
     public int IDIndex;
- 
-    private List<GameObject> activeRings;
-
- 
-
     private int correctRing;
-    public int CorrectRing
-    {
-        get
-        {
-            return correctRing;
-        }
-        set{
-            correctRing = value;
-
-        if (correctRing > 1)
-            {
-                ringEvent.OnPassedCorrectRing?.Invoke();
-            }
-        }
-    }
+    
     public Material defaultMaterial;
     public Material highlightedMaterial;
     public Material passedMaterial;
@@ -41,12 +21,22 @@ public class RingID : ScriptableObject
 
     public int placeholderCount;
 
-  
+    public int CorrectRing
+    {
+        get
+        {
+            return correctRing;
+        }
+        set
+        {
+            correctRing = value;
 
-    // private void OnEnable() {
-    //     activeRings = new List<GameObject>();
-        
-    // }
+            if (correctRing > 1)
+            {
+                ringEvent.OnPassedCorrectRing?.Invoke();
+            }
+        }
+    }
     public void GetBucket(Transform setTransform, int bucketOrder, float setSpeed)
     {
         BucketScript bucketScript = Pool.GetBucket(this);
@@ -81,7 +71,7 @@ public class RingID : ScriptableObject
         // ringScript.gameObject.SetActive(true);
 
         ringScript.gameObject.SetActive(true);
-        activeRings.Add(ringScript.gameObject);
+       
 
     }
 
@@ -104,19 +94,5 @@ public class RingID : ScriptableObject
         ballScript.gameObject.SetActive(true);
     }
 
-    public void DisableRings()
-    {
-        foreach(GameObject ring in activeRings)
-        {
-            if (ring != null)
-            {
-                ring.SetActive(false);
-            }
-            else
-            {
-                return;
-            }
-        }
-        activeRings.Clear();
-    }
+    
 }

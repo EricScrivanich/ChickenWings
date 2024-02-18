@@ -6,7 +6,19 @@ using UnityEngine;
 public class PlayerID : ScriptableObject
 {
 
+    public float slowMaxFallSpeed;
+    public float slowJumpForce;
+    public float slowFlipLeftForceX;
+    public float slowFlipLeftForceY;
+    public float slowFlipRightForceX;
+    public float slowFlipRightForceY;
     public int Lives;
+    public bool IsSlowedDown;
+    public Material PlayerMaterial;
+    public float rotationFactor;
+    public float rotationSpeed;
+    public float parachuteRotationSpeed;
+    public float decelerationFactor;
     public bool IsTwoTouchPoints;
     public float StaminaUsed;
     public float MaxStamina = 100;
@@ -39,6 +51,12 @@ public class PlayerID : ScriptableObject
         Score = startingScore;
         Ammo = startingAmmo;
         globalEvents.OnUpdateAmmo?.Invoke();
+    }
+
+    public void SlowedGame()
+    {
+
+
     }
 
 

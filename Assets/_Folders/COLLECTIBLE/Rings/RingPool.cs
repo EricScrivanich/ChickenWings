@@ -15,9 +15,11 @@ public class RingPool : ScriptableObject
     public GameObject ringPrefab;
     public GameObject bucketPrefab;
     public GameObject ballPrefab;
-
+ 
     private int ringAmount = 25;
     private int bucketAmount = 4;
+
+    public bool isTutorial;
 
 
 

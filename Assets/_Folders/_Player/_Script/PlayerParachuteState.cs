@@ -12,82 +12,111 @@ public class PlayerParachuteState : PlayerBaseState
     private float time;
     private float rotationSpeed = 360;
 
+    private bool isPositive;
+    private bool startRotation = false;
+
+    private float rotationTarget;
+
+    public float rotationFactor = 1f;
+    public float smoothFactor = 10f;
+    public float decelerationFactor = 5f; // This will be used to slow down the player
+    public float minRotation = -45f;
+    public float maxRotation = 45f;
+
     public override void EnterState(PlayerStateManager player)
     {
         time = 0;
-        player.rb.velocity = new Vector2(player.rb.velocity.x / 3, player.rb.velocity.y);
+        startRotation = false;
+
+        // Adjust rotationTarget based on the sign of the x velocity
+        rotationTarget = Mathf.Sign(player.rb.velocity.x) * Mathf.Abs(player.rb.velocity.x * player.ID.rotationFactor);
+        Debug.Log("Target: " + rotationTarget);
+
         initialRotation = player.transform.rotation.z;
-        player.transform.rotation = Quaternion.Euler(0, 0, 0);
 
-       
         player.disableButtons = true;
-        // player.anim.SetBool("ParachuteBool", true);
         player.anim.SetTrigger("ParachuteTrigger");
-
         player.maxFallSpeed = -1;
-
         startOscillation = false; // Reset the flag on state entry
     }
-    public override void ExitState(PlayerStateManager player)
 
+    public override void ExitState(PlayerStateManager player)
     {
+        Debug.Log("Finished parachute");
         player.isParachuting = false;
-        // player.anim.SetBool("ParachuteBool", false);
+        player.ImageTransform.localRotation = Quaternion.Euler(0, 0, 0);
         player.anim.SetTrigger("IdleTrigger");
         player.StartFillStaminaCoroutine();
         player.maxFallSpeed = player.ID.MaxFallSpeed;
         player.disableButtons = false;
-
     }
 
-    public override void RotateState(PlayerStateManager player)
-    {
-
-
-        // // Rotate the player around the pivot by the angle difference
-        // player.transform.RotateAround(player.ParachuteObject.transform.position, Vector3.forward, -initialRotation * rotationSpeed * Time.fixedDeltaTime);
-        // if (Mathf.Abs(initialRotation + player.transform.rotation.z) < Mathf.Abs(initialRotation / 2))
-        // {
-
-
-        //     if (rotationSpeed < 0)
-        //     {
-
-        //         initialRotation = player.transform.rotation.z;
-        //         Debug.Log("second" + initialRotation);
-        //         rotationSpeed = 360;
-
-        //     }
-        // }
-    }
-
-
-
-    // Helper function to normalize angles to [-180, 180] range
-
-
-
+  
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-        // Implement any physics-related updates here
+        float decelerationDirection = player.rb.velocity.x > 0 ? -1 : 1;
+        player.rb.velocity = new Vector2(player.rb.velocity.x + decelerationDirection * player.ID.decelerationFactor * Time.deltaTime, player.rb.velocity.y);
+
+        // Set velocity to 0 if it's near zero to prevent jitter
+        if (Mathf.Abs(player.rb.velocity.x) < 0.01f)
+        {
+            player.rb.velocity = new Vector2(0, player.rb.velocity.y);
+        }
     }
+    public override void RotateState(PlayerStateManager player)
+    {
+        if (!startRotation)
+        {
+            // Calculate the current angle in degrees
+            float currentAngle = player.transform.eulerAngles.z;
+
+            // Ensure the angle is within the -180 to 180 range for consistency
+            if (currentAngle > 180) currentAngle -= 360;
+
+            // Adjust the current angle based on the x velocity and the completion of a flip
+            if (player.rb.velocity.x > 0 && currentAngle < 0)
+            {
+                // Adjust for clockwise movement if flip hasn't completed
+                currentAngle += 360;
+            }
+            else if (player.rb.velocity.x < 0 && currentAngle > 0)
+            {
+                // Adjust for counter-clockwise movement if flip hasn't completed
+                currentAngle -= 360;
+            }
+
+            // Calculate the step based on constant speed and time delta
+            float step = rotationSpeed * Time.deltaTime;
+
+            // Calculate the new angle by moving towards the target by the step amount
+            float newAngle = Mathf.MoveTowards(currentAngle, rotationTarget, step);
+
+            // Apply the new rotation, ensuring the angle is wrapped correctly
+            player.transform.rotation = Quaternion.Euler(0, 0, newAngle % 360);
+
+            // Check if the rotation has reached the target (within a small threshold to account for floating-point inaccuracies)
+            if (Mathf.Abs(newAngle - rotationTarget) < 0.1f || Mathf.Abs((newAngle % 360) - rotationTarget) < 0.1f)
+            {
+                startRotation = true;
+            }
+        }
+        else
+        {
+            // Continue with your existing logic for the ImageTransform rotation
+            player.ImageTransform.localRotation = Quaternion.Lerp(player.ImageTransform.localRotation, Quaternion.Euler(0, 0, -rotationTarget), Time.deltaTime * player.ID.parachuteRotationSpeed);
+        }
+    }
+
 
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
     {
-        // Handle collision events here
+        // Handle collision events here, if needed
     }
 
     public override void UpdateState(PlayerStateManager player)
     {
         player.UseStamina(65);
-        // Implement any frame-based updates here
-
-        // Example: Check for state transition conditions
-        // if (conditionToTransition)
-        // {
-        //     player.SwitchState(player.SomeOtherState);
-        // }
     }
 }
 

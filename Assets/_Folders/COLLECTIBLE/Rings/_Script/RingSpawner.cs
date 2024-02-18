@@ -49,6 +49,10 @@ public class RingSpawner : MonoBehaviour
         {
             PlaceholderIndex.Add(new List<GameObject>());
         }
+
+        Pool.SpawnBallPool();
+        Pool.SpawnBucketPool();
+        Pool.SpawnRingPool();
     }
 
     private void Start()
@@ -58,9 +62,7 @@ public class RingSpawner : MonoBehaviour
 
 
 
-        Pool.SpawnBallPool();
-        Pool.SpawnBucketPool();
-        Pool.SpawnRingPool();
+        
         SpawnRings(.5f);
 
     }
@@ -153,7 +155,7 @@ public class RingSpawner : MonoBehaviour
     {
 
         // RingMovement ring = GetRingFromPool();
-        if (placeholderScript.order != ID.placeholderCount)
+        if (placeholderScript.order != ID.placeholderCount || Pool.isTutorial)
         {
 
             ID.GetRing(placeholderScript.transform, placeholderScript.order, placeholderScript.speed, placeholderScript.doesTriggerInt, placeholderScript.xCordinateTrigger);

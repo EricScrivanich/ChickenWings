@@ -13,12 +13,18 @@ MonoBehaviour:
   m_Name: StatePlayer
   m_EditorClassIdentifier: 
   Lives: 3
+  PlayerMaterial: {fileID: 2100000, guid: 30da6d11a7795474d9c7228bfbf84a37, type: 2}
+  rotationFactor: 8
+  rotationSpeed: 10
+  parachuteRotationSpeed: 1.5
+  decelerationFactor: 2.5
   IsTwoTouchPoints: 0
   StaminaUsed: 0
-  MaxStamina: 100
+  MaxStamina: 10000
   startingAmmo: 10
-  Ammo: 10
+  startingScore: 0
+  Ammo: 8
   MaxFallSpeed: -10.1
-  AddEggVelocity: 0.7407407
+  AddEggVelocity: 0
   parachuteXOffset: 0.32
   parachuteYOffset: 0.79

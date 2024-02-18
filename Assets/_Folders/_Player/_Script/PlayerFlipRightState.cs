@@ -6,7 +6,6 @@ public class PlayerFlipRightState : PlayerBaseState
 {
      private float currentRotation = 0;
     private float totalRotation;
-    private float jumpForce = 11.3f;
     private float flipForceX = 6.5f;
     private float flipForceY = 10f; 
     private float rotationSpeedVar = -400;
@@ -18,7 +17,7 @@ public class PlayerFlipRightState : PlayerBaseState
         totalRotation = 0;
         
         currentRotation = player.transform.rotation.eulerAngles.z;
-        player.rb.velocity = new Vector2(flipForceX, flipForceY);
+        player.rb.velocity = new Vector2(player.flipRightForceX, player.flipRightForceY);
         AudioManager.instance.PlayCluck();
         
       
@@ -39,7 +38,7 @@ public class PlayerFlipRightState : PlayerBaseState
     {
       
     }
-
+ 
     public override void RotateState(PlayerStateManager player)
     {
         currentRotation += rotationSpeedVar * Time.deltaTime;

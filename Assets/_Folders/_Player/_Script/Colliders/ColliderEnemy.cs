@@ -10,24 +10,26 @@ public class ColliderEnemy : MonoBehaviour
     private int lives;
     [SerializeField] private GameObject featherParticles;
     [SerializeField] private GameObject smokeParticles;
-    private SpriteRenderer spriteRenderer;
+    // private SpriteRenderer spriteRenderer;
     private bool isFlashing;
     private float flashDuration;
     [SerializeField] private int numberOfFlashes = 5; // Number of times to flash
     [SerializeField] private float totalFlashTime = 1f;
-    
-    private void Awake() 
+
+
+
+    private void Awake()
     {
-        
+
     }
     void Start()
     {
         lives = ID.Lives;
-        spriteRenderer = GetComponentInParent<SpriteRenderer>();
-       
-       
-     
-       
+        // spriteRenderer = GetComponentInParent<SpriteRenderer>();
+
+
+
+
         // Get the SpriteRenderer component
         flashDuration = totalFlashTime / (numberOfFlashes * 2);
     }
@@ -38,24 +40,24 @@ public class ColliderEnemy : MonoBehaviour
         {
             lives = 0;
             Kill();
-            DeadEvent.TriggerEvent(); 
+            DeadEvent.TriggerEvent();
         }
     }
 
-     private void OnTriggerEnter2D(Collider2D collider)
+    private void OnTriggerEnter2D(Collider2D collider)
     {
-    
-         if (collider.CompareTag("Plane") && !isFlashing) // && !isFlashing 
+
+        if (collider.CompareTag("Plane") && !isFlashing) // && !isFlashing 
         {
             lives -= 1;
             ID.globalEvents.LoseLife?.Invoke(lives);
             if (lives <= 0)
             {
                 Kill();
-                DeadEvent.TriggerEvent(); 
+                DeadEvent.TriggerEvent();
                 return;
             }
-            
+
             AudioManager.instance.PlayDamageSound();
             Instantiate(featherParticles, transform.position, Quaternion.identity);
             StartCoroutine(Flash()); // Start the flashing coroutine
@@ -64,7 +66,7 @@ public class ColliderEnemy : MonoBehaviour
         if (collider.CompareTag("Ring"))
         {
             RingMovement ring = collider.GetComponent<RingMovement>();
-            
+
             if (ring != null)
             {
                 ring.CheckOrder();
@@ -79,59 +81,62 @@ public class ColliderEnemy : MonoBehaviour
             }
         }
 
-       
 
-         
+
+
     }
 
-private void Dropping(bool floorCollisionVar)
-{
-    floorCollision = floorCollisionVar;
+    private void Dropping(bool floorCollisionVar)
+    {
+        floorCollision = floorCollisionVar;
 
-}
+    }
 
     private IEnumerator Flash()
-{
-    isFlashing = true;
-
-    for (int i = 0; i < numberOfFlashes; i++)
     {
-        spriteRenderer.color = new Color(1f, 1f, 1f, 0f); // Set opacity to 0
-        yield return new WaitForSeconds(flashDuration);
-        spriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Set opacity to 1
-        yield return new WaitForSeconds(flashDuration);
+        isFlashing = true;
+
+        for (int i = 0; i < numberOfFlashes; i++)
+        {
+            // spriteRenderer.color = new Color(1f, 1f, 1f, 0f); // Set opacity to 0
+            ID.PlayerMaterial.SetFloat("_Alpha", 0);
+            yield return new WaitForSeconds(flashDuration);
+            // spriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Set opacity to 1
+            ID.PlayerMaterial.SetFloat("_Alpha", .9f);
+            yield return new WaitForSeconds(flashDuration);
+        }
+        ID.PlayerMaterial.SetFloat("_Alpha", 1);
+
+        isFlashing = false;
     }
 
-    isFlashing = false;
-}
 
-
-private void Kill()
-{
-    Instantiate(featherParticles, transform.position, Quaternion.identity);
-    Instantiate(smokeParticles,transform.position, Quaternion.identity);
-    AudioManager.instance.PlayDeathSound(); 
-                
-    gameObject.SetActive(false);
-    
-    if(transform.parent != null) // Check if this GameObject has a parent
+    private void Kill()
     {
-        transform.parent.gameObject.SetActive(false);
+        Instantiate(featherParticles, transform.position, Quaternion.identity);
+        Instantiate(smokeParticles, transform.position, Quaternion.identity);
+        AudioManager.instance.PlayDeathSound();
+
+        gameObject.SetActive(false);
+
+        if (transform.parent != null) // Check if this GameObject has a parent
+        {
+            transform.parent.gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(false); // If no parent, disable the current GameObject
+        }
+
     }
-    else
+
+    private void OnEnable()
     {
-        gameObject.SetActive(false); // If no parent, disable the current GameObject
-    }     
-               
-}
+        ID.events.FloorCollsion += Dropping;
+    }
 
-private void OnEnable() 
-{
-    ID.events.FloorCollsion += Dropping;
-}
-
-private void OnDisable() 
-{
-    ID.events.FloorCollsion -= Dropping;
-}
+    private void OnDisable()
+    {
+        ID.events.FloorCollsion -= Dropping;
+    }
 }

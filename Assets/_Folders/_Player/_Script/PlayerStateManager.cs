@@ -5,7 +5,17 @@ using UnityEngine;
 public class PlayerStateManager : MonoBehaviour
 {
     [ExposedScriptableObject]
-    public PlayerID ID; 
+    public PlayerID ID;
+
+    [SerializeField] private bool isSlow;
+    public float jumpForce;
+    public float flipLeftForceX;
+    public float flipLeftForceY;
+    public float flipRightForceX;
+    public float flipRightForceY;
+
+
+    public Transform ImageTransform;
     private bool CanUseStamina = true;
     public GameObject ParachuteObject;
     private Coroutine fillStaminaCoroutine;
@@ -35,6 +45,8 @@ public class PlayerStateManager : MonoBehaviour
     private bool isAttacking = false;
 
 
+
+
     public bool hasFlippedRight = false;
     public bool hasFlippedLeft = false;
 
@@ -50,7 +62,7 @@ public class PlayerStateManager : MonoBehaviour
     public bool isParachuting = false;
     public bool isTryingToParachute = false;
 
-    private float jumpForce = 11.3f;
+    
     public int rotationLerpSpeed = 20;
     public int jumpRotSpeed = 200;
     private int frozenRotSpeed = 350;
@@ -83,13 +95,35 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
+        if (!isSlow)
+        {
+            ID.MaxFallSpeed = -10.1f;
+            jumpForce = 11.3f;
+            flipLeftForceX = -6.9f;
+            flipLeftForceY = 9.5f;
+            flipRightForceX = 6.5f;
+            flipRightForceY = 10f;
+            rb.gravityScale = 2.35f;
+            originalGravityScale = rb.gravityScale;
+        }
+        else
+        {
+            ID.MaxFallSpeed = ID.slowMaxFallSpeed;
+            jumpForce = ID.slowJumpForce;
+            flipLeftForceX = ID.slowFlipLeftForceX;
+            flipLeftForceY = ID.slowFlipLeftForceY;
+            flipRightForceX = ID.slowFlipRightForceX;
+            flipRightForceY = ID.slowFlipRightForceY;
+            originalGravityScale = rb.gravityScale;
 
+        }
 
         maxFallSpeed = ID.MaxFallSpeed;
-        rb = GetComponent<Rigidbody2D>();
+       
 
         attackObject.SetActive(false);
-        originalGravityScale = rb.gravityScale;
+        // originalGravityScale = rb.gravityScale;
 
         anim = GetComponent<Animator>();
 

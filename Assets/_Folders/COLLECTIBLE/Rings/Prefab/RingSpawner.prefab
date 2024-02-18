@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97961052e4d934ede96d70b151f5e1ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: {fileID: 11400000, guid: d5428165d140444d991bb0c5e34af16f, type: 2}
+  Pool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
+  Index: 1
   BallMaterial: {fileID: 8526703650263260717, guid: b6f20ad4d8609491e9086c2f37a7eb2e, type: 3}
   fadeRingsDuration: 1.5
   ringPrefab: {fileID: 1854272186094508190, guid: 0dc39bb21ad1c473396b51a04708ea11, type: 3}
@@ -58,10 +59,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8437754376451860488}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0e0714584c54a4e76a4dd451a09797a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RedID: {fileID: 11400000, guid: d5428165d140444d991bb0c5e34af16f, type: 2}
+  Pool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
+  index: 2
   ringSetups: []

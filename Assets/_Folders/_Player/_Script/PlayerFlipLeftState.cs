@@ -20,7 +20,7 @@ public class PlayerFlipLeftState : PlayerBaseState
         player.anim.SetTrigger("FlipTrigger");
 
         currentRotation = player.transform.rotation.eulerAngles.z;
-        player.rb.velocity = new Vector2(flipForceX, flipForceY);
+        player.rb.velocity = new Vector2(player.flipLeftForceX, player.flipLeftForceY);
         AudioManager.instance.PlayCluck();
         float rotationCheck = 360 - currentRotation;
         
@@ -41,7 +41,7 @@ public class PlayerFlipLeftState : PlayerBaseState
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
     {
       
-    }
+    } 
 
     public override void RotateState(PlayerStateManager player)
     {
