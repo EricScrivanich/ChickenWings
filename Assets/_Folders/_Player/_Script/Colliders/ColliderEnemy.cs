@@ -38,7 +38,7 @@ public class ColliderEnemy : MonoBehaviour
     {
         if (collision.gameObject.tag == "Floor" && floorCollision)
         {
-            lives = 0;
+            ID.Lives = 0;
             Kill();
             DeadEvent.TriggerEvent();
         }
@@ -49,9 +49,9 @@ public class ColliderEnemy : MonoBehaviour
 
         if (collider.CompareTag("Plane") && !isFlashing) // && !isFlashing 
         {
-            lives -= 1;
-            ID.globalEvents.LoseLife?.Invoke(lives);
-            if (lives <= 0)
+            ID.Lives -= 1;
+
+            if (ID.Lives <= 0)
             {
                 Kill();
                 DeadEvent.TriggerEvent();

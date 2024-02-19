@@ -115,6 +115,7 @@ public class RingMovement : MonoBehaviour
             {
                 ID.ringEvent.OnGetBall?.Invoke(transform.position);
                 sprite.material = ID.passedMaterial;
+                backRing.material = ID.passedMaterial;
             }
 
 

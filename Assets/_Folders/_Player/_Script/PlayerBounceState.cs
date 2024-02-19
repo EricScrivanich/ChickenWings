@@ -37,6 +37,7 @@ public class PlayerBounceState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
+        player.transform.rotation = Quaternion.Euler(0, 0, 0);
 
     }
 

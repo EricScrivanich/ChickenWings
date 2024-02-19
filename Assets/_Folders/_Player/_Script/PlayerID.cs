@@ -12,7 +12,7 @@ public class PlayerID : ScriptableObject
     public float slowFlipLeftForceY;
     public float slowFlipRightForceX;
     public float slowFlipRightForceY;
-    public int Lives;
+    
     public bool IsSlowedDown;
     public Material PlayerMaterial;
     public float rotationFactor;
@@ -24,6 +24,26 @@ public class PlayerID : ScriptableObject
     public float MaxStamina = 100;
     [SerializeField] private int startingAmmo;
     [SerializeField] private int startingScore;
+    [SerializeField] private int startingLives;
+    private int lives;
+    public int Lives
+    {
+        get 
+        {
+            return lives;
+        }
+        set 
+        {
+            if (value > 3)
+            {
+                return;
+            }
+            Debug.Log("Doing it");
+            lives = value;
+            Debug.Log("LIves " + lives);
+            globalEvents.OnUpdateLives?.Invoke(lives);
+        }
+    }
     private int score;
     public int Score
     {
@@ -50,6 +70,7 @@ public class PlayerID : ScriptableObject
     {
         Score = startingScore;
         Ammo = startingAmmo;
+        Lives = startingLives;
         globalEvents.OnUpdateAmmo?.Invoke();
     }
 

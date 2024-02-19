@@ -5,7 +5,9 @@ using UnityEngine;
 public class RingPlayerHandler : MonoBehaviour
 {
     public PlayerID ID;
+
     [SerializeField] private GameObject scoreText;
+    [SerializeField] private Transform livesPanel;
     
     public RingID RingRed;
     public RingID RingPink;
@@ -28,6 +30,7 @@ public class RingPlayerHandler : MonoBehaviour
         ID.Score += 2;
 
     }
+    
 
     private void BucketCompletion(int index)
     {
@@ -38,6 +41,11 @@ public class RingPlayerHandler : MonoBehaviour
                
                 break;
             case 1:
+                // Transform childTransform = livesPanel.GetChild(ID.Lives - 1);
+                // GameObject LiveObject = childTransform.gameObject;
+                // RingPink.GetBall(transform.position, null, ConvertUIToWorldPosition(LiveObject));
+                ID.Lives += 1;
+                
                 break;
 
             case 2:

@@ -98,13 +98,13 @@ public class PlayerStateManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         if (!isSlow)
         {
-            ID.MaxFallSpeed = -10.1f;
-            jumpForce = 11.3f;
+            ID.MaxFallSpeed = -10f;
+            jumpForce = 11.2f;
             flipLeftForceX = -6.9f;
-            flipLeftForceY = 9.5f;
+            flipLeftForceY = 9.4f;
             flipRightForceX = 6.5f;
             flipRightForceY = 10f;
-            rb.gravityScale = 2.35f;
+            rb.gravityScale = 2.3f;
             originalGravityScale = rb.gravityScale;
         }
         else
@@ -130,6 +130,8 @@ public class PlayerStateManager : MonoBehaviour
         currentState = StartingState;
 
         currentState.EnterState(this);
+
+        ID.ResetValues();
     }
     void OnCollisionEnter2D(Collision2D collision)
     {

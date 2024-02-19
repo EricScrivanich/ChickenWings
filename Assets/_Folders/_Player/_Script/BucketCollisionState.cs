@@ -8,21 +8,22 @@ public class BucketCollisionState : PlayerBaseState
     private float yForce;
     public override void EnterState(PlayerStateManager player)
     {
-        Debug.Log("Entered Buckyyy");
+
 
         player.disableButtons = true;
         player.rb.velocity = new Vector2(0, 0);
         player.maxFallSpeed = player.ID.MaxFallSpeed;
         player.rb.simulated = false;
         player.ID.events.FloorCollsion.Invoke(true);
-        player.anim.SetTrigger("ResetTrigger");
-        
+        // player.anim.SetTrigger("ResetTrigger");
+        player.anim.SetTrigger("IdleTrigger");
+
 
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-       
+
 
 
     }
@@ -34,7 +35,7 @@ public class BucketCollisionState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
-        
+
     }
     public override void ExitState(PlayerStateManager player)
 
@@ -58,7 +59,8 @@ public class BucketCollisionState : PlayerBaseState
             {
                 yForce = 3f;
             }
-            else{
+            else
+            {
                 yForce = 9f;
             }
 
@@ -70,7 +72,7 @@ public class BucketCollisionState : PlayerBaseState
 
 
         }
-       
+
         // // Debug.Log("Bukcet Transform" +player.bucket.transform.position);
         // Debug.Log("Player Transform" +player.transform.position);
 

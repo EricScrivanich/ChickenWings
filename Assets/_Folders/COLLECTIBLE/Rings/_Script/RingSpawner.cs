@@ -9,7 +9,7 @@ public class RingSpawner : MonoBehaviour
     public static RingSpawner Instance;
     [ExposedScriptableObject]
     public RingPool Pool;
-    private int tracker = 0;
+    private int tracker = 0; 
     private RingID ID;
     public int Index;
     public static int currentRing;

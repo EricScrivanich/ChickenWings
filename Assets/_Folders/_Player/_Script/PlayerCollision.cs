@@ -42,9 +42,9 @@ public class PlayerCollision : MonoBehaviour
     
          if (collider.gameObject.tag == "Plane" && !isFlashing) // && !isFlashing 
         {
-            lives -= 1;
-            ID.globalEvents.LoseLife?.Invoke(lives);
-            if (lives <= 0)
+            
+            ID.Lives -= 1;
+            if (ID.Lives <= 0)
             {
                 Kill();
                 DeadEvent.TriggerEvent();

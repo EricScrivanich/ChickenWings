@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f8b0a618e0e34aaab7d40d4c5ea5f23, type: 3}
   m_Name: CropID
   m_EditorClassIdentifier: 
-  speed: 8
+  speed: 7
+  poolSize: 6
   speedOffset: 1
   planeSinFrequency: 0.3
   planeSinAmplitude: 0.4
@@ -21,3 +22,4 @@ MonoBehaviour:
   planeTime: 4
   planeTimeOffset: 2
   lives: 1
+  PlaneObject: {fileID: 3705570355241859432, guid: a84a793a43cbe4679893496e46a058e4, type: 3}

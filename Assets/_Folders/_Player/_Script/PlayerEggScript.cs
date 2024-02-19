@@ -20,7 +20,7 @@ public class PlayerEggScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ID.ResetValues();
+        
 
         ammo = ID.Ammo;
         rb = GetComponent<Rigidbody2D>();

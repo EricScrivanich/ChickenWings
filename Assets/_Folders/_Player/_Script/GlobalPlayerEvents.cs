@@ -3,7 +3,7 @@ using System;
 
 public struct GlobalPlayerEvents
 {
-    public Action<int> LoseLife;
+    public Action<int> OnUpdateLives;
     public Action OnUpdateAmmo;
     public Action<int> OnAddAmmo;
     public Action<int> OnUpdateScore;

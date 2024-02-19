@@ -46,9 +46,9 @@ public class PlayerCollisions : PlayerSystem
     
          if (collider.gameObject.tag == "Plane" && !isFlashing) // && !isFlashing 
         {
-            lives -= 1;
-            player.ID.globalEvents.LoseLife?.Invoke(lives);
-            if (lives <= 0)
+            
+            player.ID.Lives -= 1;
+            if (player.ID.Lives <= 0)
             {
                 DeadEvent.TriggerEvent();
                 return;

@@ -25,7 +25,7 @@ public class PlayerDropState : PlayerBaseState
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-      
+        player.transform.rotation = Quaternion.Euler(0, 0, 0);
      
     }
 

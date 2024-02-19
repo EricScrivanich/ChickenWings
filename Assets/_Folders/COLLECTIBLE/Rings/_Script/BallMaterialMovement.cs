@@ -28,7 +28,7 @@ public class BallMaterialMovement : MonoBehaviour
     {
         Vector2 targetPos = targetObject != null ? targetObject.transform.position : targetPosition;
         float distance = Vector2.Distance(transform.position, targetPos);
-        float highlightedAmount = distance < slowingRadius ? Mathf.Lerp(0f, 0.2f, 1 - (distance / slowingRadius)) : 0f;
+        float highlightedAmount = distance < slowingRadius ? Mathf.Lerp(0f, 0.5f, 1 - (distance / slowingRadius)) : 0f;
 
         // Apply the highlighted amount to the material
        

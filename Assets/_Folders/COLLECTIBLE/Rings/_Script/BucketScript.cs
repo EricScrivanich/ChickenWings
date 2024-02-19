@@ -8,7 +8,7 @@ public class BucketScript : MonoBehaviour
     private int ResetCounter = 0;
     public PlayerID Player;
     public float speed;
-    private int index;
+    public int index;
     private bool ready = false;
     private bool isExploded = false;
     private bool isCorrect = false;
@@ -37,7 +37,7 @@ public class BucketScript : MonoBehaviour
     private Transform ringTransform;
     private Vector2 ringTransformOriginal;
     [SerializeField] private SpriteRenderer ringSpriteFront;
-    
+
     [SerializeField] private SpriteRenderer ringSpriteBack;
     private Animator anim;
     private float slowDownDuration;
@@ -65,16 +65,16 @@ public class BucketScript : MonoBehaviour
             if (speed > 0 && transform.position.x < BoundariesManager.leftBoundary)
             {
                 HandleCorrectRing();
-                ID.ringEvent.OnCreateNewSequence?.Invoke(false,index);
+                ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
 
             }
             else if (speed < 0 && transform.position.x > BoundariesManager.rightBoundary)
             {
                 HandleCorrectRing();
                 ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
-                
 
-                
+
+
             }
         }
 
@@ -132,7 +132,7 @@ public class BucketScript : MonoBehaviour
     }
     private void NewSetup(bool correctSequence, int index)
     {
-        
+
         if (correctSequence == false)
         {
 
@@ -148,7 +148,7 @@ public class BucketScript : MonoBehaviour
     private void ResetBucket()
     {
         DisableColliders();
-        StartCoroutine(FadeOut(1.2f));
+        StartCoroutine(FadeOut(.8f));
 
 
     }
@@ -175,15 +175,15 @@ public class BucketScript : MonoBehaviour
             currentTime += Time.deltaTime;
             yield return null; // Wait for the next frame
         }
-        
-        gameObject.SetActive(false);
+
+        // gameObject.SetActive(false);
     }
 
     private IEnumerator SlowDown()
     {
         float currentTime = 0;
 
-        slowDownDuration = 1.3f;
+        slowDownDuration = 1.1f;
 
         while (currentTime < slowDownDuration)
         {
@@ -321,11 +321,11 @@ public class BucketScript : MonoBehaviour
         coloredParticleSprite.color = ID.defaultMaterial.color;
         speedVar = speed;
 
-     
+
         ringSpriteFront.material = ID.defaultMaterial;
         ringSpriteBack.material = ID.defaultMaterial;
 
-        
+
 
         foreach (SpriteRenderer strip in coloredObjects)
         {
@@ -346,7 +346,7 @@ public class BucketScript : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         ringTransform.localPosition = ringTransformOriginal;
         yield return new WaitForSeconds(.5f);
-        
+
         ringTransform.gameObject.SetActive(true);
         anim.SetBool("RestartBool", false);
 
@@ -356,7 +356,7 @@ public class BucketScript : MonoBehaviour
     private void OnDisable()
     {
         isExploded = false;
-       
+
 
 
 

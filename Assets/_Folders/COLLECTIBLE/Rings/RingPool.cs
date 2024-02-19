@@ -119,6 +119,13 @@ public class RingPool : ScriptableObject
             }
 
         }
+        foreach (BucketScript bucketScript in bucketPool)
+        {
+            if (bucketScript.index == index)
+            {
+                bucketScript.gameObject.SetActive(false);
+            }
+        }
     }
 
     public void SpawnBucketPool()
@@ -176,7 +183,7 @@ public class RingPool : ScriptableObject
             time += Time.deltaTime;
             float fadeAmount = Mathf.Lerp(0, 1, time / 2f);
             RingType[0].defaultMaterial.SetFloat("_FadeAmount", fadeAmount);
-            RingType[0].highlightedMaterial.SetFloat("_FadeAmount", fadeAmount);
+            // RingType[0].highlightedMaterial.SetFloat("_FadeAmount", fadeAmount);
             RingType[0].passedMaterial.SetFloat("_FadeAmount", fadeAmount);
 
             yield return null;
@@ -244,7 +251,7 @@ public class RingPool : ScriptableObject
     private void ResetRedMaterial()
     {
         RingType[0].defaultMaterial.SetFloat("_FadeAmount", 0);
-        RingType[0].highlightedMaterial.SetFloat("_FadeAmount", 0);
+        // RingType[0].highlightedMaterial.SetFloat("_FadeAmount", 0);
         RingType[0].passedMaterial.SetFloat("_FadeAmount", 0);
     }
     private void ResetPinkMaterial()

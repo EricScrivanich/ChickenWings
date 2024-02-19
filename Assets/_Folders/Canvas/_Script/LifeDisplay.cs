@@ -14,6 +14,7 @@ public class LifeDisplay : MonoBehaviour
     private void Awake() 
     {
         lives = player.Lives;
+        InitializeEggAnimators();
         
     }   
     void Start()
@@ -50,18 +51,43 @@ public class LifeDisplay : MonoBehaviour
         }
     }
 
-    void UpdateLives(int lives)
+    void UpdateLives(int newLives)
     {
-        
-        int livesLost = eggAnimators.Count - lives;
-        if (livesLost > 0 && livesLost <= eggAnimators.Count)
+        // Check if gained a life
+        if (newLives > lives)
         {
-            // Get the rightmost egg's Animator component that is not yet dead
-            Animator eggAnimator = eggAnimators[eggAnimators.Count - livesLost];
+            if (lives <= 2)
+            {
+                Debug.Log("yerrrr");
+                eggAnimators[lives].SetBool("IsBrokenBool",false);
+                Debug.Log("gaining lifge");
 
-            // Trigger the "Break" animation
-            eggAnimator.SetTrigger("Break");
+
+            }
+            else{
+                return;
+                
+            }
+            // Find the most recently broken egg (if any)
+
+            Debug.Log(lives);
+            
+                   
+            
         }
+        else if (newLives < lives) // Check if lost a life
+        {
+            int livesLost = lives - newLives;
+            for (int i = 2; i > newLives - 1; i--)
+            {
+                // Assuming eggs are lost from right to left
+
+                eggAnimators[i].SetBool("IsBrokenBool", true);
+
+            }
+        }
+
+        lives = newLives; // Update the current lives count
     }
 
     private void OnDestroy()
@@ -70,9 +96,9 @@ public class LifeDisplay : MonoBehaviour
         // statsMan.OnLivesChanged -= UpdateLives;
     }
     private void OnEnable() {
-     player.globalEvents.LoseLife += UpdateLives;
+     player.globalEvents.OnUpdateLives += UpdateLives;
     }
     private void OnDisable() {
-        player.globalEvents.LoseLife -= UpdateLives;
+        player.globalEvents.OnUpdateLives -= UpdateLives;
     }
 }

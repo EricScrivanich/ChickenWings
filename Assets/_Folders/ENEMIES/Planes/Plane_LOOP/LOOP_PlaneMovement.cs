@@ -14,28 +14,31 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     private int lives;
     private float initialY;
     private bool initialized;
+    public float speed;
 
-    
+
     // void Awake()
     // {
-        
+
     //     stopSpawn = false;
-        
+
     //     planeHeightRandom = Random.Range(Data.minSpawn,Data.maxSpawn);
-        
+
     //     planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset,Data.planeTimeOffset);
     //     planeTimeVar = Data.planeTime + planeTimeOffsetVar;
     //     planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
     //     planeHitBool = false;
-       
-        
+
+
     // }
     void Update()
     {
        
         if (initialized)
         {
-        transform.position += Vector3.left * planeSpeed * Time.deltaTime;
+        transform.position += Vector3.left * speed * Time.deltaTime;
+        // transform.position += Vector3.left * planeSpeed * Time.deltaTime;
+
         float x = transform.position.x;
         float y = Mathf.Sin(x * Data.planeSinFrequency) * Data.planeSinAmplitude + initialY;
         transform.position = new Vector2(x, y);
@@ -50,7 +53,7 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 
     void Restart()
     {
-        if ((transform.position.x < -13 || planeHitBool))
+        if ((transform.position.x < BoundariesManager.leftBoundary || planeHitBool))
         {
             gameObject.SetActive(false);
             // planeHeightRandom = Random.Range(Data.minSpawn,Data.maxSpawn);
@@ -88,15 +91,15 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 
    
 
-    private IEnumerator ResetTimer()
-    {
+    // private IEnumerator ResetTimer()
+    // {
         
-        yield return new WaitForSeconds(planeTimeVar);
-        planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
+    //     yield return new WaitForSeconds(planeTimeVar);
+    //     planeSpeed = Data.speed + Random.Range(-Data.speedOffset,Data.speedOffset);
             
-        planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset,Data.planeTimeOffset);
-        planeTimeVar = Data.planeTime + planeTimeOffsetVar;
-    }
+    //     planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset,Data.planeTimeOffset);
+    //     planeTimeVar = Data.planeTime + planeTimeOffsetVar;
+    // }
 
     public void Hit(int damageAmount)
     {
