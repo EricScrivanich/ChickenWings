@@ -1,13 +1,20 @@
 using UnityEngine;
+using System.Collections;
 
 public class BallMaterialMovement : MonoBehaviour
 {
     public RingID ID;
     [SerializeField] private float uiCutoff;
     [SerializeField] private float playerCutoff;
+    [SerializeField] private float explodeDuration;
+
+    [SerializeField] private ParticleSystem ParticlePrefab;
     private SpriteRenderer sprite;
     [SerializeField] private Collider2D coll2D;
     private TrailRenderer trail;
+    private bool hasCrossedBoundary;
+
+    private Vector2 startingScale = new Vector2 (.5f, .4f);
 
     public float speed = 200f;
     public Vector2 startPosition;
@@ -73,14 +80,17 @@ public class BallMaterialMovement : MonoBehaviour
         transform.position = nextPosition;
 
         // Deactivate the ball when it's close enough to the target position
-        if (distanceToTarget < uiCutoff)
+        if (distanceToTarget < uiCutoff && !hasCrossedBoundary)
         {
-            gameObject.SetActive(false);
+            StartCoroutine(ExpandAndExplode());
+            hasCrossedBoundary = true;
+
         }
     }
 
     private void OnEnable()
     {
+
         
         if (ID != null)
         {
@@ -91,11 +101,60 @@ public class BallMaterialMovement : MonoBehaviour
     }
     private void OnDisable()
     {
+
+        transform.localScale = startingScale;
+        hasCrossedBoundary = false;
         if (ID != null)
         {
             ID.highlightedMaterial.SetFloat("_HitEffectBlend", 0);
+            ID.highlightedMaterial.SetFloat("_Alpha", 1);
         }
        
+    }
+
+    private IEnumerator ExpandAndExplode()
+    {
+        Vector2 startScale = transform.localScale; // Starting scale
+        Vector2 endScale = new Vector3(1.2f, 1f, 1f); // Example end scale, adjust as needed
+        float duration = .2f; // Duration of the lerp
+        float time = 0;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            // Lerp the scale
+            transform.localScale = Vector2.Lerp(startScale, endScale,t);
+
+            // Optionally, move the GameObject based on the _HitEffectBlend value
+            float blend = Mathf.Lerp(0f, .5f, t); // Example blend value calculation
+            ID.highlightedMaterial.SetFloat("_HitEffectBlend", blend);
+            // Here, you could adjust the GameObject's position based on the blend value
+
+            yield return null;
+        }
+
+        duration = .3f;
+        time = 0;
+        ParticlePrefab.Play();
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            float blend = Mathf.Lerp(1f, 0f, t);
+
+            ID.highlightedMaterial.SetFloat("_Alpha", blend);
+            yield return null;
+        }
+
+        // Ensure the final values are set
+        gameObject.SetActive(false);
+        // transform.localScale = endScale;
+        // ID.highlightedMaterial.SetFloat("_HitEffectBlend", f);
+        // Set final position based on the blend value if needed
     }
 }
 

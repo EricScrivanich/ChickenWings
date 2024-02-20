@@ -68,6 +68,7 @@ public class PlayerID : ScriptableObject
 
     public void ResetValues()
     {
+        PlayerMaterial.SetFloat("_Alpha", 1);
         Score = startingScore;
         Ammo = startingAmmo;
         Lives = startingLives;

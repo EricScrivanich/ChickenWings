@@ -12,6 +12,7 @@ public struct GlobalPlayerEvents
 
     public Action<int> OnBucketExplosion;
     public Action<bool> OnUseStamina;
+    
     public Action OnZeroStamina;
 
 

@@ -7,14 +7,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Frozen
+  m_Name: Ring_1 1
   m_Shader: {fileID: 4800000, guid: a36b7719ff0465b42ab1407d67672c5f, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - FADE_ON
-  - OVERLAY_ON
-  - SHAKEUV_ON
+  - OUTDIST_ON
+  - TWISTUV_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -67,7 +66,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OverlayTex:
-        m_Texture: {fileID: 2800000, guid: 85196bb5df56242c0890fa680fb04016, type: 3}
+        m_Texture: {fileID: 2800000, guid: be304275dbf36014ca9828884588ac47, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ShineMask:
@@ -82,13 +81,13 @@ Material:
     - _AlphaOutlineGlow: 5
     - _AlphaOutlineMinAlpha: 0
     - _AlphaOutlinePower: 1
-    - _AlphaRoundThreshold: 0.5
+    - _AlphaRoundThreshold: 0.005
     - _BillboardY: 0
     - _BlurHD: 0
     - _BlurIntensity: 10
     - _Brightness: 0
-    - _ChromAberrAlpha: 0.4
-    - _ChromAberrAmount: 1
+    - _ChromAberrAlpha: 0.91
+    - _ChromAberrAmount: 0.2
     - _ClipUvDown: 0
     - _ClipUvLeft: 0
     - _ClipUvRight: 0
@@ -106,24 +105,24 @@ Material:
     - _ColorSwapRedLuminosity: 0.5
     - _Contrast: 1
     - _CullingOption: 0
-    - _DistortAmount: 0.5
+    - _DistortAmount: 0
     - _DistortTexXSpeed: 5
     - _DistortTexYSpeed: 5
     - _EditorDrawers: 6
-    - _FadeAmount: 0.9975208
+    - _FadeAmount: -0.1
     - _FadeBurnGlow: 2
     - _FadeBurnTransition: 0.075
     - _FadeBurnWidth: 0.025
     - _FishEyeUvAmount: 0.35
     - _FlickerAlpha: 0
     - _FlickerFreq: 0.2
-    - _FlickerPercent: 0.05
+    - _FlickerPercent: 0.07
     - _GhostBlend: 1
     - _GhostColorBoost: 1
     - _GhostTransparency: 0
-    - _GlitchAmount: 3
-    - _GlitchSize: 1
-    - _Glow: 10
+    - _GlitchAmount: 6.43
+    - _GlitchSize: 0.25
+    - _Glow: 0.03
     - _GlowGlobal: 1
     - _GradBlend: 1
     - _GradBoostX: 1.2
@@ -137,15 +136,15 @@ Material:
     - _GreyscaleBlend: 1
     - _GreyscaleLuminosity: 0
     - _GreyscaleOutline: 0
-    - _HandDrawnAmount: 10
-    - _HandDrawnSpeed: 5
+    - _HandDrawnAmount: 13.59
+    - _HandDrawnSpeed: 6.26
     - _HitEffectBlend: 1
     - _HitEffectGlow: 5
     - _HologramBlend: 1
     - _HologramMaxAlpha: 0.75
     - _HologramMinAlpha: 0.1
-    - _HologramStripesAmount: 0.1
-    - _HologramStripesSpeed: 4.5
+    - _HologramStripesAmount: 1
+    - _HologramStripesSpeed: 3.29
     - _HologramUnmodAmount: 0
     - _HsvBright: 1
     - _HsvSaturation: 1
@@ -174,13 +173,13 @@ Material:
     - _OutlinePixelWidth: 1
     - _OutlineTexXSpeed: 10
     - _OutlineTexYSpeed: 0
-    - _OutlineWidth: 0.004
-    - _OverlayBlend: 0.609
-    - _OverlayGlow: 1
-    - _OverlayTextureScrollXSpeed: -3.31
-    - _OverlayTextureScrollYSpeed: -2.92
+    - _OutlineWidth: 0.05
+    - _OverlayBlend: 1
+    - _OverlayGlow: 3
+    - _OverlayTextureScrollXSpeed: 0.12
+    - _OverlayTextureScrollYSpeed: 0.04
     - _PinchUvAmount: 0.35
-    - _PixelateSize: 32
+    - _PixelateSize: 13.09
     - _PosterizeGamma: 0.75
     - _PosterizeNumColors: 8
     - _PosterizeOutline: 0
@@ -189,31 +188,31 @@ Material:
     - _RadialStartAngle: 90
     - _RandomSeed: 0
     - _RectSize: 1
-    - _RotateUvAmount: 0
-    - _RoundWaveSpeed: 2
-    - _RoundWaveStrength: 0.7
+    - _RotateUvAmount: 0.3
+    - _RoundWaveSpeed: 3.5
+    - _RoundWaveStrength: 0.8
     - _ShadowAlpha: 0.5
     - _ShadowX: 0.1
     - _ShadowY: -0.05
-    - _ShakeUvSpeed: 2.3
-    - _ShakeUvX: 0.61
-    - _ShakeUvY: 0.8
+    - _ShakeUvSpeed: 2.5
+    - _ShakeUvX: 1.5
+    - _ShakeUvY: 1
     - _ShineGlow: 1
     - _ShineLocation: 0.5
     - _ShineRotate: 0
     - _ShineWidth: 0.1
     - _TextureScrollXSpeed: 1
     - _TextureScrollYSpeed: 0
-    - _TwistUvAmount: 1
+    - _TwistUvAmount: 0
     - _TwistUvPosX: 0.5
     - _TwistUvPosY: 0.5
     - _TwistUvRadius: 0.75
-    - _WarpScale: 0.5
-    - _WarpSpeed: 8
-    - _WarpStrength: 0.025
-    - _WaveAmount: 7
-    - _WaveSpeed: 10
-    - _WaveStrength: 7.5
+    - _WarpScale: 1.18
+    - _WarpSpeed: 4.45
+    - _WarpStrength: 0.1
+    - _WaveAmount: 6.94
+    - _WaveSpeed: 8.84
+    - _WaveStrength: 6.31
     - _WaveX: 0
     - _WaveY: 0.5
     - _ZTestMode: 4
@@ -221,7 +220,7 @@ Material:
     - _ZoomUvAmount: 0.5
     m_Colors:
     - _AlphaOutlineColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.6939997, g: 0.6039216, b: 0.99215686, a: 1}
     - _ColorChangeNewCol: {r: 1, g: 1, b: 0, a: 1}
     - _ColorChangeNewCol2: {r: 1, g: 1, b: 0, a: 1}
     - _ColorChangeNewCol3: {r: 1, g: 1, b: 0, a: 1}
@@ -241,8 +240,8 @@ Material:
     - _HitEffectColor: {r: 1, g: 1, b: 1, a: 1}
     - _HologramStripeColor: {r: 0, g: 1, b: 1, a: 1}
     - _InnerOutlineColor: {r: 1, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OverlayColor: {r: 0.48865256, g: 0.5783735, b: 0.745283, a: 1}
+    - _OutlineColor: {r: 0.41037738, g: 1, b: 0.4572269, a: 1}
+    - _OverlayColor: {r: 0.13039613, g: 1, b: 0, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShineColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
