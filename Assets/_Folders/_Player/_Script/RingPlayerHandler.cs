@@ -8,6 +8,7 @@ public class RingPlayerHandler : MonoBehaviour
 
     [SerializeField] private GameObject scoreText;
     [SerializeField] private Transform livesPanel;
+    [SerializeField] private List<GameObject> Lives;
     
     public RingID RingRed;
     public RingID RingPink;
@@ -41,11 +42,12 @@ public class RingPlayerHandler : MonoBehaviour
                
                 break;
             case 1:
-                // Transform childTransform = livesPanel.GetChild(ID.Lives - 1);
-                // GameObject LiveObject = childTransform.gameObject;
-                // RingPink.GetBall(transform.position, null, ConvertUIToWorldPosition(LiveObject));
-                ID.Lives += 1;
-                
+                if (ID.Lives < 3)
+                {
+                    RingPink.GetBall(transform.position, null, Lives[ID.Lives - 1].transform.position);
+
+                }
+    
                 break;
 
             case 2:
@@ -58,6 +60,15 @@ public class RingPlayerHandler : MonoBehaviour
             default:
                 break;
         }
+
+    }
+
+    private void PinkFinish()
+    {
+        
+            ID.Lives += 1;
+
+        
 
     }
     private void LoseLife(Vector2 startPos)
@@ -93,6 +104,7 @@ public class RingPlayerHandler : MonoBehaviour
         RingRed.ringEvent.OnGetBall += LoseLife;
         RingGold.ringEvent.OnGetBall += Test;
         ID.globalEvents.OnBucketExplosion += BucketCompletion;
+        RingPink.ringEvent.OnBallFinished += PinkFinish;
 
 
 
@@ -100,6 +112,8 @@ public class RingPlayerHandler : MonoBehaviour
     }
     private void OnDisable() 
     {
+        RingPink.ringEvent.OnBallFinished -= PinkFinish;
+
         RingGold.ringEvent.OnPassedCorrectRing -= AddScore;
         RingRed.ringEvent.OnGetBall -= LoseLife;
         RingGold.ringEvent.OnGetBall -= Test;

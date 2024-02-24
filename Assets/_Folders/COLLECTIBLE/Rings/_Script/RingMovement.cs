@@ -10,8 +10,26 @@ public class RingMovement : MonoBehaviour
     private bool hasNotTriggered;
     public RingID ID;
     public float speed;
+    public bool correctCollision = false;
     public int order;
     private bool isCorrect = false;
+    // private bool _isCorrect = false; // Backing field for the property
+
+    // public bool isCorrect
+    // {
+    //     get => _isCorrect;
+    //     set
+    //     {
+    //         // Check if the new value is different from the current value
+    //         if (_isCorrect != value && order ==1)
+    //         {
+    //             // Log the change with a stack trace
+    //             Debug.Log($"isCorrect changed from {_isCorrect} to {value} at frame {Time.frameCount}\nStack Trace: {Environment.StackTrace}");
+
+    //             _isCorrect = value; // Update the value
+    //         }
+    //     }
+    // }
     [SerializeField] private Collider2D coll2D;
 
     private Transform _transform;
@@ -19,7 +37,7 @@ public class RingMovement : MonoBehaviour
 
     [SerializeField] private SpriteRenderer centerSprite;
     [SerializeField] private SpriteRenderer centerCutout;
-    [SerializeField] private ParticleSystem particles;
+
 
     private bool isFaded = false;
     private Collider2D[] colliders;
@@ -62,15 +80,11 @@ public class RingMovement : MonoBehaviour
 
             if (isCorrect && _transform.position.x < BoundariesManager.leftViewBoundary)
             {
+                // Debug.Log($"Passed: {isCorrect} from GameObject {gameObject.name} at frame {Time.frameCount}");
                 HandleCorrectRing();
                 ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
-                
-
-
-
-                
+                return;
             }
-
             else if (_transform.position.x < BoundariesManager.leftBoundary)
             {
 
@@ -86,11 +100,11 @@ public class RingMovement : MonoBehaviour
                 HandleCorrectRing();
 
                 ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
-                
 
 
 
-                
+
+
             }
 
             else if (_transform.position.x > BoundariesManager.rightBoundary)
@@ -119,7 +133,7 @@ public class RingMovement : MonoBehaviour
             }
 
 
-          
+
 
         }
     }
@@ -157,12 +171,12 @@ public class RingMovement : MonoBehaviour
 
         if (order == ID.CorrectRing)
         {
-
+            correctCollision = true;
             isCorrect = false;
             ID.CorrectRing++;
 
             DisableColliders();
-            isCorrect = false;
+            
             AudioManager.instance.PlayRingPassSound();
             anim.SetBool(BurstBoolHash, true);
             sprite.material = ID.passedMaterial;
@@ -176,25 +190,21 @@ public class RingMovement : MonoBehaviour
         {
             ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
             isCorrect = false;
-            Debug.Log("Resseting Rings");
+           
         }
 
         // print("ring" + order);
     }
 
-    public void FadeCenter()
-    {
 
-
-
-    }
 
     public void NewSetup(bool correctSequence, int index)
     {
 
         if (correctSequence == false)
         {
-           
+            hasNotTriggered = false;
+
             DisableColliders();
             isFaded = true;
             HandleCorrectRing();
@@ -214,17 +224,19 @@ public class RingMovement : MonoBehaviour
 
     private void OnEnable()
     {
+        correctCollision = false;
         sprite.material = ID.defaultMaterial;
         backRing.material = ID.defaultMaterial;
         centerSprite.color = ID.CenterColor;
         centerCutout.color = ID.CenterColor;
-        particles = ID.ringParticles;
+       
         index = ID.IDIndex;
 
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
 
         EnableColliders();
+        SetCorrectRing();
         hasNotTriggered = true;
 
     }
@@ -250,6 +262,6 @@ public class RingMovement : MonoBehaviour
 
             coll2D.enabled = true;
         }
-        isCorrect = false;
+        // isCorrect = false;
     }
 }

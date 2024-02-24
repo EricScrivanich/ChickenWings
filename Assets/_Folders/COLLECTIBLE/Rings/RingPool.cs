@@ -241,11 +241,33 @@ public class RingPool : ScriptableObject
         ResetGoldMaterial();
     }
 
+    public IEnumerator FadeOutPurple()
+    {
+        float time = 0;
+        while (time < 1f)
+        {
+            time += Time.deltaTime;
+            float fadeAmount = Mathf.Lerp(1, 0f, time / 1f);
+            float twistAmount = Mathf.Lerp(0, 1.8f, time / 1f);
+            RingType[3].defaultMaterial.SetFloat("_Alpha", fadeAmount);
+            RingType[3].highlightedMaterial.SetFloat("_Alpha", fadeAmount);
+            RingType[3].passedMaterial.SetFloat("_Alpha", fadeAmount);
+            RingType[3].defaultMaterial.SetFloat("_TwistUvAmount", twistAmount);
+            RingType[3].highlightedMaterial.SetFloat("_TwistUvAmount", twistAmount);
+            RingType[3].passedMaterial.SetFloat("_TwistUvAmount", twistAmount);
+
+            yield return null;
+        }
+        DisableRings(3);
+        ResetPurpleMaterial();
+    }
+
     public void ResetAllMaterials()
     {
         ResetRedMaterial();
         ResetPinkMaterial();
         ResetGoldMaterial();
+        ResetPurpleMaterial();
     }
 
     private void ResetRedMaterial()
@@ -268,6 +290,16 @@ public class RingPool : ScriptableObject
         RingType[2].defaultMaterial.SetFloat("_Alpha", 1);
         RingType[2].highlightedMaterial.SetFloat("_Alpha", 1);
         RingType[2].passedMaterial.SetFloat("_Alpha", 1);
+    }
+    private void ResetPurpleMaterial()
+    {
+        RingType[3].defaultMaterial.SetFloat("_Alpha", 1);
+        RingType[3].highlightedMaterial.SetFloat("_Alpha", 1);
+        RingType[3].passedMaterial.SetFloat("_Alpha", 1);
+        RingType[3].defaultMaterial.SetFloat("_TwistUvAmount", 0);
+        RingType[3].highlightedMaterial.SetFloat("_TwistUvAmount", 0);
+        RingType[3].passedMaterial.SetFloat("_TwistUvAmount", 0);
+
     }
     #endregion
 

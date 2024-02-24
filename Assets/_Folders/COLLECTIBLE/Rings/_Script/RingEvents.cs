@@ -9,6 +9,8 @@ public struct RingEvents
     public Action<int> OnRingTrigger;
     public Action OnCheckOrder;
     public Action OnPassedCorrectRing;
+    public Action ResetQuueue;
+    
     public Action<Vector2> OnGetBall;
     public Action OnBallFinished;
     public Action<bool, int> OnSpawnRings;

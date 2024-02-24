@@ -9,7 +9,7 @@ public class RingSpawner : MonoBehaviour
     public static RingSpawner Instance;
     [ExposedScriptableObject]
     public RingPool Pool;
-    private int tracker = 0; 
+    private int tracker = 0;
     private RingID ID;
     public int Index;
     public static int currentRing;
@@ -19,8 +19,8 @@ public class RingSpawner : MonoBehaviour
 
     private int currentMaxOrder = 0;
     [SerializeField] private GameObject BallMaterial;
-   
-  
+
+
     [SerializeField] private float fadeRingsDuration;
 
     [SerializeField] private GameObject ringPrefab;
@@ -39,12 +39,18 @@ public class RingSpawner : MonoBehaviour
 
     private void Awake()
     {
+
         Instance = this;
         ID = Pool.RingType[Index];
 
         correctRing = 1;
         PlaceholderIndex = new List<List<GameObject>>();
 
+        foreach (var ringId in Pool.RingType)
+        {
+           
+            ringId.InitializeEffectsPool();
+        }
         for (int i = 0; i < Pool.RingType.Count; i++)
         {
             PlaceholderIndex.Add(new List<GameObject>());
@@ -53,16 +59,22 @@ public class RingSpawner : MonoBehaviour
         Pool.SpawnBallPool();
         Pool.SpawnBucketPool();
         Pool.SpawnRingPool();
+        ID.newSetup = true;
     }
 
     private void Start()
     {
         // ResetRingMaterialFade();
         Pool.ResetAllMaterials();
+        foreach (var ringId in Pool.RingType)
+        {
+            ringId.ResetVariables(true);
+            
+        }
 
 
 
-        
+
         SpawnRings(.5f);
 
     }
@@ -99,7 +111,7 @@ public class RingSpawner : MonoBehaviour
         placeholderReferences.Clear();
         ID.placeholderCount = 0;
 
-        PopulateRecursive(parentTransform); 
+        PopulateRecursive(parentTransform);
 
 
 
@@ -137,18 +149,23 @@ public class RingSpawner : MonoBehaviour
     {
         Debug.Log("Triggered");
 
-
+        // Assign order by position to each placeholder
         AssignOrderByPosition(triggerValue);
 
-        foreach (var placeholder in placeholderReferences)
+        // Create a list of placeholders that match the trigger value, sorted by their assigned order
+        var orderedPlaceholders = placeholderReferences
+            .Where(placeholder => placeholder.Value.getsTriggeredInt == triggerValue)
+            .OrderBy(placeholder => placeholder.Value.order)
+            .ToList();
+
+        // Iterate through the sorted placeholders and spawn rings accordingly
+        foreach (var placeholder in orderedPlaceholders)
         {
-            if (placeholder.Value.getsTriggeredInt == triggerValue)
-            {
-                SpawnRingAtPlaceholder(placeholder.Key, placeholder.Value);
-            }
+            SpawnRingAtPlaceholder(placeholder.Key, placeholder.Value);
         }
 
-        ID.ringEvent.OnCheckOrder?.Invoke();
+        // Add particle object after all rings have been spawned
+        // ID.AddParticleObject();
     }
 
     private void SpawnRingAtPlaceholder(Transform placeholderTransform, PlaceholderRing placeholderScript)
@@ -179,6 +196,7 @@ public class RingSpawner : MonoBehaviour
     #region Losing and Fading
     public void SequenceFinished(bool correctSequence, int index)
     {
+        Pool.RingType[index].ResetVariables(false);
         if (!correctSequence)
         {
 
@@ -195,6 +213,10 @@ public class RingSpawner : MonoBehaviour
 
                     StartCoroutine(Pool.FadeOutGold());
                     break;
+                case 3:
+
+                    StartCoroutine(Pool.FadeOutPurple());
+                    break;
                 default:
                     break;
             }
@@ -209,6 +231,7 @@ public class RingSpawner : MonoBehaviour
 
 
         }
+       
         // RemovePlaceholders();
 
     }
@@ -216,15 +239,15 @@ public class RingSpawner : MonoBehaviour
 
     // 
 
-   
+
     #endregion
 
     private void SpawnRings(float time)
     {
         tracker += 1;
         Debug.Log("SpawningRings: " + tracker);
-        ID.triggeredRingOrder = 0;
-        ID.CorrectRing = 1;
+
+
         StartCoroutine(SpawnRingsCourintine(time));
     }
     private IEnumerator SpawnRingsCourintine(float time)
@@ -232,7 +255,7 @@ public class RingSpawner : MonoBehaviour
 
 
         PopulatePlaceholderReferences(transform);
-        ID.CorrectRing = 1;
+
         AudioManager.instance.ResetRingPassPitch();
         // currentRingSetupInstance = InstantiateRandomSetup();
 
@@ -280,7 +303,7 @@ public class RingSpawner : MonoBehaviour
     }
     private void OnDisable()
     {
-        
+
 
         foreach (var ringId in Pool.RingType)
         {
@@ -496,7 +519,7 @@ public class RingSpawner : MonoBehaviour
 // }
 
 // private void ResetRingMaterialFade()
-    // {
+// {
 
 
 //     // Reset fade effect

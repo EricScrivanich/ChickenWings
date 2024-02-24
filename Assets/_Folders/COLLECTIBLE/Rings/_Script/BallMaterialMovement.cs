@@ -14,13 +14,13 @@ public class BallMaterialMovement : MonoBehaviour
     private TrailRenderer trail;
     private bool hasCrossedBoundary;
 
-    private Vector2 startingScale = new Vector2 (.5f, .4f);
+    private Vector2 startingScale = new Vector2(.5f, .4f);
 
     public float speed = 200f;
     public Vector2 startPosition;
     public Vector2 targetPosition;
     public GameObject targetObject;
-    [SerializeField] private float minSpeed = 7f; 
+    [SerializeField] private float minSpeed = 7f;
     [SerializeField] private float maxSpeed = 50f;
     [SerializeField] private float slowingRadius = 5f;
     [SerializeField] private float arcHeight = 5f; // Height of the arc for the parabolic movement
@@ -38,9 +38,9 @@ public class BallMaterialMovement : MonoBehaviour
         float highlightedAmount = distance < slowingRadius ? Mathf.Lerp(0f, 0.5f, 1 - (distance / slowingRadius)) : 0f;
 
         // Apply the highlighted amount to the material
-       
-            ID.highlightedMaterial.SetFloat("_HitEffectBlend", highlightedAmount);
-        
+
+        ID.highlightedMaterial.SetFloat("_HitEffectBlend", highlightedAmount);
+
 
         // Calculate dynamic speed based on distance to target
         float dynamicSpeed = distance < slowingRadius ? Mathf.Lerp(minSpeed, maxSpeed, distance / slowingRadius) : maxSpeed;
@@ -91,7 +91,7 @@ public class BallMaterialMovement : MonoBehaviour
     private void OnEnable()
     {
 
-        
+
         if (ID != null)
         {
             coll2D.enabled = ID.IDIndex == 0;
@@ -109,12 +109,14 @@ public class BallMaterialMovement : MonoBehaviour
             ID.highlightedMaterial.SetFloat("_HitEffectBlend", 0);
             ID.highlightedMaterial.SetFloat("_Alpha", 1);
         }
-       
+
     }
 
     private IEnumerator ExpandAndExplode()
     {
-        Vector2 startScale = transform.localScale; // Starting scale
+        ID.ringEvent.OnBallFinished?.Invoke();
+        Vector2 startScale = transform.localScale;
+        // Starting scale
         Vector2 endScale = new Vector3(1.2f, 1f, 1f); // Example end scale, adjust as needed
         float duration = .2f; // Duration of the lerp
         float time = 0;
@@ -125,7 +127,7 @@ public class BallMaterialMovement : MonoBehaviour
             float t = time / duration;
 
             // Lerp the scale
-            transform.localScale = Vector2.Lerp(startScale, endScale,t);
+            transform.localScale = Vector2.Lerp(startScale, endScale, t);
 
             // Optionally, move the GameObject based on the _HitEffectBlend value
             float blend = Mathf.Lerp(0f, .5f, t); // Example blend value calculation
@@ -137,8 +139,9 @@ public class BallMaterialMovement : MonoBehaviour
 
         duration = .3f;
         time = 0;
-        ParticlePrefab.Play();
-
+        ID.BallParticles(transform.position);
+        Debug.Log(transform.position);
+        
         while (time < duration)
         {
             time += Time.deltaTime;

@@ -117,8 +117,8 @@ public class StatsDisplay : MonoBehaviour
     {
         float time = 0;
 
-        float startAlpha = beingUsed ? 0 : .9f; // Starting alpha value
-        float endAlpha = beingUsed ? .9f : 0; // Ending alpha value
+        float startAlpha = beingUsed ? 0 : .95f; // Starting alpha value
+        float endAlpha = beingUsed ? .95f : 0; // Ending alpha value
         
 
 
@@ -154,7 +154,7 @@ public class StatsDisplay : MonoBehaviour
         player.globalEvents.OnUseStamina += HandleStaminaBar;
         player.globalEvents.OnZeroStamina += FlashStamimaBG;
 
-        StaminaGroup.alpha = 1;
+        StaminaGroup.alpha = 0;
 
 
     }
