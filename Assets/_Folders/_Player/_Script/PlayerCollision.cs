@@ -92,12 +92,12 @@ private void Kill()
 
 private void OnEnable() 
 {
-    ID.events.FloorCollsion += Dropping;
+    // ID.events.FloorCollsion += Dropping;
 }
 
 private void OnDisable() 
 {
-    ID.events.FloorCollsion -= Dropping;
+    // ID.events.FloorCollsion -= Dropping;
 }
 }
 

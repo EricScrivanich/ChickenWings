@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7861494949178353202}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: ParticlePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,9 +45,9 @@ GameObject:
   - component: {fileID: 2839368252793041521}
   - component: {fileID: 5877634076173632196}
   - component: {fileID: 3905201091690003508}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: BallMaterial
-  m_TagString: Plane
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: {fileID: 0}
   uiCutoff: 2
-  playerCutoff: 0.2
+  playerCutoff: 1.5
   explodeDuration: 0
   ParticlePrefab: {fileID: 241993119475519742}
   coll2D: {fileID: 5877634076173632196}

@@ -62,9 +62,11 @@ public class BallMaterialMovement : MonoBehaviour
         transform.position = Vector2.MoveTowards(transform.position, targetPos, dynamicSpeed * Time.deltaTime);
 
         // Deactivate when close to the target
-        if (Vector2.Distance(transform.position, targetPos) < playerCutoff)
+        if (Vector2.Distance(transform.position, targetPos) < playerCutoff && !hasCrossedBoundary)
         {
-            gameObject.SetActive(false);
+            hasCrossedBoundary = true;
+            StartCoroutine(ExpandAndExplode());
+
         }
     }
 
@@ -82,8 +84,9 @@ public class BallMaterialMovement : MonoBehaviour
         // Deactivate the ball when it's close enough to the target position
         if (distanceToTarget < uiCutoff && !hasCrossedBoundary)
         {
-            StartCoroutine(ExpandAndExplode());
             hasCrossedBoundary = true;
+            StartCoroutine(ExpandAndExplode());
+
 
         }
     }
@@ -94,7 +97,7 @@ public class BallMaterialMovement : MonoBehaviour
 
         if (ID != null)
         {
-            coll2D.enabled = ID.IDIndex == 0;
+
             sprite.material = ID.highlightedMaterial;
             trail.material = ID.highlightedMaterial;
         }
@@ -114,7 +117,7 @@ public class BallMaterialMovement : MonoBehaviour
 
     private IEnumerator ExpandAndExplode()
     {
-        ID.ringEvent.OnBallFinished?.Invoke();
+
         Vector2 startScale = transform.localScale;
         // Starting scale
         Vector2 endScale = new Vector3(1.2f, 1f, 1f); // Example end scale, adjust as needed
@@ -136,12 +139,13 @@ public class BallMaterialMovement : MonoBehaviour
 
             yield return null;
         }
+        ID.ringEvent.OnBallFinished?.Invoke();
 
         duration = .3f;
         time = 0;
         ID.BallParticles(transform.position);
         Debug.Log(transform.position);
-        
+
         while (time < duration)
         {
             time += Time.deltaTime;

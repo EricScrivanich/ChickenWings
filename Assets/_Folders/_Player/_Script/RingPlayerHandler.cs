@@ -28,6 +28,7 @@ public class RingPlayerHandler : MonoBehaviour
 
     private void AddScore()
     {
+        Debug.Log("Adding");
         ID.Score += 2;
 
     }
@@ -51,8 +52,8 @@ public class RingPlayerHandler : MonoBehaviour
                 break;
 
             case 2:
-                ID.Score += (Mathf.CeilToInt(RingGold.CorrectRing * 1.5f) + 2);
-                RingGold.GetBall(transform.position,null,ConvertUIToWorldPosition(scoreText));
+               
+                RingGold.GetBall(transform.position,null,scoreText.transform.position);
                 
                 break;
 
@@ -62,6 +63,10 @@ public class RingPlayerHandler : MonoBehaviour
         }
 
     }
+    private void GoldFinish()
+    {
+        ID.Score += (Mathf.CeilToInt(RingGold.CorrectRing * 1.5f) + 2);
+    }
 
     private void PinkFinish()
     {
@@ -70,6 +75,11 @@ public class RingPlayerHandler : MonoBehaviour
 
         
 
+    }
+
+    private void RedFinish()
+    {
+        ID.events.LoseLife?.Invoke();
     }
     private void LoseLife(Vector2 startPos)
     {
@@ -100,11 +110,13 @@ public class RingPlayerHandler : MonoBehaviour
 
     private void OnEnable() 
     {
-        RingGold.ringEvent.OnPassedCorrectRing += AddScore;
+        RingGold.ringEvent.OnCheckOrder += AddScore;
         RingRed.ringEvent.OnGetBall += LoseLife;
-        RingGold.ringEvent.OnGetBall += Test;
+       
         ID.globalEvents.OnBucketExplosion += BucketCompletion;
         RingPink.ringEvent.OnBallFinished += PinkFinish;
+        RingGold.ringEvent.OnBallFinished += GoldFinish;
+        RingRed.ringEvent.OnBallFinished += RedFinish;
 
 
 
@@ -113,10 +125,14 @@ public class RingPlayerHandler : MonoBehaviour
     private void OnDisable() 
     {
         RingPink.ringEvent.OnBallFinished -= PinkFinish;
+        RingGold.ringEvent.OnBallFinished -= GoldFinish;
+        RingRed.ringEvent.OnBallFinished -= RedFinish;
 
-        RingGold.ringEvent.OnPassedCorrectRing -= AddScore;
+
+
+        RingGold.ringEvent.OnCheckOrder -= AddScore;
         RingRed.ringEvent.OnGetBall -= LoseLife;
-        RingGold.ringEvent.OnGetBall -= Test;
+        
 
 
         ID.globalEvents.OnBucketExplosion -= BucketCompletion;

@@ -10,6 +10,7 @@ public class PlayerBounceState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         bounceTime = 0;
+        player.maxFallSpeed = player.ID.MaxFallSpeed;
 
         player.anim.SetTrigger("BounceTrigger");
 
@@ -30,10 +31,10 @@ public class PlayerBounceState : PlayerBaseState
 
     }
 
-    public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    {
+    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
+    // {
 
-    }
+    // }
 
     public override void RotateState(PlayerStateManager player)
     {
@@ -50,7 +51,8 @@ public class PlayerBounceState : PlayerBaseState
             AudioManager.instance.PlayBounceSound();
             player.rb.velocity = new Vector2(1, 9.5f);
             player.disableButtons = false;
-            player.ID.events.FloorCollsion.Invoke(true);
+            // player.ID.events.FloorCollsion.Invoke(true);
+            player.isDropping = false;
             player.CheckIfIsTryingToParachute();
 
         }

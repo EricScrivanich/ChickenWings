@@ -26,10 +26,10 @@ public class PlayerStartingState : PlayerBaseState
      
     }
 
-    public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    {
+    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
+    // {
       
-    }
+    // }
 
     public override void RotateState(PlayerStateManager player)
     {

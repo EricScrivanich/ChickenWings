@@ -109,10 +109,10 @@ public class PlayerParachuteState : PlayerBaseState
     }
 
 
-    public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    {
-        // Handle collision events here, if needed
-    }
+    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
+    // {
+    //     // Handle collision events here, if needed
+    // }
 
     public override void UpdateState(PlayerStateManager player)
     {

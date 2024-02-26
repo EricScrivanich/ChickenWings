@@ -6,13 +6,19 @@ public class PlayerStateManager : MonoBehaviour
 {
     [ExposedScriptableObject]
     public PlayerID ID;
+    public PlayerParts playerParts;
+    public bool isDropping;
 
     [SerializeField] private bool isSlow;
+    public GameEvent DeadEvent;
     public float jumpForce;
+    private bool isDamaged;
     public float flipLeftForceX;
     public float flipLeftForceY;
     public float flipRightForceX;
     public float flipRightForceY;
+    private Queue<ParticleSystem> FeatherParticleQueue;
+    private ParticleSystem SmokeParticle;
 
 
     public Transform ImageTransform;
@@ -62,7 +68,7 @@ public class PlayerStateManager : MonoBehaviour
     public bool isParachuting = false;
     public bool isTryingToParachute = false;
 
-    
+
     public int rotationLerpSpeed = 20;
     public int jumpRotSpeed = 200;
     private int frozenRotSpeed = 350;
@@ -85,6 +91,8 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
+        isDropping = false;
+        isDamaged = false;
         jumpHeld = false;
         canDash = true;
         canDrop = true;
@@ -96,10 +104,11 @@ public class PlayerStateManager : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        // Feathers.SetActive(false);
         if (!isSlow)
         {
-            ID.MaxFallSpeed = -10f;
-            jumpForce = 11.2f;
+            ID.MaxFallSpeed = -9.7f;
+            jumpForce = 11.8f;
             flipLeftForceX = -6.9f;
             flipLeftForceY = 9.4f;
             flipRightForceX = 6.5f;
@@ -120,7 +129,15 @@ public class PlayerStateManager : MonoBehaviour
         }
 
         maxFallSpeed = ID.MaxFallSpeed;
-       
+
+        FeatherParticleQueue = new Queue<ParticleSystem>();
+        for (int i = 0; i < 2; i++)
+        {
+            var feather = Instantiate(playerParts.FeatherParticle);
+            FeatherParticleQueue.Enqueue(feather);
+        }
+        SmokeParticle = Instantiate(playerParts.SmokeParticle);
+
 
         attackObject.SetActive(false);
         // originalGravityScale = rb.gravityScale;
@@ -133,11 +150,11 @@ public class PlayerStateManager : MonoBehaviour
 
         ID.ResetValues();
     }
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        currentState.OnCollisionEnter2D(this, collision);
+    // void OnCollisionEnter2D(Collision2D collision)
+    // {
+    //     currentState.OnCollisionEnter2D(this, collision);
 
-    }
+    // }
     void FixedUpdate()
     {
         currentState.FixedUpdateState(this);
@@ -335,6 +352,7 @@ public class PlayerStateManager : MonoBehaviour
         if (!disableButtons && canDrop)
         {
             // ResetHoldJump();
+            isDropping = true;
             SwitchState(DropState);
             StartCoroutine(DropCooldown());
         }
@@ -369,6 +387,90 @@ public class PlayerStateManager : MonoBehaviour
             }
         }
     }
+
+    private void HandleDamaged()
+    {
+        if (!isDamaged)
+        {
+            isDamaged = true;
+            ID.Lives--;
+            if (ID.Lives <= 0)
+            {
+                Die();
+                return;
+            }
+            var Feather = FeatherParticleQueue.Dequeue();
+            if (Feather.isPlaying)
+            {
+                Feather.Stop();
+            }
+            Feather.transform.position = transform.position;
+            Feather.Play();
+            StartCoroutine(Flash());
+
+            FeatherParticleQueue.Enqueue(Feather);
+
+        }
+        else
+        {
+            return;
+        }
+
+    }
+
+    private void HandleGroundCollision()
+    {
+        if (!isDropping)
+        {
+            Die();
+        }
+        else
+        {
+            SwitchState(BounceState);
+        }
+    }
+
+    private void Die()
+    {
+        ID.Lives = 0;
+        DeadEvent.TriggerEvent();
+        AudioManager.instance.PlayDeathSound();
+        for (int i = 0; i < FeatherParticleQueue.Count; i++)
+        {
+            var Feather = FeatherParticleQueue.Dequeue();
+            if (Feather.isPlaying)
+            {
+                Feather.Stop();
+            }
+            Feather.transform.position = transform.position;
+            SmokeParticle.transform.position = transform.position;
+            Feather.Play();
+            SmokeParticle.Play();
+
+            gameObject.SetActive(false);
+
+
+        }
+    }
+
+    private IEnumerator Flash()
+    {
+
+
+        for (int i = 0; i < 5; i++)
+        {
+            // spriteRenderer.color = new Color(1f, 1f, 1f, 0f); // Set opacity to 0
+            ID.PlayerMaterial.SetFloat("_Alpha", 0);
+            yield return new WaitForSeconds(.12f);
+            // spriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Set opacity to 1
+            ID.PlayerMaterial.SetFloat("_Alpha", .9f);
+            yield return new WaitForSeconds(.12f);
+        }
+        ID.PlayerMaterial.SetFloat("_Alpha", 1);
+
+        isDamaged = false;
+    }
+    // d
     public void HandleParachute(bool isPressing)
     {
         isTryingToParachute = isPressing;
@@ -444,6 +546,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
+
     IEnumerator DashCooldown()
     {
         canDash = false;
@@ -497,6 +600,8 @@ public class PlayerStateManager : MonoBehaviour
         // ID.events.OnJumpReleased += HandleReleaseJump;
         ID.events.OnCompletedRingSequence += BucketCompletion;
         ID.globalEvents.OnBucketExplosion += BucketExplosion;
+        ID.events.LoseLife += HandleDamaged;
+        ID.events.HitGround += HandleGroundCollision;
 
         // ID.events.OnAttack += HandleSlash;
     }
@@ -514,6 +619,10 @@ public class PlayerStateManager : MonoBehaviour
         // ID.events.OnJumpReleased -= HandleReleaseJump;
         ID.events.OnCompletedRingSequence -= BucketCompletion;
         ID.globalEvents.OnBucketExplosion -= BucketExplosion;
+        ID.events.LoseLife -= HandleDamaged;
+        ID.events.HitGround -= HandleGroundCollision;
+
+
 
         // ID.events.OnAttack -= HandleSlash;
 

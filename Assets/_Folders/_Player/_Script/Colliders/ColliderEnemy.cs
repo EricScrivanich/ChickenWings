@@ -36,31 +36,33 @@ public class ColliderEnemy : MonoBehaviour
     // Start is called before the first frame update
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Floor" && floorCollision)
+        if (collision.gameObject.tag == "Floor" ) //&& floorCollision
         {
-            ID.Lives = 0;
-            Kill();
-            DeadEvent.TriggerEvent();
+            ID.events.HitGround?.Invoke();
+            // ID.Lives = 0;
+            // Kill();
+            // DeadEvent.TriggerEvent();
         }
     }
-
+ 
     private void OnTriggerEnter2D(Collider2D collider)
     {
 
-        if (collider.CompareTag("Plane") && !isFlashing) // && !isFlashing 
+        if (collider.CompareTag("Plane") ) // && !isFlashing 
         {
-            ID.Lives -= 1;
+            ID.events.LoseLife?.Invoke();
+            // ID.Lives -= 1;
 
-            if (ID.Lives <= 0)
-            {
-                Kill();
-                DeadEvent.TriggerEvent();
-                return;
-            }
+            // if (ID.Lives <= 0)
+            // {
+            //     Kill();
+            //     DeadEvent.TriggerEvent();
+            //     return;
+            // }
 
-            AudioManager.instance.PlayDamageSound();
-            Instantiate(featherParticles, transform.position, Quaternion.identity);
-            StartCoroutine(Flash()); // Start the flashing coroutine
+            // AudioManager.instance.PlayDamageSound();
+            // Instantiate(featherParticles, transform.position, Quaternion.identity);
+            // StartCoroutine(Flash()); // Start the flashing coroutine
         }
 
         if (collider.CompareTag("Ring"))
@@ -86,57 +88,57 @@ public class ColliderEnemy : MonoBehaviour
 
     }
 
-    private void Dropping(bool floorCollisionVar)
-    {
-        floorCollision = floorCollisionVar;
+    // private void Dropping(bool floorCollisionVar)
+    // {
+    //     floorCollision = floorCollisionVar;
 
-    }
+    // }
 
-    private IEnumerator Flash()
-    {
-        isFlashing = true;
+    // private IEnumerator Flash()
+    // {
+    //     isFlashing = true;
 
-        for (int i = 0; i < numberOfFlashes; i++)
-        {
-            // spriteRenderer.color = new Color(1f, 1f, 1f, 0f); // Set opacity to 0
-            ID.PlayerMaterial.SetFloat("_Alpha", 0);
-            yield return new WaitForSeconds(flashDuration);
-            // spriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Set opacity to 1
-            ID.PlayerMaterial.SetFloat("_Alpha", .9f);
-            yield return new WaitForSeconds(flashDuration);
-        }
-        ID.PlayerMaterial.SetFloat("_Alpha", 1);
+    //     for (int i = 0; i < numberOfFlashes; i++)
+    //     {
+    //         // spriteRenderer.color = new Color(1f, 1f, 1f, 0f); // Set opacity to 0
+    //         ID.PlayerMaterial.SetFloat("_Alpha", 0);
+    //         yield return new WaitForSeconds(flashDuration);
+    //         // spriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Set opacity to 1
+    //         ID.PlayerMaterial.SetFloat("_Alpha", .9f);
+    //         yield return new WaitForSeconds(flashDuration);
+    //     }
+    //     ID.PlayerMaterial.SetFloat("_Alpha", 1);
 
-        isFlashing = false;
-    }
+    //     isFlashing = false;
+    // }
 
 
-    private void Kill()
-    {
-        Instantiate(featherParticles, transform.position, Quaternion.identity);
-        Instantiate(smokeParticles, transform.position, Quaternion.identity);
-        AudioManager.instance.PlayDeathSound();
+    // private void Kill()
+    // {
+    //     Instantiate(featherParticles, transform.position, Quaternion.identity);
+    //     Instantiate(smokeParticles, transform.position, Quaternion.identity);
+    //     AudioManager.instance.PlayDeathSound();
 
-        gameObject.SetActive(false);
+    //     gameObject.SetActive(false);
 
-        if (transform.parent != null) // Check if this GameObject has a parent
-        {
-            transform.parent.gameObject.SetActive(false);
-        }
-        else
-        {
-            gameObject.SetActive(false); // If no parent, disable the current GameObject
-        }
+    //     if (transform.parent != null) // Check if this GameObject has a parent
+    //     {
+    //         transform.parent.gameObject.SetActive(false);
+    //     }
+    //     else
+    //     { 
+    //         gameObject.SetActive(false); // If no parent, disable the current GameObject
+    //     }
 
-    }
+    // }
 
-    private void OnEnable()
-    {
-        ID.events.FloorCollsion += Dropping;
-    }
+    // private void OnEnable()
+    // {
+        
+    // }
 
-    private void OnDisable()
-    {
-        ID.events.FloorCollsion -= Dropping;
-    }
+    // private void OnDisable()
+    // {
+       
+    // }
 }

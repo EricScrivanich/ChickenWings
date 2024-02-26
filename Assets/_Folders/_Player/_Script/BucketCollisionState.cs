@@ -14,7 +14,7 @@ public class BucketCollisionState : PlayerBaseState
         player.rb.velocity = new Vector2(0, 0);
         player.maxFallSpeed = player.ID.MaxFallSpeed;
         player.rb.simulated = false;
-        player.ID.events.FloorCollsion.Invoke(true);
+        player.isDropping = false;
         // player.anim.SetTrigger("ResetTrigger");
         player.anim.SetTrigger("IdleTrigger");
 
@@ -28,10 +28,10 @@ public class BucketCollisionState : PlayerBaseState
 
     }
 
-    public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    {
+    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
+    // {
 
-    }
+    // }
 
     public override void RotateState(PlayerStateManager player)
     {

@@ -97,6 +97,10 @@ public class PlaneSpawnManager : MonoBehaviour
 
     void SpawnPlaneInArea()
     {
+        if (!spawnArea.gameObject.activeInHierarchy)
+        {
+            return;
+        }
         int planesToSpawn = Random.Range(spawnArea.minPlanes, spawnArea.maxPlanes + 1); // +1 because Random.Range is exclusive for the max value
 
         for (int i = 0; i < planesToSpawn; i++)

@@ -53,10 +53,11 @@ public class PopUpsDisplay : MonoBehaviour
 
     public void GameOver()
     {
-        initialPosition = new Vector2(initialPosition.x, Screen.height * 1.5f);
+        Debug.Log("GameOVer");
+        initialPosition = new Vector2(0, BoundariesManager.TopPlayerBoundary +2);
         gameoverImage.transform.position = initialPosition;
         gameoverImage.gameObject.SetActive(true);
-        targetPosition = new Vector2(Screen.width / 2, Screen.height / 2);
+        targetPosition = new Vector2(0, 1);
 
         currentLerpTime = 0f;
         StartCoroutine(MoveGameOverImage());

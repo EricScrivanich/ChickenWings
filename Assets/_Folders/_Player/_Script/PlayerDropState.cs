@@ -8,7 +8,7 @@ public class PlayerDropState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.transform.rotation = Quaternion.Euler(0, 0, 0);
-        player.ID.events.FloorCollsion.Invoke(false); 
+        // player.ID.events.FloorCollsion.Invoke(false); 
         AudioManager.instance.PlayDownJumpSound();
         player.maxFallSpeed = -50;
         player.anim.SetTrigger("DropTrigger");
@@ -29,19 +29,19 @@ public class PlayerDropState : PlayerBaseState
      
     }
 
-    public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Floor")
-            {
-                player.rb.velocity = new Vector2 (0,0);
-                player.anim.SetBool("DropBool",false);
-                player.maxFallSpeed = player.ID.MaxFallSpeed;
+    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
+    // {
+    //     if (collision.gameObject.tag == "Floor")
+    //         {
+    //             player.rb.velocity = new Vector2 (0,0);
+    //             player.anim.SetBool("DropBool",false);
+    //             player.maxFallSpeed = player.ID.MaxFallSpeed;
 
-                player.SwitchState(player.BounceState);
-            }
+    //             player.SwitchState(player.BounceState);
+    //         }
 
       
-    }
+    // }
 
    
 

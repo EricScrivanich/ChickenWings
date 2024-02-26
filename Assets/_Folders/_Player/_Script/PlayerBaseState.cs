@@ -8,5 +8,5 @@ public abstract class PlayerBaseState
     public abstract void UpdateState(PlayerStateManager player);
     public abstract void FixedUpdateState(PlayerStateManager player);
     public abstract void RotateState(PlayerStateManager player);
-    public abstract void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision);
+    // public abstract void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision);
 }

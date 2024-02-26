@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class PlayerID : ScriptableObject
 {
-
+    
     public float slowMaxFallSpeed;
+    
     public float slowJumpForce;
     public float slowFlipLeftForceX;
     public float slowFlipLeftForceY;
@@ -38,9 +39,11 @@ public class PlayerID : ScriptableObject
             {
                 return;
             }
-            Debug.Log("Doing it");
+          
             lives = value;
-            Debug.Log("LIves " + lives);
+
+           
+           
             globalEvents.OnUpdateLives?.Invoke(lives);
         }
     }
@@ -53,8 +56,15 @@ public class PlayerID : ScriptableObject
         }
         set
         {
+            if (value != 0)
+            {
+                int differce = value - score;
+                globalEvents.OnUpdateScore?.Invoke(differce);
+
+            }
+            
+
             score = value;
-            globalEvents.OnUpdateScore?.Invoke(score);
         }
     }
 
