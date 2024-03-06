@@ -15,6 +15,7 @@ public class PlayerCollision : MonoBehaviour
     private float flashDuration;
     [SerializeField] private int numberOfFlashes = 5; // Number of times to flash
     [SerializeField] private float totalFlashTime = 1f;
+    [SerializeField] private float dodgeDistance;
 
     void Start()
     {
@@ -35,7 +36,31 @@ public class PlayerCollision : MonoBehaviour
             Kill();
             DeadEvent.TriggerEvent(); 
         }
+
+        if (collision.gameObject.CompareTag("Ring"))
+        {
+            foreach (ContactPoint2D contact in collision.contacts)
+            {
+                Vector2 normal = contact.normal;
+
+                // Determine direction based on the normal
+                // Assuming a simple scenario where a positive normal.x suggests a hit from the left
+                if (normal.x > 0)
+                {
+                    // Move player to the right
+                    transform.position += Vector3.right * dodgeDistance;
+                }
+                else
+                {
+                    // Move player to the left
+                    transform.position += Vector3.left * dodgeDistance;
+                }
+
+                break; // Assuming we only care about the first contact point
+            }
+        }
     }
+    
 
      private void OnTriggerEnter2D(Collider2D collider)
     {

@@ -15,6 +15,7 @@ public class PlayerSlashState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.disableButtons = true;
+        player.ChangeCollider(-1);
 
         player.anim.SetBool("AttackBool",true);
         player.attackObject.SetActive(true);
@@ -28,8 +29,8 @@ public class PlayerSlashState : PlayerBaseState
 
     }
     public override void ExitState(PlayerStateManager player)
-
     {
+        player.ChangeCollider(0);
 
     }
 

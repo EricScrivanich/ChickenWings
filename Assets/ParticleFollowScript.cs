@@ -35,7 +35,7 @@ public class ParticleFollowScript : MonoBehaviour
             ringTransform.correctCollision = false;
             canPlay = true;
             hasPlayed = false;
-            Debug.Log("retruen");
+          
             ID.ReturnEffect(this);
             // ResetRing();
             // ID.particleSystemsQueue.Enqueue(this.gameObject);
@@ -72,7 +72,7 @@ public class ParticleFollowScript : MonoBehaviour
 
     private void OnDisable()
     {
-        Debug.Log("DIsssssss");
+        
 
     }
     private void OnEnable()

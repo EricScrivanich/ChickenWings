@@ -15,16 +15,11 @@ public class RingPool : ScriptableObject
     public GameObject ringPrefab;
     public GameObject bucketPrefab;
     public GameObject ballPrefab;
- 
+
     private int ringAmount = 25;
     private int bucketAmount = 4;
 
     public bool isTutorial;
-
-
-
-
-
     // private Queue<GameObject> ringPool;
     private List<BucketScript> bucketPool;
     private List<RingMovement> ringPool;
@@ -37,7 +32,7 @@ public class RingPool : ScriptableObject
     public void SpawnRingPool()
     {
         ringPool = new List<RingMovement>();
-        
+
 
         if (!parent)
         {
@@ -130,7 +125,7 @@ public class RingPool : ScriptableObject
 
     public void SpawnBucketPool()
     {
-        Debug.Log("BucketSPawning");
+
         bucketPool = new List<BucketScript>();
         // if (bucketPool == null || bucketPool.Count == 0)
         // {
@@ -173,7 +168,7 @@ public class RingPool : ScriptableObject
     }
 
 
-#region Fading/Disabling
+    #region Fading/Disabling
     public IEnumerator FadeOutRed()
     {
         yield return new WaitForSeconds(.5f);
@@ -321,61 +316,62 @@ public class RingPool : ScriptableObject
 
 
     }
+        
 
-    #region Testing
-    private void OnValidate()
+#region Testing
+private void OnValidate()
+{
+    if (lastCurrentTrigger != currentTriggerEdited)
     {
-        if (lastCurrentTrigger != currentTriggerEdited)
-        {
-            ShowCorrectPlaceholders();
-
-        }
-
-        else if (showAllPlaceholders != lastShowAllPlaceholders)
-        {
-            if (showAllPlaceholders)
-            {
-                ShowAllPlaceholders();
-
-            }
-
-            else
-            {
-                ShowCorrectPlaceholders();
-            }
-
-
-        }
+        ShowCorrectPlaceholders();
 
     }
-    private void ShowAllPlaceholders()
+
+    else if (showAllPlaceholders != lastShowAllPlaceholders)
     {
-        foreach (PlaceholderRing placeholder in FindObjectsOfType<PlaceholderRing>())
+        if (showAllPlaceholders)
+        {
+            ShowAllPlaceholders();
+
+        }
+
+        else
+        {
+            ShowCorrectPlaceholders();
+        }
+
+
+    }
+
+}
+private void ShowAllPlaceholders()
+{
+    foreach (PlaceholderRing placeholder in FindObjectsOfType<PlaceholderRing>())
+    {
+        placeholder.gameObject.layer = LayerMask.NameToLayer("PlayerEnemy");
+    }
+    lastShowAllPlaceholders = showAllPlaceholders;
+
+}
+
+private void ShowCorrectPlaceholders()
+{
+    foreach (PlaceholderRing placeholder in FindObjectsOfType<PlaceholderRing>())
+    {
+        // Check and update the layer as needed
+        if (placeholder.getsTriggeredInt == currentTriggerEdited)
         {
             placeholder.gameObject.layer = LayerMask.NameToLayer("PlayerEnemy");
         }
-        lastShowAllPlaceholders = showAllPlaceholders;
-
-    }
-
-    private void ShowCorrectPlaceholders()
-    {
-        foreach (PlaceholderRing placeholder in FindObjectsOfType<PlaceholderRing>())
+        else
         {
-            // Check and update the layer as needed
-            if (placeholder.getsTriggeredInt == currentTriggerEdited)
-            {
-                placeholder.gameObject.layer = LayerMask.NameToLayer("PlayerEnemy");
-            }
-            else
-            {
-                placeholder.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-            }
+            placeholder.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         }
-        lastCurrentTrigger = currentTriggerEdited;
-        showAllPlaceholders = false;
-        lastShowAllPlaceholders = showAllPlaceholders;
-
     }
+    lastCurrentTrigger = currentTriggerEdited;
+    showAllPlaceholders = false;
+    lastShowAllPlaceholders = showAllPlaceholders;
+
+}
     #endregion
 }

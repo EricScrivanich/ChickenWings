@@ -57,7 +57,7 @@ public class PlaneManager : MonoBehaviour
                     continue;
                 }
 
-                Placeholder placeholder = child.GetComponent<Placeholder>();
+                PlanePlaceholder placeholder = child.GetComponent<PlanePlaceholder>();
                 if(placeholder == null)
                 {
                     Debug.LogError("A Placeholder component is missing on a filler!");

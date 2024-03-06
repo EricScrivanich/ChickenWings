@@ -147,7 +147,7 @@ public class RingSpawner : MonoBehaviour
 
     public void TriggeredSpawn(int triggerValue)
     {
-        Debug.Log("Triggered");
+       
 
         // Assign order by position to each placeholder
         AssignOrderByPosition(triggerValue);
@@ -180,7 +180,7 @@ public class RingSpawner : MonoBehaviour
         }
         else
         {
-            Debug.Log("Starting Bucket Get");
+            
             // BucketScript bucketScript = ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
             ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
 

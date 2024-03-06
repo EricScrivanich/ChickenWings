@@ -68,6 +68,7 @@ Transform:
   - {fileID: 2649424319782129383}
   - {fileID: 7318803671009453376}
   - {fileID: 2638187226689328034}
+  - {fileID: 4763380328371563221}
   m_Father: {fileID: 3549554370242709108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1714249696279193555
@@ -275,7 +276,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4031301714381076948}
-  - {fileID: 4763380328371563221}
   - {fileID: 7954770649355603934}
   - {fileID: 2846307981564940508}
   - {fileID: 321073335050485285}
@@ -321,7 +321,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db215764949cf44d8bd66b9c5b42a2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dodgeDistance: 0
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  playerParts: {fileID: 0}
+  isDropping: 0
+  isSlow: 0
+  DeadEvent: {fileID: 0}
+  jumpForce: 0
+  flipLeftForceX: 0
+  flipLeftForceY: 0
+  flipRightForceX: 0
+  flipRightForceY: 0
   ImageTransform: {fileID: 321073335050485285}
   ParachuteObject: {fileID: 4367852547350734217}
   staminaDeplete: 60
@@ -400,6 +410,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   scoreText: {fileID: 0}
+  livesPanel: {fileID: 0}
+  Lives: []
   RingRed: {fileID: 11400000, guid: d5428165d140444d991bb0c5e34af16f, type: 2}
   RingPink: {fileID: 11400000, guid: e549d978ef2c84652a50f724fc25a6f8, type: 2}
   RingGold: {fileID: 11400000, guid: dd58f32a2dde245e48fabe5bd1b5e711, type: 2}
@@ -1251,12 +1263,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6011686567827486752}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.29519996, y: -0.34379995, z: 0}
+  m_LocalScale: {x: 0.5999999, y: 0.5999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3549554370242709108}
+  m_Father: {fileID: 321073335050485285}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8039999489647537178
 MonoBehaviour:

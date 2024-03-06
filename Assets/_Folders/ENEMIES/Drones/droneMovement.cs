@@ -5,7 +5,8 @@ using UnityEngine;
 public class droneMovement : MonoBehaviour
 {
     private float speed;
-    
+    private Rigidbody2D rb;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -13,12 +14,27 @@ public class droneMovement : MonoBehaviour
     }
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
+        Invoke("Log", 3);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.left * speed * Time.deltaTime);
+        // transform.rotation = Quaternion.Euler(0, 0, 0);
+        // transform.Translate(Vector3.left * speed * Time.deltaTime);
+
+    }
+
+    private void Log()
+    {
+
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        Debug.Log(rb.velocity.x);
+
     }
 }

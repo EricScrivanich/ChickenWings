@@ -13,26 +13,11 @@ public class RingMovement : MonoBehaviour
     public bool correctCollision = false;
     public int order;
     private bool isCorrect = false;
-    // private bool _isCorrect = false; // Backing field for the property
-
-    // public bool isCorrect
-    // {
-    //     get => _isCorrect;
-    //     set
-    //     {
-    //         // Check if the new value is different from the current value
-    //         if (_isCorrect != value && order ==1)
-    //         {
-    //             // Log the change with a stack trace
-    //             Debug.Log($"isCorrect changed from {_isCorrect} to {value} at frame {Time.frameCount}\nStack Trace: {Environment.StackTrace}");
-
-    //             _isCorrect = value; // Update the value
-    //         }
-    //     }
-    // }
+   
     [SerializeField] private Collider2D coll2D;
 
     private Transform _transform;
+    private Rigidbody2D rb;
     [SerializeField] private SpriteRenderer backRing;
 
     [SerializeField] private SpriteRenderer centerSprite;
@@ -41,6 +26,7 @@ public class RingMovement : MonoBehaviour
 
     private bool isFaded = false;
     private Collider2D[] colliders;
+    // private Rigidbody2D rb;
 
     private SpriteRenderer sprite;
     private Animator anim;
@@ -52,15 +38,19 @@ public class RingMovement : MonoBehaviour
 
     private void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
         _transform = GetComponent<Transform>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         colliders = GetComponents<Collider2D>();
     }
+    private void FixedUpdate() {
+        rb.velocity = Vector2.left * speed;
+    }
 
     private void Update()
     {
-        _transform.position += Vector3.left * speed * Time.deltaTime;
+        // _transform.position += Vector3.left * speed * Time.deltaTime;
 
 
         if (doesTriggerInt != 0 && hasNotTriggered)
@@ -224,6 +214,7 @@ public class RingMovement : MonoBehaviour
 
     private void OnEnable()
     {
+        // rb.velocity = Vector2.left * speed;
         correctCollision = false;
         sprite.material = ID.defaultMaterial;
         backRing.material = ID.defaultMaterial;

@@ -8,6 +8,7 @@ public class RingID : ScriptableObject
 
 {
     [SerializeField] private RingPool Pool;
+
     public Color CenterColor;
     public GameObject ringParticles;
     public int nextIndex = 0;
@@ -17,6 +18,7 @@ public class RingID : ScriptableObject
     public GameObject ballParticlePrefab;
     private GameObject ballParticle;
     private ParticleSystem ballPS;
+    public float ballExplosionThreshold;
 
 
     public Material defaultMaterial;
@@ -70,11 +72,11 @@ public class RingID : ScriptableObject
         ParticleFollowScript script = grabbedPS.GetComponent<ParticleFollowScript>();
         script.ringTransform = ring;
 
-        if (!grabbedPS.activeInHierarchy)
-        {
+       
+        
             grabbedPS.SetActive(true);
 
-        }
+        
 
         particleSystemsQueue.Enqueue(grabbedPS);
 
@@ -109,6 +111,7 @@ public class RingID : ScriptableObject
             for (int i = 0; i < poolSize; i++)
             {
                 GameObject effectInstance = Instantiate(ringParticles); // Instantiate from the prefab
+
                 effectInstance.SetActive(false); // Start with the GameObject disabled
                 particleSystemsQueue.Enqueue(effectInstance);
             }
@@ -147,7 +150,7 @@ public class RingID : ScriptableObject
         if (particlesInUse < poolSize)
         {
             particlesInUse++;
-            Debug.Log("getting effect");
+            
             GetEffect(ringScript);
         }
     }
@@ -176,6 +179,7 @@ public class RingID : ScriptableObject
 
             if (nextIndex < ringList.Count)
             {
+                effect.gameObject.SetActive(false);
                 // particleSystemsQueue.Enqueue(effect.gameObject);
                 GetEffect(GetNewRing());
             }
@@ -214,7 +218,7 @@ public class RingID : ScriptableObject
         // bucketScript.transform.localScale = setTransform.localScale;
         bucketScript.order = bucketOrder;
         bucketScript.speed = setSpeed;
-        Debug.Log("Getting Bucket from ID");
+       
 
 
         // bucketScript.gameObject.SetActive(true);
@@ -235,9 +239,9 @@ public class RingID : ScriptableObject
         }
         else
         {
-            Debug.Log("Grabbiung");
+          
             ballScript.targetObject = obj;
-            Debug.Log("Got");
+            
 
         }
         ballScript.gameObject.SetActive(true);

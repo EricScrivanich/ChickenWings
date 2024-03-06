@@ -38,6 +38,7 @@ public class ColliderEnemy : MonoBehaviour
     {
         if (collision.gameObject.tag == "Floor" ) //&& floorCollision
         {
+           
             ID.events.HitGround?.Invoke();
             // ID.Lives = 0;
             // Kill();

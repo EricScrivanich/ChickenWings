@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Pool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
   CenterColor: {r: 0.94970715, g: 0.4009434, b: 1, a: 0}
-  ringParticles: {fileID: 570963531542925166, guid: 794fb8e532768487eb0c7d992a094bbe, type: 3}
-  nextIndex: 0
+  ringParticles: {fileID: 3709139981246965200, guid: 4c6d0267af19f43499df802fa55ed8f7, type: 3}
+  nextIndex: 5
   IDIndex: 3
+  ballParticlePrefab: {fileID: 7998140589364266062, guid: 4023f34c0b8934edaa7ad291c95071a9, type: 3}
+  ballExplosionThreshold: 5
   defaultMaterial: {fileID: 2100000, guid: 56171205b0aa74f0fb0418ee3d1f8fcd, type: 2}
   highlightedMaterial: {fileID: 2100000, guid: 6e12170bc70a1476d811fab4babefb08, type: 2}
   passedMaterial: {fileID: 2100000, guid: f195765dab05e4f35bd821537055db78, type: 2}
   ballMaterialSpeed: 0
-  triggeredRingOrder: 0
-  newSetup: 0
-  placeholderCount: 11
+  triggeredRingOrder: 10
+  newSetup: 1
+  placeholderCount: 10
   CorrectRing: 1

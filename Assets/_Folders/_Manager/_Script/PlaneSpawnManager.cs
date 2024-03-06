@@ -204,37 +204,37 @@ public class PlaneSpawnManager : MonoBehaviour
                 break;
             case 4:
                 StartCoroutine(SpawnJetPlanes());
-                cropPlanesAvailable = 3;
+                
                 break;
 
             case 6:
                 jetPlanesAvailable = 2;
                 break;
             case 7:
-                cropPlanesAvailable = 4;
+                cropPlanesAvailable = 3;
                 break;
             case 8:
                 StartCoroutine(SpawnCargoPlanes());
 
                 break;
             case 10:
-                jetPlanesAvailable = 3;
+               
                 break;
             case 12:
                 cargoPlanesAvailable = 2;
-                cropPlanesAvailable = 5;
+                cropPlanesAvailable = 4;
 
                 break;
             case 14:
                 cargoPlanesAvailable = 3;
                 break;
             case 16:
-                cropPlanesAvailable = 6;
+                
                 jetPlanesAvailable = 4;
 
                 break;
             case 19:
-                cargoPlanesAvailable = 4;
+                cargoPlanesAvailable = 3;
 
                 break;
             default:

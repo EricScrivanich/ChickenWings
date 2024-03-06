@@ -50,7 +50,7 @@ public class PlayerHoldJumpState : PlayerBaseState
     public override void UpdateState(PlayerStateManager player)
     {
 
-        player.UseStamina(60);
+        player.UseStamina(55);
 
 
 

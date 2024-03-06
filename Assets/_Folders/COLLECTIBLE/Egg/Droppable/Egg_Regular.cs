@@ -21,16 +21,16 @@ public class Egg_Regular : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        coll2D = GetComponent<Collider2D>(); 
-        
+        coll2D = GetComponent<Collider2D>();
+
 
     }
     void Start()
     {
 
         // playerRB = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody2D>();
-       
-        
+
+
         anim = GetComponent<Animator>();
         ready = true;
 
@@ -77,21 +77,22 @@ public class Egg_Regular : MonoBehaviour
     }
     private void OnEnable()
     {
-        
+        rb.simulated = true;
+        coll2D.enabled = true;
+
         rb.velocity = new Vector2(ID.AddEggVelocity, -1.5f);
-        
-        
+
+
 
 
     }
 
     private void OnDisable()
     {
-       
-            rb.simulated = true;
-            coll2D.enabled = true;
-            isCracked = false;
-       
+
+
+        isCracked = false;
+
     }
 
 

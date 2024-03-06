@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
 {
+
     [ExposedScriptableObject]
     public PlayerID ID;
     public PlayerParts playerParts;
+    [SerializeField] private CameraShake cameraShake;
+    public Transform parchutePoint;
+
+    [SerializeField] private List<Collider2D> ColliderType;
     public bool isDropping;
 
     [SerializeField] private bool isSlow;
+    public bool justFlipped;
     public GameEvent DeadEvent;
     public float jumpForce;
     private bool isDamaged;
@@ -103,15 +109,18 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+
+        ChangeCollider(0);
         rb = GetComponent<Rigidbody2D>();
         // Feathers.SetActive(false);
         if (!isSlow)
         {
             ID.MaxFallSpeed = -9.7f;
-            jumpForce = 11.8f;
+            jumpForce = 11.2f;
             flipLeftForceX = -6.9f;
             flipLeftForceY = 9.4f;
-            flipRightForceX = 6.5f;
+            flipRightForceX = 6.8f;
             flipRightForceY = 10f;
             rb.gravityScale = 2.3f;
             originalGravityScale = rb.gravityScale;
@@ -162,6 +171,26 @@ public class PlayerStateManager : MonoBehaviour
         MaxFallSpeed();
     }
 
+    public void ChangeCollider(int index)
+    {
+        if (index < 0)
+        {
+            for (int i = 0; i < ColliderType.Count; i++)
+            {
+                // If the current index matches the parameter, enable the collider, otherwise disable it.
+                ColliderType[i].enabled = false;
+
+            }
+            return;
+
+        }
+        for (int i = 0; i < ColliderType.Count; i++)
+        {
+            // If the current index matches the parameter, enable the collider, otherwise disable it.
+            ColliderType[i].enabled = (i == index);
+        }
+    }
+
     public void UseStamina(float amount)
     {
         ID.StaminaUsed += amount * Time.deltaTime;
@@ -190,7 +219,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private IEnumerator FillStamina()
     {
-        yield return new WaitForSeconds(2.8f);
+        yield return new WaitForSeconds(2.5f);
 
         while (ID.StaminaUsed > 0 && !jumpHeld)
         {
@@ -223,6 +252,14 @@ public class PlayerStateManager : MonoBehaviour
     public void SwitchState(PlayerBaseState newState)
     {
         currentState.ExitState(this);
+        if (currentState == FlipLeftState || currentState == FlipRightState)
+        {
+            justFlipped = true;
+        }
+        else
+        {
+            justFlipped = false;
+        }
         currentState = newState;
         newState.EnterState(this);
         // previousState = currentState;
@@ -290,8 +327,11 @@ public class PlayerStateManager : MonoBehaviour
     void HandleAttack(bool attacking)
     {
 
-        if (attacking && !disableButtons)
+        if (attacking && !disableButtons && ID.numberOfPowersThatCanBeUsed >= 1)
         {
+            ID.numberOfPowersThatCanBeUsed--;
+            ID.CurrentMana -= ID.ManaNeeded;
+            ID.globalEvents.UsePower?.Invoke();
             // ResetHoldJump();
             isAttacking = true;
             SwitchState(SlashState);
@@ -347,25 +387,17 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    void HandleDrop()
-    {
-        if (!disableButtons && canDrop)
-        {
-            // ResetHoldJump();
-            isDropping = true;
-            SwitchState(DropState);
-            StartCoroutine(DropCooldown());
-        }
 
-    }
 
     void HandleHoldJump(bool isHolding)
     {
-        Debug.Log("yuh");
+
+
         if (!disableButtons)
         {
             if (isHolding)
             {
+
                 if (ID.StaminaUsed < ID.MaxStamina)
                 {
                     ID.globalEvents.OnUseStamina?.Invoke(true);
@@ -379,8 +411,10 @@ public class PlayerStateManager : MonoBehaviour
             }
             else
             {
+
                 if (jumpHeld)
                 {
+
                     SwitchState(IdleState);
                 }
                 // ResetHoldJump();
@@ -390,6 +424,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void HandleDamaged()
     {
+
         if (!isDamaged)
         {
             isDamaged = true;
@@ -399,6 +434,7 @@ public class PlayerStateManager : MonoBehaviour
                 Die();
                 return;
             }
+            CameraShake.instance.ShakeCamera(.5f, .14f);
             var Feather = FeatherParticleQueue.Dequeue();
             if (Feather.isPlaying)
             {
@@ -417,22 +453,38 @@ public class PlayerStateManager : MonoBehaviour
         }
 
     }
+    void HandleDrop()
+    {
+        if (!disableButtons && canDrop)
+        {
+            // ResetHoldJump();
+            isDropping = true;
+            SwitchState(DropState);
+            StartCoroutine(DropCooldown());
+        }
+
+    }
 
     private void HandleGroundCollision()
     {
+
         if (!isDropping)
         {
             Die();
         }
         else
         {
+            Debug.Log("Started Bounce");
+            // CameraShake.instance.ShakeCamera(.2f, .08f);
             SwitchState(BounceState);
         }
     }
 
     private void Die()
     {
+        Debug.Log(isDropping);
         ID.Lives = 0;
+        CameraShake.instance.ShakeCamera(.6f, .2f);
         DeadEvent.TriggerEvent();
         AudioManager.instance.PlayDeathSound();
         for (int i = 0; i < FeatherParticleQueue.Count; i++)
@@ -451,6 +503,33 @@ public class PlayerStateManager : MonoBehaviour
 
 
         }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // if (collision.gameObject.CompareTag("Ring") && isDropping)
+        // {
+        //     foreach (ContactPoint2D contact in collision.contacts)
+        //     {
+        //         Vector2 normal = contact.normal;
+
+        //         // Determine direction based on the normal
+        //         // Assuming a simple scenario where a positive normal.x suggests a hit from the left
+        //         if (normal.x > 0)
+        //         {
+        //             // Move player to the right
+        //             rb.AddForce(new Vector2(dodgeDistance, 0), ForceMode2D.Impulse);
+        //         }
+        //         else
+        //         {
+        //             // Move player to the left
+        //             rb.AddForce(new Vector2(-dodgeDistance, 0), ForceMode2D.Impulse);
+        //         }
+        //         Debug.Log("HIT RING went: ");
+
+        //         break; // Assuming we only care about the first contact point
+        //     }
+        // }
     }
 
     private IEnumerator Flash()
@@ -479,6 +558,7 @@ public class PlayerStateManager : MonoBehaviour
         {
             if (ID.StaminaUsed < ID.MaxStamina)
             {
+                Debug.Log("Holding chute");
 
                 SwitchState(ParachuteState);
                 isParachuting = true;

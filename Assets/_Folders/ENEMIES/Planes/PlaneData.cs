@@ -21,6 +21,7 @@ public class PlaneData : ScriptableObject
 
     public void SpawnPlanePool()
     {
+        Debug.Log("SpawnedPlanePool");
         planePool = new List<LOOP_PlaneMovement>();
 
         if (!parent)

@@ -7,32 +7,40 @@ public class RingPlayerHandler : MonoBehaviour
     public PlayerID ID;
 
     [SerializeField] private GameObject scoreText;
-    [SerializeField] private Transform livesPanel;
+    [SerializeField] private Transform Mana;
     [SerializeField] private List<GameObject> Lives;
-    
+
     public RingID RingRed;
     public RingID RingPink;
     public RingID RingGold;
+    public RingID RingPurple;
     // Start is called before the first frame update
     void Start()
     {
-        
+
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void AddScore()
     {
-        Debug.Log("Adding");
+
         ID.Score += 2;
 
     }
-    
+
+    private void AddMana()
+    {
+
+
+        ID.CurrentMana += 12;
+    }
+
 
     private void BucketCompletion(int index)
     {
@@ -40,7 +48,7 @@ public class RingPlayerHandler : MonoBehaviour
         {
             case 0:
 
-               
+
                 break;
             case 1:
                 if (ID.Lives < 3)
@@ -48,15 +56,20 @@ public class RingPlayerHandler : MonoBehaviour
                     RingPink.GetBall(transform.position, null, Lives[ID.Lives - 1].transform.position);
 
                 }
-    
+
                 break;
 
             case 2:
-               
-                RingGold.GetBall(transform.position,null,scoreText.transform.position);
-                
+
+                RingGold.GetBall(transform.position, null, scoreText.transform.position);
+
                 break;
 
+            case 3:
+
+                RingPurple.GetBall(transform.position, null, Mana.position);
+
+                break;
 
             default:
                 break;
@@ -70,11 +83,15 @@ public class RingPlayerHandler : MonoBehaviour
 
     private void PinkFinish()
     {
-        
-            ID.Lives += 1;
 
-        
+        ID.Lives += 1;
 
+
+    }
+
+    private void PurpleFinish()
+    {
+        ID.CurrentMana += (Mathf.CeilToInt(RingPurple.CorrectRing * 10));
     }
 
     private void RedFinish()
@@ -100,7 +117,7 @@ public class RingPlayerHandler : MonoBehaviour
     }
     private void Test(Vector2 startPos)
     {
-        
+
 
     }
     private void GainLife()
@@ -108,31 +125,36 @@ public class RingPlayerHandler : MonoBehaviour
 
     }
 
-    private void OnEnable() 
+    private void OnEnable()
     {
         RingGold.ringEvent.OnCheckOrder += AddScore;
+        RingPurple.ringEvent.OnCheckOrder += AddMana;
         RingRed.ringEvent.OnGetBall += LoseLife;
-       
+
         ID.globalEvents.OnBucketExplosion += BucketCompletion;
         RingPink.ringEvent.OnBallFinished += PinkFinish;
         RingGold.ringEvent.OnBallFinished += GoldFinish;
         RingRed.ringEvent.OnBallFinished += RedFinish;
+        RingPurple.ringEvent.OnBallFinished += PurpleFinish;
 
 
 
 
     }
-    private void OnDisable() 
+    private void OnDisable()
     {
         RingPink.ringEvent.OnBallFinished -= PinkFinish;
         RingGold.ringEvent.OnBallFinished -= GoldFinish;
         RingRed.ringEvent.OnBallFinished -= RedFinish;
+        RingPurple.ringEvent.OnBallFinished -= PurpleFinish;
 
 
 
         RingGold.ringEvent.OnCheckOrder -= AddScore;
+        RingPurple.ringEvent.OnCheckOrder -= AddMana;
+
         RingRed.ringEvent.OnGetBall -= LoseLife;
-        
+
 
 
         ID.globalEvents.OnBucketExplosion -= BucketCompletion;

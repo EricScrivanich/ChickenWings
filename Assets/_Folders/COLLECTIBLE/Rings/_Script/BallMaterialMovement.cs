@@ -4,8 +4,8 @@ using System.Collections;
 public class BallMaterialMovement : MonoBehaviour
 {
     public RingID ID;
-    [SerializeField] private float uiCutoff;
-    [SerializeField] private float playerCutoff;
+   
+    
     [SerializeField] private float explodeDuration;
 
     [SerializeField] private ParticleSystem ParticlePrefab;
@@ -62,7 +62,7 @@ public class BallMaterialMovement : MonoBehaviour
         transform.position = Vector2.MoveTowards(transform.position, targetPos, dynamicSpeed * Time.deltaTime);
 
         // Deactivate when close to the target
-        if (Vector2.Distance(transform.position, targetPos) < playerCutoff && !hasCrossedBoundary)
+        if (Vector2.Distance(transform.position, targetPos) < ID.ballExplosionThreshold && !hasCrossedBoundary)
         {
             hasCrossedBoundary = true;
             StartCoroutine(ExpandAndExplode());
@@ -82,7 +82,7 @@ public class BallMaterialMovement : MonoBehaviour
         transform.position = nextPosition;
 
         // Deactivate the ball when it's close enough to the target position
-        if (distanceToTarget < uiCutoff && !hasCrossedBoundary)
+        if (distanceToTarget < ID.ballExplosionThreshold && !hasCrossedBoundary)
         {
             hasCrossedBoundary = true;
             StartCoroutine(ExpandAndExplode());

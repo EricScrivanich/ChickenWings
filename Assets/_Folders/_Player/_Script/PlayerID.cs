@@ -5,15 +5,57 @@ using UnityEngine;
 
 public class PlayerID : ScriptableObject
 {
-    
     public float slowMaxFallSpeed;
-    
     public float slowJumpForce;
+    private bool resetingValues;
     public float slowFlipLeftForceX;
+    public float CurrentManaTarget;
     public float slowFlipLeftForceY;
     public float slowFlipRightForceX;
     public float slowFlipRightForceY;
-    
+    public int MaxMana = 360;
+    public int numberOfPowersThatCanBeUsed;
+    private float currentMana;
+    private bool hasHitMaxMana;
+    public float CurrentMana
+    {
+        get
+        {
+            return currentMana;
+        }
+        set
+        {
+            if (value > currentMana && !resetingValues)
+            {
+                currentMana = value;
+                if (currentMana >= MaxMana)
+                {
+                    currentMana = MaxMana;
+                    if (hasHitMaxMana)
+                    {
+                        return;
+                    }
+                    hasHitMaxMana = true;
+                }
+                globalEvents.AddMana?.Invoke();
+                if (currentMana >= ManaNeeded * (numberOfPowersThatCanBeUsed + 1))
+                {
+                    
+                    globalEvents.AddPowerUse?.Invoke((ManaNeeded * (numberOfPowersThatCanBeUsed + 1)) / MaxMana);
+                    numberOfPowersThatCanBeUsed += 1;
+                }
+            }
+            else
+            {
+                currentMana = value;
+                if (currentMana < MaxMana)
+                {
+                    hasHitMaxMana = false;
+                }
+            }
+        }
+    }
+    public float ManaNeeded;
     public bool IsSlowedDown;
     public Material PlayerMaterial;
     public float rotationFactor;
@@ -29,21 +71,21 @@ public class PlayerID : ScriptableObject
     private int lives;
     public int Lives
     {
-        get 
+        get
         {
             return lives;
         }
-        set 
+        set
         {
             if (value > 3)
             {
                 return;
             }
-          
+
             lives = value;
 
-           
-           
+
+
             globalEvents.OnUpdateLives?.Invoke(lives);
         }
     }
@@ -56,15 +98,10 @@ public class PlayerID : ScriptableObject
         }
         set
         {
-            if (value != 0)
-            {
-                int differce = value - score;
-                globalEvents.OnUpdateScore?.Invoke(differce);
-
-            }
-            
 
             score = value;
+            globalEvents.OnUpdateScore?.Invoke(score);
+
         }
     }
 
@@ -78,11 +115,21 @@ public class PlayerID : ScriptableObject
 
     public void ResetValues()
     {
+        resetingValues = true;
+        numberOfPowersThatCanBeUsed = 0;
+        CurrentMana = 0;
         PlayerMaterial.SetFloat("_Alpha", 1);
         Score = startingScore;
         Ammo = startingAmmo;
         Lives = startingLives;
         globalEvents.OnUpdateAmmo?.Invoke();
+        resetingValues = false;
+        numberOfPowersThatCanBeUsed = Mathf.FloorToInt(CurrentMana / ManaNeeded);
+
+        if (CurrentMana < MaxMana)
+        {
+            hasHitMaxMana = false;
+        }
     }
 
     public void SlowedGame()
