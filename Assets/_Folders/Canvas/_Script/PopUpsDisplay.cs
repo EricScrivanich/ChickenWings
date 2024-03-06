@@ -53,7 +53,7 @@ public class PopUpsDisplay : MonoBehaviour
 
     public void GameOver()
     {
-        Debug.Log("GameOVer");
+        
         initialPosition = new Vector2(0, BoundariesManager.TopPlayerBoundary +2);
         gameoverImage.transform.position = initialPosition;
         gameoverImage.gameObject.SetActive(true);

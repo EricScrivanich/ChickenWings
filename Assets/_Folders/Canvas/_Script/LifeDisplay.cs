@@ -58,9 +58,9 @@ public class LifeDisplay : MonoBehaviour
         {
             if (lives <= 2)
             {
-                Debug.Log("yerrrr");
+                
                 eggAnimators[lives].SetBool("IsBrokenBool",false);
-                Debug.Log("gaining lifge");
+              
 
 
             }
@@ -70,7 +70,7 @@ public class LifeDisplay : MonoBehaviour
             }
             // Find the most recently broken egg (if any)
 
-            Debug.Log(lives);
+           
             
                    
             

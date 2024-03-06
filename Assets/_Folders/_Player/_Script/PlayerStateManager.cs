@@ -474,7 +474,7 @@ public class PlayerStateManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Started Bounce");
+            
             // CameraShake.instance.ShakeCamera(.2f, .08f);
             SwitchState(BounceState);
         }
@@ -482,7 +482,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log(isDropping);
+        
         ID.Lives = 0;
         CameraShake.instance.ShakeCamera(.6f, .2f);
         DeadEvent.TriggerEvent();

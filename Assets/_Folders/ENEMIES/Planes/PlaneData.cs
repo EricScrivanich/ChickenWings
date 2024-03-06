@@ -21,7 +21,7 @@ public class PlaneData : ScriptableObject
 
     public void SpawnPlanePool()
     {
-        Debug.Log("SpawnedPlanePool");
+
         planePool = new List<LOOP_PlaneMovement>();
 
         if (!parent)
@@ -41,7 +41,7 @@ public class PlaneData : ScriptableObject
 
     public void GetPlane(float speedVar, Vector2 spawnPosition)
     {
-        if (planePool == null || planePool.Count ==0)
+        if (planePool == null || planePool.Count == 0)
         {
             SpawnPlanePool();
             Debug.LogWarning($"{name} spawned mid-game. Consider spawning it at the start of the game");
@@ -49,7 +49,7 @@ public class PlaneData : ScriptableObject
 
         foreach (LOOP_PlaneMovement planeScript in planePool)
         {
-            if(!planeScript.gameObject.activeInHierarchy)
+            if (!planeScript.gameObject.activeInHierarchy)
             {
                 if (speedVar == 0)
                 {
@@ -62,8 +62,8 @@ public class PlaneData : ScriptableObject
                 break;
 
             }
-            
+
         }
     }
-    
+
 }

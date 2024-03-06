@@ -9,6 +9,8 @@ public class RingSpawner : MonoBehaviour
     public static RingSpawner Instance;
     [ExposedScriptableObject]
     public RingPool Pool;
+
+    public PlaceholderRingDataCollection placeholderDataCollection;
     private int tracker = 0;
     private RingID ID;
     public int Index;
@@ -48,7 +50,7 @@ public class RingSpawner : MonoBehaviour
 
         foreach (var ringId in Pool.RingType)
         {
-           
+
             ringId.InitializeEffectsPool();
         }
         for (int i = 0; i < Pool.RingType.Count; i++)
@@ -69,7 +71,7 @@ public class RingSpawner : MonoBehaviour
         foreach (var ringId in Pool.RingType)
         {
             ringId.ResetVariables(true);
-            
+
         }
 
 
@@ -147,7 +149,7 @@ public class RingSpawner : MonoBehaviour
 
     public void TriggeredSpawn(int triggerValue)
     {
-       
+
 
         // Assign order by position to each placeholder
         AssignOrderByPosition(triggerValue);
@@ -168,6 +170,31 @@ public class RingSpawner : MonoBehaviour
         // ID.AddParticleObject();
     }
 
+    public void NewTriggeredSpawn(int triggerValue)
+    {
+        // Find the PlaceholderTriggerGroup for the given trigger value
+        PlaceholderTriggerGroup triggerGroup = placeholderDataCollection.triggerGroups.FirstOrDefault(g => g.triggerValue == triggerValue);
+
+        if (triggerGroup == null)
+        {
+            Debug.LogError($"No placeholders found for trigger {triggerValue}");
+            return;
+        }
+
+        // Iterate through the placeholders for the specific trigger, already sorted by their x position
+        foreach (var placeholderData in triggerGroup.placeholderDataList)
+        {
+            ID.triggeredRingOrder++; // Increment the order for each spawned ring
+
+            // Spawn the ring using the placeholder's transform and other data
+            ID.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ID.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
+            // If you have special logic for the last ring or a "BucketScript", you can include that here
+            // For example, if placeholderData represents the last item in the list, you might call ID.GetBucket or similar
+        }
+
+        // Consider whether you need to reset ID.triggeredRingOrder here, depending on whether it should continue across different triggers
+    }
+
     private void SpawnRingAtPlaceholder(Transform placeholderTransform, PlaceholderRing placeholderScript)
     {
 
@@ -175,12 +202,12 @@ public class RingSpawner : MonoBehaviour
         if (placeholderScript.order != ID.placeholderCount || Pool.isTutorial)
         {
 
-            ID.GetRing(placeholderScript.transform, placeholderScript.order, placeholderScript.speed, placeholderScript.doesTriggerInt, placeholderScript.xCordinateTrigger);
+            ID.GetRing(placeholderScript.transform.position,placeholderScript.transform.rotation,placeholderScript.transform.localScale, placeholderScript.order, placeholderScript.speed, placeholderScript.doesTriggerInt, placeholderScript.xCordinateTrigger);
 
         }
         else
         {
-            
+
             // BucketScript bucketScript = ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
             ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
 
@@ -189,6 +216,11 @@ public class RingSpawner : MonoBehaviour
         }
 
 
+
+    }
+
+    private void NewTriggeredSpawn()
+    {
 
     }
 
@@ -231,7 +263,7 @@ public class RingSpawner : MonoBehaviour
 
 
         }
-       
+
         // RemovePlaceholders();
 
     }
@@ -254,13 +286,13 @@ public class RingSpawner : MonoBehaviour
     {
 
 
-        PopulatePlaceholderReferences(transform);
+        // PopulatePlaceholderReferences(transform);
 
         AudioManager.instance.ResetRingPassPitch();
         // currentRingSetupInstance = InstantiateRandomSetup();
 
         yield return new WaitForSeconds(time);
-        TriggeredSpawn(0);
+        NewTriggeredSpawn(0);
     }
 
 
@@ -291,7 +323,7 @@ public class RingSpawner : MonoBehaviour
         foreach (var ringId in Pool.RingType)
         {
             ringId.ringEvent.OnSpawnRings += SequenceFinished;
-            ringId.ringEvent.OnRingTrigger += TriggeredSpawn;
+            ringId.ringEvent.OnRingTrigger += NewTriggeredSpawn;
             ringId.ringEvent.OnCreateNewSequence += SequenceFinished;
 
             // Subscribe to other events as needed
@@ -309,7 +341,7 @@ public class RingSpawner : MonoBehaviour
         {
 
             ringId.ringEvent.OnSpawnRings -= SequenceFinished;
-            ringId.ringEvent.OnRingTrigger -= TriggeredSpawn;
+            ringId.ringEvent.OnRingTrigger -= NewTriggeredSpawn;
             ringId.ringEvent.OnCreateNewSequence -= SequenceFinished;
             // Subscribe to other events as needed
         }

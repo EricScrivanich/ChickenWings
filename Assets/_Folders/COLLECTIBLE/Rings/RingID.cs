@@ -128,16 +128,16 @@ public class RingID : ScriptableObject
         {
             return ringList[nextIndex];
         }
-
+  
     }
 
-    public void GetRing(Transform setTransform, int ringOrder, float setSpeed, int doesTriggerInt, float xCordinateTrigger)
+    public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, int ringOrder, float setSpeed, int doesTriggerInt, float xCordinateTrigger)
     {
         RingMovement ringScript = Pool.GetRing(this);
 
-        ringScript.transform.position = setTransform.position;
-        ringScript.transform.rotation = setTransform.rotation;
-        ringScript.transform.localScale = setTransform.localScale;
+        ringScript.transform.position = setPosition;
+        ringScript.transform.rotation = setRotation;
+        ringScript.transform.localScale = setScale;
         ringScript.order = ringOrder;
         ringScript.speed = setSpeed;
         ringScript.doesTriggerInt = doesTriggerInt;
