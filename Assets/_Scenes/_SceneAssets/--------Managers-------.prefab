@@ -260,11 +260,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3676765210862537307, guid: c3cdede725f7e4e54929864f2666e2ab, type: 3}
       propertyPath: slowdownFactor
-      value: 0.9
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3676765210862537307, guid: c3cdede725f7e4e54929864f2666e2ab, type: 3}
       propertyPath: DebogLogEnabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -396,8 +396,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3200132407588421741, guid: 1983fb03eac714ffd853b43424dd199b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7777618830517749606, guid: 1983fb03eac714ffd853b43424dd199b, type: 3}
+      propertyPath: ID
+      value: 
+      objectReference: {fileID: 11400000, guid: 1d0c68d6da83a453188ddafa7d20cb8a, type: 2}
     - target: {fileID: 7777618830517749606, guid: 1983fb03eac714ffd853b43424dd199b, type: 3}
       propertyPath: player
       value: 

@@ -3,5 +3,6 @@ using System.Collections.Generic;
 public class PlaceholderTriggerGroup
 {
     public int triggerValue;
-    public List<PlaceholderRingData> placeholderDataList = new List<PlaceholderRingData>();
+    public List<PlaceholderRingData> placeholderRingDataList = new List<PlaceholderRingData>();
+    public List<PlaceHolderPlaneData> placeholderPlaneDataList = new List<PlaceHolderPlaneData>(); 
 }

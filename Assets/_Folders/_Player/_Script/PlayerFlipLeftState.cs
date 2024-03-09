@@ -47,7 +47,7 @@ public class PlayerFlipLeftState : PlayerBaseState
     {
         if (rotationTime < rotationDelay)
         {
-            rotationTime += Time.deltaTime;
+            rotationTime += Time.deltaTime; 
         }
         else{
             currentRotation += rotationSpeedVar * Time.deltaTime;

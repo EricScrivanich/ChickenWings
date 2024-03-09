@@ -9,7 +9,7 @@ public class PlayerDashState : PlayerBaseState
 
 
 
-    [SerializeField] private float dashPower = 11.2f;
+    [SerializeField] private float dashPower = 11f;
     private int rotationSpeed = 80;
     private float rotZ;
     private bool passedTime;
@@ -17,11 +17,10 @@ public class PlayerDashState : PlayerBaseState
     private float dashingDuration = .36f;
     private float currentSpeed;
     private float currentGravity;
-    private float slowdownSpeed = 16.5f;
+    private float slowdownSpeed = 16.2f;
     private float addGravitySpeed = 4f;
-    [SerializeField] private float dashCoolDown = 1.5f;
-    [SerializeField] private float dropCoolDown = 2f;
-    private float bounceHeight = 10f;
+    
+    
     public override void EnterState(PlayerStateManager player)
     {
         rotZ = 0;

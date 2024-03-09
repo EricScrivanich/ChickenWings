@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlaneSpawnManager : MonoBehaviour
 {
+    public PlaneManagerID ID;
     [ExposedScriptableObject]
     public PlaneData CropData;
     public PlayerID player;
@@ -81,11 +82,12 @@ public class PlaneSpawnManager : MonoBehaviour
 
     void Start()
     {
+        ID.SpawnExplosionQueue();
         CropData.SpawnPlanePool();
         JetData.SpawnPlanePool();
         CargoData.SpawnPlanePool();
 
-        Invoke("SpawnPlaneInArea", 1f);
+        // Invoke("SpawnPlaneInArea", 1f);
 
 
 
@@ -97,6 +99,10 @@ public class PlaneSpawnManager : MonoBehaviour
 
     void SpawnPlaneInArea()
     {
+        if (spawnArea == null)
+        {
+            return;
+        }
         if (!spawnArea.gameObject.activeInHierarchy)
         {
             return;

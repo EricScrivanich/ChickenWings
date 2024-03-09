@@ -37,7 +37,7 @@ public class RingID : ScriptableObject
 
 
     private const int poolSize = 5;
-    public void ResetVariables(bool initialReset)
+    public void ResetVariables()
     {
 
         CorrectRing = 1;
@@ -105,7 +105,7 @@ public class RingID : ScriptableObject
         ringList = new List<RingMovement>();
         particleSystemsQueue = new Queue<GameObject>();
         if (ringParticles != null)
-        {
+        { 
 
 
             for (int i = 0; i < poolSize; i++)
@@ -209,13 +209,14 @@ public class RingID : ScriptableObject
 
 
 
-    public void GetBucket(Transform setTransform, int bucketOrder, float setSpeed)
+    public void GetBucket(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, int bucketOrder, float setSpeed)
     {
         BucketScript bucketScript = Pool.GetBucket(this);
 
-        bucketScript.transform.position = setTransform.position;
-        bucketScript.transform.rotation = setTransform.rotation;
-        // bucketScript.transform.localScale = setTransform.localScale;
+
+        bucketScript.transform.position = setPosition;
+        bucketScript.transform.rotation = setRotation;
+        bucketScript.transform.localScale = setScale;
         bucketScript.order = bucketOrder;
         bucketScript.speed = setSpeed;
        
@@ -236,14 +237,16 @@ public class RingID : ScriptableObject
         if (targetPos.HasValue)
         {
             ballScript.targetPosition = targetPos.Value;
+            ballScript.targetObject = null;
         }
         else
         {
-          
+           
             ballScript.targetObject = obj;
             
 
         }
+        ballScript.ID = this;
         ballScript.gameObject.SetActive(true);
     }
 

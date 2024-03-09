@@ -19,5 +19,10 @@ public struct GlobalPlayerEvents
 
     public Action UsePower;
 
+    public Action<bool> CanDash;
+    public Action<bool> CanDrop;
+
+    public Action<float, float> ShakeCamera;
+
 
 }

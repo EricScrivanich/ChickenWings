@@ -24,6 +24,7 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.Dash.performed += ctx => ID.events.OnDash?.Invoke();
         controls.Movement.Drop.performed += ctx => ID.events.OnDrop?.Invoke();
         controls.Movement.DropEgg.performed += ctx => ID.events.OnEggDrop?.Invoke();
+        controls.Movement.DashSlash.performed += ctx => ID.events.OnDashSlash?.Invoke();
         
         controls.Movement.JumpHold.performed += ctx =>
  {

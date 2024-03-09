@@ -93,6 +93,7 @@ public class BallMaterialMovement : MonoBehaviour
 
     private void OnEnable()
     {
+        // Debug.Log(targetObject.gameObject);
 
 
         if (ID != null)
@@ -144,7 +145,7 @@ public class BallMaterialMovement : MonoBehaviour
         duration = .3f;
         time = 0;
         ID.BallParticles(transform.position);
-        Debug.Log(transform.position);
+        // Debug.Log(transform.position);
 
         while (time < duration)
         {

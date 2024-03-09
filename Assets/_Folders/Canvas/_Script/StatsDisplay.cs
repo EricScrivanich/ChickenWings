@@ -9,6 +9,8 @@ public class StatsDisplay : MonoBehaviour
     public PlayerID player;
     [SerializeField] private Image ManaBar;
     [SerializeField] private Image ManaBarBig;
+    [SerializeField] private Image dashArrow;
+    [SerializeField] private Image dropArrow;
     private bool isFilllingMana;
     private bool hasHit10;
     private int lastUpdatedScore;
@@ -380,6 +382,12 @@ public class StatsDisplay : MonoBehaviour
         isUsingStamina = usingStamina;
         StartCoroutine(FadeStaminaBar(usingStamina));
         // Assuming you have a way to get the current stamina value from PlayerID
+
+    }
+
+    private void HandleDashArrow(bool canDash)
+    {
+        
 
     }
     private void OnEnable()

@@ -41,8 +41,8 @@ public class PlayerFlipRightState : PlayerBaseState
  
     public override void RotateState(PlayerStateManager player)
     {
-        currentRotation += rotationSpeedVar * Time.deltaTime;
-        totalRotation -= rotationSpeedVar * Time.deltaTime;
+        currentRotation += rotationSpeedVar *Time.deltaTime;
+        totalRotation -= rotationSpeedVar *Time.deltaTime;
         player.transform.rotation = Quaternion.Euler(0, 0, currentRotation);
         // Debug.Log("right: " + currentRotation);
        

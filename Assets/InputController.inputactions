@@ -103,6 +103,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "DashSlash",
+                    "type": "Button",
+                    "id": "1cbbf4c4-de14-4525-b189-264d8197cd0b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold(duration=0.32)",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -308,7 +317,7 @@
                     "name": "",
                     "id": "71785b00-5b5a-4d60-a60a-bfe45c783bc6",
                     "path": "<Gamepad>/buttonSouth",
-                    "interactions": "Hold(duration=0.08,pressPoint=0.2),Tap(pressPoint=0.2)",
+                    "interactions": "Hold(duration=0.07,pressPoint=0.2),Tap(pressPoint=0.2)",
                     "processors": "",
                     "groups": "Mobile",
                     "action": "Jump",
@@ -323,6 +332,28 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6624c8c8-2105-4363-885c-22ba6cf97fdf",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "DashSlash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e7a56b1f-185b-4242-b3b9-7cee360a64d4",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mobile",
+                    "action": "DashSlash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

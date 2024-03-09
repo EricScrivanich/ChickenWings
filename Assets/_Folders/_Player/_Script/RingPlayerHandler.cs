@@ -38,7 +38,7 @@ public class RingPlayerHandler : MonoBehaviour
     {
 
 
-        ID.CurrentMana += 12;
+        ID.CurrentMana += 40;
     }
 
 

@@ -5,12 +5,16 @@ using System.Linq;
 [CreateAssetMenu(fileName = "PlaceholderRingDataCollection", menuName = "ScriptableObjects/PlaceholderRingDataCollection", order = 1)]
 public class PlaceholderRingDataCollection : ScriptableObject
 {
+    
+
     [SerializeField] private GameObject placeholderRingPrefab;
-    public List<PlaceholderTriggerGroup> triggerGroups = new List<PlaceholderTriggerGroup>();
+    public List<PlaceholderTriggerGroup> triggerGroups = new List<PlaceholderTriggerGroup>(); 
 
     public void RecordPlaceholders(GameObject ringRecorder)
     {
+        
         triggerGroups.Clear(); // Clear existing groups
+       
 
         foreach (var placeholder in ringRecorder.GetComponentsInChildren<PlaceholderRing>())
         {
@@ -25,13 +29,37 @@ public class PlaceholderRingDataCollection : ScriptableObject
                 triggerGroups.Add(group);
             }
 
-            group.placeholderDataList.Add(data);
+            group.placeholderRingDataList.Add(data);
+            
         }
 
         // Optionally, sort each list within the groups by some criteria, such as the x-position
         foreach (var group in triggerGroups)
         {
-            group.placeholderDataList = group.placeholderDataList.OrderBy(group => group.position.x).ToList();
+            group.placeholderRingDataList = group.placeholderRingDataList.OrderBy(group => group.position.x).ToList();
+        }
+
+        foreach (var placeholder in ringRecorder.GetComponentsInChildren<PlaceholderPlane>())
+        {
+            var data = new PlaceHolderPlaneData(placeholder);
+            int triggerValue = placeholder.getsTriggeredInt; // Assuming PlaceholderPlane now has a getsTriggeredInt property
+
+            // Find the existing group for this trigger value (groups should already exist from the PlaceholderRing loop)
+            PlaceholderTriggerGroup group = triggerGroups.FirstOrDefault(g => g.triggerValue == triggerValue);
+            if (group != null) // No need to create a new group, as they should already exist from PlaceholderRing handling
+            {
+                group.placeholderPlaneDataList.Add(data);
+            }
+            else
+            {
+                Debug.LogWarning($"No trigger group found for trigger value {triggerValue} from PlaceholderPlane. This should not happen if rings and planes share trigger values.");
+            }
+        }
+
+        // Optionally, sort plane data within the groups, if needed
+        foreach (var group in triggerGroups)
+        {
+            group.placeholderPlaneDataList = group.placeholderPlaneDataList.OrderBy(data => data.position.x).ToList();
         }
     }
 
@@ -48,7 +76,7 @@ public class PlaceholderRingDataCollection : ScriptableObject
 
         foreach (var group in triggerGroups)
         {
-            foreach (var placeholderData in group.placeholderDataList)
+            foreach (var placeholderData in group.placeholderRingDataList)
             {
                 GameObject prefabInstance = Instantiate(placeholderRingPrefab, placeholderData.position, placeholderData.rotation, recordedOutput.transform);
                 prefabInstance.transform.localScale = placeholderData.scale;
@@ -59,7 +87,30 @@ public class PlaceholderRingDataCollection : ScriptableObject
                     // Apply data from PlaceholderRingData to PlaceholderRing script
                 }
             }
+
+
+            foreach (var planeData in group.placeholderPlaneDataList)
+            {
+                if (planeData.planeType != null && planeData.planeType.fillObject != null)
+                {
+                    // Use the fillObject as the prefab to instantiate for planes
+                    GameObject planeInstance = Instantiate(planeData.planeType.fillObject, planeData.position, Quaternion.identity, recordedOutput.transform);
+                    // Set properties like scale and speed if needed. Assuming fillObject is a GameObject that has a PlaceholderPlane component or similar where you can set speed.
+                    PlaceholderPlane placeholderPlaneScript = planeInstance.GetComponent<PlaceholderPlane>();
+                    if (placeholderPlaneScript != null)
+                    {
+                        placeholderPlaneScript.speed = planeData.speed;
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("PlaneType or FillObject is null. Skipping plane instantiation.");
+                }
+            }
         }
+
+
+        
     }
 }
 

@@ -28,12 +28,12 @@ public class PlayerParachuteState : PlayerBaseState
         // player.transform.RotateAround(player.parchutePoint.transform.position, new Vector3(0, 0, 1), 100f);
         if (player.rb.velocity.x > 7.2f)
         {
-            Debug.Log("fast");
-            decelerationFactor = 5.5f;
+            
+            decelerationFactor = 6.7f;
         }
         else
         {
-            decelerationFactor = 2.7f;
+            decelerationFactor = 3.2f;
         }
         time = 0;
         startRotation = false;

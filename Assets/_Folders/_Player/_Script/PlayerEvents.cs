@@ -7,6 +7,7 @@ public struct PlayerEvents
     public Action OnFlipRight;
     public Action OnFlipLeft;
     public Action OnDash;
+    public Action OnDashSlash;
     public Action OnDrop;
     public Action OnBounce;
     public Action<bool> OnJumpHeld;  

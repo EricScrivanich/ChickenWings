@@ -11,6 +11,9 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private CameraShake cameraShake;
     public Transform parchutePoint;
 
+    public GameObject Sword;
+    // private SpriteRenderer SwordSprite;
+
     [SerializeField] private List<Collider2D> ColliderType;
     public bool isDropping;
 
@@ -48,6 +51,8 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerBounceState BounceState = new PlayerBounceState();
     public PlayerSlashState SlashState = new PlayerSlashState();
 
+    public PlayerDashSlashState DashSlash = new PlayerDashSlashState();
+
     public PlayerIdleState IdleState = new PlayerIdleState();
     public PlayerFrozenState FrozenState = new PlayerFrozenState();
     public PlayerHoldJumpState HoldJumpState = new PlayerHoldJumpState();
@@ -69,7 +74,7 @@ public class PlayerStateManager : MonoBehaviour
     public bool canDrop;
     private bool canSlash;
     private float dashCooldownTime = 1.5f;
-    private float dropCooldownTime = 3f;
+    private float dropCooldownTime = 2f;
     public bool jumpHeld;
     public bool isParachuting = false;
     public bool isTryingToParachute = false;
@@ -120,8 +125,8 @@ public class PlayerStateManager : MonoBehaviour
             jumpForce = 11.2f;
             flipLeftForceX = -6.9f;
             flipLeftForceY = 9.4f;
-            flipRightForceX = 6.8f;
-            flipRightForceY = 10f;
+            flipRightForceX = 6.9f;
+            flipRightForceY = 10.15f;
             rb.gravityScale = 2.3f;
             originalGravityScale = rb.gravityScale;
         }
@@ -136,6 +141,7 @@ public class PlayerStateManager : MonoBehaviour
             originalGravityScale = rb.gravityScale;
 
         }
+        // SwordSprite = Sword.GetComponent<SpriteRenderer>();
 
         maxFallSpeed = ID.MaxFallSpeed;
 
@@ -434,7 +440,8 @@ public class PlayerStateManager : MonoBehaviour
                 Die();
                 return;
             }
-            CameraShake.instance.ShakeCamera(.5f, .14f);
+            // CameraShake.instance.ShakeCamera(.5f, .14f);
+            ID.globalEvents.ShakeCamera?.Invoke(.5f, .14f);
             var Feather = FeatherParticleQueue.Dequeue();
             if (Feather.isPlaying)
             {
@@ -453,7 +460,7 @@ public class PlayerStateManager : MonoBehaviour
         }
 
     }
-    void HandleDrop()
+    private void HandleDrop()
     {
         if (!disableButtons && canDrop)
         {
@@ -474,7 +481,7 @@ public class PlayerStateManager : MonoBehaviour
         }
         else
         {
-            
+
             // CameraShake.instance.ShakeCamera(.2f, .08f);
             SwitchState(BounceState);
         }
@@ -482,9 +489,10 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Die()
     {
-        
+
         ID.Lives = 0;
-        CameraShake.instance.ShakeCamera(.6f, .2f);
+       
+        ID.globalEvents.ShakeCamera?.Invoke(.6f, .2f);
         DeadEvent.TriggerEvent();
         AudioManager.instance.PlayDeathSound();
         for (int i = 0; i < FeatherParticleQueue.Count; i++)
@@ -505,32 +513,7 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        // if (collision.gameObject.CompareTag("Ring") && isDropping)
-        // {
-        //     foreach (ContactPoint2D contact in collision.contacts)
-        //     {
-        //         Vector2 normal = contact.normal;
 
-        //         // Determine direction based on the normal
-        //         // Assuming a simple scenario where a positive normal.x suggests a hit from the left
-        //         if (normal.x > 0)
-        //         {
-        //             // Move player to the right
-        //             rb.AddForce(new Vector2(dodgeDistance, 0), ForceMode2D.Impulse);
-        //         }
-        //         else
-        //         {
-        //             // Move player to the left
-        //             rb.AddForce(new Vector2(-dodgeDistance, 0), ForceMode2D.Impulse);
-        //         }
-        //         Debug.Log("HIT RING went: ");
-
-        //         break; // Assuming we only care about the first contact point
-        //     }
-        // }
-    }
 
     private IEnumerator Flash()
     {
@@ -623,8 +606,58 @@ public class PlayerStateManager : MonoBehaviour
 
     // }
 
+    private void HandleDashSlash()
+    {
+
+        SwitchState(DashSlash);
+
+    }
+
+    // public void ShowSword(bool isShown)
+    // {
+    //     if (isShown)
+    //     {
+    //         Sword.SetActive(true);
+    //     }
+    //     StartCoroutine(SwordCoroutine(isShown));
+
+    // }
+
+    // private IEnumerator SwordCoroutine(bool isShown)
+    // {
+
+    //     float duration = 0.1f; // Duration in seconds over which the fade will occur
+    //     float elapsedTime = 0;
+    //     if (isShown)
+    //     {
 
 
+    //         while (elapsedTime < duration)
+    //         {
+    //             elapsedTime += Time.deltaTime;
+    //             float alpha = Mathf.Lerp(0, 1, elapsedTime / duration);
+    //             SwordSprite.color = new Color(SwordSprite.color.r, SwordSprite.color.g, SwordSprite.color.b, alpha);
+    //             yield return null;
+    //         }
+
+    //         // Ensure the final alpha is set to the target value
+    //         SwordSprite.color = new Color(SwordSprite.color.r, SwordSprite.color.g, SwordSprite.color.b, 1);
+    //     }
+    //     else{
+    //         while (elapsedTime < duration)
+    //         {
+    //             elapsedTime += Time.deltaTime;
+    //             float alpha = Mathf.Lerp(1, 0, elapsedTime / duration);
+    //             SwordSprite.color = new Color(SwordSprite.color.r, SwordSprite.color.g, SwordSprite.color.b, alpha);
+    //             yield return null;
+    //         }
+
+    //         // Ensure the final alpha is set to the target value
+    //         SwordSprite.color = new Color(SwordSprite.color.r, SwordSprite.color.g, SwordSprite.color.b, 1);
+    //         Sword.SetActive(false);
+
+    //     }
+    // }
 
 
     IEnumerator DashCooldown()
@@ -682,6 +715,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnBucketExplosion += BucketExplosion;
         ID.events.LoseLife += HandleDamaged;
         ID.events.HitGround += HandleGroundCollision;
+        ID.events.OnDashSlash += HandleDashSlash;
 
         // ID.events.OnAttack += HandleSlash;
     }
@@ -701,6 +735,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnBucketExplosion -= BucketExplosion;
         ID.events.LoseLife -= HandleDamaged;
         ID.events.HitGround -= HandleGroundCollision;
+        ID.events.OnDashSlash -= HandleDashSlash;
+
 
 
 

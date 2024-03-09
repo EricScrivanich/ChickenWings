@@ -14,9 +14,6 @@ GameObject:
   - component: {fileID: 2173681433810284826}
   - component: {fileID: 1512460045394321810}
   - component: {fileID: 8706714158983395153}
-  - component: {fileID: -1115720196903239557}
-  - component: {fileID: 2787886588492073317}
-  - component: {fileID: 8568443858477124933}
   - component: {fileID: 1990536230585923684}
   m_Layer: 0
   m_Name: GameManager
@@ -108,66 +105,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 918da025053b849d6a7f4ad6a4861dd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-1115720196903239557
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3260796118307300524}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22d6ed213510d456faf376837252d9f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cloudPrefabs:
-  - {fileID: 3668003930039764881, guid: 905bc0929177f497289c5889a883d3ea, type: 3}
-  - {fileID: 6626570074863122253, guid: fd456fef5847743e4b51aed4cb362dcc, type: 3}
-  - {fileID: 4017423660452970757, guid: 6d9253a85276046c194299c28c86bc1b, type: 3}
-  - {fileID: 5011782479178810102, guid: dc87b92b502b548afb8c1c9fdb3ea51a, type: 3}
-  - {fileID: 3727542229217329356, guid: c3f66091babfe4d7e809a5f336f96ab0, type: 3}
-  - {fileID: 8105069229153905207, guid: cf080c8a7ac204e2986519d3c872c366, type: 3}
-  speed: 0.5
---- !u!114 &2787886588492073317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3260796118307300524}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 433326d7d8c3a40a09fdc95c2719f8a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cloudPrefabs:
-  - {fileID: 6917385639097871778, guid: cd77a8e79d67a4df9b688097d324e199, type: 3}
-  - {fileID: 6777885565331225699, guid: e977d622d0eb14037b72d6081f888dcb, type: 3}
-  - {fileID: 9136949263369837022, guid: 8303af34fddb945c5abdaba55b920fb4, type: 3}
-  - {fileID: 8532588621603792381, guid: 25f766c6b8de84071b49b8ecb7141bef, type: 3}
-  speed: 0.3
---- !u!114 &8568443858477124933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3260796118307300524}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0070f6fd41064888bcaf780e9d917dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cloudPrefabs:
-  - {fileID: 3668003930039764881, guid: 905bc0929177f497289c5889a883d3ea, type: 3}
-  - {fileID: 6626570074863122253, guid: fd456fef5847743e4b51aed4cb362dcc, type: 3}
-  - {fileID: 4017423660452970757, guid: 6d9253a85276046c194299c28c86bc1b, type: 3}
-  - {fileID: 5011782479178810102, guid: dc87b92b502b548afb8c1c9fdb3ea51a, type: 3}
-  - {fileID: 3727542229217329356, guid: c3f66091babfe4d7e809a5f336f96ab0, type: 3}
-  - {fileID: 8105069229153905207, guid: cf080c8a7ac204e2986519d3c872c366, type: 3}
-  speed: 0.3
-  spawnYPoint: 10.7
-  rotation: {x: 0, y: 0, z: -90}
 --- !u!114 &1990536230585923684
 MonoBehaviour:
   m_ObjectHideFlags: 0

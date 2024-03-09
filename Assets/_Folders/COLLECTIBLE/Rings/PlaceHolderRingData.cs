@@ -14,9 +14,10 @@ public class PlaceholderRingData
     public Vector2 position; // To store the position
     public Quaternion rotation; // To store the rotation
     public Vector2 scale;
-
+ 
     public PlaceholderRingData(PlaceholderRing placeholder)
     {
+        
         
         getsTriggeredInt = placeholder.getsTriggeredInt;
         doesTriggerInt = placeholder.doesTriggerInt;

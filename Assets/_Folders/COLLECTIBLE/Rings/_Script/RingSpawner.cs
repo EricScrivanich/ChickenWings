@@ -70,7 +70,7 @@ public class RingSpawner : MonoBehaviour
         Pool.ResetAllMaterials();
         foreach (var ringId in Pool.RingType)
         {
-            ringId.ResetVariables(true);
+            ringId.ResetVariables();
 
         }
 
@@ -172,6 +172,7 @@ public class RingSpawner : MonoBehaviour
 
     public void NewTriggeredSpawn(int triggerValue)
     {
+        int totalPlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderRingDataList.Count);
         // Find the PlaceholderTriggerGroup for the given trigger value
         PlaceholderTriggerGroup triggerGroup = placeholderDataCollection.triggerGroups.FirstOrDefault(g => g.triggerValue == triggerValue);
 
@@ -182,14 +183,28 @@ public class RingSpawner : MonoBehaviour
         }
 
         // Iterate through the placeholders for the specific trigger, already sorted by their x position
-        foreach (var placeholderData in triggerGroup.placeholderDataList)
+        foreach (var placeholderData in triggerGroup.placeholderRingDataList)
         {
             ID.triggeredRingOrder++; // Increment the order for each spawned ring
 
+            if (ID.triggeredRingOrder == totalPlaceholders)
+            {
+                ID.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, ID.triggeredRingOrder, placeholderData.speed);
+            }
+            else
+            {
+                ID.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ID.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
+                // If you have special logic for the last ring or a "BucketScript", you can include that here
+            }
+
             // Spawn the ring using the placeholder's transform and other data
-            ID.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ID.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
-            // If you have special logic for the last ring or a "BucketScript", you can include that here
+            
             // For example, if placeholderData represents the last item in the list, you might call ID.GetBucket or similar
+        }
+
+        foreach (var placeholderData in triggerGroup.placeholderPlaneDataList)
+        {
+            placeholderData.planeType.GetPlane(placeholderData.speed, placeholderData.position);
         }
 
         // Consider whether you need to reset ID.triggeredRingOrder here, depending on whether it should continue across different triggers
@@ -209,7 +224,7 @@ public class RingSpawner : MonoBehaviour
         {
 
             // BucketScript bucketScript = ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
-            ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
+            ID.GetBucket(placeholderScript.transform.position, placeholderScript.transform.rotation, placeholderScript.transform.localScale, placeholderScript.order, placeholderScript.speed);
 
             // bucketScript.gameObject.SetActive(true);
 
@@ -219,16 +234,13 @@ public class RingSpawner : MonoBehaviour
 
     }
 
-    private void NewTriggeredSpawn()
-    {
-
-    }
+   
 
 
     #region Losing and Fading
     public void SequenceFinished(bool correctSequence, int index)
     {
-        Pool.RingType[index].ResetVariables(false);
+        Pool.RingType[index].ResetVariables();
         if (!correctSequence)
         {
 
@@ -276,8 +288,11 @@ public class RingSpawner : MonoBehaviour
 
     private void SpawnRings(float time)
     {
-        tracker += 1;
+        
+
+        ID = Pool.RingType[Index];
         Debug.Log("SpawningRings: " + tracker);
+        Index++;
 
 
         StartCoroutine(SpawnRingsCourintine(time));

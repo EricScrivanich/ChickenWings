@@ -125,6 +125,15 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DashSlash"",
+                    ""type"": ""Button"",
+                    ""id"": ""1cbbf4c4-de14-4525-b189-264d8197cd0b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(duration=0.32)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -330,7 +339,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""71785b00-5b5a-4d60-a60a-bfe45c783bc6"",
                     ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": ""Hold(duration=0.08,pressPoint=0.2),Tap(pressPoint=0.2)"",
+                    ""interactions"": ""Hold(duration=0.07,pressPoint=0.2),Tap(pressPoint=0.2)"",
                     ""processors"": """",
                     ""groups"": ""Mobile"",
                     ""action"": ""Jump"",
@@ -345,6 +354,28 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6624c8c8-2105-4363-885c-22ba6cf97fdf"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""DashSlash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e7a56b1f-185b-4242-b3b9-7cee360a64d4"",
+                    ""path"": ""<Gamepad>/leftStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Mobile"",
+                    ""action"": ""DashSlash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -439,6 +470,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_Movement_TouchPosition = m_Movement.FindAction("TouchPosition", throwIfNotFound: true);
         m_Movement_Parachute = m_Movement.FindAction("Parachute", throwIfNotFound: true);
         m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
+        m_Movement_DashSlash = m_Movement.FindAction("DashSlash", throwIfNotFound: true);
         // Special
         m_Special = asset.FindActionMap("Special", throwIfNotFound: true);
         m_Special_ResetGame = m_Special.FindAction("ResetGame", throwIfNotFound: true);
@@ -514,6 +546,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private readonly InputAction m_Movement_TouchPosition;
     private readonly InputAction m_Movement_Parachute;
     private readonly InputAction m_Movement_Jump;
+    private readonly InputAction m_Movement_DashSlash;
     public struct MovementActions
     {
         private @InputController m_Wrapper;
@@ -529,6 +562,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         public InputAction @TouchPosition => m_Wrapper.m_Movement_TouchPosition;
         public InputAction @Parachute => m_Wrapper.m_Movement_Parachute;
         public InputAction @Jump => m_Wrapper.m_Movement_Jump;
+        public InputAction @DashSlash => m_Wrapper.m_Movement_DashSlash;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -571,6 +605,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @DashSlash.started += instance.OnDashSlash;
+            @DashSlash.performed += instance.OnDashSlash;
+            @DashSlash.canceled += instance.OnDashSlash;
         }
 
         private void UnregisterCallbacks(IMovementActions instance)
@@ -608,6 +645,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @DashSlash.started -= instance.OnDashSlash;
+            @DashSlash.performed -= instance.OnDashSlash;
+            @DashSlash.canceled -= instance.OnDashSlash;
         }
 
         public void RemoveCallbacks(IMovementActions instance)
@@ -702,6 +742,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnTouchPosition(InputAction.CallbackContext context);
         void OnParachute(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnDashSlash(InputAction.CallbackContext context);
     }
     public interface ISpecialActions
     {

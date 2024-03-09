@@ -4,24 +4,11 @@ using UnityEngine;
 
 public class CameraShake : MonoBehaviour
 {
-    public static CameraShake instance;
+    public PlayerID player;
     private bool isShaking = false;
     // Start is called before the first frame update
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
-
-        // Don't destroy AudioManager on scene change.
-        DontDestroyOnLoad(gameObject);
-    }
+    
     public void ShakeCamera(float duration, float magnitude)
     {
         if (!isShaking)
@@ -48,5 +35,13 @@ public class CameraShake : MonoBehaviour
         }
         isShaking = false;
         transform.position = orignalPosition;
+    }
+
+    private void OnEnable() {
+        player.globalEvents.ShakeCamera += ShakeCamera;
+    }
+    private void OnDisable() {
+        player.globalEvents.ShakeCamera -= ShakeCamera;
+
     }
 }
