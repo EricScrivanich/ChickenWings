@@ -14,7 +14,7 @@ public class PlaceholderRingDataCollectionEditor : Editor
         if (GUILayout.Button("Record Placeholders"))
         {
             // Automatically find the GameObject named "PlaceholderRecorder"
-            GameObject ringRecorder = GameObject.Find("PlaceholderRecorder"); 
+            GameObject ringRecorder = GameObject.Find("PlaceholderRecorder");
 
             if (ringRecorder != null)
             {
@@ -36,7 +36,7 @@ public class PlaceholderRingDataCollectionEditor : Editor
 
         if (GUILayout.Button("Clear RecordedOutput Children"))
         {
-            GameObject recordedOutput = GameObject.Find("RecordedOutput");
+            GameObject recordedOutput = GameObject.Find("PlaceholderRecorder");
             if (recordedOutput != null)
             {
                 // Clear children
@@ -54,5 +54,5 @@ public class PlaceholderRingDataCollectionEditor : Editor
             }
         }
     }
-    
+
 }

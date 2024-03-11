@@ -16,14 +16,17 @@ public class RingPool : ScriptableObject
     public GameObject bucketPrefab;
     public GameObject ballPrefab;
 
-    private int ringAmount = 25;
+    private int ringAmount = 25; 
     private int bucketAmount = 4;
+
+    private List<List<GameObject>> ringsToDeactivate;
 
     public bool isTutorial;
     // private Queue<GameObject> ringPool;
     private List<BucketScript> bucketPool;
     private List<RingMovement> ringPool;
     private List<BallMaterialMovement> ballPool;
+    private List<BucketScript> currentBucket;
 
     private Transform parent;
 
@@ -32,12 +35,20 @@ public class RingPool : ScriptableObject
     public void SpawnRingPool()
     {
         ringPool = new List<RingMovement>();
+        ringsToDeactivate = new List<List<GameObject>>();
 
-
-        if (!parent)
+        for (int i = 0; i < RingType.Count; i++)
         {
-            parent = new GameObject(name).transform;
+            List<GameObject> list = new List<GameObject>();
+
+            ringsToDeactivate.Add(list);
         }
+
+
+            if (!parent)
+            {
+                parent = new GameObject(name).transform;
+            }
 
         while (ringPool.Count < ringAmount)
         {
@@ -105,28 +116,22 @@ public class RingPool : ScriptableObject
 
     public void DisableRings(int index)
     {
-        foreach (RingMovement ringScript in ringPool)
-        {
-            if (ringScript.index == index)
-            {
-                ringScript.gameObject.SetActive(false);
+        Debug.Log("number to deactivate: " + ringsToDeactivate[index].Count);
 
-            }
+        foreach (var obj in ringsToDeactivate[index])
+        {
+            obj.SetActive(false);
 
         }
-        foreach (BucketScript bucketScript in bucketPool)
-        {
-            if (bucketScript.index == index)
-            {
-                bucketScript.gameObject.SetActive(false);
-            }
-        }
+       
     }
 
     public void SpawnBucketPool()
     {
 
         bucketPool = new List<BucketScript>();
+      
+        
         // if (bucketPool == null || bucketPool.Count == 0)
         // {
         //     bucketPool = new List<BucketScript>();
@@ -167,10 +172,13 @@ public class RingPool : ScriptableObject
         return null;
     }
 
+    
+
 
     #region Fading/Disabling
     public IEnumerator FadeOutRed()
     {
+        ringsToDeactivate[0] = RingType[0].CurrentRingList();
         yield return new WaitForSeconds(.5f);
         float time = 0;
         while (time < 2f)
@@ -190,6 +198,7 @@ public class RingPool : ScriptableObject
 
     public IEnumerator FadeOutPink()
     {
+        ringsToDeactivate[1] = RingType[1].CurrentRingList();
         float time = 0;
         while (time < 1f)
         {
@@ -208,6 +217,7 @@ public class RingPool : ScriptableObject
 
     public IEnumerator FadeOutGold()
     {
+        ringsToDeactivate[2] = RingType[2].CurrentRingList();
         float time = 0;
         while (time < .4f)
         {
@@ -238,6 +248,7 @@ public class RingPool : ScriptableObject
 
     public IEnumerator FadeOutPurple()
     {
+        ringsToDeactivate[3] = RingType[3].CurrentRingList();
         float time = 0;
         while (time < 1f)
         {
@@ -254,6 +265,7 @@ public class RingPool : ScriptableObject
             yield return null;
         }
         DisableRings(3);
+        yield return new WaitForEndOfFrame();
         ResetPurpleMaterial();
     }
 

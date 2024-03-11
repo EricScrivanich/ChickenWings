@@ -14,6 +14,11 @@ public class PlaneSpawnManager : MonoBehaviour
 
     [ExposedScriptableObject]
     public PlaneData JetData;
+    private List<Coroutine> Coroutines;
+
+    private Coroutine cropCourintine;
+    private Coroutine jetCourintine;
+    private Coroutine cargoCourintine;
 
     [SerializeField] private GameObject cropPlanePrefab;
     [SerializeField] private GameObject cargoPlanePrefab;
@@ -64,6 +69,7 @@ public class PlaneSpawnManager : MonoBehaviour
 
     private void Awake()
     {
+        ID.spawnRandomPlanesBool = true;
         upperRegion = 3f;
         player.globalEvents.OnUpdateScore += CheckScore;
 
@@ -97,53 +103,72 @@ public class PlaneSpawnManager : MonoBehaviour
 
 
 
-    void SpawnPlaneInArea()
+    // void SpawnPlaneInArea()
+    // {
+    //     if (spawnArea == null) 
+    //     {
+    //         return;
+    //     }
+    //     if (!spawnArea.gameObject.activeInHierarchy)
+    //     {
+    //         return;
+    //     }
+    //     int planesToSpawn = Random.Range(spawnArea.minPlanes, spawnArea.maxPlanes + 1); // +1 because Random.Range is exclusive for the max value
+
+    //     for (int i = 0; i < planesToSpawn; i++)
+    //     {
+    //         // Generate a random position within the spawn area
+    //         float randomX = Random.Range(spawnArea.GetMinX(), spawnArea.GetMaxX());
+    //         float randomY = Random.Range(spawnArea.GetMinY(), spawnArea.GetMaxY());
+    //         Vector2 spawnPosition = new Vector2(randomX, randomY); // Assuming a 2D game
+
+    //         // Determine the type of plane to spawn based on chances
+    //         PlaneData planeType = DeterminePlaneType(spawnArea);
+
+    //         // Log the choices for now
+    //         planeType.GetPlane(0, spawnPosition);
+    //     }
+    // }
+
+    // PlaneData DeterminePlaneType(PlaneAreaSpawn area)
+    // {
+    //     float totalChance = area.cropChance + area.jetChance + area.cargoChance;
+    //     float randomPoint = Random.Range(0, totalChance);
+
+    //     if (randomPoint <= area.cropChance)
+    //     {
+    //         return CropData;
+    //     }
+    //     else if (randomPoint <= area.cropChance + area.jetChance)
+    //     {
+    //         return JetData;
+    //     }
+    //     else
+    //     {
+    //         return CargoData;
+    //     }
+    // }
+
+
+    private void SpawnCrops()
     {
-        if (spawnArea == null)
-        {
-            return;
-        }
-        if (!spawnArea.gameObject.activeInHierarchy)
-        {
-            return;
-        }
-        int planesToSpawn = Random.Range(spawnArea.minPlanes, spawnArea.maxPlanes + 1); // +1 because Random.Range is exclusive for the max value
+        cropCourintine = StartCoroutine(SpawnCropPlanes());
 
-        for (int i = 0; i < planesToSpawn; i++)
+    }
+    private void SpawnJets()
+    {
+        jetCourintine = StartCoroutine(SpawnJetPlanes());
+
+        if (!ID.spawnRandomPlanesBool)
         {
-            // Generate a random position within the spawn area
-            float randomX = Random.Range(spawnArea.GetMinX(), spawnArea.GetMaxX());
-            float randomY = Random.Range(spawnArea.GetMinY(), spawnArea.GetMaxY());
-            Vector2 spawnPosition = new Vector2(randomX, randomY); // Assuming a 2D game
 
-            // Determine the type of plane to spawn based on chances
-            PlaneData planeType = DeterminePlaneType(spawnArea);
-
-            // Log the choices for now
-            planeType.GetPlane(0, spawnPosition);
         }
     }
-
-    PlaneData DeterminePlaneType(PlaneAreaSpawn area)
+    private void SpawnCargos()
     {
-        float totalChance = area.cropChance + area.jetChance + area.cargoChance;
-        float randomPoint = Random.Range(0, totalChance);
+        cargoCourintine = StartCoroutine(SpawnCargoPlanes());
 
-        if (randomPoint <= area.cropChance)
-        {
-            return CropData;
-        }
-        else if (randomPoint <= area.cropChance + area.jetChance)
-        {
-            return JetData;
-        }
-        else
-        {
-            return CargoData;
-        }
     }
-
-
 
 
 
@@ -156,11 +181,14 @@ public class PlaneSpawnManager : MonoBehaviour
             for (int i = 0; i < cropPlanesAvailable; i++)
             {
                 float cropSpawnOffsetVar = Random.Range(minCropOffset, maxCropOffset);
+                yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
                 yield return new WaitForSeconds(cropSpawnOffsetVar + totalSpawnDelay);
+                yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
                 GetCrop(); // Spawn a plane
                 // Wait for offset
             }
             float cropIterationEndDelay = Random.Range(minCropIterationDelay, maxCropIterationDelay);
+            yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
             yield return new WaitForSeconds(cropIterationEndDelay + totalIterationSpawnDelay); // End-of-iteration delay
                                                                                                // Optional: Adjust cropPlanesAvailable and delays based on game conditions
         }
@@ -172,11 +200,14 @@ public class PlaneSpawnManager : MonoBehaviour
             for (int i = 0; i < jetPlanesAvailable; i++)
             {
                 float jetSpawnOffsetVar = Random.Range(minJetOffset, maxJetOffset);
+                yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
                 yield return new WaitForSeconds(jetSpawnOffsetVar + totalSpawnDelay);
+                yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
                 GetJet(); // Spawn a plane
                 // Wait for offset
             }
             float jetIterationEndDelay = Random.Range(minJetIterationDelay, maxJetIterationDelay);
+            yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
             yield return new WaitForSeconds(jetIterationEndDelay + totalIterationSpawnDelay); // End-of-iteration delay
                                                                                               // Optional: Adjust cropPlanesAvailable and delays based on game conditions
         }
@@ -188,11 +219,14 @@ public class PlaneSpawnManager : MonoBehaviour
             for (int i = 0; i < cargoPlanesAvailable; i++)
             {
                 float cargoSpawnOffsetVar = Random.Range(minCargoOffset, maxCargoOffset);
+                yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
                 yield return new WaitForSeconds(cargoSpawnOffsetVar + totalSpawnDelay);
+                yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
                 GetCargo(); // Spawn a plane
                 // Wait for offset
             }
             float cargoIterationEndDelay = Random.Range(minCargoIterationDelay, maxCargoIterationDelay);
+            yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
             yield return new WaitForSeconds(cargoIterationEndDelay + totalIterationSpawnDelay); // End-of-iteration delay
                                                                                                 // Optional: Adjust cropPlanesAvailable and delays based on game conditions
         }
@@ -210,7 +244,7 @@ public class PlaneSpawnManager : MonoBehaviour
                 break;
             case 4:
                 StartCoroutine(SpawnJetPlanes());
-                
+
                 break;
 
             case 6:
@@ -224,7 +258,7 @@ public class PlaneSpawnManager : MonoBehaviour
 
                 break;
             case 10:
-               
+
                 break;
             case 12:
                 cargoPlanesAvailable = 2;
@@ -235,7 +269,7 @@ public class PlaneSpawnManager : MonoBehaviour
                 cargoPlanesAvailable = 3;
                 break;
             case 16:
-                
+
                 jetPlanesAvailable = 4;
 
                 break;
@@ -248,54 +282,13 @@ public class PlaneSpawnManager : MonoBehaviour
         }
     }
 
-    // void CheckScore(int newScore)
-    // {
-    //     if (newScore == 1)
-    //     {
-    //         StartCoroutine(SpawnCropPlanes());
 
-    //     }
-
-    //     else if (newScore > 2 && newScore < 4)
-    //     {
-    //         cropPlanesAvailable = 3;
-    //     }
-    //     else if (newScore > 3 && newScore < 5)
-    //     {
-    //         cropPlanesAvailable = 5;
-    //     }
-    // }
 
     #region Pools
-    // void InitializePool(List<GameObject> pool, GameObject prefab, int size)
-    // {
-    //     for (int i = 0; i < size; i++)
-    //     {
-    //         GameObject obj = Instantiate(prefab);
-    //         obj.SetActive(false);
-    //         pool.Add(obj);
-    //     }
-    // }
 
-    // public GameObject GetPooledPlane(List<GameObject> pool)
-    // {
-    //     foreach (var obj in pool)
-    //     {
-    //         if (!obj.activeInHierarchy)
-    //         {
-    //             return obj;
-    //         }
-    //     }
-    //     return null;
-    // }
     private void GetCrop()
     {
-        // GameObject crop = GetPooledPlane(cropPlanePool);
-        // if (crop == null)
-        // {
-        //     Debug.LogError("No crop plane available in the pool.");
-        //     return;
-        // }
+
 
         float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnCrop);
         Vector2 position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
@@ -303,12 +296,6 @@ public class PlaneSpawnManager : MonoBehaviour
     }
     private void GetCargo()
     {
-        // GameObject cargo = GetPooledPlane(cargoPlanePool);
-        // if (cargo == null)
-        // {
-        //     Debug.LogError("No cargo plane available in the pool.");
-        //     return;
-        // }
 
         float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnCargo);
         Vector2 position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
@@ -317,12 +304,7 @@ public class PlaneSpawnManager : MonoBehaviour
 
     private void GetJet()
     {
-        // GameObject jet = GetPooledPlane(jetPlanePool);
-        // if (jet == null)
-        // {
-        //     Debug.LogError("No jet plane available in the pool.");
-        //     return;
-        // }
+
         float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnJet);
         Vector2 position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
         JetData.GetPlane(0, position);

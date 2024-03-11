@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlaneAreaSpawn : MonoBehaviour
 {
     [SerializeField] private BoxCollider2D spawnArea;
-
+    public int getsTriggeredInt;
     public int maxPlanes;
     public int minPlanes;
 

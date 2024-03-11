@@ -174,7 +174,27 @@ public class PlayerStateManager : MonoBehaviour
     {
         currentState.FixedUpdateState(this);
 
+
+    }
+    void Update()
+    {
         MaxFallSpeed();
+        currentState.UpdateState(this);
+        currentState.RotateState(this);
+        if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
+        {
+            // ResetHoldJump();
+            SwitchState(FrozenState);
+        }
+    }
+
+    public void MaxFallSpeed()
+    {
+        if (rb.velocity.y < maxFallSpeed)
+        {
+            // If it does, limit it to the max fall speed
+            rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
+        }
     }
 
     public void ChangeCollider(int index)
@@ -244,17 +264,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
-    {
 
-        currentState.UpdateState(this);
-        currentState.RotateState(this);
-        if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
-        {
-            // ResetHoldJump();
-            SwitchState(FrozenState);
-        }
-    }
     public void SwitchState(PlayerBaseState newState)
     {
         currentState.ExitState(this);
@@ -295,14 +305,7 @@ public class PlayerStateManager : MonoBehaviour
     }
 
 
-    public void MaxFallSpeed()
-    {
-        if (rb.velocity.y < maxFallSpeed)
-        {
-            // If it does, limit it to the max fall speed
-            rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
-        }
-    }
+   
 
     public void BaseRotationLogic()
     {
@@ -491,7 +494,7 @@ public class PlayerStateManager : MonoBehaviour
     {
 
         ID.Lives = 0;
-       
+
         ID.globalEvents.ShakeCamera?.Invoke(.6f, .2f);
         DeadEvent.TriggerEvent();
         AudioManager.instance.PlayDeathSound();

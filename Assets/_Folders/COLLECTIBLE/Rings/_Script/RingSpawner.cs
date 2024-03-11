@@ -9,9 +9,13 @@ public class RingSpawner : MonoBehaviour
     public static RingSpawner Instance;
     [ExposedScriptableObject]
     public RingPool Pool;
+    public PlaneManagerID PlaneID;
+
+    [SerializeField] private PlayerID player;
 
     public PlaceholderRingDataCollection placeholderDataCollection;
     private int tracker = 0;
+
     private RingID ID;
     public int Index;
     public static int currentRing;
@@ -173,6 +177,7 @@ public class RingSpawner : MonoBehaviour
     public void NewTriggeredSpawn(int triggerValue)
     {
         int totalPlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderRingDataList.Count);
+
         // Find the PlaceholderTriggerGroup for the given trigger value
         PlaceholderTriggerGroup triggerGroup = placeholderDataCollection.triggerGroups.FirstOrDefault(g => g.triggerValue == triggerValue);
 
@@ -181,6 +186,8 @@ public class RingSpawner : MonoBehaviour
             Debug.LogError($"No placeholders found for trigger {triggerValue}");
             return;
         }
+        Debug.Log(tracker + ": Triggered: " + triggerGroup);
+
 
         // Iterate through the placeholders for the specific trigger, already sorted by their x position
         foreach (var placeholderData in triggerGroup.placeholderRingDataList)
@@ -198,13 +205,18 @@ public class RingSpawner : MonoBehaviour
             }
 
             // Spawn the ring using the placeholder's transform and other data
-            
+
             // For example, if placeholderData represents the last item in the list, you might call ID.GetBucket or similar
         }
 
         foreach (var placeholderData in triggerGroup.placeholderPlaneDataList)
         {
             placeholderData.planeType.GetPlane(placeholderData.speed, placeholderData.position);
+        }
+
+        foreach (var placeholder in triggerGroup.planeAreaSpawnDataList)
+        {
+            PlaneID.SpawnInArea(placeholder.minPlanes, placeholder.maxPlanes, placeholder.minX, placeholder.maxX, placeholder.minY, placeholder.maxY, placeholder.cropChance, placeholder.jetChance, placeholder.cargoChance);
         }
 
         // Consider whether you need to reset ID.triggeredRingOrder here, depending on whether it should continue across different triggers
@@ -217,7 +229,7 @@ public class RingSpawner : MonoBehaviour
         if (placeholderScript.order != ID.placeholderCount || Pool.isTutorial)
         {
 
-            ID.GetRing(placeholderScript.transform.position,placeholderScript.transform.rotation,placeholderScript.transform.localScale, placeholderScript.order, placeholderScript.speed, placeholderScript.doesTriggerInt, placeholderScript.xCordinateTrigger);
+            ID.GetRing(placeholderScript.transform.position, placeholderScript.transform.rotation, placeholderScript.transform.localScale, placeholderScript.order, placeholderScript.speed, placeholderScript.doesTriggerInt, placeholderScript.xCordinateTrigger);
 
         }
         else
@@ -234,13 +246,13 @@ public class RingSpawner : MonoBehaviour
 
     }
 
-   
+
 
 
     #region Losing and Fading
     public void SequenceFinished(bool correctSequence, int index)
     {
-        Pool.RingType[index].ResetVariables();
+
         if (!correctSequence)
         {
 
@@ -275,10 +287,14 @@ public class RingSpawner : MonoBehaviour
 
 
         }
+        // Pool.RingType[index].ResetVariables();
+
+
 
         // RemovePlaceholders();
 
     }
+
 
 
     // 
@@ -288,25 +304,46 @@ public class RingSpawner : MonoBehaviour
 
     private void SpawnRings(float time)
     {
-        
 
-        ID = Pool.RingType[Index];
-        Debug.Log("SpawningRings: " + tracker);
-        Index++;
+        AudioManager.instance.ResetRingPassPitch();
+
+        tracker++;
+
+        // Index++;
 
 
-        StartCoroutine(SpawnRingsCourintine(time));
+        StartCoroutine(SpawnRingsCourintine(.5f));
     }
     private IEnumerator SpawnRingsCourintine(float time)
     {
+        if (!Pool.Testing)
+        {
+            PlaneID.spawnRandomPlanesBool = true;
+            yield return new WaitForSeconds(8f);
+
+            // PopulatePlaceholderReferences(transform);
 
 
-        // PopulatePlaceholderReferences(transform);
 
-        AudioManager.instance.ResetRingPassPitch();
+
+
+        }
+        PlaneID.spawnRandomPlanesBool = false;
+        if (player.Lives == 1)
+        {
+            Index = 1;
+        }
+        else
+        {
+            Index = 3;
+        }
+        ID = Pool.RingType[Index];
+
         // currentRingSetupInstance = InstantiateRandomSetup();
 
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(2.5f);
+        Debug.Log("spawning Rings: " + tracker);
+
         NewTriggeredSpawn(0);
     }
 

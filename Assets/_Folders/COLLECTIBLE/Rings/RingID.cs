@@ -21,6 +21,8 @@ public class RingID : ScriptableObject
     public float ballExplosionThreshold;
 
 
+
+
     public Material defaultMaterial;
     public Material highlightedMaterial;
     public Material passedMaterial;
@@ -29,6 +31,8 @@ public class RingID : ScriptableObject
     public int triggeredRingOrder = 0;
     private List<RingMovement> ringList;
     public Queue<GameObject> particleSystemsQueue;
+    private GameObject currentBucket;
+    private List<GameObject> objectsToDeactivate;
     public bool newSetup;
     public int placeholderCount;
 
@@ -39,11 +43,14 @@ public class RingID : ScriptableObject
     private const int poolSize = 5;
     public void ResetVariables()
     {
-
+        Debug.Log("Resseting: " + this);
         CorrectRing = 1;
+        currentBucket = null;
+        objectsToDeactivate.Clear();
         nextIndex = 0;
         triggeredRingOrder = 0;
         ReadyToSpawn = true;
+        ReturnAllParticles();
         ringList.Clear();
         particlesInUse = 0;
 
@@ -61,6 +68,22 @@ public class RingID : ScriptableObject
         // }
 
     }
+    public List<GameObject> CurrentRingList()
+    {
+        foreach (var ringScript in ringList)
+        {
+            objectsToDeactivate.Add(ringScript.gameObject);
+        }
+        if (currentBucket != null)
+        {
+            objectsToDeactivate.Add(currentBucket);
+
+        }
+        return objectsToDeactivate;
+
+    }
+
+
     public void GetEffect(RingMovement ring)
     {
         // if (ring == null)
@@ -72,11 +95,11 @@ public class RingID : ScriptableObject
         ParticleFollowScript script = grabbedPS.GetComponent<ParticleFollowScript>();
         script.ringTransform = ring;
 
-       
-        
-            grabbedPS.SetActive(true);
 
-        
+
+        grabbedPS.SetActive(true);
+
+
 
         particleSystemsQueue.Enqueue(grabbedPS);
 
@@ -85,6 +108,22 @@ public class RingID : ScriptableObject
         nextIndex++;
         // grabbedPS.SetActive(true);
 
+
+    }
+
+    public void ReturnAllParticles()
+    {
+        if (particlesInUse > 0)
+        {
+            for (int i = 0; i < poolSize; i++)
+            {
+                GameObject effect = particleSystemsQueue.Dequeue();
+                effect.SetActive(false);
+                particleSystemsQueue.Enqueue(effect);
+
+            }
+
+        }
 
     }
 
@@ -104,8 +143,9 @@ public class RingID : ScriptableObject
 
         ringList = new List<RingMovement>();
         particleSystemsQueue = new Queue<GameObject>();
+        objectsToDeactivate = new List<GameObject>();
         if (ringParticles != null)
-        { 
+        {
 
 
             for (int i = 0; i < poolSize; i++)
@@ -128,7 +168,7 @@ public class RingID : ScriptableObject
         {
             return ringList[nextIndex];
         }
-  
+
     }
 
     public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, int ringOrder, float setSpeed, int doesTriggerInt, float xCordinateTrigger)
@@ -150,7 +190,7 @@ public class RingID : ScriptableObject
         if (particlesInUse < poolSize)
         {
             particlesInUse++;
-            
+
             GetEffect(ringScript);
         }
     }
@@ -219,7 +259,8 @@ public class RingID : ScriptableObject
         bucketScript.transform.localScale = setScale;
         bucketScript.order = bucketOrder;
         bucketScript.speed = setSpeed;
-       
+        currentBucket = bucketScript.gameObject;
+
 
 
         // bucketScript.gameObject.SetActive(true);
@@ -241,9 +282,9 @@ public class RingID : ScriptableObject
         }
         else
         {
-           
+
             ballScript.targetObject = obj;
-            
+
 
         }
         ballScript.ID = this;

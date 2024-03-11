@@ -43,6 +43,16 @@ public class RingMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         colliders = GetComponents<Collider2D>();
+        for (int i = 2; i >= 0; i--)
+        {
+            var col = colliders[i];
+            if (col.enabled == false)
+            {
+                Destroy(col);
+
+            }
+
+        }
     }
     private void FixedUpdate() {
         rb.velocity = Vector2.left * speed;
@@ -133,7 +143,10 @@ public class RingMovement : MonoBehaviour
 
         foreach (var collider in colliders)
         {
-            collider.enabled = false;
+            if (collider != null)
+            {
+                collider.enabled = false;
+            }
         }
     }
     private void EnableColliders()
@@ -141,7 +154,11 @@ public class RingMovement : MonoBehaviour
 
         foreach (var collider in colliders)
         {
-            collider.enabled = true;
+            if (collider != null)
+            {
+                collider.enabled = true;
+            }
+            
         }
     }
 

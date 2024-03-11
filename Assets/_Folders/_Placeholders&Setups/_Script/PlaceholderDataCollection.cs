@@ -8,6 +8,7 @@ public class PlaceholderRingDataCollection : ScriptableObject
     
 
     [SerializeField] private GameObject placeholderRingPrefab;
+    [SerializeField] private GameObject planeAreaPrefab;
     public List<PlaceholderTriggerGroup> triggerGroups = new List<PlaceholderTriggerGroup>(); 
 
     public void RecordPlaceholders(GameObject ringRecorder)
@@ -34,9 +35,16 @@ public class PlaceholderRingDataCollection : ScriptableObject
         }
 
         // Optionally, sort each list within the groups by some criteria, such as the x-position
+        // foreach (var group in triggerGroups)
+        // {
+        //     group.placeholderRingDataList = group.placeholderRingDataList.OrderBy(group => group.position.x).ToList();
+        // }
+
         foreach (var group in triggerGroups)
         {
-            group.placeholderRingDataList = group.placeholderRingDataList.OrderBy(group => group.position.x).ToList();
+            group.placeholderRingDataList = group.placeholderRingDataList
+                .OrderBy(data => Mathf.Abs(data.position.x))
+                .ToList();
         }
 
         foreach (var placeholder in ringRecorder.GetComponentsInChildren<PlaceholderPlane>())
@@ -61,12 +69,29 @@ public class PlaceholderRingDataCollection : ScriptableObject
         {
             group.placeholderPlaneDataList = group.placeholderPlaneDataList.OrderBy(data => data.position.x).ToList();
         }
+
+        foreach (var placeholder in ringRecorder.GetComponentsInChildren<PlaneAreaSpawn>())
+        {
+            var data = new PlaneAreaSpawnData(placeholder);
+            int triggerValue = placeholder.getsTriggeredInt; // Assuming PlaceholderPlane now has a getsTriggeredInt property
+
+            // Find the existing group for this trigger value (groups should already exist from the PlaceholderRing loop)
+            PlaceholderTriggerGroup group = triggerGroups.FirstOrDefault(g => g.triggerValue == triggerValue);
+            if (group != null) // No need to create a new group, as they should already exist from PlaceholderRing handling
+            {
+                group.planeAreaSpawnDataList.Add(data);
+            }
+            else
+            {
+                Debug.LogWarning($"No trigger group found for trigger value {triggerValue} from PlaceholderPlane. This should not happen if rings and planes share trigger values.");
+            }
+        }
     }
 
 
     public void PlacePrefabsInScene()
     {
-        GameObject recordedOutput = GameObject.Find("RecordedOutput") ?? new GameObject("RecordedOutput");
+        GameObject recordedOutput = GameObject.Find("PlaceholderRecorder") ?? new GameObject("PlaceholderRecorder");
 
         for (int i = recordedOutput.transform.childCount - 1; i >= 0; i--)
         {
@@ -84,6 +109,11 @@ public class PlaceholderRingDataCollection : ScriptableObject
                 PlaceholderRing placeholderScript = prefabInstance.GetComponent<PlaceholderRing>();
                 if (placeholderScript != null)
                 {
+                    placeholderScript.getsTriggeredInt = placeholderData.getsTriggeredInt;
+                    placeholderScript.doesTriggerInt = placeholderData.doesTriggerInt;
+                    placeholderScript.xCordinateTrigger = placeholderData.xCordinateTrigger;
+                    placeholderScript.speed = placeholderData.speed;
+                   
                     // Apply data from PlaceholderRingData to PlaceholderRing script
                 }
             }
@@ -107,6 +137,32 @@ public class PlaceholderRingDataCollection : ScriptableObject
                     Debug.LogWarning("PlaneType or FillObject is null. Skipping plane instantiation.");
                 }
             }
+
+           
+                // Your existing logic for placing rings and planes...
+
+                // Instantiate plane area spawn representations
+                foreach (var areaData in group.planeAreaSpawnDataList)
+                {
+                    // Assume planeAreaPrefab is a GameObject that represents your spawn area
+                    GameObject areaInstance = Instantiate(planeAreaPrefab, recordedOutput.transform);
+                var script = areaInstance.GetComponent<PlaneAreaSpawn>();
+
+                // Set the position and scale to represent the areaData bounds
+                Vector3 position = new Vector3((areaData.minX + areaData.maxX) / 2, (areaData.minY + areaData.maxY) / 2, 0);
+                    Vector3 scale = new Vector3(areaData.maxX - areaData.minX, areaData.maxY - areaData.minY, 1);
+
+                    areaInstance.transform.position = position;
+                    areaInstance.transform.localScale = scale;
+
+                script.getsTriggeredInt = areaData.getsTriggeredInt;
+                script.minPlanes = areaData.minPlanes;
+                script.maxPlanes = areaData.maxPlanes;
+                script.cropChance = areaData.cropChance;
+                script.jetChance = areaData.jetChance;
+                script.cargoChance = areaData.cargoChance;
+                }
+            
         }
 
 
