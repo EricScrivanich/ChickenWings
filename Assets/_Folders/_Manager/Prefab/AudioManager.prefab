@@ -142,7 +142,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 840b25932446e4ba1af95e85b175dd4b, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
@@ -362,6 +362,8 @@ MonoBehaviour:
   scoreVolume: 0.1
   frozenVolume: 0.7
   ringSuccess: {fileID: 8300000, guid: 8cdad93d05f5744109a33ef54ac92b5d, type: 3}
+  bucketBurstSound: {fileID: 0}
   ringSuccessVolume: 0.7
   ringPassSound: {fileID: 8300000, guid: 59117968211e74630a83f959eb23a852, type: 3}
   ringPassVolume: 0.7
+  bucketBurstSoundVolume: 0.7

@@ -50,7 +50,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DebogLogEnabled: 0
-  slowdownFactor: 0.5
+  slowdownFactor: 0.95
+  deltaScale: 1
 --- !u!114 &1002591744477790286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,8 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8dd1cfec2ef14e968cfaf3d5ec97bbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reset: {fileID: 0}
-  sprite: {fileID: 0}
+  targetFrameRate: 60
 --- !u!114 &8706714158983395153
 MonoBehaviour:
   m_ObjectHideFlags: 0

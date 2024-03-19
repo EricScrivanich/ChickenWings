@@ -43,7 +43,7 @@ public class PlaneData : ScriptableObject
 
     }
 
-    public void GetPlane(float speedVar, Vector2 spawnPosition)
+    public void GetPlane(int trigger, float xCorTrigger, float speedVar, Vector2 spawnPosition)
     {
         if (planePool == null || planePool.Count == 0)
         {
@@ -59,7 +59,8 @@ public class PlaneData : ScriptableObject
                 {
                     speedVar = speed + Random.Range(-speedOffset, speedOffset);
                 }
-
+planeScript.doesTiggerInt = trigger;
+planeScript.xCordinateTrigger = xCorTrigger;
                 planeScript.speed = speedVar;
                 planeScript.transform.position = spawnPosition;
                 planeScript.gameObject.SetActive(true);

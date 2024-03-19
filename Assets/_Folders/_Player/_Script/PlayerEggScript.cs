@@ -5,8 +5,13 @@ using UnityEngine;
 public class PlayerEggScript : MonoBehaviour
 {
     public PlayerID ID;
+    private bool rotationIsFrozen;
     private Rigidbody2D rb;
+    private bool canShootBool;
+    private Animator anim;
+    [SerializeField] private Transform bulletSpawnPos;
     [SerializeField] private GameObject egg_Regular;
+    [SerializeField] private GameObject egg_Bullet;
     // [SerializeField] private GameObject egg_Bullet;
     // [SerializeField] private GameObject eggYolkPrefab;
     [SerializeField] private int eggPoolAmount = 10;
@@ -20,7 +25,10 @@ public class PlayerEggScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        rotationIsFrozen = false;
+        canShootBool = true;
+        anim = GetComponent<Animator>();
+
 
         ammo = ID.Ammo;
         rb = GetComponent<Rigidbody2D>();
@@ -47,6 +55,12 @@ public class PlayerEggScript : MonoBehaviour
 
         // ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
     }
+    public void FreezeRotation()
+    {
+        rb.freezeRotation = !rotationIsFrozen;
+        rotationIsFrozen = !rotationIsFrozen;
+
+    }
 
     public GameObject GetPooledObject(List<GameObject> pool)
     {
@@ -60,11 +74,30 @@ public class PlayerEggScript : MonoBehaviour
         return null;
     }
 
+    public void SetCanShootTrue()
+    {
+        canShootBool = true;
+
+    }
+
 
 
     private void EggDrop()
     {
-        if (ID.Ammo > 0)
+        if (ID.UsingClocker)
+        {
+            if (canShootBool)
+            {
+                anim.SetTrigger("ShootGunTrigger");
+
+               
+                canShootBool = false;
+
+            }
+           
+
+        }
+        else if (ID.Ammo > 0)
         {
             GameObject egg = GetPooledObject(eggPool);
 
@@ -79,8 +112,14 @@ public class PlayerEggScript : MonoBehaviour
             }
             ID.Ammo -= 1;
             ID.globalEvents.OnUpdateAmmo?.Invoke();
-            
+
         }
+    }
+
+    public void ShootBullet()
+    {
+        Instantiate(egg_Bullet, bulletSpawnPos.transform.position, Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z - 90));
+
     }
     private void getPlayerVelocity()
     {

@@ -123,7 +123,9 @@ public class RingPool : ScriptableObject
             obj.SetActive(false);
 
         }
-       
+
+        RingType[index].ResetVariables();
+
     }
 
     public void SpawnBucketPool()

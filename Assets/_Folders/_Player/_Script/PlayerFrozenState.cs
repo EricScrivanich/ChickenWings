@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class PlayerFrozenState : PlayerBaseState
 {
-    private float frozenRotZ;
-    private float frozenRotationSpeed = 380f;
-    private float waitAtTopDuration = .45f;
+
+    private float waitAtTopDuration = .4f;
     private float time;
     private bool rotate;
     // Start is called before the first frame update
@@ -16,30 +15,31 @@ public class PlayerFrozenState : PlayerBaseState
         rotate = false;
         player.ID.globalEvents.Frozen.Invoke();
         AudioManager.instance.PlayFrozenSound();
-        player.anim.SetBool("FrozenBool",true);
+        player.anim.SetBool("FrozenBool", true);
         player.disableButtons = true;
-        player.rb.velocity = new Vector2 (0,0);
+        player.rb.velocity = new Vector2(0, 0);
         player.maxFallSpeed = 0;
-        player.transform.rotation = Quaternion.Euler(0, 0, 0);
-        frozenRotZ = 0;
-       
+        player.rb.freezeRotation = true;
+
+
     }
     public override void ExitState(PlayerStateManager player)
 
     {
+        player.rb.freezeRotation = false;
 
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-        
+
     }
 
     // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
     // {
-        
+
     // }
-   
+
     public override void RotateState(PlayerStateManager player)
     {
         // if (rotate)
@@ -48,7 +48,7 @@ public class PlayerFrozenState : PlayerBaseState
         //     player.transform.rotation = Quaternion.Euler(0,0, frozenRotZ);
 
         // }
-        
+
     }
 
     public override void UpdateState(PlayerStateManager player)
@@ -56,18 +56,18 @@ public class PlayerFrozenState : PlayerBaseState
         time += Time.deltaTime;
         if (time > waitAtTopDuration)
         {
-            player.maxFallSpeed = -4.5f;
-            rotate = true; 
+            player.maxFallSpeed = -4.6f;
+            rotate = true;
 
         }
         if (player.transform.position.y < 1)
         {
             player.disableButtons = false;
-            player.anim.SetBool("FrozenBool",false);
+            player.anim.SetBool("FrozenBool", false);
             player.maxFallSpeed = player.ID.MaxFallSpeed;
 
             player.CheckIfIsTryingToParachute();
         }
-        
+
     }
 }

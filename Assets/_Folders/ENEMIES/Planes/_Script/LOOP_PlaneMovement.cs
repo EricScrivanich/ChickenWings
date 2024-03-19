@@ -5,7 +5,11 @@ using UnityEngine;
 public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 {
     public PlaneData Data;
+    public PlaneManagerID ID;
+    public int doesTiggerInt;
+    public float xCordinateTrigger;
     private float planeHeightRandom;
+
     private Collider2D coll;
     private bool stopSpawn;
     private float planeTimeVar;
@@ -15,8 +19,10 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     private int lives;
     private float initialY;
     private bool initialized;
-    public float speed;
+    public float speed = 0;
     private Animator anim;
+    private bool positiveSpeed;
+    private bool hasTrigger;
 
 
     // void Awake()
@@ -42,32 +48,65 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     void Update()
     {
 
-        if (initialized)
+
+        transform.position += Vector3.left * speed * Time.deltaTime;
+
+        if (positiveSpeed)
         {
-            transform.position += Vector3.left * speed * Time.deltaTime;
-            if ((transform.position.x < BoundariesManager.leftBoundary))
+            if (hasTrigger)
             {
-                gameObject.SetActive(false);
+                if (transform.position.x < xCordinateTrigger)
+                {
+                    ID.events.TriggeredSpawn(doesTiggerInt);
+                    hasTrigger = false;
+                }
 
             }
-            // transform.position += Vector3.left * planeSpeed * Time.deltaTime;
 
-            float x = transform.position.x;
-            float y = Mathf.Sin(x * Data.planeSinFrequency) * Data.planeSinAmplitude + initialY;
-            transform.position = new Vector2(x, y);
+            else
+            {
+                if (transform.position.x < BoundariesManager.leftBoundary)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
+
+        }
+        else
+        {
+            if (hasTrigger)
+            {
+                if (transform.position.x > xCordinateTrigger)
+                {
+                    ID.events.TriggeredSpawn(doesTiggerInt);
+                    hasTrigger = false;
+                }
+
+            }
+
+            else
+            {
+                if (transform.position.x > BoundariesManager.rightBoundary)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
+
 
         }
 
 
 
+        // transform.position += Vector3.left * planeSpeed * Time.deltaTime;
+
+        float x = transform.position.x;
+        float y = Mathf.Sin(x * Data.planeSinFrequency) * Data.planeSinAmplitude + initialY;
+        transform.position = new Vector2(x, y);
 
         // Restart();
     }
 
-    void Restart()
-    {
 
-    }
 
     void StopSpawn()
     {
@@ -79,21 +118,45 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 
     void OnEnable()
     {
+        if (speed > 0)
+        {
+            positiveSpeed = true;
+            Vector3 currentRotation = transform.eulerAngles;
+            transform.eulerAngles = new Vector3(currentRotation.x, 0, currentRotation.z);
+        }
+        else
+        {
+            Debug.Log("Negative Speed: " + speed);
+            positiveSpeed = false;
+            Vector3 currentRotation = transform.eulerAngles;
+            transform.eulerAngles = new Vector3(currentRotation.x, 180, currentRotation.z);
+            // flip x rotation here
+
+        }
+
+        if (doesTiggerInt != 0)
+        {
+            hasTrigger = true;
+        }
+        else
+        {
+            hasTrigger = false;
+        }
         planeTimeOffsetVar = Random.Range(-Data.planeTimeOffset, Data.planeTimeOffset);
         planeTimeVar = Data.planeTime + planeTimeOffsetVar;
         planeSpeed = Data.speed + Random.Range(-Data.speedOffset, Data.speedOffset);
         // planeHitBool = false;
         coll.enabled = true;
         initialY = transform.position.y;
-        initialized = true;
+
 
 
     }
 
-    void OnDisable()
-    {
-        initialized = false;
-    }
+    // void OnDisable()
+    // {
+
+    // }
 
 
 

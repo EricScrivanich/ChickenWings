@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
 {
-
+    [SerializeField] private float SlowFactor;
     [ExposedScriptableObject]
     public PlayerID ID;
+    private LineRenderer line;
     public PlayerParts playerParts;
     [SerializeField] private CameraShake cameraShake;
     public Transform parchutePoint;
@@ -28,6 +29,8 @@ public class PlayerStateManager : MonoBehaviour
     public float flipRightForceY;
     private Queue<ParticleSystem> FeatherParticleQueue;
     private ParticleSystem SmokeParticle;
+
+    private float originalTimeScale;
 
 
     public Transform ImageTransform;
@@ -60,6 +63,10 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerParachuteState ParachuteState = new PlayerParachuteState();
     public BucketScript bucket;
     private bool isAttacking = false;
+
+    public bool justFlippedRight;
+    public bool justFlippedLeft;
+
 
 
 
@@ -94,6 +101,10 @@ public class PlayerStateManager : MonoBehaviour
     private int remainingRightFlips = 0;
     public float addEggVelocity { get; private set; } = 2.5f;
     public bool disableButtons;
+    public bool rotateSlash;
+
+    public bool justStartedClocker;
+
 
 
 
@@ -102,6 +113,8 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
+        ID.UsingClocker = false;
+        rotateSlash = false;
         isDropping = false;
         isDamaged = false;
         jumpHeld = false;
@@ -114,20 +127,22 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        originalTimeScale = Time.timeScale;
 
 
         ChangeCollider(0);
         rb = GetComponent<Rigidbody2D>();
+        line = GetComponent<LineRenderer>();
         // Feathers.SetActive(false);
         if (!isSlow)
         {
-            ID.MaxFallSpeed = -9.7f;
-            jumpForce = 11.2f;
-            flipLeftForceX = -6.9f;
-            flipLeftForceY = 9.4f;
-            flipRightForceX = 6.9f;
-            flipRightForceY = 10.15f;
-            rb.gravityScale = 2.3f;
+            ID.MaxFallSpeed = -9.7f * SlowFactor;
+            jumpForce = 11.2f * SlowFactor;
+            flipLeftForceX = -6.9f * SlowFactor;
+            flipLeftForceY = 9.4f * SlowFactor;
+            flipRightForceX = 6.9f * SlowFactor;
+            flipRightForceY = 10.15f * SlowFactor;
+            rb.gravityScale = 2.3f * SlowFactor;
             originalGravityScale = rb.gravityScale;
         }
         else
@@ -170,17 +185,39 @@ public class PlayerStateManager : MonoBehaviour
     //     currentState.OnCollisionEnter2D(this, collision);
 
     // }
+
     void FixedUpdate()
     {
+        MaxFallSpeed();
+        if (rb.freezeRotation == false)
+        {
+            currentState.RotateState(this);
+
+        }
+       
         currentState.FixedUpdateState(this);
 
 
     }
+    public void SetFlipDirection(bool isRight)
+    {
+        if (isRight)
+        {
+            justFlippedLeft = false;
+            justFlippedRight = true;
+        }
+        else
+        {
+            justFlippedRight = false;
+            justFlippedLeft = true;
+        }
+
+    }
     void Update()
     {
-        MaxFallSpeed();
+
         currentState.UpdateState(this);
-        currentState.RotateState(this);
+        // currentState.RotateState(this);
         if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
         {
             // ResetHoldJump();
@@ -190,11 +227,10 @@ public class PlayerStateManager : MonoBehaviour
 
     public void MaxFallSpeed()
     {
-        if (rb.velocity.y < maxFallSpeed)
-        {
-            // If it does, limit it to the max fall speed
-            rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
-        }
+
+        // If it does, limit it to the max fall speed
+        rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, maxFallSpeed, 15f));
+
     }
 
     public void ChangeCollider(int index)
@@ -261,13 +297,19 @@ public class PlayerStateManager : MonoBehaviour
 
         }
     }
+    public void SetCanRotateSlash()
+    {
+        rotateSlash = true;
 
+    }
 
     // Update is called once per frame
 
     public void SwitchState(PlayerBaseState newState)
     {
         currentState.ExitState(this);
+        currentState = newState;
+        
         if (currentState == FlipLeftState || currentState == FlipRightState)
         {
             justFlipped = true;
@@ -275,9 +317,14 @@ public class PlayerStateManager : MonoBehaviour
         else
         {
             justFlipped = false;
+
+            if (ID.UsingClocker)
+            {
+                HandleClocker(false);
+            }
         }
-        currentState = newState;
         newState.EnterState(this);
+        
         // previousState = currentState;
         // currentState = newState;
 
@@ -305,24 +352,42 @@ public class PlayerStateManager : MonoBehaviour
     }
 
 
-   
-
     public void BaseRotationLogic()
     {
+        // Check if the Rigidbody is moving upwards and hasn't reached the max rotation limit
         if (rb.velocity.y > 0 && rotZ < maxRotUp)
         {
-            // Calculate the new rotation
             rotZ += jumpRotSpeed * Time.deltaTime;
         }
-        // If the object is moving downwards, rotate it downwards
-        else if (rb.velocity.y < 0 && rotZ > maxRotDown)
+        // Check if the Rigidbody is moving downwards and hasn't reached the max rotation limit
+        else if (rb.velocity.y <= 0 && rotZ > maxRotDown)
         {
-            // Calculate the new rotation
             rotZ -= jumpRotSpeed * Time.deltaTime;
         }
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, rotZ), Time.deltaTime * rotationLerpSpeed);
 
+        // Smoothly interpolate the rotation towards the target rotation
+        float newRotation = Mathf.LerpAngle(rb.rotation, rotZ, Time.deltaTime * rotationLerpSpeed);
+
+        // Apply the new rotation
+        rb.MoveRotation(newRotation);
     }
+
+    // public void BaseRotationLogic()
+    // {
+    //     if (rb.velocity.y > 0 && rotZ < maxRotUp)
+    //     {
+    //         // Calculate the new rotation
+    //         rotZ += jumpRotSpeed * Time.deltaTime;
+    //     }
+    //     // If the object is moving downwards, rotate it downwards
+    //     else if (rb.velocity.y <= 0 && rotZ > maxRotDown)
+    //     {
+    //         // Calculate the new rotation
+    //         rotZ -= jumpRotSpeed * Time.deltaTime;
+    //     }
+    //     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, rotZ), Time.deltaTime * rotationLerpSpeed);
+
+    // }
     void HandleJump()
     {
         if (!disableButtons && !ID.IsTwoTouchPoints)
@@ -331,6 +396,34 @@ public class PlayerStateManager : MonoBehaviour
             SwitchState(JumpState);
         }
 
+    }
+    void HandleHoldJump(bool isHolding)
+    {
+        ID.isHolding = isHolding;
+        // if (!disableButtons)
+        // {
+        //     if (isHolding)
+        //     {
+        //         if (ID.StaminaUsed < ID.MaxStamina)
+        //         {
+        //             ID.globalEvents.OnUseStamina?.Invoke(true);
+        //             jumpHeld = true;
+        //         }
+        //         else
+        //         {
+        //             StartFillStaminaCoroutine();
+        //             ID.globalEvents.OnZeroStamina?.Invoke();
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if (jumpHeld)
+        //         {
+        //             SwitchState(IdleState);
+        //         }
+        //         // ResetHoldJump();
+        //     }
+        // }
     }
 
     void HandleAttack(bool attacking)
@@ -396,40 +489,20 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-
-
-    void HandleHoldJump(bool isHolding)
+    private void HandleDashSlash()
     {
-
-
         if (!disableButtons)
         {
-            if (isHolding)
-            {
+            ChangeCollider(-1);
+            disableButtons = true;
+            SwitchState(DashSlash);
 
-                if (ID.StaminaUsed < ID.MaxStamina)
-                {
-                    ID.globalEvents.OnUseStamina?.Invoke(true);
-                    jumpHeld = true;
-                }
-                else
-                {
-                    StartFillStaminaCoroutine();
-                    ID.globalEvents.OnZeroStamina?.Invoke();
-                }
-            }
-            else
-            {
 
-                if (jumpHeld)
-                {
-
-                    SwitchState(IdleState);
-                }
-                // ResetHoldJump();
-            }
         }
+
+
     }
+
 
     private void HandleDamaged()
     {
@@ -579,6 +652,42 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
+    public void HandleClocker(bool b)
+    {
+        // if (b)
+        // {
+        //     Time.timeScale = 0.2f;
+        //     justStartedClocker = true;
+        //     anim.SetBool("GetGunBool", true);
+
+
+        //     ID.UsingClocker = true;
+        //     maxFallSpeed = -6.5f;
+        //     if (justFlippedRight)
+        //     {
+        //         FlipRightState.ReEnterState();
+        //     }
+        //     else{
+        //         FlipLeftState.ReEnterState();
+        //     }
+        //     AudioManager.instance.SlowMotionPitch(true);
+
+        // }
+        // else
+        // {
+
+        //     Time.timeScale = originalTimeScale;
+        //     AudioManager.instance.SlowMotionPitch(false);
+
+
+        //     ID.UsingClocker = false;
+        //     maxFallSpeed = ID.MaxFallSpeed;
+
+
+        // }
+
+    }
+
 
 
     // private void ResetHoldJump()
@@ -609,12 +718,7 @@ public class PlayerStateManager : MonoBehaviour
 
     // }
 
-    private void HandleDashSlash()
-    {
 
-        SwitchState(DashSlash);
-
-    }
 
     // public void ShowSword(bool isShown)
     // {
@@ -719,6 +823,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.LoseLife += HandleDamaged;
         ID.events.HitGround += HandleGroundCollision;
         ID.events.OnDashSlash += HandleDashSlash;
+        ID.events.OnClocker += HandleClocker;
 
         // ID.events.OnAttack += HandleSlash;
     }
@@ -739,6 +844,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.LoseLife -= HandleDamaged;
         ID.events.HitGround -= HandleGroundCollision;
         ID.events.OnDashSlash -= HandleDashSlash;
+        ID.events.OnClocker -= HandleClocker;
+
 
 
 

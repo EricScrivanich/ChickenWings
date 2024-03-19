@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    public float musicPitch;
+    public float sfxPitch;
     public static AudioManager instance;
+    private float globalAudioSourcePitch;
+
 
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioSource musicSource;
@@ -19,7 +23,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip start;
     [SerializeField] private AudioClip scoreSound;
     [SerializeField] private AudioClip frozenSound;
-    
+
 
 
     [SerializeField] private float cluckVolume = 0.7f;
@@ -40,7 +44,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip ringPassSound; // Assign in Unity Editor
     [SerializeField] private float ringPassVolume = 0.7f;
     [SerializeField] private float bucketBurstSoundVolume = 0.7f;
-  
+
     float semitoneRatio = Mathf.Pow(2, 1f / 12f);
     private float ringPassPitch = 1f; // Default pitch
 
@@ -57,18 +61,37 @@ public class AudioManager : MonoBehaviour
 
         // Don't destroy AudioManager on scene change.
         DontDestroyOnLoad(gameObject);
+
     }
 
     void Start()
     {
         PlayMusic();
     }
-
-
-    public void PlayRingPassSound() 
+    public void SlowMotionPitch(bool isSlow)
     {
-            ringPassSource.PlayOneShot(ringPassSound, ringPassVolume);
-            ringPassSource.pitch *= semitoneRatio;
+        if (isSlow)
+        {
+            musicSource.pitch = musicPitch;
+            audioSource.pitch = sfxPitch;
+            audioSource.bypassEffects = false;
+
+        }
+        else 
+        {
+            musicSource.pitch = 1;
+            audioSource.pitch = 1;
+            audioSource.bypassEffects = true;
+
+        }
+       
+    }
+
+
+    public void PlayRingPassSound()
+    {
+        ringPassSource.PlayOneShot(ringPassSound, ringPassVolume);
+        ringPassSource.pitch *= semitoneRatio;
     }
 
     public void PlayBucketBurstSound()
@@ -87,6 +110,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayMusic()
     {
+        
         musicSource.Play(); // Play the music audio source
     }
 
@@ -117,7 +141,7 @@ public class AudioManager : MonoBehaviour
     {
         audioSource.PlayOneShot(downJump, downJumpVolume);
     }
-   
+
     public void PlayBounceSound()
     {
         audioSource.Stop();
@@ -132,7 +156,7 @@ public class AudioManager : MonoBehaviour
     {
         audioSource.PlayOneShot(crack, crackVolume);
     }
-     public void PlayStartSound()
+    public void PlayStartSound()
     {
         audioSource.PlayOneShot(start, startVolume);
     }

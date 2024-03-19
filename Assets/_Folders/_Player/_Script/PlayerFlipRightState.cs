@@ -4,61 +4,102 @@ using UnityEngine;
 
 public class PlayerFlipRightState : PlayerBaseState
 {
-     private float currentRotation = 0;
+    private float currentRotation = 0;
     private float totalRotation;
     private float flipForceX = 6.5f;
-    private float flipForceY = 10f; 
-    private float rotationSpeedVar = -400;
-  
-    
+    private float flipForceY = 10f;
+    private float rotationSpeedVar;
+    private float rotationSpeed = 450;
+    private float rotationDelay = .15f;
+    private float rotationTime = 0;
+    private float time;
+    private bool hitSlowTarget;
+    private bool prolongRotation;
+
+
     public override void EnterState(PlayerStateManager player)
     {
+        hitSlowTarget = false;
+        time = 0;
+        player.SetFlipDirection(true);
         player.anim.SetTrigger("FlipTrigger");
+
         totalRotation = 0;
-        
+        // if (player.justFlipped && player.justFlippedRight)
+        // {
+        //     player.rb.velocity = new Vector2(player.flipRightForceX - .5f, player.flipRightForceY + .8f);
+
+        // }
+        // else
+        // {
+
+
+        // }
         currentRotation = player.transform.rotation.eulerAngles.z;
+
+        if (player.ID.UsingClocker)
+        {
+            rotationSpeed = 300;
+        }
+        else if (currentRotation < 220)
+        {
+
+            prolongRotation = true;
+            rotationSpeed += currentRotation / 3;
+        }
+        else
+        {
+
+            prolongRotation = false;
+            rotationSpeed = 450;
+        }
+        rotationSpeedVar = rotationSpeed;
         player.rb.velocity = new Vector2(player.flipRightForceX, player.flipRightForceY);
-        AudioManager.instance.PlayCluck();
-        
-      
+
        
+
+
+        AudioManager.instance.PlayCluck();
+    }
+    public void ReEnterState()
+    {
+        rotationSpeedVar = 300;
+
     }
     public override void ExitState(PlayerStateManager player)
-
     {
 
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-     
+
     }
 
-    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    // {
-      
-    // }
- 
     public override void RotateState(PlayerStateManager player)
     {
-        currentRotation += rotationSpeedVar *Time.deltaTime;
-        totalRotation -= rotationSpeedVar *Time.deltaTime;
-        player.transform.rotation = Quaternion.Euler(0, 0, currentRotation);
-        // Debug.Log("right: " + currentRotation);
-       
+
+        currentRotation -= rotationSpeedVar * Time.fixedDeltaTime;
+        float targetRotation = Mathf.LerpAngle(player.rb.rotation, currentRotation, Time.fixedDeltaTime * rotationSpeedVar);
+        player.rb.MoveRotation(targetRotation);
+        if (hitSlowTarget)
+        {
+            time += Time.fixedDeltaTime;
+            rotationSpeedVar = Mathf.Lerp(rotationSpeed, 10, time / .4f);
+        }
+
     }
 
     public override void UpdateState(PlayerStateManager player)
     {
-       
-         if (totalRotation > 420)
+        if (player.transform.rotation.eulerAngles.z < player.ID.startLerp && !hitSlowTarget && !prolongRotation)
         {
-            
-
-            player.SwitchState(player.IdleState);
+            hitSlowTarget = true;
         }
-        
-        
+        if (player.transform.rotation.eulerAngles.z > 330 && prolongRotation)
+        {
+            prolongRotation = false;
+        }
     }
 }
 

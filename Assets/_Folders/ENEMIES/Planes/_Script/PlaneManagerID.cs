@@ -8,6 +8,7 @@ public class PlaneManagerID : ScriptableObject
     [SerializeField] private GameObject ExplosionPrefab;
     public bool spawnRandomPlanesBool;
     public List<PlaneData> PlaneDataType;
+    public PlaneEvents events;
     private Queue<GameObject> explosionQueue;
     const int explosionQueueSize = 8;
 
@@ -95,7 +96,7 @@ public class PlaneManagerID : ScriptableObject
             PlaneData planeType = DeterminePlaneType(cropChance, jetChance, cargoChance);
 
             // Spawn the plane at the determined position
-            planeType.GetPlane(0, spawnPosition);
+            planeType.GetPlane(0,0,0, spawnPosition);
         }
     }
 

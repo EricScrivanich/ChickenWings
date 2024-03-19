@@ -11,7 +11,35 @@ public class PlaceholderRingDataCollectionEditor : Editor
 
         PlaceholderRingDataCollection script = (PlaceholderRingDataCollection)target;
 
-        if (GUILayout.Button("Record Placeholders"))
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Record Specified Placeholders"))
+        {
+            // Automatically find the GameObject named "PlaceholderRecorder"
+            GameObject ringRecorder = GameObject.Find("PlaceholderRecorder");
+
+            if (ringRecorder != null)
+            {
+                // Use the found GameObject to record placeholders
+                script.RecordPlaceholdersForSpecifiedTrigger(ringRecorder);
+                EditorUtility.SetDirty(target); // Marks the object as dirty to ensure the changes are saved
+            }
+            else
+            {
+                Debug.LogWarning("PlaceholderRecorder GameObject not found. Please ensure it exists in the current scene.");
+            }
+        }
+
+        if (GUILayout.Button("Place Specific Placeholders"))
+        {
+            script.PlaceSpecifiedTrigger();
+            EditorUtility.SetDirty(target); // Ensure changes are saved
+        }
+
+
+        GUILayout.Space(25);
+
+        if (GUILayout.Button("Record All Placeholders"))
         {
             // Automatically find the GameObject named "PlaceholderRecorder"
             GameObject ringRecorder = GameObject.Find("PlaceholderRecorder");
@@ -27,14 +55,18 @@ public class PlaceholderRingDataCollectionEditor : Editor
                 Debug.LogWarning("PlaceholderRecorder GameObject not found. Please ensure it exists in the current scene.");
             }
         }
-        if (GUILayout.Button("Place Prefabs in Scene"))
+
+
+        if (GUILayout.Button("Place all Placeholders"))
         {
             script.PlacePrefabsInScene();
             EditorUtility.SetDirty(target); // Ensure changes are saved
         }
 
+        GUILayout.Space(20);
 
-        if (GUILayout.Button("Clear RecordedOutput Children"))
+
+        if (GUILayout.Button("Clear All Recorded Output Children"))
         {
             GameObject recordedOutput = GameObject.Find("PlaceholderRecorder");
             if (recordedOutput != null)
@@ -53,6 +85,11 @@ public class PlaceholderRingDataCollectionEditor : Editor
                 Debug.LogWarning("RecordedOutput GameObject not found.");
             }
         }
+
+
+        // Method to place prefabs for a specific trigger
+
+
     }
 
 }

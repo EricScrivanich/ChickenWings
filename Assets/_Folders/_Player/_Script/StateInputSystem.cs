@@ -25,7 +25,20 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.Drop.performed += ctx => ID.events.OnDrop?.Invoke();
         controls.Movement.DropEgg.performed += ctx => ID.events.OnEggDrop?.Invoke();
         controls.Movement.DashSlash.performed += ctx => ID.events.OnDashSlash?.Invoke();
-        
+        controls.Movement.HoldJumpRight.performed += ctx =>
+        {
+            ID.events.OnClocker?.Invoke(!ID.UsingClocker);
+        };
+
+        controls.Movement.HoldJumpLeft.performed += ctx =>
+
+            {
+                ID.events.OnClocker?.Invoke(!ID.UsingClocker);
+            };
+
+
+
+
         controls.Movement.JumpHold.performed += ctx =>
  {
 
@@ -40,7 +53,7 @@ public class StateInputSystem : MonoBehaviour
                 isHolding = false;
 
             }
-           
+
         };
 
         controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(true);

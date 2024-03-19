@@ -13,7 +13,7 @@ public class RingMovement : MonoBehaviour
     public bool correctCollision = false;
     public int order;
     private bool isCorrect = false;
-   
+
     [SerializeField] private Collider2D coll2D;
 
     private Transform _transform;
@@ -54,13 +54,11 @@ public class RingMovement : MonoBehaviour
 
         }
     }
-    private void FixedUpdate() {
-        rb.velocity = Vector2.left * speed;
-    }
+   
 
     private void Update()
     {
-        // _transform.position += Vector3.left * speed * Time.deltaTime;
+        _transform.position += Vector3.left * speed * Time.deltaTime;
 
 
         if (doesTriggerInt != 0 && hasNotTriggered)
@@ -158,7 +156,7 @@ public class RingMovement : MonoBehaviour
             {
                 collider.enabled = true;
             }
-            
+
         }
     }
 
@@ -183,7 +181,7 @@ public class RingMovement : MonoBehaviour
             ID.CorrectRing++;
 
             DisableColliders();
-            
+
             AudioManager.instance.PlayRingPassSound();
             anim.SetBool(BurstBoolHash, true);
             sprite.material = ID.passedMaterial;
@@ -197,7 +195,7 @@ public class RingMovement : MonoBehaviour
         {
             ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
             isCorrect = false;
-           
+
         }
 
         // print("ring" + order);
@@ -237,7 +235,7 @@ public class RingMovement : MonoBehaviour
         backRing.material = ID.defaultMaterial;
         centerSprite.color = ID.CenterColor;
         centerCutout.color = ID.CenterColor;
-       
+
         index = ID.IDIndex;
 
         ID.ringEvent.OnCheckOrder += SetCorrectRing;

@@ -8,13 +8,14 @@ public class RingID : ScriptableObject
 
 {
     [SerializeField] private RingPool Pool;
+    public bool ReadyToSpawn;
 
     public Color CenterColor;
     public GameObject ringParticles;
     public int nextIndex = 0;
     private int particlesInUse;
     public int IDIndex;
-    private bool ReadyToSpawn;
+    
     public GameObject ballParticlePrefab;
     private GameObject ballParticle;
     private ParticleSystem ballPS;
@@ -49,23 +50,11 @@ public class RingID : ScriptableObject
         objectsToDeactivate.Clear();
         nextIndex = 0;
         triggeredRingOrder = 0;
-        ReadyToSpawn = true;
+        
         ReturnAllParticles();
         ringList.Clear();
         particlesInUse = 0;
-
-        // if (!initialReset)
-        // {
-        //     Debug.Log("GOing buhhh: " + IDIndex);
-        //     int initialCount = particleSystemsQueue.Count; // Store the initial count
-
-        //     for (int i = 0; i < initialCount; i++)
-        //     {
-        //         GameObject ps = particleSystemsQueue.Dequeue(); // Remove the item from the front of the queue
-        //         ps.SetActive(false); // Perform the reset action
-        //         particleSystemsQueue.Enqueue(ps); // Place it back at the end of the queue
-        //     }
-        // }
+        ReadyToSpawn = true;
 
     }
     public List<GameObject> CurrentRingList()
@@ -173,6 +162,7 @@ public class RingID : ScriptableObject
 
     public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, int ringOrder, float setSpeed, int doesTriggerInt, float xCordinateTrigger)
     {
+        ReadyToSpawn = false;
         RingMovement ringScript = Pool.GetRing(this);
 
         ringScript.transform.position = setPosition;

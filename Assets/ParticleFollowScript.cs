@@ -18,43 +18,42 @@ public class ParticleFollowScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
-    {
-        if (ringTransform!=null)
-        {
-             if (ringTransform.correctCollision && canPlay)
-        {
-            ps.Play();
-            canPlay = false;
-            hasPlayed = true;
-        }
-        // Debug.Log(ps.isStopped);
-
-        if ((ps.isStopped && hasPlayed))
-        {
-            ringTransform.correctCollision = false;
-            canPlay = true;
-            hasPlayed = false;
-          
-            ID.ReturnEffect(this);
-            // ResetRing();
-            // ID.particleSystemsQueue.Enqueue(this.gameObject);
-            // // gameObject.SetActive(false);
-            // ID.GetEffect(ID.ringList[ID.nextIndex]);
-
-            // Return this gameobject to pool to then be attachted to the next ring based on its order in list 
-        }
-        gameObject.transform.position = ringTransform.transform.position;
-
-        }
-       
-
-       
+   
+    // private void LateUpdate() {
+    //     gameObject.transform.position = ringTransform.transform.position;
 
 
+    // }
 
+    // void Update()
+    // {
+    //     if (ringTransform != null)
+    //     {
+    //         if (ringTransform.correctCollision && canPlay)
+    //         {
+    //             ps.Play();
+    //             canPlay = false;
+    //             hasPlayed = true;
+    //         }
+    //         // Debug.Log(ps.isStopped);
 
-    }
+    //         if ((ps.isStopped && hasPlayed))
+    //         {
+    //             ringTransform.correctCollision = false;
+    //             canPlay = true;
+    //             hasPlayed = false;
+
+    //             ID.ReturnEffect(this);
+    //             // ResetRing();
+    //             // ID.particleSystemsQueue.Enqueue(this.gameObject);
+    //             // // gameObject.SetActive(false);
+    //             // ID.GetEffect(ID.ringList[ID.nextIndex]);
+
+    //             // Return this gameobject to pool to then be attachted to the next ring based on its order in list 
+    //         }
+           
+    //     }
+    // }
 
    
 

@@ -306,7 +306,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -322,6 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db215764949cf44d8bd66b9c5b42a2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SlowFactor: 0
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   playerParts: {fileID: 11400000, guid: 985b73365ea814b258007007881a2590, type: 2}
   cameraShake: {fileID: 0}
@@ -349,6 +350,8 @@ MonoBehaviour:
   bucketIsExploded: 0
   maxFallSpeed: -2
   bucket: {fileID: 0}
+  justFlippedRight: 0
+  justFlippedLeft: 0
   hasFlippedRight: 0
   hasFlippedLeft: 0
   canDrop: 0
@@ -359,6 +362,7 @@ MonoBehaviour:
   jumpRotSpeed: 200
   maxRotUp: 15
   disableButtons: 0
+  rotateSlash: 0
   rb: {fileID: 0}
 --- !u!114 &107412689077373414
 MonoBehaviour:
@@ -1991,6 +1995,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3549554370242709108}
     m_Modifications:
+    - target: {fileID: 190717787763438887, guid: eb9102f083a5448559b26635836af258, type: 3}
+      propertyPath: m_Time
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 190717787763438887, guid: eb9102f083a5448559b26635836af258, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2552346844006020849, guid: eb9102f083a5448559b26635836af258, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 68a97f6dba0da4e70bed942db7619a6e, type: 3}
     - target: {fileID: 2552346844006020849, guid: eb9102f083a5448559b26635836af258, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -1998,6 +2014,14 @@ PrefabInstance:
     - target: {fileID: 2552346844006020849, guid: eb9102f083a5448559b26635836af258, type: 3}
       propertyPath: m_SortingOrder
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2552346844006020849, guid: eb9102f083a5448559b26635836af258, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2552346844006020849, guid: eb9102f083a5448559b26635836af258, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3225099123117535369, guid: eb9102f083a5448559b26635836af258, type: 3}
       propertyPath: m_LocalScale.x
@@ -2061,7 +2085,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5109732789631917580, guid: eb9102f083a5448559b26635836af258, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2073,6 +2097,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5109732789631917580, guid: eb9102f083a5448559b26635836af258, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6716356858613723353}
+    - targetCorrespondingSourceObject: {fileID: 5109732789631917580, guid: eb9102f083a5448559b26635836af258, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7449830889156072397}
   m_SourcePrefab: {fileID: 100100000, guid: eb9102f083a5448559b26635836af258, type: 3}
 --- !u!4 &3147164738960362635 stripped
 Transform:
@@ -2116,10 +2143,10 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.028481752, y: -0.55098665}
+  m_Offset: {x: 0.13331304, y: -0.5059328}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.508695, y: 0.6958384}
+    pivot: {x: 0.52259976, y: 0.6385543}
     oldSize: {x: 1.22, y: 2.6}
     newSize: {x: 1.22, y: 2.6}
     adaptiveTilingThreshold: 0.5
@@ -2127,7 +2154,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.877593, y: 2.8325224}
+  m_Size: {x: 1.2425783, y: 2.8024874}
   m_EdgeRadius: 0
 --- !u!114 &6716356858613723353
 MonoBehaviour:
@@ -2143,6 +2170,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   damageAmount: 1
+--- !u!114 &7449830889156072397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4720979472372408846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shaderTypes: 3
+  normalStrength: 5
+  normalSmoothing: 1
+  computingNormal: 0
 --- !u!1001 &2218496116377838057
 PrefabInstance:
   m_ObjectHideFlags: 0

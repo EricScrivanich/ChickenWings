@@ -292,14 +292,14 @@ public class PlaneSpawnManager : MonoBehaviour
 
         float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnCrop);
         Vector2 position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
-        CropData.GetPlane(0, position);
+        CropData.GetPlane(0,0,0, position);
     }
     private void GetCargo()
     {
 
         float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnCargo);
         Vector2 position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
-        CargoData.GetPlane(0, position);
+        CargoData.GetPlane(0,0, 0, position);
     }
 
     private void GetJet()
@@ -307,7 +307,7 @@ public class PlaneSpawnManager : MonoBehaviour
 
         float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnJet);
         Vector2 position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
-        JetData.GetPlane(0, position);
+        JetData.GetPlane(0,0,0, position);
     }
     #endregion
 

@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class PlayerID : ScriptableObject
 {
+    public float addJumpForce;
+    public float startLerp;
+    public float lerpTarget;
+    public float lerpTime;
+    public float flipSpeed;
     public float slowMaxFallSpeed;
     public float slowJumpForce;
     private bool resetingValues;
@@ -16,7 +21,10 @@ public class PlayerID : ScriptableObject
     public int MaxMana = 360;
     public int numberOfPowersThatCanBeUsed;
     private float currentMana;
+    public bool UsingClocker;
     private bool hasHitMaxMana;
+
+    public bool isHolding;
     public float CurrentMana
     {
         get

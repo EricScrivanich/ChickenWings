@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 68a97f6dba0da4e70bed942db7619a6e
+guid: 532ae0c5229d1486ea965cf1c13779ba
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -43,16 +43,16 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
-  alignment: 9
-  spritePivot: {x: 0.52259976, y: 0.6385543}
-  spritePixelsToUnits: 100
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 200
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
@@ -134,18 +134,91 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: GunAndBullet_0
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 126
+        width: 223
+        height: 126
+      alignment: 9
+      pivot: {x: 0.18213052, y: 0.47127256}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f50171154610146c69ac62a99cfaa161
+      internalID: 1280850032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GunAndBullet_4
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 5
+        width: 88
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0d472f78a1da4c35bd260fa6b726df4
+      internalID: -1065478674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GunAndBullet_8
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 44
+        width: 51
+        height: 34
+      alignment: 9
+      pivot: {x: 0.8193811, y: 0.38466847}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c155287abe134cd7ab443362f0786c1
+      internalID: -2031099920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      GunAndBullet_0: 1280850032
+      GunAndBullet_1: -1947745873
+      GunAndBullet_2: -191782224
+      GunAndBullet_3: -535647197
+      GunAndBullet_4: -1065478674
+      GunAndBullet_5: 635633801
+      GunAndBullet_6: 1886571747
+      GunAndBullet_7: -1842502244
+      GunAndBullet_8: -2031099920
+      GunAndBullet_9: -540343824
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

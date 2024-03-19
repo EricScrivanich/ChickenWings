@@ -95,11 +95,7 @@ public class PlayerBounceState : PlayerBaseState
             player.maxFallSpeed = -3f;
             // player.ID.events.FloorCollsion.Invoke(true);
         }
-        else if (bounceTime < bounceDuration)
-        {
-            // Debug.Log("YER" + bounceTime);
-
-        }
+       
 
 
     }

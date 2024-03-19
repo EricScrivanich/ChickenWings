@@ -12,14 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2969e9bedb78493d9c10fe18b8ea9c4, type: 3}
   m_Name: StatePlayer
   m_EditorClassIdentifier: 
+  addJumpForce: 18
+  startLerp: 30
+  lerpTarget: -10
+  lerpTime: 0.3
+  flipSpeed: 450
   slowMaxFallSpeed: 0
   slowJumpForce: 0
   slowFlipLeftForceX: 0
+  CurrentManaTarget: 0
   slowFlipLeftForceY: 0
   slowFlipRightForceX: 0
   slowFlipRightForceY: 0
   MaxMana: 360
   numberOfPowersThatCanBeUsed: 0
+  UsingClocker: 0
+  isHolding: 0
   ManaNeeded: 180
   IsSlowedDown: 0
   PlayerMaterial: {fileID: 2100000, guid: 30da6d11a7795474d9c7228bfbf84a37, type: 2}

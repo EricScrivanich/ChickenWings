@@ -211,7 +211,7 @@ public class RingSpawner : MonoBehaviour
 
         foreach (var placeholderData in triggerGroup.placeholderPlaneDataList)
         {
-            placeholderData.planeType.GetPlane(placeholderData.speed, placeholderData.position);
+            placeholderData.planeType.GetPlane(placeholderData.doesTiggerInt,placeholderData.xCordinateTrigger,placeholderData.speed, placeholderData.position);
         }
 
         foreach (var placeholder in triggerGroup.planeAreaSpawnDataList)
@@ -283,11 +283,12 @@ public class RingSpawner : MonoBehaviour
         }
         else
         {
+            Pool.RingType[index].ResetVariables();
             SpawnRings(4f);
 
 
         }
-        // Pool.RingType[index].ResetVariables();
+
 
 
 
@@ -316,6 +317,7 @@ public class RingSpawner : MonoBehaviour
     }
     private IEnumerator SpawnRingsCourintine(float time)
     {
+
         if (!Pool.Testing)
         {
             PlaneID.spawnRandomPlanesBool = true;
@@ -342,6 +344,7 @@ public class RingSpawner : MonoBehaviour
         // currentRingSetupInstance = InstantiateRandomSetup();
 
         yield return new WaitForSeconds(2.5f);
+        yield return new WaitUntil(() => ID.ReadyToSpawn == true);
         Debug.Log("spawning Rings: " + tracker);
 
         NewTriggeredSpawn(0);
@@ -380,6 +383,8 @@ public class RingSpawner : MonoBehaviour
 
             // Subscribe to other events as needed
         }
+
+        PlaneID.events.TriggeredSpawn += NewTriggeredSpawn;
 
 
 

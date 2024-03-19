@@ -9,8 +9,8 @@ public class PlayerDashState : PlayerBaseState
 
 
 
-    [SerializeField] private float dashPower = 11f;
-    private int rotationSpeed = 80;
+    [SerializeField] private float dashPower = 10.5f;
+    private int rotationSpeed = 100;
     private float rotZ;
     private bool passedTime;
     private float dashingTime;
@@ -18,9 +18,9 @@ public class PlayerDashState : PlayerBaseState
     private float currentSpeed;
     private float currentGravity;
     private float slowdownSpeed = 16.2f;
-    private float addGravitySpeed = 4f;
-    
-    
+    private float addGravitySpeed = 3.3f;
+
+
     public override void EnterState(PlayerStateManager player)
     {
         rotZ = 0;
@@ -29,7 +29,7 @@ public class PlayerDashState : PlayerBaseState
         player.rb.velocity = Vector2.zero;
         // player.disableButtons = true;
         player.rb.gravityScale = 0;
-        player.transform.rotation = Quaternion.Euler(0, 0, 0);
+        player.rb.MoveRotation(0);
         player.anim.SetTrigger("DashTrigger");
         AudioManager.instance.PlayDashSound();
         dashingTime = 0;
@@ -65,10 +65,13 @@ public class PlayerDashState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
-        if (passedTime && rotZ > -60)
+        if (passedTime && rotZ > -85)
         {
             rotZ -= rotationSpeed * Time.fixedDeltaTime;
-            player.transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            float newRotation = Mathf.LerpAngle(player.rb.rotation, rotZ, Time.deltaTime * rotationSpeed);
+
+            // Apply the new rotation
+            player.rb.MoveRotation(newRotation);
 
         }
 

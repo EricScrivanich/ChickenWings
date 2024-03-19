@@ -5,25 +5,37 @@ using UnityEngine;
 public class PlayerDashSlashState : PlayerBaseState
 {
 
-    
+
     private bool startRotation;
     private float currentRotation;
-    private float rotationSpeedVar = 580;
+    private float currentRotationBefore;
+    private float rotationSpeedVar;
     private float totalRotation;
+    private float currentRotationVar;
+    private float startingRotationSpeed = 900f;
     private bool hasSlashed;
+    private float time;
+    private float currentXVelocity;
 
     public override void EnterState(PlayerStateManager player)
     {
-        player.ChangeCollider(-1);
-        player.Sword.SetActive(true);
+        
+        currentXVelocity = player.rb.velocity.x;
+        time = 0;
+        rotationSpeedVar = startingRotationSpeed;
+        player.rotateSlash = false;
+
+        
+        // player.Sword.SetActive(true);
         currentRotation = 0;
+        currentRotationBefore = 0;
         hasSlashed = false;
         player.maxFallSpeed = -9f;
         totalRotation = 0;
         startRotation = false;
+
        
-        player.disableButtons = true;
-        player.anim.SetTrigger("IdleTrigger");
+        player.anim.SetTrigger("DashSlashTrigger");
 
 
 
@@ -42,9 +54,20 @@ public class PlayerDashSlashState : PlayerBaseState
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-        if (!hasSlashed)
+        // if (!player.rotateSlash && player.rb.velocity.x > 1)
+        // {
+        //     currentXVelocity -= 11.5f * Time.deltaTime;
+        //     player.rb.velocity = new Vector2(currentXVelocity, 0);
+        // }
+        if (!player.rotateSlash)
         {
-            player.rb.velocity = new Vector2(2.1f, 0);
+
+            player.rb.velocity = new Vector2(5, 0);
+        }
+        else if (!hasSlashed)
+        {
+            player.rb.velocity = new Vector2(1, -.1f);
+
         }
 
 
@@ -60,27 +83,46 @@ public class PlayerDashSlashState : PlayerBaseState
     {
         if (hasSlashed)
         {
-
-            player.BaseRotationLogic();
+            return;
+            // player.BaseRotationLogic();
 
         }
-        else 
+        else if (player.rotateSlash)
         {
-            currentRotation -= rotationSpeedVar * Time.deltaTime;
-            totalRotation -= rotationSpeedVar * Time.deltaTime;
-            player.transform.rotation = Quaternion.Euler(0, 0, currentRotation);
+            time += Time.fixedDeltaTime;
 
-            if (totalRotation <= -360)
+            currentRotation -= rotationSpeedVar * Time.fixedDeltaTime;
+            // totalRotation -= rotationSpeedVar * Time.deltaTime;
+
+
+
+            rotationSpeedVar = Mathf.Lerp(startingRotationSpeed, 100, time / .9f);
+
+            float newRotation = Mathf.LerpAngle(player.rb.rotation, currentRotation, Time.deltaTime * rotationSpeedVar);
+
+            // Apply the new rotation
+            player.rb.MoveRotation(newRotation);
+            // player.transform.rotation = Quaternion.Euler(0, 0, currentRotation);
+
+
+            if (currentRotation <= -400)
             {
-                
+
                 player.disableButtons = false;
-                player.Sword.SetActive(false);
+                // player.Sword.SetActive(false);
                 player.ChangeCollider(0);
+                player.anim.SetTrigger("DashSlashFinishTrigger");
+
                 startRotation = false;
                 hasSlashed = true;
 
             }
 
+        }
+        else
+        {
+            currentRotation += 120 * Time.deltaTime;
+            player.transform.rotation = Quaternion.Euler(0, 0, currentRotation);
         }
 
 

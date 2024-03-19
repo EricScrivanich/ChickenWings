@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4016342717550054080}
   - component: {fileID: 361876404719489581}
   - component: {fileID: 7771507303025360198}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sky
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 50784a7644d5b45aebd6e900881b9bb8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -309,7 +309,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: c41c05f620c76414f8c9797cdf354302, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -405,6 +405,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 321141756399474866, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: m_Color.b
+      value: 0.60784316
+      objectReference: {fileID: 0}
+    - target: {fileID: 321141756399474866, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: m_Color.g
+      value: 0.60784316
+      objectReference: {fileID: 0}
     - target: {fileID: 428674807402919873, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -498,9 +506,17 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8933918264872543595, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: m_Color.b
+      value: 0.6084906
+      objectReference: {fileID: 0}
+    - target: {fileID: 8933918264872543595, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6084906
+      objectReference: {fileID: 0}
+    - target: {fileID: 8933918264872543595, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 9053817703640837566, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: m_Name
       value: Background
@@ -519,32 +535,8 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 56641520349870396, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4016342717550054080}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 774426807535464505, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4997375150291502773}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
---- !u!1 &1461886669765066648 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 774426807535464505, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
-  m_PrefabInstance: {fileID: 2231246893185847201}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4997375150291502773
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1461886669765066648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shaderTypes: 3
-  normalStrength: 5
-  normalSmoothing: 1
-  computingNormal: 0
 --- !u!4 &2179671936424261277 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 56641520349870396, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
