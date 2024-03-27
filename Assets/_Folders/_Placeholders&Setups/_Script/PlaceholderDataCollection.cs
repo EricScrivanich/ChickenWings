@@ -5,8 +5,8 @@ using System.Linq;
 [CreateAssetMenu(fileName = "PlaceholderRingDataCollection", menuName = "ScriptableObjects/PlaceholderRingDataCollection", order = 1)]
 public class PlaceholderRingDataCollection : ScriptableObject
 {
-    
 
+    public bool TestSpecifiedTrigger;
     [SerializeField] private GameObject placeholderRingPrefab;
     [SerializeField] private GameObject planeAreaPrefab;
     public List<PlaceholderTriggerGroup> triggerGroups = new List<PlaceholderTriggerGroup>();
@@ -16,9 +16,9 @@ public class PlaceholderRingDataCollection : ScriptableObject
 
     public void RecordPlaceholders(GameObject ringRecorder)
     {
-        
+
         triggerGroups.Clear(); // Clear existing groups
-       
+
 
         foreach (var placeholder in ringRecorder.GetComponentsInChildren<PlaceholderRing>())
         {
@@ -34,7 +34,7 @@ public class PlaceholderRingDataCollection : ScriptableObject
             }
 
             group.placeholderRingDataList.Add(data);
-            
+
         }
 
         // Optionally, sort each list within the groups by some criteria, such as the x-position
@@ -165,7 +165,13 @@ public class PlaceholderRingDataCollection : ScriptableObject
             // Use DestroyImmediate in the editor, Destroy if this needs to run at runtime
             GameObject.DestroyImmediate(recordedOutput.transform.GetChild(i).gameObject);
         }
-        PlaceRelvantPrefabs(triggerGroups[SpecifiedTrigger],recordedOutput);
+        PlaceholderTriggerGroup group = triggerGroups.FirstOrDefault(g => g.triggerValue == SpecifiedTrigger);
+        if (group == null)
+        {
+            group = new PlaceholderTriggerGroup { triggerValue = SpecifiedTrigger };
+            triggerGroups.Add(group);
+        }
+        PlaceRelvantPrefabs(triggerGroups[SpecifiedTrigger], recordedOutput);
     }
 
 

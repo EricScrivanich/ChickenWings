@@ -57,8 +57,11 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
             {
                 if (transform.position.x < xCordinateTrigger)
                 {
-                    ID.events.TriggeredSpawn(doesTiggerInt);
                     hasTrigger = false;
+                    ID.events.TriggeredSpawn?.Invoke(doesTiggerInt);
+                    Debug.Log("PlaneTrigger");
+                    return;
+
                 }
 
             }
@@ -173,6 +176,8 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     {
         speed = 0;
         Data.GetExplosion(transform.position);
+        AudioManager.instance.PlayPlaneExplosionSound();
+
         Debug.Log("Stopped" + this.gameObject);
     }
 

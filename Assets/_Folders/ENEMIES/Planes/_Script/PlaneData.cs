@@ -73,11 +73,9 @@ planeScript.xCordinateTrigger = xCorTrigger;
 
     public void GetExplosion(Vector2 position)
     {
-        GameObject explosion = ID.GetExplosion();
+        ID.GetExplosion(position,explosionScale); 
 
-        explosion.transform.position = position;
-        explosion.transform.localScale = explosionScale;
-        explosion.SetActive(true);
+        
     }
 
 }

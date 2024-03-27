@@ -21,5 +21,5 @@ public struct PlayerEvents
     public Action LoseLife;
     public Action HitGround;
 
-    public Action<bool> OnClocker;
+    public Action<bool> OnHoldFlip;
 }

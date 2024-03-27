@@ -5,13 +5,16 @@ using UnityEngine;
 public class PlayerJumpState : PlayerBaseState
 {
     private float jumpForce = 11.3f;
-    private float slightUpwardsForce = 12f; 
+    // private float slightUpwardsForce = 12f;
+    private float slightUpwardsForce = 15f;
+
+    private bool startHoldJumpAnimation;
 
 
     public override void EnterState(PlayerStateManager player)
     {
         player.anim.SetTrigger("JumpTrigger");
-        
+
         player.rb.velocity = new Vector2(0, player.jumpForce);
         // player.rb.AddForce(new Vector2(0, player.jumpForce),ForceMode2D.Impulse);
         AudioManager.instance.PlayCluck();
@@ -23,7 +26,7 @@ public class PlayerJumpState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
 
     {
-        
+
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
@@ -31,14 +34,20 @@ public class PlayerJumpState : PlayerBaseState
         if (player.ID.isHolding && player.rb.velocity.y > -5)
         {
             player.rb.AddForce(new Vector2(0, player.ID.addJumpForce - Mathf.Abs(player.rb.velocity.y)));
-            Debug.Log("Adding");
+            startHoldJumpAnimation = true;
+
 
         }
-        else if (Mathf.Abs(player.rb.velocity.y) < 0.5f)
+        else if (Mathf.Abs(player.rb.velocity.y) < 0.5f && !player.ID.testingNewGravity)
+        {
+            player.rb.AddForce(new Vector2(0, slightUpwardsForce));
+
+        }
+        else if (player.rb.velocity.y < player.ID.startAddDownForce && player.rb.velocity.y > player.ID.endAddDownForce)
         {
             // Apply a small upwards force
             // You can adjust this value as needed
-            player.rb.AddForce(new Vector2(0, slightUpwardsForce));
+            player.rb.AddForce(new Vector2(0, -player.ID.playerAddDownForce));
         }
 
     }
@@ -60,6 +69,7 @@ public class PlayerJumpState : PlayerBaseState
         {
             player.SwitchState(player.HoldJumpState);
         }
+
 
     }
 }

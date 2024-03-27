@@ -7,10 +7,15 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private float SlowFactor;
     [ExposedScriptableObject]
     public PlayerID ID;
+
+
+    [SerializeField] private Vector2 startPoint;
+    [SerializeField] private Vector2 endPoint;
+    [SerializeField] private float drawSpeed;
     private LineRenderer line;
     public PlayerParts playerParts;
-    [SerializeField] private CameraShake cameraShake;
     public Transform parchutePoint;
+    public bool holdingFlip;
 
     public GameObject Sword;
     // private SpriteRenderer SwordSprite;
@@ -113,6 +118,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
+        holdingFlip = false;
         ID.UsingClocker = false;
         rotateSlash = false;
         isDropping = false;
@@ -127,6 +133,7 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         originalTimeScale = Time.timeScale;
 
 
@@ -134,25 +141,26 @@ public class PlayerStateManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         line = GetComponent<LineRenderer>();
         // Feathers.SetActive(false);
-        if (!isSlow)
+        if (!ID.testingNewGravity)
         {
-            ID.MaxFallSpeed = -9.7f * SlowFactor;
-            jumpForce = 11.2f * SlowFactor;
-            flipLeftForceX = -6.9f * SlowFactor;
-            flipLeftForceY = 9.4f * SlowFactor;
-            flipRightForceX = 6.9f * SlowFactor;
-            flipRightForceY = 10.15f * SlowFactor;
-            rb.gravityScale = 2.3f * SlowFactor;
-            originalGravityScale = rb.gravityScale;
+            ID.MaxFallSpeed = -9.7f;
+            jumpForce = 12f;
+            flipLeftForceX = -5f;
+            flipLeftForceY = 10f;
+            flipRightForceX = 2.5f;
+            flipRightForceY = 12f;
+
+            originalGravityScale = 2.3f;
         }
         else
         {
-            ID.MaxFallSpeed = ID.slowMaxFallSpeed;
-            jumpForce = ID.slowJumpForce;
-            flipLeftForceX = ID.slowFlipLeftForceX;
-            flipLeftForceY = ID.slowFlipLeftForceY;
-            flipRightForceX = ID.slowFlipRightForceX;
-            flipRightForceY = ID.slowFlipRightForceY;
+            ID.MaxFallSpeed = -9.7f;
+            jumpForce = ID.playerJumpForce;
+            flipLeftForceX = -6.9f;
+            flipLeftForceY = 9.4f;
+            flipRightForceX = 6.3f;
+            flipRightForceY = 9.2f;
+
             originalGravityScale = rb.gravityScale;
 
         }
@@ -167,6 +175,9 @@ public class PlayerStateManager : MonoBehaviour
             FeatherParticleQueue.Enqueue(feather);
         }
         SmokeParticle = Instantiate(playerParts.SmokeParticle);
+        line = GetComponent<LineRenderer>();
+
+
 
 
         attackObject.SetActive(false);
@@ -194,7 +205,7 @@ public class PlayerStateManager : MonoBehaviour
             currentState.RotateState(this);
 
         }
-       
+
         currentState.FixedUpdateState(this);
 
 
@@ -218,11 +229,11 @@ public class PlayerStateManager : MonoBehaviour
 
         currentState.UpdateState(this);
         // currentState.RotateState(this);
-        if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
-        {
-            // ResetHoldJump();
-            SwitchState(FrozenState);
-        }
+        // if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
+        // {
+        //     // ResetHoldJump();
+        //     SwitchState(FrozenState);
+        // }
     }
 
     public void MaxFallSpeed()
@@ -309,7 +320,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         currentState.ExitState(this);
         currentState = newState;
-        
+
         if (currentState == FlipLeftState || currentState == FlipRightState)
         {
             justFlipped = true;
@@ -318,13 +329,13 @@ public class PlayerStateManager : MonoBehaviour
         {
             justFlipped = false;
 
-            if (ID.UsingClocker)
-            {
-                HandleClocker(false);
-            }
+            // if (ID.UsingClocker)
+            // {
+            //     HandleClocker(false);
+            // }
         }
         newState.EnterState(this);
-        
+
         // previousState = currentState;
         // currentState = newState;
 
@@ -400,6 +411,15 @@ public class PlayerStateManager : MonoBehaviour
     void HandleHoldJump(bool isHolding)
     {
         ID.isHolding = isHolding;
+
+        if (isHolding == true)
+        {
+            anim.SetTrigger("JumpHoldTrigger");
+        }
+        else
+        {
+            anim.SetTrigger("IdleTrigger");
+        }
         // if (!disableButtons)
         // {
         //     if (isHolding)
@@ -461,11 +481,16 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons)
         {
+
             // ResetHoldJump();
             SwitchState(FlipRightState);
+
+
         }
 
     }
+
+
 
     void HandleLeftFlip()
     {
@@ -474,6 +499,12 @@ public class PlayerStateManager : MonoBehaviour
             // ResetHoldJump();
             SwitchState(FlipLeftState);
         }
+
+    }
+
+    private void HandleHoldFlip(bool isHolding)
+    {
+        holdingFlip = isHolding;
 
     }
 
@@ -503,6 +534,48 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
+    private void HandleClocker(bool usingClocker)
+    {
+        if (usingClocker)
+        {
+            ID.UsingClocker = usingClocker;
+            Time.timeScale = .4f;
+            anim.SetBool("GetGunBool", true);
+            StartCoroutine(DrawLine());
+        }
+        else{
+            Time.timeScale = originalTimeScale;
+            line.enabled = false;
+            anim.SetBool("GetGunBool", false);
+
+        }
+
+    }
+
+    IEnumerator DrawLine()
+    {
+        line.enabled = true;
+        float startTime = Time.time;
+        float distance = Vector3.Distance(startPoint, endPoint);
+        float fracJourney = 0f;
+
+        line.SetPosition(0, startPoint);
+        line.SetPosition(1, startPoint); // Start with the line collapsed at the start point
+
+        while (fracJourney < 1f)
+        {
+            float distCovered = (Time.time - startTime) * drawSpeed;
+            fracJourney = distCovered / distance;
+            Vector2 currentPoint = Vector2.Lerp(startPoint, endPoint, fracJourney);
+
+            line.SetPosition(1, currentPoint); // Update the end point
+
+            yield return null;
+        }
+
+        line.SetPosition(1, endPoint); // Ensure the line is fully drawn to the end point
+    }
+
 
     private void HandleDamaged()
     {
@@ -525,6 +598,8 @@ public class PlayerStateManager : MonoBehaviour
             }
             Feather.transform.position = transform.position;
             Feather.Play();
+            AudioManager.instance.PlayDamageSound();
+
             StartCoroutine(Flash());
 
             FeatherParticleQueue.Enqueue(Feather);
@@ -652,41 +727,41 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    public void HandleClocker(bool b)
-    {
-        // if (b)
-        // {
-        //     Time.timeScale = 0.2f;
-        //     justStartedClocker = true;
-        //     anim.SetBool("GetGunBool", true);
+    // public void HandleClocker(bool b)
+    // {
+    //     if (b)
+    //     {
+    //         Time.timeScale = 0.2f;
+    //         justStartedClocker = true;
+    //         anim.SetBool("GetGunBool", true);
 
 
-        //     ID.UsingClocker = true;
-        //     maxFallSpeed = -6.5f;
-        //     if (justFlippedRight)
-        //     {
-        //         FlipRightState.ReEnterState();
-        //     }
-        //     else{
-        //         FlipLeftState.ReEnterState();
-        //     }
-        //     AudioManager.instance.SlowMotionPitch(true);
+    //         ID.UsingClocker = true;
+    //         maxFallSpeed = -6.5f;
+    //         if (justFlippedRight)
+    //         {
+    //             FlipRightState.ReEnterState();
+    //         }
+    //         else{
+    //             FlipLeftState.ReEnterState();
+    //         }
+    //         AudioManager.instance.SlowMotionPitch(true);
 
-        // }
-        // else
-        // {
+    //     }
+    //     else
+    //     {
 
-        //     Time.timeScale = originalTimeScale;
-        //     AudioManager.instance.SlowMotionPitch(false);
-
-
-        //     ID.UsingClocker = false;
-        //     maxFallSpeed = ID.MaxFallSpeed;
+    //         Time.timeScale = originalTimeScale;
+    //         AudioManager.instance.SlowMotionPitch(false);
 
 
-        // }
+    //         ID.UsingClocker = false;
+    //         maxFallSpeed = ID.MaxFallSpeed;
 
-    }
+
+    //     }
+
+    // }
 
 
 
@@ -810,7 +885,7 @@ public class PlayerStateManager : MonoBehaviour
     private void OnEnable()
     {
         ID.events.OnJump += HandleJump;
-        ID.events.OnAttack += HandleAttack;
+        ID.events.OnAttack += HandleClocker;
         ID.events.OnFlipRight += HandleRightFlip;
         ID.events.OnFlipLeft += HandleLeftFlip;
         ID.events.OnDash += HandleDash;
@@ -823,14 +898,15 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.LoseLife += HandleDamaged;
         ID.events.HitGround += HandleGroundCollision;
         ID.events.OnDashSlash += HandleDashSlash;
-        ID.events.OnClocker += HandleClocker;
+        ID.events.OnHoldFlip += HandleHoldFlip;
 
         // ID.events.OnAttack += HandleSlash;
     }
     private void OnDisable()
     {
         ID.events.OnJump -= HandleJump;
-        ID.events.OnAttack -= HandleAttack;
+        ID.events.OnAttack -= HandleClocker;
+
         ID.events.OnFlipRight -= HandleRightFlip;
         ID.events.OnFlipLeft -= HandleLeftFlip;
         ID.events.OnDash -= HandleDash;
@@ -844,7 +920,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.LoseLife -= HandleDamaged;
         ID.events.HitGround -= HandleGroundCollision;
         ID.events.OnDashSlash -= HandleDashSlash;
-        ID.events.OnClocker -= HandleClocker;
+        ID.events.OnHoldFlip -= HandleHoldFlip;
 
 
 

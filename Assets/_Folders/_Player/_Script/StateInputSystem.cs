@@ -4,7 +4,9 @@ using UnityEngine.InputSystem;
 public class StateInputSystem : MonoBehaviour
 {
     private InputController controls;
+    
     private bool isHolding;
+    private bool isHoldingFlip;
     private Vector2 touchStartPosition;
     private float touchStartTime;
     private const float swipeThreshold = 0.3f; // Adjust as needed
@@ -14,7 +16,9 @@ public class StateInputSystem : MonoBehaviour
 
     private void Awake()
     {
+        ID.UsingClocker = false;
         isHolding = false;
+        isHoldingFlip = false;
         controls = new InputController();
 
         // Bind existing actions to methods
@@ -22,19 +26,55 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.JumpRight.performed += ctx => ID.events.OnFlipRight?.Invoke();
         controls.Movement.JumpLeft.performed += ctx => ID.events.OnFlipLeft?.Invoke();
         controls.Movement.Dash.performed += ctx => ID.events.OnDash?.Invoke();
+
         controls.Movement.Drop.performed += ctx => ID.events.OnDrop?.Invoke();
         controls.Movement.DropEgg.performed += ctx => ID.events.OnEggDrop?.Invoke();
         controls.Movement.DashSlash.performed += ctx => ID.events.OnDashSlash?.Invoke();
+
         controls.Movement.HoldJumpRight.performed += ctx =>
-        {
-            ID.events.OnClocker?.Invoke(!ID.UsingClocker);
-        };
+       {
+           isHoldingFlip = true;
+           ID.events.OnHoldFlip?.Invoke(true);
+       };
 
         controls.Movement.HoldJumpLeft.performed += ctx =>
 
+        {
+            isHoldingFlip = true;
+            ID.events.OnHoldFlip?.Invoke(true);
+        };
+
+        controls.Movement.HoldJumpRight.canceled += ctx =>
+      {
+          if (isHoldingFlip)
+          {
+              ID.events.OnHoldFlip?.Invoke(false);
+
+          }
+
+
+      };
+
+        controls.Movement.HoldJumpLeft.canceled += ctx =>
+
+        {
+            if (isHoldingFlip)
             {
-                ID.events.OnClocker?.Invoke(!ID.UsingClocker);
-            };
+                ID.events.OnHoldFlip?.Invoke(false);
+
+            }
+        };
+
+        // controls.Movement.HoldJumpRight.performed += ctx =>
+        // {
+        //     ID.events.OnHoldFlip?.Invoke(!ID.UsingClocker);
+        // };
+
+        // controls.Movement.HoldJumpLeft.performed += ctx =>
+
+        //     {
+        //         ID.events.OnClocker?.Invoke(!ID.UsingClocker);
+        //     };
 
 
 
@@ -56,9 +96,23 @@ public class StateInputSystem : MonoBehaviour
 
         };
 
-        controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(true);
+        controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(!ID.UsingClocker);
         controls.Movement.Parachute.performed += ctx => ID.events.OnParachute?.Invoke(true);
         controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
+
+
+        if (TimeManager.DebogLogEnabled)
+        {
+            controls.Movement.Dash.performed += ctx => ID.globalEvents.HighlightDash?.Invoke(true);
+            controls.Movement.Drop.performed += ctx => ID.globalEvents.HighlightDrop?.Invoke(true);
+            controls.Movement.DropEgg.performed += ctx => ID.globalEvents.HighlightEgg?.Invoke(true);
+
+            controls.Movement.Dash.canceled += ctx => ID.globalEvents.HighlightDash?.Invoke(false);
+            controls.Movement.Drop.canceled += ctx => ID.globalEvents.HighlightDrop?.Invoke(false);
+            controls.Movement.DropEgg.canceled += ctx => ID.globalEvents.HighlightEgg?.Invoke(false);
+
+
+        }
         // controls.Movement.Parachute.performed += ctx =>
         // {
         //     // if (Input.touchCount == 2)

@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class PlayerFlipLeftState : PlayerBaseState
 {
+    private Vector2 AddForceVector = new Vector2 (-5,5);
     private float currentRotation;
     private float totalRotation;
     private float flipForceX = -6.9f;
+
     private float flipForceY = 9.5f;
     private float rotationSpeed = 420;
     private float doesTiggerInt;
@@ -16,15 +18,24 @@ public class PlayerFlipLeftState : PlayerBaseState
     private float flipThreshold;
     private float time;
     private bool hitSlowTarget;
+    private bool hitHeightTarget;
     private bool prolongRotation;
 
     public override void EnterState(PlayerStateManager player)
     {
         hitSlowTarget = false;
+        hitHeightTarget = false;
+
         time = 0;
         player.SetFlipDirection(false);
         rotationSpeedVar = 420;
         player.anim.SetTrigger("FlipTrigger");
+        if (player.ID.testingNewGravity)
+        {
+            player.rb.gravityScale = player.ID.flipGravity;
+
+        }
+
         totalRotation = 0;
         currentRotation = player.transform.rotation.eulerAngles.z;
 
@@ -44,14 +55,21 @@ if (player.ID.UsingClocker)
         }
         player.rb.velocity = new Vector2(player.flipLeftForceX, player.flipLeftForceY);
         AudioManager.instance.PlayCluck();
+
+
     }
     public override void ExitState(PlayerStateManager player)
     {
+        player.rb.gravityScale = player.originalGravityScale;
 
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
+        if (player.holdingFlip && !hitHeightTarget)
+        {
+            player.rb.AddForce(AddForceVector);
+        }
 
     }
 
@@ -75,6 +93,13 @@ if (player.ID.UsingClocker)
 
     public override void UpdateState(PlayerStateManager player)
     {
+        if (!hitHeightTarget && player.rb.velocity.y < 0 )
+        {
+          
+            hitHeightTarget = true;
+
+
+        }
         if (player.transform.rotation.eulerAngles.z > 330 && !hitSlowTarget && !prolongRotation)
         {
             hitSlowTarget = true;

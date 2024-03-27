@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class PlayerID : ScriptableObject
 {
+    
+    public bool testingNewGravity;
+    public float playerJumpForce;
+    public float playerAddDownForce;
+    public float startAddDownForce;
+    public float endAddDownForce;
+    public float flipGravity;
+    public float stopFlipGravity;
     public float addJumpForce;
     public float startLerp;
     public float lerpTarget;

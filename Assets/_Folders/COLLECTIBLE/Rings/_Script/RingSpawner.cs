@@ -176,7 +176,23 @@ public class RingSpawner : MonoBehaviour
 
     public void NewTriggeredSpawn(int triggerValue)
     {
-        int totalPlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderRingDataList.Count);
+       
+        if (triggerValue == -1)
+        {
+            SpawnRings(0);
+            return;
+        }
+        if (placeholderDataCollection.TestSpecifiedTrigger)
+        {
+            triggerValue = placeholderDataCollection.SpecifiedTrigger;
+
+        }
+
+        int totalRingPlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderRingDataList.Count);
+        int totalPlanePlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderPlaneDataList.Count);
+        int planesSpawned = 0;
+
+
 
         // Find the PlaceholderTriggerGroup for the given trigger value
         PlaceholderTriggerGroup triggerGroup = placeholderDataCollection.triggerGroups.FirstOrDefault(g => g.triggerValue == triggerValue);
@@ -194,7 +210,7 @@ public class RingSpawner : MonoBehaviour
         {
             ID.triggeredRingOrder++; // Increment the order for each spawned ring
 
-            if (ID.triggeredRingOrder == totalPlaceholders)
+            if (ID.triggeredRingOrder == totalRingPlaceholders)
             {
                 ID.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, ID.triggeredRingOrder, placeholderData.speed);
             }
@@ -211,7 +227,17 @@ public class RingSpawner : MonoBehaviour
 
         foreach (var placeholderData in triggerGroup.placeholderPlaneDataList)
         {
-            placeholderData.planeType.GetPlane(placeholderData.doesTiggerInt,placeholderData.xCordinateTrigger,placeholderData.speed, placeholderData.position);
+            planesSpawned++;
+            if (planesSpawned == totalPlanePlaceholders && placeholderDataCollection.TestSpecifiedTrigger)
+            {
+                placeholderData.planeType.GetPlane(-1, 0, placeholderData.speed, placeholderData.position);
+
+            }
+            else
+            {
+                placeholderData.planeType.GetPlane(placeholderData.doesTiggerInt, placeholderData.xCordinateTrigger, placeholderData.speed, placeholderData.position);
+
+            }
         }
 
         foreach (var placeholder in triggerGroup.planeAreaSpawnDataList)
@@ -279,12 +305,12 @@ public class RingSpawner : MonoBehaviour
 
 
 
-            SpawnRings(3.4f);
+            // SpawnRings(3.4f);
         }
         else
         {
             Pool.RingType[index].ResetVariables();
-            SpawnRings(4f);
+            // SpawnRings(4f);
 
 
         }
@@ -331,14 +357,14 @@ public class RingSpawner : MonoBehaviour
 
         }
         PlaneID.spawnRandomPlanesBool = false;
-        if (player.Lives == 1)
-        {
-            Index = 1;
-        }
-        else
-        {
-            Index = 3;
-        }
+        // if (player.Lives == 1)
+        // {
+        //     Index = 1;
+        // }
+        // else
+        // {
+        //     Index = 3;
+        // }
         ID = Pool.RingType[Index];
 
         // currentRingSetupInstance = InstantiateRandomSetup();
@@ -402,6 +428,8 @@ public class RingSpawner : MonoBehaviour
             ringId.ringEvent.OnCreateNewSequence -= SequenceFinished;
             // Subscribe to other events as needed
         }
+
+        PlaneID.events.TriggeredSpawn -= NewTriggeredSpawn;
 
         // ID.ringEvent.OnPassRing -= CheckOrder;
 

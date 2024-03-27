@@ -6,33 +6,78 @@ using System.Collections.Generic;
 public class PlaneManagerID : ScriptableObject
 {
     [SerializeField] private GameObject ExplosionPrefab;
+    public Vector3 droppedBombExplosionScale;
+    [SerializeField] private GameObject bombPrefab;
     public bool spawnRandomPlanesBool;
     public List<PlaneData> PlaneDataType;
     public PlaneEvents events;
     private Queue<GameObject> explosionQueue;
+    private Queue<GameObject> bombQueue;
     const int explosionQueueSize = 8;
+    const int bomberPlaneBombQueueSize = 10;
+    private Transform parent;
 
     public void SpawnExplosionQueue()
     {
         explosionQueue = new Queue<GameObject>();
+        if (!parent)
+        {
+            parent = new GameObject(name).transform;
+        }
         if (ExplosionPrefab != null)
         {
             for (int i = 0; i < explosionQueueSize; i++)
             {
-                GameObject prefab = Instantiate(ExplosionPrefab); // Instantiate from the prefab
+                GameObject prefab = Instantiate(ExplosionPrefab,parent); // Instantiate from the prefab
 
                 prefab.SetActive(false); // Start with the GameObject disabled
                 explosionQueue.Enqueue(prefab);
             }
         }
 
+        SpawnBombQueue();
+
     }
 
-    public GameObject GetExplosion()
+    public void SpawnBombQueue()
+    {
+        bombQueue = new Queue<GameObject>();
+        if (!parent)
+        {
+            parent = new GameObject(name).transform;
+        }
+        if (bombPrefab != null)
+        {
+            for (int i = 0; i < explosionQueueSize; i++)
+            {
+                GameObject prefab = Instantiate(bombPrefab,parent); // Instantiate from the prefab
+
+                prefab.SetActive(false); // Start with the GameObject disabled
+                bombQueue.Enqueue(prefab);
+            }
+        }
+
+    }
+    public void GetBomb(Vector2 position)
+    {
+        GameObject prefab = bombQueue.Dequeue();
+        prefab.transform.position = position;
+        prefab.SetActive(true);
+        bombQueue.Enqueue(prefab);
+        
+
+
+
+    }
+
+    public void GetExplosion(Vector2 position, Vector3 scale)
     {
         GameObject prefab = explosionQueue.Dequeue();
+        prefab.transform.position = position;
+        prefab.transform.localScale = scale;
+        prefab.SetActive(true);
         explosionQueue.Enqueue(prefab);
-        return prefab;
+        
 
 
 

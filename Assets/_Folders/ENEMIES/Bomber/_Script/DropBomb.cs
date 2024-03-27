@@ -13,6 +13,8 @@ public class DropBomb : MonoBehaviour
 
     private Queue<GameObject> pooledBombs = new Queue<GameObject>();
     [SerializeField] private GameObject bombPrefab;
+
+    public PlaneManagerID ID;
     private int amountToPool = 10;
 
     private float minX = -5.5f;
@@ -33,12 +35,12 @@ public class DropBomb : MonoBehaviour
         spawnTransform = bombSpawn.GetComponent<Transform>();
         xPos = Random.Range(minX, maxX);
 
-        for (int i = 0; i < amountToPool; i++)
-        {
-            GameObject tmp = Instantiate(bombPrefab);
-            tmp.SetActive(false);
-            pooledBombs.Enqueue(tmp);
-        }
+        // for (int i = 0; i < amountToPool; i++)
+        // {
+        //     GameObject tmp = Instantiate(bombPrefab);
+        //     tmp.SetActive(false);
+        //     pooledBombs.Enqueue(tmp);
+        // }
     }
 
     void Update()
@@ -52,31 +54,31 @@ public class DropBomb : MonoBehaviour
         Restart();
     }
 
-    public GameObject GetPooledObject()
-    {
-        if (pooledBombs.Count > 0 && !pooledBombs.Peek().activeInHierarchy)
-        {
-            return pooledBombs.Dequeue();
-        }
-        return null;
-    }
-    public void ReturnBombToPool(GameObject bomb)
-{
-    bomb.SetActive(false);
-    pooledBombs.Enqueue(bomb);
-}
+    //     public GameObject GetPooledObject()
+    //     {
+    //         if (pooledBombs.Count > 0 && !pooledBombs.Peek().activeInHierarchy)
+    //         {
+    //             return pooledBombs.Dequeue();
+    //         }
+    //         return null;
+    //     }
+    //     public void ReturnBombToPool(GameObject bomb)
+    // {
+    //     bomb.SetActive(false);
+    //     pooledBombs.Enqueue(bomb);
+    // }
 
     void Drop()
     {
         dropTimer += Time.deltaTime;
         if (dropping && dropTimer >= dropTime)
         {
-            GameObject bomb = GetPooledObject();
-            if (bomb != null)
-            {
-                bomb.transform.position = spawnTransform.position;
-                bomb.SetActive(true);
-            }
+            ID.GetBomb(spawnTransform.position);
+            // if (bomb != null)
+            // {
+            //     bomb.transform.position = spawnTransform.position;
+            //     bomb.SetActive(true);
+            // }
             dropTimer = 0;
         }
     }

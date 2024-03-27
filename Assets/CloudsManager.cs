@@ -5,6 +5,7 @@ using UnityEngine;
 public class CloudsManager : MonoBehaviour
 {
     public static CloudsManager Instance;
+    public bool setActive;
     [SerializeField] private List<GameObject> Prefabs;
 
     void Awake()
@@ -19,14 +20,17 @@ public class CloudsManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        
 
-        foreach(var prefab in Prefabs)
+        if (setActive)
         {
-            if (!prefab.activeInHierarchy)
+            foreach (var prefab in Prefabs)
             {
-                prefab.SetActive(true);
+                if (!prefab.activeInHierarchy)
+                {
+                    prefab.SetActive(true);
+                }
             }
         }
+
     }
 }

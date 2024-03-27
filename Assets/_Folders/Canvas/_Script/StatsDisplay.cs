@@ -49,6 +49,7 @@ public class StatsDisplay : MonoBehaviour
 
     void Start()
     {
+        player.ResetValues();
         ManaBar.fillAmount = player.CurrentMana / player.MaxMana;
         ManaBarBig.fillAmount = ((player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / player.MaxMana);
        

@@ -12,7 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2969e9bedb78493d9c10fe18b8ea9c4, type: 3}
   m_Name: StatePlayer
   m_EditorClassIdentifier: 
-  addJumpForce: 18
+  testingNewGravity: 1
+  playerJumpForce: 10.5
+  playerAddDownForce: 0
+  startAddDownForce: -0.5
+  endAddDownForce: -2
+  flipGravity: 2
+  stopFlipGravity: -3
+  addJumpForce: 15
   startLerp: 30
   lerpTarget: -10
   lerpTime: 0.3
@@ -41,7 +48,7 @@ MonoBehaviour:
   startingAmmo: 10
   startingScore: 0
   startingLives: 3
-  Ammo: 11
+  Ammo: 10
   MaxFallSpeed: -9.7
   AddEggVelocity: 0
   parachuteXOffset: 0.32

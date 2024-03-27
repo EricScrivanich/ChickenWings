@@ -36,6 +36,8 @@ public class PlayerDashSlashState : PlayerBaseState
 
        
         player.anim.SetTrigger("DashSlashTrigger");
+        AudioManager.instance.PlaySwordSlashSound();
+
 
 
 

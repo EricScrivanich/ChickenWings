@@ -24,5 +24,9 @@ public struct GlobalPlayerEvents
 
     public Action<float, float> ShakeCamera;
 
+    public Action<bool> HighlightDash;
+    public Action<bool> HighlightDrop;
+    public Action<bool> HighlightEgg;
+
 
 }

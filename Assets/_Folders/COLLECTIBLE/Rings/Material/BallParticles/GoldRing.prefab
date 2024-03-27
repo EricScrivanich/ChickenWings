@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2686174354978659273}
   - component: {fileID: 2888966651176902767}
   - component: {fileID: 9162684120316895894}
-  - component: {fileID: 4703423302557216973}
   m_Layer: 0
   m_Name: GoldRing
   m_TagString: Untagged
@@ -4889,18 +4888,3 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &4703423302557216973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6552583243254373370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e1bffd30ced848249ce1abae4aa61b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ringTransform: {fileID: 0}
-  ID: {fileID: 11400000, guid: dd58f32a2dde245e48fabe5bd1b5e711, type: 2}
-  canPlay: 0

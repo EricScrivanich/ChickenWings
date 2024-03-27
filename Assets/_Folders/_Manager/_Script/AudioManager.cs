@@ -14,6 +14,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource ringPassSource;
     [SerializeField] private AudioClip[] cluckSounds;
+    [SerializeField] private AudioClip[] flipSounds;
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private AudioClip damageSound;
     [SerializeField] private AudioClip downJump;
@@ -23,10 +24,16 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip start;
     [SerializeField] private AudioClip scoreSound;
     [SerializeField] private AudioClip frozenSound;
+    [SerializeField] private AudioClip planeExplosionSound;
+    [SerializeField] private AudioClip bombExplosionSound;
+    [SerializeField] private AudioClip swordSlashSound;
+
+    
 
 
 
     [SerializeField] private float cluckVolume = 0.7f;
+    [SerializeField] private float flipVolume = 0.7f;
     [SerializeField] private float deathSoundVolume = 1f;
     [SerializeField] private float damageSoundVolume = 1f;
     [SerializeField] private float downJumpVolume = 0.7f;
@@ -36,6 +43,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float startVolume = 0.7f;
     [SerializeField] private float scoreVolume = 0.7f;
     [SerializeField] private float frozenVolume = 0.7f;
+    [SerializeField] private float planeExplosionVolume = 0.7f;
+    [SerializeField] private float bombExplosionVolume = 0.7f;
+    [SerializeField] private float swordSlashVolume = 0.7f;
 
     [SerializeField] private AudioClip ringSuccess;
     [SerializeField] private AudioClip bucketBurstSound;
@@ -107,6 +117,20 @@ public class AudioManager : MonoBehaviour
     {
         audioSource.PlayOneShot(ringSuccess, ringSuccessVolume);
     }
+    public void PlayPlaneExplosionSound()
+    {
+        audioSource.PlayOneShot(planeExplosionSound, planeExplosionVolume);
+    }
+    public void PlayBombExplosionSound()
+    {
+        
+        audioSource.PlayOneShot(bombExplosionSound, bombExplosionVolume);
+    }
+
+    public void PlaySwordSlashSound()
+    {
+        audioSource.PlayOneShot(swordSlashSound, swordSlashVolume);
+    }
 
     public void PlayMusic()
     {
@@ -121,9 +145,18 @@ public class AudioManager : MonoBehaviour
 
     public void PlayCluck()
     {
+        
         // Choose a random cluck sound from the array
         int randomIndex = Random.Range(0, cluckSounds.Length);
         audioSource.PlayOneShot(cluckSounds[randomIndex], cluckVolume);
+    }
+    public void PlayFlipSound()
+    {
+        // Choose a random cluck sound from the array
+        int randomIndex = Random.Range(0, flipSounds.Length);
+        
+
+        audioSource.PlayOneShot(flipSounds[randomIndex], flipVolume);
     }
 
     public void PlayDeathSound()
@@ -133,7 +166,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayDamageSound()
     {
-        audioSource.Stop();
+        
         audioSource.PlayOneShot(damageSound, damageSoundVolume);
     }
 

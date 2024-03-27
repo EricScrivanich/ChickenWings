@@ -34,6 +34,7 @@ public class RingID : ScriptableObject
     public Queue<GameObject> particleSystemsQueue;
     private GameObject currentBucket;
     private List<GameObject> objectsToDeactivate;
+    private Transform parent;
     public bool newSetup;
     public int placeholderCount;
 
@@ -124,22 +125,29 @@ public class RingID : ScriptableObject
 
     public void InitializeEffectsPool()
     {
+        if (!parent)
+        {
+            parent = new GameObject(name).transform;
+        }
         if (ballParticlePrefab != null)
         {
-            ballParticle = Instantiate(ballParticlePrefab);
+            ballParticle = Instantiate(ballParticlePrefab,parent);
             ballPS = ballParticle.GetComponent<ParticleSystem>();
+        
         }
 
         ringList = new List<RingMovement>();
         particleSystemsQueue = new Queue<GameObject>();
         objectsToDeactivate = new List<GameObject>();
+
+       
         if (ringParticles != null)
         {
 
 
             for (int i = 0; i < poolSize; i++)
             {
-                GameObject effectInstance = Instantiate(ringParticles); // Instantiate from the prefab
+                GameObject effectInstance = Instantiate(ringParticles,parent); // Instantiate from the prefab
 
                 effectInstance.SetActive(false); // Start with the GameObject disabled
                 particleSystemsQueue.Enqueue(effectInstance);

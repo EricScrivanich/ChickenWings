@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: PlaneManagerID
   m_EditorClassIdentifier: 
   ExplosionPrefab: {fileID: 785694925829598545, guid: 83a64e926b8db416fa6bf87798d2196b, type: 3}
+  droppedBombExplosionScale: {x: 0.8, y: 0.8, z: 0.8}
+  bombPrefab: {fileID: 7542614907565986036, guid: b3f7b40842fcd4769b77e8d150574559, type: 3}
+  spawnRandomPlanesBool: 1
   PlaneDataType:
   - {fileID: 11400000, guid: 48af6dd414deb4e9691e35766a2e0656, type: 2}
   - {fileID: 11400000, guid: 045520bfef6784831b98fa13cd6f6033, type: 2}

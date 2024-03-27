@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4951571917034972469}
   - component: {fileID: 2039888195929267459}
   - component: {fileID: 2833841457656160554}
+  - component: {fileID: 3233758667693879064}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -144,7 +145,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 840b25932446e4ba1af95e85b175dd4b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: 0.94
   Loop: 1
   Mute: 0
   Spatialize: 0
@@ -155,7 +156,7 @@ AudioSource:
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
-  BypassEffects: 0
+  BypassEffects: 1
   BypassListenerEffects: 0
   BypassReverbZones: 0
   rolloffCustomCurve:
@@ -251,7 +252,7 @@ AudioSource:
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
-  BypassEffects: 0
+  BypassEffects: 1
   BypassListenerEffects: 0
   BypassReverbZones: 0
   rolloffCustomCurve:
@@ -335,15 +336,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e194d2cc3e68b4f0da0630e9371d4db8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicPitch: 0.85
+  sfxPitch: 0.8
   audioSource: {fileID: 3477819981823733023}
-  musicSource: {fileID: 0}
+  musicSource: {fileID: 4951571917034972469}
   ringPassSource: {fileID: 2039888195929267459}
   cluckSounds:
   - {fileID: 8300000, guid: f50b2bd72379746ff87134ceae75eaae, type: 3}
   - {fileID: 8300000, guid: c86349adae0c04032bd8d8c9a95631da, type: 3}
   - {fileID: 8300000, guid: 9fcdc1a05b52a4b468bc9a64e6d2a349, type: 3}
+  flipSounds:
+  - {fileID: 8300000, guid: 1a7c701c5d03d43e2a58a9960fe4a961, type: 3}
+  - {fileID: 8300000, guid: 23430dca332074f32b83902c7ffe9f3d, type: 3}
+  - {fileID: 8300000, guid: 2eb581ec3f1c9457c9c29c54be3dc89b, type: 3}
+  - {fileID: 8300000, guid: 54b775f0ac5df4a8b9a587f66a87884c, type: 3}
   deathSound: {fileID: 8300000, guid: 033ca00de33ae4417b844e8d6ca25667, type: 3}
-  damageSound: {fileID: 8300000, guid: 9d21b68ae40044f9f81e9780cc007f3f, type: 3}
+  damageSound: {fileID: 8300000, guid: fa9a9c829edb640cda3e85780ba6bc3a, type: 3}
   downJump: {fileID: 8300000, guid: 98921ac9b312d4b9e90162bfeaece40e, type: 3}
   bounce: {fileID: 8300000, guid: 4717e8c000ebb425183b7ba50478dbd7, type: 3}
   dash: {fileID: 8300000, guid: 2b64e719199234d08a4e609348b06c66, type: 3}
@@ -351,9 +359,13 @@ MonoBehaviour:
   start: {fileID: 8300000, guid: 8ce8a7739f0584ccd839851b21d05e1a, type: 3}
   scoreSound: {fileID: 8300000, guid: 678c64c9b28384205ba6b72691e2b8f1, type: 3}
   frozenSound: {fileID: 8300000, guid: 9f971a8787bd6426db09ab08357075a0, type: 3}
+  planeExplosionSound: {fileID: 8300000, guid: dc234c741a7c54376bc4a9c8ea8013ee, type: 3}
+  bombExplosionSound: {fileID: 8300000, guid: 15b44ede18db44b06a52af85cf7c6400, type: 3}
+  swordSlashSound: {fileID: 8300000, guid: f49e10f6906334baf803f016e7f53ff8, type: 3}
   cluckVolume: 0.9
+  flipVolume: 0.5
   deathSoundVolume: 0.5
-  damageSoundVolume: 1
+  damageSoundVolume: 0.5
   downJumpVolume: 0.6
   bounceVolume: 0.5
   dashVolume: 0.45
@@ -361,9 +373,35 @@ MonoBehaviour:
   startVolume: 0.7
   scoreVolume: 0.1
   frozenVolume: 0.7
+  planeExplosionVolume: 0.5
+  bombExplosionVolume: 0.5
+  swordSlashVolume: 0.7
   ringSuccess: {fileID: 8300000, guid: 8cdad93d05f5744109a33ef54ac92b5d, type: 3}
   bucketBurstSound: {fileID: 0}
   ringSuccessVolume: 0.7
   ringPassSound: {fileID: 8300000, guid: 59117968211e74630a83f959eb23a852, type: 3}
   ringPassVolume: 0.7
   bucketBurstSoundVolume: 0.7
+--- !u!164 &3233758667693879064
+AudioReverbFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643956304610027615}
+  m_Enabled: 1
+  m_DryLevel: -1.2
+  m_Room: -1000
+  m_RoomHF: -698
+  m_DecayTime: 7.24
+  m_DecayHFRatio: 0.33
+  m_ReflectionsLevel: -1166
+  m_ReverbLevel: 16
+  m_ReverbDelay: 0.03
+  m_Diffusion: 100
+  m_Density: 100
+  m_HFReference: 5000
+  m_RoomLF: 0
+  m_LFReference: 250
+  m_ReflectionsDelay: 0
+  m_ReverbPreset: 10
