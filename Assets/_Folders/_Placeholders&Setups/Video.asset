@@ -134,8 +134,8 @@ MonoBehaviour:
       speed: 0
       position: {x: 26.09103, y: -1.8792715}
     - planeType: {fileID: 11400000, guid: 2b07855d1607442fe8d0a9a89906d330, type: 2}
-      doesTiggerInt: 0
-      xCordinateTrigger: 0
+      doesTiggerInt: 3
+      xCordinateTrigger: -1
       speed: 6.2
       position: {x: 33.856636, y: -1.6818409}
     - planeType: {fileID: 11400000, guid: 045520bfef6784831b98fa13cd6f6033, type: 2}
@@ -144,4 +144,33 @@ MonoBehaviour:
       speed: 0
       position: {x: 34.25, y: 4.175269}
     planeAreaSpawnDataList: []
-  SpecifiedTrigger: 2
+  - triggerValue: 3
+    placeholderRingDataList: []
+    placeholderPlaneDataList:
+    - planeType: {fileID: 11400000, guid: 2b07855d1607442fe8d0a9a89906d330, type: 2}
+      doesTiggerInt: 0
+      xCordinateTrigger: 0
+      speed: 0
+      position: {x: 17.28, y: 3.37}
+    - planeType: {fileID: 11400000, guid: 48af6dd414deb4e9691e35766a2e0656, type: 2}
+      doesTiggerInt: 0
+      xCordinateTrigger: 0
+      speed: 0
+      position: {x: 20.711311, y: 0.8038132}
+    - planeType: {fileID: 11400000, guid: 48af6dd414deb4e9691e35766a2e0656, type: 2}
+      doesTiggerInt: 0
+      xCordinateTrigger: 0
+      speed: 0
+      position: {x: 21.97, y: 2.13}
+    - planeType: {fileID: 11400000, guid: 2b07855d1607442fe8d0a9a89906d330, type: 2}
+      doesTiggerInt: -1
+      xCordinateTrigger: 1
+      speed: 0
+      position: {x: 22.67, y: -1.8149209}
+    - planeType: {fileID: 11400000, guid: 48af6dd414deb4e9691e35766a2e0656, type: 2}
+      doesTiggerInt: 0
+      xCordinateTrigger: 0
+      speed: 0
+      position: {x: 26.57, y: 0.23}
+    planeAreaSpawnDataList: []
+  SpecifiedTrigger: 3
