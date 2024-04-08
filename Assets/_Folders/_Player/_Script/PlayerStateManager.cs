@@ -7,6 +7,7 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private float SlowFactor;
     [ExposedScriptableObject]
     public PlayerID ID;
+    public ParticleSystem Dust;
 
 
     [SerializeField] private Vector2 startPoint;
@@ -128,11 +129,13 @@ public class PlayerStateManager : MonoBehaviour
         canDrop = true;
         disableButtons = true;
         ID.StaminaUsed = 0;
+        
 
     }
     // Start is called before the first frame update
     void Start()
     {
+        ID.ResetValues();
 
         originalTimeScale = Time.timeScale;
 
@@ -156,10 +159,7 @@ public class PlayerStateManager : MonoBehaviour
         {
             ID.MaxFallSpeed = -9.7f;
             jumpForce = ID.playerJumpForce;
-            flipLeftForceX = -6.9f;
-            flipLeftForceY = 9.4f;
-            flipRightForceX = 6.3f;
-            flipRightForceY = 9.2f;
+
 
             originalGravityScale = rb.gravityScale;
 
@@ -543,7 +543,8 @@ public class PlayerStateManager : MonoBehaviour
             anim.SetBool("GetGunBool", true);
             StartCoroutine(DrawLine());
         }
-        else{
+        else
+        {
             Time.timeScale = originalTimeScale;
             line.enabled = false;
             anim.SetBool("GetGunBool", false);

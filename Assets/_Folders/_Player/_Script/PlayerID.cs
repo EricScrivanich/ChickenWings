@@ -33,7 +33,11 @@ public class PlayerID : ScriptableObject
     private bool hasHitMaxMana;
 
     public bool isHolding;
+    public bool isAlive;
+    public float addScoreTime;
     public float CurrentMana
+
+   
     {
         get
         {
@@ -132,6 +136,8 @@ public class PlayerID : ScriptableObject
     public void ResetValues()
     {
         resetingValues = true;
+        isAlive = true;
+
         numberOfPowersThatCanBeUsed = 0;
         CurrentMana = 0;
         PlayerMaterial.SetFloat("_Alpha", 1);
@@ -146,6 +152,15 @@ public class PlayerID : ScriptableObject
         {
             hasHitMaxMana = false;
         }
+    }
+
+    public void AddScore(int amount)
+    {
+        globalEvents.OnAddScore?.Invoke(amount);
+        Score += amount;
+        
+
+
     }
 
     public void SlowedGame()

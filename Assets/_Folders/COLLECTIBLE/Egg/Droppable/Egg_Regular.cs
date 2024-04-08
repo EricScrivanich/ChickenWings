@@ -37,31 +37,44 @@ public class Egg_Regular : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    // void Update()
+    // {
+
+
+    //     if (isCracked)
+    //     {
+    //         transform.Translate(-5 * Time.deltaTime, 0, 0);
+    //         if (transform.position.x < BoundariesManager.leftBoundary)
+    //         {
+
+    //             gameObject.SetActive(false);
+    //         }
+
+    //     }
+
+
+    // }
+
+    IEnumerator YolkMovement()
     {
-
-
-        if (isCracked)
+        while (transform.position.x > BoundariesManager.leftBoundary)
         {
-            transform.Translate(-5 * Time.deltaTime, 0, 0);
-            if (transform.position.x < BoundariesManager.leftBoundary)
-            {
-
-                gameObject.SetActive(false);
-            }
+            transform.Translate(-Vector2.left * -5 * Time.deltaTime);
+            yield return null;
 
         }
-
-
+        anim.SetTrigger("EnterTrigger");
+        yield return new WaitForSeconds(.1f);
+        gameObject.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.gameObject.CompareTag("Floor"))
         {
-            rb.simulated = false;
-            coll2D.enabled = false;
-            anim.SetBool("Cracked", true);
+
+            anim.SetTrigger("CrackTrigger");
+            StartCoroutine(YolkMovement());
             AudioManager.instance.PlayCrackSound();
             isCracked = true;
 
@@ -70,15 +83,14 @@ public class Egg_Regular : MonoBehaviour
         }
         if (collider.gameObject.CompareTag("Barn"))
         {
-            ID.Score += 1;
+            ID.AddScore(5);
             gameObject.SetActive(false);
 
         }
     }
     private void OnEnable()
     {
-        rb.simulated = true;
-        coll2D.enabled = true;
+
 
         rb.velocity = new Vector2(ID.AddEggVelocity, -1.5f);
 

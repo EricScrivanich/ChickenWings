@@ -314,78 +314,8 @@ public class RingPool : ScriptableObject
 
 
 
-    private void OnEnable()
-    {
-
-        if (showAllPlaceholders)
-        {
-            ShowAllPlaceholders();
-            lastCurrentTrigger = currentTriggerEdited;
-        }
-        else
-        {
-            ShowCorrectPlaceholders();
-
-        }
-
-
-    }
+    
         
 
-#region Testing
-private void OnValidate()
-{
-    if (lastCurrentTrigger != currentTriggerEdited)
-    {
-        ShowCorrectPlaceholders();
 
-    }
-
-    else if (showAllPlaceholders != lastShowAllPlaceholders)
-    {
-        if (showAllPlaceholders)
-        {
-            ShowAllPlaceholders();
-
-        }
-
-        else
-        {
-            ShowCorrectPlaceholders();
-        }
-
-
-    }
-
-}
-private void ShowAllPlaceholders()
-{
-    foreach (PlaceholderRing placeholder in FindObjectsOfType<PlaceholderRing>())
-    {
-        placeholder.gameObject.layer = LayerMask.NameToLayer("PlayerEnemy");
-    }
-    lastShowAllPlaceholders = showAllPlaceholders;
-
-}
-
-private void ShowCorrectPlaceholders()
-{
-    foreach (PlaceholderRing placeholder in FindObjectsOfType<PlaceholderRing>())
-    {
-        // Check and update the layer as needed
-        if (placeholder.getsTriggeredInt == currentTriggerEdited)
-        {
-            placeholder.gameObject.layer = LayerMask.NameToLayer("PlayerEnemy");
-        }
-        else
-        {
-            placeholder.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        }
-    }
-    lastCurrentTrigger = currentTriggerEdited;
-    showAllPlaceholders = false;
-    lastShowAllPlaceholders = showAllPlaceholders;
-
-}
-    #endregion
 }

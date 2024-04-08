@@ -35,6 +35,8 @@ MonoBehaviour:
   numberOfPowersThatCanBeUsed: 0
   UsingClocker: 0
   isHolding: 0
+  isAlive: 1
+  addScoreTime: 2
   ManaNeeded: 180
   IsSlowedDown: 0
   PlayerMaterial: {fileID: 2100000, guid: 30da6d11a7795474d9c7228bfbf84a37, type: 2}
@@ -45,11 +47,11 @@ MonoBehaviour:
   IsTwoTouchPoints: 0
   StaminaUsed: 0
   MaxStamina: 1000
-  startingAmmo: 10
+  startingAmmo: 3
   startingScore: 0
   startingLives: 3
   Ammo: 10
   MaxFallSpeed: -9.7
-  AddEggVelocity: 0
+  AddEggVelocity: -2.3703704
   parachuteXOffset: 0.32
   parachuteYOffset: 0.79

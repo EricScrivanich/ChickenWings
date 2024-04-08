@@ -11,6 +11,8 @@ public class BoundariesManager : MonoBehaviour
     public static float rightPlayerBoundary = 11.3f;
     public static float TopPlayerBoundary = 6.5f;
     public static float leftPlayerBoundary = -11.3f;
+
+    public static float GroundSpeed = 5;
     // Start is called before the first frame update
     void Start()
     {

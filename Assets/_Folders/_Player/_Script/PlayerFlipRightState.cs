@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerFlipRightState : PlayerBaseState
 {
 
-    private Vector2 AddForceVector = new Vector2(5, 10);
+    private Vector2 AddForceVector = new Vector2(7.5f, 12.5f);
     private float currentRotation = 0;
     private float totalRotation;
     private float flipForceX = 6.5f;

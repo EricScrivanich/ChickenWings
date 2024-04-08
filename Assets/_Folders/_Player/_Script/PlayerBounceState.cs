@@ -50,6 +50,10 @@ public class PlayerBounceState : PlayerBaseState
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
+        if (!hasBounced)
+        {
+            player.rb.velocity = Vector2.left * (BoundariesManager.GroundSpeed - .2f);
+        }
         if (!player.isDropping && !hasEnabledColliders)
         {
             player.ChangeCollider(0);
@@ -82,6 +86,9 @@ public class PlayerBounceState : PlayerBaseState
         }
         else if (bounceTime > bounceDuration && !hasBounced)
         {
+            hasBounced = true;
+            player.Dust.Play();
+
             player.rb.gravityScale = player.originalGravityScale;
             // player.ID.events.OnBounce.Invoke();
             AudioManager.instance.PlayBounceSound();
@@ -91,7 +98,6 @@ public class PlayerBounceState : PlayerBaseState
             player.rb.velocity = new Vector2(1, 9.5f);
             player.disableButtons = false;
 
-            hasBounced = true;
             player.maxFallSpeed = -3f;
             // player.ID.events.FloorCollsion.Invoke(true);
         }
@@ -101,7 +107,7 @@ public class PlayerBounceState : PlayerBaseState
     }
     private IEnumerator ApplyBounceAfterDelay()
     {
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(.08f);
         bounce = true;
 
 

@@ -2,8 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-[CreateAssetMenu(fileName = "PlaceholderRingDataCollection", menuName = "ScriptableObjects/PlaceholderRingDataCollection", order = 1)]
-public class PlaceholderRingDataCollection : ScriptableObject
+[CreateAssetMenu(fileName = "PlaceholderDataCollection", menuName = "PlaceholderScriptableObjects/PlaceholderDataCollection", order = 1)]
+public class PlaceholderDataCollection : ScriptableObject
 {
 
     public bool TestSpecifiedTrigger;

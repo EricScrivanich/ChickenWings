@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using AllIn1SpriteShader;
 using UnityEngine;
 
 public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
@@ -21,8 +22,11 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     private bool initialized;
     public float speed = 0;
     private Animator anim;
+
+    private SetAtlasUvs uv;
     private bool positiveSpeed;
     private bool hasTrigger;
+    private SpriteRenderer sprite;
 
 
     // void Awake()
@@ -42,8 +46,16 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 
     private void Awake()
     {
+        planeHitBool = false;
+
+        uv = GetComponent<SetAtlasUvs>();
+
+        sprite = GetComponent<SpriteRenderer>();
         coll = GetComponent<Collider2D>();
+
         anim = GetComponent<Animator>();
+
+        uv.enabled = false;
     }
     void Update()
     {
@@ -156,10 +168,13 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 
     }
 
-    // void OnDisable()
-    // {
+    void OnDisable()
+    {
+        uv.enabled = false;
+        sprite.material = ID.defualtMaterial;
 
-    // }
+
+    }
 
 
 
@@ -189,6 +204,9 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
     }
     public void Hit(int damageAmount)
     {
+        uv.enabled = true;
+
+        sprite.material = ID.planeMaterial;
         // lives -= damageAmount;
 
         // if (lives <= 0)

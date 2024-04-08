@@ -89,6 +89,14 @@ public class ResetManager : MonoBehaviour
         }
     }
 
+    public void PausedReset()
+    {
+        onRestartGame?.Invoke();
+        controls.Special.Disable();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+    }
+
     public void SpecialReset()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

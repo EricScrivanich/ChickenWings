@@ -39,6 +39,7 @@ public class StatsDisplay : MonoBehaviour
 
 
     [SerializeField] private Color lightRed;
+    private int scoreDisplayed;
 
 
 
@@ -49,7 +50,9 @@ public class StatsDisplay : MonoBehaviour
 
     void Start()
     {
-        player.ResetValues();
+        scoreDisplayed = player.Score;
+        scoreText.text = "Score: " + scoreDisplayed.ToString();
+        
         ManaBar.fillAmount = player.CurrentMana / player.MaxMana;
         ManaBarBig.fillAmount = ((player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / player.MaxMana);
        
@@ -104,16 +107,20 @@ public class StatsDisplay : MonoBehaviour
 
         }
     }
-    void UpdateScore(int score)
+    void UpdateScore(int scoreAdded)
     {
-        if (score == 0)
+        CheckDigitAmount(scoreDisplayed);
+      
+        if (scoreAdded == 1)
         {
-            scoreText.text = "Score: " + player.Score.ToString();
-            lastUpdatedScore = 0;
+            
+            scoreDisplayed += 1;
+            scoreText.text = "Score: " + scoreDisplayed.ToString();
+            
             return;
 
         }
-        temporaryScore = score - lastUpdatedScore; // Accumulate the temporary score
+        temporaryScore += scoreAdded; // Accumulate the temporary score
         temporaryScoreText.text = "+" + temporaryScore.ToString(); // Update the temporary score display
 
         // Fade in the temporary score text
@@ -148,6 +155,47 @@ public class StatsDisplay : MonoBehaviour
         // Reset the temporary score
 
     }
+
+    private IEnumerator ParseScore(int tempScoreVar)
+    {
+        lastUpdatedScore = player.Score;
+        float parseTime = .1f;
+        if (tempScoreVar < 15)
+        {
+            parseTime = .1f;
+
+        }
+        else if (tempScoreVar < 30)
+        {
+            parseTime = .05f;
+
+
+        }
+        else if (tempScoreVar < 60)
+        {
+            parseTime = .02f;
+        }
+        else
+        {
+            parseTime = .01f;
+
+        }
+
+
+        int startScore = int.Parse(scoreText.text.Replace("Score: ", ""));
+        int endScore = startScore + tempScoreVar;
+        
+        for (int i = startScore + 1; i <= endScore; i++)
+        {
+            scoreDisplayed += 1;
+            CheckDigitAmount(scoreDisplayed);
+            scoreText.text = "Score: " + scoreDisplayed.ToString();
+            yield return new WaitForSeconds(parseTime); // Adjust the speed of score update as needed
+        }
+
+
+    }
+
 
     private void FillMana()
     {
@@ -247,44 +295,7 @@ public class StatsDisplay : MonoBehaviour
         Debug.Log("Finished");
     }
 
-    private IEnumerator ParseScore(int tempScoreVar)
-    {
-        lastUpdatedScore = player.Score;
-        float parseTime = .1f;
-        if (tempScoreVar < 15)
-        {
-            parseTime = .1f;
-
-        }
-        else if (tempScoreVar < 30)
-        {
-            parseTime = .05f;
-
-
-        }
-        else if (tempScoreVar < 60)
-        {
-            parseTime = .02f;
-        }
-        else
-        {
-            parseTime = .01f;
-
-        }
-
-
-        int startScore = int.Parse(scoreText.text.Replace("Score: ", ""));
-        int endScore = startScore + tempScoreVar;
-        CheckDigitAmount(endScore);
-        for (int i = startScore + 1; i <= endScore; i++)
-        {
-            scoreText.text = "Score: " + i;
-            yield return new WaitForSeconds(parseTime); // Adjust the speed of score update as needed
-        }
-
-
-    }
-
+   
 
     // void UpdateScore(int score)
     // {
@@ -394,7 +405,7 @@ public class StatsDisplay : MonoBehaviour
     private void OnEnable()
     {
 
-        player.globalEvents.OnUpdateScore += UpdateScore;
+        player.globalEvents.OnAddScore += UpdateScore;
         player.globalEvents.OnUpdateAmmo += UpdateAmmo;
         player.globalEvents.OnUseStamina += HandleStaminaBar;
         player.globalEvents.OnZeroStamina += FlashStamimaBG;
@@ -408,7 +419,7 @@ public class StatsDisplay : MonoBehaviour
     }
     private void OnDisable()
     {
-        player.globalEvents.OnUpdateScore -= UpdateScore;
+        player.globalEvents.OnAddScore -= UpdateScore;
         player.globalEvents.OnUpdateAmmo -= UpdateAmmo;
         player.globalEvents.OnUseStamina -= HandleStaminaBar;
         player.globalEvents.OnZeroStamina -= FlashStamimaBG;

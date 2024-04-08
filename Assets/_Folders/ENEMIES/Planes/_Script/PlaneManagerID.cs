@@ -17,6 +17,9 @@ public class PlaneManagerID : ScriptableObject
     const int bomberPlaneBombQueueSize = 10;
     private Transform parent;
 
+    public Material planeMaterial;
+    public Material defualtMaterial;
+
     public void SpawnExplosionQueue()
     {
         explosionQueue = new Queue<GameObject>();

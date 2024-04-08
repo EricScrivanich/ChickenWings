@@ -30,7 +30,7 @@ public class RingPlayerHandler : MonoBehaviour
     private void AddScore()
     {
 
-        ID.Score += 2;
+        ID.AddScore(3);
 
     }
 
@@ -78,7 +78,7 @@ public class RingPlayerHandler : MonoBehaviour
     }
     private void GoldFinish()
     {
-        ID.Score += (Mathf.CeilToInt(RingGold.CorrectRing * 1.5f) + 2);
+        ID.AddScore(Mathf.CeilToInt(RingGold.CorrectRing * 2) + 3);
     }
 
     private void PinkFinish()

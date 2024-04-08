@@ -14,6 +14,7 @@ public class PlayerJumpState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.anim.SetTrigger("JumpTrigger");
+        
 
         player.rb.velocity = new Vector2(0, player.jumpForce);
         // player.rb.AddForce(new Vector2(0, player.jumpForce),ForceMode2D.Impulse);

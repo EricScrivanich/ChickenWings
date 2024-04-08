@@ -14,6 +14,13 @@ public class BackgroundController : MonoBehaviour
         public float startPosition2;
     }
 
+    public List<GameObject> layers;
+    public List<float> speeds;
+    public List<float> gradientBlends;
+
+    public float groundSpeed;
+    public float mountainSpeed;
+
     public ParallaxLayer skyLayer;
     public ParallaxLayer mountainsLayer;
     public ParallaxLayer groundLayer;
@@ -23,6 +30,17 @@ public class BackgroundController : MonoBehaviour
 
     private void Start()
     {
+
+        for (int i = 0; i < layers.Count; i++)
+        {
+            Material mat = layers[i].GetComponent<Renderer>().material;
+
+            mat.SetFloat("_TextureScrollXSpeed", speeds[i]);
+            mat.SetFloat("_GradBlend", gradientBlends[i]);
+
+        }
+       
+
         skyLayer.startPosition1 = skyLayer.transform1.position.x;
         skyLayer.startPosition2 = skyLayer.transform2.position.x;
 
@@ -69,6 +87,8 @@ public class BackgroundController : MonoBehaviour
             layer.startPosition2 = newPosition2 - layer.speed * Time.time;
         }
     }
+
+    
 
 }
        

@@ -6,6 +6,13 @@ using System.Collections.Generic;
 public class PlaneData : ScriptableObject
 {
     public PlaneManagerID ID;
+
+    public int PlanesAvailable;
+    public float minOffsetTime;
+    public float maxOffsetTime;
+    public float minIterationDelay;
+    public float maxIterationDelay;
+
     public GameObject fillObject;
     public int PlaneIndex;
     public Vector3 explosionScale;
@@ -23,6 +30,11 @@ public class PlaneData : ScriptableObject
     public int lives;
     public GameObject PlaneObject;
 
+
+public void ResetValues()
+{
+        PlanesAvailable = 1;
+    }
     public void SpawnPlanePool()
     {
 

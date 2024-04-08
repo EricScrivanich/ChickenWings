@@ -14,7 +14,7 @@ public class PlaneSpawnManager : MonoBehaviour
 
     [ExposedScriptableObject]
     public PlaneData JetData;
-    private List<Coroutine> Coroutines;
+
 
     private Coroutine cropCourintine;
     private Coroutine jetCourintine;
@@ -37,11 +37,8 @@ public class PlaneSpawnManager : MonoBehaviour
 
     // Variables used to create a space within a plane's spawn
     private bool createSpace = false;
-    private float upperRegion;
-    private float lowerRegion;
+ 
 
-    private float cropSpawnRatio;
-    private float jetSpawnRatio;
 
     private int cropPlanesAvailable = 1;
     private int jetPlanesAvailable = 1;
@@ -65,22 +62,16 @@ public class PlaneSpawnManager : MonoBehaviour
     [SerializeField] private float minCargoIterationDelay = 4;
     [SerializeField] private float maxCargoIterationDelay = 5.5f;
 
-    [SerializeField] private PlaneAreaSpawn spawnArea;
-
     private void Awake()
     {
         ID.spawnRandomPlanesBool = true;
-        upperRegion = 3f;
+
         player.globalEvents.OnUpdateScore += CheckScore;
 
-        lowerRegion = -2f;
+
         createSpace = true;
 
-        // InitializePool(cropPlanePool, cropPlanePrefab, cropPoolSize);
-        // InitializePool(cargoPlanePool, cargoPlanePrefab, cargoPoolSize);
-        // InitializePool(jetPlanePool, jetPlanePrefab, jetPoolSize);
-
-        // SetSpawnRatio(.85f, .15f);
+       
 
 
 
@@ -92,6 +83,8 @@ public class PlaneSpawnManager : MonoBehaviour
         CropData.SpawnPlanePool();
         JetData.SpawnPlanePool();
         CargoData.SpawnPlanePool();
+
+        StartCoroutine(MainSpawner());
 
         // Invoke("SpawnPlaneInArea", 1f);
 
@@ -171,9 +164,6 @@ public class PlaneSpawnManager : MonoBehaviour
     }
 
 
-
-    /// Add another timer if plane count is above a certain number to avoid long lines of planes
-
     IEnumerator SpawnCropPlanes()
     {
         while (true) // Main game loop
@@ -231,60 +221,82 @@ public class PlaneSpawnManager : MonoBehaviour
                                                                                                 // Optional: Adjust cropPlanesAvailable and delays based on game conditions
         }
     }
+   private IEnumerator MainSpawner()
+   {
+        yield return new WaitForSeconds(6f);
+        StartCoroutine(SpawnCropPlanes());
+        yield return new WaitForSeconds(5f);
+        cropPlanesAvailable = 2;
+        yield return new WaitForSeconds(6f);
+        StartCoroutine(SpawnJetPlanes());
+        yield return new WaitForSeconds(7f);
+        TimeManager.SpawnSetup();
+        yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
+        yield return new WaitForSeconds(4f);
+
+        cropPlanesAvailable = 3;
+        yield return new WaitForSeconds(4f);
+        jetPlanesAvailable = 2;
+        yield return new WaitForSeconds(5f);
+        StartCoroutine(SpawnCargoPlanes());
+        yield return new WaitForSeconds(8f);
+        cargoPlanesAvailable = 2;
+
+    }
 
     void CheckScore(int newScore)
     {
-        switch (newScore)
-        {
-            case 1:
-                StartCoroutine(SpawnCropPlanes());
-                break;
-            case 3:
-                cropPlanesAvailable = 2;
-                break;
-            case 4:
-                StartCoroutine(SpawnJetPlanes());
+        // switch (newScore)
+        // {
+        //     case 1:
+        //         StartCoroutine(SpawnCropPlanes());
+        //         break;
+        //     case 3:
+        //         cropPlanesAvailable = 2;
+        //         break;
+        //     case 4:
+        //         StartCoroutine(SpawnJetPlanes());
 
-                break;
+        //         break;
 
-            case 6:
-                jetPlanesAvailable = 2;
-                break;
-            case 7:
-                cropPlanesAvailable = 3;
-                break;
-            case 8:
-                StartCoroutine(SpawnCargoPlanes());
+        //     case 6:
+        //         jetPlanesAvailable = 2;
+        //         break;
+        //     case 7:
+        //         cropPlanesAvailable = 3;
+        //         break;
+        //     case 8:
+        //         StartCoroutine(SpawnCargoPlanes());
 
-                break;
-            case 10:
+        //         break;
+        //     case 10:
 
-                break;
-            case 12:
-                cargoPlanesAvailable = 2;
-                cropPlanesAvailable = 4;
+        //         break;
+        //     case 12:
+        //         cargoPlanesAvailable = 2;
+        //         cropPlanesAvailable = 4;
 
-                break;
-            case 14:
-                cargoPlanesAvailable = 3;
-                break;
-            case 16:
+        //         break;
+        //     case 14:
+        //         cargoPlanesAvailable = 3;
+        //         break;
+        //     case 16:
 
-                jetPlanesAvailable = 4;
+        //         jetPlanesAvailable = 4;
 
-                break;
-            case 19:
-                cargoPlanesAvailable = 3;
+        //         break;
+        //     case 19:
+        //         cargoPlanesAvailable = 3;
 
-                break;
-            default:
-                break;
-        }
+        //         break;
+        //     default:
+        //         break;
+        // }
     }
 
 
 
-    #region Pools
+    #region GetPlanes
 
     private void GetCrop()
     {
@@ -443,5 +455,6 @@ public class PlaneSpawnManager : MonoBehaviour
 // }
 
 #endregion
+
 
 

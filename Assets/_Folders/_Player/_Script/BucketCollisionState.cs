@@ -14,9 +14,14 @@ public class BucketCollisionState : PlayerBaseState
         player.rb.velocity = new Vector2(0, 0);
         player.maxFallSpeed = player.ID.MaxFallSpeed;
         player.rb.simulated = false;
-        player.isDropping = false;
+        
         // player.anim.SetTrigger("ResetTrigger");
-        player.anim.SetTrigger("IdleTrigger");
+        if (player.isDropping)
+        {
+            Debug.Log("DropIn");
+            player.anim.SetTrigger("BounceTrigger");
+            player.isDropping = false;
+        }
 
 
     }

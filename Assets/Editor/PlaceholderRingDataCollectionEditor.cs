@@ -3,14 +3,14 @@ using UnityEditor.SceneManagement;
 using System.IO;
 using UnityEngine;
 
-[CustomEditor(typeof(PlaceholderRingDataCollection))]
-public class PlaceholderRingDataCollectionEditor : Editor
+[CustomEditor(typeof(PlaceholderDataCollection))]
+public class PlaceholderDataCollectionEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI(); // Draw the default inspector
 
-        PlaceholderRingDataCollection script = (PlaceholderRingDataCollection)target;
+        PlaceholderDataCollection script = (PlaceholderDataCollection)target;
 
         EditorGUILayout.PrefixLabel("Specified Trigger");
         EditorGUILayout.BeginHorizontal();

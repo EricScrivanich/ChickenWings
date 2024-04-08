@@ -7,6 +7,7 @@ public struct GlobalPlayerEvents
     public Action OnUpdateAmmo;
     public Action<int> OnAddAmmo; 
     public Action<int> OnUpdateScore;
+    public Action<int> OnAddScore;
     public Action<float> EggVelocity;
     public Action Frozen;
 

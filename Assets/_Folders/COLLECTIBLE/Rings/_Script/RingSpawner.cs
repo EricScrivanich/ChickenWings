@@ -11,43 +11,39 @@ public class RingSpawner : MonoBehaviour
     public RingPool Pool;
     public PlaneManagerID PlaneID;
 
+    [SerializeField] private PlaneData crop;
+    [SerializeField] private PlaneData jet;
+    [SerializeField] private PlaneData cargo;
+
+    [SerializeField] private float totalSpawnDelay;
+    [SerializeField] private float totalIterationSpawnDelay;
+
     [SerializeField] private PlayerID player;
 
-    public PlaceholderRingDataCollection placeholderDataCollection;
+    public PlaceholderDataCollection placeholderDataCollection;
+
+    public SetupHolder setupHolder;
     private int tracker = 0;
 
-    private RingID ID;
+    private RingID ringType;
     public int Index;
     public static int currentRing;
     private int correctRing;
     private int correctTrigger = 0;
     private List<List<GameObject>> PlaceholderIndex;
 
-    private int currentMaxOrder = 0;
-    [SerializeField] private GameObject BallMaterial;
 
+    // red = 0
+    // pink = 1
+    // gold = 2
+    // purple = 3
 
-    [SerializeField] private float fadeRingsDuration;
-
-    [SerializeField] private GameObject ringPrefab;
-
-    private List<GameObject> ringPool;
-    private List<RingMovement> ringScripts;
-
-    [SerializeField] private GameObject Bucket;
-    private int ringAmount = 0;
-
-    // private const int ringPoolSize = 20;
-    [SerializeField] private float spawnInterval = 5f;
-
-    private Dictionary<Transform, PlaceholderRing> placeholderReferences = new Dictionary<Transform, PlaceholderRing>();
-    private GameObject currentRingSetupInstance;
 
     private void Awake()
     {
 
         Instance = this;
-        ID = Pool.RingType[Index];
+        ringType = Pool.RingType[Index];
 
         correctRing = 1;
         PlaceholderIndex = new List<List<GameObject>>();
@@ -65,11 +61,28 @@ public class RingSpawner : MonoBehaviour
         Pool.SpawnBallPool();
         Pool.SpawnBucketPool();
         Pool.SpawnRingPool();
-        ID.newSetup = true;
+        ringType.newSetup = true;
     }
 
     private void Start()
     {
+        PlaneID.SpawnExplosionQueue();
+        crop.SpawnPlanePool();
+        jet.SpawnPlanePool();
+        cargo.SpawnPlanePool();
+
+        if (Pool.Testing)
+        {
+            StartCoroutine(SpawnSpecificSetup());
+        }
+        else
+        {
+            StartCoroutine(MainSpawner());
+
+        }
+
+
+
         // ResetRingMaterialFade();
         Pool.ResetAllMaterials();
         foreach (var ringId in Pool.RingType)
@@ -81,106 +94,30 @@ public class RingSpawner : MonoBehaviour
 
 
 
-        SpawnRings(.5f);
+        PlaneID.spawnRandomPlanesBool = true;
 
     }
 
-    private void AssignOrderByPosition(int correctTrig)
-    {
-
-        // Create a local list of placeholder Transforms from the dictionary
-        List<Transform> sortedPlaceholders = new List<Transform>(placeholderReferences.Keys);
-
-
-        // Sort the placeholders by their x position (left to right)
-        sortedPlaceholders.Sort((transform1, transform2) => transform1.position.x.CompareTo(transform2.position.x));
-
-        // Assign order based on sorted positions
-        for (int i = 0; i < sortedPlaceholders.Count; i++)
-        {
-            // The order is assigned starting from 1, going left to right
-
-            if (placeholderReferences[sortedPlaceholders[i]].getsTriggeredInt == correctTrig)
-            {
-
-                ID.triggeredRingOrder++;
-                placeholderReferences[sortedPlaceholders[i]].order = ID.triggeredRingOrder;
-
-            }
-
-        }
-    }
-
-    private void PopulatePlaceholderReferences(Transform parentTransform)
-    {
-
-        placeholderReferences.Clear();
-        ID.placeholderCount = 0;
-
-        PopulateRecursive(parentTransform);
-
-
-
-
-    }
-
-    private void PopulateRecursive(Transform currentTransform)
-    {
-
-        foreach (Transform child in currentTransform)
-        {
-            if (child.gameObject.activeInHierarchy)
-            {
-                var placeholderScript = child.GetComponent<PlaceholderRing>();
-                if (placeholderScript != null)
-                {
-                    placeholderReferences[child] = placeholderScript;
-                    ID.placeholderCount++;
-                }
-            }
-
-            // Recursively search through nested children
-            if (child.childCount > 0)
-            {
-                PopulateRecursive(child);
-
-            }
-            PlaceholderIndex[Index].Add(child.gameObject);
-        }
-
-
-    }
-
-    public void TriggeredSpawn(int triggerValue)
-    {
-
-
-        // Assign order by position to each placeholder
-        AssignOrderByPosition(triggerValue);
-
-        // Create a list of placeholders that match the trigger value, sorted by their assigned order
-        var orderedPlaceholders = placeholderReferences
-            .Where(placeholder => placeholder.Value.getsTriggeredInt == triggerValue)
-            .OrderBy(placeholder => placeholder.Value.order)
-            .ToList();
-
-        // Iterate through the sorted placeholders and spawn rings accordingly
-        foreach (var placeholder in orderedPlaceholders)
-        {
-            SpawnRingAtPlaceholder(placeholder.Key, placeholder.Value);
-        }
-
-        // Add particle object after all rings have been spawned
-        // ID.AddParticleObject();
-    }
 
     public void NewTriggeredSpawn(int triggerValue)
     {
        
+
         if (triggerValue == -1)
         {
-            SpawnRings(0);
+            if (Pool.Testing)
+            {
+                StartCoroutine(SpawnSpecificSetup());
+                
+            }
+            else
+            {
+                PlaneID.spawnRandomPlanesBool = true;
+
+            }
+
             return;
+
         }
         if (placeholderDataCollection.TestSpecifiedTrigger)
         {
@@ -208,15 +145,15 @@ public class RingSpawner : MonoBehaviour
         // Iterate through the placeholders for the specific trigger, already sorted by their x position
         foreach (var placeholderData in triggerGroup.placeholderRingDataList)
         {
-            ID.triggeredRingOrder++; // Increment the order for each spawned ring
+            ringType.triggeredRingOrder++; // Increment the order for each spawned ring
 
-            if (ID.triggeredRingOrder == totalRingPlaceholders)
+            if (ringType.triggeredRingOrder == totalRingPlaceholders)
             {
-                ID.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, ID.triggeredRingOrder, placeholderData.speed);
+                ringType.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringType.triggeredRingOrder, placeholderData.speed);
             }
             else
             {
-                ID.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ID.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
+                ringType.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringType.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
                 // If you have special logic for the last ring or a "BucketScript", you can include that here
             }
 
@@ -248,29 +185,7 @@ public class RingSpawner : MonoBehaviour
         // Consider whether you need to reset ID.triggeredRingOrder here, depending on whether it should continue across different triggers
     }
 
-    private void SpawnRingAtPlaceholder(Transform placeholderTransform, PlaceholderRing placeholderScript)
-    {
 
-        // RingMovement ring = GetRingFromPool();
-        if (placeholderScript.order != ID.placeholderCount || Pool.isTutorial)
-        {
-
-            ID.GetRing(placeholderScript.transform.position, placeholderScript.transform.rotation, placeholderScript.transform.localScale, placeholderScript.order, placeholderScript.speed, placeholderScript.doesTriggerInt, placeholderScript.xCordinateTrigger);
-
-        }
-        else
-        {
-
-            // BucketScript bucketScript = ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
-            ID.GetBucket(placeholderScript.transform.position, placeholderScript.transform.rotation, placeholderScript.transform.localScale, placeholderScript.order, placeholderScript.speed);
-
-            // bucketScript.gameObject.SetActive(true);
-
-        }
-
-
-
-    }
 
 
 
@@ -282,43 +197,80 @@ public class RingSpawner : MonoBehaviour
         if (!correctSequence)
         {
 
-            switch (index)
-            {
-                case 0:
-                    StartCoroutine(Pool.FadeOutRed());
-                    break;
-                case 1:
-                    StartCoroutine(Pool.FadeOutPink());
-
-                    break;
-                case 2:
-
-                    StartCoroutine(Pool.FadeOutGold());
-                    break;
-                case 3:
-
-                    StartCoroutine(Pool.FadeOutPurple());
-                    break;
-                default:
-                    break;
-            }
-
-
+            StartCoroutine(SequenceFinishedCourintine(0, index));
 
             // SpawnRings(3.4f);
         }
         else
         {
-            Pool.RingType[index].ResetVariables();
+            StartCoroutine(SequenceFinishedCourintine(1.5f, index));
+
+            // Pool.RingType[index].ResetVariables();
             // SpawnRings(4f);
 
 
         }
 
+    }
+
+    private IEnumerator SequenceFinishedCourintine(float time, int index)
+    {
+        yield return new WaitForSeconds(time);
+
+        switch (index)
+        {
+            case 0:
+                StartCoroutine(Pool.FadeOutRed());
+                break;
+            case 1:
+                StartCoroutine(Pool.FadeOutPink());
+
+                break;
+            case 2:
+
+                StartCoroutine(Pool.FadeOutGold());
+                break;
+            case 3:
+
+                StartCoroutine(Pool.FadeOutPurple());
+                break;
+            default:
+                break;
+        }
+
+
+}
+
+    private void SpawnRandomSetup(int ringIndex, float time)
+    {
+        placeholderDataCollection = setupHolder.GetRandomSetup();
+        PlaneID.spawnRandomPlanesBool = false;
+
+        if (ringIndex >= 0)
+        {
+            ringType = Pool.RingType[ringIndex];
+        }
+
+        StartCoroutine(SpawnSetupCourintine(time));
 
 
 
-        // RemovePlaceholders();
+
+    }
+
+    private IEnumerator SpawnSpecificSetup()
+    {
+        Debug.Log("SpawningTHTHTHTHT");
+        yield return new WaitUntil(() => ringType.ReadyToSpawn == true);
+
+        if (placeholderDataCollection.TestSpecifiedTrigger)
+        {
+            NewTriggeredSpawn(placeholderDataCollection.SpecifiedTrigger);
+        }
+        else
+        {
+            NewTriggeredSpawn(0);
+        }
 
     }
 
@@ -341,62 +293,99 @@ public class RingSpawner : MonoBehaviour
 
         StartCoroutine(SpawnRingsCourintine(.5f));
     }
+
+    private IEnumerator SpawnSetupCourintine(float time)
+    {
+        yield return new WaitForSeconds(time);
+        yield return new WaitUntil(() => ringType.ReadyToSpawn == true);
+        NewTriggeredSpawn(0);
+
+
+    }
     private IEnumerator SpawnRingsCourintine(float time)
     {
 
         if (!Pool.Testing)
         {
             PlaneID.spawnRandomPlanesBool = true;
-            yield return new WaitForSeconds(8f);
-
-            // PopulatePlaceholderReferences(transform);
-
-
-
-
-
+            yield return new WaitForSeconds(time);
         }
         PlaneID.spawnRandomPlanesBool = false;
-        // if (player.Lives == 1)
-        // {
-        //     Index = 1;
-        // }
-        // else
-        // {
-        //     Index = 3;
-        // }
-        ID = Pool.RingType[Index];
+        ringType = Pool.RingType[Index];
 
         // currentRingSetupInstance = InstantiateRandomSetup();
 
         yield return new WaitForSeconds(2.5f);
-        yield return new WaitUntil(() => ID.ReadyToSpawn == true);
+        yield return new WaitUntil(() => ringType.ReadyToSpawn == true);
         Debug.Log("spawning Rings: " + tracker);
 
         NewTriggeredSpawn(0);
     }
 
-
-
-    IEnumerator TimePassed()
+    private IEnumerator MainSpawner()
     {
+        yield return new WaitForSeconds(6f);
+        StartCoroutine(SpawnPlaneType(crop));
+        yield return new WaitForSeconds(5f);
+        crop.PlanesAvailable = 2;
+        yield return new WaitForSeconds(6f);
+        StartCoroutine(SpawnPlaneType(jet));
+        yield return new WaitForSeconds(7f);
+        SpawnRandomSetup(2, 2.5f);
+
+        yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
         yield return new WaitForSeconds(4f);
-    }
-    // public void ReturnRingToPool(GameObject ring)
-    // {
-    //     ring.SetActive(false);
-    //     ringPool.Add(ring);
-    // }
 
-    private void RemovePlaceholders()
+        crop.PlanesAvailable = 3;
+        yield return new WaitForSeconds(4f);
+        jet.PlanesAvailable = 2;
+        yield return new WaitForSeconds(5f);
+        StartCoroutine(SpawnPlaneType(cargo));
+        yield return new WaitForSeconds(8f);
+        cargo.PlanesAvailable = 2;
+        yield return new WaitForSeconds(6f);
+        SpawnRandomSetup(0, 2.5f);
+yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+
+
+    }
+
+
+
+    #region Plane
+
+
+    IEnumerator SpawnPlaneType(PlaneData plane)
     {
-        foreach (GameObject placeholder in PlaceholderIndex[Index])
+        while (true) // Main game loop
         {
-            placeholder.SetActive(false);
-
+            for (int i = 0; i < plane.PlanesAvailable; i++)
+            {
+                float SpawnOffsetVar = Random.Range(plane.minOffsetTime, plane.maxOffsetTime);
+                yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+                yield return new WaitForSeconds(SpawnOffsetVar + totalSpawnDelay);
+                yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+                float spawnPositionY = SpawnPointManager.GetRandomSpawnPointY(sp => sp.canSpawnCrop);
+                Vector2 position = new Vector2(BoundariesManager.rightBoundary, spawnPositionY);
+                plane.GetPlane(0, 0, 0, position);
+                // Spawn a plane
+                // Wait for offset
+            }
+            float iterationEndDelay = Random.Range(plane.minIterationDelay, plane.maxIterationDelay);
+            yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+            yield return new WaitForSeconds(iterationEndDelay + totalIterationSpawnDelay); // End-of-iteration delay
+                                                                                           // Optional: Adjust cropPlanesAvailable and delays based on game conditions
         }
-
     }
+
+
+
+
+    #endregion
+
+
+
+
 
     private void OnEnable()
     {
@@ -407,19 +396,13 @@ public class RingSpawner : MonoBehaviour
             ringId.ringEvent.OnRingTrigger += NewTriggeredSpawn;
             ringId.ringEvent.OnCreateNewSequence += SequenceFinished;
 
-            // Subscribe to other events as needed
         }
 
         PlaneID.events.TriggeredSpawn += NewTriggeredSpawn;
 
-
-
-
     }
     private void OnDisable()
     {
-
-
         foreach (var ringId in Pool.RingType)
         {
 
@@ -430,11 +413,6 @@ public class RingSpawner : MonoBehaviour
         }
 
         PlaneID.events.TriggeredSpawn -= NewTriggeredSpawn;
-
-        // ID.ringEvent.OnPassRing -= CheckOrder;
-
-
-
 
     }
 
@@ -449,6 +427,9 @@ public class RingSpawner : MonoBehaviour
     }
 
 }
+
+
+
 #region comments
 
 // private void DeactivateAllRings()
@@ -645,6 +626,119 @@ public class RingSpawner : MonoBehaviour
 //     ID.passedMaterial.SetFloat("_FadeAmount", 0);
 // }
 
+
+// private void AssignOrderByPosition(int correctTrig)
+// {
+
+//     // Create a local list of placeholder Transforms from the dictionary
+//     List<Transform> sortedPlaceholders = new List<Transform>(placeholderReferences.Keys);
+
+
+//     // Sort the placeholders by their x position (left to right)
+//     sortedPlaceholders.Sort((transform1, transform2) => transform1.position.x.CompareTo(transform2.position.x));
+
+//     // Assign order based on sorted positions
+//     for (int i = 0; i < sortedPlaceholders.Count; i++)
+//     {
+//         // The order is assigned starting from 1, going left to right
+
+//         if (placeholderReferences[sortedPlaceholders[i]].getsTriggeredInt == correctTrig)
+//         {
+
+//             ID.triggeredRingOrder++;
+//             placeholderReferences[sortedPlaceholders[i]].order = ID.triggeredRingOrder;
+
+//         }
+
+//     }
+// }
+
+// private void PopulatePlaceholderReferences(Transform parentTransform)
+// {
+
+//     placeholderReferences.Clear();
+//     ID.placeholderCount = 0;
+
+//     PopulateRecursive(parentTransform);
+
+
+
+
+// }
+
+// private void PopulateRecursive(Transform currentTransform)
+// {
+
+//     foreach (Transform child in currentTransform)
+//     {
+//         if (child.gameObject.activeInHierarchy)
+//         {
+//             var placeholderScript = child.GetComponent<PlaceholderRing>();
+//             if (placeholderScript != null)
+//             {
+//                 placeholderReferences[child] = placeholderScript;
+//                 ID.placeholderCount++;
+//             }
+//         }
+
+//         // Recursively search through nested children
+//         if (child.childCount > 0)
+//         {
+//             PopulateRecursive(child);
+
+//         }
+//         PlaceholderIndex[Index].Add(child.gameObject);
+//     }
+
+
+// }
+
+// public void TriggeredSpawn(int triggerValue)
+// {
+
+
+//     // Assign order by position to each placeholder
+//     AssignOrderByPosition(triggerValue);
+
+//     // Create a list of placeholders that match the trigger value, sorted by their assigned order
+//     var orderedPlaceholders = placeholderReferences
+//         .Where(placeholder => placeholder.Value.getsTriggeredInt == triggerValue)
+//         .OrderBy(placeholder => placeholder.Value.order)
+//         .ToList();
+
+//     // Iterate through the sorted placeholders and spawn rings accordingly
+//     foreach (var placeholder in orderedPlaceholders)
+//     {
+//         SpawnRingAtPlaceholder(placeholder.Key, placeholder.Value);
+//     }
+
+//     // Add particle object after all rings have been spawned
+//     // ID.AddParticleObject();
+// }
+
+// private void SpawnRingAtPlaceholder(Transform placeholderTransform, PlaceholderRing placeholderScript)
+// {
+
+//     // RingMovement ring = GetRingFromPool();
+//     if (placeholderScript.order != ID.placeholderCount || Pool.isTutorial)
+//     {
+
+//         ID.GetRing(placeholderScript.transform.position, placeholderScript.transform.rotation, placeholderScript.transform.localScale, placeholderScript.order, placeholderScript.speed, placeholderScript.doesTriggerInt, placeholderScript.xCordinateTrigger);
+
+//     }
+//     else
+//     {
+
+//         // BucketScript bucketScript = ID.GetBucket(placeholderTransform, placeholderScript.order, placeholderScript.speed);
+//         ID.GetBucket(placeholderScript.transform.position, placeholderScript.transform.rotation, placeholderScript.transform.localScale, placeholderScript.order, placeholderScript.speed);
+
+//         // bucketScript.gameObject.SetActive(true);
+
+//     }
+
+
+
+// }
 
 #endregion
 
