@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerFlipLeftState : PlayerBaseState
 {
-    private Vector2 AddForceVector = new Vector2 (-6,7);
+    private Vector2 AddForceVector = new Vector2(-9f, 8);
     private float currentRotation;
     private float totalRotation;
     private float flipForceX = -6.9f;
@@ -39,10 +39,10 @@ public class PlayerFlipLeftState : PlayerBaseState
         totalRotation = 0;
         currentRotation = player.transform.rotation.eulerAngles.z;
 
-if (player.ID.UsingClocker)
-{
+        if (player.ID.UsingClocker)
+        {
             rotationSpeed = 300;
-}
+        }
         else if (currentRotation > 140)
         {
             rotationSpeed += (360 - currentRotation) / 3;
@@ -93,9 +93,9 @@ if (player.ID.UsingClocker)
 
     public override void UpdateState(PlayerStateManager player)
     {
-        if (!hitHeightTarget && player.rb.velocity.y < 0 )
+        if (!hitHeightTarget && player.rb.velocity.y < -1)
         {
-          
+
             hitHeightTarget = true;
 
 
