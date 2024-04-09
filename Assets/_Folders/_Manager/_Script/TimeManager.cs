@@ -54,6 +54,7 @@ public class TimeManager : MonoBehaviour
 
     private IEnumerator AddScore()
     {
+        
         while (player.isAlive)
         {
             // Calculate the current delay based on the elapsed time

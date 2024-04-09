@@ -86,7 +86,7 @@ public class PlayerID : ScriptableObject
     public float StaminaUsed;
     public float MaxStamina = 100;
     [SerializeField] private int startingAmmo;
-    [SerializeField] private int startingScore;
+    private int startingScore = 0;
     [SerializeField] private int startingLives;
     private int lives;
     public int Lives
@@ -135,6 +135,7 @@ public class PlayerID : ScriptableObject
 
     public void ResetValues()
     {
+        Debug.Log("REEEE");
         resetingValues = true;
         isAlive = true;
 

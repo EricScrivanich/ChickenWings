@@ -9,7 +9,7 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private GameObject UI;
 
 
-    public void Pause (bool isPaused)
+    public void Pause(bool isPaused)
     {
         if (isPaused)
         {
@@ -25,35 +25,37 @@ public class PauseMenuManager : MonoBehaviour
         }
     }
     // Start is called before the first frame update
-   public void Menu()
-   {
+    public void Menu()
+    {
         SceneManager.LoadScene("MainMenu");
         Time.timeScale = 1;
     }
 
 
+
     void OnApplicationFocus(bool pauseStatus)
+    {
+        // if (!pauseStatus )
+        // {
+        //     Time.timeScale = 0;
+        //     UI.SetActive(true);//you
+
+        // }
+       
+     
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
         {
-           
+            Time.timeScale = 0;
+            UI.SetActive(true);
+
         }
         else
         {
-            Time.timeScale = 0;
-            UI.SetActive(true);//your app is now in the background
-        }
-    }
 
-    private void OnApplicationPause(bool pauseStatus) {
-        if (pauseStatus)
-        {
-
-        }
-        else 
-        {
-            Time.timeScale = 0;
-            UI.SetActive(true);
         }
     }
 }

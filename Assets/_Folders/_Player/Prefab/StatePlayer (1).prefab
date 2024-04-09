@@ -273,7 +273,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.0032899445, z: 0, w: 0.9999946}
   m_LocalPosition: {x: -1.398, y: 0, z: 0}
-  m_LocalScale: {x: 0.55, y: 0.55, z: 0.91666657}
+  m_LocalScale: {x: 0.57, y: 0.57, z: 0.94999987}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4295892072133194512}
@@ -327,9 +327,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SlowFactor: 1
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  startPoint: {x: 0, y: 0}
-  endPoint: {x: 0, y: 0}
-  drawSpeed: 0
+  Dust: {fileID: 4295892072133194518}
+  startPoint: {x: 1.5, y: 0}
+  endPoint: {x: 25, y: 0}
+  drawSpeed: 60
   playerParts: {fileID: 11400000, guid: 985b73365ea814b258007007881a2590, type: 2}
   parchutePoint: {fileID: 0}
   holdingFlip: 0
@@ -344,10 +345,10 @@ MonoBehaviour:
   justFlipped: 0
   DeadEvent: {fileID: 11400000, guid: 640dc4253f94c442ea1eaf7ca15c382a, type: 2}
   jumpForce: 0
-  flipLeftForceX: 0
-  flipLeftForceY: 0
-  flipRightForceX: 0
-  flipRightForceY: 0
+  flipLeftForceX: -6.4
+  flipLeftForceY: 7.8
+  flipRightForceX: 4
+  flipRightForceY: 9.2
   ImageTransform: {fileID: 321073335050485285}
   ParachuteObject: {fileID: 4367852547350734217}
   staminaDeplete: 60
@@ -2855,5 +2856,10 @@ PrefabInstance:
 --- !u!4 &4295892072133194512 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2282438384830233660, guid: 7697a49ea05824642b45a2fab61c81c4, type: 3}
+  m_PrefabInstance: {fileID: 2608369828346449708}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &4295892072133194518 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2282438384830233658, guid: 7697a49ea05824642b45a2fab61c81c4, type: 3}
   m_PrefabInstance: {fileID: 2608369828346449708}
   m_PrefabAsset: {fileID: 0}

@@ -119,6 +119,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
+        ID.ResetValues();
         holdingFlip = false;
         ID.UsingClocker = false;
         rotateSlash = false;
@@ -129,13 +130,13 @@ public class PlayerStateManager : MonoBehaviour
         canDrop = true;
         disableButtons = true;
         ID.StaminaUsed = 0;
-        
+
 
     }
     // Start is called before the first frame update
     void Start()
     {
-        ID.ResetValues();
+
 
         originalTimeScale = Time.timeScale;
 
@@ -189,7 +190,7 @@ public class PlayerStateManager : MonoBehaviour
 
         currentState.EnterState(this);
 
-        ID.ResetValues();
+
     }
     // void OnCollisionEnter2D(Collision2D collision)
     // {
@@ -614,6 +615,9 @@ public class PlayerStateManager : MonoBehaviour
     }
     private void HandleDrop()
     {
+
+
+
         if (!disableButtons && canDrop)
         {
             // ResetHoldJump();
@@ -627,6 +631,7 @@ public class PlayerStateManager : MonoBehaviour
     private void HandleGroundCollision()
     {
 
+
         if (!isDropping)
         {
             Die();
@@ -634,9 +639,20 @@ public class PlayerStateManager : MonoBehaviour
         else
         {
 
+
             // CameraShake.instance.ShakeCamera(.2f, .08f);
             SwitchState(BounceState);
         }
+
+        // if (isDropping)
+        // {
+        //     anim.SetTrigger("JumpTrigger");
+        //     disableButtons = false;
+        //     maxFallSpeed = ID.MaxFallSpeed;
+        //     SwitchState(IdleState);
+
+        // }
+
     }
 
     private void Die()

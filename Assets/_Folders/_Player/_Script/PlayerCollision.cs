@@ -30,12 +30,15 @@ public class PlayerCollision : MonoBehaviour
     // Start is called before the first frame update
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        
         if (collision.gameObject.tag == "Floor" && floorCollision)
         {
             lives = 0;
             Kill();
             DeadEvent.TriggerEvent(); 
         }
+
+        
 
         if (collision.gameObject.CompareTag("Ring"))
         {

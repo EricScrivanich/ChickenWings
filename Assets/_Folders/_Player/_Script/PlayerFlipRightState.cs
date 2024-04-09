@@ -6,6 +6,7 @@ public class PlayerFlipRightState : PlayerBaseState
 {
 
     private Vector2 AddForceVector = new Vector2(7.5f, 12.5f);
+    // private Vector2 AddForceVector = new Vector2(11.5f, 13.5f);
     private float currentRotation = 0;
     private float totalRotation;
     private float flipForceX = 6.5f;

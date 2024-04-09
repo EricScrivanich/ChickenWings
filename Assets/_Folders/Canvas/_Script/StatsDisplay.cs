@@ -52,12 +52,14 @@ public class StatsDisplay : MonoBehaviour
     {
         scoreDisplayed = player.Score;
         scoreText.text = "Score: " + scoreDisplayed.ToString();
-        
+
+  
+
         ManaBar.fillAmount = player.CurrentMana / player.MaxMana;
         ManaBarBig.fillAmount = ((player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / player.MaxMana);
-       
+
         // Debug.Log("Current Big GIll: " + (player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / maxStamina);
-       
+
         isFilllingMana = false;
         temporaryScoreText.alpha = 0;
 
@@ -110,13 +112,14 @@ public class StatsDisplay : MonoBehaviour
     void UpdateScore(int scoreAdded)
     {
         CheckDigitAmount(scoreDisplayed);
-      
+     
+
         if (scoreAdded == 1)
         {
-            
+
             scoreDisplayed += 1;
             scoreText.text = "Score: " + scoreDisplayed.ToString();
-            
+
             return;
 
         }
@@ -184,7 +187,7 @@ public class StatsDisplay : MonoBehaviour
 
         int startScore = int.Parse(scoreText.text.Replace("Score: ", ""));
         int endScore = startScore + tempScoreVar;
-        
+
         for (int i = startScore + 1; i <= endScore; i++)
         {
             scoreDisplayed += 1;
@@ -265,7 +268,7 @@ public class StatsDisplay : MonoBehaviour
 
         isFilllingMana = true;
         float fillSpeed = 1f; // Adjust this value to control the fill speed
-        
+
 
         while (ManaBar.fillAmount < smallTargetFill - .005f)   //!Mathf.Approximately(ManaBar.fillAmount, targetFillAmount)
         {
@@ -273,7 +276,7 @@ public class StatsDisplay : MonoBehaviour
             yield return null; // Wait for the next frame
 
             // Update the target fill amount in case more stamina was added
-            
+
 
         }
         ManaBar.fillAmount = smallTargetFill;
@@ -295,7 +298,7 @@ public class StatsDisplay : MonoBehaviour
         Debug.Log("Finished");
     }
 
-   
+
 
     // void UpdateScore(int score)
     // {
@@ -399,7 +402,7 @@ public class StatsDisplay : MonoBehaviour
 
     private void HandleDashArrow(bool canDash)
     {
-        
+
 
     }
     private void OnEnable()

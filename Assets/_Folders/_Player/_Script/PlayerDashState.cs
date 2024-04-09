@@ -10,6 +10,11 @@ public class PlayerDashState : PlayerBaseState
 
 
     [SerializeField] private float dashPower = 10.5f;
+    // [SerializeField] private float dashPower = 12.5f;
+
+
+
+
     private int rotationSpeed = 100;
     private float rotZ;
     private bool passedTime;
