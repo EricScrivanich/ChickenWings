@@ -476,7 +476,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 562315321}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1136049571}
+        m_TargetAssemblyTypeName: MainMenuScript, Assembly-CSharp
+        m_MethodName: LoadSceneWithIndex
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &562315321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1370,6 +1382,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: --------Managers-------
       objectReference: {fileID: 0}
+    - target: {fileID: 4100451905543458094, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
     - target: {fileID: 6759283485066347905, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

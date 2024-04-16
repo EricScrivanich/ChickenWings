@@ -16,6 +16,7 @@ public class BackgroundController : MonoBehaviour
 
     public List<GameObject> layers;
     public List<float> speeds;
+    public List<float> MountainSpeeds;
     public List<float> gradientBlends;
 
     public float groundSpeed;
@@ -29,7 +30,10 @@ public class BackgroundController : MonoBehaviour
     private const float Offset = 80f;
 
     private void Start()
+    { foreach(var obj in layers)
     {
+            obj.SetActive(true);
+        }
 
         for (int i = 0; i < layers.Count; i++)
         {
@@ -70,6 +74,20 @@ public class BackgroundController : MonoBehaviour
 
         Reset(layer);
     }
+
+    public void MoveWithMountains(bool turnOffSpeed)
+    {
+        for (int i = 0; i < layers.Count; i++)
+        {
+            Material mat = layers[i].GetComponent<Renderer>().material;
+
+            mat.SetFloat("_TextureScrollXSpeed", MountainSpeeds[i]);
+        
+        }
+
+    }
+
+    
 
     private void Reset(ParallaxLayer layer)
     {

@@ -46,12 +46,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Pool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
+  PlaneID: {fileID: 11400000, guid: 1d0c68d6da83a453188ddafa7d20cb8a, type: 2}
+  crop: {fileID: 11400000, guid: 48af6dd414deb4e9691e35766a2e0656, type: 2}
+  jet: {fileID: 11400000, guid: 045520bfef6784831b98fa13cd6f6033, type: 2}
+  cargo: {fileID: 11400000, guid: 2b07855d1607442fe8d0a9a89906d330, type: 2}
+  totalSpawnDelay: 0
+  totalIterationSpawnDelay: 0
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  placeholderDataCollection: {fileID: 11400000, guid: 734a7c168a0614ea1b0d0c79bf2cd485, type: 2}
+  setupHolder: {fileID: 11400000, guid: 6a3967eb42fec411d9a1518ce64d8fff, type: 2}
   Index: 1
-  BallMaterial: {fileID: 8526703650263260717, guid: b6f20ad4d8609491e9086c2f37a7eb2e, type: 3}
-  fadeRingsDuration: 1.5
-  ringPrefab: {fileID: 1854272186094508190, guid: 0dc39bb21ad1c473396b51a04708ea11, type: 3}
-  Bucket: {fileID: 0}
-  spawnInterval: 2
 --- !u!114 &3977460430288753493
 MonoBehaviour:
   m_ObjectHideFlags: 0

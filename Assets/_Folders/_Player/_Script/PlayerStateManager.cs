@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
 {
+    [SerializeField] private GameObject THETHING;
+    private bool USINGTHING = false;
     [SerializeField] private float SlowFactor;
     [ExposedScriptableObject]
     public PlayerID ID;
@@ -196,7 +198,16 @@ public class PlayerStateManager : MonoBehaviour
     // {
     //     currentState.OnCollisionEnter2D(this, collision);
 
-    // }
+    // }\
+
+    public void USETHING()
+    {
+
+        THETHING.SetActive(!USINGTHING);
+        USINGTHING = !USINGTHING;
+
+
+    }
 
     void FixedUpdate()
     {
@@ -243,6 +254,42 @@ public class PlayerStateManager : MonoBehaviour
         // If it does, limit it to the max fall speed
         rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, maxFallSpeed, 15f));
 
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Plane"))
+        {
+            SwitchState(IdleState);
+            HandleDamaged();
+            isDropping = false;
+            disableButtons = false;
+            foreach (ContactPoint2D pos in collision.contacts)
+            {
+                Debug.Log(pos.normal);
+
+                if (pos.normal.y > .92f)
+                {
+                    rb.velocity = new Vector2(1, 9);
+
+                }
+                else if (pos.normal.x < -.1f)
+                {
+                    rb.velocity = new Vector2(-6.5f, 2);
+
+
+                }
+                else if (pos.normal.x > .6f)
+                {
+                    rb.velocity = new Vector2(3, 2);
+
+                }
+               
+                
+            }
+            // Switch to idle state or handle other logic
+
+        }
     }
 
     public void ChangeCollider(int index)

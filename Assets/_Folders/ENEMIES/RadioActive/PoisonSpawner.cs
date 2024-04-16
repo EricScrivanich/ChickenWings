@@ -31,8 +31,8 @@ public class PoisonSpawner : MonoBehaviour
     {
         while (true)
         {
-            spawnedObject = Instantiate(poisonPrefab, spawnPoint.position, Quaternion.identity);
-            spawnedObject.transform.parent = transform;
+            spawnedObject = Instantiate(poisonPrefab, transform);
+            
             
             yield return new WaitForSeconds(spawnInterval);
         }

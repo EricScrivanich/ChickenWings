@@ -49,9 +49,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2fd349640d804fa69d4b9a77f0ea3db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebogLogEnabled: 0
+  debogLogEnabled: 0
+  player: {fileID: 0}
   slowdownFactor: 0.95
   deltaScale: 1
+  initialAddScoreDelay: 2
+  minimumAddScoreDelay: 0.4
+  delayDecreaseDuration: 80
 --- !u!114 &1002591744477790286
 MonoBehaviour:
   m_ObjectHideFlags: 0

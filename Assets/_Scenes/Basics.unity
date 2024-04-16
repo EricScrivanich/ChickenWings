@@ -194,7 +194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shaderTypes: 0
+  shaderTypes: 3
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0
@@ -2349,9 +2349,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   scoreText: {fileID: 1733153365}
+  Mana: {fileID: 0}
+  Lives: []
   RingRed: {fileID: 11400000, guid: d5428165d140444d991bb0c5e34af16f, type: 2}
   RingPink: {fileID: 11400000, guid: e549d978ef2c84652a50f724fc25a6f8, type: 2}
   RingGold: {fileID: 11400000, guid: dd58f32a2dde245e48fabe5bd1b5e711, type: 2}
+  RingPurple: {fileID: 0}
 --- !u!4 &1528943062 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8440166696154211301, guid: 4d60310f404d6473c872d23c83b10116, type: 3}
@@ -2381,9 +2384,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   scoreText: {fileID: 1733153365}
+  Mana: {fileID: 0}
+  Lives: []
   RingRed: {fileID: 11400000, guid: d5428165d140444d991bb0c5e34af16f, type: 2}
   RingPink: {fileID: 11400000, guid: e549d978ef2c84652a50f724fc25a6f8, type: 2}
   RingGold: {fileID: 11400000, guid: dd58f32a2dde245e48fabe5bd1b5e711, type: 2}
+  RingPurple: {fileID: 0}
 --- !u!1001 &1620491954
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3510,7 +3516,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1750629484722698203, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4100451905543458094, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
       propertyPath: slowdownFactor
