@@ -8,6 +8,7 @@ public struct CameraEvents
 {
     
     public Action<List<GameObject>, float> OnChangePosition;
+    public Action<float, float> OnShakeCamera;
 
     public Action<bool, float> OnMoveEnviroment;
     public Action<float, float> OnChangeYPosition;

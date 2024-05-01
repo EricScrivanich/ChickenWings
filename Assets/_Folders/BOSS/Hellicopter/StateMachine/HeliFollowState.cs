@@ -12,6 +12,11 @@ public class HeliFollowState : HeliBaseState
         throw new System.NotImplementedException();
     }
 
+    public override void ExitState(HeliStateManager heli)
+    {
+
+    }
+
     public override void UpdateState(HeliStateManager heli)
     {
         throw new System.NotImplementedException();

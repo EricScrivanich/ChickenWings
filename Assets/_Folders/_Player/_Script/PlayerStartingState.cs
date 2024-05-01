@@ -9,7 +9,8 @@ public class PlayerStartingState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.rb.gravityScale = .8f;
-        player.rb.velocity = new Vector2(0, 5);
+        // player.rb.velocity = new Vector2(0, 5);
+        player.AdjustForce(0, 5);
 
         time = 0;
         AudioManager.instance.PlayStartSound();

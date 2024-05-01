@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerDropState : PlayerBaseState
 {
-    private float dropPower = -15f;
+    private float dropPower = -14f;
     public override void EnterState(PlayerStateManager player)
     {
         
@@ -16,7 +16,8 @@ public class PlayerDropState : PlayerBaseState
         player.maxFallSpeed = -50;
         player.anim.SetTrigger("DropTrigger");
         player.disableButtons = true;
-        player.rb.velocity = new Vector2 (0,dropPower);
+        // player.rb.velocity = new Vector2 (0,dropPower);
+        player.AdjustForce(0, dropPower);
         player.rb.freezeRotation = true;
         
 

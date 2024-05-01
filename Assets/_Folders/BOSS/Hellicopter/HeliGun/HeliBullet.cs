@@ -4,10 +4,23 @@ using System.Collections;
 public class HeliBullet : MonoBehaviour
 {
     public float speed = 10f;
+
+    private float speedVar;
+
     public float lifetime = 3f;
+    [SerializeField] private HelicopterID heli;
 
     private void OnEnable()
     {
+        if (heli.isFlipped)
+        {
+            speedVar = -speed;
+        }
+        else
+        {
+            speedVar = speed;
+        }
+
         // Start the bullet's movement and lifetime countdown
         StartCoroutine(MoveAndDeactivate());
     }
@@ -19,7 +32,7 @@ public class HeliBullet : MonoBehaviour
         while (elapsedTime < lifetime)
         {
             // Move the bullet
-            transform.Translate(Vector3.left * speed * Time.deltaTime);
+            transform.Translate(Vector2.left * speedVar * Time.deltaTime);
 
             elapsedTime += Time.deltaTime;
             yield return null;

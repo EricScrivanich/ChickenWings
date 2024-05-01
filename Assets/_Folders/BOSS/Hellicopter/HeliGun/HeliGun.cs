@@ -31,9 +31,9 @@ public class HeliGun : MonoBehaviour
 
     IEnumerator ShootBullets(float totalShootTime, int bulletCount)
     {
-        float timeBetweenShots = totalShootTime / bulletCount;
+        float timeBetweenShots = helicopterID.shotDuration / helicopterID.bulletAmount;
 
-        for (int i = 0; i < bulletCount; i++)
+        for (int i = 0; i < helicopterID.bulletAmount; i++)
         {
             // Get a bullet from the pool
             GameObject bullet = bulletPool.Dequeue();

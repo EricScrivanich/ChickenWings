@@ -20,7 +20,7 @@ public class TimeManager : MonoBehaviour
 
     private void Awake()
     {
-        DebogLogEnabled = debogLogEnabled;
+        DebogLogEnabled = true;
         GlobalTimer = 0;
         Debug.unityLogger.logEnabled = DebogLogEnabled;
         Time.timeScale = slowdownFactor;
@@ -29,6 +29,12 @@ public class TimeManager : MonoBehaviour
 
     private void Start()
     {
+        GameObject.Find("Background").GetComponent<EnviromentMovement>().enabled = player.constantPlayerForceBool;
+
+        if (player.isTutorial || player.constantPlayerForceBool)
+        {
+            return;
+        }
         StartCoroutine(AddScore());
     }
 
@@ -54,7 +60,7 @@ public class TimeManager : MonoBehaviour
 
     private IEnumerator AddScore()
     {
-        
+
         while (player.isAlive)
         {
             // Calculate the current delay based on the elapsed time

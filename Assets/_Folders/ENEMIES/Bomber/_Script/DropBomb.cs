@@ -125,7 +125,7 @@ public class DropBomb : MonoBehaviour
             spawnTimer += Time.deltaTime;
             xPos = Random.Range(minX, maxX);
         }
-        if (spawnTimer >= spawnTime)
+        if (spawnTimer > ID.bomberTime)
         {
             bomberGoing = true;
             makeZoneBool = true;

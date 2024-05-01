@@ -28,7 +28,7 @@ public class PlayerParachuteState : PlayerBaseState
         // player.transform.RotateAround(player.parchutePoint.transform.position, new Vector3(0, 0, 1), 100f);
         if (player.rb.velocity.x > 7.2f)
         {
-            
+
             decelerationFactor = 6.7f;
         }
         else
@@ -59,7 +59,7 @@ public class PlayerParachuteState : PlayerBaseState
         player.isParachuting = false;
         player.ImageTransform.localRotation = Quaternion.Euler(0, 0, 0);
         player.anim.SetTrigger("IdleTrigger");
-        player.StartFillStaminaCoroutine();
+        // player.StartFillStaminaCoroutine();
         player.maxFallSpeed = player.ID.MaxFallSpeed;
         player.disableButtons = false;
     }
@@ -141,7 +141,7 @@ public class PlayerParachuteState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
-        player.UseStamina(52);
+        // player.UseStamina(52);
     }
 }
 

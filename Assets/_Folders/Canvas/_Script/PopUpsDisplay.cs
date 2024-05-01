@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+
+using DG.Tweening;
 
 public class PopUpsDisplay : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class PopUpsDisplay : MonoBehaviour
     [SerializeField] private float lerpTime = 1f;
     private float currentLerpTime = 0f;
     private GameObject player;
-    [SerializeField] private Image gameoverImage;
+
+    public RectTransform gameOver;
     private Vector2 initialPosition;
     private Vector2 targetPosition;
     private float positionArrivalThreshold = 1f;
@@ -30,10 +32,17 @@ public class PopUpsDisplay : MonoBehaviour
     void Start()
     {
         frozenOverlayMaterial.SetFloat("_FadeAmount", 1);
-        gameoverImage.gameObject.SetActive(false);
+
+
+        gameOver.gameObject.SetActive(false);
         Frozen.SetActive(false);
         FrozenOverlay.SetActive(false);
-        initialPosition = gameoverImage.transform.position;
+
+    }
+    private void GameOver2()
+    {
+        gameOver.anchoredPosition = new Vector2(0, Screen.height + 30);
+        gameOver.DOAnchorPos(new Vector2(0, 10), 1.5f);
     }
 
     void Update()
@@ -53,29 +62,30 @@ public class PopUpsDisplay : MonoBehaviour
 
     public void GameOver()
     {
+        gameOver.anchoredPosition = new Vector2(0, Screen.height + 30);
+        gameOver.gameObject.SetActive(true);
+        gameOver.DOAnchorPos(new Vector2(0, 10), 1.5f);
 
-        initialPosition = new Vector2(0, BoundariesManager.TopPlayerBoundary + 2);
-        gameoverImage.transform.position = initialPosition;
-        gameoverImage.gameObject.SetActive(true);
-        targetPosition = new Vector2(0, 1);
+        // gameoverImage.gameObject.SetActive(true);
+        // targetPosition = new Vector2(0, 1);
 
-        currentLerpTime = 0f;
-        StartCoroutine(MoveGameOverImage());
+        // currentLerpTime = 0f;
+        // StartCoroutine(MoveGameOverImage());
     }
 
-    private IEnumerator MoveGameOverImage()
-    {
-        while (currentLerpTime < lerpTime)
-        {
-            currentLerpTime += Time.deltaTime;
-            float perc = currentLerpTime / lerpTime;
-            float smoothT = Mathf.SmoothStep(0, 1, perc);
+    // private IEnumerator MoveGameOverImage()
+    // {
+    //     while (currentLerpTime < lerpTime)
+    //     {
+    //         currentLerpTime += Time.deltaTime;
+    //         float perc = currentLerpTime / lerpTime;
+    //         float smoothT = Mathf.SmoothStep(0, 1, perc);
 
-            gameoverImage.transform.position = Vector2.Lerp(initialPosition, targetPosition, smoothT);
+    //         gameoverImage.transform.position = Vector2.Lerp(initialPosition, targetPosition, smoothT);
 
-            yield return null;
-        }
-    }
+    //         yield return null;
+    //     }
+    // }
 
     private void FrozenEvent()
     {

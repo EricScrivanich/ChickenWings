@@ -7,8 +7,11 @@ public class PlayerID : ScriptableObject
 {
     
     public bool testingNewGravity;
+    public bool isTutorial;
     public float playerJumpForce;
     public float playerAddDownForce;
+    public bool constantPlayerForceBool;
+    public float constantPlayerForce;
     public float startAddDownForce;
     public float endAddDownForce;
     public float flipGravity;

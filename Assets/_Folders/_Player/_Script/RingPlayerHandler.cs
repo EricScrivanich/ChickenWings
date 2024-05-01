@@ -7,6 +7,7 @@ public class RingPlayerHandler : MonoBehaviour
     public PlayerID ID;
 
     [SerializeField] private GameObject scoreText;
+    [SerializeField] private GameObject tutorialText;
     [SerializeField] private Transform Mana;
     [SerializeField] private List<GameObject> Lives;
 
@@ -29,6 +30,10 @@ public class RingPlayerHandler : MonoBehaviour
 
     private void AddScore()
     {
+        if (ID.isTutorial)
+        {
+            return;
+        }
 
         ID.AddScore(3);
 
@@ -60,6 +65,12 @@ public class RingPlayerHandler : MonoBehaviour
                 break;
 
             case 2:
+                if (ID.isTutorial)
+                {
+                    RingGold.GetBall(transform.position, null, tutorialText.transform.position);
+                    return;
+
+                }
 
                 RingGold.GetBall(transform.position, null, scoreText.transform.position);
 
@@ -78,6 +89,11 @@ public class RingPlayerHandler : MonoBehaviour
     }
     private void GoldFinish()
     {
+        if (ID.isTutorial)
+        {
+            RingGold.ringEvent.OnCheckOrder?.Invoke();
+            return;
+        }
         ID.AddScore(Mathf.CeilToInt(RingGold.CorrectRing * 2) + 3);
     }
 

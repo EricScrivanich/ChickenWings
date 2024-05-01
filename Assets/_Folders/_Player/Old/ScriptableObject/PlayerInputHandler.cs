@@ -23,7 +23,7 @@ public class PlayerInputHandler : PlayerSystem
         controls.Movement.Jump.started += ctx => player.ID.events.OnJump?.Invoke();
         controls.Movement.JumpRight.performed += ctx => player.ID.events.OnFlipRight?.Invoke();
         controls.Movement.JumpLeft.performed += ctx => player.ID.events.OnFlipLeft?.Invoke();
-        controls.Movement.Dash.performed += ctx => player.ID.events.OnDash?.Invoke();
+        controls.Movement.Dash.performed += ctx => player.ID.events.OnDash?.Invoke(true);
         controls.Movement.Drop.performed += ctx => player.ID.events.OnDrop?.Invoke();
         controls.Movement.DropEgg.performed += ctx => player.ID.events.OnEggDrop?.Invoke();
 

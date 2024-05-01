@@ -27,7 +27,7 @@ public class HighlightButtons : MonoBehaviour
 
     private void HighlightDash(bool isPressed)
     {
-        Debug.Log("Pressed");
+
         if (isPressed)
         {
             HighlightButton(dashButton);
@@ -79,17 +79,17 @@ public class HighlightButtons : MonoBehaviour
 
     private void OnEnable()
     {
-        player.globalEvents.HighlightDash += HighlightDash;
-        player.globalEvents.HighlightDrop += HighlightDrop;
-        player.globalEvents.HighlightEgg += HighlightEgg;
+        // player.globalEvents.HighlightDash += HighlightDash;
+        // player.globalEvents.HighlightDrop += HighlightDrop;
+        // player.globalEvents.HighlightEgg += HighlightEgg;
 
 
     }
     private void OnDisable()
     {
-        player.globalEvents.HighlightDash -= HighlightDash;
-        player.globalEvents.HighlightDrop -= HighlightDrop;
-        player.globalEvents.HighlightEgg -= HighlightEgg;
+        // player.globalEvents.HighlightDash -= HighlightDash;
+        // player.globalEvents.HighlightDrop -= HighlightDrop;
+        // player.globalEvents.HighlightEgg -= HighlightEgg;
 
     }
 }

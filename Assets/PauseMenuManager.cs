@@ -5,57 +5,59 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
 {
-
     [SerializeField] private GameObject UI;
+    
 
+    // This method toggles the pause state of the game.
+    public void TogglePause()
+    {
+        if (Time.timeScale != 0)
+        {
+            Pause(true);
+        }
+        else
+        {
+            Pause(false);
+        }
+    }
 
-    public void Pause(bool isPaused)
+    // This method sets the game into a paused or unpaused state.
+    private void Pause(bool isPaused)
     {
         if (isPaused)
         {
             Time.timeScale = 0;
             UI.SetActive(true);
-
         }
         else
         {
             UI.SetActive(false);
             Time.timeScale = 1;
-
         }
     }
-    // Start is called before the first frame update
+
+    // This method is called to return to the main menu.
     public void Menu()
     {
         SceneManager.LoadScene("MainMenu");
-        Time.timeScale = 1;
+        Time.timeScale = 1;  // Ensure game time is running normally in the main menu.
     }
 
-
-
-    void OnApplicationFocus(bool pauseStatus)
+    // Called when the application is paused or resumed.
+    private void OnApplicationPause(bool isPaused)
     {
-        // if (!pauseStatus )
-        // {
-        //     Time.timeScale = 0;
-        //     UI.SetActive(true);//you
-
-        // }
-       
-     
-    }
-
-    private void OnApplicationPause(bool pauseStatus)
-    {
-        if (pauseStatus)
+        if (isPaused)
         {
-            Time.timeScale = 0;
-            UI.SetActive(true);
-
+          
+            // When the game is paused by the system (going to background).
+            Pause(true);
         }
         else
         {
-
+            
+            // When the game returns from background, keep it paused.
+            // Pause(true);
         }
     }
 }
+

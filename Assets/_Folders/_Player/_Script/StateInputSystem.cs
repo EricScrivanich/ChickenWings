@@ -25,11 +25,14 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.Jump.performed += ctx => ID.events.OnJump?.Invoke();
         controls.Movement.JumpRight.performed += ctx => ID.events.OnFlipRight?.Invoke();
         controls.Movement.JumpLeft.performed += ctx => ID.events.OnFlipLeft?.Invoke();
-        controls.Movement.Dash.performed += ctx => ID.events.OnDash?.Invoke();
+        // controls.Movement.Dash.started += ctx => ID.events.OnDash?.Invoke();
+        controls.Movement.Dash.performed += ctx => ID.events.OnDash?.Invoke(true);
+        controls.Movement.Dash.canceled += ctx => ID.events.OnDash?.Invoke(false);
+       
 
         controls.Movement.Drop.performed += ctx => ID.events.OnDrop?.Invoke();
         controls.Movement.DropEgg.performed += ctx => ID.events.OnEggDrop?.Invoke();
-        controls.Movement.DashSlash.performed += ctx => ID.events.OnDashSlash?.Invoke();
+        // controls.Movement.DashSlash.performed += ctx => ID.events.OnDashSlash?.Invoke();
 
         controls.Movement.HoldJumpRight.performed += ctx =>
        {

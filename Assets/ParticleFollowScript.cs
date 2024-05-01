@@ -25,7 +25,7 @@ public class ParticleFollowScript : MonoBehaviour
             gameObject.transform.position = ringTransform.transform.position;
 
         }
-        Debug.Log("yerr");
+       
 
 
     }

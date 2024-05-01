@@ -65,6 +65,7 @@ MonoBehaviour:
   - 0.05
   - 0.03
   - 0.02
+  MountainSpeeds: []
   gradientBlends:
   - 0
   - 0
@@ -753,6 +754,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 56641520349870396}
     m_Modifications:
+    - target: {fileID: 3386728248768953284, guid: 34fd954d97fc140658d345dc122076dd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 50784a7644d5b45aebd6e900881b9bb8, type: 2}
     - target: {fileID: 6835046388719263712, guid: 34fd954d97fc140658d345dc122076dd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.9953

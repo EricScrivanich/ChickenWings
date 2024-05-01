@@ -1,13 +1,19 @@
 using System.Collections;
 using System;
 using UnityEngine;
-using System.Collections.Generic;
+
 
 public class MountainController : MonoBehaviour
 {
     public CameraID cam;
+    private bool isShaking = false;
 
-    public Transform player;
+    [SerializeField] private GameObject[] DeActivate;
+
+
+
+    public Transform playerTransform;
+    public PlayerID player;
     public static Action<Vector2, float> OnMoveCamera;
     public static Action<float, float> OnChangeZoom;
     public static Action<float, float> OnChangeSpeed;
@@ -37,11 +43,17 @@ public class MountainController : MonoBehaviour
     private void Awake()
     {
 
-        speed = startSpeed;
+
     }
 
     private void Start()
     {
+        foreach (GameObject obj in DeActivate)
+        {
+            obj.SetActive(false);
+        }
+        speed = player.constantPlayerForce;
+
         Debug.Log(targetCamera.aspect * targetCamera.orthographicSize * 2);
         originalCameraSize = targetCamera.orthographicSize;
 
@@ -55,25 +67,20 @@ public class MountainController : MonoBehaviour
     void Update()
     {
 
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
+        targetCamera.transform.Translate(Vector2.right * speed * Time.deltaTime);
 
 
     }
 
-    public void StartMoving()
-    {
-
-
-    }
 
 
 
     public void AdjustCameraYPosition(float yThreshold, bool setBelow, float duration)
     {
-        Vector3 playerViewportPosition = targetCamera.WorldToViewportPoint(player.transform.position);
+        Vector3 playerTransformViewportPosition = targetCamera.WorldToViewportPoint(playerTransform.transform.position);
         bool adjustY = false;
 
-        if ((playerViewportPosition.y > yThreshold && setBelow) || (playerViewportPosition.y < yThreshold && !setBelow))
+        if ((playerTransformViewportPosition.y > yThreshold && setBelow) || (playerTransformViewportPosition.y < yThreshold && !setBelow))
         {
             adjustY = true;
         }
@@ -89,9 +96,9 @@ public class MountainController : MonoBehaviour
 
     private IEnumerator AdjustCameraYCoroutine(float yThreshold, bool setBelow, float duration)
     {
-        float playerPosition = targetCamera.WorldToViewportPoint(player.transform.position).y;
+        float playerTransformPosition = targetCamera.WorldToViewportPoint(playerTransform.transform.position).y;
         float startingY = targetCamera.transform.position.y;
-        float movePercent = MathF.Abs(yThreshold - playerPosition);
+        float movePercent = MathF.Abs(yThreshold - playerTransformPosition);
         float moveAmount = (targetCamera.orthographicSize * 2) * movePercent;
 
         if (setBelow)
@@ -112,12 +119,38 @@ public class MountainController : MonoBehaviour
         }
     }
 
+
+    private void MoveCameraYPosition(float amount, float time)
+    {
+        if (moveCameraYCoroutine != null) StopCoroutine(moveCameraYCoroutine);
+        if (adjustCameraYCoroutine != null) StopCoroutine(adjustCameraYCoroutine);
+        moveCameraYCoroutine = StartCoroutine(MoveCameraYCourintine(amount, time));
+
+    }
+
+    private IEnumerator MoveCameraYCourintine(float targetY, float duration)
+    {
+        float time = 0;
+        float startingY = targetCamera.transform.position.y;
+
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float newY = Mathf.SmoothStep(startingY, targetY, time / duration);
+
+            targetCamera.transform.position = new Vector3(targetCamera.transform.position.x, newY, targetCamera.transform.position.z);
+            yield return null;
+        }
+
+    }
+
     public void AdjustCameraXPosition(float xThreshold, bool setBehind, float duration)
     {
-        Vector3 playerViewportPosition = targetCamera.WorldToViewportPoint(player.transform.position);
+        Vector3 playerTransformViewportPosition = targetCamera.WorldToViewportPoint(playerTransform.transform.position);
         bool adjustX = false;
 
-        if ((playerViewportPosition.x > xThreshold && setBehind) || (playerViewportPosition.x < xThreshold && !setBehind))
+        if ((playerTransformViewportPosition.x > xThreshold && setBehind) || (playerTransformViewportPosition.x < xThreshold && !setBehind))
         {
             adjustX = true;
         }
@@ -134,9 +167,9 @@ public class MountainController : MonoBehaviour
 
     private IEnumerator AdjustCameraXCoroutine(float xThreshold, bool setBehind, float duration)
     {
-        float playerPosition = targetCamera.WorldToViewportPoint(player.transform.position).x;
+        float playerTransformPosition = targetCamera.WorldToViewportPoint(playerTransform.transform.position).x;
         float startingX = targetCamera.transform.position.x;
-        float movePercent = MathF.Abs(xThreshold - playerPosition);
+        float movePercent = MathF.Abs(xThreshold - playerTransformPosition);
         float moveAmount = (targetCamera.aspect * targetCamera.orthographicSize * 2) * movePercent;
 
         if (!setBehind)
@@ -145,13 +178,14 @@ public class MountainController : MonoBehaviour
         }
 
         float targetX = startingX + moveAmount;
-        float elapsedTime = 0;
+        float startTime = Time.time;
 
-        while (elapsedTime < duration)
+        while (Time.time - startTime < duration)
         {
-            elapsedTime += Time.deltaTime;
-            float newX = Mathf.SmoothStep(startingX, targetX, elapsedTime / duration);
-
+            float elapsed = Time.time - startTime;
+            float newX = Mathf.SmoothStep(startingX, targetX, elapsed / duration);
+            // Include the constant speed effect by adding the product of speed and elapsed time
+            newX += speed * elapsed;
             targetCamera.transform.position = new Vector3(newX, targetCamera.transform.position.y, targetCamera.transform.position.z);
             yield return null;
         }
@@ -160,40 +194,6 @@ public class MountainController : MonoBehaviour
 
 
 
-
-
-
-
-    private void MoveCamera(Vector2 targetPosition, float duration)
-    {
-        if (moveCameraCoroutine != null) StopCoroutine(moveCameraCoroutine);
-        moveCameraCoroutine = StartCoroutine(MoveCameraCoroutine(targetPosition, duration));
-    }
-
-    private void MoveCameraYPosition(float amount, float time)
-    {
-        if (moveCameraYCoroutine != null) StopCoroutine(moveCameraYCoroutine);
-        if (adjustCameraYCoroutine != null) StopCoroutine(adjustCameraYCoroutine);
-        moveCameraYCoroutine = StartCoroutine(MoveCameraYCourintine(amount, time));
-
-    }
-
-    private IEnumerator MoveCameraYCourintine(float targetY, float duration)
-    {
-        float time = 0;
-        float startingY = targetCamera.transform.position.y;
-        
-
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            float newY = Mathf.SmoothStep(startingY, targetY, time / duration);
-
-            targetCamera.transform.position = new Vector3(targetCamera.transform.position.x, newY, targetCamera.transform.position.z);
-            yield return null;
-        }
-
-    }
 
     private void MoveCameraXPosition(float amount, float time)
     {
@@ -205,99 +205,20 @@ public class MountainController : MonoBehaviour
 
     private IEnumerator MoveCameraXCourintine(float amount, float duration)
     {
-        float time = 0;
+        float startTime = Time.time;
         float startingX = targetCamera.transform.position.x;
         float targetX = startingX + amount;
 
-        while (time < duration)
+        while (Time.time - startTime < duration)
         {
-            time += Time.deltaTime;
-            float newX = Mathf.SmoothStep(startingX, targetX, time / duration);
-
+            float elapsed = Time.time - startTime;
+            float newX = Mathf.SmoothStep(startingX, targetX, elapsed / duration);
+            // Include the constant speed effect by adding the product of speed and elapsed time
+            newX += speed * elapsed;
             targetCamera.transform.position = new Vector3(newX, targetCamera.transform.position.y, targetCamera.transform.position.z);
             yield return null;
         }
-
     }
-
-    private IEnumerator MoveCameraCoroutine(Vector2 targetPosition, float duration)
-    {
-        float time = 0;
-        Vector2 startPosition = targetCamera.transform.position;
-
-
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            Vector2 newPosition = Vector2.Lerp(startPosition, targetPosition, time / duration);
-            targetCamera.transform.position = new Vector3(newPosition.x, newPosition.y, targetCamera.transform.position.z);
-            yield return null;
-        }
-
-        targetCamera.transform.position = new Vector3(targetPosition.x, targetPosition.y, targetCamera.transform.position.z);
-    }
-
-    // private void MoveCamera(List<GameObject> targetObjects, float duration)
-    // {
-    //     if (moveCameraCoroutine != null) StopCoroutine(moveCameraCoroutine);
-    //     moveCameraCoroutine = StartCoroutine(MoveCameraCoroutine(targetObjects, duration));
-    // }
-
-    // private IEnumerator MoveCameraCoroutine(List<GameObject> targetObjects, float duration)
-    // {
-    //     Debug.Log("ChangingCam");
-
-    //     // Ensure there's at least one object in the list
-    //     if (targetObjects == null || targetObjects.Count == 0) yield break;
-
-    //     // Calculate the duration for each segment based on the number of objects
-    //     int numberOfSegments = targetObjects.Count;
-    //     float segmentDuration = duration / numberOfSegments;
-
-    //     Vector3 startPosition = targetCamera.transform.position;
-
-    //     for (int i = 0; i < numberOfSegments; i++)
-    //     {
-    //         GameObject currentTarget = targetObjects[i];
-    //         float segmentTime = 0;
-
-    //         while (segmentTime < segmentDuration)
-    //         {
-    //             if (!currentTarget)
-    //             {
-    //                 Debug.LogWarning("Target GameObject is null, skipping to next target.");
-    //                 break; // Skip to the next target if the current one is null (destroyed or not assigned)
-    //             }
-
-    //             Vector2 targetPosition = currentTarget.transform.position;
-    //             segmentTime += Time.deltaTime;
-
-    //             // Calculate the new position
-    //             float t = segmentTime / segmentDuration;
-    //             Vector2 newPosition = Vector2.Lerp(startPosition, targetPosition, t);
-    //             targetCamera.transform.position = new Vector3(newPosition.x, newPosition.y, targetCamera.transform.position.z);
-
-    //             // Check if the camera is close enough to the target position
-    //             if (Vector2.Distance(newPosition, targetPosition) < 0.4f)
-    //             {
-    //                 break; // Move to the next target if within a small distance
-    //             }
-
-    //             yield return null;
-    //         }
-
-    //         startPosition = targetCamera.transform.position; // Update the start position for the next segment
-
-    //         // Ensure the camera is exactly at the last known position of the current target
-    //         if (currentTarget)
-    //         {
-    //             Vector2 finalPosition = currentTarget.transform.position;
-    //             targetCamera.transform.position = new Vector3(finalPosition.x, finalPosition.y, targetCamera.transform.position.z);
-    //         }
-    //     }
-    // }
-
-
 
 
 
@@ -305,6 +226,11 @@ public class MountainController : MonoBehaviour
     {
         if (changeSpeedCoroutine != null) StopCoroutine(changeSpeedCoroutine);
         changeSpeedCoroutine = StartCoroutine(ChangeSpeedCoroutine(targetSpeed, duration));
+    }
+
+    public void DieChangeSpeed()
+    {
+        ChangeSpeed(0, 2);
     }
 
     private void ChangeZoom(float targetZoom, float duration)
@@ -338,10 +264,39 @@ public class MountainController : MonoBehaviour
         {
             time += Time.deltaTime;
             speed = Mathf.Lerp(startSpeed, targetSpeed, time / duration);
+            player.globalEvents.OnAdjustConstantSpeed?.Invoke(speed);
             yield return null;
         }
 
         speed = targetSpeed;
+    }
+
+
+    public void ShakeCamera(float duration, float magnitude)
+    {
+        // if (!isShaking)
+        // {
+        //     StartCoroutine(Shake(duration, magnitude));
+        //     isShaking = true;
+        // }
+    }
+
+    private IEnumerator Shake(float duration, float magnitude)
+    {
+        Vector3 originalPosition = targetCamera.transform.localPosition;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float x = UnityEngine.Random.Range(-1f, 1f) * magnitude;
+            float y = UnityEngine.Random.Range(-1f, 1f) * magnitude;
+
+            targetCamera.transform.localPosition = new Vector3(originalPosition.x + x, originalPosition.y + y, -10);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        targetCamera.transform.localPosition = originalPosition;
+        isShaking = false;
     }
 
     private void OnEnable()
@@ -359,9 +314,12 @@ public class MountainController : MonoBehaviour
         cam.events.OnChangeSpeed += ChangeSpeed;
         cam.events.OnChangeZoom += ChangeZoom;
 
+        cam.events.OnShakeCamera += ShakeCamera;
+
 
 
     }
+
 
     private void OnDisable()
     {
@@ -382,5 +340,7 @@ public class MountainController : MonoBehaviour
         // cam.events.OnChangePosition -= MoveCamera;
         cam.events.OnChangeSpeed -= ChangeSpeed;
         cam.events.OnChangeZoom -= ChangeZoom;
+        cam.events.OnShakeCamera -= ShakeCamera;
+
     }
 }

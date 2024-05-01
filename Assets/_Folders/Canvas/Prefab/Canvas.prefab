@@ -49,6 +49,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 828175758325819034}
+  - component: {fileID: 4333359594649889521}
   m_Layer: 5
   m_Name: Buttons
   m_TagString: Untagged
@@ -87,6 +88,34 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4333359594649889521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 119535735836634470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e2256b8dcbbd4ad7be57f47938b8173, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  dashButton: {fileID: 6490646008505846873}
+  dashImage: {fileID: 5018770031582548636}
+  dashImageMana: {fileID: 547056974804571516}
+  dashSlashCooldown: 20
+  PressedColorNormal: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.8509804}
+  PressedColorMana: {r: 0.5368903, g: 0.66741204, b: 0.8962264, a: 0.8509804}
+  fillingManaColor: {r: 0.45882353, g: 0.92156863, b: 1, a: 0.6}
+  canUseDashSlashButtonColor: {r: 0.28627452, g: 0.21176471, b: 1, a: 0.5019608}
+  canUseDashSlashImageColor: {r: 0.16470589, g: 0.7254902, b: 1, a: 0.7490196}
+  orignialButtonColor: {r: 0.83137256, g: 0.7647059, b: 0.7647059, a: 0.14901961}
+  dropButton: {fileID: 6617124750898684435}
+  dropImage: {fileID: 2292492962917707332}
+  canDropColor: {r: 1, g: 1, b: 1, a: 0.6}
+  canNotDropColor: {r: 1, g: 1, b: 1, a: 0.3}
+  leftFlipArrow: {fileID: 1813416036277770053}
 --- !u!1 &264844406438587340
 GameObject:
   m_ObjectHideFlags: 0
@@ -907,16 +936,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1060766693509726002}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.85859, y: 0.85859, z: 0.85859}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4537927521024295274}
+  m_Father: {fileID: 7867726890359498018}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000029325, y: 0.00000095367}
+  m_AnchoredPosition: {x: 2, y: -2}
   m_SizeDelta: {x: 146.9946, y: 195.444}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6730223622299755976
@@ -1694,16 +1723,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2575474324596084166}
-  m_LocalRotation: {x: -0, y: -0, z: -1, w: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.67295897, y: 1.06942, z: 0.78785}
+  m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 7867726890359498018}
+  m_Father: {fileID: 4537927521024295274}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 19, y: 0}
+  m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: 356.03, y: 171.85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5576856920986047429
@@ -1727,7 +1756,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.6313726}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.6}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -1736,7 +1765,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: -362160147, guid: 3c3562a9851f94f9581aeb50ffdbfc26, type: 3}
   m_Type: 0
-  m_PreserveAspect: 1
+  m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1928,8 +1957,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000015259, y: -0.000005722}
-  m_SizeDelta: {x: 315.56, y: 191.92}
+  m_AnchoredPosition: {x: 1.52, y: -5.7}
+  m_SizeDelta: {x: 315, y: 191.92}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6132974652127720928
 CanvasRenderer:
@@ -1952,7 +1981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.6313726}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.6}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -1963,10 +1992,10 @@ MonoBehaviour:
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &3825094185149179242
@@ -2005,7 +2034,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.000012532, y: -0.0000038147}
-  m_SizeDelta: {x: 224.79, y: 298.88}
+  m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6906809818455410059
 CanvasRenderer:
@@ -2037,7 +2066,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 2115318138, guid: 3c3562a9851f94f9581aeb50ffdbfc26, type: 3}
   m_Type: 0
-  m_PreserveAspect: 1
+  m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -2101,7 +2130,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 34, y: -0.0000076294}
-  m_SizeDelta: {x: 279.2, y: 371.23}
+  m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4006204776006588000
 CanvasRenderer:
@@ -2133,7 +2162,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 2115318138, guid: 3c3562a9851f94f9581aeb50ffdbfc26, type: 3}
   m_Type: 0
-  m_PreserveAspect: 1
+  m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -2423,7 +2452,7 @@ GameObject:
   - component: {fileID: 6617124750898684435}
   - component: {fileID: 3257723190909489030}
   m_Layer: 5
-  m_Name: EggDrop
+  m_Name: DropButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2441,13 +2470,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7647278455915667707}
+  - {fileID: 1409282355871861312}
   m_Father: {fileID: 828175758325819034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -970.19, y: -126}
-  m_SizeDelta: {x: 393.7, y: 269.0594}
+  m_AnchoredPosition: {x: -970.19, y: -117}
+  m_SizeDelta: {x: 360, y: 260}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1734225128128856183
 CanvasRenderer:
@@ -2479,7 +2508,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: -1009940903, guid: 3c3562a9851f94f9581aeb50ffdbfc26, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -2512,7 +2541,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.83137256, g: 0.7647059, b: 0.7647059, a: 0.24705882}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 0.6084906, b: 0.6084906, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -2543,7 +2572,82 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ControlPath: <Gamepad>/buttonWest
+  m_ControlPath: <Gamepad>/buttonNorth
+--- !u!1 &4386451873514375674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3769798622462857990}
+  - component: {fileID: 8380998012585126435}
+  - component: {fileID: 547056974804571516}
+  m_Layer: 5
+  m_Name: DashIMGMana
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3769798622462857990
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386451873514375674}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5841510012793932065}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1.52, y: -5.7}
+  m_SizeDelta: {x: 315, y: 191.92}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &8380998012585126435
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386451873514375674}
+  m_CullTransparentMesh: 1
+--- !u!114 &547056974804571516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386451873514375674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.16509432, g: 0.7262329, b: 1, a: 0.7490196}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -362160147, guid: 3c3562a9851f94f9581aeb50ffdbfc26, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 0
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4418802941015593343
 GameObject:
   m_ObjectHideFlags: 0
@@ -3105,6 +3209,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UI: {fileID: 8962624035197747143}
+  audioSources:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &5335122777903548441
 GameObject:
   m_ObjectHideFlags: 0
@@ -3193,7 +3301,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -951.42676, y: -407.49}
+  m_AnchoredPosition: {x: -992, y: -395}
   m_SizeDelta: {x: 412.75, y: 239.04}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2943746190463735471
@@ -3380,7 +3488,7 @@ GameObject:
   - component: {fileID: 2716229841730491999}
   - component: {fileID: 3094427194940941586}
   m_Layer: 5
-  m_Name: DropButton
+  m_Name: EggButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3398,13 +3506,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1409282355871861312}
+  - {fileID: 7647278455915667707}
   m_Father: {fileID: 828175758325819034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -627.6761, y: -365.86}
-  m_SizeDelta: {x: 305.3375, y: 208.61}
+  m_SizeDelta: {x: 276.8, y: 233.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6947286292864032528
 CanvasRenderer:
@@ -3436,7 +3544,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: -1009940903, guid: 3c3562a9851f94f9581aeb50ffdbfc26, type: 3}
   m_Type: 0
-  m_PreserveAspect: 1
+  m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -3466,10 +3574,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0.8301887, g: 0.763617, b: 0.763617, a: 0.24705882}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.8509804}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.7924528, g: 0, b: 0, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -3500,7 +3608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ControlPath: <Gamepad>/buttonNorth
+  m_ControlPath: <Gamepad>/buttonWest
 --- !u!1 &7085125459688532321
 GameObject:
   m_ObjectHideFlags: 0
@@ -3755,16 +3863,17 @@ RectTransform:
   m_GameObject: {fileID: 7340038301710949231}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1.05, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7412079424495291990}
+  - {fileID: 3769798622462857990}
   m_Father: {fileID: 828175758325819034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 996, y: -116.944695}
-  m_SizeDelta: {x: 394.13, y: 261.24}
+  m_AnchoredPosition: {x: 996, y: -117}
+  m_SizeDelta: {x: 360, y: 260}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4415603793935856101
 CanvasRenderer:
@@ -3827,9 +3936,9 @@ MonoBehaviour:
   m_Colors:
     m_NormalColor: {r: 0.8301887, g: 0.763617, b: 0.763617, a: 0.14901961}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.8509804}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.89411765}
+    m_PressedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.8509804}
     m_SelectedColor: {r: 0.83137256, g: 0.7647059, b: 0.7647059, a: 0.24705882}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 0.60784316, b: 0.60784316, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -5001,8 +5110,8 @@ MonoBehaviour:
   normalColor: {r: 0.83137256, g: 0.7647059, b: 0.7647059, a: 0.24705882}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   dashButton: {fileID: 6490646008505846873}
-  dropButton: {fileID: 2716229841730491999}
-  eggButton: {fileID: 6617124750898684435}
+  dropButton: {fileID: 6617124750898684435}
+  eggButton: {fileID: 2716229841730491999}
 --- !u!114 &1356997933925494661 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4456421439802056448, guid: e639662d7def64ee4a3724906deff4b4, type: 3}

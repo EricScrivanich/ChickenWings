@@ -7,7 +7,8 @@ public class SpawnPointManager : MonoBehaviour
 {
     public static List<SpawnPoint> SpawnPoints = new List<SpawnPoint>();
 
-    public int numberOfPointsToDeactivate = 3;
+   
+    public PlaneManagerID ID;
     public static bool doRandom = true;
     private bool useSequential = true;
     private bool isActive = true;
@@ -21,8 +22,9 @@ public class SpawnPointManager : MonoBehaviour
         InitializeSpawnPoints(); 
     }
     private void Start() {
-        int startIndex = UnityEngine.Random.Range(0, SpawnPoints.Count - numberOfPointsToDeactivate);
-        SetSpawnPointsActiveInRange(startIndex, startIndex + numberOfPointsToDeactivate, false);
+        
+        int startIndex = UnityEngine.Random.Range(0, SpawnPoints.Count - ID.numberOfSpawnsToDeactivate);
+        SetSpawnPointsActiveInRange(startIndex, startIndex + ID.numberOfSpawnsToDeactivate, false);
     }
 
     void Update()
@@ -40,13 +42,13 @@ public class SpawnPointManager : MonoBehaviour
         {
             if (useSequential)
             {
-                int startIndex = UnityEngine.Random.Range(0, (SpawnPoints.Count + 1) - numberOfPointsToDeactivate);
+                int startIndex = UnityEngine.Random.Range(0, (SpawnPoints.Count + 1) - ID.numberOfSpawnsToDeactivate);
             
-                SetSpawnPointsActiveInRange(startIndex, startIndex + numberOfPointsToDeactivate, false);
+                SetSpawnPointsActiveInRange(startIndex, startIndex + ID.numberOfSpawnsToDeactivate, false);
             }
             else
             {
-                var randomPoints = GetRandomSpawnPoints(numberOfPointsToDeactivate);
+                var randomPoints = GetRandomSpawnPoints(ID.numberOfSpawnsToDeactivate);
                 SetSpawnPointsActive(randomPoints, false);
             }
 

@@ -6,10 +6,12 @@ using System.Linq;
 
 public class RingSpawner : MonoBehaviour
 {
-    public static RingSpawner Instance;
+
     [ExposedScriptableObject]
     public RingPool Pool;
     public PlaneManagerID PlaneID;
+
+    [SerializeField] private bool bossExample;
 
     [SerializeField] private PlaneData crop;
     [SerializeField] private PlaneData jet;
@@ -42,7 +44,7 @@ public class RingSpawner : MonoBehaviour
     private void Awake()
     {
 
-        Instance = this;
+
         ringType = Pool.RingType[Index];
 
         correctRing = 1;
@@ -66,10 +68,28 @@ public class RingSpawner : MonoBehaviour
 
     private void Start()
     {
-        PlaneID.SpawnExplosionQueue();
         crop.SpawnPlanePool();
         jet.SpawnPlanePool();
         cargo.SpawnPlanePool();
+        PlaneID.SpawnExplosionQueue();
+
+        if (bossExample)
+        {
+            StartCoroutine(BossSpawner());
+            PlaneID.bomberTime = 30;
+            PlaneID.numberOfSpawnsToDeactivate = 3;
+            PlaneID.SpawnExplosionQueue();
+            PlaneID.spawnRandomPlanesBool = true;
+
+            return;
+
+        }
+
+
+        PlaneID.bomberTime = 27;
+        PlaneID.numberOfSpawnsToDeactivate = 3;
+
+
 
         if (Pool.Testing)
         {
@@ -101,14 +121,14 @@ public class RingSpawner : MonoBehaviour
 
     public void NewTriggeredSpawn(int triggerValue)
     {
-       
+
 
         if (triggerValue == -1)
         {
             if (Pool.Testing)
             {
                 StartCoroutine(SpawnSpecificSetup());
-                
+
             }
             else
             {
@@ -239,7 +259,7 @@ public class RingSpawner : MonoBehaviour
         }
 
 
-}
+    }
 
     private void SpawnRandomSetup(int ringIndex, float time)
     {
@@ -322,6 +342,7 @@ public class RingSpawner : MonoBehaviour
         NewTriggeredSpawn(0);
     }
 
+    #region SpawnerMain
     private IEnumerator MainSpawner()
     {
         yield return new WaitForSeconds(6f);
@@ -334,23 +355,54 @@ public class RingSpawner : MonoBehaviour
         SpawnRandomSetup(2, 2.5f);
 
         yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+        PlaneID.bomberTime = 22;
+
         yield return new WaitForSeconds(4f);
+        PlaneID.numberOfSpawnsToDeactivate = 2;
+
 
         crop.PlanesAvailable = 3;
         yield return new WaitForSeconds(4f);
         jet.PlanesAvailable = 2;
         yield return new WaitForSeconds(5f);
+
+        Debug.Log("Cargo");
         StartCoroutine(SpawnPlaneType(cargo));
         yield return new WaitForSeconds(8f);
         cargo.PlanesAvailable = 2;
         yield return new WaitForSeconds(6f);
         SpawnRandomSetup(0, 2.5f);
-yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+
+        yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+        PlaneID.bomberTime = 17;
+        crop.PlanesAvailable = 4;
+        yield return new WaitForSeconds(3f);
+        jet.PlanesAvailable = 3;
 
 
     }
 
+    private IEnumerator BossSpawner()
+    {
+        crop.PlanesAvailable = 2;
+        StartCoroutine(SpawnPlaneType(crop));
+        yield return new WaitForSeconds(9f);
 
+        StartCoroutine(SpawnPlaneType(jet));
+        yield return new WaitForSeconds(3f);
+
+        yield return new WaitForSeconds(10f);
+        StartCoroutine(SpawnPlaneType(cargo));
+
+
+
+
+
+
+
+    }
+
+    #endregion
 
     #region Plane
 

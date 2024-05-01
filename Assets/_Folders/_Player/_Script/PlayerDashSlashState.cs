@@ -19,13 +19,14 @@ public class PlayerDashSlashState : PlayerBaseState
 
     public override void EnterState(PlayerStateManager player)
     {
-        
-        currentXVelocity = player.rb.velocity.x;
+
+       
         time = 0;
         rotationSpeedVar = startingRotationSpeed;
         player.rotateSlash = false;
+        player.ChangeCollider(-1);
 
-        
+
         // player.Sword.SetActive(true);
         currentRotation = 0;
         currentRotationBefore = 0;
@@ -34,7 +35,7 @@ public class PlayerDashSlashState : PlayerBaseState
         totalRotation = 0;
         startRotation = false;
 
-       
+
         player.anim.SetTrigger("DashSlashTrigger");
         AudioManager.instance.PlaySwordSlashSound();
 
@@ -64,11 +65,14 @@ public class PlayerDashSlashState : PlayerBaseState
         if (!player.rotateSlash)
         {
 
-            player.rb.velocity = new Vector2(5, 0);
+            // player.rb.velocity = new Vector2(5, 0);
+            player.AdjustForce(4, 0);
         }
         else if (!hasSlashed)
         {
-            player.rb.velocity = new Vector2(1, -.1f);
+            // player.rb.velocity = new Vector2(1, -.1f);
+            player.AdjustForce(1, -.1f);
+
 
         }
 
@@ -81,7 +85,7 @@ public class PlayerDashSlashState : PlayerBaseState
 
     // }
 
-    public override void RotateState(PlayerStateManager player)
+    public override void RotateState(PlayerStateManager player) 
     {
         if (hasSlashed)
         {

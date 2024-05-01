@@ -12,7 +12,9 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - GRADIENT2COL_ON
   - GRADIENT_ON
+  - RECTSIZE_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -134,7 +136,7 @@ Material:
     - _GlowGlobal: 1
     - _GradBlend: 1
     - _GradBoostX: 0.1
-    - _GradBoostY: 2.8
+    - _GradBoostY: 1.02
     - _GradIsRadial: 0
     - _GrassManualAnim: 1
     - _GrassManualToggle: 0
@@ -197,7 +199,7 @@ Material:
     - _RadialClip2: 0
     - _RadialStartAngle: 90
     - _RandomSeed: 0
-    - _RectSize: 1
+    - _RectSize: 1.13
     - _RotateUvAmount: 0
     - _RoundWaveSpeed: 2
     - _RoundWaveStrength: 0.7
@@ -242,10 +244,10 @@ Material:
     - _ColorSwapRed: {r: 1, g: 1, b: 1, a: 1}
     - _FadeBurnColor: {r: 1, g: 1, b: 0, a: 1}
     - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
-    - _GradBotLeftCol: {r: 0.20852618, g: 0.5012628, b: 0.6226415, a: 1}
+    - _GradBotLeftCol: {r: 1, g: 0.9411765, b: 0.85490197, a: 1}
     - _GradBotRightCol: {r: 0.7004717, g: 0.8083613, b: 0.9339623, a: 1}
-    - _GradTopLeftCol: {r: 1, g: 0.8726415, b: 0.8726415, a: 1}
-    - _GradTopRightCol: {r: 0.5235849, g: 0.9488115, b: 1, a: 1}
+    - _GradTopLeftCol: {r: 1, g: 0.54509807, b: 0.4117647, a: 1}
+    - _GradTopRightCol: {r: 0.7311321, g: 0.9711133, b: 1, a: 1}
     - _GreyscaleTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _HitEffectColor: {r: 1, g: 1, b: 1, a: 1}
     - _HologramStripeColor: {r: 0, g: 1, b: 1, a: 1}

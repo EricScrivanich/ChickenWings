@@ -22,19 +22,12 @@ public class Egg_Regular : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         coll2D = GetComponent<Collider2D>();
-
-
-    }
-    void Start()
-    {
-
-        // playerRB = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody2D>();
-
-
         anim = GetComponent<Animator>();
         ready = true;
 
+
     }
+
 
     // Update is called once per frame
     // void Update()
@@ -57,9 +50,10 @@ public class Egg_Regular : MonoBehaviour
 
     IEnumerator YolkMovement()
     {
+       
         while (transform.position.x > BoundariesManager.leftBoundary)
         {
-            transform.Translate(-Vector2.left * -5 * Time.deltaTime);
+            transform.Translate(Vector2.left * BoundariesManager.GroundSpeed * Time.deltaTime);
             yield return null;
 
         }

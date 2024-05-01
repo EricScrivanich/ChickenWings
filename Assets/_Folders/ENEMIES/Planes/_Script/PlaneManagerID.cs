@@ -6,6 +6,12 @@ using System.Collections.Generic;
 public class PlaneManagerID : ScriptableObject
 {
     [SerializeField] private GameObject ExplosionPrefab;
+    public float bomberTime;
+    public float missileTime;
+
+
+    public int numberOfSpawnsToDeactivate;
+
     public Vector3 droppedBombExplosionScale;
     [SerializeField] private GameObject bombPrefab;
     public bool spawnRandomPlanesBool;

@@ -60,7 +60,7 @@ AudioSource:
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
-  BypassEffects: 0
+  BypassEffects: 1
   BypassListenerEffects: 0
   BypassReverbZones: 0
   rolloffCustomCurve:
@@ -336,8 +336,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e194d2cc3e68b4f0da0630e9371d4db8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicPitch: 0.85
-  sfxPitch: 0.8
+  musicPitch: 0.95
+  sfxPitch: 1
   audioSource: {fileID: 3477819981823733023}
   musicSource: {fileID: 4951571917034972469}
   ringPassSource: {fileID: 2039888195929267459}
@@ -377,7 +377,7 @@ MonoBehaviour:
   bombExplosionVolume: 0.5
   swordSlashVolume: 0.7
   ringSuccess: {fileID: 8300000, guid: 8cdad93d05f5744109a33ef54ac92b5d, type: 3}
-  bucketBurstSound: {fileID: 0}
+  bucketBurstSound: {fileID: 8300000, guid: e977e4a5c1fd540489de1e6ddbc6c6c3, type: 3}
   ringSuccessVolume: 0.7
   ringPassSound: {fileID: 8300000, guid: 59117968211e74630a83f959eb23a852, type: 3}
   ringPassVolume: 0.7
@@ -389,7 +389,7 @@ AudioReverbFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1643956304610027615}
-  m_Enabled: 1
+  m_Enabled: 0
   m_DryLevel: -1.2
   m_Room: -1000
   m_RoomHF: -698

@@ -16,7 +16,8 @@ public class PlayerJumpState : PlayerBaseState
         player.anim.SetTrigger("JumpTrigger");
         
 
-        player.rb.velocity = new Vector2(0, player.jumpForce);
+        // player.rb.velocity = new Vector2(0, player.jumpForce);
+        player.AdjustForce(0, player.jumpForce);
         // player.rb.AddForce(new Vector2(0, player.jumpForce),ForceMode2D.Impulse);
         AudioManager.instance.PlayCluck();
 

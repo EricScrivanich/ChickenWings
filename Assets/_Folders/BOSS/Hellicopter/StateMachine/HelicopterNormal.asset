@@ -12,8 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d94ee001809b48f0af6cea3eec48536, type: 3}
   m_Name: HelicopterNormal
   m_EditorClassIdentifier: 
+  leftPosition: {x: -7.8, y: 1.85}
   normalPosition: {x: 7.8, y: 2.5}
+  normalSpeed: 4
+  isFlipped: 1
   xSwayAmount: 0.001
   ySwayAmount: 0.003
-  waitToShootTime: 5
+  shootingCooldown: 4
+  minSwitchTime: 8
+  maxSwitchTime: 0
+  bulletAmount: 4
+  Lives: 2
+  shotDuration: 2.5
   rotationToPlayerSpeed: 20
+  dipYTarget: -2.85
+  riseYTarget: 1.4
+  dippingYSpeed: 4
+  risingYSpeed: 7
+  dippingXSpeed: 1.2
+  risingXSpeed: 3
+  dippedXSpeed: 5

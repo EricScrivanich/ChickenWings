@@ -48,7 +48,7 @@ public class PowerMovement : PlayerSystem
             rb.velocity = dropVector;
         }
     }
-    private void StartDash()
+    private void StartDash(bool nothing)
     {
         if (canDash && !player.DisableButtons)
         {

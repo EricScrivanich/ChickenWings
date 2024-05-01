@@ -50,7 +50,7 @@ public class PlayerBounceState : PlayerBaseState
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-        if (!hasBounced)
+        if (!hasBounced && !player.ID.constantPlayerForceBool)
         {
             player.rb.velocity = Vector2.left * (BoundariesManager.GroundSpeed - .2f);
         }
@@ -92,16 +92,17 @@ public class PlayerBounceState : PlayerBaseState
             player.rb.gravityScale = player.originalGravityScale;
             // player.ID.events.OnBounce.Invoke();
             AudioManager.instance.PlayBounceSound();
-            
+
             // player.rb.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
             // player.rb.gravityScale = player.originalGravityScale;
-            player.rb.velocity = new Vector2(1, 9.5f);
+
+            player.AdjustForce(1, 9.5f);
             player.disableButtons = false;
 
             player.maxFallSpeed = -3f;
             // player.ID.events.FloorCollsion.Invoke(true);
         }
-       
+
 
 
     }

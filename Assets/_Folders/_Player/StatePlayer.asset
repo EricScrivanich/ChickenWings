@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: StatePlayer
   m_EditorClassIdentifier: 
   testingNewGravity: 1
+  isTutorial: 0
   playerJumpForce: 10.5
   playerAddDownForce: 0
+  constantPlayerForceBool: 1
+  constantPlayerForce: 4.7
   startAddDownForce: -0.5
   endAddDownForce: -2
   flipGravity: 2
@@ -35,7 +38,7 @@ MonoBehaviour:
   numberOfPowersThatCanBeUsed: 0
   UsingClocker: 0
   isHolding: 0
-  isAlive: 1
+  isAlive: 0
   addScoreTime: 2
   ManaNeeded: 180
   IsSlowedDown: 0
@@ -48,10 +51,9 @@ MonoBehaviour:
   StaminaUsed: 0
   MaxStamina: 1000
   startingAmmo: 3
-  startingScore: 0
   startingLives: 3
-  Ammo: 10
+  Ammo: 3
   MaxFallSpeed: -9.7
-  AddEggVelocity: -2.3703704
+  AddEggVelocity: -2.5555556
   parachuteXOffset: 0.32
   parachuteYOffset: 0.79

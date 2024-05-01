@@ -5,21 +5,21 @@ using UnityEngine;
 public class PlayerDashState : PlayerBaseState
 {
     private bool canDash;
-    private bool isDashing;
 
+    private bool switchSlash;
 
-
-    [SerializeField] private float dashPower = 10.5f;
+    [SerializeField] private float dashPower = 10.3f;
     // [SerializeField] private float dashPower = 12.5f;
-
-
-
 
     private int rotationSpeed = 100;
     private float rotZ;
     private bool passedTime;
     private float dashingTime;
-    private float dashingDuration = .36f;
+    private float dragDuration = .4f;
+    private float dragAmount = 2.5f;
+    private float dragTime;
+    private float dashDurationMin = .32f;
+    private float dashDurationMax = .45f;
     private float currentSpeed;
     private float currentGravity;
     private float slowdownSpeed = 16.2f;
@@ -28,28 +28,41 @@ public class PlayerDashState : PlayerBaseState
 
     public override void EnterState(PlayerStateManager player)
     {
+        player.isDashing = true;
+        player.stillDashing = true;
+        switchSlash = false;
+        dragTime = 0;
+        if (player.canDashSlash)
+        {
+            player.ID.globalEvents.CanDashSlash?.Invoke(true);
+        }
+
         rotZ = 0;
         passedTime = false;
         player.ChangeCollider(1);
-        player.rb.velocity = Vector2.zero;
+        // player.rb.velocity = Vector2.zero;
         // player.disableButtons = true;
         player.rb.gravityScale = 0;
         player.rb.MoveRotation(0);
         player.anim.SetTrigger("DashTrigger");
         AudioManager.instance.PlayDashSound();
         dashingTime = 0;
-        player.rb.velocity = new Vector2(dashPower, 0);
+        // player.rb.velocity = new Vector2(dashPower, 0);
+        player.AdjustForce(dashPower, 0);
         currentSpeed = dashPower;
-
-
-
 
     }
     public override void ExitState(PlayerStateManager player)
 
     {
-        player.rb.gravityScale = player.originalGravityScale;
+        if (player.canDashSlash)
+        {
+            player.ID.globalEvents.CanDashSlash?.Invoke(false);
 
+        }
+        player.rb.gravityScale = player.originalGravityScale;
+        player.stillDashing = false;
+        player.rb.drag = 0f;
         player.ChangeCollider(0);
 
     }
@@ -57,16 +70,8 @@ public class PlayerDashState : PlayerBaseState
     public override void FixedUpdateState(PlayerStateManager player)
     {
 
-
-
-
-
     }
 
-    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    // {
-
-    // }
 
     public override void RotateState(PlayerStateManager player)
     {
@@ -83,15 +88,25 @@ public class PlayerDashState : PlayerBaseState
 
     }
 
+    public void SwitchSlash() 
+    {
+        switchSlash = true;
+    }
+
+
     public override void UpdateState(PlayerStateManager player)
     {
+
         dashingTime += Time.deltaTime;
-        if (dashingTime > dashingDuration && !passedTime)
+        if ((dashingTime > dashDurationMin && !player.isDashing || player.isDashing && dashingTime > dashDurationMax) && !passedTime)
         {
-            player.disableButtons = false;
+
+
             player.rb.gravityScale = player.originalGravityScale;
+            player.ID.globalEvents.CanDash?.Invoke(false);
 
             passedTime = true;
+            player.rb.drag = dragAmount;
             // player.rb.gravityScale = player.originalGravityScale;
             // player.rb.velocity = new Vector2(2, player.rb.velocity.y);
 
@@ -99,22 +114,32 @@ public class PlayerDashState : PlayerBaseState
             // player.CheckIfIsTryingToParachute();
         }
 
-        if (passedTime)
+        if (passedTime && player.stillDashing)
         {
-            if (player.rb.velocity.x > 0)
+            if (switchSlash)
             {
-
-                currentSpeed -= slowdownSpeed * Time.deltaTime;
+                player.SwitchState(player.DashSlash);
+                player.ID.globalEvents.SetCanDashSlash?.Invoke(false);
+                return;
             }
-            // if (player.rb.gravityScale < player.originalGravityScale)
-            // {
-            //     currentGravity += addGravitySpeed * Time.deltaTime;
+            dragTime += Time.deltaTime;
 
-            // }
-            player.rb.velocity = new Vector2(currentSpeed, player.rb.velocity.y);
-            // player.rb.gravityScale = currentGravity;
+
+
+
+            if (dragTime > dragDuration)
+            {
+                player.rb.drag = 0;
+                player.stillDashing = false;
+                if (player.canDashSlash)
+                {
+                    player.ID.globalEvents.CanDashSlash?.Invoke(false);
+
+
+                }
+            }
+
         }
-
 
     }
 }

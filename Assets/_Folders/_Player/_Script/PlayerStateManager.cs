@@ -9,7 +9,12 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private float SlowFactor;
     [ExposedScriptableObject]
     public PlayerID ID;
+    public CameraID Cam;
     public ParticleSystem Dust;
+
+    [SerializeField] private float initialConstantForce;
+    public float currentForce;
+    [SerializeField] private bool isTutorial;
 
 
     [SerializeField] private Vector2 startPoint;
@@ -39,6 +44,10 @@ public class PlayerStateManager : MonoBehaviour
     private ParticleSystem SmokeParticle;
 
     private float originalTimeScale;
+    public bool isDashing;
+    public bool canDashSlash;
+    private bool justDashedSlashed;
+    public bool stillDashing;
 
 
     public Transform ImageTransform;
@@ -113,6 +122,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public bool justStartedClocker;
 
+    private Vector2 originalPosition;
+
 
 
 
@@ -121,6 +132,18 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
+        ID.constantPlayerForce = initialConstantForce;
+        if (initialConstantForce == 0)
+        {
+            ID.constantPlayerForceBool = false;
+        }
+        else
+        {
+            ID.constantPlayerForceBool = true;
+
+        }
+        ID.isTutorial = isTutorial;
+        stillDashing = false;
         ID.ResetValues();
         holdingFlip = false;
         ID.UsingClocker = false;
@@ -132,6 +155,8 @@ public class PlayerStateManager : MonoBehaviour
         canDrop = true;
         disableButtons = true;
         ID.StaminaUsed = 0;
+        rb = GetComponent<Rigidbody2D>();
+        justDashedSlashed = false;
 
 
     }
@@ -140,11 +165,15 @@ public class PlayerStateManager : MonoBehaviour
     {
 
 
+
+
+        originalPosition = transform.position;
+
         originalTimeScale = Time.timeScale;
 
 
         ChangeCollider(0);
-        rb = GetComponent<Rigidbody2D>();
+
         line = GetComponent<LineRenderer>();
         // Feathers.SetActive(false);
         if (!ID.testingNewGravity)
@@ -209,8 +238,30 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
+    private IEnumerator LerpToOriginalPosition(float duration)
+    {
+        float timeElapsed = 0;
+        Vector2 startPosition = transform.position;
+        disableButtons = true;
+
+        while (timeElapsed < duration)
+        {
+            // Use Mathf.SmoothStep for easing; it smoothly interpolates between the start and end values
+            float t = timeElapsed / duration;
+            t = Mathf.SmoothStep(0.0f, 1.0f, t);  // Apply smoothing to t
+            transform.position = Vector2.Lerp(startPosition, originalPosition, t);
+            timeElapsed += Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+
+        transform.position = originalPosition;
+        AdjustForce(0, 0);
+        disableButtons = false; // Ensure the position is set exactly at the original
+    }
+
     void FixedUpdate()
     {
+        // rb.velocity = new Vector2(currentForce, rb.velocity.y);
         MaxFallSpeed();
         if (rb.freezeRotation == false)
         {
@@ -222,30 +273,52 @@ public class PlayerStateManager : MonoBehaviour
 
 
     }
-    public void SetFlipDirection(bool isRight)
+
+    public void BaseRotationLogic()
     {
-        if (isRight)
+        // Check if the Rigidbody is moving upwards and hasn't reached the max rotation limit
+        if (rb.velocity.y > 0 && rotZ < maxRotUp)
         {
-            justFlippedLeft = false;
-            justFlippedRight = true;
+            rotZ += jumpRotSpeed * Time.deltaTime;
         }
-        else
+        // Check if the Rigidbody is moving downwards and hasn't reached the max rotation limit
+        else if (rb.velocity.y <= 0 && rotZ > maxRotDown)
         {
-            justFlippedRight = false;
-            justFlippedLeft = true;
+            rotZ -= jumpRotSpeed * Time.deltaTime;
         }
 
+        // Smoothly interpolate the rotation towards the target rotation
+        float newRotation = Mathf.LerpAngle(rb.rotation, rotZ, Time.deltaTime * rotationLerpSpeed);
+
+        // Apply the new rotation
+        rb.MoveRotation(newRotation);
     }
+    private void ChangeConstantForce(float newSpeed)
+    {
+        float difference = newSpeed - ID.constantPlayerForce;
+        ID.constantPlayerForce = newSpeed;
+        rb.velocity = new Vector2(rb.velocity.x + difference, rb.velocity.y);
+    }
+
+    public void AdjustForce(float xForce, float yForce)
+    {
+        // currentForce = xForce + ID.constantPlayerForce;
+
+        rb.velocity = new Vector2(xForce + ID.constantPlayerForce, yForce);
+
+
+    }
+
     void Update()
     {
 
         currentState.UpdateState(this);
         // currentState.RotateState(this);
-        // if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons)
-        // {
-        //     // ResetHoldJump();
-        //     SwitchState(FrozenState);
-        // }
+        if (transform.position.y > 7f && !disableButtons && !ID.constantPlayerForceBool)
+        {
+            // ResetHoldJump();
+            SwitchState(FrozenState);
+        }
     }
 
     public void MaxFallSpeed()
@@ -256,41 +329,7 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    public void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Plane"))
-        {
-            SwitchState(IdleState);
-            HandleDamaged();
-            isDropping = false;
-            disableButtons = false;
-            foreach (ContactPoint2D pos in collision.contacts)
-            {
-                Debug.Log(pos.normal);
 
-                if (pos.normal.y > .92f)
-                {
-                    rb.velocity = new Vector2(1, 9);
-
-                }
-                else if (pos.normal.x < -.1f)
-                {
-                    rb.velocity = new Vector2(-6.5f, 2);
-
-
-                }
-                else if (pos.normal.x > .6f)
-                {
-                    rb.velocity = new Vector2(3, 2);
-
-                }
-               
-                
-            }
-            // Switch to idle state or handle other logic
-
-        }
-    }
 
     public void ChangeCollider(int index)
     {
@@ -312,57 +351,15 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    public void UseStamina(float amount)
-    {
-        ID.StaminaUsed += amount * Time.deltaTime;
-
-        if (ID.StaminaUsed >= ID.MaxStamina)
-        {
-            // ResetHoldJump();
-            // ResetParachute();
-
-            ID.globalEvents.OnZeroStamina?.Invoke();
-            SwitchState(IdleState);
-
-        }
 
 
-    }
-
-    public void StartFillStaminaCoroutine()
-    {
-        if (fillStaminaCoroutine != null)
-        {
-            StopCoroutine(fillStaminaCoroutine);
-        }
-        fillStaminaCoroutine = StartCoroutine(FillStamina());
-    }
-
-    private IEnumerator FillStamina()
-    {
-        yield return new WaitForSeconds(2.5f);
-
-        while (ID.StaminaUsed > 0 && !jumpHeld)
-        {
-
-            ID.StaminaUsed -= staminaFill * Time.deltaTime;
-            yield return null; // Wait for the next frame
-        }
-
-        if (!jumpHeld)
-        {
-            ID.StaminaUsed = 0;
-            ID.globalEvents.OnUseStamina?.Invoke(false);
-
-        }
-    }
     public void SetCanRotateSlash()
     {
         rotateSlash = true;
 
     }
 
-    // Update is called once per frame
+
 
     public void SwitchState(PlayerBaseState newState)
     {
@@ -377,76 +374,18 @@ public class PlayerStateManager : MonoBehaviour
         {
             justFlipped = false;
 
-            // if (ID.UsingClocker)
-            // {
-            //     HandleClocker(false);
-            // }
+
         }
         newState.EnterState(this);
 
-        // previousState = currentState;
-        // currentState = newState;
 
-        // if (previousState is PlayerHoldJumpState)
-        // {
-        //     rb.gravityScale = originalGravityScale;
-        //     maxFallSpeed = ID.MaxFallSpeed;
-        //     newState.EnterState(this);
-        //     StartCoroutine(WaitForAnim());
-        // }
-        // // else if (previousState is PlayerFlipLeftState)
-        // // {
-
-        // // }
-        // // else if (previousState is PlayerFlipRightState)
-        // // {
-
-        // // }
-
-        // else
-        // {
-        //     newState.EnterState(this);
-        // }
 
     }
 
 
-    public void BaseRotationLogic()
-    {
-        // Check if the Rigidbody is moving upwards and hasn't reached the max rotation limit
-        if (rb.velocity.y > 0 && rotZ < maxRotUp)
-        {
-            rotZ += jumpRotSpeed * Time.deltaTime;
-        }
-        // Check if the Rigidbody is moving downwards and hasn't reached the max rotation limit
-        else if (rb.velocity.y <= 0 && rotZ > maxRotDown)
-        {
-            rotZ -= jumpRotSpeed * Time.deltaTime;
-        }
 
-        // Smoothly interpolate the rotation towards the target rotation
-        float newRotation = Mathf.LerpAngle(rb.rotation, rotZ, Time.deltaTime * rotationLerpSpeed);
 
-        // Apply the new rotation
-        rb.MoveRotation(newRotation);
-    }
 
-    // public void BaseRotationLogic()
-    // {
-    //     if (rb.velocity.y > 0 && rotZ < maxRotUp)
-    //     {
-    //         // Calculate the new rotation
-    //         rotZ += jumpRotSpeed * Time.deltaTime;
-    //     }
-    //     // If the object is moving downwards, rotate it downwards
-    //     else if (rb.velocity.y <= 0 && rotZ > maxRotDown)
-    //     {
-    //         // Calculate the new rotation
-    //         rotZ -= jumpRotSpeed * Time.deltaTime;
-    //     }
-    //     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, rotZ), Time.deltaTime * rotationLerpSpeed);
-
-    // }
     void HandleJump()
     {
         if (!disableButtons && !ID.IsTwoTouchPoints)
@@ -468,60 +407,10 @@ public class PlayerStateManager : MonoBehaviour
         {
             anim.SetTrigger("IdleTrigger");
         }
-        // if (!disableButtons)
-        // {
-        //     if (isHolding)
-        //     {
-        //         if (ID.StaminaUsed < ID.MaxStamina)
-        //         {
-        //             ID.globalEvents.OnUseStamina?.Invoke(true);
-        //             jumpHeld = true;
-        //         }
-        //         else
-        //         {
-        //             StartFillStaminaCoroutine();
-        //             ID.globalEvents.OnZeroStamina?.Invoke();
-        //         }
-        //     }
-        //     else
-        //     {
-        //         if (jumpHeld)
-        //         {
-        //             SwitchState(IdleState);
-        //         }
-        //         // ResetHoldJump();
-        //     }
-        // }
-    }
-
-    void HandleAttack(bool attacking)
-    {
-
-        if (attacking && !disableButtons && ID.numberOfPowersThatCanBeUsed >= 1)
-        {
-            ID.numberOfPowersThatCanBeUsed--;
-            ID.CurrentMana -= ID.ManaNeeded;
-            ID.globalEvents.UsePower?.Invoke();
-            // ResetHoldJump();
-            isAttacking = true;
-            SwitchState(SlashState);
-        }
-        else if (!attacking && isAttacking)
-        {
-            // invoked false by featherAnimation, called function on AddDamage()
-
-            maxFallSpeed = ID.MaxFallSpeed;
-            attackObject.SetActive(false);
-            anim.SetBool("AttackBool", false);
-            disableButtons = false;
-            isAttacking = false;
-            CheckIfIsTryingToParachute();
-
-
-        }
-
 
     }
+
+
 
 
 
@@ -556,74 +445,77 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    void HandleDash()
+    public void SetFlipDirection(bool isRight)
     {
-        if (canDash && !disableButtons)
+        if (isRight)
         {
-            // ResetHoldJump();
-            SwitchState(DashState);
-            StartCoroutine(DashCooldown());
-
-        }
-
-    }
-
-    private void HandleDashSlash()
-    {
-        if (!disableButtons)
-        {
-            ChangeCollider(-1);
-            disableButtons = true;
-            SwitchState(DashSlash);
-
-
-        }
-
-
-    }
-
-    private void HandleClocker(bool usingClocker)
-    {
-        if (usingClocker)
-        {
-            ID.UsingClocker = usingClocker;
-            Time.timeScale = .4f;
-            anim.SetBool("GetGunBool", true);
-            StartCoroutine(DrawLine());
+            justFlippedLeft = false;
+            justFlippedRight = true;
         }
         else
         {
-            Time.timeScale = originalTimeScale;
-            line.enabled = false;
-            anim.SetBool("GetGunBool", false);
-
+            justFlippedRight = false;
+            justFlippedLeft = true;
         }
 
     }
 
-    IEnumerator DrawLine()
+    void HandleDash(bool holding)
     {
-        line.enabled = true;
-        float startTime = Time.time;
-        float distance = Vector3.Distance(startPoint, endPoint);
-        float fracJourney = 0f;
-
-        line.SetPosition(0, startPoint);
-        line.SetPosition(1, startPoint); // Start with the line collapsed at the start point
-
-        while (fracJourney < 1f)
+        if (stillDashing && holding && canDashSlash)
         {
-            float distCovered = (Time.time - startTime) * drawSpeed;
-            fracJourney = distCovered / distance;
-            Vector2 currentPoint = Vector2.Lerp(startPoint, endPoint, fracJourney);
+            DashState.SwitchSlash();
+            justDashedSlashed = true;
+        }
+        else if (holding && canDash && !disableButtons)
+        {
+            // ResetHoldJump();
+            StartCoroutine(DashCooldown(dashCooldownTime));
+            SwitchState(DashState);
 
-            line.SetPosition(1, currentPoint); // Update the end point
 
-            yield return null;
+        }
+        if (!holding && !justDashedSlashed)
+        {
+            ID.globalEvents.CanDash?.Invoke(false);
+            isDashing = false;
+        }
+        else if (!holding && justDashedSlashed)
+        {
+            justDashedSlashed = false;
         }
 
-        line.SetPosition(1, endPoint); // Ensure the line is fully drawn to the end point
     }
+
+    private void HandleDashSlash(bool canSlash) 
+    {
+
+        canDashSlash = canSlash;
+        // if (!disableButtons)
+        // {
+        //     ChangeCollider(-1);
+        //     disableButtons = true;
+        //     SwitchState(DashSlash);
+
+
+        // }
+    }
+
+    private void HandleDrop()
+    {
+        if (!disableButtons && canDrop)
+        {
+            // ResetHoldJump();
+            isDropping = true;
+            SwitchState(DropState);
+            ID.globalEvents.CanDrop?.Invoke(false);
+
+            StartCoroutine(DropCooldown());
+        }
+
+    }
+
+
 
 
     private void HandleDamaged()
@@ -631,6 +523,15 @@ public class PlayerStateManager : MonoBehaviour
 
         if (!isDamaged)
         {
+            if (isTutorial)
+            {
+                StartCoroutine(LerpToOriginalPosition(.8f));
+                DamageEffects();
+
+
+
+                return;
+            }
             isDamaged = true;
             ID.Lives--;
             if (ID.Lives <= 0)
@@ -638,20 +539,8 @@ public class PlayerStateManager : MonoBehaviour
                 Die();
                 return;
             }
-            // CameraShake.instance.ShakeCamera(.5f, .14f);
-            ID.globalEvents.ShakeCamera?.Invoke(.5f, .14f);
-            var Feather = FeatherParticleQueue.Dequeue();
-            if (Feather.isPlaying)
-            {
-                Feather.Stop();
-            }
-            Feather.transform.position = transform.position;
-            Feather.Play();
-            AudioManager.instance.PlayDamageSound();
+            DamageEffects();
 
-            StartCoroutine(Flash());
-
-            FeatherParticleQueue.Enqueue(Feather);
 
         }
         else
@@ -660,20 +549,62 @@ public class PlayerStateManager : MonoBehaviour
         }
 
     }
-    private void HandleDrop()
+
+    private void DamageEffects()
     {
+        ID.globalEvents.ShakeCamera?.Invoke(.5f, .14f);
+        Cam.events.OnShakeCamera?.Invoke(.5f, .14f);
 
-
-
-        if (!disableButtons && canDrop)
+        var Feather = FeatherParticleQueue.Dequeue();
+        if (Feather.isPlaying)
         {
-            // ResetHoldJump();
-            isDropping = true;
-            SwitchState(DropState);
-            StartCoroutine(DropCooldown());
+            Feather.Stop();
         }
+        Feather.transform.position = transform.position;
+        Feather.Play();
+        AudioManager.instance.PlayDamageSound();
+
+        StartCoroutine(Flash());
+
+        FeatherParticleQueue.Enqueue(Feather);
 
     }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Plane"))
+        {
+            SwitchState(IdleState);
+            HandleDamaged();
+            isDropping = false;
+            disableButtons = false;
+            foreach (ContactPoint2D pos in collision.contacts)
+            {
+                Debug.Log(pos.normal);
+
+                if (pos.normal.y > .92f)
+                {
+
+                    AdjustForce(1, 9);
+
+                }
+                else if (pos.normal.x < -.7f)
+                {
+
+                    // rb.velocity = new Vector2(-6.5f, 2);
+                    AdjustForce(-6.3f, 2);
+
+
+                }
+                else if (pos.normal.x > .6f)
+                {
+
+                    AdjustForce(3, 2);
+                }
+            }
+        }
+    }
+
 
     private void HandleGroundCollision()
     {
@@ -681,6 +612,11 @@ public class PlayerStateManager : MonoBehaviour
 
         if (!isDropping)
         {
+            if (isTutorial)
+            {
+                HandleDamaged();
+                return;
+            }
             Die();
         }
         else
@@ -708,6 +644,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.Lives = 0;
 
         ID.globalEvents.ShakeCamera?.Invoke(.6f, .2f);
+        Cam.events.OnShakeCamera?.Invoke(.6f, .2f);
+        ID.isAlive = false;
         DeadEvent.TriggerEvent();
         AudioManager.instance.PlayDeathSound();
         for (int i = 0; i < FeatherParticleQueue.Count; i++)
@@ -747,49 +685,249 @@ public class PlayerStateManager : MonoBehaviour
 
         isDamaged = false;
     }
-    // d
-    public void HandleParachute(bool isPressing)
+
+
+
+
+
+
+    private void OffScreen()
     {
-        isTryingToParachute = isPressing;
+        SwitchState(IdleState);
+        HandleDamaged();
+        float targetYVelocity;
+        float currentYPosition = transform.position.y;
 
-        if (isPressing && !disableButtons)
+        if (currentYPosition < 6)
         {
-            if (ID.StaminaUsed < ID.MaxStamina)
-            {
-                Debug.Log("Holding chute");
-
-                SwitchState(ParachuteState);
-                isParachuting = true;
-                ID.globalEvents.OnUseStamina?.Invoke(true);
-            }
-            else
-            {
-                StartFillStaminaCoroutine();
-
-                ID.globalEvents.OnZeroStamina?.Invoke();
-
-            }
-
-        }
-        else if (!isPressing && isParachuting)
-        {
-            // ResetParachute();
-            SwitchState(IdleState);
-        }
-    }
-
-    public void CheckIfIsTryingToParachute()
-    {
-        if (isTryingToParachute)
-        {
-            HandleParachute(true);
+            // Calculate a velocity that increases as the Y position decreases
+            targetYVelocity = (6 - currentYPosition) * 2; // Multiplier adjusts the strength of the velocity
         }
         else
         {
-            SwitchState(IdleState);
+            // If the player is at or above Y position of 6, set the velocity to zero
+            targetYVelocity = 0;
+        }
+        if (transform.position.x < 0)
+        {
+            AdjustForce(5, targetYVelocity);
+
+        }
+        else
+        {
+            AdjustForce(-5, targetYVelocity);
+
         }
 
+
     }
+
+    private IEnumerator DashCooldown(float time)
+    {
+        canDash = false;
+
+        yield return new WaitForSeconds(time);
+        ID.globalEvents.CanDash?.Invoke(true);
+        canDash = true;
+    }
+    IEnumerator DropCooldown()
+    {
+        canDrop = false;
+
+        yield return new WaitForSeconds(dropCooldownTime);
+        ID.globalEvents.CanDrop?.Invoke(true);
+
+        canDrop = true;
+    }
+
+    IEnumerator WaitForAnim()
+    {
+        yield return new WaitForSeconds(.3f);
+        anim.SetBool("JumpHeld", false);
+    }
+
+    private void BucketCompletion(BucketScript bucketScript)
+    {
+        bucket = bucketScript;
+        // ResetHoldJump();
+        // ResetParachute();
+        SwitchState(BucketState);
+
+    }
+
+    private void BucketExplosion(int index)
+    {
+        bucketIsExploded = true;
+
+    }
+
+
+
+
+
+    private void OnEnable()
+    {
+        ID.events.OnJump += HandleJump;
+        // ID.events.OnAttack += HandleClocker;
+        ID.events.OnFlipRight += HandleRightFlip;
+        ID.events.OnFlipLeft += HandleLeftFlip;
+        ID.events.OnDash += HandleDash;
+        ID.events.OnDrop += HandleDrop;
+        ID.events.OnJumpHeld += HandleHoldJump;
+        // ID.events.OnParachute += HandleParachute;
+        // ID.events.OnJumpReleased += HandleReleaseJump;
+        ID.events.OnCompletedRingSequence += BucketCompletion;
+        ID.globalEvents.OnBucketExplosion += BucketExplosion;
+        ID.events.LoseLife += HandleDamaged;
+        ID.events.HitGround += HandleGroundCollision;
+        ID.globalEvents.SetCanDashSlash += HandleDashSlash;
+        ID.events.OnHoldFlip += HandleHoldFlip;
+        ID.globalEvents.OnAdjustConstantSpeed += ChangeConstantForce;
+        ID.globalEvents.OnOffScreen += OffScreen;
+
+        // ID.events.OnAttack += HandleSlash;
+    }
+    private void OnDisable()
+    {
+        ID.events.OnJump -= HandleJump;
+        // ID.events.OnAttack -= HandleClocker;
+
+        ID.events.OnFlipRight -= HandleRightFlip;
+        ID.events.OnFlipLeft -= HandleLeftFlip;
+        ID.events.OnDash -= HandleDash;
+        ID.events.OnDrop -= HandleDrop;
+        ID.events.OnJumpHeld -= HandleHoldJump;
+        // ID.events.OnParachute -= HandleParachute;
+
+        // ID.events.OnJumpReleased -= HandleReleaseJump;
+        ID.events.OnCompletedRingSequence -= BucketCompletion;
+        ID.globalEvents.OnBucketExplosion -= BucketExplosion;
+        ID.events.LoseLife -= HandleDamaged;
+        ID.events.HitGround -= HandleGroundCollision;
+        ID.globalEvents.SetCanDashSlash -= HandleDashSlash;
+
+        ID.events.OnHoldFlip -= HandleHoldFlip;
+        ID.globalEvents.OnAdjustConstantSpeed -= ChangeConstantForce;
+        ID.globalEvents.OnOffScreen -= OffScreen;
+
+
+
+    }
+
+    // private void HandleClocker(bool usingClocker)
+    // {
+    //     if (usingClocker)
+    //     {
+    //         ID.UsingClocker = usingClocker;
+    //         Time.timeScale = .4f;
+    //         anim.SetBool("GetGunBool", true);
+    //         StartCoroutine(DrawLine());
+    //     }
+    //     else
+    //     {
+    //         Time.timeScale = originalTimeScale;
+    //         line.enabled = false;
+    //         anim.SetBool("GetGunBool", false);
+
+    //     }
+
+    // }
+
+    // IEnumerator DrawLine()
+    // {
+    //     line.enabled = true;
+    //     float startTime = Time.time;
+    //     float distance = Vector3.Distance(startPoint, endPoint);
+    //     float fracJourney = 0f;
+
+    //     line.SetPosition(0, startPoint);
+    //     line.SetPosition(1, startPoint); // Start with the line collapsed at the start point
+
+    //     while (fracJourney < 1f)
+    //     {
+    //         float distCovered = (Time.time - startTime) * drawSpeed;
+    //         fracJourney = distCovered / distance;
+    //         Vector2 currentPoint = Vector2.Lerp(startPoint, endPoint, fracJourney);
+
+    //         line.SetPosition(1, currentPoint); // Update the end point
+
+    //         yield return null;
+    //     }
+
+    //     line.SetPosition(1, endPoint); // Ensure the line is fully drawn to the end point
+    // }
+
+
+
+
+
+    // void HandleAttack(bool attacking)
+    // {
+
+    //     if (attacking && !disableButtons && ID.numberOfPowersThatCanBeUsed >= 1)
+    //     {
+    //         ID.numberOfPowersThatCanBeUsed--;
+    //         ID.CurrentMana -= ID.ManaNeeded;
+    //         ID.globalEvents.UsePower?.Invoke();
+    //         // ResetHoldJump();
+    //         isAttacking = true;
+    //         SwitchState(SlashState);
+    //     }
+    //     else if (!attacking && isAttacking)
+    //     {
+    //         // invoked false by featherAnimation, called function on AddDamage()
+
+    //         maxFallSpeed = ID.MaxFallSpeed;
+    //         attackObject.SetActive(false);
+    //         anim.SetBool("AttackBool", false);
+    //         disableButtons = false;
+    //         isAttacking = false;
+    //         CheckIfIsTryingToParachute();
+    //     }
+    // }
+
+    // public void CheckIfIsTryingToParachute()
+    // {
+    //     if (isTryingToParachute)
+    //     {
+    //         HandleParachute(true);
+    //     }
+    //     else
+    //     {
+    //         SwitchState(IdleState);
+    //     }
+
+    // }
+    // public void HandleParachute(bool isPressing)
+    // {
+    //     isTryingToParachute = isPressing;
+
+    //     if (isPressing && !disableButtons)
+    //     {
+    //         if (ID.StaminaUsed < ID.MaxStamina)
+    //         {
+    //             Debug.Log("Holding chute");
+
+    //             SwitchState(ParachuteState);
+    //             isParachuting = true;
+    //             ID.globalEvents.OnUseStamina?.Invoke(true);
+    //         }
+    //         else
+    //         {
+    //             StartFillStaminaCoroutine();
+
+    //             ID.globalEvents.OnZeroStamina?.Invoke();
+
+    //         }
+
+    //     }
+    //     else if (!isPressing && isParachuting)
+    //     {
+    //         // ResetParachute();
+    //         SwitchState(IdleState);
+    //     }
+    // }
+
 
     // public void HandleClocker(bool b)
     // {
@@ -826,6 +964,52 @@ public class PlayerStateManager : MonoBehaviour
     //     }
 
     // }
+
+    // private IEnumerator FillStamina()
+    // {
+    //     yield return new WaitForSeconds(2.5f);
+
+    //     while (ID.StaminaUsed > 0 && !jumpHeld)
+    //     {
+
+    //         ID.StaminaUsed -= staminaFill * Time.deltaTime;
+    //         yield return null; // Wait for the next frame
+    //     }
+
+    //     if (!jumpHeld)
+    //     {
+    //         ID.StaminaUsed = 0;
+    //         ID.globalEvents.OnUseStamina?.Invoke(false);
+
+    //     }
+    // }
+
+    // public void UseStamina(float amount)
+    // {
+    //     ID.StaminaUsed += amount * Time.deltaTime;
+
+    //     if (ID.StaminaUsed >= ID.MaxStamina)
+    //     {
+    //         // ResetHoldJump();
+    //         // ResetParachute();
+
+    //         ID.globalEvents.OnZeroStamina?.Invoke();
+    //         SwitchState(IdleState);
+
+    //     }
+
+
+    // }
+
+    // public void StartFillStaminaCoroutine()
+    // {
+    //     if (fillStaminaCoroutine != null)
+    //     {
+    //         StopCoroutine(fillStaminaCoroutine);
+    //     }
+    //     fillStaminaCoroutine = StartCoroutine(FillStamina());
+    // }
+
 
 
 
@@ -904,93 +1088,4 @@ public class PlayerStateManager : MonoBehaviour
 
     //     }
     // }
-
-
-    IEnumerator DashCooldown()
-    {
-        canDash = false;
-
-        yield return new WaitForSeconds(dashCooldownTime);
-        canDash = true;
-    }
-    IEnumerator DropCooldown()
-    {
-        canDrop = false;
-
-        yield return new WaitForSeconds(dropCooldownTime);
-        canDrop = true;
-    }
-
-    IEnumerator WaitForAnim()
-    {
-        yield return new WaitForSeconds(.3f);
-        anim.SetBool("JumpHeld", false);
-    }
-
-    private void BucketCompletion(BucketScript bucketScript)
-    {
-        bucket = bucketScript;
-        // ResetHoldJump();
-        // ResetParachute();
-        SwitchState(BucketState);
-
-    }
-
-    private void BucketExplosion(int index)
-    {
-        bucketIsExploded = true;
-
-    }
-
-
-
-
-
-    private void OnEnable()
-    {
-        ID.events.OnJump += HandleJump;
-        ID.events.OnAttack += HandleClocker;
-        ID.events.OnFlipRight += HandleRightFlip;
-        ID.events.OnFlipLeft += HandleLeftFlip;
-        ID.events.OnDash += HandleDash;
-        ID.events.OnDrop += HandleDrop;
-        ID.events.OnJumpHeld += HandleHoldJump;
-        ID.events.OnParachute += HandleParachute;
-        // ID.events.OnJumpReleased += HandleReleaseJump;
-        ID.events.OnCompletedRingSequence += BucketCompletion;
-        ID.globalEvents.OnBucketExplosion += BucketExplosion;
-        ID.events.LoseLife += HandleDamaged;
-        ID.events.HitGround += HandleGroundCollision;
-        ID.events.OnDashSlash += HandleDashSlash;
-        ID.events.OnHoldFlip += HandleHoldFlip;
-
-        // ID.events.OnAttack += HandleSlash;
-    }
-    private void OnDisable()
-    {
-        ID.events.OnJump -= HandleJump;
-        ID.events.OnAttack -= HandleClocker;
-
-        ID.events.OnFlipRight -= HandleRightFlip;
-        ID.events.OnFlipLeft -= HandleLeftFlip;
-        ID.events.OnDash -= HandleDash;
-        ID.events.OnDrop -= HandleDrop;
-        ID.events.OnJumpHeld -= HandleHoldJump;
-        ID.events.OnParachute -= HandleParachute;
-
-        // ID.events.OnJumpReleased -= HandleReleaseJump;
-        ID.events.OnCompletedRingSequence -= BucketCompletion;
-        ID.globalEvents.OnBucketExplosion -= BucketExplosion;
-        ID.events.LoseLife -= HandleDamaged;
-        ID.events.HitGround -= HandleGroundCollision;
-        ID.events.OnDashSlash -= HandleDashSlash;
-        ID.events.OnHoldFlip -= HandleHoldFlip;
-
-
-
-
-
-        // ID.events.OnAttack -= HandleSlash;
-
-    }
 }

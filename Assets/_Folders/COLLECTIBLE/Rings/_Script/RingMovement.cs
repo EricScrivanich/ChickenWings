@@ -182,7 +182,7 @@ public class RingMovement : MonoBehaviour
 
             DisableColliders();
 
-            AudioManager.instance.PlayRingPassSound();
+            AudioManager.instance.PlayRingPassSound(order);
             anim.SetBool(BurstBoolHash, true);
             sprite.material = ID.passedMaterial;
             backRing.material = ID.passedMaterial;

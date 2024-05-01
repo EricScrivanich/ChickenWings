@@ -28,7 +28,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip bombExplosionSound;
     [SerializeField] private AudioClip swordSlashSound;
 
-    
+
 
 
 
@@ -60,17 +60,21 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
         {
             instance = this;
         }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
+        DontDestroyOnLoad(this.gameObject);
+
+        BoundariesManager.isDay = false;
 
         // Don't destroy AudioManager on scene change.
-        DontDestroyOnLoad(gameObject);
+       
 
     }
 
@@ -87,21 +91,22 @@ public class AudioManager : MonoBehaviour
             audioSource.bypassEffects = false;
 
         }
-        else 
+        else
         {
             musicSource.pitch = 1;
             audioSource.pitch = 1;
             audioSource.bypassEffects = true;
 
         }
-       
+
     }
 
 
-    public void PlayRingPassSound()
+    public void PlayRingPassSound(int order)
     {
+        ringPassSource.pitch = Mathf.Pow(2, (order - 1) / 12.0f);
         ringPassSource.PlayOneShot(ringPassSound, ringPassVolume);
-        ringPassSource.pitch *= semitoneRatio;
+
     }
 
     public void PlayBucketBurstSound()
@@ -123,7 +128,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayBombExplosionSound()
     {
-        
+
         audioSource.PlayOneShot(bombExplosionSound, bombExplosionVolume);
     }
 
@@ -134,7 +139,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayMusic()
     {
-        
+
         musicSource.Play(); // Play the music audio source
     }
 
@@ -145,7 +150,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayCluck()
     {
-        
+
         // Choose a random cluck sound from the array
         int randomIndex = Random.Range(0, cluckSounds.Length);
         audioSource.PlayOneShot(cluckSounds[randomIndex], cluckVolume);
@@ -154,7 +159,7 @@ public class AudioManager : MonoBehaviour
     {
         // Choose a random cluck sound from the array
         int randomIndex = Random.Range(0, flipSounds.Length);
-        
+
 
         audioSource.PlayOneShot(flipSounds[randomIndex], flipVolume);
     }
@@ -166,7 +171,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayDamageSound()
     {
-        
+
         audioSource.PlayOneShot(damageSound, damageSoundVolume);
     }
 
@@ -202,4 +207,25 @@ public class AudioManager : MonoBehaviour
     {
         audioSource.PlayOneShot(frozenSound, frozenVolume);
     }
+
+    private void OnApplicationPause(bool isPaused)
+    {
+        if (isPaused)
+        {
+
+            musicSource.Pause();
+            ringPassSource.Pause();
+            audioSource.Pause();
+        }
+        else
+        {
+            musicSource.UnPause();
+            ringPassSource.UnPause();
+            audioSource.UnPause();
+
+        }
+    }
 }
+
+
+

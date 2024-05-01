@@ -1,0 +1,367 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1975420917391926
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4786898457860480}
+  - component: {fileID: 33105115081125760}
+  - component: {fileID: 65353205791667228}
+  - component: {fileID: 23437073282256728}
+  - component: {fileID: 54940356575676758}
+  - component: {fileID: 114472774816244026}
+  m_Layer: 0
+  m_Name: Basic Grey (conditional)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4786898457860480
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975420917391926}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 65, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &33105115081125760
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975420917391926}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &65353205791667228
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975420917391926}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &23437073282256728
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975420917391926}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 977fad2f5bbd64a8f90d8a3fcd18ce1c, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!54 &54940356575676758
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975420917391926}
+  serializedVersion: 4
+  m_Mass: 50
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &114472774816244026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975420917391926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfeb76cabbfdd47a1b1db9ef7bdd0e66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tab: 1
+  pool: {fileID: 0}
+  aliveTime: 0
+  despawnMode: 4
+  despawnCountdown: 5
+  despawnCountdownRandomMin: 4
+  despawnCountdownRandomMax: 6
+  particleSystemToUse: 0
+  useThisParticleSystem: {fileID: 0}
+  playParticleSystemOnSpawn: 1
+  audioSourceToUse: 0
+  useThisAudioSource: {fileID: 0}
+  playAudioSourceOnSpawn: 1
+  overlapType: 2
+  overlapOffset: {x: 0, y: 0, z: 0}
+  overlapRadius: 1
+  overlapScale: {x: 1, y: 1, z: 1}
+  overlapAlsoDespawnAfterCountdown: 1
+  overlapCountdown: 5
+  colliderAlsoDespawnAfterCountdown: 1
+  colliderCountdown: 5
+  useCollisionEnter: 1
+  useCollisionStay: 0
+  useCollisionExit: 0
+  triggerAlsoDespawnAfterCountdown: 1
+  triggerCountdown: 5
+  useTriggerEnter: 1
+  useTriggerStay: 0
+  useTriggerExit: 0
+  collider2DAlsoDespawnAfterCountdown: 1
+  collider2DCountdown: 5
+  useCollisionEnter2D: 1
+  useCollisionStay2D: 0
+  useCollisionExit2D: 0
+  trigger2DAlsoDespawnAfterCountdown: 1
+  trigger2DCountdown: 5
+  useTriggerEnter2D: 1
+  useTriggerStay2D: 0
+  useTriggerExit2D: 0
+  raycast3DAlsoDespawnAfterCountdown: 1
+  raycast3DCountdown: 5
+  raycast3DmaxHits: 30
+  raycast3DDistance: 1.5
+  raycast3DDirection: {x: 0, y: 0, z: 1}
+  raycast2DAlsoDespawnAfterCountdown: 1
+  raycast2DCountdown: 5
+  raycast2DmaxHits: 30
+  raycast2DDistance: 1.5
+  raycast2DDirection: {x: 1, y: 0}
+  raycast2DMinZDepth: -Infinity
+  raycast2DMaxZDepth: Infinity
+  sourceOfCollisions: 0
+  collisionSourceGameObject: {fileID: 0}
+  resetRigidbodyVelocitiesOnSpawn: 1
+  filterLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  filterTags: []
+  queryTriggerInteraction: 0
+  lastCollisionPoint: {x: 0, y: 0, z: 0}
+  lastCollidedPhysicsGameObject: {fileID: 0}
+  chainableSpawns:
+  - prefab: {fileID: 1553043131289158, guid: 28a553b91e1714c8e98288692a8a28a6, type: 3}
+    spawnOptions: 2
+    usePhysicsEventFilters: 0
+    filterLayers:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    filterTags: []
+    filterNames: []
+    spawnAt: 0
+    customSpawnTransform: {fileID: 0}
+    localPositionOffset: {x: 0, y: 0, z: 0}
+    addRandomizationRange: 0
+    randomizationRangeMin: {x: -0.1, y: -0.1, z: -0.1}
+    randomizationRangeMax: {x: 0.1, y: 0.1, z: 0.1}
+    rotationMode: 0
+    customRotationEulerAngles: {x: 0, y: 0, z: 0}
+    scaleMode: 0
+    customLocalScale: {x: 1, y: 1, z: 1}
+    customLocalScaleMin: {x: 0, y: 0, z: 0}
+    customLocalScaleMax: {x: 1, y: 1, z: 1}
+    customLocalScaleProportionalMin: 0
+    customLocalScaleProportionalMax: 1
+    customScaleOptions: 0
+    timesToSpawnMode: 0
+    timesToSpawnThisObject: 1
+    minTimesToSpawnThisObject: 1
+    maxTimesToSpawnThisObject: 2
+    tabIsOpen: 0
+  - prefab: {fileID: 1553043131289158, guid: 5f5a2a699fdbd4c59ae78b397f752b31, type: 3}
+    spawnOptions: 1
+    usePhysicsEventFilters: 1
+    filterLayers:
+      serializedVersion: 2
+      m_Bits: 16
+    filterTags: []
+    filterNames: []
+    spawnAt: 0
+    customSpawnTransform: {fileID: 0}
+    localPositionOffset: {x: 0, y: 0, z: 0}
+    addRandomizationRange: 0
+    randomizationRangeMin: {x: -0.1, y: -0.1, z: -0.1}
+    randomizationRangeMax: {x: 0.1, y: 0.1, z: 0.1}
+    rotationMode: 0
+    customRotationEulerAngles: {x: 0, y: 0, z: 0}
+    scaleMode: 0
+    customLocalScale: {x: 1, y: 1, z: 1}
+    customLocalScaleMin: {x: 0, y: 0, z: 0}
+    customLocalScaleMax: {x: 1, y: 1, z: 1}
+    customLocalScaleProportionalMin: 0
+    customLocalScaleProportionalMax: 1
+    customScaleOptions: 0
+    timesToSpawnMode: 0
+    timesToSpawnThisObject: 1
+    minTimesToSpawnThisObject: 1
+    maxTimesToSpawnThisObject: 2
+    tabIsOpen: 0
+  - prefab: {fileID: 1553043131289158, guid: 019d81239cd644d1d858d9eb887f6a73, type: 3}
+    spawnOptions: 1
+    usePhysicsEventFilters: 1
+    filterLayers:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    filterTags:
+    - Enemy
+    filterNames: []
+    spawnAt: 0
+    customSpawnTransform: {fileID: 0}
+    localPositionOffset: {x: 0, y: 0, z: 0}
+    addRandomizationRange: 0
+    randomizationRangeMin: {x: -0.1, y: -0.1, z: -0.1}
+    randomizationRangeMax: {x: 0.1, y: 0.1, z: 0.1}
+    rotationMode: 0
+    customRotationEulerAngles: {x: 0, y: 0, z: 0}
+    scaleMode: 0
+    customLocalScale: {x: 1, y: 1, z: 1}
+    customLocalScaleMin: {x: 0, y: 0, z: 0}
+    customLocalScaleMax: {x: 1, y: 1, z: 1}
+    customLocalScaleProportionalMin: 0
+    customLocalScaleProportionalMax: 1
+    customScaleOptions: 0
+    timesToSpawnMode: 0
+    timesToSpawnThisObject: 1
+    minTimesToSpawnThisObject: 1
+    maxTimesToSpawnThisObject: 2
+    tabIsOpen: 0
+  - prefab: {fileID: 1553043131289158, guid: bcef65eb30f324f729434aa40e298495, type: 3}
+    spawnOptions: 1
+    usePhysicsEventFilters: 1
+    filterLayers:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    filterTags: []
+    filterNames:
+    - 3rd Floor Cube (Red by Name)
+    spawnAt: 0
+    customSpawnTransform: {fileID: 0}
+    localPositionOffset: {x: 0, y: 0, z: 0}
+    addRandomizationRange: 0
+    randomizationRangeMin: {x: -0.1, y: -0.1, z: -0.1}
+    randomizationRangeMax: {x: 0.1, y: 0.1, z: 0.1}
+    rotationMode: 0
+    customRotationEulerAngles: {x: 0, y: 0, z: 0}
+    scaleMode: 0
+    customLocalScale: {x: 1, y: 1, z: 1}
+    customLocalScaleMin: {x: 0, y: 0, z: 0}
+    customLocalScaleMax: {x: 1, y: 1, z: 1}
+    customLocalScaleProportionalMin: 0
+    customLocalScaleProportionalMax: 1
+    customScaleOptions: 0
+    timesToSpawnMode: 0
+    timesToSpawnThisObject: 1
+    minTimesToSpawnThisObject: 1
+    maxTimesToSpawnThisObject: 2
+    tabIsOpen: 0
+  - prefab: {fileID: 1553043131289158, guid: a345a6de8e1a64b29addaae161e13fc4, type: 3}
+    spawnOptions: 1
+    usePhysicsEventFilters: 1
+    filterLayers:
+      serializedVersion: 2
+      m_Bits: 4
+    filterTags:
+    - Rocks
+    filterNames:
+    - 4th Floor Cube (Yellow Hybrid - tag Rocks, layer IgnoreRaycast)
+    spawnAt: 0
+    customSpawnTransform: {fileID: 0}
+    localPositionOffset: {x: 0, y: 0, z: 0}
+    addRandomizationRange: 0
+    randomizationRangeMin: {x: -0.1, y: -0.1, z: -0.1}
+    randomizationRangeMax: {x: 0.1, y: 0.1, z: 0.1}
+    rotationMode: 0
+    customRotationEulerAngles: {x: 0, y: 0, z: 0}
+    scaleMode: 0
+    customLocalScale: {x: 1, y: 1, z: 1}
+    customLocalScaleMin: {x: 0, y: 0, z: 0}
+    customLocalScaleMax: {x: 1, y: 1, z: 1}
+    customLocalScaleProportionalMin: 0
+    customLocalScaleProportionalMax: 1
+    customScaleOptions: 0
+    timesToSpawnMode: 0
+    timesToSpawnThisObject: 1
+    minTimesToSpawnThisObject: 1
+    maxTimesToSpawnThisObject: 2
+    tabIsOpen: 0
+  enableDespawnerEvents: 0
+  useOnDespawnUnityEvent: 0
+  OnDespawnUnityEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  useOnChainSpawnUnityEvent: 0
+  OnChainSpawnUnityEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  useOnPhysicsCollidedUnityEvent: 0
+  OnPhysicsCollidedUnityEvent:
+    m_PersistentCalls:
+      m_Calls: []

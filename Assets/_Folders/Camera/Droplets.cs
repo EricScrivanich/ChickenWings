@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using HellTap.PoolKit;
 
 public class Droplets : MonoBehaviour
 {
@@ -11,11 +12,21 @@ public class Droplets : MonoBehaviour
     [SerializeField] private float dropTime;
     private float time;
 
+
+
+    private Pool pool;
     private bool ready;
 
     // Start is called before the first frame update
     void Start()
     {
+
+
+
+    }
+    void OnEnable()
+    {
+        pool = PoolKit.GetPool("Poison");
         time = 0;
 
         ready = false;
@@ -37,12 +48,12 @@ public class Droplets : MonoBehaviour
 
             if (time > dropTime)
             {
-                Debug.Log("drop");
-                Instantiate(droplet, transform);
+                Transform myInstance = pool.Spawn(droplet, dropPosition.position, Vector3.zero, null);
+
                 time = 0;
             }
 
         }
-        
+
     }
 }

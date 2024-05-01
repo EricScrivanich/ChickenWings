@@ -16,5 +16,7 @@ public struct RingEvents
     public Action<bool, int> OnSpawnRings;
     public Action<bool,int> OnCreateNewSequence;
 
+    public Action tutorialRingPass;
+
 
 }

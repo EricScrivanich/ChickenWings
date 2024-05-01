@@ -53,7 +53,8 @@ public class PlayerFlipLeftState : PlayerBaseState
             rotationSpeed = 420;
             prolongRotation = false;
         }
-        player.rb.velocity = new Vector2(player.flipLeftForceX, player.flipLeftForceY);
+        // player.rb.velocity = new Vector2(player.flipLeftForceX, player.flipLeftForceY);
+        player.AdjustForce(player.flipLeftForceX, player.flipLeftForceY);
         AudioManager.instance.PlayCluck();
 
 

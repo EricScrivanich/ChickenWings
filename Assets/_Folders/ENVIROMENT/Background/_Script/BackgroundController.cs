@@ -14,6 +14,8 @@ public class BackgroundController : MonoBehaviour
         public float startPosition2;
     }
 
+
+
     public List<GameObject> layers;
     public List<float> speeds;
     public List<float> MountainSpeeds;
@@ -28,22 +30,39 @@ public class BackgroundController : MonoBehaviour
 
     private const float ResetPosition = -51f;
     private const float Offset = 80f;
-
-    private void Start()
-    { foreach(var obj in layers)
+    private void Awake()
     {
+       
+        foreach (var obj in layers)
+        {
             obj.SetActive(true);
         }
 
         for (int i = 0; i < layers.Count; i++)
         {
-            Material mat = layers[i].GetComponent<Renderer>().material;
+            // Get the renderer and sprite
+            var renderer = layers[i].GetComponent<Renderer>();
+            var sprite = layers[i].GetComponent<SpriteRenderer>();
 
-            mat.SetFloat("_TextureScrollXSpeed", speeds[i]);
-            mat.SetFloat("_GradBlend", gradientBlends[i]);
+            // Calculate the actual width of the sprite in world units
+            float spriteWidth = sprite.bounds.size.x;
+
+            // Get the material from the renderer
+            Material mat = renderer.material;
+
+            // Convert world speed to texture coordinate speed
+            float textureSpeed = speeds[i] / spriteWidth;
+
+            mat.SetFloat("_TextureScrollXSpeed", textureSpeed);
 
         }
-       
+
+    }
+    private void Start()
+    {
+
+
+
 
         skyLayer.startPosition1 = skyLayer.transform1.position.x;
         skyLayer.startPosition2 = skyLayer.transform2.position.x;
@@ -82,12 +101,12 @@ public class BackgroundController : MonoBehaviour
             Material mat = layers[i].GetComponent<Renderer>().material;
 
             mat.SetFloat("_TextureScrollXSpeed", MountainSpeeds[i]);
-        
+
         }
 
     }
 
-    
+
 
     private void Reset(ParallaxLayer layer)
     {
@@ -106,7 +125,7 @@ public class BackgroundController : MonoBehaviour
         }
     }
 
-    
+
 
 }
-       
+

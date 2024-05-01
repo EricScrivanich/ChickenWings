@@ -4,6 +4,7 @@ using System;
 public struct GlobalPlayerEvents
 {
     public Action<int> OnUpdateLives;
+    public Action<float> OnAdjustConstantSpeed;
     public Action OnUpdateAmmo;
     public Action<int> OnAddAmmo; 
     public Action<int> OnUpdateScore;
@@ -23,11 +24,16 @@ public struct GlobalPlayerEvents
     public Action<bool> CanDash;
     public Action<bool> CanDrop;
 
+    public Action<bool> CanDashSlash;
+    public Action<bool> SetCanDashSlash;
+
     public Action<float, float> ShakeCamera;
 
     public Action<bool> HighlightDash;
     public Action<bool> HighlightDrop;
     public Action<bool> HighlightEgg;
+
+    public Action OnOffScreen;
 
 
 }

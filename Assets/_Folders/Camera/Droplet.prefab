@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5562718333670231775}
   - component: {fileID: 4158073212846067442}
   - component: {fileID: 6475459927819651308}
+  - component: {fileID: -327326648144223382}
   m_Layer: 11
   m_Name: Droplet
   m_TagString: Plane
@@ -158,3 +159,90 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-327326648144223382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3458719528986316293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfeb76cabbfdd47a1b1db9ef7bdd0e66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tab: 0
+  pool: {fileID: 0}
+  aliveTime: 0
+  despawnMode: 4
+  despawnCountdown: 5
+  despawnCountdownRandomMin: 4
+  despawnCountdownRandomMax: 6
+  particleSystemToUse: 0
+  useThisParticleSystem: {fileID: 0}
+  playParticleSystemOnSpawn: 1
+  audioSourceToUse: 0
+  useThisAudioSource: {fileID: 0}
+  playAudioSourceOnSpawn: 1
+  overlapType: 3
+  overlapOffset: {x: 0, y: 0, z: 0}
+  overlapRadius: 0.3
+  overlapScale: {x: 1.12, y: 1.39, z: 1}
+  overlapAlsoDespawnAfterCountdown: 0
+  overlapCountdown: 5
+  colliderAlsoDespawnAfterCountdown: 1
+  colliderCountdown: 5
+  useCollisionEnter: 1
+  useCollisionStay: 0
+  useCollisionExit: 0
+  triggerAlsoDespawnAfterCountdown: 1
+  triggerCountdown: 5
+  useTriggerEnter: 1
+  useTriggerStay: 0
+  useTriggerExit: 0
+  collider2DAlsoDespawnAfterCountdown: 1
+  collider2DCountdown: 5
+  useCollisionEnter2D: 1
+  useCollisionStay2D: 0
+  useCollisionExit2D: 0
+  trigger2DAlsoDespawnAfterCountdown: 1
+  trigger2DCountdown: 5
+  useTriggerEnter2D: 1
+  useTriggerStay2D: 0
+  useTriggerExit2D: 0
+  raycast3DAlsoDespawnAfterCountdown: 1
+  raycast3DCountdown: 5
+  raycast3DmaxHits: 30
+  raycast3DDistance: 1.5
+  raycast3DDirection: {x: 0, y: 0, z: 1}
+  raycast2DAlsoDespawnAfterCountdown: 1
+  raycast2DCountdown: 5
+  raycast2DmaxHits: 30
+  raycast2DDistance: 1.5
+  raycast2DDirection: {x: 1, y: 0}
+  raycast2DMinZDepth: -Infinity
+  raycast2DMaxZDepth: Infinity
+  sourceOfCollisions: 0
+  collisionSourceGameObject: {fileID: 0}
+  resetRigidbodyVelocitiesOnSpawn: 1
+  filterLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  filterTags: []
+  queryTriggerInteraction: 0
+  lastCollisionPoint: {x: 0, y: 0, z: 0}
+  lastCollidedPhysicsGameObject: {fileID: 0}
+  chainableSpawns: []
+  enableDespawnerEvents: 0
+  useOnDespawnUnityEvent: 0
+  OnDespawnUnityEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  useOnChainSpawnUnityEvent: 0
+  OnChainSpawnUnityEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  useOnPhysicsCollidedUnityEvent: 0
+  OnPhysicsCollidedUnityEvent:
+    m_PersistentCalls:
+      m_Calls: []

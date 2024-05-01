@@ -13,9 +13,11 @@ public class BarnMovement : MonoBehaviour
     private float spawnTimeVar;
     [SerializeField] private float offsetSpawnTime;
 
-    
+    private MissileLauncher shoot;
 
-    
+
+
+
     void Awake()
     {
         spawnTimeVar = spawnTime += Random.Range(-offsetSpawnTime,offsetSpawnTime);
@@ -23,8 +25,13 @@ public class BarnMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-  
+        shoot = GetComponent<MissileLauncher>();
+        if (shoot != null)
+        {
+            shoot.enabled = false;
+        }
+
+
     }
 
     // Update is called once per frame
@@ -39,6 +46,11 @@ private void Restart()
    if (transform.position.x < -13f)
    {
        nextBarnBool = false;
+    transform.position = new Vector2(BoundariesManager.rightBoundary, transform.position.y);
+            if (shoot != null)
+            {
+                shoot.enabled = false;
+            }
        
    }
    
@@ -49,7 +61,11 @@ private void Restart()
 
    if (!nextBarnBool && spawnTimer >+ spawnTimeVar)
    {
-    transform.position = new Vector2(BoundariesManager.rightBoundary, transform.position.y);
+            if (shoot != null)
+            {
+                shoot.enabled = true;
+            }
+   
     nextBarnBool = true;
     spawnTimeVar = spawnTime += Random.Range(-offsetSpawnTime,offsetSpawnTime);
     spawnTimer = 0;
