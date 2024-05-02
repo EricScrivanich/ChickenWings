@@ -5,14 +5,23 @@ using UnityEngine;
 public class HeliGun : MonoBehaviour
 {
     public HelicopterID helicopterID;
-    [SerializeField] private  GameObject bulletPrefab;
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Transform spawnPoint;
+    private Animator anim;
     private int poolSize = 10;
+    private int shootTriggerHash;
 
     private Queue<GameObject> bulletPool;
-
+    private void Awake()
+    {
+        anim = GetComponent<Animator>();
+    }
     private void Start()
     {
-       
+
+
+        shootTriggerHash = Animator.StringToHash("Shoot");
+
 
         // Initialize the bullet pool
         bulletPool = new Queue<GameObject>();
@@ -39,8 +48,10 @@ public class HeliGun : MonoBehaviour
             GameObject bullet = bulletPool.Dequeue();
 
             // Set bullet position and direction
-            bullet.transform.position = transform.position;
+            bullet.transform.position = spawnPoint.position;
             bullet.transform.rotation = transform.rotation;
+            anim.SetTrigger(shootTriggerHash);
+
             bullet.SetActive(true);
 
             // Return the bullet to the pool after some time
@@ -54,15 +65,17 @@ public class HeliGun : MonoBehaviour
         }
     }
 
-    private void OnEnable() 
+    private void OnEnable()
     {
         helicopterID.events.shoot += Shoot;
-        
+        anim.SetTrigger("Reset");
+
+
     }
 
-    private void OnDisable() 
+    private void OnDisable()
     {
         helicopterID.events.shoot -= Shoot;
-        
+
     }
 }

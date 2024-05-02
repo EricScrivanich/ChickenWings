@@ -487,7 +487,7 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    private void HandleDashSlash(bool canSlash) 
+    private void HandleDashSlash(bool canSlash)
     {
 
         canDashSlash = canSlash;
@@ -547,6 +547,12 @@ public class PlayerStateManager : MonoBehaviour
         {
             return;
         }
+
+    }
+
+    private void HitBoss()
+    {
+        DashSlash.IgnoreForce(true);
 
     }
 
@@ -784,6 +790,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnHoldFlip += HandleHoldFlip;
         ID.globalEvents.OnAdjustConstantSpeed += ChangeConstantForce;
         ID.globalEvents.OnOffScreen += OffScreen;
+        ID.events.HitBoss += HitBoss;
 
         // ID.events.OnAttack += HandleSlash;
     }
@@ -809,6 +816,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnHoldFlip -= HandleHoldFlip;
         ID.globalEvents.OnAdjustConstantSpeed -= ChangeConstantForce;
         ID.globalEvents.OnOffScreen -= OffScreen;
+        ID.events.HitBoss -= HitBoss;
+
 
 
 

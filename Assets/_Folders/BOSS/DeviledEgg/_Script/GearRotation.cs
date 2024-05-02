@@ -35,28 +35,31 @@ public class GearRotation : MonoBehaviour
     {
         speedRatio = GetSpeedRatio(largeGearTeeth, smallGearTeeth);
         previousRotation = transform.rotation;
+        rotationSpeed = 40;
 
-        StartCoroutine(FireCannons());
+        // StartCoroutine(FireCannons());
+        
+    }
+    private void OnEnable() {
+        StartCoroutine(RandomFireRoutine());
     }
 
     void Update()
     {
-      if (targetObject != null)
-      {
-        if (shouldRotateContinuously)
-        {
-            RotateContinuously();
-        }
-        else
-        {
-            RotateGears();
-        }
-      }
-      else
-      {
-        return;
-      }
-        
+        RotateContinuously();
+        //   if (targetObject != null)
+        //   {
+        //     if (shouldRotateContinuously)
+        //     {
+        //         RotateContinuously();
+        //     }
+        //     else
+        //     {
+        //         RotateGears();
+        //     }
+        //   }
+
+
     }
 
     private float GetSpeedRatio(int largeGearTeeth, int smallGearTeeth)
@@ -89,6 +92,42 @@ public class GearRotation : MonoBehaviour
         RotateGear(targetRotationZ);
     }
 
+    private IEnumerator RandomFireRoutine()
+    {
+        while (true)
+        {
+            // Randomly choose a new rotation angle
+
+            rotationSpeed = 0;
+            yield return new WaitForSeconds(.3f);
+            // Fire cannons based on the configuration
+            if (fireAllAtOnce)
+            {
+                topCannon.FireCannonBall();
+                leftCannon.FireCannonBall();
+                bottomCannon.FireCannonBall();
+                rightCannon.FireCannonBall();
+            }
+            else
+            {
+                topCannon.FireCannonBall();
+                yield return new WaitForSeconds(fireTime);
+                leftCannon.FireCannonBall();
+                yield return new WaitForSeconds(fireTime);
+                bottomCannon.FireCannonBall();
+                yield return new WaitForSeconds(fireTime);
+                rightCannon.FireCannonBall();
+            }
+            rotateClockwise = !rotateClockwise;
+            yield return new WaitForSeconds(.3f);
+            rotationSpeed = Random.Range(35, 60);
+
+
+            // Wait for a bit before the next cycle
+            yield return new WaitForSeconds(3);
+        }
+    }
+
     private void RotateGear(float targetRotationZ)
     {
         float rotationAngle = Mathf.DeltaAngle(previousRotation.eulerAngles.z, targetRotationZ);
@@ -103,6 +142,8 @@ public class GearRotation : MonoBehaviour
 
         smallGear.transform.Rotate(0, 0, -smallGearRotationAngle);
     }
+
+
 
     private void RotateContinuously()
     {

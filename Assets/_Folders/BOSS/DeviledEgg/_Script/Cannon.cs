@@ -4,32 +4,49 @@ using UnityEngine;
 
 
 
+
 public class Cannon : MonoBehaviour
 {
     [SerializeField] private GameObject cannonBallPrefab;
+    [SerializeField] private Transform spawnPoint;
+    private GameObject cannonBall;
+    private Rigidbody2D ballRB;
+
     public float speed = 5f;
+
+    private void Start()
+    {
+        cannonBall = Instantiate(cannonBallPrefab);
+        ballRB = cannonBall.GetComponent<Rigidbody2D>();
+
+        cannonBall.SetActive(false);
+    }
 
     public void FireCannonBall()
     {
-        var spawnPoint = transform.Find("CannonBallSpawn");
+        cannonBall.SetActive(false);
+
         if (spawnPoint != null)
         {
-            GameObject newCannonBall = Instantiate(cannonBallPrefab, spawnPoint.position, Quaternion.identity);
-            Rigidbody2D rb = newCannonBall.GetComponent<Rigidbody2D>();
 
-            if (rb != null)
-            {
-                Vector2 fireDirection = transform.up; // Use the cannon's upward direction
-                rb.velocity = fireDirection * speed;
-            }
-            else
-            {
-                Debug.LogError("Cannon ball prefab does not have a Rigidbody2D component.");
-            }
+            cannonBall.transform.position = spawnPoint.position;
+            cannonBall.SetActive(true);
+            Vector2 fireDirection = transform.up; // Use the cannon's upward direction
+            ballRB.velocity = fireDirection * speed;
+
+
         }
         else
         {
             Debug.LogError("Cannon does not have a child object named 'CannonBallSpawn'.");
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (cannonBall != null)
+        {
+            cannonBall.SetActive(false);
         }
     }
 }

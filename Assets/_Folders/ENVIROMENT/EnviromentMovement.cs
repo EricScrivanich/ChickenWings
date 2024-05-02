@@ -10,10 +10,11 @@ public class EnviromentMovement : MonoBehaviour
 
     // Update is called once per frame
 
-    private void Start() {
+    private void Start()
+    {
         if (player.constantPlayerForceBool)
         {
-            foreach(var obj in clouds)
+            foreach (var obj in clouds)
             {
                 obj.SetActive(false);
             }
@@ -21,7 +22,7 @@ public class EnviromentMovement : MonoBehaviour
     }
     void Update()
     {
-        transform.Translate(Vector2.right * player.constantPlayerForce * Time.deltaTime);
+        transform.position = new Vector2(Camera.main.transform.position.x, 0);
 
     }
 }

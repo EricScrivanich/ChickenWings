@@ -16,11 +16,13 @@ public class PlayerDashSlashState : PlayerBaseState
     private bool hasSlashed;
     private float time;
     private float currentXVelocity;
+    private bool ignoreForce;
 
     public override void EnterState(PlayerStateManager player)
     {
+        ignoreForce = false;
 
-       
+
         time = 0;
         rotationSpeedVar = startingRotationSpeed;
         player.rotateSlash = false;
@@ -40,18 +42,20 @@ public class PlayerDashSlashState : PlayerBaseState
         AudioManager.instance.PlaySwordSlashSound();
 
 
-
-
-
-
-
     }
+
     public override void ExitState(PlayerStateManager player)
 
     {
         player.ChangeCollider(0);
 
         player.maxFallSpeed = player.ID.MaxFallSpeed;
+
+    }
+
+    public void IgnoreForce(bool ignore)
+    {
+        ignoreForce = ignore;
 
     }
 
@@ -62,13 +66,23 @@ public class PlayerDashSlashState : PlayerBaseState
         //     currentXVelocity -= 11.5f * Time.deltaTime;
         //     player.rb.velocity = new Vector2(currentXVelocity, 0);
         // }
-        if (!player.rotateSlash)
+
+        if (ignoreForce)
+        {
+            player.AdjustForce(-3, .1f);
+            if (hasSlashed)
+            {
+                player.SwitchState(player.IdleState);
+            }
+
+        }
+        if (!player.rotateSlash && !ignoreForce)
         {
 
             // player.rb.velocity = new Vector2(5, 0);
             player.AdjustForce(4, 0);
         }
-        else if (!hasSlashed)
+        else if (!hasSlashed && !ignoreForce)
         {
             // player.rb.velocity = new Vector2(1, -.1f);
             player.AdjustForce(1, -.1f);
@@ -85,7 +99,7 @@ public class PlayerDashSlashState : PlayerBaseState
 
     // }
 
-    public override void RotateState(PlayerStateManager player) 
+    public override void RotateState(PlayerStateManager player)
     {
         if (hasSlashed)
         {

@@ -384,15 +384,18 @@ public class RingSpawner : MonoBehaviour
 
     private IEnumerator BossSpawner()
     {
-        crop.PlanesAvailable = 2;
+        yield return new WaitForSeconds(6f);
+
+        crop.PlanesAvailable = 1;
         StartCoroutine(SpawnPlaneType(crop));
         yield return new WaitForSeconds(9f);
-
+        jet.PlanesAvailable = 1;
         StartCoroutine(SpawnPlaneType(jet));
         yield return new WaitForSeconds(3f);
 
         yield return new WaitForSeconds(10f);
-        StartCoroutine(SpawnPlaneType(cargo));
+        crop.PlanesAvailable = 2;
+
 
 
 
@@ -413,6 +416,7 @@ public class RingSpawner : MonoBehaviour
         {
             for (int i = 0; i < plane.PlanesAvailable; i++)
             {
+                Debug.Log(plane.PlanesAvailable);
                 float SpawnOffsetVar = Random.Range(plane.minOffsetTime, plane.maxOffsetTime);
                 yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
                 yield return new WaitForSeconds(SpawnOffsetVar + totalSpawnDelay);

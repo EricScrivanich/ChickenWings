@@ -8,20 +8,23 @@ public class HeliStateManager : MonoBehaviour, IDamageable
     [ExposedScriptableObject]
     public HelicopterID ID;
     public bool targetRight;
-    private bool isFlipped;
+    public bool isFlipped;
 
     public bool finishedFlipping;
     private Coroutine rotateShoot;
+    public PlaneManagerID planeID;
 
     public Transform player;
+    public bool isTest;
     private bool isHit;
     HeliBaseState currentState;
     public HeliNormalState NormalState = new HeliNormalState();
     public HeliFlipState FlipState = new HeliFlipState();
     public HeliDipState DipState = new HeliDipState();
     public HeliFollowState FollowState = new HeliFollowState();
+    [SerializeField] private Material mat;
 
-    public Animator anim;
+
 
     public Rigidbody2D rb { get; private set; }
 
@@ -36,12 +39,15 @@ public class HeliStateManager : MonoBehaviour, IDamageable
     {
         targetRight = false;
         isFlipped = false;
-        anim = GetComponent<Animator>();
+
         ID.shootingCooldown = 5.6f;
         ID.Lives = 3;
         ID.bulletAmount = 3;
         ID.shotDuration = 2.5f;
-        ID.minSwitchTime = 5.5f;
+        ID.minSwitchTime = 7f;
+        ID.maxSwitchTime = 10f;
+        ID.risingYSpeed = 5;
+        ID.riseYTarget = 1.1f;
         ID.minSwitchTime = 8f;
 
         rb = GetComponent<Rigidbody2D>();
@@ -50,6 +56,15 @@ public class HeliStateManager : MonoBehaviour, IDamageable
         currentState = NormalState;
 
         currentState.EnterState(this);
+
+        if (isTest)
+        {
+            ID.shootingCooldown = 4.2f;
+            ID.Lives = 3;
+            ID.bulletAmount = 5;
+            ID.shotDuration = 1.1f;
+
+        }
     }
 
     public void Hit(int damageAmount)
@@ -61,7 +76,7 @@ public class HeliStateManager : MonoBehaviour, IDamageable
 
         isHit = true;
         StartCoroutine(HitEffect());
-        anim.SetTrigger("HitTrigger");
+
         ID.Lives--;
 
         if (ID.Lives == 2)
@@ -69,16 +84,21 @@ public class HeliStateManager : MonoBehaviour, IDamageable
             Invoke("TempSwitch", 3);
             ID.bulletAmount = 4;
             ID.shootingCooldown = 4;
+            ID.risingYSpeed = 6;
+            ID.riseYTarget = 1.3f;
         }
         else if (ID.Lives == 1)
         {
-            ID.minSwitchTime = 3.2f;
             ID.minSwitchTime = 4.5f;
+            ID.minSwitchTime = 6.4f;
             ID.shootingCooldown = 2.6f;
+            ID.risingYSpeed = 7;
+            ID.riseYTarget = 1.5f;
 
         }
         else if (ID.Lives == 0)
         {
+            planeID.GetExplosion(transform.position, new Vector3(1.3f, 1.3f, 1.3f));
             gameObject.SetActive(false);
         }
 
@@ -111,7 +131,12 @@ public class HeliStateManager : MonoBehaviour, IDamageable
 
     public void RotateAndShoot(bool start)
     {
-        if (start)
+        if (isTest)
+        {
+            return;
+
+        }
+        else if (start)
         {
             rotateShoot = StartCoroutine(RotateAndShootCourintine(35, 3.2f));
         }
@@ -124,8 +149,42 @@ public class HeliStateManager : MonoBehaviour, IDamageable
 
     }
 
+    public IEnumerator RandomRotateAndShootCoroutine(float rotationSpeed, float rotationDuration)
+    {
+        float elapsedTime = 0f;
+        Quaternion initialRotation = transform.rotation;
+
+        // Choose a random target rotation between two angles
+        float minAngle = 4.1f;  // Define the minimum angle
+        float maxAngle = 25f;   // Define the maximum angle
+        float randomAngle = UnityEngine.Random.Range(minAngle, maxAngle);
+
+        // Create the target rotation
+        Quaternion targetRotation = Quaternion.Euler(0, 0, randomAngle);
+
+        // Rotate over time
+        while (elapsedTime < rotationDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / rotationDuration;
+            transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, t);
+            yield return null;
+        }
+
+        // Invoke shooting event or method
+        ID.events.shoot?.Invoke(1.2f, 5);
+
+        // Wait before restarting or finishing
+        yield return new WaitForSeconds(ID.shootingCooldown);
+
+        // Optionally restart the coroutine
+        rotateShoot = StartCoroutine(RandomRotateAndShootCoroutine(rotationSpeed, rotationDuration));
+    }
+
     public IEnumerator RotateAndShootCourintine(float rotationSpeed, float rotationDuration)
     {
+
+
         float elapsedTime = 0f;
         bool isFlipped = transform.localScale.x < 0;  // Check if the helicopter is flipped along the Y-axis
 
@@ -160,7 +219,7 @@ public class HeliStateManager : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(ID.shootingCooldown);
 
         // Restart the coroutine to repeat the behavior
-       rotateShoot =  StartCoroutine(RotateAndShootCourintine(rotationSpeed, rotationDuration));
+        rotateShoot = StartCoroutine(RotateAndShootCourintine(rotationSpeed, rotationDuration));
     }
 
     public void TempSwitch()
@@ -266,11 +325,31 @@ public class HeliStateManager : MonoBehaviour, IDamageable
     //     transform.rotation = Quaternion.Euler(0, finalAngle, transform.rotation.eulerAngles.z);
     //     finishedFlipping = true;
     // }
+    private void OnEnable()
+    {
 
+        if (isTest)
+        {
+            rotateShoot = StartCoroutine(RandomRotateAndShootCoroutine(35, .7f));
+        }
+        mat.SetFloat("_Alpha", 1);
+    }
 
     private IEnumerator HitEffect()
     {
-        yield return new WaitForSeconds(1.5f);
+
+        for (int i = 0; i < 5; i++)
+        {
+            // spriteRenderer.color = new Color(1f, 1f, 1f, 0f); // Set opacity to 0
+            mat.SetFloat("_Alpha", 0f);
+            yield return new WaitForSeconds(.1f);
+            // spriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Set opacity to 1
+            mat.SetFloat("_Alpha", .9f);
+            yield return new WaitForSeconds(.1f);
+        }
+        mat.SetFloat("_Alpha", 1);
+
+
 
         isHit = false;
 

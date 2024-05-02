@@ -18,6 +18,8 @@ public struct PlayerEvents
     public Action<bool> OnAttack;
     public Action<BucketScript> OnCompletedRingSequence;
 
+    public Action HitBoss;
+
     public Action LoseLife;
     public Action HitGround;
 

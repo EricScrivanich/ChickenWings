@@ -14,6 +14,10 @@ public class HeliNormalState : HeliBaseState
         if (heli.ID.Lives < 3)
         {
             float time = Random.Range(heli.ID.minSwitchTime, heli.ID.maxSwitchTime);
+            if (heli.isFlipped)
+            {
+                time = Random.Range(heli.ID.minSwitchTime - 2, heli.ID.maxSwitchTime - 3);
+            }
             heli.Invoke("TempSwitch", time);
 
         }

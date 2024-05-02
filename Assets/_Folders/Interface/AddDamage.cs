@@ -14,7 +14,13 @@ public class AddDamage : MonoBehaviour
         {
             damageableEntity.Damage(damageAmount);
         }
+        if (collider.gameObject.CompareTag("SolidEnemy"))
+        {
+            Debug.Log("Hit");
+            ID.events.HitBoss?.Invoke();
+        }
     }
+
 
     public void AttackFinished()
     {
