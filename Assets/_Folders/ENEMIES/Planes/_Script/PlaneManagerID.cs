@@ -9,6 +9,10 @@ public class PlaneManagerID : ScriptableObject
     public float bomberTime;
     public float missileTime;
 
+    public bool finsihedDrop;
+
+    public int bombsDropped;
+
 
     public int numberOfSpawnsToDeactivate;
 

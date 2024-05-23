@@ -175,7 +175,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3370166446289568688}
   - component: {fileID: 3679946209921622469}
-  - component: {fileID: 3299547612893877592}
   m_Layer: 0
   m_Name: CloudsDarkImage
   m_TagString: Untagged
@@ -250,22 +249,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3299547612893877592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8054319997157572715}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shaderTypes: 0
-  normalStrength: 5
-  normalSmoothing: 1
-  computingNormal: 0
 --- !u!1001 &2231246893185847201
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -325,6 +308,10 @@ PrefabInstance:
     - target: {fileID: 4424006291327415490, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4517206497498035114, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: speeds.Array.data[0]

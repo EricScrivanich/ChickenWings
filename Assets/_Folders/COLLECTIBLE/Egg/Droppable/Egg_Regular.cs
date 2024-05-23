@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using HellTap.PoolKit;
 
 public class Egg_Regular : MonoBehaviour
 {
@@ -11,9 +12,10 @@ public class Egg_Regular : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D coll2D;
     private bool isCracked;
-    private Animator anim;
+    // private Animator anim;
     private bool isFirstActivation = true;
     private bool ready = false;
+    private Pool pool;
 
 
     // private Vector2 playerForce;
@@ -21,11 +23,15 @@ public class Egg_Regular : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        coll2D = GetComponent<Collider2D>();
-        anim = GetComponent<Animator>();
-        ready = true;
+        // coll2D = GetComponent<Collider2D>();
+        // anim = GetComponent<Animator>();
+        // ready = true;
 
 
+    }
+    private void Start()
+    {
+        pool = PoolKit.GetPool("EggPool");
     }
 
 
@@ -48,29 +54,31 @@ public class Egg_Regular : MonoBehaviour
 
     // }
 
-    IEnumerator YolkMovement()
-    {
+    // IEnumerator YolkMovement()
+    // {
        
-        while (transform.position.x > BoundariesManager.leftBoundary)
-        {
-            transform.Translate(Vector2.left * BoundariesManager.GroundSpeed * Time.deltaTime);
-            yield return null;
+    //     while (transform.position.x > BoundariesManager.leftBoundary)
+    //     {
+    //         transform.Translate(Vector2.left * BoundariesManager.GroundSpeed * Time.deltaTime);
+    //         yield return null;
 
-        }
-        anim.SetTrigger("EnterTrigger");
-        yield return new WaitForSeconds(.1f);
-        gameObject.SetActive(false);
-    }
+    //     }
+    //     anim.SetTrigger("EnterTrigger");
+    //     yield return new WaitForSeconds(.1f);
+    //     gameObject.SetActive(false);
+    // }
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.gameObject.CompareTag("Floor"))
         {
 
-            anim.SetTrigger("CrackTrigger");
-            StartCoroutine(YolkMovement());
+           
+            // StartCoroutine(YolkMovement());
             AudioManager.instance.PlayCrackSound();
-            isCracked = true;
+            pool.Spawn("YolkParent", transform.position,Vector3.zero);
+            pool.Despawn(gameObject);
+            // isCracked = true;
 
 
 
@@ -78,28 +86,30 @@ public class Egg_Regular : MonoBehaviour
         if (collider.gameObject.CompareTag("Barn"))
         {
             ID.AddScore(5);
-            gameObject.SetActive(false);
+            pool.Despawn(gameObject);
+
+
 
         }
     }
-    private void OnEnable()
-    {
+    // private void OnEnable()
+    // {
 
 
-        rb.velocity = new Vector2(ID.AddEggVelocity, -1.5f);
+    //     // rb.velocity = new Vector2(ID.AddEggVelocity, -1.5f);
 
 
 
 
-    }
+    // }
 
-    private void OnDisable()
-    {
+    // private void OnDisable()
+    // {
 
 
-        isCracked = false;
+    //     isCracked = false;
 
-    }
+    // }
 
 
 }

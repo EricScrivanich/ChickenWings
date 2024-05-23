@@ -7,6 +7,8 @@ using UnityEngine;
 public class RingPool : ScriptableObject
 {
     public bool Testing;
+    [SerializeField] private GameObject SonicWavePrefab;
+    private GameObject SonicWave;
     [SerializeField] private int currentTriggerEdited;
     private int lastCurrentTrigger;
     [SerializeField] private bool showAllPlaceholders;
@@ -16,7 +18,7 @@ public class RingPool : ScriptableObject
     public GameObject bucketPrefab;
     public GameObject ballPrefab;
 
-    private int ringAmount = 25; 
+    private int ringAmount = 25;
     private int bucketAmount = 4;
 
     private List<List<GameObject>> ringsToDeactivate;
@@ -45,10 +47,10 @@ public class RingPool : ScriptableObject
         }
 
 
-            if (!parent)
-            {
-                parent = new GameObject(name).transform;
-            }
+        if (!parent)
+        {
+            parent = new GameObject(name).transform;
+        }
 
         while (ringPool.Count < ringAmount)
         {
@@ -127,13 +129,23 @@ public class RingPool : ScriptableObject
         RingType[index].ResetVariables();
 
     }
+    public void GetSonicWave(Vector2 position)
+    {
+        if (SonicWave != null)
+        {
+            SonicWave.transform.position = position;
+            SonicWave.SetActive(true);
 
+        }
+    }
     public void SpawnBucketPool()
     {
 
+        SonicWave = Instantiate(SonicWavePrefab);
+        SonicWave.SetActive(false);
         bucketPool = new List<BucketScript>();
-      
-        
+
+
         // if (bucketPool == null || bucketPool.Count == 0)
         // {
         //     bucketPool = new List<BucketScript>();
@@ -174,7 +186,7 @@ public class RingPool : ScriptableObject
         return null;
     }
 
-    
+
 
 
     #region Fading/Disabling
@@ -314,8 +326,8 @@ public class RingPool : ScriptableObject
 
 
 
-    
-        
+
+
 
 
 }

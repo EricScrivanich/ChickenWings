@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 1606673710451425555}
   - component: {fileID: 6142840828816796483}
   - component: {fileID: 9203055847505442420}
-  m_Layer: 11
+  - component: {fileID: 4808038901882348346}
+  m_Layer: 15
   m_Name: missile
   m_TagString: Plane
   m_Icon: {fileID: 0}
@@ -173,6 +174,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   force: 8
+--- !u!114 &4808038901882348346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3979571776137083320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 893808f128e50421f98c1a4b1b4645ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalExplosionScale: {x: 1, y: 1, z: 1}
+  groundExplosionScale: {x: 1.4, y: 1.4, z: 1.4}
 --- !u!1001 &776070454297651559
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -364,6 +379,10 @@ PrefabInstance:
     - target: {fileID: 2467450161918755088, guid: 315e1c13983654d3da05f6eb4a575930, type: 3}
       propertyPath: m_Name
       value: SmokeTrail
+      objectReference: {fileID: 0}
+    - target: {fileID: 2467450161918755088, guid: 315e1c13983654d3da05f6eb4a575930, type: 3}
+      propertyPath: m_Layer
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 2918388030798461340, guid: 315e1c13983654d3da05f6eb4a575930, type: 3}
       propertyPath: m_SortingOrder

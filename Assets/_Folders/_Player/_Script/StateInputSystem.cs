@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class StateInputSystem : MonoBehaviour
 {
     private InputController controls;
-    
+
     private bool isHolding;
     private bool isHoldingFlip;
     private Vector2 touchStartPosition;
@@ -28,7 +28,7 @@ public class StateInputSystem : MonoBehaviour
         // controls.Movement.Dash.started += ctx => ID.events.OnDash?.Invoke();
         controls.Movement.Dash.performed += ctx => ID.events.OnDash?.Invoke(true);
         controls.Movement.Dash.canceled += ctx => ID.events.OnDash?.Invoke(false);
-       
+
 
         controls.Movement.Drop.performed += ctx => ID.events.OnDrop?.Invoke();
         controls.Movement.DropEgg.performed += ctx => ID.events.OnEggDrop?.Invoke();
@@ -104,18 +104,18 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
 
 
-        if (TimeManager.DebogLogEnabled)
-        {
-            controls.Movement.Dash.performed += ctx => ID.globalEvents.HighlightDash?.Invoke(true);
-            controls.Movement.Drop.performed += ctx => ID.globalEvents.HighlightDrop?.Invoke(true);
-            controls.Movement.DropEgg.performed += ctx => ID.globalEvents.HighlightEgg?.Invoke(true);
+        // if (TimeManager.DebogLogEnabled)
+        // {
+        //     controls.Movement.Dash.performed += ctx => ID.globalEvents.HighlightDash?.Invoke(true);
+        //     controls.Movement.Drop.performed += ctx => ID.globalEvents.HighlightDrop?.Invoke(true);
+        //     controls.Movement.DropEgg.performed += ctx => ID.globalEvents.HighlightEgg?.Invoke(true);
 
-            controls.Movement.Dash.canceled += ctx => ID.globalEvents.HighlightDash?.Invoke(false);
-            controls.Movement.Drop.canceled += ctx => ID.globalEvents.HighlightDrop?.Invoke(false);
-            controls.Movement.DropEgg.canceled += ctx => ID.globalEvents.HighlightEgg?.Invoke(false);
+        //     controls.Movement.Dash.canceled += ctx => ID.globalEvents.HighlightDash?.Invoke(false);
+        //     controls.Movement.Drop.canceled += ctx => ID.globalEvents.HighlightDrop?.Invoke(false);
+        //     controls.Movement.DropEgg.canceled += ctx => ID.globalEvents.HighlightEgg?.Invoke(false);
 
 
-        }
+        // }
         // controls.Movement.Parachute.performed += ctx =>
         // {
         //     // if (Input.touchCount == 2)

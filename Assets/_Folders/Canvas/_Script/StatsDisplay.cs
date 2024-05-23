@@ -25,6 +25,7 @@ public class StatsDisplay : MonoBehaviour
     private Coroutine fillBigManaBarCoroutine;
     [SerializeField] private float staminaBarFadeTime;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI finalScore;
     [SerializeField] private TextMeshProUGUI ammoText;
     public Material staminaBarMaterial; // Reference to the stamina bar's material
     public CanvasGroup StaminaGroup;
@@ -52,8 +53,9 @@ public class StatsDisplay : MonoBehaviour
     {
         scoreDisplayed = player.Score;
         scoreText.text = "Score: " + scoreDisplayed.ToString();
+        UpdateAmmo();
 
-  
+
 
         ManaBar.fillAmount = player.CurrentMana / player.MaxMana;
         ManaBarBig.fillAmount = ((player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / player.MaxMana);
@@ -109,10 +111,19 @@ public class StatsDisplay : MonoBehaviour
 
         }
     }
+
+    public void UpdateFinalScore()
+    {
+        if (finalScore != null)
+        {
+            finalScore.text = "Your Score: " + player.Score.ToString();
+
+        }
+    }
     void UpdateScore(int scoreAdded)
     {
         CheckDigitAmount(scoreDisplayed);
-     
+
 
         if (scoreAdded == 1)
         {

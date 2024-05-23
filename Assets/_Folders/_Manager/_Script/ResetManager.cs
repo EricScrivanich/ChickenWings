@@ -15,11 +15,11 @@ public class ResetManager : MonoBehaviour
     private PlayerManager playerMan;
     public static event Action onRestartGame;
     private InputAction resetAction;
-    
+
 
     void Awake()
     {
-        
+
         controls = new InputController();
 
         // Bind the Reset action to a method
@@ -29,13 +29,13 @@ public class ResetManager : MonoBehaviour
     }
     void Start()
     {
-        
+
         playerMan = GetComponent<PlayerManager>();
         canReset = false;
         resetTriggered = false;
-        
-       
-        
+
+
+
     }
 
     void Update()
@@ -47,7 +47,7 @@ public class ResetManager : MonoBehaviour
             {
                 canReset = true;
                 resetTriggered = false;
-                controls.Special.Enable();
+                // controls.Special.Enable();
                 resetTimer = 0f;
             }
         }
@@ -80,13 +80,13 @@ public class ResetManager : MonoBehaviour
 
     public void ResetGame()
     {
-       if(canReset)
-       {
+
+
         canReset = false;
         onRestartGame?.Invoke();
         controls.Special.Disable();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+
     }
 
     public void PausedReset()

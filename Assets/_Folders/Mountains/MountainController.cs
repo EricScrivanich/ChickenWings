@@ -7,8 +7,10 @@ public class MountainController : MonoBehaviour
 {
     public CameraID cam;
     private bool isShaking = false;
+    [SerializeField] private bool usingIpad;
 
     [SerializeField] private GameObject[] DeActivate;
+    private bool hasFinished;
 
 
 
@@ -39,9 +41,11 @@ public class MountainController : MonoBehaviour
 
     private Coroutine moveCameraYCoroutine;
     private Coroutine moveCameraXCoroutine;
+    private Coroutine changeSpeedFinishedCoroutine;
 
     private void Awake()
     {
+        hasFinished = false;
 
 
     }
@@ -68,6 +72,13 @@ public class MountainController : MonoBehaviour
     {
 
         targetCamera.transform.Translate(Vector2.right * speed * Time.deltaTime);
+        if (targetCamera.transform.position.x > 292 && !hasFinished)
+        {
+            ChangeSpeedFinished(0, 1.5f);
+
+            hasFinished = true;
+
+        }
 
 
     }
@@ -228,6 +239,12 @@ public class MountainController : MonoBehaviour
         changeSpeedCoroutine = StartCoroutine(ChangeSpeedCoroutine(targetSpeed, duration));
     }
 
+    private void ChangeSpeedFinished(float targetSpeed, float duration)
+    {
+        if (changeSpeedCoroutine != null) StopCoroutine(changeSpeedCoroutine);
+        changeSpeedFinishedCoroutine = StartCoroutine(ChangeSpeedCoroutine(targetSpeed, duration));
+    }
+
     public void DieChangeSpeed()
     {
         ChangeSpeed(0, 2);
@@ -235,7 +252,19 @@ public class MountainController : MonoBehaviour
 
     private void ChangeZoom(float targetZoom, float duration)
     {
+        float scale = (targetZoom - 5) / 5;
+
+        float newTargetZoom = 7.49f * (1 + scale);  // This
+
+
+
         if (changeZoomCoroutine != null) StopCoroutine(changeZoomCoroutine);
+        if (usingIpad)
+        {
+            changeZoomCoroutine = StartCoroutine(ChangeZoomCoroutine(newTargetZoom, duration));
+            return;
+
+        }
         changeZoomCoroutine = StartCoroutine(ChangeZoomCoroutine(targetZoom, duration));
     }
 
@@ -270,6 +299,25 @@ public class MountainController : MonoBehaviour
 
         speed = targetSpeed;
     }
+
+    private IEnumerator ChangeSpeedCoroutineFinished(float targetSpeed, float duration)
+    {
+        float time = 0;
+        float startSpeed = speed;
+
+
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            speed = Mathf.Lerp(startSpeed, targetSpeed, time / duration);
+
+            yield return null;
+        }
+
+        speed = targetSpeed;
+    }
+
 
 
     public void ShakeCamera(float duration, float magnitude)
@@ -315,6 +363,7 @@ public class MountainController : MonoBehaviour
         cam.events.OnChangeZoom += ChangeZoom;
 
         cam.events.OnShakeCamera += ShakeCamera;
+        cam.events.OnChangeSpeedFinished += ChangeSpeedFinished;
 
 
 
@@ -341,6 +390,8 @@ public class MountainController : MonoBehaviour
         cam.events.OnChangeSpeed -= ChangeSpeed;
         cam.events.OnChangeZoom -= ChangeZoom;
         cam.events.OnShakeCamera -= ShakeCamera;
+        cam.events.OnChangeSpeedFinished -= ChangeSpeedFinished;
+
 
     }
 }

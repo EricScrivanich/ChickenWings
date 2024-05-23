@@ -18,8 +18,8 @@ public class TutorialCavas : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        panelRectTransform.anchoredPosition = new Vector2(0, Screen.height);  // Start position off-screen
-        
+        panelRectTransform.anchoredPosition = new Vector2(0, 800);  // Start position off-screen
+
 
     }
 
@@ -27,8 +27,9 @@ public class TutorialCavas : MonoBehaviour
     {
 
 
+
         // Move panel into view
-        panelRectTransform.DOAnchorPos(new Vector2(0, 420), 1.5f);  // 
+        panelRectTransform.DOAnchorPos(new Vector2(0, 425), 1.5f);  // 
     }
     public void UpdateRings(int passed, int needed)
     {
@@ -40,5 +41,5 @@ public class TutorialCavas : MonoBehaviour
     }
 
     // Update is called once per frame
-   
+
 }

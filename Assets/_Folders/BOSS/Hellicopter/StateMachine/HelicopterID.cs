@@ -25,10 +25,34 @@ public class HelicopterID : ScriptableObject
     public float risingYSpeed;
     public float dippingXSpeed;
     public float risingXSpeed;
+    public int missileCount;
 
     public float dippedXSpeed;
 
     public HelicopterEvents events;
+
+
+    public float GetOffset()
+    {
+        if (missileCount == 1)
+        {
+            return -3.5f;
+        }
+        else if (missileCount == 2)
+        {
+            return 0;
+
+        }
+        else if (missileCount == 3)
+        {
+            return 3.5f;
+        }
+        else
+        {
+            return 0;
+        }
+
+    }
 
 
 }

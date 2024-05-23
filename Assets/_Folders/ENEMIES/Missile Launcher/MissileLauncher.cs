@@ -13,14 +13,15 @@ public class MissileLauncher : MonoBehaviour
 
     public float frontRange = 3;
     public float backRange = -3;
-    public float shootTime = 2;
+    private float shootTime = 4;
    
     
-    public Pool missilePool; // Drag your pool reference here in the inspector
+    public Pool pool; // Drag your pool reference here in the inspector
 
     void Start()
     {
-        
+        pool = PoolKit.GetPool("ExplosionPool");
+
         player = GameObject.FindGameObjectWithTag("Player");
         bulletSpawnPoint = transform.Find("BulletSpawnPoint").gameObject;
         
@@ -43,15 +44,15 @@ public class MissileLauncher : MonoBehaviour
             Vector3 distance = player.transform.position - transform.position;
             inRange = distance.x > frontRange && distance.x < backRange;
 
-            if (missileTimer > shootTime && shotAmount <= 10 && inRange)
+            if (missileTimer > shootTime && inRange)
             {
                 Vector3 direction = player.transform.position - bulletSpawnPoint.transform.position;
                 Quaternion rotation = Quaternion.LookRotation(Vector3.forward, direction);
 
                 // Spawn the missile from the pool with the calculated rotation
-                Transform missile = missilePool.Spawn("missile",bulletSpawnPoint.transform.position, rotation);
+                pool.Spawn("missile",bulletSpawnPoint.transform.position, rotation);
                 
-                shotAmount++;
+                
                 missileTimer = 0;
             }
         }

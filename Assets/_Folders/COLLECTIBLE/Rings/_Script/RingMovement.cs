@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class RingMovement : MonoBehaviour
+public class RingMovement : MonoBehaviour, ICollectible
 {
     public int doesTriggerInt;
 
@@ -14,7 +14,7 @@ public class RingMovement : MonoBehaviour
     public int order;
     private bool isCorrect = false;
 
-    [SerializeField] private Collider2D coll2D;
+    
 
     private Transform _transform;
     private Rigidbody2D rb;
@@ -25,7 +25,7 @@ public class RingMovement : MonoBehaviour
 
 
     private bool isFaded = false;
-    private Collider2D[] colliders;
+    private Collider2D col;
     // private Rigidbody2D rb;
 
     private SpriteRenderer sprite;
@@ -42,19 +42,10 @@ public class RingMovement : MonoBehaviour
         _transform = GetComponent<Transform>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        colliders = GetComponents<Collider2D>();
-        for (int i = 2; i >= 0; i--)
-        {
-            var col = colliders[i];
-            if (col.enabled == false)
-            {
-                Destroy(col);
+        col = GetComponent<EdgeCollider2D>();
 
-            }
-
-        }
     }
-   
+
 
     private void Update()
     {
@@ -136,29 +127,7 @@ public class RingMovement : MonoBehaviour
         }
     }
 
-    private void DisableColliders()
-    {
 
-        foreach (var collider in colliders)
-        {
-            if (collider != null)
-            {
-                collider.enabled = false;
-            }
-        }
-    }
-    private void EnableColliders()
-    {
-
-        foreach (var collider in colliders)
-        {
-            if (collider != null)
-            {
-                collider.enabled = true;
-            }
-
-        }
-    }
 
     public void SetCorrectRing()
     {
@@ -171,7 +140,7 @@ public class RingMovement : MonoBehaviour
         }
 
     }
-    public void CheckOrder()
+    public void Collected()
     {
 
         if (order == ID.CorrectRing)
@@ -180,7 +149,7 @@ public class RingMovement : MonoBehaviour
             isCorrect = false;
             ID.CorrectRing++;
 
-            DisableColliders();
+            col.enabled = false;
 
             AudioManager.instance.PlayRingPassSound(order);
             anim.SetBool(BurstBoolHash, true);
@@ -191,12 +160,12 @@ public class RingMovement : MonoBehaviour
 
         }
 
-        else
-        {
-            ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
-            isCorrect = false;
+        // else
+        // {
+        //     ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
+        //     isCorrect = false;
 
-        }
+        // }
 
         // print("ring" + order);
     }
@@ -209,8 +178,7 @@ public class RingMovement : MonoBehaviour
         if (correctSequence == false)
         {
             hasNotTriggered = false;
-
-            DisableColliders();
+            col.enabled = false;
             isFaded = true;
             HandleCorrectRing();
 
@@ -241,7 +209,8 @@ public class RingMovement : MonoBehaviour
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
 
-        EnableColliders();
+        col.enabled = true;
+
         SetCorrectRing();
         hasNotTriggered = true;
 
@@ -261,12 +230,6 @@ public class RingMovement : MonoBehaviour
             anim.SetBool(FadeCenterHash, false);
             isFaded = false;
 
-        }
-
-        if (sprite != null)
-        {
-
-            coll2D.enabled = true;
         }
         // isCorrect = false;
     }

@@ -35,6 +35,8 @@ public class PlayerID : ScriptableObject
     public bool UsingClocker;
     private bool hasHitMaxMana;
 
+    
+
     public bool isHolding;
     public bool isAlive;
     public float addScoreTime;
@@ -138,7 +140,7 @@ public class PlayerID : ScriptableObject
 
     public void ResetValues()
     {
-        Debug.Log("REEEE");
+        
         resetingValues = true;
         isAlive = true;
 
@@ -148,7 +150,7 @@ public class PlayerID : ScriptableObject
         Score = startingScore;
         Ammo = startingAmmo;
         Lives = startingLives;
-        globalEvents.OnUpdateAmmo?.Invoke();
+       
         resetingValues = false;
         numberOfPowersThatCanBeUsed = Mathf.FloorToInt(CurrentMana / ManaNeeded);
 

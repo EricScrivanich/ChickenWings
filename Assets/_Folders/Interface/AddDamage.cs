@@ -9,14 +9,19 @@ public class AddDamage : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
+      
         IDamageable damageableEntity = collider.gameObject.GetComponent<IDamageable>();
         if (damageableEntity != null)
         {
             damageableEntity.Damage(damageAmount);
         }
+
+
+
+
         if (collider.gameObject.CompareTag("SolidEnemy"))
         {
-            Debug.Log("Hit");
+            
             ID.events.HitBoss?.Invoke();
         }
     }

@@ -230,7 +230,7 @@ public class PlaneSpawnManager : MonoBehaviour
         yield return new WaitForSeconds(6f);
         StartCoroutine(SpawnJetPlanes());
         yield return new WaitForSeconds(7f);
-        TimeManager.SpawnSetup();
+        // TimeManager.SpawnSetup();
         yield return new WaitUntil(() => ID.spawnRandomPlanesBool == true);
         yield return new WaitForSeconds(4f);
 

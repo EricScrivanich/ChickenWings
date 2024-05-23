@@ -168,6 +168,12 @@ public class RingID : ScriptableObject
 
     }
 
+    public void GetSonicWave(Vector2 position)
+    {
+        Pool.GetSonicWave(position);
+
+    }
+
     public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, int ringOrder, float setSpeed, int doesTriggerInt, float xCordinateTrigger)
     {
         ReadyToSpawn = false;

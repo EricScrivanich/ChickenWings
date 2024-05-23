@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: CargoID
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: 1d0c68d6da83a453188ddafa7d20cb8a, type: 2}
-  PlanesAvailable: 2
-  minOffsetTime: 2
-  maxOffsetTime: 4
+  PlanesAvailable: 4
+  startingMinOffsetTime: 2
+  startingMaxOffsetTime: 4
+  startingMinIterationDelay: 4
+  startingMaxIterationDelay: 5.5
+  minOffsetTime: 1
+  maxOffsetTime: 3
   minIterationDelay: 4
   maxIterationDelay: 5.5
   fillObject: {fileID: 944327783407205413, guid: 62ec7f080371248db8292388d65ee621, type: 3}

@@ -5,26 +5,25 @@ using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
-    [SerializeField] private bool debogLogEnabled;
+
     public PlayerID player;
-    public static bool DebogLogEnabled;
-    public float slowdownFactor;
-    public float deltaScale;
+
+
+
 
     public float initialAddScoreDelay = 2f; // Initial delay
     public float minimumAddScoreDelay = 0.4f; // Minimum delay
     public float delayDecreaseDuration = 80f; // Duration over which the delay decreases
 
-    public static float GlobalTimer;
-    public static Action SpawnSetup;
+    public float GlobalTimer;
+
 
     private void Awake()
     {
-        DebogLogEnabled = true;
+
         GlobalTimer = 0;
-        Debug.unityLogger.logEnabled = DebogLogEnabled;
-        Time.timeScale = slowdownFactor;
-        Time.fixedDeltaTime = .02f * deltaScale;
+
+
     }
 
     private void Start()
@@ -36,6 +35,8 @@ public class TimeManager : MonoBehaviour
             return;
         }
         StartCoroutine(AddScore());
+
+
     }
 
     private void Update()
@@ -46,17 +47,7 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    public void Pause(bool isPaused)
-    {
-        if (isPaused)
-        {
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Time.timeScale = slowdownFactor;
-        }
-    }
+
 
     private IEnumerator AddScore()
     {

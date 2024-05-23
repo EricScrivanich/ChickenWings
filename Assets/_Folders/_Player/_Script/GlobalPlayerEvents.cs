@@ -16,7 +16,7 @@ public struct GlobalPlayerEvents
     public Action<bool> OnUseStamina;
     
     public Action OnZeroStamina;
-    public Action AddMana;
+    public Action AddMana; 
     public Action<float> AddPowerUse;
 
     public Action UsePower;

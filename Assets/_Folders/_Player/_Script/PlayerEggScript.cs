@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using HellTap.PoolKit;
 
 public class PlayerEggScript : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class PlayerEggScript : MonoBehaviour
     // [SerializeField] private GameObject egg_Bullet;
     // [SerializeField] private GameObject eggYolkPrefab;
     [SerializeField] private int eggPoolAmount = 10;
+    private Pool pool;
+    //
 
 
     private List<GameObject> eggPool;
@@ -25,6 +28,8 @@ public class PlayerEggScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pool = PoolKit.GetPool("EggPool");
+        //
         rotationIsFrozen = false;
         canShootBool = true;
         anim = GetComponent<Animator>();
@@ -62,17 +67,17 @@ public class PlayerEggScript : MonoBehaviour
 
     }
 
-    public GameObject GetPooledObject(List<GameObject> pool)
-    {
-        foreach (var obj in pool)
-        {
-            if (!obj.activeInHierarchy)
-            {
-                return obj;
-            }
-        }
-        return null;
-    }
+    // public GameObject GetPooledObject(List<GameObject> pool)
+    // {
+    //     foreach (var obj in pool)
+    //     {
+    //         if (!obj.activeInHierarchy)
+    //         {
+    //             return obj;
+    //         }
+    //     }
+    //     return null;
+    // }
 
     public void SetCanShootTrue()
     {
@@ -99,17 +104,20 @@ public class PlayerEggScript : MonoBehaviour
         }
         else if (ID.Ammo > 0)
         {
-            GameObject egg = GetPooledObject(eggPool);
+            GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
+egg.GetComponent<Rigidbody2D>().AddForce(new Vector2(rb.velocity.x / 2, -1),ForceMode2D.Impulse);
 
-            if (egg != null)
-            {
-                ID.AddEggVelocity = rb.velocity.x / 2.7f;
-                egg.transform.position = new Vector2(transform.position.x, transform.position.y - .25f);
+            // GameObject egg = GetPooledObject(eggPool);
+
+            // if (egg != null)
+            // {
+            //     ID.AddEggVelocity = rb.velocity.x / 2.7f;
+            //     egg.transform.position = new Vector2(transform.position.x, transform.position.y - .25f);
 
 
-                egg.SetActive(true);
-                // ID.globalEvents.eggVelocity?.Invoke(rb.velocity.x);
-            }
+            //     egg.SetActive(true);
+            //     // ID.globalEvents.eggVelocity?.Invoke(rb.velocity.x);
+            // }
             ID.Ammo -= 1;
             ID.globalEvents.OnUpdateAmmo?.Invoke();
 

@@ -1,5 +1,6 @@
 
 using System;
+using UnityEngine;
 
 public struct PlayerEvents
 {
@@ -16,7 +17,7 @@ public struct PlayerEvents
     // public Action<bool> FloorCollsion;
     public Action OnEggDrop;
     public Action<bool> OnAttack;
-    public Action<BucketScript> OnCompletedRingSequence;
+    public Action<Transform> OnCompletedRingSequence;
 
     public Action HitBoss;
 

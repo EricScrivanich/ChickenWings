@@ -10,7 +10,8 @@ public class PlayerFlipLeftState : PlayerBaseState
     private float flipForceX = -6.9f;
 
     private float flipForceY = 9.5f;
-    private float rotationSpeed = 420;
+    // private float rotationSpeed = 420;
+    private float rotationSpeed = 100;
     private float doesTiggerInt;
     private float rotationSpeedVar;
     private float rotationDelay = .15f;
@@ -28,7 +29,7 @@ public class PlayerFlipLeftState : PlayerBaseState
 
         time = 0;
         player.SetFlipDirection(false);
-        rotationSpeedVar = 420;
+        rotationSpeedVar = 300;
         player.anim.SetTrigger("FlipTrigger");
         if (player.ID.testingNewGravity)
         {
@@ -45,12 +46,12 @@ public class PlayerFlipLeftState : PlayerBaseState
         }
         else if (currentRotation > 140)
         {
-            rotationSpeed += (360 - currentRotation) / 3;
+            // rotationSpeed += (360 - currentRotation) / 3;
             prolongRotation = true;
         }
         else
         {
-            rotationSpeed = 420;
+            // rotationSpeed = 420;
             prolongRotation = false;
         }
         // player.rb.velocity = new Vector2(player.flipLeftForceX, player.flipLeftForceY);

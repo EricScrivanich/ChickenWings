@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public struct CameraEvents 
+public struct CameraEvents
 {
-    
+
     public Action<List<GameObject>, float> OnChangePosition;
     public Action<float, float> OnShakeCamera;
 
@@ -17,6 +17,9 @@ public struct CameraEvents
     public Action<float, bool, float> AdjustCameraY;
     public Action<Vector2, int> OnSendPosiition;
     public Action<float, float> OnChangeZoom;
-    public Action<float,float> OnChangeSpeed;
-    public Action<int,bool> OnChangeGameObject;
+    public Action<float, float> OnChangeSpeed;
+    public Action<int, bool> OnChangeGameObject;
+
+    public Action<bool> OnStopTimer;
+    public Action<float, float> OnChangeSpeedFinished;
 }

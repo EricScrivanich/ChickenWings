@@ -5,14 +5,14 @@ using UnityEngine;
 public class ColliderCollectable : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    private void OnTriggerEnter2D(Collider2D collider)
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        ICollectible collectibleEntity = collider.gameObject.GetComponent<ICollectible>();
+        if (collectibleEntity != null)
+        {
+            collectibleEntity.Collected();
+        }
+
     }
 }

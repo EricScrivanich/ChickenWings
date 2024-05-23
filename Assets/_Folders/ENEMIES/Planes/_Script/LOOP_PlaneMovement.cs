@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using AllIn1SpriteShader;
 using UnityEngine;
+using HellTap.PoolKit;
 
 public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
 {
@@ -71,7 +72,7 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
                 {
                     hasTrigger = false;
                     ID.events.TriggeredSpawn?.Invoke(doesTiggerInt);
-                    Debug.Log("PlaneTrigger");
+                   
                     return;
 
                 }
@@ -193,7 +194,7 @@ public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
         Data.GetExplosion(transform.position);
         AudioManager.instance.PlayPlaneExplosionSound();
 
-        Debug.Log("Stopped" + this.gameObject);
+        
     }
 
 

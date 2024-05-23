@@ -1,13 +1,20 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using HellTap.PoolKit;
 
 [CreateAssetMenu]
 public class PlaneData : ScriptableObject
 {
     public PlaneManagerID ID;
+    private Pool explosionPool;
 
     public int PlanesAvailable;
+    [SerializeField] private float startingMinOffsetTime;
+    [SerializeField] private float startingMaxOffsetTime;
+    [SerializeField] private float startingMinIterationDelay;
+    [SerializeField] private float startingMaxIterationDelay;
+
     public float minOffsetTime;
     public float maxOffsetTime;
     public float minIterationDelay;
@@ -31,9 +38,14 @@ public class PlaneData : ScriptableObject
     public GameObject PlaneObject;
 
 
-public void ResetValues()
-{
+    public void ResetValues()
+    {
+        explosionPool = PoolKit.GetPool("ExplosionPool");
         PlanesAvailable = 1;
+        minOffsetTime = startingMinOffsetTime;
+        maxOffsetTime = startingMaxOffsetTime;
+        minIterationDelay = startingMinIterationDelay;
+        maxIterationDelay = startingMaxIterationDelay;
     }
     public void SpawnPlanePool()
     {
@@ -71,8 +83,8 @@ public void ResetValues()
                 {
                     speedVar = speed + Random.Range(-speedOffset, speedOffset);
                 }
-planeScript.doesTiggerInt = trigger;
-planeScript.xCordinateTrigger = xCorTrigger;
+                planeScript.doesTiggerInt = trigger;
+                planeScript.xCordinateTrigger = xCorTrigger;
                 planeScript.speed = speedVar;
                 planeScript.transform.position = spawnPosition;
                 planeScript.gameObject.SetActive(true);
@@ -85,9 +97,11 @@ planeScript.xCordinateTrigger = xCorTrigger;
 
     public void GetExplosion(Vector2 position)
     {
-        ID.GetExplosion(position,explosionScale); 
+        // ID.GetExplosion(position, explosionScale);
 
-        
+        explosionPool.Spawn("NormalExplosion", position, Vector3.zero, explosionScale, null);
+
+
     }
 
 }

@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TutorialRingMovement : MonoBehaviour
+public class TutorialRingMovement : MonoBehaviour, ICollectible
 {
     public RingID ID;
 
-    [SerializeField] private Collider2D coll2D;
+    private EdgeCollider2D coll2D;
     
+    private RingParent parent;
+    private ParticleSystem ps;
+
 
     [SerializeField] private int order;
 
@@ -39,74 +42,55 @@ public class TutorialRingMovement : MonoBehaviour
         
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        coll2D = GetComponent<Collider2D>();
+        coll2D = GetComponent<EdgeCollider2D>();
 
 
+    }
+    private void Start() {
+        ps = GetComponent<ParticleSystem>();
+        parent = GetComponentInParent<RingParent>();
     }
 
     // Update is called once per frame
-    void Update()
+    public void CheckForHighlight(int correctRing)
     {
-        
-
+        if (order == correctRing)
+        {
+            sprite.material = ID.highlightedMaterial;
+            backRing.material = ID.highlightedMaterial;
+        }
     }
 
-    public void CheckOrder()
+    public void CheckOrder(bool isCorrect)
     {
-        if (finalOrder == 1)
+        if (isCorrect)
         {
-            ID.ringEvent.tutorialRingPass?.Invoke();
-            ID.CorrectRing = 1;
+            
             AudioManager.instance.PlayRingPassSound(order);
-            anim.SetBool(BurstBoolHash, true);
-            sprite.material = ID.passedMaterial;
-            backRing.material = ID.passedMaterial;
-        }
-        if (order == 1)
-        {
-            ID.CorrectRing = 2;
-            AudioManager.instance.PlayRingPassSound(order);
-            anim.SetBool(BurstBoolHash, true);
-            sprite.material = ID.passedMaterial;
-            backRing.material = ID.passedMaterial;
-        }
-
-        else if (order == ID.CorrectRing)
-        {
-
-            ID.CorrectRing++;
-
-            coll2D.enabled = true;
-
-
-            AudioManager.instance.PlayRingPassSound(order);
+            ps.Play();
             anim.SetBool(BurstBoolHash, true);
             sprite.material = ID.passedMaterial;
             backRing.material = ID.passedMaterial;
 
-            if (ID.CorrectRing == finalOrder + 1)
-            {
-                ID.ringEvent.tutorialRingPass?.Invoke();
-
-
-            }
-
-
-
         }
-
-        else
-        {
-            ID.CorrectRing = 1;
-
-        }
+      
 
         // print("ring" + order);
     }
 
-    private void OnTriggerEnter2D(Collider2D other) {
-        CheckOrder();
+    public void Collected()
+    {
+        CheckOrder(parent.CheckOrder(order));
+
+
     }
+
+      
+
+        // print("ring" + order);
+    
+
+   
 
     private void RingEffect()
     {
@@ -121,11 +105,19 @@ public class TutorialRingMovement : MonoBehaviour
         centerSprite.color = ID.CenterColor;
         centerCutout.color = ID.CenterColor;
         coll2D.enabled = true;
+        // if (order == parent.correctRing)
+        // {
+        //     sprite.material = ID.highlightedMaterial;
+        //     backRing.material = ID.highlightedMaterial;
+        // }
+       
+       
+       
     }
 
-    private void OnDisable()
-    {
+    // private void OnDisable()
+    // {
 
 
-    }
+    // }
 }

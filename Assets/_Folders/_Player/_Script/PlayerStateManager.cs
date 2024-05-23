@@ -78,7 +78,7 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerHoldJumpState HoldJumpState = new PlayerHoldJumpState();
     public BucketCollisionState BucketState = new BucketCollisionState();
     public PlayerParachuteState ParachuteState = new PlayerParachuteState();
-    public BucketScript bucket;
+    public Transform bucket;
     private bool isAttacking = false;
 
     public bool justFlippedRight;
@@ -525,7 +525,7 @@ public class PlayerStateManager : MonoBehaviour
         {
             if (isTutorial)
             {
-                StartCoroutine(LerpToOriginalPosition(.8f));
+                // StartCoroutine(LerpToOriginalPosition(.8f));
                 DamageEffects();
 
 
@@ -618,12 +618,15 @@ public class PlayerStateManager : MonoBehaviour
 
         if (!isDropping)
         {
-            if (isTutorial)
-            {
-                HandleDamaged();
-                return;
-            }
-            Die();
+            HandleDamaged();
+            AdjustForce(0, 12.5f);
+            SwitchState(IdleState);
+            // if (isTutorial)
+            // {
+            //     HandleDamaged();
+            //     return;
+            // }
+            // Die();
         }
         else
         {
@@ -653,6 +656,7 @@ public class PlayerStateManager : MonoBehaviour
         Cam.events.OnShakeCamera?.Invoke(.6f, .2f);
         ID.isAlive = false;
         DeadEvent.TriggerEvent();
+
         AudioManager.instance.PlayDeathSound();
         for (int i = 0; i < FeatherParticleQueue.Count; i++)
         {
@@ -752,9 +756,9 @@ public class PlayerStateManager : MonoBehaviour
         anim.SetBool("JumpHeld", false);
     }
 
-    private void BucketCompletion(BucketScript bucketScript)
+    private void BucketCompletion(Transform position)
     {
-        bucket = bucketScript;
+        bucket = position;
         // ResetHoldJump();
         // ResetParachute();
         SwitchState(BucketState);

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BucketScript : MonoBehaviour
+public class BucketScript : MonoBehaviour, ICollectible
 {
     public RingID ID;
     private int ResetCounter = 0;
@@ -241,6 +241,7 @@ public class BucketScript : MonoBehaviour
     public void Explode()
     {
         anim.SetTrigger("ParticleTrigger");
+        ID.GetSonicWave(transform.position);
         Player.globalEvents.OnBucketExplosion?.Invoke(index);
         isExploded = true;
         // anim.ResetTrigger("ParticleTrigger");
@@ -268,12 +269,12 @@ public class BucketScript : MonoBehaviour
     }
 
 
-    public void Completed()
+    public void Collected()
     {
         if (isCorrect)
         {
             ready = true;
-            Player.events.OnCompletedRingSequence?.Invoke(this);
+            Player.events.OnCompletedRingSequence?.Invoke(baseTransform);
             DisableColliders();
             // AudioManager.instance.PlayRingSuccessSound();
             StartCoroutine(SlowDown());

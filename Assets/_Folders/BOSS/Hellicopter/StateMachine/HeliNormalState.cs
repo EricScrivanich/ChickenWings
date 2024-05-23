@@ -10,7 +10,7 @@ public class HeliNormalState : HeliBaseState
 
         // heli.transform.position = heli.ID.normalPosition;
 
-        heli.RotateAndShoot(true);
+        heli.RotateAndShoot(true); 
         if (heli.ID.Lives < 3)
         {
             float time = Random.Range(heli.ID.minSwitchTime, heli.ID.maxSwitchTime);

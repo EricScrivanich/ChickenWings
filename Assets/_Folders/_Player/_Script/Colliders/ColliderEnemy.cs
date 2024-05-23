@@ -48,6 +48,12 @@ public class ColliderEnemy : MonoBehaviour
  
     private void OnTriggerEnter2D(Collider2D collider)
     {
+        Debug.Log(collider.gameObject);
+        IExplodable explodableEntity = collider.gameObject.GetComponent<IExplodable>();
+        if (explodableEntity != null)
+        {
+            explodableEntity.Explode(false);
+        }
 
         if (collider.CompareTag("Plane") ) // && !isFlashing 
         {
@@ -66,22 +72,22 @@ public class ColliderEnemy : MonoBehaviour
             // StartCoroutine(Flash()); // Start the flashing coroutine
         }
 
-        if (collider.CompareTag("Ring"))
-        {
-            RingMovement ring = collider.GetComponent<RingMovement>();
+        // if (collider.CompareTag("Ring"))
+        // {
+        //     RingMovement ring = collider.GetComponent<RingMovement>();
 
-            if (ring != null)
-            {
-                ring.CheckOrder();
+        //     if (ring != null)
+        //     {
+        //         ring.CheckOrder();
 
-            }
-            else
-            {
-                BucketScript bucket = collider.GetComponent<BucketScript>();
-                Debug.Log("bucket");
-                // ID.events.OnCompletedRingSequence?.Invoke(bucket);
-                bucket.Completed();
-            }
+        //     }
+        //     else
+        //     {
+        //         BucketScript bucket = collider.GetComponent<BucketScript>();
+        //         Debug.Log("bucket");
+        //         // ID.events.OnCompletedRingSequence?.Invoke(bucket);
+        //         bucket.Completed();
+        //     }
         }
 
 
@@ -142,4 +148,4 @@ public class ColliderEnemy : MonoBehaviour
     // {
        
     // }
-}
+

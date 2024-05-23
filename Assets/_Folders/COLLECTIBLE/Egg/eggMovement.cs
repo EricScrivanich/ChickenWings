@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class eggMovement : MonoBehaviour
+public class eggMovement : MonoBehaviour, ICollectible
 {
     public PlayerID ID;
     private int amount = 1;
@@ -108,23 +108,18 @@ public class eggMovement : MonoBehaviour
 
     }
 
-     private void OnTriggerEnter2D(Collider2D collider)
-{
-    
-    if (collider.gameObject.tag == "Player")
+    public void Collected()
     {
-        
         ammoCollected = true;
 
         ID.Ammo += 1;
         ID.globalEvents.OnUpdateAmmo?.Invoke();
         
-        
     }
 
     
-}
 
+  
 }
     
 

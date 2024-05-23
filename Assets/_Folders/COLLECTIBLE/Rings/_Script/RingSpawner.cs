@@ -10,6 +10,9 @@ public class RingSpawner : MonoBehaviour
     [ExposedScriptableObject]
     public RingPool Pool;
     public PlaneManagerID PlaneID;
+    private bool hasSpawnedLives;
+
+    private bool SpawningRandomSetup;
 
     [SerializeField] private bool bossExample;
 
@@ -23,6 +26,7 @@ public class RingSpawner : MonoBehaviour
     [SerializeField] private PlayerID player;
 
     public PlaceholderDataCollection placeholderDataCollection;
+    [SerializeField] private PlaceholderDataCollection lifeSupport;
 
     public SetupHolder setupHolder;
     private int tracker = 0;
@@ -43,6 +47,8 @@ public class RingSpawner : MonoBehaviour
 
     private void Awake()
     {
+        hasSpawnedLives = false;
+        SpawningRandomSetup = false;
 
 
         ringType = Pool.RingType[Index];
@@ -71,6 +77,9 @@ public class RingSpawner : MonoBehaviour
         crop.SpawnPlanePool();
         jet.SpawnPlanePool();
         cargo.SpawnPlanePool();
+        crop.ResetValues();
+        jet.ResetValues();
+        cargo.ResetValues();
         PlaneID.SpawnExplosionQueue();
 
         if (bossExample)
@@ -132,6 +141,7 @@ public class RingSpawner : MonoBehaviour
             }
             else
             {
+                SpawningRandomSetup = false;
                 PlaneID.spawnRandomPlanesBool = true;
 
             }
@@ -139,68 +149,77 @@ public class RingSpawner : MonoBehaviour
             return;
 
         }
-        if (placeholderDataCollection.TestSpecifiedTrigger)
+
+        if (placeholderDataCollection != null)
         {
-            triggerValue = placeholderDataCollection.SpecifiedTrigger;
-
-        }
-
-        int totalRingPlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderRingDataList.Count);
-        int totalPlanePlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderPlaneDataList.Count);
-        int planesSpawned = 0;
-
-
-
-        // Find the PlaceholderTriggerGroup for the given trigger value
-        PlaceholderTriggerGroup triggerGroup = placeholderDataCollection.triggerGroups.FirstOrDefault(g => g.triggerValue == triggerValue);
-
-        if (triggerGroup == null)
-        {
-            Debug.LogError($"No placeholders found for trigger {triggerValue}");
-            return;
-        }
-        Debug.Log(tracker + ": Triggered: " + triggerGroup);
-
-
-        // Iterate through the placeholders for the specific trigger, already sorted by their x position
-        foreach (var placeholderData in triggerGroup.placeholderRingDataList)
-        {
-            ringType.triggeredRingOrder++; // Increment the order for each spawned ring
-
-            if (ringType.triggeredRingOrder == totalRingPlaceholders)
+            if (placeholderDataCollection.TestSpecifiedTrigger)
             {
-                ringType.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringType.triggeredRingOrder, placeholderData.speed);
-            }
-            else
-            {
-                ringType.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringType.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
-                // If you have special logic for the last ring or a "BucketScript", you can include that here
-            }
+                triggerValue = placeholderDataCollection.SpecifiedTrigger;
 
-            // Spawn the ring using the placeholder's transform and other data
-
-            // For example, if placeholderData represents the last item in the list, you might call ID.GetBucket or similar
-        }
-
-        foreach (var placeholderData in triggerGroup.placeholderPlaneDataList)
-        {
-            planesSpawned++;
-            if (planesSpawned == totalPlanePlaceholders && placeholderDataCollection.TestSpecifiedTrigger)
-            {
-                placeholderData.planeType.GetPlane(-1, 0, placeholderData.speed, placeholderData.position);
 
             }
-            else
-            {
-                placeholderData.planeType.GetPlane(placeholderData.doesTiggerInt, placeholderData.xCordinateTrigger, placeholderData.speed, placeholderData.position);
+            int totalRingPlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderRingDataList.Count);
+            int totalPlanePlaceholders = placeholderDataCollection.triggerGroups.Sum(g => g.placeholderPlaneDataList.Count);
 
+            int planesSpawned = 0;
+            SpawningRandomSetup = true;
+
+
+
+            // Find the PlaceholderTriggerGroup for the given trigger value
+            PlaceholderTriggerGroup triggerGroup = placeholderDataCollection.triggerGroups.FirstOrDefault(g => g.triggerValue == triggerValue);
+
+            if (triggerGroup == null)
+            {
+                Debug.LogError($"No placeholders found for trigger {triggerValue}");
+                return;
+            }
+            Debug.Log(tracker + ": Triggered: " + triggerGroup);
+
+
+            // Iterate through the placeholders for the specific trigger, already sorted by their x position
+            foreach (var placeholderData in triggerGroup.placeholderRingDataList)
+            {
+                ringType.triggeredRingOrder++; // Increment the order for each spawned ring
+
+                if (ringType.triggeredRingOrder == totalRingPlaceholders)
+                {
+                    ringType.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringType.triggeredRingOrder, placeholderData.speed);
+                }
+                else
+                {
+                    ringType.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringType.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
+                    // If you have special logic for the last ring or a "BucketScript", you can include that here
+                }
+
+                // Spawn the ring using the placeholder's transform and other data
+
+                // For example, if placeholderData represents the last item in the list, you might call ID.GetBucket or similar
+            }
+
+            foreach (var placeholderData in triggerGroup.placeholderPlaneDataList)
+            {
+                planesSpawned++;
+                if (planesSpawned == totalPlanePlaceholders && placeholderDataCollection.TestSpecifiedTrigger)
+                {
+                    placeholderData.planeType.GetPlane(-1, 0, placeholderData.speed, placeholderData.position);
+
+                }
+                else
+                {
+                    placeholderData.planeType.GetPlane(placeholderData.doesTiggerInt, placeholderData.xCordinateTrigger, placeholderData.speed, placeholderData.position);
+
+                }
+            }
+
+            foreach (var placeholder in triggerGroup.planeAreaSpawnDataList)
+            {
+                PlaneID.SpawnInArea(placeholder.minPlanes, placeholder.maxPlanes, placeholder.minX, placeholder.maxX, placeholder.minY, placeholder.maxY, placeholder.cropChance, placeholder.jetChance, placeholder.cargoChance);
             }
         }
 
-        foreach (var placeholder in triggerGroup.planeAreaSpawnDataList)
-        {
-            PlaneID.SpawnInArea(placeholder.minPlanes, placeholder.maxPlanes, placeholder.minX, placeholder.maxX, placeholder.minY, placeholder.maxY, placeholder.cropChance, placeholder.jetChance, placeholder.cargoChance);
-        }
+
+
 
         // Consider whether you need to reset ID.triggeredRingOrder here, depending on whether it should continue across different triggers
     }
@@ -280,8 +299,9 @@ public class RingSpawner : MonoBehaviour
 
     private IEnumerator SpawnSpecificSetup()
     {
-        Debug.Log("SpawningTHTHTHTHT");
+
         yield return new WaitUntil(() => ringType.ReadyToSpawn == true);
+        yield return new WaitUntil(() => SpawningRandomSetup == false);
 
         if (placeholderDataCollection.TestSpecifiedTrigger)
         {
@@ -368,7 +388,11 @@ public class RingSpawner : MonoBehaviour
 
         Debug.Log("Cargo");
         StartCoroutine(SpawnPlaneType(cargo));
+        crop.minIterationDelay = 2;
         yield return new WaitForSeconds(8f);
+        jet.minOffsetTime = 0;
+        jet.maxOffsetTime = 2;
+        jet.maxIterationDelay = 2;
         cargo.PlanesAvailable = 2;
         yield return new WaitForSeconds(6f);
         SpawnRandomSetup(0, 2.5f);
@@ -376,8 +400,53 @@ public class RingSpawner : MonoBehaviour
         yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
         PlaneID.bomberTime = 17;
         crop.PlanesAvailable = 4;
+
+        crop.maxIterationDelay = 4;
         yield return new WaitForSeconds(3f);
         jet.PlanesAvailable = 3;
+        crop.PlanesAvailable = 4;
+
+        yield return new WaitForSeconds(4f);
+        cargo.PlanesAvailable = 3;
+        cargo.maxOffsetTime = 3;
+        yield return new WaitForSeconds(6f);
+        jet.PlanesAvailable = 4;
+        yield return new WaitForSeconds(8f);
+        crop.PlanesAvailable = 6;
+        jet.minIterationDelay = 0;
+        jet.maxIterationDelay = 1;
+        PlaneID.bomberTime = 13;
+
+        yield return new WaitForSeconds(6f);
+        cargo.PlanesAvailable = 4;
+        PlaneID.numberOfSpawnsToDeactivate = 1;
+
+        cargo.minOffsetTime = 0;
+        cargo.minOffsetTime = 1;
+
+
+
+
+
+
+
+
+
+
+    }
+
+    private IEnumerator SpawnLives()
+    {
+        float randomTime = Random.Range(4, 9);
+        yield return new WaitUntil(() => SpawningRandomSetup == false);
+        SpawningRandomSetup = true;
+        yield return new WaitForSeconds(randomTime);
+        PlaneID.spawnRandomPlanesBool = false;
+        yield return new WaitForSeconds(2);
+
+        placeholderDataCollection = lifeSupport;
+        ringType = Pool.RingType[1];
+        NewTriggeredSpawn(0);
 
 
     }
@@ -455,6 +524,7 @@ public class RingSpawner : MonoBehaviour
         }
 
         PlaneID.events.TriggeredSpawn += NewTriggeredSpawn;
+        player.globalEvents.OnUpdateLives += CheckLives;
 
     }
     private void OnDisable()
@@ -469,6 +539,19 @@ public class RingSpawner : MonoBehaviour
         }
 
         PlaneID.events.TriggeredSpawn -= NewTriggeredSpawn;
+        player.globalEvents.OnUpdateLives -= CheckLives;
+
+
+    }
+
+    private void CheckLives(int lives)
+    {
+        if (lives == 1 && !hasSpawnedLives)
+        {
+            StartCoroutine(SpawnLives());
+            hasSpawnedLives = true;
+
+        }
 
     }
 

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class PauseMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject UI;
-    
+
 
     // This method toggles the pause state of the game.
     public void TogglePause()
@@ -36,6 +37,14 @@ public class PauseMenuManager : MonoBehaviour
         }
     }
 
+    public void ResetGame()
+    {
+        Pause(false);
+
+        GameObject.Find("GameManager").GetComponent<ResetManager>().ResetGame();
+
+    }
+
     // This method is called to return to the main menu.
     public void Menu()
     {
@@ -48,13 +57,13 @@ public class PauseMenuManager : MonoBehaviour
     {
         if (isPaused)
         {
-          
+
             // When the game is paused by the system (going to background).
             Pause(true);
         }
         else
         {
-            
+
             // When the game returns from background, keep it paused.
             // Pause(true);
         }

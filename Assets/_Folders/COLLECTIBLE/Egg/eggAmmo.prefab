@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2874368603167049194}
   - component: {fileID: 7923017158134461636}
-  - component: {fileID: 424151608365405014}
   - component: {fileID: 5259942446856497217}
+  - component: {fileID: 7493679204092296669}
   m_Layer: 14
   m_Name: eggAmmo
   m_TagString: eggAmmo
@@ -86,8 +86,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!70 &424151608365405014
-CapsuleCollider2D:
+--- !u!114 &5259942446856497217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4351014547753438834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0eb0dc5ab10f46fabefce1bee581a23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  ammoCollected: 0
+  eggTime: 20
+  minAmmoSpeed: 6.5
+  maxAmmoSpeed: 8.5
+--- !u!61 &7493679204092296669
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -118,23 +135,16 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.010297298, y: 0.0035217404}
-  m_Size: {x: 0.6847553, y: 1.0170432}
-  m_Direction: 0
---- !u!114 &5259942446856497217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4351014547753438834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0eb0dc5ab10f46fabefce1bee581a23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  ammoCollected: 0
-  eggTime: 20
-  minAmmoSpeed: 6.5
-  maxAmmoSpeed: 8.5
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.08, y: 1.57}
+    newSize: {x: 0.67, y: 1.01}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.08, y: 1.57}
+  m_EdgeRadius: 0
