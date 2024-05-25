@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1074995351139053617}
-  - component: {fileID: 1894303498205153747}
+  - component: {fileID: -7187285608709722465}
   m_Layer: 0
   m_Name: RingDrop
   m_TagString: Untagged
@@ -36,7 +36,7 @@ Transform:
   - {fileID: 6441171156995401521}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1894303498205153747
+--- !u!114 &-7187285608709722465
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,9 +45,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 145206166614227992}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cca3de348979b4e58a008fd022539f71, type: 3}
+  m_Script: {fileID: 11500000, guid: 66c00beeb04274a87bee98817b6a8e8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   speed: 5
 --- !u!1001 &4528062025143685966
 PrefabInstance:

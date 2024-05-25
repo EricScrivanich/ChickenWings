@@ -7,36 +7,46 @@ using System;
 public class StatsDisplay : MonoBehaviour
 {
     public PlayerID player;
-    [SerializeField] private Image ManaBar;
-    [SerializeField] private Image ManaBarBig;
-    [SerializeField] private Image dashArrow;
-    [SerializeField] private Image dropArrow;
-    private bool isFilllingMana;
+    [SerializeField] private LevelManagerID LvlID;
+
+    #region Stamina/Mana
+    // [SerializeField] private Image ManaBar;
+    // [SerializeField] private Image ManaBarBig;
+    // private Coroutine fillManaBarCoroutine;
+    // private Coroutine fillBigManaBarCoroutine;
+    // public CanvasGroup StaminaGroup;
+    // public Material staminaBarMaterial;
+    // public Image StaminaBG; 
+    // private bool canFlashStaminaBG = true;
+    // [SerializeField] private float staminaBarFadeTime;
+    // [SerializeField] private Color BGFlashColor;
+    // [SerializeField] private int numverOfBGFlashes;
+    // [SerializeField] private float totalStaminaBGFlashDuration;
+    // private Color originalStaminaBGColor;
+    // private bool isFilllingMana;
+
+    // private float maxStamina;
+    // private bool isUsingStamina;
+    // private float bigTargetFill;
+    // private float smallTargetFill;
+
+    #endregion
+
+    [Header("RingPass")]
+    [SerializeField] private GameObject RingPanel;
+    [SerializeField] private TextMeshProUGUI RingNumber;
+
     private bool hasHit10;
     private int lastUpdatedScore;
     private bool hasHit100;
     private bool hasHit1000;
-    private float maxStamina;
-    private bool isUsingStamina;
-    private float bigTargetFill;
-    private float smallTargetFill;
+    // 
 
-    private Coroutine fillManaBarCoroutine;
-    private Coroutine fillBigManaBarCoroutine;
-    [SerializeField] private float staminaBarFadeTime;
+
+
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI finalScore;
     [SerializeField] private TextMeshProUGUI ammoText;
-    public Material staminaBarMaterial; // Reference to the stamina bar's material
-    public CanvasGroup StaminaGroup;
-
-    public Image StaminaBG; // Reference to the UI element you want to flash
-    private bool canFlashStaminaBG = true;
-    [SerializeField] private Color BGFlashColor; // The color to flash to
-    [SerializeField] private int numverOfBGFlashes; // Total number of flashes
-    [SerializeField] private float totalStaminaBGFlashDuration; //
-    private Color originalStaminaBGColor;
-
 
 
     [SerializeField] private Color lightRed;
@@ -44,51 +54,34 @@ public class StatsDisplay : MonoBehaviour
 
 
 
-    [SerializeField] private TextMeshProUGUI temporaryScoreText; // Add this to your class variables
+    [SerializeField] private TextMeshProUGUI temporaryScoreText;
     private int temporaryScore = 0;
     private Coroutine fadeOutCoroutine = null;
     private int lastKnownScore = 0;
 
     void Start()
     {
+        // ManaBar.fillAmount = player.CurrentMana / player.MaxMana;
+        // ManaBarBig.fillAmount = ((player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / player.MaxMana);
+        // originalStaminaBGColor = StaminaBG.color;
+        // isFilllingMana = false;
+        // maxStamina = player.MaxStamina;
+
+        if (LvlID.areRingsRequired)
+        {
+            RingPanel.SetActive(LvlID.areRingsRequired);
+            RingNumber.text = LvlID.currentRingsPassed.ToString() + " / " + LvlID.ringsNeeded.ToString();
+
+        }
+
+
         scoreDisplayed = player.Score;
         scoreText.text = "Score: " + scoreDisplayed.ToString();
         UpdateAmmo();
-
-
-
-        ManaBar.fillAmount = player.CurrentMana / player.MaxMana;
-        ManaBarBig.fillAmount = ((player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / player.MaxMana);
-
-        // Debug.Log("Current Big GIll: " + (player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / maxStamina);
-
-        isFilllingMana = false;
         temporaryScoreText.alpha = 0;
-
-
-
-        maxStamina = player.MaxStamina;
-        originalStaminaBGColor = StaminaBG.color;
-
-
-
-
-
-        // Find the StatsPanel
-        // Transform statsPanel = transform.Find("StatsPanel");
-        // if (statsPanel != null)
-        // {
-        //     scoreText = statsPanel.Find("ScoreText")?.GetComponent<TextMeshProUGUI>();
-        //     ammoText = statsPanel.Find("AmmoText")?.GetComponent<TextMeshProUGUI>();
-        // }
-
-
         hasHit10 = false;
         hasHit100 = false;
         hasHit1000 = false;
-
-        // Subscribe to events
-
     }
 
     private void CheckDigitAmount(int digit)
@@ -112,11 +105,19 @@ public class StatsDisplay : MonoBehaviour
         }
     }
 
+
+    private void UpdateRingPanel(int number)
+    {
+        RingNumber.text = number.ToString() + " / " + LvlID.ringsNeeded.ToString();
+
+    }
+
     public void UpdateFinalScore()
     {
         if (finalScore != null)
         {
             finalScore.text = "Your Score: " + player.Score.ToString();
+
 
         }
     }
@@ -211,116 +212,8 @@ public class StatsDisplay : MonoBehaviour
     }
 
 
-    private void FillMana()
-    {
-        smallTargetFill = player.CurrentMana / player.MaxMana;
-        if (!isFilllingMana)
-        {
-            fillManaBarCoroutine = StartCoroutine(FillManaBar());
-        }
-    }
-    private void FillBigMana(float fillAmount)
-    {
-        bigTargetFill = fillAmount;
-        fillBigManaBarCoroutine = StartCoroutine(FillBigManaBar(fillAmount));
-    }
-
-    private void UseMana()
-    {
-        StartCoroutine(UseManaCourintine());
-
-    }
-    private void StopManaCourintines()
-    {
-        StopCoroutine(fillBigManaBarCoroutine);
-        StopCoroutine(fillManaBarCoroutine);
-        isFilllingMana = false;
-        // ManaBar.fillAmount = smallTargetFill;
-        // ManaBarBig.fillAmount = bigTargetFill;
-    }
-    private IEnumerator UseManaCourintine()
-    {
-        StopManaCourintines();
-        float fillSpeed = .4f;
-        bool hasReachedBigTarget = false;
-        bool hasReachedSmallTarget = false;
-        float bigTarget = (player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / player.MaxMana;
-        Debug.Log("BigTarget: " + bigTarget);
-        float smallTarget = player.CurrentMana / player.MaxMana;
 
 
-        while (!hasReachedBigTarget || !hasReachedSmallTarget)
-        {
-            if (ManaBarBig.fillAmount > bigTarget)
-            {
-                ManaBarBig.fillAmount -= fillSpeed * Time.deltaTime;
-            }
-            else
-            {
-                hasReachedBigTarget = true;
-            }
-
-            if (ManaBar.fillAmount > smallTarget)
-            {
-                ManaBar.fillAmount -= fillSpeed * Time.deltaTime;
-            }
-            else
-            {
-                hasReachedSmallTarget = true;
-            }
-
-            yield return null; // Wait for the next frame
-        }
-    }
-
-    private IEnumerator FillManaBar()
-    {
-
-
-        isFilllingMana = true;
-        float fillSpeed = 1f; // Adjust this value to control the fill speed
-
-
-        while (ManaBar.fillAmount < smallTargetFill - .005f)   //!Mathf.Approximately(ManaBar.fillAmount, targetFillAmount)
-        {
-            ManaBar.fillAmount = Mathf.Lerp(ManaBar.fillAmount, smallTargetFill, fillSpeed * Time.deltaTime);
-            yield return null; // Wait for the next frame
-
-            // Update the target fill amount in case more stamina was added
-
-
-        }
-        ManaBar.fillAmount = smallTargetFill;
-        isFilllingMana = false;
-    }
-
-    private IEnumerator FillBigManaBar(float targetFillAmount)
-    {
-        float fillSpeed = 2f; // Adjust this value to control the fill speed
-                              // Small threshold to determine "close enough"
-
-        while (ManaBarBig.fillAmount < targetFillAmount - .005f) // Subtract threshold to avoid floating-point precision issues
-        {
-            ManaBarBig.fillAmount = Mathf.Lerp(ManaBarBig.fillAmount, targetFillAmount, fillSpeed * Time.deltaTime);
-            yield return null; // Wait for the next frame
-        }
-
-        ManaBarBig.fillAmount = targetFillAmount; // Ensure the fill amount is exactly the target value when done
-        Debug.Log("Finished");
-    }
-
-
-
-    // void UpdateScore(int score)
-    // {
-    //     if (scoreText != null)
-    //     {
-    //         scoreText.text = "Score: " + score.ToString();
-
-    //     }
-
-
-    // }
 
     void UpdateAmmo()
     {
@@ -330,86 +223,8 @@ public class StatsDisplay : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (isUsingStamina)
-        {
-            // float staminaPercentage = player.CurrentStamina / player.MaxStamina;
-            staminaBarMaterial.SetFloat("_OffsetUvX", player.StaminaUsed / maxStamina);
-            Color staminaColor = Color.Lerp(Color.white, lightRed, player.StaminaUsed / maxStamina);
-            staminaBarMaterial.SetColor("_Color", staminaColor);
-            // Debug.Log(player.StaminaUsed * .01f);
-        }
 
 
-    }
-    private IEnumerator FlashBG()
-    {
-        canFlashStaminaBG = false;
-        float flashDuration = totalStaminaBGFlashDuration / (numverOfBGFlashes * 2); // Calculate the duration of each flash
-
-        for (int i = 0; i < numverOfBGFlashes; i++)
-        {
-            // Change to the flash color
-            StaminaBG.color = BGFlashColor
-    ;
-            yield return new WaitForSeconds(flashDuration);
-
-            // Revert to the original color
-            StaminaBG.color = originalStaminaBGColor;
-            yield return new WaitForSeconds(flashDuration);
-        }
-        canFlashStaminaBG = true;
-    }
-
-    private void FlashStamimaBG()
-    {
-        if (canFlashStaminaBG)
-        {
-            StartCoroutine(FlashBG());
-        }
-        else
-        {
-            return;
-        }
-
-    }
-
-
-    private IEnumerator FadeStaminaBar(bool beingUsed)
-    {
-        float time = 0;
-
-        float startAlpha = beingUsed ? 0 : .95f; // Starting alpha value
-        float endAlpha = beingUsed ? .95f : 0; // Ending alpha value
-
-
-
-        while (time < staminaBarFadeTime)
-        {
-            time += Time.deltaTime;
-            float alpha = Mathf.Lerp(startAlpha, endAlpha, time / staminaBarFadeTime);
-            // staminaBarMaterial.SetFloat("_Alpha", alpha);
-            StaminaGroup.alpha = alpha;
-            yield return null;
-        }
-
-        // Ensure the final alpha is set correctly
-        StaminaGroup.alpha = endAlpha;
-    }
-
-    private void HandleStaminaBar(bool usingStamina)
-    {
-        if (isUsingStamina == usingStamina)
-        {
-            return;
-        }
-
-        isUsingStamina = usingStamina;
-        StartCoroutine(FadeStaminaBar(usingStamina));
-        // Assuming you have a way to get the current stamina value from PlayerID
-
-    }
 
     private void HandleDashArrow(bool canDash)
     {
@@ -421,13 +236,14 @@ public class StatsDisplay : MonoBehaviour
 
         player.globalEvents.OnAddScore += UpdateScore;
         player.globalEvents.OnUpdateAmmo += UpdateAmmo;
-        player.globalEvents.OnUseStamina += HandleStaminaBar;
-        player.globalEvents.OnZeroStamina += FlashStamimaBG;
-        player.globalEvents.AddMana += FillMana;
-        player.globalEvents.AddPowerUse += FillBigMana;
-        player.globalEvents.UsePower += UseMana;
+        LvlID.outputEvent.RingParentPass += UpdateRingPanel;
+        // player.globalEvents.OnUseStamina += HandleStaminaBar;
+        // player.globalEvents.OnZeroStamina += FlashStamimaBG;
+        // player.globalEvents.AddMana += FillMana;
+        // player.globalEvents.AddPowerUse += FillBigMana;
+        // player.globalEvents.UsePower += UseMana;
 
-        StaminaGroup.alpha = 0;
+        // StaminaGroup.alpha = 0;
 
 
     }
@@ -435,22 +251,209 @@ public class StatsDisplay : MonoBehaviour
     {
         player.globalEvents.OnAddScore -= UpdateScore;
         player.globalEvents.OnUpdateAmmo -= UpdateAmmo;
-        player.globalEvents.OnUseStamina -= HandleStaminaBar;
-        player.globalEvents.OnZeroStamina -= FlashStamimaBG;
-        player.globalEvents.AddMana -= FillMana;
-        player.globalEvents.AddPowerUse -= FillBigMana;
-        player.globalEvents.UsePower -= UseMana;
+        LvlID.outputEvent.RingParentPass -= UpdateRingPanel;
+
+        // player.globalEvents.OnUseStamina -= HandleStaminaBar;
+        // player.globalEvents.OnZeroStamina -= FlashStamimaBG;
+        // player.globalEvents.AddMana -= FillMana;
+        // player.globalEvents.AddPowerUse -= FillBigMana;
+        // player.globalEvents.UsePower -= UseMana;
 
 
 
-        staminaBarMaterial.SetColor("_Color", Color.white);
+        // staminaBarMaterial.SetColor("_Color", Color.white);
 
-        staminaBarMaterial.SetFloat("_OffsetUvX", 0);
+        // staminaBarMaterial.SetFloat("_OffsetUvX", 0);
 
 
     }
 
 
 }
+
+#region ManaStuff
+
+// private void FillMana()
+// {
+//     smallTargetFill = player.CurrentMana / player.MaxMana;
+//     if (!isFilllingMana)
+//     {
+//         fillManaBarCoroutine = StartCoroutine(FillManaBar());
+//     }
+// }
+// private void FillBigMana(float fillAmount)
+// {
+//     bigTargetFill = fillAmount;
+//     fillBigManaBarCoroutine = StartCoroutine(FillBigManaBar(fillAmount));
+// }
+
+// private void UseMana()
+// {
+//     StartCoroutine(UseManaCourintine());
+
+// }
+// private void StopManaCourintines()
+// {
+//     StopCoroutine(fillBigManaBarCoroutine);
+//     StopCoroutine(fillManaBarCoroutine);
+//     isFilllingMana = false;
+//     // ManaBar.fillAmount = smallTargetFill;
+//     // ManaBarBig.fillAmount = bigTargetFill;
+// }
+// private IEnumerator UseManaCourintine()
+// {
+//     StopManaCourintines();
+//     float fillSpeed = .4f;
+//     bool hasReachedBigTarget = false;
+//     bool hasReachedSmallTarget = false;
+//     float bigTarget = (player.numberOfPowersThatCanBeUsed * player.ManaNeeded) / player.MaxMana;
+//     Debug.Log("BigTarget: " + bigTarget);
+//     float smallTarget = player.CurrentMana / player.MaxMana;
+
+
+//     while (!hasReachedBigTarget || !hasReachedSmallTarget)
+//     {
+//         if (ManaBarBig.fillAmount > bigTarget)
+//         {
+//             ManaBarBig.fillAmount -= fillSpeed * Time.deltaTime;
+//         }
+//         else
+//         {
+//             hasReachedBigTarget = true;
+//         }
+
+//         if (ManaBar.fillAmount > smallTarget)
+//         {
+//             ManaBar.fillAmount -= fillSpeed * Time.deltaTime;
+//         }
+//         else
+//         {
+//             hasReachedSmallTarget = true;
+//         }
+
+//         yield return null; // Wait for the next frame
+//     }
+// }
+
+// private IEnumerator FillManaBar()
+// {
+
+
+//     isFilllingMana = true;
+//     float fillSpeed = 1f; // Adjust this value to control the fill speed
+
+
+//     while (ManaBar.fillAmount < smallTargetFill - .005f)   //!Mathf.Approximately(ManaBar.fillAmount, targetFillAmount)
+//     {
+//         ManaBar.fillAmount = Mathf.Lerp(ManaBar.fillAmount, smallTargetFill, fillSpeed * Time.deltaTime);
+//         yield return null; // Wait for the next frame
+
+//         // Update the target fill amount in case more stamina was added
+
+
+//     }
+//     ManaBar.fillAmount = smallTargetFill;
+//     isFilllingMana = false;
+// }
+
+// private IEnumerator FillBigManaBar(float targetFillAmount)
+// {
+//     float fillSpeed = 2f; // Adjust this value to control the fill speed
+//                           // Small threshold to determine "close enough"
+
+//     while (ManaBarBig.fillAmount < targetFillAmount - .005f) // Subtract threshold to avoid floating-point precision issues
+//     {
+//         ManaBarBig.fillAmount = Mathf.Lerp(ManaBarBig.fillAmount, targetFillAmount, fillSpeed * Time.deltaTime);
+//         yield return null; // Wait for the next frame
+//     }
+
+//     ManaBarBig.fillAmount = targetFillAmount; // Ensure the fill amount is exactly the target value when done
+//     Debug.Log("Finished");
+// }
+
+// void Update()
+// {
+//     if (isUsingStamina)
+//     {
+//         // float staminaPercentage = player.CurrentStamina / player.MaxStamina;
+//         staminaBarMaterial.SetFloat("_OffsetUvX", player.StaminaUsed / maxStamina);
+//         Color staminaColor = Color.Lerp(Color.white, lightRed, player.StaminaUsed / maxStamina);
+//         staminaBarMaterial.SetColor("_Color", staminaColor);
+//         // Debug.Log(player.StaminaUsed * .01f);
+//     }
+
+
+// }
+
+// private IEnumerator FlashBG()
+// {
+//     canFlashStaminaBG = false;
+//     float flashDuration = totalStaminaBGFlashDuration / (numverOfBGFlashes * 2); // Calculate the duration of each flash
+
+//     for (int i = 0; i < numverOfBGFlashes; i++)
+//     {
+//         // Change to the flash color
+//         StaminaBG.color = BGFlashColor
+// ;
+//         yield return new WaitForSeconds(flashDuration);
+
+//         // Revert to the original color
+//         StaminaBG.color = originalStaminaBGColor;
+//         yield return new WaitForSeconds(flashDuration);
+//     }
+//     canFlashStaminaBG = true;
+// }
+
+// private void FlashStamimaBG()
+// {
+//     if (canFlashStaminaBG)
+//     {
+//         StartCoroutine(FlashBG());
+//     }
+//     else
+//     {
+//         return;
+//     }
+
+// }
+
+
+// private IEnumerator FadeStaminaBar(bool beingUsed)
+// {
+//     float time = 0;
+
+//     float startAlpha = beingUsed ? 0 : .95f; // Starting alpha value
+//     float endAlpha = beingUsed ? .95f : 0; // Ending alpha value
+
+
+
+//     while (time < staminaBarFadeTime)
+//     {
+//         time += Time.deltaTime;
+//         float alpha = Mathf.Lerp(startAlpha, endAlpha, time / staminaBarFadeTime);
+//         // staminaBarMaterial.SetFloat("_Alpha", alpha);
+//         StaminaGroup.alpha = alpha;
+//         yield return null;
+//     }
+
+//     // Ensure the final alpha is set correctly
+//     StaminaGroup.alpha = endAlpha;
+// }
+
+// private void HandleStaminaBar(bool usingStamina)
+// {
+//     if (isUsingStamina == usingStamina)
+//     {
+//         return;
+//     }
+
+//     isUsingStamina = usingStamina;
+//     StartCoroutine(FadeStaminaBar(usingStamina));
+//     // Assuming you have a way to get the current stamina value from PlayerID
+
+// }
+
+#endregion
+
 
 

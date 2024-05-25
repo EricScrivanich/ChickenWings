@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RingParent : MonoBehaviour
 {
+    [SerializeField] private LevelManagerID LvlID;
     private int ringAmount;
     public int correctRing { get; private set; }
     private List<TutorialRingMovement> rings;
@@ -14,7 +15,7 @@ public class RingParent : MonoBehaviour
     {
         rings = new List<TutorialRingMovement>();
         ringAmount = 0;
-        foreach(Transform child in transform)
+        foreach(Transform child in transform) 
         {
             ringAmount++;
             rings.Add(child.gameObject.GetComponent<TutorialRingMovement>());
@@ -45,7 +46,7 @@ public class RingParent : MonoBehaviour
     }
     private void Completed()
     {
-        Debug.Log("Compleete");
+        LvlID.inputEvent.RingParentPass?.Invoke(0);
 
     }
     private void HighlightCorrectRing(int correctInt)

@@ -6,6 +6,9 @@ using DG.Tweening;
 public class PopUpsDisplay : MonoBehaviour
 {
     public PlayerID ID;
+    [SerializeField] private LevelManagerID LvlID;
+
+    [SerializeField] private GameObject FinishedLevelUI;
     [SerializeField] private GameObject Frozen;
     [SerializeField] private GameObject FrozenOverlay;
     private PlayerMovement playerMove;
@@ -31,6 +34,7 @@ public class PopUpsDisplay : MonoBehaviour
 
     void Start()
     {
+        FinishedLevelUI.SetActive(false);
         frozenOverlayMaterial.SetFloat("_FadeAmount", 1);
 
 
@@ -53,11 +57,14 @@ public class PopUpsDisplay : MonoBehaviour
     void OnEnable()
     {
         ID.globalEvents.Frozen += FrozenEvent;
+        LvlID.outputEvent.FinishedLevel += FinishLevel;
     }
 
     void OnDisable()
     {
         ID.globalEvents.Frozen -= FrozenEvent;
+        LvlID.outputEvent.FinishedLevel -= FinishLevel;
+
     }
 
     public void GameOver()
@@ -121,5 +128,11 @@ public class PopUpsDisplay : MonoBehaviour
             yield return null;
         }
         Frozen.SetActive(false);
+    }
+
+    private void FinishLevel()
+    {
+        Time.timeScale = 0;
+        FinishedLevelUI.SetActive(true);
     }
 }
