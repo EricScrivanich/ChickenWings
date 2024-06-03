@@ -58,36 +58,10 @@ public class ColliderEnemy : MonoBehaviour
         if (collider.CompareTag("Plane") ) // && !isFlashing 
         {
             ID.events.LoseLife?.Invoke();
-            // ID.Lives -= 1;
-
-            // if (ID.Lives <= 0)
-            // {
-            //     Kill();
-            //     DeadEvent.TriggerEvent();
-            //     return;
-            // }
-
-            // AudioManager.instance.PlayDamageSound();
-            // Instantiate(featherParticles, transform.position, Quaternion.identity);
-            // StartCoroutine(Flash()); // Start the flashing coroutine
+            
         }
 
-        // if (collider.CompareTag("Ring"))
-        // {
-        //     RingMovement ring = collider.GetComponent<RingMovement>();
-
-        //     if (ring != null)
-        //     {
-        //         ring.CheckOrder();
-
-        //     }
-        //     else
-        //     {
-        //         BucketScript bucket = collider.GetComponent<BucketScript>();
-        //         Debug.Log("bucket");
-        //         // ID.events.OnCompletedRingSequence?.Invoke(bucket);
-        //         bucket.Completed();
-        //     }
+      
         }
 
 
@@ -95,57 +69,4 @@ public class ColliderEnemy : MonoBehaviour
 
     }
 
-    // private void Dropping(bool floorCollisionVar)
-    // {
-    //     floorCollision = floorCollisionVar;
-
-    // }
-
-    // private IEnumerator Flash()
-    // {
-    //     isFlashing = true;
-
-    //     for (int i = 0; i < numberOfFlashes; i++)
-    //     {
-    //         // spriteRenderer.color = new Color(1f, 1f, 1f, 0f); // Set opacity to 0
-    //         ID.PlayerMaterial.SetFloat("_Alpha", 0);
-    //         yield return new WaitForSeconds(flashDuration);
-    //         // spriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Set opacity to 1
-    //         ID.PlayerMaterial.SetFloat("_Alpha", .9f);
-    //         yield return new WaitForSeconds(flashDuration);
-    //     }
-    //     ID.PlayerMaterial.SetFloat("_Alpha", 1);
-
-    //     isFlashing = false;
-    // }
-
-
-    // private void Kill()
-    // {
-    //     Instantiate(featherParticles, transform.position, Quaternion.identity);
-    //     Instantiate(smokeParticles, transform.position, Quaternion.identity);
-    //     AudioManager.instance.PlayDeathSound();
-
-    //     gameObject.SetActive(false);
-
-    //     if (transform.parent != null) // Check if this GameObject has a parent
-    //     {
-    //         transform.parent.gameObject.SetActive(false);
-    //     }
-    //     else
-    //     { 
-    //         gameObject.SetActive(false); // If no parent, disable the current GameObject
-    //     }
-
-    // }
-
-    // private void OnEnable()
-    // {
-        
-    // }
-
-    // private void OnDisable()
-    // {
-       
-    // }
-
+   

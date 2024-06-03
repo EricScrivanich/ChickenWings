@@ -7,7 +7,7 @@ public class ColliderCollectable : MonoBehaviour
     // Start is called before the first frame update
     private void OnTriggerEnter2D(Collider2D collider)
     {
-
+        Debug.Log("HSHHDH");
         ICollectible collectibleEntity = collider.gameObject.GetComponent<ICollectible>();
         if (collectibleEntity != null)
         {

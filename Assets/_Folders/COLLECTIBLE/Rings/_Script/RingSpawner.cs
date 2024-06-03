@@ -363,6 +363,69 @@ public class RingSpawner : MonoBehaviour
     }
 
     #region SpawnerMain
+    // private IEnumerator MainSpawner()
+    // {
+    //     yield return new WaitForSeconds(6f);
+    //     StartCoroutine(SpawnPlaneType(crop));
+    //     yield return new WaitForSeconds(5f);
+    //     crop.PlanesAvailable = 2;
+    //     yield return new WaitForSeconds(6f);
+    //     StartCoroutine(SpawnPlaneType(jet));
+    //     yield return new WaitForSeconds(7f);
+    //     SpawnRandomSetup(2, 2.5f);
+
+    //     yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+    //     PlaneID.bomberTime = 22;
+
+    //     yield return new WaitForSeconds(4f);
+    //     PlaneID.numberOfSpawnsToDeactivate = 2;
+
+
+    //     crop.PlanesAvailable = 3;
+    //     yield return new WaitForSeconds(4f);
+    //     jet.PlanesAvailable = 2;
+    //     yield return new WaitForSeconds(5f);
+
+    //     Debug.Log("Cargo");
+    //     StartCoroutine(SpawnPlaneType(cargo));
+    //     crop.minIterationDelay = 2;
+    //     yield return new WaitForSeconds(8f);
+    //     jet.minOffsetTime = 0;
+    //     jet.maxOffsetTime = 2;
+    //     jet.maxIterationDelay = 2;
+    //     cargo.PlanesAvailable = 2;
+    //     yield return new WaitForSeconds(6f);
+    //     SpawnRandomSetup(0, 2.5f);
+
+    //     yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
+    //     PlaneID.bomberTime = 17;
+    //     crop.PlanesAvailable = 4;
+
+    //     crop.maxIterationDelay = 4;
+    //     yield return new WaitForSeconds(3f);
+    //     jet.PlanesAvailable = 3;
+    //     crop.PlanesAvailable = 4;
+
+    //     yield return new WaitForSeconds(4f);
+    //     cargo.PlanesAvailable = 3;
+    //     cargo.maxOffsetTime = 3;
+    //     yield return new WaitForSeconds(6f);
+    //     jet.PlanesAvailable = 4;
+    //     yield return new WaitForSeconds(8f);
+    //     crop.PlanesAvailable = 6;
+    //     jet.minIterationDelay = 0;
+    //     jet.maxIterationDelay = 1;
+    //     PlaneID.bomberTime = 13;
+
+    //     yield return new WaitForSeconds(6f);
+    //     cargo.PlanesAvailable = 4;
+    //     PlaneID.numberOfSpawnsToDeactivate = 1;
+
+    //     cargo.minOffsetTime = 0;
+    //     cargo.minOffsetTime = 1;
+
+    // }
+
     private IEnumerator MainSpawner()
     {
         yield return new WaitForSeconds(6f);
@@ -372,9 +435,7 @@ public class RingSpawner : MonoBehaviour
         yield return new WaitForSeconds(6f);
         StartCoroutine(SpawnPlaneType(jet));
         yield return new WaitForSeconds(7f);
-        SpawnRandomSetup(2, 2.5f);
 
-        yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
         PlaneID.bomberTime = 22;
 
         yield return new WaitForSeconds(4f);
@@ -395,9 +456,7 @@ public class RingSpawner : MonoBehaviour
         jet.maxIterationDelay = 2;
         cargo.PlanesAvailable = 2;
         yield return new WaitForSeconds(6f);
-        SpawnRandomSetup(0, 2.5f);
 
-        yield return new WaitUntil(() => PlaneID.spawnRandomPlanesBool == true);
         PlaneID.bomberTime = 17;
         crop.PlanesAvailable = 4;
 
@@ -423,15 +482,6 @@ public class RingSpawner : MonoBehaviour
 
         cargo.minOffsetTime = 0;
         cargo.minOffsetTime = 1;
-
-
-
-
-
-
-
-
-
 
     }
 
@@ -546,12 +596,12 @@ public class RingSpawner : MonoBehaviour
 
     private void CheckLives(int lives)
     {
-        if (lives == 1 && !hasSpawnedLives)
-        {
-            StartCoroutine(SpawnLives());
-            hasSpawnedLives = true;
+        // if (lives == 1 && !hasSpawnedLives)
+        // {
+        //     StartCoroutine(SpawnLives());
+        //     hasSpawnedLives = true;
 
-        }
+        // }
 
     }
 

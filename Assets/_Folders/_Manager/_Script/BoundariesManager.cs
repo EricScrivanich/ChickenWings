@@ -18,6 +18,7 @@ public class BoundariesManager : MonoBehaviour
     void Start()
     {
         Debug.unityLogger.logEnabled = true;
+        // Time.timeScale = .1f;
 
     }
 

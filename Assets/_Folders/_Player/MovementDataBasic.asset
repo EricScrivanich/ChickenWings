@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d1a22450bf8e4553bb071265dc2430f, type: 3}
+  m_Name: MovementDataBasic
+  m_EditorClassIdentifier: 
+  JumpForce: 0
+  FlipRightInitialForceVector: {x: 3, y: 10}
+  FlipRightAddForce: {x: 5, y: 4.6}
+  FlipRightDownForce: {x: 4, y: -3.5}
+  flipRightAddForceTime: 0.45
+  flipRightDownForceTime: 0.5
+  FlipLeftInitialForceVector: {x: -6, y: 8.5}
+  FlipLeftAddForce: {x: -3.3, y: 4}
+  FlipLeftDownForce: {x: -2, y: -2}
+  flipLeftAddForceTime: 0.45
+  flipLeftDownForceTime: 0.3

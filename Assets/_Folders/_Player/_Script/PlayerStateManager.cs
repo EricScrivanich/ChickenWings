@@ -9,6 +9,9 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private float SlowFactor;
     [ExposedScriptableObject]
     public PlayerID ID;
+
+    [ExposedScriptableObject]
+    public PlayerMovementData MovementData;
     public CameraID Cam;
     public ParticleSystem Dust;
 
@@ -157,6 +160,12 @@ public class PlayerStateManager : MonoBehaviour
         ID.StaminaUsed = 0;
         rb = GetComponent<Rigidbody2D>();
         justDashedSlashed = false;
+
+        FlipRightState.CachVariables(MovementData.FlipRightInitialForceVector, MovementData.FlipRightAddForce,
+        MovementData.FlipRightDownForce, MovementData.flipRightAddForceTime, MovementData.flipRightDownForceTime);
+
+        FlipLeftState.CachVariables(MovementData.FlipLeftInitialForceVector, MovementData.FlipLeftAddForce,
+        MovementData.FlipLeftDownForce, MovementData.flipLeftAddForceTime, MovementData.flipLeftDownForceTime);
 
 
     }
@@ -418,7 +427,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons)
         {
-
+            holdingFlip = true;
             // ResetHoldJump();
             SwitchState(FlipRightState);
 
@@ -433,6 +442,8 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons)
         {
+            holdingFlip = true;
+
             // ResetHoldJump();
             SwitchState(FlipLeftState);
         }

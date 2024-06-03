@@ -20,7 +20,7 @@ public class PlayerEggScript : MonoBehaviour
     //
 
 
-    private List<GameObject> eggPool;
+    private List<GameObject> eggPool; 
 
 
     private int ammo;

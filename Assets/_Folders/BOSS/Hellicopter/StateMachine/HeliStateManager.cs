@@ -126,7 +126,7 @@ public class HeliStateManager : MonoBehaviour
         {
             float chance = UnityEngine.Random.Range(0f, 1f);
             Debug.Log("Chance: " + chance);
-            if (chance > .8f)
+            if (chance > .5f)
             {
                 isMissile = true;
                 time = ID.shootingCooldown * 1.8f;

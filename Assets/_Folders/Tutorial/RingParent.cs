@@ -5,6 +5,7 @@ using UnityEngine;
 public class RingParent : MonoBehaviour
 {
     [SerializeField] private LevelManagerID LvlID;
+    public RingID ID;
     private int ringAmount;
     public int correctRing { get; private set; }
     private List<TutorialRingMovement> rings;
@@ -15,7 +16,7 @@ public class RingParent : MonoBehaviour
     {
         rings = new List<TutorialRingMovement>();
         ringAmount = 0;
-        foreach(Transform child in transform) 
+        foreach (Transform child in transform)
         {
             ringAmount++;
             rings.Add(child.gameObject.GetComponent<TutorialRingMovement>());
@@ -36,9 +37,10 @@ public class RingParent : MonoBehaviour
             if (order == ringAmount)
             {
                 Completed();
+                ID.ringEvent.tutorialRingPass?.Invoke();
             }
         }
-        
+
         return isCorrect;
 
 
@@ -51,7 +53,7 @@ public class RingParent : MonoBehaviour
     }
     private void HighlightCorrectRing(int correctInt)
     {
-        foreach(var ring in rings)
+        foreach (var ring in rings)
         {
             ring.CheckForHighlight(correctInt);
         }
@@ -63,12 +65,13 @@ public class RingParent : MonoBehaviour
         transform.Translate(Vector2.left * speed * Time.deltaTime);
 
     }
-    private void OnEnable() {
+    private void OnEnable()
+    {
         correctRing = 1;
-        
+
 
 
     }
 
-   
+
 }

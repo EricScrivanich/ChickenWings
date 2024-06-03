@@ -44,7 +44,7 @@ public class HomingMissile : MonoBehaviour
     private float currentOffset = 0f;
     private float offsetDirection = 1f;
 
-    private int TestExplosion;
+
 
     // Start is called before the first frame update
     private void Awake()
@@ -75,7 +75,7 @@ public class HomingMissile : MonoBehaviour
 
     private void OnEnable()
     {
-        TestExplosion = 0;
+        
         reachedOffset = false;
         rotateSpeed = startingRotateSpeed;
 
@@ -185,7 +185,6 @@ public class HomingMissile : MonoBehaviour
             {
 
 
-                // Calculate the current offset value using a sine wave
 
                 float distanceToTarget = Vector2.Distance(transform.position, OffsetPosition);
                 if (distanceToTarget < 2.5f)
@@ -193,19 +192,15 @@ public class HomingMissile : MonoBehaviour
                     reachedOffset = true;
                     rotateSpeed += (Random.Range(130, 150));
                 }
-                // Calculate direction towards the player
+        
                 Vector2 direction = OffsetPosition - rb.position;
 
-                // Apply the offset to the direction vector
-                // direction.x += currentOffset;
-
-                // Normalize the direction vector
                 direction.Normalize();
 
-                // Calculate rotation
+           
                 float rotateAmount = Vector3.Cross(direction, transform.up).z;
 
-                // Apply rotation and velocity to the rigidbody
+      
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
                 rb.velocity = transform.up * maxVelocity;
             }
@@ -214,16 +209,9 @@ public class HomingMissile : MonoBehaviour
             {
                 Vector2 direction = (Vector2)(player.position) - rb.position;
 
-                // Apply the offset to the direction vector
-                // direction.x += currentOffset;
-
-                // Normalize the direction vector
+          
                 direction.Normalize();
-
-                // Calculate rotation
                 float rotateAmount = Vector3.Cross(direction, transform.up).z;
-
-                // Apply rotation and velocity to the rigidbody
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
                 rb.velocity = transform.up * maxVelocity;
 
@@ -264,8 +252,8 @@ public class HomingMissile : MonoBehaviour
     {
         pool.Spawn("NormalExplosion", transform.position, transform.rotation, explosionScale);
         pool.Despawn(this.gameObject);
-        TestExplosion++;
-        Debug.Log("Test" + TestExplosion);
+     
+      
 
     }
 

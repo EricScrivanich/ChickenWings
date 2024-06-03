@@ -65,7 +65,7 @@ public class BucketCollisionState : PlayerBaseState
                 {
                     yForce = 1f;
                 }
-                else if (player.transform.position.y > 3)
+                else if (player.transform.position.y > 3) 
                 {
                     yForce = 2.5f;
                 }

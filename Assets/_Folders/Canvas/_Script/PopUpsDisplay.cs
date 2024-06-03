@@ -34,7 +34,10 @@ public class PopUpsDisplay : MonoBehaviour
 
     void Start()
     {
-        FinishedLevelUI.SetActive(false);
+        if (FinishedLevelUI != null)
+        {
+            FinishedLevelUI.SetActive(false);
+        }
         frozenOverlayMaterial.SetFloat("_FadeAmount", 1);
 
 
@@ -57,13 +60,21 @@ public class PopUpsDisplay : MonoBehaviour
     void OnEnable()
     {
         ID.globalEvents.Frozen += FrozenEvent;
-        LvlID.outputEvent.FinishedLevel += FinishLevel;
+
+        if (LvlID != null)
+        {
+            LvlID.outputEvent.FinishedLevel += FinishLevel;
+        }
+
     }
 
     void OnDisable()
     {
         ID.globalEvents.Frozen -= FrozenEvent;
-        LvlID.outputEvent.FinishedLevel -= FinishLevel;
+        if (LvlID != null)
+        {
+            LvlID.outputEvent.FinishedLevel -= FinishLevel;
+        }
 
     }
 
