@@ -315,6 +315,7 @@ GameObject:
   - component: {fileID: 1944153489549500312}
   - component: {fileID: 1432890697274359675}
   - component: {fileID: 66901339332722841}
+  - component: {fileID: 2454187349646226091}
   m_Layer: 11
   m_Name: Piggy
   m_TagString: Plane
@@ -472,6 +473,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54bbe5eb74e0e4d9dbddff75cebbbe31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isScalable: 0
+  explosionScale: {x: 0.9, y: 0.9, z: 0.9}
+  colls:
+  - {fileID: 1432890697274359675}
   sprites:
   - {fileID: 5088269677243982766}
   - {fileID: 8195355413645132988}
@@ -483,7 +488,8 @@ MonoBehaviour:
   - {fileID: 2627085635552860102}
   - {fileID: 2074204896979078561}
   - {fileID: 7404031746429990950}
-  pigMaterial: {fileID: 2100000, guid: f8aacee17c2b94053bcaa6c2861fff24, type: 2}
+  pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
+  defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   body: {fileID: 357748487732977913}
   BackLegs: {fileID: 6840480931914924450}
   FrontLegs: {fileID: 2752491233751144196}
@@ -493,6 +499,18 @@ MonoBehaviour:
   FrontLegsPosition: {fileID: 0}
   WingsPosition: {fileID: 4438767337380101504}
   TailPosition: {fileID: 5731793649703512238}
+--- !u!210 &2454187349646226091
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2425336107443998327}
+  m_Enabled: 1
+  m_SortingLayerID: -884308203
+  m_SortingLayer: 4
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1 &2927166378316838539
 GameObject:
   m_ObjectHideFlags: 0

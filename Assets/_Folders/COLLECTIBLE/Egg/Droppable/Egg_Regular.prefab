@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7399662429970248629}
   - component: {fileID: -2510314267226362309}
   - component: {fileID: -8411989719637922897}
-  - component: {fileID: -3590248857024333675}
   - component: {fileID: -1766277696447703265}
   m_Layer: 13
   m_Name: Egg_Regular
@@ -161,27 +160,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.82312, y: 1.3632658}
   m_EdgeRadius: 0
---- !u!95 &-3590248857024333675
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1449390570128243431}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 4ef2c572a50b14f0894ed37d1ca23bb7, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &-1766277696447703265
 MonoBehaviour:
   m_ObjectHideFlags: 0

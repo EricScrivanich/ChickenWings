@@ -21,7 +21,7 @@ public class BucketCollisionState : PlayerBaseState
         if (player.isDropping)
         {
 
-            player.anim.SetTrigger("BounceTrigger");
+            // player.anim.SetTrigger("BounceTrigger");
             player.isDropping = false;
         }
 

@@ -12,7 +12,7 @@ public class StateInputSystem : MonoBehaviour
     private const float swipeThreshold = 0.3f; // Adjust as needed
     private const float tapTimeThreshold = 0.2f; // Adjust as needed
     public PlayerID ID;
-    [SerializeField] private RectTransform touchButtonRectTransform; 
+    [SerializeField] private RectTransform touchButtonRectTransform;
 
     private void Awake()
     {
@@ -22,6 +22,7 @@ public class StateInputSystem : MonoBehaviour
         controls = new InputController();
 
         // Bind existing actions to methods
+        controls.Movement.Jump.performed += ctx => ID.events.OnJump?.Invoke();
         controls.Movement.Jump.performed += ctx => ID.events.OnJump?.Invoke();
         controls.Movement.JumpRight.performed += ctx => ID.events.OnFlipRight?.Invoke();
         controls.Movement.JumpLeft.performed += ctx => ID.events.OnFlipLeft?.Invoke();
@@ -52,10 +53,10 @@ public class StateInputSystem : MonoBehaviour
 
         controls.Movement.HoldJumpRight.canceled += ctx =>
       {
-         
-              ID.events.OnHoldFlip?.Invoke(false);
 
-          
+          ID.events.OnHoldFlip?.Invoke(false);
+
+
 
 
       };
@@ -63,10 +64,10 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.HoldJumpLeft.canceled += ctx =>
 
         {
-           
-                ID.events.OnHoldFlip?.Invoke(false);
 
-            
+            ID.events.OnHoldFlip?.Invoke(false);
+
+
         };
 
         // controls.Movement.HoldJumpRight.performed += ctx =>
@@ -91,12 +92,12 @@ public class StateInputSystem : MonoBehaviour
  };
         controls.Movement.JumpHold.canceled += ctx =>
         {
-            if (isHolding)
-            {
-                ID.events.OnJumpHeld?.Invoke(false);
-                isHolding = false;
+            // if (isHolding)
+            // {
+            ID.events.OnJumpHeld?.Invoke(false);
+            // isHolding = false;
 
-            }
+            // }
 
         };
 

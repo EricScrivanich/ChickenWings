@@ -48,7 +48,7 @@ public class PlayerParachuteState : PlayerBaseState
         initialRotation = player.transform.rotation.z;
 
         player.disableButtons = true;
-        player.anim.SetTrigger("ParachuteTrigger");
+        // player.anim.SetTrigger("ParachuteTrigger");
         player.maxFallSpeed = -1;
         startOscillation = false; // Reset the flag on state entry
     }
@@ -58,7 +58,7 @@ public class PlayerParachuteState : PlayerBaseState
 
         player.isParachuting = false;
         player.ImageTransform.localRotation = Quaternion.Euler(0, 0, 0);
-        player.anim.SetTrigger("IdleTrigger");
+        // player.anim.SetTrigger("IdleTrigger");
         // player.StartFillStaminaCoroutine();
         player.maxFallSpeed = player.ID.MaxFallSpeed;
         player.disableButtons = false;

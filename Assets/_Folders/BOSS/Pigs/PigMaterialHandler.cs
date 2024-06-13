@@ -7,6 +7,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 {
     [SerializeField] private bool isScalable;
     [SerializeField] private Vector3 explosionScale;
+
     private Pool explosionPool;
 
     [SerializeField] private Collider2D[] colls;
@@ -73,6 +74,11 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
             {
                 pig.material = defaultMat;
             }
+            foreach (var col in colls)
+            {
+                col.enabled = true;
+            }
+            isHit = false;
         }
 
         // if (isScalable)
@@ -118,20 +124,20 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         }
 
 
-        StartCoroutine(Explode(.8f));
+        StartCoroutine(Explode(.45f));
 
     }
 
     private IEnumerator Explode(float time)
     {
         float elapsedTime = 0.0f;
-        float endScale = initialScale * 1.3f;
+        float endScale = initialScale * 1.2f;
         float hitEffectBlendStart = 0f;
-        float hitEffectBlendEnd = 0.15f;
+        float hitEffectBlendEnd = 0.1f;
         float fadeAmountStart = 0.0f;
         float fadeAmountEnd = .7f;
         bool hasExploded = false;
-        while (elapsedTime < .2f)
+        while (elapsedTime < .15f)
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / time;
@@ -146,6 +152,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
             yield return null;
         }
         elapsedTime = 0;
+        explosionPool.Spawn("NormalExplosion", transform.position, Vector3.zero, explosionScale);
+
         while (elapsedTime < time)
         {
             elapsedTime += Time.deltaTime;
@@ -153,14 +161,13 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
             float t = elapsedTime / time;
             if (elapsedTime > time * .5f && !hasExploded)
             {
-                explosionPool.Spawn("NormalExplosion", transform.position, Vector3.zero, explosionScale);
                 hasExploded = true;
 
             }
 
             // Interpolate _HitEffectBlend and _FadeAmount
             float currentHitEffectBlend = Mathf.Lerp(hitEffectBlendEnd, hitEffectBlendStart, t);
-            float alpha = Mathf.Lerp(1, .3f, t);
+            float alpha = Mathf.Lerp(1, .2f, t);
             float scale = Mathf.Lerp(initialScale, endScale, t);
             float currentFadeAmount = Mathf.Lerp(fadeAmountStart, fadeAmountEnd, t);
             transform.localScale = new Vector3(scale, scale, scale);

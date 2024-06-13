@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerFlipRightState : PlayerBaseState
 {
     private Vector2 JumpForce;
+    private bool hasFadedJumpAir;
     private Vector2 AddForceVector;
     private Vector2 AddForceDownVector;
     private float addForceTime;
@@ -19,16 +20,19 @@ public class PlayerFlipRightState : PlayerBaseState
     private float rotationTimer;
     private bool hitSlowTarget;
     private bool prolongRotation;
+    private int jumpAirIndex;
 
     public override void EnterState(PlayerStateManager player)
     {
+        hasFadedJumpAir = false;
+        jumpAirIndex = player.CurrentJumpAirIndex;
         hitSlowTarget = false;
         addForceDownTimer = 0;
         rotationSlowDownTime = .6f;
         time = 0;
         rotationTimer = 0;
         player.SetFlipDirection(true);
-        player.anim.SetTrigger("FlipTrigger");
+        // player.anim.SetTrigger("FlipTrigger");
         if (player.transform.rotation.eulerAngles.z < 175f)
         {
             prolongRotation = true;
@@ -48,7 +52,13 @@ public class PlayerFlipRightState : PlayerBaseState
     }
     public override void ExitState(PlayerStateManager player)
     {
-        player.rb.gravityScale = player.originalGravityScale;
+     
+
+        if (!hasFadedJumpAir)
+        {
+            
+            player.ID.events.OnStopJumpAir?.Invoke(jumpAirIndex);
+        }
     }
     public override void FixedUpdateState(PlayerStateManager player)
     {
@@ -98,6 +108,12 @@ public class PlayerFlipRightState : PlayerBaseState
                 prolongRotation = false;
 
             }
+        }
+
+        if (!hasFadedJumpAir && !player.holdingFlip)
+        {
+            hasFadedJumpAir = true;
+            player.ID.events.OnStopJumpAir?.Invoke(jumpAirIndex);
         }
 
     }

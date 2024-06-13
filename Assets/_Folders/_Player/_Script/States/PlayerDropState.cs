@@ -14,7 +14,7 @@ public class PlayerDropState : PlayerBaseState
         // player.ID.events.FloorCollsion.Invoke(false); 
         AudioManager.instance.PlayDownJumpSound();
         player.maxFallSpeed = -50;
-        player.anim.SetTrigger("DropTrigger");
+        // player.anim.SetTrigger("DropTrigger");
         player.disableButtons = true;
         // player.rb.velocity = new Vector2 (0,dropPower);
         player.AdjustForce(0, dropPower);
@@ -28,6 +28,8 @@ public class PlayerDropState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
 
     {
+        // player.anim.SetTrigger(player.FinishDashTrigger);
+
         player.rb.freezeRotation = false;
 
     }

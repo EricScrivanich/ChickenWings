@@ -5,6 +5,7 @@ using UnityEngine;
 public struct PlayerEvents
 {
     public Action OnJump;
+    
     public Action OnFlipRight;
     public Action OnFlipLeft;
     public Action<bool> OnDash; 
@@ -25,4 +26,6 @@ public struct PlayerEvents
     public Action HitGround;
 
     public Action<bool> OnHoldFlip;
+
+    public Action<int> OnStopJumpAir;
 }

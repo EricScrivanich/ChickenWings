@@ -22,6 +22,7 @@ public class PlayerID : ScriptableObject
     public float lerpTime;
     public float flipSpeed;
     public float slowMaxFallSpeed;
+    public int jumpAirIndex;
     public float slowJumpForce;
     private bool resetingValues;
     public float slowFlipLeftForceX;
@@ -140,7 +141,7 @@ public class PlayerID : ScriptableObject
 
     public void ResetValues()
     {
-        
+        jumpAirIndex = 0;
         resetingValues = true;
         isAlive = true;
 

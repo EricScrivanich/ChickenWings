@@ -8,7 +8,7 @@ public class PlayerDashState : PlayerBaseState
 
     private bool switchSlash;
 
-    [SerializeField] private float dashPower = 10.3f;
+    [SerializeField] private float dashPower = 10.4f;
     // [SerializeField] private float dashPower = 12.5f;
 
     private int rotationSpeed = 100;
@@ -18,17 +18,19 @@ public class PlayerDashState : PlayerBaseState
     private float dragDuration = .4f;
     private float dragAmount = 2.5f;
     private float dragTime;
-    private float dashDurationMin = .32f;
-    private float dashDurationMax = .45f;
+    private float dashDurationMin = .35f;
+    private float dashDurationMax = .52f;
     private float currentSpeed;
     private float currentGravity;
     private float slowdownSpeed = 16.2f;
     private float addGravitySpeed = 3.3f;
+    private bool hasFinishedDash;
 
 
     public override void EnterState(PlayerStateManager player)
     {
         player.isDashing = true;
+        hasFinishedDash = false;
         player.stillDashing = true;
         switchSlash = false;
         dragTime = 0;
@@ -44,7 +46,7 @@ public class PlayerDashState : PlayerBaseState
         // player.disableButtons = true;
         player.rb.gravityScale = 0;
         player.rb.MoveRotation(0);
-        player.anim.SetTrigger("DashTrigger");
+        // player.anim.SetTrigger("DashTrigger");
         AudioManager.instance.PlayDashSound();
         dashingTime = 0;
         // player.rb.velocity = new Vector2(dashPower, 0);
@@ -60,6 +62,14 @@ public class PlayerDashState : PlayerBaseState
             player.ID.globalEvents.CanDashSlash?.Invoke(false);
 
         }
+
+        if (!hasFinishedDash)
+        {
+            hasFinishedDash = true;
+            player.anim.SetTrigger(player.FinishDashTrigger);
+
+        }
+
         player.rb.gravityScale = player.originalGravityScale;
         player.stillDashing = false;
         player.rb.drag = 0f;
@@ -69,6 +79,12 @@ public class PlayerDashState : PlayerBaseState
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
+
+    }
+
+    private void FinishDash()
+    {
+
 
     }
 
@@ -88,9 +104,10 @@ public class PlayerDashState : PlayerBaseState
 
     }
 
-    public void SwitchSlash() 
+    public void SwitchSlash()
     {
         switchSlash = true;
+
     }
 
 
@@ -104,6 +121,12 @@ public class PlayerDashState : PlayerBaseState
 
             player.rb.gravityScale = player.originalGravityScale;
             player.ID.globalEvents.CanDash?.Invoke(false);
+            if (!hasFinishedDash)
+            {
+                hasFinishedDash = true;
+                player.anim.SetTrigger(player.FinishDashTrigger);
+
+            }
 
             passedTime = true;
             player.rb.drag = dragAmount;
@@ -119,6 +142,14 @@ public class PlayerDashState : PlayerBaseState
             if (switchSlash)
             {
                 player.SwitchState(player.DashSlash);
+                if (!hasFinishedDash)
+                {
+                    hasFinishedDash = true;
+                    player.anim.SetTrigger(player.FinishDashTrigger);
+
+                }
+
+
                 player.ID.globalEvents.SetCanDashSlash?.Invoke(false);
                 return;
             }

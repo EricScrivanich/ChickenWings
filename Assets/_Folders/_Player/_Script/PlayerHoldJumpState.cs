@@ -13,7 +13,7 @@ public class PlayerHoldJumpState : PlayerBaseState
         holdTime = 0;
         holdTimeBool = false;
         // player.anim.SetBool("JumpHeld", true);
-        player.anim.SetTrigger("JumpHoldTrigger");
+        // player.anim.SetTrigger("JumpHoldTrigger");
         // player.rb.gravityScale -= .2f;
         player.maxFallSpeed = 2;
 
@@ -23,7 +23,7 @@ public class PlayerHoldJumpState : PlayerBaseState
 
     {
         player.jumpHeld = false;
-        player.anim.SetTrigger("IdleTrigger");
+        // player.anim.SetTrigger("IdleTrigger");
         player.maxFallSpeed = player.ID.MaxFallSpeed;
         // player.StartFillStaminaCoroutine();
 

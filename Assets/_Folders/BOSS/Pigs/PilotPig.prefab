@@ -651,6 +651,9 @@ GameObject:
   - component: {fileID: 4507103270016417565}
   - component: {fileID: 1466411344348881338}
   - component: {fileID: 8593314813052039977}
+  - component: {fileID: -2259727775895193576}
+  - component: {fileID: -8150473846529898941}
+  - component: {fileID: -4034670026731776184}
   m_Layer: 11
   m_Name: PilotPig
   m_TagString: Plane
@@ -729,6 +732,7 @@ MonoBehaviour:
   R: 2
   duration: 1.5
   invokeTime: 2
+  sinDownSpeed: 0
 --- !u!95 &1466411344348881338
 Animator:
   serializedVersion: 5
@@ -795,6 +799,73 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.772359, y: 1.0109782}
   m_EdgeRadius: 0
+--- !u!114 &-2259727775895193576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7067416515346818908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3ddb33d42f3d4ea3aa9e68f03933811, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialSpeed: {x: 0, y: 0}
+  addForceY: 0
+  minY: 0
+  maxY: 0
+  maxYSpeed: 0
+  xTrigger: 0
+  currentFlightMode: 0
+--- !u!210 &-8150473846529898941
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7067416515346818908}
+  m_Enabled: 1
+  m_SortingLayerID: -884308203
+  m_SortingLayer: 4
+  m_SortingOrder: 1
+  m_SortAtRoot: 0
+--- !u!114 &-4034670026731776184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7067416515346818908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbe5eb74e0e4d9dbddff75cebbbe31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScalable: 0
+  explosionScale: {x: 0.8, y: 0.8, z: 0.8}
+  colls:
+  - {fileID: 8593314813052039977}
+  sprites:
+  - {fileID: 1656323838889974121}
+  - {fileID: 4107541737354562971}
+  - {fileID: 4738674588736840673}
+  - {fileID: 8079517341021361388}
+  - {fileID: 5320707088347364062}
+  - {fileID: 7978210047812537812}
+  - {fileID: 6777718642100271056}
+  - {fileID: 196232078045999114}
+  pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
+  defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  body: {fileID: 0}
+  BackLegs: {fileID: 0}
+  FrontLegs: {fileID: 0}
+  Wings: {fileID: 0}
+  Tail: {fileID: 0}
+  BackLegsPosition: {fileID: 0}
+  FrontLegsPosition: {fileID: 0}
+  WingsPosition: {fileID: 0}
+  TailPosition: {fileID: 0}
 --- !u!1 &7531350597852955848
 GameObject:
   m_ObjectHideFlags: 0

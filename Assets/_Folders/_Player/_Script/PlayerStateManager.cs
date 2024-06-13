@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
 {
+    [SerializeField] private Transform airSpawnPos;
     [SerializeField] private GameObject THETHING;
     private bool USINGTHING = false;
     [SerializeField] private float SlowFactor;
     [ExposedScriptableObject]
     public PlayerID ID;
+    [SerializeField] private GameObject jumpAirPrefab;
+    private Queue<GameObject> jumpAir;
 
     [ExposedScriptableObject]
     public PlayerMovementData MovementData;
@@ -19,8 +22,15 @@ public class PlayerStateManager : MonoBehaviour
     public float currentForce;
     [SerializeField] private bool isTutorial;
 
+    [SerializeField] private Transform airResistance;
+    private Vector2 airDashPos = new Vector2(.62f, -.43f);
+    private Vector2 airDropPos = new Vector2(.15f, -.9f);
+    private Vector3 airDropRot = new Vector3(0, 0, -90);
+
+
 
     [SerializeField] private Vector2 startPoint;
+
     [SerializeField] private Vector2 endPoint;
     [SerializeField] private float drawSpeed;
     private LineRenderer line;
@@ -63,6 +73,9 @@ public class PlayerStateManager : MonoBehaviour
     public bool bucketIsExploded = false;
     public float maxFallSpeed;
     public float originalGravityScale { get; private set; }
+
+
+    #region States
     PlayerBaseState currentState;
     PlayerBaseState previousState;
     public PlayerStartingState StartingState = new PlayerStartingState();
@@ -81,11 +94,59 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerHoldJumpState HoldJumpState = new PlayerHoldJumpState();
     public BucketCollisionState BucketState = new BucketCollisionState();
     public PlayerParachuteState ParachuteState = new PlayerParachuteState();
+
+    #endregion
+
+    #region AnimationHashes
+    public readonly int DashTrigger = Animator.StringToHash("DashTrigger");
+    public readonly int DropTrigger = Animator.StringToHash("DropTrigger");
+    public readonly int BounceTrigger = Animator.StringToHash("BounceTrigger");
+    public readonly int IdleTrigger = Animator.StringToHash("IdleTrigger");
+    public readonly int FlipTrigger = Animator.StringToHash("FlipTrigger");
+    public readonly int JumpTrigger = Animator.StringToHash("JumpTrigger");
+    public readonly int JumpHoldTrigger = Animator.StringToHash("JumpHoldTrigger");
+    public readonly int ParachuteTrigger = Animator.StringToHash("ParachuteTrigger");
+    public readonly int FrozenBool = Animator.StringToHash("FrozenBool");
+    public readonly int DashSlashFinishTrigger = Animator.StringToHash("DashSlashFinishTrigger");
+    public readonly int DashSlashTrigger = Animator.StringToHash("DashSlashTrigger");
+    public readonly int ShootGunTrigger = Animator.StringToHash("ShootGunTrigger");
+    public readonly int GetGunBool = Animator.StringToHash("GetGunBool");
+    public readonly int ReloadGunTrigger = Animator.StringToHash("ReloadGunTrigger");
+    public readonly int FinishDashTrigger = Animator.StringToHash("FinishDashTrigger");
+
+
+    #endregion
     public Transform bucket;
     private bool isAttacking = false;
 
     public bool justFlippedRight;
     public bool justFlippedLeft;
+
+    private readonly int jumpAirAmount = 7;
+    private int currentJumpAirIndex;
+    public int CurrentJumpAirIndex
+    {
+        get
+        {
+            currentJumpAirIndex++;
+
+            if (currentJumpAirIndex > jumpAirAmount)
+            {
+                currentJumpAirIndex = 1;
+            }
+            Debug.Log(currentJumpAirIndex);
+            return currentJumpAirIndex;
+
+        }
+        set
+        {
+            currentJumpAirIndex = value;
+        }
+
+
+    }
+
+
 
 
 
@@ -132,9 +193,11 @@ public class PlayerStateManager : MonoBehaviour
 
     public Rigidbody2D rb;
     public Animator anim { get; private set; }
+    // 
 
     private void Awake()
     {
+        CurrentJumpAirIndex = 0;
         ID.constantPlayerForce = initialConstantForce;
         if (initialConstantForce == 0)
         {
@@ -172,9 +235,19 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        jumpAir = new Queue<GameObject>();
 
+        for (int i = 0; i < jumpAirAmount; i++)
+        {
+            var obj = Instantiate(jumpAirPrefab);
+            obj.GetComponent<JumpAirBehavior>().SetIndex(CurrentJumpAirIndex);
 
+            obj.SetActive(false);
+            jumpAir.Enqueue(obj);
 
+        }
+
+        currentJumpAirIndex = 0;
 
         originalPosition = transform.position;
 
@@ -326,6 +399,8 @@ public class PlayerStateManager : MonoBehaviour
         if (transform.position.y > 7f && !disableButtons && !ID.constantPlayerForceBool)
         {
             // ResetHoldJump();
+            anim.SetBool(FrozenBool, true);
+
             SwitchState(FrozenState);
         }
     }
@@ -335,6 +410,8 @@ public class PlayerStateManager : MonoBehaviour
 
         // If it does, limit it to the max fall speed
         rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, maxFallSpeed, 15f));
+
+       
 
     }
 
@@ -399,23 +476,45 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!disableButtons && !ID.IsTwoTouchPoints)
         {
+
             // ResetHoldJump();
+            anim.SetTrigger(JumpTrigger);
+            var obj = jumpAir.Dequeue();
+            obj.transform.position = airSpawnPos.position;
+            obj.transform.eulerAngles = Vector3.zero;
+            obj.SetActive(true);
+            jumpAir.Enqueue(obj);
+
             SwitchState(JumpState);
         }
 
     }
     void HandleHoldJump(bool isHolding)
     {
-        ID.isHolding = isHolding;
+
 
         if (isHolding == true)
         {
-            anim.SetTrigger("JumpHoldTrigger");
+            // anim.SetTrigger("JumpHoldTrigger");
+            anim.SetTrigger(JumpHoldTrigger);
+
         }
         else
         {
-            anim.SetTrigger("IdleTrigger");
+            if (currentState == JumpState)
+            {
+                ID.events.OnStopJumpAir?.Invoke(currentJumpAirIndex);
+
+                if (ID.isHolding)
+                {
+                    anim.SetTrigger(IdleTrigger);
+                }
+                // anim.SetTrigger("IdleTrigger");
+
+            }
+
         }
+        ID.isHolding = isHolding;
 
     }
 
@@ -428,6 +527,14 @@ public class PlayerStateManager : MonoBehaviour
         if (!disableButtons)
         {
             holdingFlip = true;
+            anim.SetTrigger(FlipTrigger);
+            var obj = jumpAir.Dequeue();
+            obj.transform.position = airSpawnPos.position;
+
+            obj.transform.eulerAngles = new Vector3(0, 0, 315);
+            obj.SetActive(true);
+            jumpAir.Enqueue(obj);
+
             // ResetHoldJump();
             SwitchState(FlipRightState);
 
@@ -445,6 +552,14 @@ public class PlayerStateManager : MonoBehaviour
             holdingFlip = true;
 
             // ResetHoldJump();
+            anim.SetTrigger(FlipTrigger);
+            var obj = jumpAir.Dequeue();
+            obj.transform.position = airSpawnPos.position;
+
+            obj.transform.eulerAngles = new Vector3(0, 0, 42);
+            obj.SetActive(true);
+            jumpAir.Enqueue(obj);
+
             SwitchState(FlipLeftState);
         }
 
@@ -453,6 +568,7 @@ public class PlayerStateManager : MonoBehaviour
     private void HandleHoldFlip(bool isHolding)
     {
         holdingFlip = isHolding;
+
 
     }
 
@@ -476,12 +592,19 @@ public class PlayerStateManager : MonoBehaviour
         if (stillDashing && holding && canDashSlash)
         {
             DashState.SwitchSlash();
+
             justDashedSlashed = true;
         }
         else if (holding && canDash && !disableButtons)
         {
             // ResetHoldJump();
             StartCoroutine(DashCooldown(dashCooldownTime));
+            // airResistance.localPosition = airDashPos;
+            // airResistance.localEulerAngles = Vector3.zero;
+            anim.SetTrigger(DashTrigger);
+
+
+
             SwitchState(DashState);
 
 
@@ -519,6 +642,10 @@ public class PlayerStateManager : MonoBehaviour
             // ResetHoldJump();
             isDropping = true;
             SwitchState(DropState);
+            // airResistance.localPosition = airDropPos;
+            // airResistance.localEulerAngles = airDropRot;
+            anim.SetTrigger(DropTrigger);
+
             ID.globalEvents.CanDrop?.Invoke(false);
 
             StartCoroutine(DropCooldown());
@@ -644,6 +771,8 @@ public class PlayerStateManager : MonoBehaviour
 
 
             // CameraShake.instance.ShakeCamera(.2f, .08f);
+            anim.SetTrigger(BounceTrigger);
+
             SwitchState(BounceState);
         }
 
@@ -772,6 +901,10 @@ public class PlayerStateManager : MonoBehaviour
         bucket = position;
         // ResetHoldJump();
         // ResetParachute();
+        if (isDropping)
+        {
+            anim.SetTrigger(BounceTrigger);
+        }
         SwitchState(BucketState);
 
     }

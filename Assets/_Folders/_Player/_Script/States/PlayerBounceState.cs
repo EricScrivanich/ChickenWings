@@ -27,7 +27,7 @@ public class PlayerBounceState : PlayerBaseState
 
 
 
-        player.anim.SetTrigger("BounceTrigger");
+        // player.anim.SetTrigger("BounceTrigger");
 
 
 

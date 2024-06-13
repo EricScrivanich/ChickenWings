@@ -22,7 +22,7 @@ public class RingParent : MonoBehaviour
             rings.Add(child.gameObject.GetComponent<TutorialRingMovement>());
 
         }
-        HighlightCorrectRing(correctRing);
+        // HighlightCorrectRing(correctRing);
 
 
     }

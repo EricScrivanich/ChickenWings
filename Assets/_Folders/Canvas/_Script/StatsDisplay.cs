@@ -84,26 +84,26 @@ public class StatsDisplay : MonoBehaviour
         hasHit1000 = false;
     }
 
-    private void CheckDigitAmount(int digit)
-    {
-        if (digit >= 1000 && !hasHit1000)
-        {
-            temporaryScoreText.margin = new Vector4(99, 0, 0, 0);
-            hasHit1000 = true;
-        }
-        else if (digit >= 100 && !hasHit100)
-        {
-            temporaryScoreText.margin = new Vector4(66, 0, 0, 0);
-            hasHit100 = true;
+    // private void CheckDigitAmount(int digit)
+    // {
+    //     if (digit >= 1000 && !hasHit1000)
+    //     {
+    //         temporaryScoreText.margin = new Vector4(99, 0, 0, 0);
+    //         hasHit1000 = true;
+    //     }
+    //     else if (digit >= 100 && !hasHit100)
+    //     {
+    //         temporaryScoreText.margin = new Vector4(66, 0, 0, 0);
+    //         hasHit100 = true;
 
-        }
-        else if (digit >= 10 && !hasHit10)
-        {
-            temporaryScoreText.margin = new Vector4(33, 0, 0, 0);
-            hasHit10 = true;
+    //     }
+    //     else if (digit >= 10 && !hasHit10)
+    //     {
+    //         temporaryScoreText.margin = new Vector4(33, 0, 0, 0);
+    //         hasHit10 = true;
 
-        }
-    }
+    //     }
+    // }
 
 
     private void UpdateRingPanel(int number)
@@ -123,7 +123,7 @@ public class StatsDisplay : MonoBehaviour
     }
     void UpdateScore(int scoreAdded)
     {
-        CheckDigitAmount(scoreDisplayed);
+        // CheckDigitAmount(scoreDisplayed);
 
 
         if (scoreAdded == 1)
@@ -203,7 +203,7 @@ public class StatsDisplay : MonoBehaviour
         for (int i = startScore + 1; i <= endScore; i++)
         {
             scoreDisplayed += 1;
-            CheckDigitAmount(scoreDisplayed);
+            // CheckDigitAmount(scoreDisplayed);
             scoreText.text = "Score: " + scoreDisplayed.ToString();
             yield return new WaitForSeconds(parseTime); // Adjust the speed of score update as needed
         }
@@ -219,7 +219,8 @@ public class StatsDisplay : MonoBehaviour
     {
         if (ammoText != null)
         {
-            ammoText.text = "Ammo: " + player.Ammo.ToString();
+            // ammoText.text = "Ammo: " + player.Ammo.ToString();
+            ammoText.text = player.Ammo.ToString();
         }
     }
 

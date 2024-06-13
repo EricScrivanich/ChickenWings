@@ -260,8 +260,17 @@ TrailRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.59193075
-        value: 0.48963785
+        time: 0.2782682
+        value: 0.17582493
+        inSlope: 0.58946776
+        outSlope: 0.58946776
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5334438
+        value: 0.52667856
         inSlope: 1.7597979
         outSlope: 1.7597979
         tangentMode: 0
@@ -282,9 +291,9 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 0.80784315}
+      key0: {r: 1, g: 1, b: 1, a: 0.72156864}
       key1: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
+      key2: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -292,14 +301,14 @@ TrailRenderer:
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
       ctime1: 27371
-      ctime2: 0
+      ctime2: 27371
       ctime3: 0
       ctime4: 0
       ctime5: 0
       ctime6: 0
       ctime7: 0
       atime0: 578
-      atime1: 51850
+      atime1: 49344
       atime2: 65535
       atime3: 0
       atime4: 0
@@ -586,6 +595,8 @@ GameObject:
   - component: {fileID: 8618701998500747155}
   - component: {fileID: -8337938735608243768}
   - component: {fileID: 4435639612076056519}
+  - component: {fileID: 8114966415048519506}
+  - component: {fileID: 7242554576543695591}
   m_Layer: 11
   m_Name: JetpackPig
   m_TagString: Plane
@@ -695,6 +706,52 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.2376754, y: 0.51654905}
   m_EdgeRadius: 0
+--- !u!210 &8114966415048519506
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554680807245287772}
+  m_Enabled: 1
+  m_SortingLayerID: -884308203
+  m_SortingLayer: 4
+  m_SortingOrder: 2
+  m_SortAtRoot: 0
+--- !u!114 &7242554576543695591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554680807245287772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbe5eb74e0e4d9dbddff75cebbbe31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isScalable: 0
+  explosionScale: {x: 0.7, y: 0.7, z: 0.7}
+  colls:
+  - {fileID: 4435639612076056519}
+  sprites:
+  - {fileID: 6714149703184825721}
+  - {fileID: 8552636622228708367}
+  - {fileID: 2616538909647789416}
+  - {fileID: 583122095770796232}
+  - {fileID: 704704760051568243}
+  - {fileID: 5607506319477832825}
+  pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
+  defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  body: {fileID: 0}
+  BackLegs: {fileID: 0}
+  FrontLegs: {fileID: 0}
+  Wings: {fileID: 0}
+  Tail: {fileID: 0}
+  BackLegsPosition: {fileID: 0}
+  FrontLegsPosition: {fileID: 0}
+  WingsPosition: {fileID: 0}
+  TailPosition: {fileID: 0}
 --- !u!1 &8888429728512582436
 GameObject:
   m_ObjectHideFlags: 0

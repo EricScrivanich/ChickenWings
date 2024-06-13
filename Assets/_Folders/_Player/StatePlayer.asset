@@ -28,6 +28,7 @@ MonoBehaviour:
   lerpTime: 0.3
   flipSpeed: 450
   slowMaxFallSpeed: 0
+  jumpAirIndex: 0
   slowJumpForce: 0
   slowFlipLeftForceX: 0
   CurrentManaTarget: 0
@@ -50,9 +51,9 @@ MonoBehaviour:
   IsTwoTouchPoints: 0
   StaminaUsed: 0
   MaxStamina: 1000
-  startingAmmo: 5
+  startingAmmo: 23
   startingLives: 3
-  Ammo: 5
+  Ammo: 10
   MaxFallSpeed: -9.7
   AddEggVelocity: 0
   parachuteXOffset: 0.32

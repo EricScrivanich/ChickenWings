@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerJumpState : PlayerBaseState
 {
     private float jumpForce = 11.3f;
+    private bool hasFadedJumpAir;
+
+    public int jumpAirIndex;
     // private float slightUpwardsForce = 12f;
     private float slightUpwardsForce = 15f;
 
@@ -13,8 +16,10 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void EnterState(PlayerStateManager player)
     {
-        player.anim.SetTrigger("JumpTrigger"); 
-        
+        // player.anim.SetTrigger("JumpTrigger"); 
+        hasFadedJumpAir = false;
+
+        jumpAirIndex = player.CurrentJumpAirIndex;
 
         // player.rb.velocity = new Vector2(0, player.jumpForce);
         player.AdjustForce(0, player.jumpForce);
@@ -28,15 +33,26 @@ public class PlayerJumpState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
 
     {
+        if (!hasFadedJumpAir)
+        {
+
+            player.ID.events.OnStopJumpAir?.Invoke(jumpAirIndex);
+        }
 
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-        if (player.ID.isHolding && player.rb.velocity.y > -5)
+        if (player.ID.isHolding)
         {
+            Debug.Log("Holdinggg");
             player.rb.AddForce(new Vector2(0, player.ID.addJumpForce - Mathf.Abs(player.rb.velocity.y)));
             startHoldJumpAnimation = true;
+
+            if (player.rb.velocity.y < -5)
+            {
+                player.ID.isHolding = false;
+            }
 
 
         }
@@ -50,6 +66,8 @@ public class PlayerJumpState : PlayerBaseState
             // Apply a small upwards force
             // You can adjust this value as needed
             player.rb.AddForce(new Vector2(0, -player.ID.playerAddDownForce));
+            Debug.Log("dowwnnnwnwn");
+
         }
 
     }
@@ -67,9 +85,14 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
-        if (player.jumpHeld)
+        // if (player.jumpHeld)
+        // {
+        //     player.SwitchState(player.HoldJumpState);
+        // }
+
+        if (!player.ID.isHolding && !hasFadedJumpAir)
         {
-            player.SwitchState(player.HoldJumpState);
+            hasFadedJumpAir = true;
         }
 
 

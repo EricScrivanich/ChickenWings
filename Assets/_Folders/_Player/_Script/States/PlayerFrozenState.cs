@@ -15,7 +15,7 @@ public class PlayerFrozenState : PlayerBaseState
         rotate = false;
         player.ID.globalEvents.Frozen.Invoke();
         AudioManager.instance.PlayFrozenSound();
-        player.anim.SetBool("FrozenBool", true);
+        player.anim.SetBool(player.FrozenBool, true);
         player.disableButtons = true;
         player.rb.velocity = new Vector2(0, 0);
         player.maxFallSpeed = 0;
@@ -60,7 +60,8 @@ public class PlayerFrozenState : PlayerBaseState
         if (player.transform.position.y < 1)
         {
             player.disableButtons = false;
-            player.anim.SetBool("FrozenBool", false);
+            player.anim.SetBool(player.FrozenBool, false);
+
             player.maxFallSpeed = player.ID.MaxFallSpeed;
 
             // player.CheckIfIsTryingToParachute();

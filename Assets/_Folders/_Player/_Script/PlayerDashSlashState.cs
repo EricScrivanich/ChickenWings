@@ -38,7 +38,7 @@ public class PlayerDashSlashState : PlayerBaseState
         startRotation = false;
 
 
-        player.anim.SetTrigger("DashSlashTrigger");
+        player.anim.SetTrigger(player.DashSlashTrigger);
         AudioManager.instance.PlaySwordSlashSound();
 
 
@@ -131,7 +131,7 @@ public class PlayerDashSlashState : PlayerBaseState
                 player.disableButtons = false;
                 // player.Sword.SetActive(false);
                 player.ChangeCollider(0);
-                player.anim.SetTrigger("DashSlashFinishTrigger");
+                player.anim.SetTrigger(player.DashSlashFinishTrigger);
 
                 startRotation = false;
                 hasSlashed = true;

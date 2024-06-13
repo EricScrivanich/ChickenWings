@@ -7,7 +7,7 @@ public class TutorialRingMovement : MonoBehaviour, ICollectible
     public RingID ID;
 
     private EdgeCollider2D coll2D;
-    
+
     private RingParent parent;
     private ParticleSystem ps;
 
@@ -39,14 +39,15 @@ public class TutorialRingMovement : MonoBehaviour, ICollectible
 
     private void Awake()
     {
-        
+
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         coll2D = GetComponent<EdgeCollider2D>();
 
 
     }
-    private void Start() {
+    private void Start()
+    {
         ps = GetComponent<ParticleSystem>();
         parent = GetComponentInParent<RingParent>();
     }
@@ -65,7 +66,7 @@ public class TutorialRingMovement : MonoBehaviour, ICollectible
     {
         if (isCorrect)
         {
-            
+
             AudioManager.instance.PlayRingPassSound(order);
             ps.Play();
             anim.SetBool(BurstBoolHash, true);
@@ -73,7 +74,7 @@ public class TutorialRingMovement : MonoBehaviour, ICollectible
             backRing.material = ID.passedMaterial;
 
         }
-      
+
 
         // print("ring" + order);
     }
@@ -85,23 +86,33 @@ public class TutorialRingMovement : MonoBehaviour, ICollectible
 
     }
 
-      
 
-        // print("ring" + order);
-    
 
-   
+    // print("ring" + order);
+
+
+
 
     private void RingEffect()
     {
-        
+
     }
 
 
     private void OnEnable()
     {
-        sprite.material = ID.defaultMaterial;
-        backRing.material = ID.defaultMaterial;
+        if (order == 1)
+        {
+            sprite.material = ID.highlightedMaterial;
+            backRing.material = ID.highlightedMaterial;
+
+        }
+        else
+        {
+            sprite.material = ID.defaultMaterial;
+            backRing.material = ID.defaultMaterial;
+        }
+
         centerSprite.color = ID.CenterColor;
         centerCutout.color = ID.CenterColor;
         coll2D.enabled = true;
@@ -110,9 +121,9 @@ public class TutorialRingMovement : MonoBehaviour, ICollectible
         //     sprite.material = ID.highlightedMaterial;
         //     backRing.material = ID.highlightedMaterial;
         // }
-       
-       
-       
+
+
+
     }
 
     // private void OnDisable()

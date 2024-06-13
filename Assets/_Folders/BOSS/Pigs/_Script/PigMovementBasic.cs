@@ -79,7 +79,7 @@ public class PigMovementBasic : MonoBehaviour
             float r = Random.Range(0f, 1f);
             if (r > .4f)
             {
-                Debug.Log("DOOOODODODODO");
+      
                 sinDown = true;
             }
         }

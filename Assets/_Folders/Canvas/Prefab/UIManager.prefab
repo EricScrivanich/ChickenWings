@@ -33,7 +33,6 @@ RectTransform:
   - {fileID: 373120021920063021}
   - {fileID: 6502206067393063307}
   m_Father: {fileID: 9114015588899894226}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -104,6 +103,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4456766109796165030}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -112,7 +112,6 @@ Transform:
   - {fileID: 4831659309462398064}
   - {fileID: 1642024987371033157}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1769585220814932129
 MonoBehaviour:
@@ -126,6 +125,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ea88fec80fa493dbbc8bbc45d8f653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  LvlID: {fileID: 0}
+  RingPanel: {fileID: 0}
+  RingNumber: {fileID: 0}
+  scoreText: {fileID: 0}
+  finalScore: {fileID: 0}
+  ammoText: {fileID: 0}
+  lightRed: {r: 0, g: 0, b: 0, a: 0}
+  temporaryScoreText: {fileID: 0}
 --- !u!114 &380991197594460456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,9 +146,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66af20db4b43b4f8caccefdf16b3b857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frozen: {fileID: 7470567988384711682, guid: 7fa818998e7ff4f73b975a8cfe10b80b, type: 3}
+  ID: {fileID: 0}
+  LvlID: {fileID: 0}
+  FinishedLevelUI: {fileID: 0}
+  Frozen: {fileID: 0}
+  FrozenOverlay: {fileID: 0}
   lerpTime: 1
-  gameoverImage: {fileID: 0}
+  gameOver: {fileID: 0}
+  frozenMaterial: {fileID: 0}
+  frozenOverlayMaterial: {fileID: 0}
+  fadeInDuration: 0.9
+  fadeOutDuration: 0.2
+  frozenTime: 0.2
+  frozenOverlayFadeAmount: 0.5
 --- !u!114 &2767121321017850616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,6 +172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   livesPanel: {fileID: 1642024987371033157}
+  player: {fileID: 0}
 --- !u!1001 &79207860625196495
 PrefabInstance:
   m_ObjectHideFlags: 0

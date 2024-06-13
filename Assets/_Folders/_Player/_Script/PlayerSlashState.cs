@@ -17,7 +17,7 @@ public class PlayerSlashState : PlayerBaseState
         player.disableButtons = true;
         player.ChangeCollider(-1);
 
-        player.anim.SetBool("AttackBool",true);
+        // player.anim.SetBool("AttackBool",true);
         player.attackObject.SetActive(true);
 
 
