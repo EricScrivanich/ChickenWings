@@ -8,6 +8,8 @@ public class ButtonManager : MonoBehaviour
 {
     [Header("Dash")]
     public PlayerID player;
+    [SerializeField] private bool DashSlashOn;
+
     [SerializeField] private Button dashButton;
     [SerializeField] private Image dashImage;
     [SerializeField] private Image dashImageMana;
@@ -119,10 +121,15 @@ public class ButtonManager : MonoBehaviour
 
     private void OnEnable()
     {
-        player.globalEvents.CanDrop += HandleDrop;
-        player.globalEvents.CanDash += HandleDash;
-        player.globalEvents.SetCanDashSlash += HandleDashSlashImage;
-        player.globalEvents.CanDashSlash += HandleDashSlashButton;
+        if (DashSlashOn)
+        {
+            player.globalEvents.CanDrop += HandleDrop;
+            player.globalEvents.CanDash += HandleDash;
+            player.globalEvents.SetCanDashSlash += HandleDashSlashImage;
+            player.globalEvents.CanDashSlash += HandleDashSlashButton;
+
+        }
+
 
 
 
@@ -131,11 +138,15 @@ public class ButtonManager : MonoBehaviour
 
     private void OnDisable()
     {
-        player.globalEvents.CanDrop -= HandleDrop;
-        player.globalEvents.CanDash -= HandleDash;
+        if (DashSlashOn)
+        {
+            player.globalEvents.CanDrop -= HandleDrop;
+            player.globalEvents.CanDash -= HandleDash;
 
-        player.globalEvents.SetCanDashSlash -= HandleDashSlashImage;
-        player.globalEvents.CanDashSlash -= HandleDashSlashButton;
+            player.globalEvents.SetCanDashSlash -= HandleDashSlashImage;
+            player.globalEvents.CanDashSlash -= HandleDashSlashButton;
+        }
+
 
     }
 

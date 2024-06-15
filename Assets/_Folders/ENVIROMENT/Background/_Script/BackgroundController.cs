@@ -32,11 +32,11 @@ public class BackgroundController : MonoBehaviour
     private const float Offset = 80f;
     private void Awake()
     {
-       
-        foreach (var obj in layers)
-        {
-            obj.SetActive(true);
-        }
+
+        // foreach (var obj in layers)
+        // {
+        //     obj.SetActive(true);
+        // }
 
         for (int i = 0; i < layers.Count; i++)
         {

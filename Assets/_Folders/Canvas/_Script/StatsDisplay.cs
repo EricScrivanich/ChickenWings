@@ -67,12 +67,12 @@ public class StatsDisplay : MonoBehaviour
         // isFilllingMana = false;
         // maxStamina = player.MaxStamina;
 
-        if (LvlID != null && LvlID.areRingsRequired)
-        {
-            RingPanel.SetActive(LvlID.areRingsRequired);
-            RingNumber.text = LvlID.currentRingsPassed.ToString() + " / " + LvlID.ringsNeeded.ToString();
+        // if (LvlID != null && LvlID.areRingsRequired)
+        // {
+        //     RingPanel.SetActive(LvlID.areRingsRequired);
+        //     RingNumber.text = LvlID.currentRingsPassed.ToString() + " / " + LvlID.ringsNeeded.ToString();
 
-        }
+        // }
 
 
         scoreDisplayed = player.Score;
