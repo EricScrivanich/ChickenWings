@@ -6,10 +6,10 @@ using UnityEngine.UI;
 public class SidewaysSignMovement : MonoBehaviour
 {
     [SerializeField] private RectTransform target;
- 
+
     [SerializeField] private Button[] NextPrevButtons;
 
-    private Vector2 endPosition = new Vector2(0,-1110);
+    private Vector2 endPosition = new Vector2(0, -1110);
     [SerializeField] private float rotationAmount;
     [SerializeField] private float rotationDuration;
     [SerializeField] private float swingDuration;
@@ -22,20 +22,20 @@ public class SidewaysSignMovement : MonoBehaviour
     private Sequence sequence;
     private Sequence signSequence;
 
-    void Start()
+    void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-       
-       
+
+
     }
 
-    public void AnimateSign(bool goingLeft,bool SetActive)
+    public void AnimateSign(bool goingLeft, bool SetActive)
     {
         if (signSequence != null && signSequence.IsActive())
         {
             signSequence.Kill();
         }
-       
+
         if (goingLeft)
         {
             moveAmountVar = moveAmount;
@@ -47,7 +47,7 @@ public class SidewaysSignMovement : MonoBehaviour
             rotationAmountVar = -rotationAmount;
 
         }
-       signSequence = DOTween.Sequence().SetUpdate(true);
+        signSequence = DOTween.Sequence().SetUpdate(true);
 
         // Calculate half movement
         Vector2 halfMoveAmount = moveAmountVar / 2f;
@@ -88,11 +88,18 @@ public class SidewaysSignMovement : MonoBehaviour
 
     public void DropSign()
     {
+        rectTransform = GetComponent<RectTransform>();
+        if (signSequence != null && signSequence.IsActive())
+        {
+            signSequence.Kill();
+        }
         if (sequence != null && sequence.IsActive())
         {
             sequence.Kill();
         }
         target.anchoredPosition = Vector2.zero;
+
+        rectTransform.eulerAngles = Vector3.zero;
 
         // Create the main drop tween
         Tweener mainDropTween = target.DOAnchorPos(endPosition, .8f)
@@ -115,6 +122,10 @@ public class SidewaysSignMovement : MonoBehaviour
 
     public void RetractToNextUI(bool isNext)
     {
+        if (signSequence != null && signSequence.IsActive())
+        {
+            signSequence.Kill();
+        }
         if (sequence != null && sequence.IsActive())
         {
             sequence.Kill();

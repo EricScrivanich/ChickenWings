@@ -7,13 +7,16 @@ using UnityEngine.UI;
 public class FadeInUI : MonoBehaviour
 {
     [SerializeField] private CanvasGroup FadeGroup;
-    
+
     [SerializeField] private List<GameObject> SetActiveObjects;
+    [SerializeField] private List<GameObject> SetUnactiveObjects;
 
     [SerializeField] private float startAlpha;
     [SerializeField] private float endAlpha;
     [SerializeField] private float fadeDuration;
     [SerializeField] private float setObjectActiveDelay;
+
+    private bool hasFaded;
 
 
     [SerializeField] private Image flashImage;
@@ -26,11 +29,7 @@ public class FadeInUI : MonoBehaviour
     private Sequence sequence;
 
     // Start is called before the first frame update
-    void Start()
-    {
 
-
-    }
 
     private IEnumerator SetObjectsActive()
     {
@@ -41,23 +40,41 @@ public class FadeInUI : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void SetObjectUnactive()
     {
 
     }
-    private void OnDisable() {
 
-        
-    }
-
+    // Update is called once per frame
 
 
     private void OnEnable()
     {
+        hasFaded = false;
+        foreach (var item in SetActiveObjects)
+        {
+            item.SetActive(false);
+        }
+        foreach (var item in SetUnactiveObjects)
+        {
+            item.SetActive(false);
+        }
 
         FadeGroup.DOFade(endAlpha, fadeDuration).SetEase(Ease.InOutSine).From(startAlpha).SetUpdate(true);
-        flashImage.CrossFadeColor(flashImageColor1, flashImageDurataion,true,false);
+
         StartCoroutine(SetObjectsActive());
     }
+
+    public void FadeOut()
+    {
+        if (!hasFaded)
+        {
+            hasFaded = true;
+            FadeGroup.DOFade(startAlpha, fadeDuration / 2).SetEase(Ease.InOutSine).From(endAlpha).SetUpdate(true).SetUpdate(true);
+
+        }
+
+    }
+
+
 }

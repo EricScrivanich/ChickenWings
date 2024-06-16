@@ -13,10 +13,11 @@ public class SidewaysSignParent : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
-        
+
+
     }
-    private void Awake() {
+    private void Awake()
+    {
 
         currentIndex = 0;
         // OgPositions = new List<Vector2>();
@@ -30,6 +31,7 @@ public class SidewaysSignParent : MonoBehaviour
 
     public void SwitchSign(bool isNext)
     {
+        Debug.Log("Side Index: " + currentIndex);
         if (isNext)
         {
             signList[currentIndex].AnimateSign(true, false);
@@ -38,11 +40,11 @@ public class SidewaysSignParent : MonoBehaviour
             if (currentIndex >= signList.Count)
             {
                 currentIndex--;
-                signList[currentIndex].RetractToNextUI(false);
+                signList[currentIndex].RetractToNextUI(true);
                 return;
             }
-           
-            signList[currentIndex].AnimateSign(true,true);
+
+            signList[currentIndex].AnimateSign(true, true);
         }
 
         else
@@ -52,6 +54,7 @@ public class SidewaysSignParent : MonoBehaviour
             currentIndex--;
             if (currentIndex < 0)
             {
+                currentIndex = 0;
                 signList[0].RetractToNextUI(false);
                 return;
 
@@ -60,21 +63,20 @@ public class SidewaysSignParent : MonoBehaviour
         }
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         signList[currentIndex].DropSign();
 
     }
 
-    public void NextSign()
+
+
+    private void OnDisable()
     {
-
-    }
-
-    private void OnDisable() {
         // for (int i = 0; i < signList.Count; i++)
         // {
         //     Vector2 pos = signList[i].GetComponent<RectTransform>().position = OgPositions[i];
-          
+
 
         // }
     }
@@ -82,6 +84,6 @@ public class SidewaysSignParent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

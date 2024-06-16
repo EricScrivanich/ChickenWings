@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour
 {
     [SerializeField] private LevelManagerID LvlID;
     private int currentSection;
+    private int currentSectionSubtraction;
     private int amountOfSections;
     [SerializeField] private bool showSectionAtStart;
     [Header("RingPass")]
@@ -16,6 +17,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private int currentRingsPassed;
 
     [SerializeField] private List<GameObject> sections;
+    [SerializeField] private List<int> playSections;
+    [SerializeField] private List<float> playSectionDelayToUI;
+
+    private bool hasStartedPlayTimeDelayedPause;
     // [SerializeField] private List<GameObject> Section2;
     // [SerializeField] private List<GameObject> Section3;
 
@@ -25,6 +30,7 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         currentSection = 0;
+        hasStartedPlayTimeDelayedPause = false;
 
 
         LvlID.ResetLevel(areRingsRequired, ringsNeeded);
@@ -57,12 +63,12 @@ public class LevelManager : MonoBehaviour
         if (show)
         {
             // sections[section].SetActive(true);
-            StartCoroutine(SmoothTimeScaleTransition(0, .5f, show, section));
+            StartCoroutine(SmoothTimeScaleTransition(0, .5f, .4f, show, section));
         }
         else
         {
-            sections[section].SetActive(false);
-            Time.timeScale = 1;
+
+            StartCoroutine(SmoothTimeScaleTransition(1, .3f, .4f, show, section));
         }
 
     }
@@ -74,6 +80,22 @@ public class LevelManager : MonoBehaviour
             currentSection++;
 
 
+            for (int n = 0; n < playSections.Count; n++)
+            {
+                if (currentSection == playSections[n])
+                {
+                    ShowSection(false, currentSection);
+
+                    if (n < playSectionDelayToUI.Count)
+                    {
+                        ShowNextUISectionFromPlaytime(playSectionDelayToUI[n], currentSection);
+                    }
+
+                    return;
+                }
+            }
+
+
         }
         else
         {
@@ -81,8 +103,17 @@ public class LevelManager : MonoBehaviour
 
 
         }
+
         StartCoroutine(ShowNextUISection(1.2f, currentSection));
 
+    }
+
+    public void ShowNextUISectionFromPlaytime(float delay, int section)
+    {
+        currentSection++;
+        hasStartedPlayTimeDelayedPause = true;
+
+        StartCoroutine(SmoothTimeScaleTransition(0, .4f, delay, true, currentSection));
     }
 
     private IEnumerator ShowNextUISection(float delay, int section)
@@ -91,13 +122,17 @@ public class LevelManager : MonoBehaviour
         sections[section].SetActive(true);
     }
 
-    private IEnumerator SmoothTimeScaleTransition(float targetTimeScale, float duration, bool show, int section)
+    private IEnumerator SmoothTimeScaleTransition(float targetTimeScale, float duration, float delay, bool show, int section)
     {
         float start = Time.timeScale;
         float elapsed = 0f;
         if (show)
         {
-            yield return new WaitForSecondsRealtime(.4f);
+
+            yield return new WaitForSecondsRealtime(delay);
+
+
+
             sections[section].SetActive(true);
 
 
@@ -112,6 +147,7 @@ public class LevelManager : MonoBehaviour
         }
 
         Time.timeScale = targetTimeScale;
+        hasStartedPlayTimeDelayedPause = false;
     }
 
 

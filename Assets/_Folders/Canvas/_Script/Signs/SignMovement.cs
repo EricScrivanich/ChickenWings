@@ -16,6 +16,7 @@ public class SignMovement : MonoBehaviour
     [SerializeField] private float RetractBounceAmount;
     [SerializeField] private float overshootDuration;
     [SerializeField] private float overshootAmount;
+    private bool hasRetracted;
 
     private LevelManager LM;
     private Sequence sequence;
@@ -24,7 +25,7 @@ public class SignMovement : MonoBehaviour
     {
 
         LM = GameObject.Find("LevelManager").GetComponent<LevelManager>();
-       
+
     }
 
     private void DropSignTween()
@@ -51,8 +52,10 @@ public class SignMovement : MonoBehaviour
                 .SetUpdate(true);
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         DisableButtons();
+        hasRetracted = false;
 
         if (doesDrop)
         {
@@ -61,8 +64,8 @@ public class SignMovement : MonoBehaviour
 
 
         // Ensure the target starts at the startPosition
-       
-        
+
+
     }
 
     private void OnDisable()
@@ -98,8 +101,22 @@ public class SignMovement : MonoBehaviour
 
     public void RetractToNextUI(bool isNext)
     {
+        if (hasRetracted || LM ==  null)
+        {
+            return;
+        }
+        else
+        {
+            hasRetracted = true;
+        }
         DisableButtons();
-        LM.NextUI(isNext);
+       
+
+
+    
+            LM.NextUI(isNext);
+
+
         Vector3 overshootPosition = endPosition - new Vector3(0, overshootAmount, 0) - new Vector3(0, RetractBounceAmount, 0);
         Tweener overshootTween = target.DOAnchorPos(overshootPosition, RetractBounceDuration)
             .SetEase(Ease.InSine)
