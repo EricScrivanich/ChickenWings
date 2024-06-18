@@ -17,9 +17,11 @@ public class RingParentSpawner : MonoBehaviour
     void Start()
     {
         ringPool = PoolKit.GetPool("RingPool");
-        SpawnRings(Index);
+        // SpawnRings(Index);
 
     }
+
+    
 
     public void SpawnRings(int index)
     {

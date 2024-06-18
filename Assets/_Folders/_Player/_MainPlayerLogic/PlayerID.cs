@@ -95,6 +95,7 @@ public class PlayerID : ScriptableObject
     private int startingScore = 0;
     [SerializeField] private int startingLives;
     private int lives;
+    public bool infiniteLives;
     public int Lives
     {
         get

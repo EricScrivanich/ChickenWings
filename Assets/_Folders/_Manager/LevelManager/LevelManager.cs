@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private LevelManagerID LvlID;
+    [SerializeField] private GameObject finishedLevelUIPrefab;
+    private Canvas canvas;
+
+    [SerializeField] private Button pauseButton;
+    private RingParentSpawner ringSpawner;
     private int currentSection;
     private int currentSectionSubtraction;
     private int amountOfSections;
@@ -32,6 +38,8 @@ public class LevelManager : MonoBehaviour
         currentSection = 0;
         hasStartedPlayTimeDelayedPause = false;
 
+        ringSpawner = GetComponent<RingParentSpawner>();
+
 
         LvlID.ResetLevel(areRingsRequired, ringsNeeded);
         finishedRings = !areRingsRequired;
@@ -45,6 +53,7 @@ public class LevelManager : MonoBehaviour
     }
     void Start()
     {
+        canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         foreach (var obj in sections)
         {
             obj.SetActive(false);
@@ -58,12 +67,15 @@ public class LevelManager : MonoBehaviour
 
     }
 
+
+
     private void ShowSection(bool show, int section)
     {
         if (show)
         {
             // sections[section].SetActive(true);
             StartCoroutine(SmoothTimeScaleTransition(0, .5f, .4f, show, section));
+
         }
         else
         {
@@ -130,12 +142,14 @@ public class LevelManager : MonoBehaviour
         {
 
             yield return new WaitForSecondsRealtime(delay);
-
-
-
+            pauseButton.enabled = false;
             sections[section].SetActive(true);
 
 
+        }
+        else
+        {
+            pauseButton.enabled = true;
 
         }
 
@@ -181,7 +195,23 @@ public class LevelManager : MonoBehaviour
         }
         if (finishedRings == true)
         {
-            LvlID.outputEvent.FinishedLevel?.Invoke();
+            CreateFinish();
         }
+    }
+
+
+    private void CreateFinish()
+    {
+        StartCoroutine(SmoothTimeScaleTransition(0, .5f, .4f, false, 0));
+        GameObject finishedLevelUI = Instantiate(finishedLevelUIPrefab);
+
+        // Set the parent to the canvas and maintain world position
+        finishedLevelUI.transform.SetParent(canvas.transform, false);
+
+        // Get the RectTransform component
+        RectTransform rectTransform = finishedLevelUI.GetComponent<RectTransform>();
+
+        // Set the anchored position
+        rectTransform.anchoredPosition = new Vector2(0, 645);
     }
 }

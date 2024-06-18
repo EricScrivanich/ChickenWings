@@ -4,6 +4,7 @@ using System;
 public struct GlobalPlayerEvents
 {
     public Action<int> OnUpdateLives;
+    public Action OnInfiniteLives;
     public Action<float> OnAdjustConstantSpeed;
     public Action OnUpdateAmmo;
     public Action<int> OnAddAmmo;  

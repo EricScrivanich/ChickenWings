@@ -210,6 +210,7 @@ public class PlayerStateManager : MonoBehaviour
         }
         ID.isTutorial = isTutorial;
         stillDashing = false;
+
         ID.ResetValues();
         holdingFlip = false;
         ID.UsingClocker = false;
@@ -411,7 +412,7 @@ public class PlayerStateManager : MonoBehaviour
         // If it does, limit it to the max fall speed
         rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, maxFallSpeed, 15f));
 
-       
+
 
     }
 
@@ -671,11 +672,23 @@ public class PlayerStateManager : MonoBehaviour
                 return;
             }
             isDamaged = true;
-            ID.Lives--;
-            if (ID.Lives <= 0)
+
+            if (!ID.infiniteLives)
             {
-                Die();
-                return;
+                Debug.Log("LoseLife" + ID.infiniteLives);
+
+                ID.Lives--;
+                if (ID.Lives <= 0)
+                {
+                    Die();
+                    return;
+                }
+
+            }
+
+            else
+            {
+                ID.globalEvents.OnInfiniteLives?.Invoke();
             }
             DamageEffects();
 

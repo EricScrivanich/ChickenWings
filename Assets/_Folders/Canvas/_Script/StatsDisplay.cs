@@ -106,11 +106,7 @@ public class StatsDisplay : MonoBehaviour
     // }
 
 
-    private void UpdateRingPanel(int number)
-    {
-        RingNumber.text = number.ToString() + " / " + LvlID.ringsNeeded.ToString();
-
-    }
+  
 
     public void UpdateFinalScore()
     {
@@ -238,11 +234,6 @@ public class StatsDisplay : MonoBehaviour
         player.globalEvents.OnAddScore += UpdateScore;
         player.globalEvents.OnUpdateAmmo += UpdateAmmo;
 
-        if (LvlID != null)
-        {
-            LvlID.outputEvent.RingParentPass += UpdateRingPanel;
-        }
-
         // player.globalEvents.OnUseStamina += HandleStaminaBar;
         // player.globalEvents.OnZeroStamina += FlashStamimaBG;
         // player.globalEvents.AddMana += FillMana;
@@ -257,10 +248,7 @@ public class StatsDisplay : MonoBehaviour
     {
         player.globalEvents.OnAddScore -= UpdateScore;
         player.globalEvents.OnUpdateAmmo -= UpdateAmmo;
-        if (LvlID != null)
-        {
-            LvlID.outputEvent.RingParentPass -= UpdateRingPanel;
-        }
+    
 
         // player.globalEvents.OnUseStamina -= HandleStaminaBar;
         // player.globalEvents.OnZeroStamina -= FlashStamimaBG;
