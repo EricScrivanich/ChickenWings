@@ -59,6 +59,8 @@ public class PigMovementBasic : MonoBehaviour
         jumpForce = new Vector2(xSpeed, addYForce);
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        upGlide = false;
+        downGlide = false;
 
         // rb.velocity = new Vector2(xSpeed, 0);
         justJumped = false;
@@ -70,19 +72,19 @@ public class PigMovementBasic : MonoBehaviour
     }
     private void OnEnable()
     {
-        sinDown = false;
+        // sinDown = false;
 
         initialY = transform.position.y;
 
-        if (initialY > 3f)
-        {
-            float r = Random.Range(0f, 1f);
-            if (r > .4f)
-            {
+        // if (initialY > 3f)
+        // {
+        //     float r = Random.Range(0f, 1f);
+        //     if (r > .4f)
+        //     {
       
-                sinDown = true;
-            }
-        }
+        //         sinDown = true;
+        //     }
+        // }
     }
 
     private void GlideDown()

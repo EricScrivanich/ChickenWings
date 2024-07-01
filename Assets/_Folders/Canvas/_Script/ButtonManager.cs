@@ -114,17 +114,18 @@ public class ButtonManager : MonoBehaviour
 
     void HandleDrop(bool canDrop)
     {
-        dropButton.interactable = canDrop;
-        dropImage.color = canDrop ? canDropColor : canNotDropColor;
+        // dropButton.interactable = canDrop;
+        // dropImage.color = canDrop ? canDropColor : canNotDropColor;
     }
 
 
     private void OnEnable()
     {
+        player.globalEvents.CanDrop += HandleDrop;
+        player.globalEvents.CanDash += HandleDash;
         if (DashSlashOn)
         {
-            player.globalEvents.CanDrop += HandleDrop;
-            player.globalEvents.CanDash += HandleDash;
+            
             player.globalEvents.SetCanDashSlash += HandleDashSlashImage;
             player.globalEvents.CanDashSlash += HandleDashSlashButton;
 
@@ -138,10 +139,11 @@ public class ButtonManager : MonoBehaviour
 
     private void OnDisable()
     {
+        player.globalEvents.CanDrop -= HandleDrop;
+        player.globalEvents.CanDash -= HandleDash;
         if (DashSlashOn)
         {
-            player.globalEvents.CanDrop -= HandleDrop;
-            player.globalEvents.CanDash -= HandleDash;
+        
 
             player.globalEvents.SetCanDashSlash -= HandleDashSlashImage;
             player.globalEvents.CanDashSlash -= HandleDashSlashButton;

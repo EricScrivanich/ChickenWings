@@ -390,8 +390,9 @@ public class TutorialManger : MonoBehaviour
 
 
     }
-    private void HitFlip()
+    private void HitFlip(bool holding)
     {
+        if (holding)
         ShowFlips(false);
     }
 

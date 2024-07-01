@@ -9,9 +9,9 @@ public class BoundariesManager : MonoBehaviour
     public static int leftBoundary = -13;
     public static float rightViewBoundary = 10.8f;
     public static float leftViewBoundary = -10.8f;
-    public static float rightPlayerBoundary = 11.3f;
-    public static float TopPlayerBoundary = 6.5f;
-    public static float leftPlayerBoundary = -11.3f;
+    public static float rightPlayerBoundary = 10.8f;
+    public static float TopPlayerBoundary = 6.9f;
+    public static float leftPlayerBoundary = -10.8f;
 
     public static float GroundSpeed = 5;
     // Start is called before the first frame update
@@ -23,8 +23,5 @@ public class BoundariesManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
 
-    }
 }

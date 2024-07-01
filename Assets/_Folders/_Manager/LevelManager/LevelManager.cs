@@ -8,39 +8,27 @@ public class LevelManager : MonoBehaviour
 {
     [SerializeField] private LevelManagerID LvlID;
     [SerializeField] private GameObject finishedLevelUIPrefab;
+    [SerializeField] private bool activateRingsAfterDelay;
     private Canvas canvas;
-
-    [SerializeField] private Button pauseButton;
-    private RingParentSpawner ringSpawner;
+    private Button pauseButton;
     private int currentSection;
-    private int currentSectionSubtraction;
-    private int amountOfSections;
     [SerializeField] private bool showSectionAtStart;
     [Header("RingPass")]
     [SerializeField] private bool areRingsRequired;
     private bool finishedRings;
     [SerializeField] private int ringsNeeded;
     [SerializeField] private int currentRingsPassed;
-
+    [SerializeField] private List<GameObject> initalGameObjectsToDeactivate;
     [SerializeField] private List<GameObject> sections;
     [SerializeField] private List<int> playSections;
     [SerializeField] private List<float> playSectionDelayToUI;
 
     private bool hasStartedPlayTimeDelayedPause;
-    // [SerializeField] private List<GameObject> Section2;
-    // [SerializeField] private List<GameObject> Section3;
 
-
-
-    // Start is called before the first frame update
     private void Awake()
     {
         currentSection = 0;
         hasStartedPlayTimeDelayedPause = false;
-
-        ringSpawner = GetComponent<RingParentSpawner>();
-
-
         LvlID.ResetLevel(areRingsRequired, ringsNeeded);
         finishedRings = !areRingsRequired;
 
@@ -49,15 +37,21 @@ public class LevelManager : MonoBehaviour
             LvlID.inputEvent.RingParentPass += PassRing;
 
         }
-
     }
     void Start()
     {
+        pauseButton = GameObject.Find("PauseButton").GetComponent<Button>();
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         foreach (var obj in sections)
         {
             obj.SetActive(false);
         }
+        foreach (var obj in initalGameObjectsToDeactivate)
+        {
+            obj.SetActive(false);
+        }
+
+
         if (showSectionAtStart)
         {
             ShowSection(true, 0);
@@ -66,8 +60,6 @@ public class LevelManager : MonoBehaviour
 
 
     }
-
-
 
     private void ShowSection(bool show, int section)
     {
@@ -90,8 +82,6 @@ public class LevelManager : MonoBehaviour
         if (isNext)
         {
             currentSection++;
-
-
             for (int n = 0; n < playSections.Count; n++)
             {
                 if (currentSection == playSections[n])
@@ -103,21 +93,36 @@ public class LevelManager : MonoBehaviour
                         ShowNextUISectionFromPlaytime(playSectionDelayToUI[n], currentSection);
                     }
 
-                    return;
+                    return; // Exit the method immediately
+                }
+                else if (currentSection == playSections[n] - 1)
+                {
+
+                    SetButtonsActive buttonScriptvar = GameObject.Find("Buttons").GetComponent<SetButtonsActive>();
+                    buttonScriptvar.SetActive(true);
+                    buttonScriptvar.SetPlayerButtons(true);
+                    StartCoroutine(ShowNextUISection(1.2f, currentSection));
+
+                    return; // Exit the method immediately
                 }
             }
-
-
+            SetButtonsActive buttonScript = GameObject.Find("Buttons").GetComponent<SetButtonsActive>();
+            buttonScript.SetActive(false);
+            buttonScript.SetPlayerButtons(false);
+            StartCoroutine(ShowNextUISection(1.2f, currentSection));
         }
+
         else
         {
             currentSection--;
 
-
+            StartCoroutine(ShowNextUISection(1.2f, currentSection));
         }
+    }
 
-        StartCoroutine(ShowNextUISection(1.2f, currentSection));
-
+    private void SetRingsActiveAfterDelay()
+    {
+        GetComponent<RingParentSpawner>().SpawnRingsAndPigs(3);
     }
 
     public void ShowNextUISectionFromPlaytime(float delay, int section)
@@ -125,11 +130,17 @@ public class LevelManager : MonoBehaviour
         currentSection++;
         hasStartedPlayTimeDelayedPause = true;
 
-        StartCoroutine(SmoothTimeScaleTransition(0, .4f, delay, true, currentSection));
+        if (activateRingsAfterDelay)
+        {
+            Invoke("SetRingsActiveAfterDelay", delay);
+        }
+
+        StartCoroutine(SmoothTimeScaleTransition(0, .5f, delay, true, currentSection));
     }
 
     private IEnumerator ShowNextUISection(float delay, int section)
     {
+        Debug.Log("showingSectionInFunc");
         yield return new WaitForSecondsRealtime(delay);
         sections[section].SetActive(true);
     }
@@ -144,6 +155,22 @@ public class LevelManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(delay);
             pauseButton.enabled = false;
             sections[section].SetActive(true);
+            for (int n = 0; n < playSections.Count; n++)
+            {
+
+                if (currentSection == playSections[n] - 1)
+                {
+                    SetButtonsActive buttonScript = GameObject.Find("Buttons").GetComponent<SetButtonsActive>();
+                    buttonScript.SetActive(true);
+                    buttonScript.SetPlayerButtons(true);
+                }
+                else if (currentSection != playSections[n])
+                {
+                    SetButtonsActive buttonScript = GameObject.Find("Buttons").GetComponent<SetButtonsActive>();
+                    buttonScript.SetActive(false);
+                    buttonScript.SetPlayerButtons(false);
+                }
+            }
 
 
         }
@@ -159,6 +186,8 @@ public class LevelManager : MonoBehaviour
             Time.timeScale = Mathf.Lerp(start, targetTimeScale, elapsed / duration);
             yield return null;
         }
+
+        
 
         Time.timeScale = targetTimeScale;
         hasStartedPlayTimeDelayedPause = false;

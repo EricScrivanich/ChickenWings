@@ -16,7 +16,7 @@ public class SignMovement : MonoBehaviour
     [SerializeField] private float RetractBounceAmount;
     [SerializeField] private float overshootDuration;
     [SerializeField] private float overshootAmount;
-    private bool hasRetracted;
+    private bool hasRetracted = false;
 
     private LevelManager LM;
     private Sequence sequence;
@@ -31,6 +31,7 @@ public class SignMovement : MonoBehaviour
     private void DropSignTween()
     {
 
+        hasRetracted = false;
         target.anchoredPosition = startPosition;
 
         // Create the main drop tween
@@ -101,7 +102,7 @@ public class SignMovement : MonoBehaviour
 
     public void RetractToNextUI(bool isNext)
     {
-        if (hasRetracted || LM ==  null)
+        if (LM == null || hasRetracted || !this.gameObject.activeInHierarchy)
         {
             return;
         }
@@ -109,12 +110,14 @@ public class SignMovement : MonoBehaviour
         {
             hasRetracted = true;
         }
+
+        Debug.Log("Retracting with this: " + this.gameObject);
         DisableButtons();
-       
 
 
-    
-            LM.NextUI(isNext);
+
+
+        LM.NextUI(isNext);
 
 
         Vector3 overshootPosition = endPosition - new Vector3(0, overshootAmount, 0) - new Vector3(0, RetractBounceAmount, 0);
@@ -136,4 +139,6 @@ public class SignMovement : MonoBehaviour
 
 
     }
+
+
 }

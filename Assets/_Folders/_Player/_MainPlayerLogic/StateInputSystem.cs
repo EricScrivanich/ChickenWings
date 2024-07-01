@@ -1,12 +1,26 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
+using System.Collections;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class StateInputSystem : MonoBehaviour
 {
     private InputController controls;
+    private Sequence dropButtonSeq;
+    private Coroutine dropButtonCor;
+    private Sequence dashButtonSeq;
+    [SerializeField] private Color normalButtonColor;
+    [SerializeField] private Color highlightButtonColor;
+    [SerializeField] private Color disabledButtonColor;
+    private Image DropButton;
+    private Image DashButton;
+    private bool canDrop;
+    private bool canDash;
 
-    private bool isHolding;
-    private bool isHoldingFlip;
+    private bool ButtonsEnabled;
+
     private Vector2 touchStartPosition;
     private float touchStartTime;
     private const float swipeThreshold = 0.3f; // Adjust as needed
@@ -17,93 +31,87 @@ public class StateInputSystem : MonoBehaviour
     private void Awake()
     {
         ID.UsingClocker = false;
-        isHolding = false;
-        isHoldingFlip = false;
+
+
+
         controls = new InputController();
 
         // Bind existing actions to methods
-        controls.Movement.Jump.performed += ctx => ID.events.OnJump?.Invoke();
-        controls.Movement.Jump.performed += ctx => ID.events.OnJump?.Invoke();
-        controls.Movement.JumpRight.performed += ctx => ID.events.OnFlipRight?.Invoke();
-        controls.Movement.JumpLeft.performed += ctx => ID.events.OnFlipLeft?.Invoke();
-        // controls.Movement.Dash.started += ctx => ID.events.OnDash?.Invoke();
-        controls.Movement.Dash.performed += ctx => ID.events.OnDash?.Invoke(true);
-        controls.Movement.Dash.canceled += ctx => ID.events.OnDash?.Invoke(false);
 
 
-        controls.Movement.Drop.performed += ctx => ID.events.OnDrop?.Invoke();
-        controls.Movement.DropEgg.performed += ctx => ID.events.OnEggDrop?.Invoke();
-        controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(true);
-        controls.Movement.Fireball.canceled += ctx => ID.events.OnAttack?.Invoke(false);
-
-        // controls.Movement.DashSlash.performed += ctx => ID.events.OnDashSlash?.Invoke();
-
-        controls.Movement.HoldJumpRight.performed += ctx =>
-       {
-           isHoldingFlip = true;
-           ID.events.OnHoldFlip?.Invoke(true);
-       };
-
-        controls.Movement.HoldJumpLeft.performed += ctx =>
-
+        controls.Movement.Jump.performed += ctx =>
         {
-            isHoldingFlip = true;
-            ID.events.OnHoldFlip?.Invoke(true);
+            if (ButtonsEnabled) ID.events.OnJump?.Invoke();
         };
 
-        controls.Movement.HoldJumpRight.canceled += ctx =>
-      {
-
-          ID.events.OnHoldFlip?.Invoke(false);
-
-
-
-
-      };
-
-        controls.Movement.HoldJumpLeft.canceled += ctx =>
-
+        controls.Movement.JumpRight.started += ctx =>
         {
-
-            ID.events.OnHoldFlip?.Invoke(false);
-
-
+            if (ButtonsEnabled) ID.events.OnFlipRight?.Invoke(true);
+        };
+        controls.Movement.JumpRight.canceled += ctx =>
+        {
+            if (ButtonsEnabled) ID.events.OnFlipRight?.Invoke(false);
         };
 
-        // controls.Movement.HoldJumpRight.performed += ctx =>
-        // {
-        //     ID.events.OnHoldFlip?.Invoke(!ID.UsingClocker);
-        // };
+        controls.Movement.JumpLeft.started += ctx =>
+        {
+            if (ButtonsEnabled) ID.events.OnFlipLeft?.Invoke(true);
+        };
+        controls.Movement.JumpLeft.canceled += ctx =>
+        {
+            if (ButtonsEnabled) ID.events.OnFlipLeft?.Invoke(false);
+        };
 
-        // controls.Movement.HoldJumpLeft.performed += ctx =>
+        controls.Movement.Dash.performed += ctx =>
+        {
+            if (ButtonsEnabled) ID.events.OnDash?.Invoke(true);
+        };
+        controls.Movement.Dash.canceled += ctx =>
+        {
+            if (ButtonsEnabled) ID.events.OnDash?.Invoke(false);
+        };
 
-        //     {
-        //         ID.events.OnClocker?.Invoke(!ID.UsingClocker);
-        //     };
+        controls.Movement.Drop.performed += ctx =>
+        {
+            if (ButtonsEnabled && canDrop)
+            {
+                ID.events.OnDrop?.Invoke();
+                DropCooldown();
 
-
-
+            }
+        };
+        controls.Movement.DropEgg.performed += ctx =>
+        {
+            if (ButtonsEnabled) ID.events.OnEggDrop?.Invoke();
+        };
+        controls.Movement.Fireball.performed += ctx =>
+        {
+            if (ButtonsEnabled) ID.events.OnAttack?.Invoke(true);
+        };
+        controls.Movement.Fireball.canceled += ctx =>
+        {
+            if (ButtonsEnabled) ID.events.OnAttack?.Invoke(false);
+        };
 
         controls.Movement.JumpHold.performed += ctx =>
- {
+        {
+            if (ButtonsEnabled) ID.events.OnJumpHeld?.Invoke(true);
+        };
 
-     ID.events.OnJumpHeld?.Invoke(true);
-     isHolding = true;
- };
         controls.Movement.JumpHold.canceled += ctx =>
         {
-            // if (isHolding)
-            // {
-            ID.events.OnJumpHeld?.Invoke(false); 
-            // isHolding = false;
-
-            // }
+            ID.events.OnJumpHeld?.Invoke(false);
 
         };
 
         controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(!ID.UsingClocker);
         controls.Movement.Parachute.performed += ctx => ID.events.OnParachute?.Invoke(true);
         controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
+
+
+
+
+
 
 
         // if (TimeManager.DebogLogEnabled)
@@ -134,16 +142,101 @@ public class StateInputSystem : MonoBehaviour
         // controls.Movement.TouchPosition.performed += ctx => UpdateTouchPosition(ctx);
 
         // }
+        // controls.Movement.DashSlash.performed += ctx => ID.events.OnDashSlash?.Invoke();
+
+        //     controls.Movement.HoldJumpRight.performed += ctx =>
+        //    {
+        //        isHoldingFlip = true;
+        //        ID.events.OnHoldFlip?.Invoke(true);
+        //    };
+
+        //     controls.Movement.HoldJumpLeft.performed += ctx =>
+
+        //     {
+        //         isHoldingFlip = true;
+        //         ID.events.OnHoldFlip?.Invoke(true);
+        //     };
+
+        //     controls.Movement.HoldJumpRight.canceled += ctx =>
+        //   {
+
+        //       ID.events.OnHoldFlip?.Invoke(false);
+
+
+
+
+        //   };
+
+        //     controls.Movement.HoldJumpLeft.canceled += ctx =>
+
+        //     {
+
+        //         ID.events.OnHoldFlip?.Invoke(false);
+
+
+        //     };
+
+        // controls.Movement.HoldJumpRight.performed += ctx =>
+        // {
+        //     ID.events.OnHoldFlip?.Invoke(!ID.UsingClocker);
+        // };
+
+        // controls.Movement.HoldJumpLeft.performed += ctx =>
+
+        //     {
+        //         ID.events.OnClocker?.Invoke(!ID.UsingClocker);
+        //     };
 
     }
+
+    void Start()
+    {
+        if (GameObject.Find("DropButton") != null)
+            DropButton = GameObject.Find("DropButton").GetComponent<Image>();
+        canDrop = true;
+        canDash = true;
+    }
+
+
+    private void DropCooldown()
+    {
+        if (dropButtonSeq != null && dropButtonSeq.IsPlaying())
+            dropButtonSeq.Kill();
+
+        canDrop = false;
+        dropButtonSeq = DOTween.Sequence();
+        dropButtonSeq.Append(DropButton.DOColor(highlightButtonColor, .15f));
+        dropButtonSeq.AppendInterval(.15f);
+
+        dropButtonSeq.Append(DropButton.DOColor(disabledButtonColor, .15f));
+        dropButtonSeq.AppendInterval(1.8f);
+        dropButtonSeq.Append(DropButton.DOColor(normalButtonColor, .1f));
+        dropButtonSeq.OnComplete(() => canDrop = true);
+
+
+
+        dropButtonSeq.Play();
+
+
+    }
+    public void ActivateButtons(bool IsActive)
+    {
+        ButtonsEnabled = IsActive;
+
+
+    }
+
     private void OnEnable()
     {
         controls.Movement.Enable();
+        ID.events.EnableButtons += ActivateButtons;
     }
 
     private void OnDisable()
     {
         controls.Movement.Disable();
+        ID.events.EnableButtons -= ActivateButtons;
+
     }
 }
 

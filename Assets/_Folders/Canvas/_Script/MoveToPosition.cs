@@ -6,9 +6,11 @@ using DG.Tweening;
 public class MoveToPosition : MonoBehaviour
 {
     private RectTransform rectTransform;
+    [SerializeField] private bool isSpecial;
     [SerializeField] private float duration;
     [SerializeField] private Vector2 startPosition;
     [SerializeField] private Vector2 endPosition;
+    private Sequence sequence;
     // Start is called before the first frame update\
 
     void Awake()
@@ -22,8 +24,42 @@ public class MoveToPosition : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!isSpecial)
+        {
+            rectTransform.anchoredPosition = startPosition; // Set the start position directly
+            rectTransform.DOAnchorPos(endPosition, duration).SetEase(Ease.OutSine).SetUpdate(true);
+        }
+        else
+        {
+            MoveLivesThenActivate();
+        }
+
+    }
+    private void OnDisable()
+    {
+        if (sequence != null && sequence.IsPlaying())
+        {
+            sequence.Kill();
+        }
+    }
+
+    public void MoveLivesThenActivate()
+    {
         rectTransform.anchoredPosition = startPosition; // Set the start position directly
-        rectTransform.DOAnchorPos(endPosition, duration).SetEase(Ease.OutSine).SetUpdate(true);
+        sequence = DOTween.Sequence();
+
+        sequence.Append(rectTransform.DOAnchorPos(endPosition, duration).SetEase(Ease.OutSine).SetUpdate(true));
+        sequence.OnComplete(SetInfiniteLives).SetUpdate(true);
+
+        sequence.Play().SetUpdate(true);
+
+
+    }
+
+    private void SetInfiniteLives()
+    {
+        rectTransform.gameObject.GetComponent<LifeDisplay>().SetInfiniteLives(false);
+       
     }
 
     // Update is called once per frame

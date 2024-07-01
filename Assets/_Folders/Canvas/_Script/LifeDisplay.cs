@@ -18,13 +18,20 @@ public class LifeDisplay : MonoBehaviour
     {
 
         player.infiniteLives = infiniteLives;
-        Debug.Log("InfiniteLives?" + player.infiniteLives);
+       
 
 
 
 
 
         // InitializeEggAnimators();
+
+    }
+
+    public void SetInfiniteLives(bool isInfinite)
+    {
+        infiniteLives = isInfinite;
+        player.infiniteLives = infiniteLives;
 
     }
 
@@ -33,39 +40,7 @@ public class LifeDisplay : MonoBehaviour
 
 
     }
-    void Start()
-    {
 
-        // InitializeEggAnimators();
-
-        // Subscribe to the OnLivesChanged event
-        // statsMan.OnLivesChanged += UpdateLives;
-    }
-
-    // private void InitializeEggAnimators()
-    // {
-    //     eggAnimators = new List<Animator>();
-
-    //     if (livesPanel == null)
-    //     {
-
-    //         return;
-    //     }
-
-    //     // Iterate through the children of the LivesPanel and find the Animator components
-    //     for (int i = 0; i < livesPanel.childCount; i++)
-    //     {
-    //         Transform childTransform = livesPanel.GetChild(i);
-    //         Animator eggAnimator = childTransform.GetComponent<Animator>();
-
-    //         if (eggAnimator != null)
-    //         {
-    //             eggAnimators.Add(eggAnimator);
-
-    //         }
-
-    //     }
-    // }
 
     void UpdateLives(int newLives)
     {
@@ -109,18 +84,22 @@ public class LifeDisplay : MonoBehaviour
     void InfiniteLivesAnim()
     {
 
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(infinitySymbol.DOAnchorPosY(infinitySymbol.anchoredPosition.y + 20, .2f).SetEase(Ease.OutSine));
+        if (infinitySymbol != null)
+        {
 
-        sequence.Append(infinitySymbol.DORotate(new Vector3(0, 0, 10), 0.15f)
-      .SetEase(Ease.InOutSine)
-      .SetLoops(5, LoopType.Yoyo)); // Loops the rotation back and forth
+            Sequence sequence = DOTween.Sequence();
+            sequence.Append(infinitySymbol.DOAnchorPosY(infinitySymbol.anchoredPosition.y + 20, .2f).SetEase(Ease.OutSine));
 
-        sequence.Append(infinitySymbol.DOAnchorPosY(infinitySymbol.anchoredPosition.y, .2f).SetEase(Ease.OutSine));
-        sequence.Join(infinitySymbol.DORotate(new Vector3(0, 0, 0), 0.2f));
+            sequence.Append(infinitySymbol.DORotate(new Vector3(0, 0, 10), 0.15f)
+          .SetEase(Ease.InOutSine)
+          .SetLoops(5, LoopType.Yoyo)); // Loops the rotation back and forth
 
-        // Play the sequence
-        sequence.Play();
+            sequence.Append(infinitySymbol.DOAnchorPosY(infinitySymbol.anchoredPosition.y, .2f).SetEase(Ease.OutSine));
+            sequence.Join(infinitySymbol.DORotate(new Vector3(0, 0, 0), 0.2f));
+
+            // Play the sequence
+            sequence.Play();
+        }
 
     }
 

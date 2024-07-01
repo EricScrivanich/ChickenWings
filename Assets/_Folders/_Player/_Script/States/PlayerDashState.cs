@@ -150,7 +150,7 @@ public class PlayerDashState : PlayerBaseState
                 }
 
 
-                player.ID.globalEvents.SetCanDashSlash?.Invoke(false);
+                player.ID.globalEvents.SetCanDashSlash?.Invoke(false); 
                 return;
             }
             dragTime += Time.deltaTime;

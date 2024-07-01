@@ -499,6 +499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   airSpawnPos: {fileID: 4305018266838528776}
   THETHING: {fileID: 3615536453794694547}
+  arrowPlayerPosition: {fileID: 556582436784589314, guid: fa20cd46945f74d07837495e6aa8ab83, type: 3}
   SlowFactor: 1
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   jumpAirPrefab: {fileID: 6268765921969228752, guid: a45e714496a644ff7927e2fd3c7429a8, type: 3}
@@ -509,12 +510,10 @@ MonoBehaviour:
   currentForce: 0
   isTutorial: 0
   airResistance: {fileID: 7925714788662196650}
-  startPoint: {x: 1.5, y: 0}
-  endPoint: {x: 25, y: 0}
-  drawSpeed: 60
   playerParts: {fileID: 11400000, guid: 985b73365ea814b258007007881a2590, type: 2}
   parchutePoint: {fileID: 0}
-  holdingFlip: 0
+  holdingRightFlip: 0
+  holdingLeftFlip: 0
   Sword: {fileID: 4720979472372408846}
   ColliderType:
   - {fileID: 1246830404484255609}
@@ -568,6 +567,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937f1c2bdbd274c02a8bc85eb100cc93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  normalButtonColor: {r: 0.83137256, g: 0.7647059, b: 0.7647059, a: 0.14901961}
+  highlightButtonColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.8509804}
+  disabledButtonColor: {r: 1, g: 0.60784316, b: 0.60784316, a: 0.5019608}
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   touchButtonRectTransform: {fileID: 0}
 --- !u!114 &2362284218855398748

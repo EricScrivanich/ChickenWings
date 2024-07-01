@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1187288466204869367}
   - component: {fileID: 2986584006943735145}
   - component: {fileID: 7620167946994231658}
+  - component: {fileID: 5605337939446891069}
   m_Layer: 5
   m_Name: Home
   m_TagString: Untagged
@@ -68,7 +69,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1188969091, guid: 79563336ec62543c2987cd6809e458c9, type: 3}
+  m_Sprite: {fileID: -3950272, guid: 71139c852c20846b5a426017f7678571, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -121,7 +122,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2986584006943735145}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5605337939446891069}
+        m_TargetAssemblyTypeName: PauseButtonActions, Assembly-CSharp
+        m_MethodName: Menu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &5605337939446891069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1065489998940407710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1434302524972317038
 GameObject:
   m_ObjectHideFlags: 0
@@ -1152,7 +1177,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 12}
+  m_AnchoredPosition: {x: 0, y: 16}
   m_SizeDelta: {x: 141.4, y: 107.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5811714454513320907
@@ -1183,7 +1208,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 493431473, guid: 79563336ec62543c2987cd6809e458c9, type: 3}
+  m_Sprite: {fileID: -1409934420, guid: 71139c852c20846b5a426017f7678571, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1339,7 +1364,7 @@ MonoBehaviour:
   target: {fileID: 6070093590855601451}
   startPosition: {x: 0, y: 0, z: 0}
   endPosition: {x: 0, y: -900, z: 0}
-  mainDropDuration: 1.7
+  mainDropDuration: 1.2
   RetractDuration: 0.7
   RetractBounceDuration: 0.4
   RetractBounceAmount: 70
@@ -1577,7 +1602,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1188969091, guid: 79563336ec62543c2987cd6809e458c9, type: 3}
+  m_Sprite: {fileID: -3950272, guid: 71139c852c20846b5a426017f7678571, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1696,7 +1721,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1392539845, guid: 79563336ec62543c2987cd6809e458c9, type: 3}
+  m_Sprite: {fileID: 607543156, guid: 71139c852c20846b5a426017f7678571, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1793,6 +1818,7 @@ GameObject:
   - component: {fileID: 2231736205489041167}
   - component: {fileID: 5326320156538779275}
   - component: {fileID: 80703283121902862}
+  - component: {fileID: 8555283741313934073}
   m_Layer: 5
   m_Name: Retry
   m_TagString: Untagged
@@ -1849,7 +1875,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1188969091, guid: 79563336ec62543c2987cd6809e458c9, type: 3}
+  m_Sprite: {fileID: -3950272, guid: 71139c852c20846b5a426017f7678571, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1902,7 +1928,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5326320156538779275}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8555283741313934073}
+        m_TargetAssemblyTypeName: PauseButtonActions, Assembly-CSharp
+        m_MethodName: ResetGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8555283741313934073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7249583259727130510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7398682278843069919
 GameObject:
   m_ObjectHideFlags: 0

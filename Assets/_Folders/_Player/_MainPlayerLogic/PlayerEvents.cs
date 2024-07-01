@@ -6,8 +6,8 @@ public struct PlayerEvents
 {
     public Action OnJump;
     
-    public Action OnFlipRight;
-    public Action OnFlipLeft;
+    public Action<bool> OnFlipRight;
+    public Action<bool> OnFlipLeft;
     public Action<bool> OnDash; 
     public Action OnDashSlash;
     public Action OnDrop;
@@ -24,6 +24,8 @@ public struct PlayerEvents
 
     public Action LoseLife;
     public Action HitGround;
+
+    public Action<bool> EnableButtons;
 
     public Action<bool> OnHoldFlip;
 

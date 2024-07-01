@@ -30,7 +30,7 @@ public class CameraShake : MonoBehaviour
             float y = Random.Range(-1f, 1f) * magnitude;
 
             transform.position = new Vector3(x, y,-10);
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
         isShaking = false;

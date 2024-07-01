@@ -18,8 +18,12 @@ public class RingParent : MonoBehaviour
         ringAmount = 0;
         foreach (Transform child in transform)
         {
-            ringAmount++;
-            rings.Add(child.gameObject.GetComponent<TutorialRingMovement>());
+            if (child.gameObject.GetComponent<TutorialRingMovement>() != null)
+            {
+                ringAmount++;
+                rings.Add(child.gameObject.GetComponent<TutorialRingMovement>());
+            }
+
 
         }
         // HighlightCorrectRing(correctRing);

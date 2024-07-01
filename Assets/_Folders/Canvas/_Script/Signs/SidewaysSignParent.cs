@@ -5,6 +5,7 @@ using UnityEngine;
 public class SidewaysSignParent : MonoBehaviour
 {
     [SerializeField] private List<SidewaysSignMovement> signList;
+    [SerializeField] private List<TipSignMovement> tipSignList;
 
     private List<Vector2> OgPositions;
     private RectTransform StartingSignRect;
@@ -35,6 +36,8 @@ public class SidewaysSignParent : MonoBehaviour
         if (isNext)
         {
             signList[currentIndex].AnimateSign(true, false);
+            int tipSignPrev = signList[currentIndex].TipSignIndex;
+            if (tipSignPrev > 0) tipSignList[tipSignPrev - 1].Retract();
 
             currentIndex++;
             if (currentIndex >= signList.Count)
@@ -45,11 +48,15 @@ public class SidewaysSignParent : MonoBehaviour
             }
 
             signList[currentIndex].AnimateSign(true, true);
+            int tipSignNext = signList[currentIndex].TipSignIndex;
+            if (tipSignNext > 0) tipSignList[tipSignNext - 1].DropSignTween();
         }
 
         else
         {
             signList[currentIndex].AnimateSign(false, false);
+            int tipSignPrev = signList[currentIndex].TipSignIndex;
+            if (tipSignPrev > 0) tipSignList[tipSignPrev - 1].Retract();
 
             currentIndex--;
             if (currentIndex < 0)
@@ -60,12 +67,16 @@ public class SidewaysSignParent : MonoBehaviour
 
             }
             signList[currentIndex].AnimateSign(false, true);
+            int tipSignNext = signList[currentIndex].TipSignIndex;
+            if (tipSignNext > 0) tipSignList[tipSignNext - 1].DropSignTween();
         }
     }
 
     private void OnEnable()
     {
         signList[currentIndex].DropSign();
+        int tipSignNext = signList[currentIndex].TipSignIndex;
+        if (tipSignNext > 0) tipSignList[tipSignNext - 1].DropSignTween();
 
     }
 

@@ -45,7 +45,7 @@ public class PlayerJumpState : PlayerBaseState
     {
         if (player.ID.isHolding)
         {
-            Debug.Log("Holdinggg");
+
             player.rb.AddForce(new Vector2(0, player.ID.addJumpForce - Mathf.Abs(player.rb.velocity.y)));
             startHoldJumpAnimation = true;
 
@@ -66,7 +66,7 @@ public class PlayerJumpState : PlayerBaseState
             // Apply a small upwards force
             // You can adjust this value as needed
             player.rb.AddForce(new Vector2(0, -player.ID.playerAddDownForce));
-            Debug.Log("dowwnnnwnwn");
+
 
         }
 

@@ -7,12 +7,28 @@ public class SidewaysSignMovement : MonoBehaviour
 {
     [SerializeField] private RectTransform target;
 
+    public int TipSignIndex;
+
     [SerializeField] private Button[] NextPrevButtons;
+
+    private readonly Vector3[] rotations = new Vector3[]
+      {
+        new Vector3(0, 0, 8f),
+        new Vector3(0, 0, -6.5f),
+        new Vector3(0, 0, 3f),
+        new Vector3(0, 0, -1.7f),
+        new Vector3(0, 0, .7f),
+        new Vector3(0, 0, -.3f),
+        new Vector3(0, 0, .15f),
+        Vector3.zero
+      };
+
+
 
     private Vector2 endPosition = new Vector2(0, -1110);
     [SerializeField] private float rotationAmount;
     [SerializeField] private float rotationDuration;
-    [SerializeField] private float swingDuration;
+    private float swingDuration = .75f;
     [SerializeField] private float signMovementTime;
     [SerializeField] private Vector2 moveAmount; // Adjust as needed
     private float rotationAmountVar;
@@ -39,12 +55,12 @@ public class SidewaysSignMovement : MonoBehaviour
         if (goingLeft)
         {
             moveAmountVar = moveAmount;
-            rotationAmountVar = rotationAmount;
+            rotationAmountVar = 1;
         }
         else
         {
             moveAmountVar = -moveAmount;
-            rotationAmountVar = -rotationAmount;
+            rotationAmountVar = -1;
 
         }
         signSequence = DOTween.Sequence().SetUpdate(true);
@@ -54,23 +70,24 @@ public class SidewaysSignMovement : MonoBehaviour
         Vector2 finalPosition = rectTransform.anchoredPosition + moveAmountVar;
 
         // First part of the movement and initial rotation
-        signSequence.Append(rectTransform.DORotate(new Vector3(0, 0, rotationAmountVar), signMovementTime / 2).SetEase(Ease.InSine)).SetUpdate(true);
+        signSequence.Append(rectTransform.DORotate(rotations[0] * rotationAmountVar, signMovementTime / 2).SetEase(Ease.InSine)).SetUpdate(true);
         signSequence.Join(rectTransform.DOAnchorPos(rectTransform.anchoredPosition + halfMoveAmount, signMovementTime / 2).SetEase(Ease.InSine)).SetUpdate(true);
 
         // Second part of the movement and counter rotation
-        signSequence.Append(rectTransform.DORotate(new Vector3(0, 0, -rotationAmountVar), signMovementTime / 2).SetEase(Ease.OutSine)).SetUpdate(true);
+        signSequence.Append(rectTransform.DORotate(rotations[1] * rotationAmountVar, signMovementTime / 2).SetEase(Ease.OutSine)).SetUpdate(true);
         signSequence.Join(rectTransform.DOAnchorPos(finalPosition, signMovementTime / 2).SetEase(Ease.OutSine)).SetUpdate(true);
 
         // Swing back and forth to simulate stopping
         float halfRotationAmount = rotationAmountVar / 2f;
         float quarterRotationAmount = rotationAmountVar / 4f;
+        float finalRotationAmount = -(quarterRotationAmount - 5);
 
         // Rotate to half of the initial rotation amount in the opposite direction
-        signSequence.Append(rectTransform.DORotate(new Vector3(0, 0, halfRotationAmount), swingDuration * .6f).SetEase(Ease.InOutSine)).SetUpdate(true);
-        // Rotate back to one fourth of the initial rotation amount in the original direction
-        signSequence.Append(rectTransform.DORotate(new Vector3(0, 0, -quarterRotationAmount), swingDuration * .7f).SetEase(Ease.InOutSine)).SetUpdate(true);
-        // Finally, rotate back to zero to stop the sign
-        signSequence.Append(rectTransform.DORotate(Vector3.zero, swingDuration * .9f).SetEase(Ease.InOutSine)).SetUpdate(true);
+        for (int i = 2; i < rotations.Length; i++)
+        {
+            signSequence.Append(rectTransform.DORotate(rotations[i] * rotationAmountVar, swingDuration).SetEase(Ease.InOutSine).SetUpdate(true));
+
+        }
         // signSequence.AppendCallback(() => SetUnactive(SetActive));
         // Start the sequence
         signSequence.Play().SetUpdate(true);
@@ -126,10 +143,7 @@ public class SidewaysSignMovement : MonoBehaviour
         {
             signSequence.Kill();
         }
-        if (sequence != null && sequence.IsActive())
-        {
-            sequence.Kill();
-        }
+
         DisableButtons();
         LevelManager LM = GameObject.Find("LevelManager").GetComponent<LevelManager>();
         LM.NextUI(isNext);

@@ -3,9 +3,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerFlipLeftState : PlayerBaseState
 {
+    private Sequence sequence;
+    private RectTransform flipImage;
+    private Vector3 flipImageTargetRotation = new Vector3(0, 0, 45);
+    Vector3[] rotations = new Vector3[]
+       {
+        new Vector3(0, 0, 40),
+        new Vector3(0, 0, -35),
+        new Vector3(0, 0, 20),
+        new Vector3(0, 0, -15),
+        new Vector3(0, 0, 5),
+        new Vector3(0, 0, -3),
+        Vector3.zero
+       };
+
+
     private Vector2 JumpForce;
     private bool hasFadedJumpAir;
     private Vector2 AddForceVector;
@@ -26,6 +42,15 @@ public class PlayerFlipLeftState : PlayerBaseState
 
     public override void EnterState(PlayerStateManager player)
     {
+        if (sequence != null && sequence.IsPlaying())
+            sequence.Kill();
+
+        sequence = DOTween.Sequence();
+
+        sequence.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime)).SetEase(Ease.InSine);
+        // sequence.Join(flipImage.DOScale(flipImageTargetScale * 1.1f, .6f)).SetEase(Ease.InSine);
+        sequence.Play();
+
         hasFadedJumpAir = false;
         jumpAirIndex = player.CurrentJumpAirIndex;
         hitSlowTarget = false;
@@ -53,8 +78,11 @@ public class PlayerFlipLeftState : PlayerBaseState
     {
         if (!hasFadedJumpAir)
         {
-            
+
             player.ID.events.OnStopJumpAir?.Invoke(jumpAirIndex);
+
+
+            SwingJumpImage();
         }
 
 
@@ -64,19 +92,19 @@ public class PlayerFlipLeftState : PlayerBaseState
         time += Time.fixedDeltaTime;
         if (time > .2f)
         {
-            if (player.holdingFlip)
+            if (player.holdingLeftFlip)
             {
                 player.rb.AddForce(AddForceVector);
                 rotationSlowDownTime += .45f * Time.fixedDeltaTime;
 
                 if (time > addForceTime)
                 {
-                    
-                    player.holdingFlip = false;
+
+                    player.holdingLeftFlip = false;
 
                 }
             }
-            else if (!player.holdingFlip && addForceDownTimer < addForceDownTime)
+            else if (!player.holdingLeftFlip && addForceDownTimer < addForceDownTime)
             {
                 addForceDownTimer += Time.fixedDeltaTime;
                 player.rb.AddForce(AddForceDownVector);
@@ -88,7 +116,7 @@ public class PlayerFlipLeftState : PlayerBaseState
         currentRotation += rotationSpeedVar * Time.fixedDeltaTime;
         float targetRotation = Mathf.LerpAngle(player.rb.rotation, currentRotation, Time.fixedDeltaTime * rotationSpeedVar);
         player.rb.MoveRotation(targetRotation);
-        if (hitSlowTarget && !player.holdingFlip)
+        if (hitSlowTarget && !player.holdingLeftFlip)
         {
             rotationTimer += Time.fixedDeltaTime;
             rotationSpeedVar = Mathf.Lerp(rotationSpeed, 0, rotationTimer / rotationSlowDownTime);
@@ -110,12 +138,35 @@ public class PlayerFlipLeftState : PlayerBaseState
             }
         }
 
-        if (!hasFadedJumpAir && !player.holdingFlip )
+        if (!hasFadedJumpAir && !player.holdingLeftFlip)
         {
+
             hasFadedJumpAir = true;
+
             player.ID.events.OnStopJumpAir?.Invoke(jumpAirIndex);
+
+            SwingJumpImage();
+
         }
 
+    }
+
+    private void SwingJumpImage()
+    {
+        if (sequence != null && sequence.IsPlaying())
+        {
+            sequence.Kill();
+        }
+
+        sequence = DOTween.Sequence();
+
+        foreach (var rotation in rotations)
+        {
+            sequence.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
+
+        }
+
+        sequence.Play();
     }
     public void CachVariables(Vector2 jf, Vector2 afv, Vector2 afdv, float at, float adt)
     {
@@ -123,8 +174,10 @@ public class PlayerFlipLeftState : PlayerBaseState
         JumpForce = jf;
         AddForceVector = afv;
         AddForceDownVector = afdv;
-        addForceTime = .6f;
+        addForceTime = .8f;
         addForceDownTime = .3f;
+        if (GameObject.Find("FlipLeftIMG") != null)
+            flipImage = GameObject.Find("FlipLeftIMG").GetComponent<RectTransform>();
 
     }
 }

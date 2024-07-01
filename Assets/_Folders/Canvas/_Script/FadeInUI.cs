@@ -67,10 +67,10 @@ public class FadeInUI : MonoBehaviour
 
     public void FadeOut()
     {
-        if (!hasFaded)
+        if (!hasFaded && this.gameObject.activeInHierarchy)
         {
             hasFaded = true;
-            FadeGroup.DOFade(startAlpha, fadeDuration / 2).SetEase(Ease.InOutSine).From(endAlpha).SetUpdate(true).SetUpdate(true);
+            FadeGroup.DOFade(startAlpha, fadeDuration / 2).SetEase(Ease.InOutSine).From(endAlpha).SetUpdate(true);
 
         }
 

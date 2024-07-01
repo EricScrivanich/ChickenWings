@@ -65,9 +65,9 @@ public class P_Movement : PlayerSystem
         
     }
 
-     public void FlipRight()
+     public void FlipRight(bool holding)
     {
-         if (player.DisableButtons)
+         if (player.DisableButtons && !holding)
         {
             return;
         }
@@ -82,9 +82,9 @@ public class P_Movement : PlayerSystem
         
     }
 
-    public void FlipLeft()
+    public void FlipLeft(bool holding)
     { 
-        if (player.DisableButtons)
+        if (player.DisableButtons && !holding)
         {
             return;
         }

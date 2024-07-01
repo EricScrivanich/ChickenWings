@@ -5,8 +5,17 @@ using DG.Tweening;
 
 public class TouchGestureVideo : MonoBehaviour
 {
+    public PlayerID player;
     public float initialDelay;
     public int loopCount;
+
+    public bool isLeft;
+    public bool isDash;
+    public bool isDrop;
+    public bool isJump;
+    public bool isEggDrop;
+
+    private CanvasGroup fadeGroup;
     // public PlayerID player;
     [SerializeField] private bool isTap;
     [Header("Hand Animation Settings")]
@@ -28,51 +37,211 @@ public class TouchGestureVideo : MonoBehaviour
 
     private Sequence gestureSequence;
 
+    private bool isHolding;
+    private bool hasCompleted;
+    private bool hasStarted;
 
-    private void OnEnable()
+    private void Awake()
     {
         InitializeValues();
-        StartCoroutine(WaitForDelay());
 
 
-
+        fadeGroup = GetComponent<CanvasGroup>();
+        fadeGroup.DOFade(0, .1f);
+        if (isJump)
+        {
+            player.events.OnJump += InitialTap;
+            player.events.OnJumpHeld += FlipListener;
+        }
+        else if (isEggDrop) player.events.OnEggDrop += InitialTap;
+        else if (isDash) player.events.OnDash += FlipListener;
+        else if (isDrop) player.events.OnDrop += InitialTap;
+        else if (isLeft) player.events.OnFlipLeft += FlipListener;
+        else player.events.OnFlipRight += FlipListener;
     }
-    private void OnDisable()
+
+    private void OnDestroy()
+
     {
-        if (gestureSequence != null && gestureSequence.IsActive())
+        if (isJump)
         {
-            gestureSequence.Kill();
+            player.events.OnJump -= InitialTap;
+            player.events.OnJumpHeld -= FlipListener;
         }
+        else if (isEggDrop) player.events.OnEggDrop -= InitialTap;
+        else if (isDash) player.events.OnDash -= FlipListener;
+        else if (isDrop) player.events.OnDrop -= InitialTap;
+        else if (isLeft) player.events.OnFlipLeft -= FlipListener;
+        else player.events.OnFlipRight -= FlipListener;
+
     }
 
-    private IEnumerator WaitForDelay()
-    {
-        hand.gameObject.SetActive(false);
-        circle.gameObject.SetActive(false);
-        yield return new WaitForSecondsRealtime(initialDelay);
-        hand.gameObject.SetActive(true);
-        circle.gameObject.SetActive(true);
-        if (isTap)
-        {
-            AnimateTapGesture();
-        }
-        else
-        {
-            AnimateHoldGesture();
-        }
-    }
+    // private void OnDisable()
+    // {
+    //     if (gestureSequence != null && gestureSequence.IsActive())
+    //     {
+    //         gestureSequence.Kill();
+    //     }
+    // }
+
+    // private IEnumerator WaitForDelay()
+    // {
+    //     hand.gameObject.SetActive(false);
+    //     circle.gameObject.SetActive(false);
+    //     yield return new WaitForSecondsRealtime(initialDelay);
+    //     hand.gameObject.SetActive(true);
+    //     circle.gameObject.SetActive(true);
+    //     if (isTap)
+    //     {
+    //         AnimateTapGesture();
+    //     }
+    //     else
+    //     {
+    //         AnimateHoldGesture();
+    //     }
+    // }
 
     private void InitializeValues()
     {
-        // Set initial values for hand
-        hand.localRotation = Quaternion.Euler(handStartRotation);
-        hand.localScale = handStartScale;
+        // // Set initial values for hand
+        // hand.localRotation = Quaternion.Euler(handStartRotation);
+        // hand.localScale = handStartScale;
 
-        // Set initial values for circle
-        circle.localScale = circleStartScale;
+        // // Set initial values for circle
+        // circle.localScale = circleStartScale;
+        // Color color = circleImage.color;
+        // color.a = circleStartAlpha;
+        // circleImage.color = color;
+    }
+    private void InitialTap()
+    {
+        if (gestureSequence != null && gestureSequence.IsPlaying())
+            gestureSequence.Kill();
+        isHolding = true;
+        hasCompleted = false;
+        gestureSequence = DOTween.Sequence();
+        gestureSequence.Append(hand.DOScale(handScaleFactor, .2f).SetEase(Ease.InOutSine).From(handStartScale));
+        gestureSequence.Join(circle.DOScale(circleStartScale, 0f));
+        gestureSequence.Join(circleImage.DOFade(circleStartAlpha, 0f));
+
+        gestureSequence.Join(hand.DORotate(handRotationAngle, .2f, RotateMode.FastBeyond360).SetEase(Ease.InOutSine));
+
+        gestureSequence.Join(fadeGroup.DOFade(1, .2f).SetEase(Ease.InSine));
+
+        gestureSequence.OnComplete(() =>
+       {
+           hasCompleted = true;
+           if (isHolding && !isDrop && !isEggDrop)
+           {
+               if (isJump)
+                   AnimateHoldingJump();
+
+               else
+                   AnimateHolding();
+           }
+           else
+           {
+               AnimateRelease();
+           }
+       });
+
+
+
+        gestureSequence.Play();
+
+
+    }
+
+    private void InitialTapJump()
+    {
+        hasCompleted = false;
+        if (gestureSequence != null && gestureSequence.IsPlaying())
+            gestureSequence.Kill();
+
+        // Ensure alpha values are set correctly
+        fadeGroup.alpha = 1;
         Color color = circleImage.color;
-        color.a = circleStartAlpha;
+        color.a = 1;
         circleImage.color = color;
+
+        hasStarted = true;
+        gestureSequence = DOTween.Sequence();
+        gestureSequence.Append(hand.DOScale(handScaleFactor, .4f).SetEase(Ease.InOutSine).From(handStartScale));
+        gestureSequence.Join(circle.DOScale(circleStartScale, 0f));
+        gestureSequence.Join(circleImage.DOFade(circleStartAlpha, 0f));
+        gestureSequence.Join(hand.DORotate(handRotationAngle, .4f, RotateMode.FastBeyond360).SetEase(Ease.InOutSine));
+        gestureSequence.OnComplete(() =>
+        {
+            hasCompleted = true;
+            if (isHolding)
+            {
+                AnimateHolding();
+            }
+            else
+            {
+                AnimateRelease();
+            }
+        });
+        gestureSequence.Play();
+
+
+    }
+
+
+
+    private void FlipListener(bool holding)
+    {
+        isHolding = holding;
+        if (hasCompleted && !isHolding)
+        {
+            AnimateRelease();
+        }
+        else if (holding && !isJump)
+        {
+            InitialTap();
+        }
+
+    }
+
+    private void AnimateHolding()
+    {
+        gestureSequence.Append(circle.DOScale(circleScaleFactor, .8f).SetEase(Ease.InOutSine).From(handStartScale));
+        gestureSequence.Join(circleImage.DOFade(circleEndAlpha, .8f));
+
+
+    }
+
+    private void AnimateHoldingJump()
+    {
+        gestureSequence.Append(circle.DOScale(circleScaleFactor, 1.2f).SetEase(Ease.InOutSine).From(handStartScale));
+        gestureSequence.Join(circleImage.DOFade(circleEndAlpha, 1.2f));
+
+
+    }
+
+    private void AnimateRelease()
+    {
+        hasCompleted = false;
+        if (gestureSequence != null && gestureSequence.IsPlaying())
+            gestureSequence.Kill();
+        fadeGroup.alpha = 1;
+        gestureSequence.Append(hand.DOScale(handStartScale, .4f).SetEase(Ease.InOutSine));
+
+
+        gestureSequence.Join(hand.DORotate(handStartRotation, .4f).SetEase(Ease.InOutSine));
+
+        // Circle animation: Scale and change opacity
+        gestureSequence.Join(circle.DOScale(circleScaleFactor, .4f).SetEase(Ease.InOutSine));
+        gestureSequence.Join(circleImage.DOFade(circleEndAlpha, .4f).SetEase(Ease.InOutSine));
+
+        gestureSequence.Append(fadeGroup.DOFade(0, .9f));
+
+
+
+        gestureSequence.Play();
+
+
+
     }
 
     private void AnimateTapGesture()

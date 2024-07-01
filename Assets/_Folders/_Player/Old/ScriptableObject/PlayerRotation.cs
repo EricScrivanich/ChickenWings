@@ -87,20 +87,27 @@ public class PlayerRotation : PlayerSystem
 
     }
 
-    private void FlipRight()
+    private void FlipRight(bool holding)
     {
+        if (holding)
+        {
+            currentRotation = transform.rotation.eulerAngles.z;
 
-        currentRotation = transform.rotation.eulerAngles.z;
+            rotationSpeedVar = -rotationSpeed;
+        }
 
-        rotationSpeedVar = -rotationSpeed;
+
     }
 
-    private void FlipLeft()
+    private void FlipLeft(bool holding)
     {
+        if (holding)
+        {
+            currentRotation = transform.rotation.eulerAngles.z;
 
-        currentRotation = transform.rotation.eulerAngles.z;
+            rotationSpeedVar = rotationSpeed;
+        }
 
-        rotationSpeedVar = rotationSpeed;
     }
 
     void OnEnable()

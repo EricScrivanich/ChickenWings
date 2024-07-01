@@ -6,6 +6,8 @@ public class PlayerStateManager : MonoBehaviour
 {
     [SerializeField] private Transform airSpawnPos;
     [SerializeField] private GameObject THETHING;
+
+    [SerializeField] private GameObject arrowPlayerPosition;
     private bool USINGTHING = false;
     [SerializeField] private float SlowFactor;
     [ExposedScriptableObject]
@@ -23,20 +25,16 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private bool isTutorial;
 
     [SerializeField] private Transform airResistance;
-    private Vector2 airDashPos = new Vector2(.62f, -.43f);
-    private Vector2 airDropPos = new Vector2(.15f, -.9f);
-    private Vector3 airDropRot = new Vector3(0, 0, -90);
 
 
 
-    [SerializeField] private Vector2 startPoint;
-
-    [SerializeField] private Vector2 endPoint;
-    [SerializeField] private float drawSpeed;
     private LineRenderer line;
     public PlayerParts playerParts;
     public Transform parchutePoint;
-    public bool holdingFlip;
+    // public bool holdingFlip;
+    public bool holdingRightFlip;
+    public bool holdingLeftFlip;
+
 
     public GameObject Sword;
     // private SpriteRenderer SwordSprite;
@@ -134,7 +132,7 @@ public class PlayerStateManager : MonoBehaviour
             {
                 currentJumpAirIndex = 1;
             }
-            Debug.Log(currentJumpAirIndex);
+
             return currentJumpAirIndex;
 
         }
@@ -145,11 +143,6 @@ public class PlayerStateManager : MonoBehaviour
 
 
     }
-
-
-
-
-
 
 
     public bool hasFlippedRight = false;
@@ -199,6 +192,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         CurrentJumpAirIndex = 0;
         ID.constantPlayerForce = initialConstantForce;
+        ID.events.EnableButtons?.Invoke(true);
         if (initialConstantForce == 0)
         {
             ID.constantPlayerForceBool = false;
@@ -212,7 +206,7 @@ public class PlayerStateManager : MonoBehaviour
         stillDashing = false;
 
         ID.ResetValues();
-        holdingFlip = false;
+        // holdingFlip = false;
         ID.UsingClocker = false;
         rotateSlash = false;
         isDropping = false;
@@ -247,6 +241,8 @@ public class PlayerStateManager : MonoBehaviour
             jumpAir.Enqueue(obj);
 
         }
+
+
 
         currentJumpAirIndex = 0;
 
@@ -293,7 +289,12 @@ public class PlayerStateManager : MonoBehaviour
         line = GetComponent<LineRenderer>();
 
 
-
+        if (!ID.constantPlayerForceBool)
+        {
+            PlayerAddForceBoundaries script = gameObject.AddComponent<PlayerAddForceBoundaries>();
+            script.CreateArrow(arrowPlayerPosition);
+            // script.SetStateManager(this);
+        }
 
         attackObject.SetActive(false);
         // originalGravityScale = rb.gravityScale;
@@ -397,12 +398,13 @@ public class PlayerStateManager : MonoBehaviour
 
         currentState.UpdateState(this);
         // currentState.RotateState(this);
-        if (transform.position.y > 7f && !disableButtons && !ID.constantPlayerForceBool)
+        if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons && !ID.constantPlayerForceBool)
         {
             // ResetHoldJump();
             anim.SetBool(FrozenBool, true);
 
             SwitchState(FrozenState);
+            ID.events.EnableButtons?.Invoke(false);
         }
     }
 
@@ -494,7 +496,7 @@ public class PlayerStateManager : MonoBehaviour
     {
 
 
-        if (isHolding == true)
+        if (isHolding)
         {
             // anim.SetTrigger("JumpHoldTrigger");
             anim.SetTrigger(JumpHoldTrigger);
@@ -523,52 +525,70 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-    void HandleRightFlip()
+    void HandleRightFlip(bool holding)
     {
         if (!disableButtons)
         {
-            holdingFlip = true;
-            anim.SetTrigger(FlipTrigger);
-            var obj = jumpAir.Dequeue();
-            obj.transform.position = airSpawnPos.position;
-
-            obj.transform.eulerAngles = new Vector3(0, 0, 315);
-            obj.SetActive(true);
-            jumpAir.Enqueue(obj);
-
-            // ResetHoldJump();
-            SwitchState(FlipRightState);
 
 
+
+            if (holding)
+            {
+                holdingRightFlip = true;
+                anim.SetTrigger(FlipTrigger);
+                var obj = jumpAir.Dequeue();
+                obj.transform.position = airSpawnPos.position;
+
+                obj.transform.eulerAngles = new Vector3(0, 0, 315);
+                obj.SetActive(true);
+                jumpAir.Enqueue(obj);
+
+                // ResetHoldJump();
+                SwitchState(FlipRightState);
+
+            }
+            else
+            {
+                holdingRightFlip = false;
+            }
         }
 
     }
 
 
 
-    void HandleLeftFlip()
+    void HandleLeftFlip(bool holding)
     {
         if (!disableButtons)
+
         {
-            holdingFlip = true;
+            if (holding)
+            {
+                holdingLeftFlip = true;
 
-            // ResetHoldJump();
-            anim.SetTrigger(FlipTrigger);
-            var obj = jumpAir.Dequeue();
-            obj.transform.position = airSpawnPos.position;
+                // ResetHoldJump();
+                anim.SetTrigger(FlipTrigger);
+                var obj = jumpAir.Dequeue();
+                obj.transform.position = airSpawnPos.position;
 
-            obj.transform.eulerAngles = new Vector3(0, 0, 42);
-            obj.SetActive(true);
-            jumpAir.Enqueue(obj);
+                obj.transform.eulerAngles = new Vector3(0, 0, 42);
+                obj.SetActive(true);
+                jumpAir.Enqueue(obj);
 
-            SwitchState(FlipLeftState);
+                SwitchState(FlipLeftState);
+            }
+            else
+            {
+                holdingLeftFlip = false;
+            }
         }
+
 
     }
 
     private void HandleHoldFlip(bool isHolding)
     {
-        holdingFlip = isHolding;
+        // holdingFlip = isHolding;
 
 
     }
@@ -638,7 +658,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void HandleDrop()
     {
-        if (!disableButtons && canDrop)
+        if (!disableButtons)
         {
             // ResetHoldJump();
             isDropping = true;
@@ -647,9 +667,9 @@ public class PlayerStateManager : MonoBehaviour
             // airResistance.localEulerAngles = airDropRot;
             anim.SetTrigger(DropTrigger);
 
-            ID.globalEvents.CanDrop?.Invoke(false);
+            // ID.globalEvents.CanDrop?.Invoke(false);
 
-            StartCoroutine(DropCooldown());
+            // StartCoroutine(DropCooldown());
         }
 
     }
