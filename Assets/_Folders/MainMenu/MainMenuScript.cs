@@ -127,10 +127,10 @@ public class MainMenuScript : MonoBehaviour
             Main.DOAnchorPos(new Vector2(Main.anchoredPosition.x + initialRightShift, Main.anchoredPosition.y), durationRightShift)
                 .OnComplete(() =>
                 {
-                    Bosses.DOAnchorPos(new Vector2(0, Bosses.anchoredPosition.y), finalLeftShiftDuration);
+                    Levels.DOAnchorPos(new Vector2(0, Levels.anchoredPosition.y), finalLeftShiftDuration);
                     // After completing the move to the right, move to the final position to the left
                     Main.DOAnchorPos(new Vector2(-2700, Main.anchoredPosition.y), finalLeftShiftDuration);
-                });
+                }); 
         }
         else if (switchTo == 1)
         {

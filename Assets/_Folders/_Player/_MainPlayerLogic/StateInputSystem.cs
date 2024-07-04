@@ -192,7 +192,12 @@ public class StateInputSystem : MonoBehaviour
     void Start()
     {
         if (GameObject.Find("DropButton") != null)
+        {
             DropButton = GameObject.Find("DropButton").GetComponent<Image>();
+            DropButton.color = normalButtonColor;
+
+
+        }
         canDrop = true;
         canDash = true;
     }

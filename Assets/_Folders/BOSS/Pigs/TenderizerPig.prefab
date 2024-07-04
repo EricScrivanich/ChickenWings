@@ -483,7 +483,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3211451519360721835}
   - component: {fileID: 1497359128130943728}
-  - component: {fileID: 3722495603827291362}
   - component: {fileID: 6447823062168538188}
   - component: {fileID: 380209552114082525}
   - component: {fileID: 1277107987063809660}
@@ -540,34 +539,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3722495603827291362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5053118216464345145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 359615f741359444eb5b59985b4112a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BackLegs: {fileID: 0}
-  FrontLegs: {fileID: 0}
-  Wings: {fileID: 0}
-  BackLegsPosition: {fileID: 0}
-  FrontLegsPosition: {fileID: 0}
-  WingsPosition: {fileID: 0}
-  addYForce: 0
-  belowAmount: 0
-  ySpeed: 0
-  xSpeed: -3.5
-  amplitude: 0.3
-  frequency: 2
-  R: 0
-  duration: 0
-  invokeTime: 0
-  sinDownSpeed: 0
 --- !u!61 &6447823062168538188
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -625,8 +596,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6ebba7c7f14c4213833bc23a2c831a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
   Hammer: {fileID: 7525811087780969652}
-  player: {fileID: 0}
   eye: {fileID: 7146807728698037258}
   pupil: {fileID: 3595968126987387635}
   eyeRadius: 0.05

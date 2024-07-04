@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class JetPackPigMovement : MonoBehaviour
 {
-    [SerializeField] float speed;
+    public float speed;
     private float speedVar;
     // Start is called before the first frame update
     void Start()

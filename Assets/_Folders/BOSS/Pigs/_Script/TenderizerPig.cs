@@ -4,28 +4,47 @@ using UnityEngine;
 
 public class TenderizerPig : MonoBehaviour, ICollectible
 {
+    public float speed;
+    public bool hasHammer;
     private CircleCollider2D detection;
+    private float amplitude = .3f;
+    private int frequency = 2;
+    private float initialY;
     private Animator anim;
     [SerializeField] private GameObject Hammer;
     private Transform player; // Reference to the player
     public Transform eye; // Reference to the eye
     public Transform pupil; // Reference to the pupil
     public float eyeRadius = 0.5f; // Radius within which the pupil can move
+
+    private void Awake()
+    {
+        detection = GetComponent<CircleCollider2D>();
+    }
     private void Start()
     {
         player = GameObject.Find("Player").GetComponent<Transform>();
         anim = GetComponent<Animator>();
-        detection = GetComponent<CircleCollider2D>();
-        if (!Hammer.activeInHierarchy)
-        {
-            detection.enabled = false;
-        }
+
+
 
 
 
     }
+    private void OnEnable()
+    {
+        initialY = transform.position.y;
+        detection.enabled = hasHammer;
+        Hammer.SetActive(hasHammer);
+        Debug.Log("Hashammer: " + hasHammer);
+    }
     void Update()
     {
+        transform.Translate(Vector2.left * speed * Time.deltaTime);
+
+
+        float y = Mathf.Sin(transform.position.x * frequency) * amplitude + initialY;
+        transform.position = new Vector2(transform.position.x, y);
         if (player != null)
         {
             Vector3 direction = player.position - eye.position; // Calculate the direction to the player
