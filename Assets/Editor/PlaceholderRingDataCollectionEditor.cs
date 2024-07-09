@@ -14,7 +14,6 @@ public class PlaceholderDataCollectionEditor : Editor
 
         EditorGUILayout.PrefixLabel("Specified Trigger");
         EditorGUILayout.BeginHorizontal();
-
         // IntField for showing and editing the integer value
         // If the '-' button is pressed, decrement the value
         if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(18))) // Width and Height are optional for button size
@@ -56,6 +55,7 @@ public class PlaceholderDataCollectionEditor : Editor
         }
 
 
+
         GUILayout.Space(25);
 
         if (GUILayout.Button("Record Specified Placeholders"))
@@ -71,6 +71,8 @@ public class PlaceholderDataCollectionEditor : Editor
             }
             else
             {
+
+
                 Debug.LogWarning("PlaceholderRecorder GameObject not found. Please ensure it exists in the current scene.");
             }
         }
@@ -79,8 +81,10 @@ public class PlaceholderDataCollectionEditor : Editor
 
         if (GUILayout.Button("Record All Placeholders"))
         {
+
             // Automatically find the GameObject named "PlaceholderRecorder"
             GameObject ringRecorder = GameObject.Find("PlaceholderRecorder");
+
 
             if (ringRecorder != null)
             {

@@ -34,6 +34,18 @@ public class RingPool : ScriptableObject
 
     public List<RingID> RingType;
 
+public void Initialize()
+{
+        SpawnRingPool();
+        SpawnBallPool();
+        SpawnBucketPool();
+
+        foreach (var ring in RingType)
+        {
+            ring.InitializeVariables();
+            ring.InitializeEffectsPool();
+        }
+    }
     public void SpawnRingPool()
     {
         ringPool = new List<RingMovement>();

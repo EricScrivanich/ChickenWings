@@ -32,7 +32,7 @@ public class PigMovementBasic : MonoBehaviour
 
 
     [SerializeField] private float ySpeed;
-    [SerializeField] private float xSpeed;
+    public float xSpeed;
     [SerializeField] private float amplitude;
     [SerializeField] private float frequency;
     private int direction = 1;
@@ -145,7 +145,7 @@ public class PigMovementBasic : MonoBehaviour
 
 
 
-        transform.Translate(Vector2.left * -xSpeed * Time.deltaTime);
+        transform.Translate(Vector2.left * xSpeed * Time.deltaTime);
 
         if (sinDown)
         {

@@ -5,13 +5,13 @@ using System.Linq;
 [CreateAssetMenu(fileName = "PlaceholderDataCollection", menuName = "PlaceholderScriptableObjects/PlaceholderDataCollection", order = 1)]
 public class PlaceholderDataCollection : ScriptableObject
 {
-
     public bool TestSpecifiedTrigger;
     [SerializeField] private GameObject placeholderRingPrefab;
     [SerializeField] private GameObject planeAreaPrefab;
     public List<PlaceholderTriggerGroup> triggerGroups = new List<PlaceholderTriggerGroup>();
 
     [Space(20)]
+
     public int SpecifiedTrigger;
 
     public void RecordPlaceholders(GameObject ringRecorder)
@@ -89,8 +89,12 @@ public class PlaceholderDataCollection : ScriptableObject
         }
     }
 
+
+
+
     public void RecordPlaceholdersForSpecifiedTrigger(GameObject ringRecorder)
     {
+
         // Find the trigger group that matches SpecifiedTrigger
         PlaceholderTriggerGroup specifiedGroup = triggerGroups.FirstOrDefault(g => g.triggerValue == SpecifiedTrigger);
 
@@ -148,6 +152,7 @@ public class PlaceholderDataCollection : ScriptableObject
             // Use DestroyImmediate in the editor, Destroy if this needs to run at runtime
             GameObject.DestroyImmediate(recordedOutput.transform.GetChild(i).gameObject);
         }
+
 
         foreach (var group in triggerGroups)
         {
@@ -215,6 +220,7 @@ public class PlaceholderDataCollection : ScriptableObject
                 Debug.LogWarning("PlaneType or FillObject is null. Skipping plane instantiation.");
             }
         }
+
 
 
         // Your existing logic for placing rings and planes...

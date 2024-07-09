@@ -46,7 +46,7 @@ public class PlayerStateManager : MonoBehaviour
     public bool justFlipped;
     public GameEvent DeadEvent;
     public float jumpForce;
-    private bool isDamaged;
+    public bool isDamaged { get; private set; }
     public float flipLeftForceX;
     public float flipLeftForceY;
     public float flipRightForceX;
@@ -894,14 +894,17 @@ public class PlayerStateManager : MonoBehaviour
         if (transform.position.x < 0)
         {
             AdjustForce(5, targetYVelocity);
-
         }
         else
         {
             AdjustForce(-5, targetYVelocity);
-
         }
-
+    }
+    public IEnumerator SetUndamagableCourintine(bool setBoolInitial, float duration)
+    {
+        isDamaged = true;
+        yield return new WaitForSeconds(duration);
+        isDamaged = false;
 
     }
 

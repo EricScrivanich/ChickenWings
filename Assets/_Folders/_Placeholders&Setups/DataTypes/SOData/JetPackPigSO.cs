@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu]
+// [CreateAssetMenuAttribute(fileName = "JetPackPigSetup", menuName = "IndividualSetups")]
+[System.Serializable]
 public class JetPackPigSO : EnemyData
 {
     public JetPackPigData[] data;
-    public override void InitializeEnemy()
+    public override void InitializeEnemy(EnemyPoolManager manager)
     {
-        var script = GameObject.Find("EnemyManager").GetComponent<EnemyPoolManager>();
-
+    
         for (int i = 0; i < data.Length; i++)
         {
-            script.GetJetPackPig(data[i].position, data[i].scale, data[i].speed);
+            manager.GetJetPackPig(data[i].position, data[i].scale, data[i].speed);
         }
 
     }

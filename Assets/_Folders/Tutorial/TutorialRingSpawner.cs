@@ -49,11 +49,11 @@ public class TutorialRingSpawner : MonoBehaviour
 
             if (ringID.triggeredRingOrder == totalRingPlaceholders)
             {
-                ringID.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringID.triggeredRingOrder, placeholderData.speed);
+                ringID.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, placeholderData.speed);
             }
             else
             {
-                ringID.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringID.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
+                ringID.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale,placeholderData.speed);
                 // If you have special logic for the last ring or a "BucketScript", you can include that here
             }
 

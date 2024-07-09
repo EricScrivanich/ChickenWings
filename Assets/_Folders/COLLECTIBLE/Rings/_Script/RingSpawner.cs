@@ -184,11 +184,11 @@ public class RingSpawner : MonoBehaviour
 
                 if (ringType.triggeredRingOrder == totalRingPlaceholders)
                 {
-                    ringType.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringType.triggeredRingOrder, placeholderData.speed);
+                    ringType.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale,  placeholderData.speed);
                 }
                 else
                 {
-                    ringType.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, ringType.triggeredRingOrder, placeholderData.speed, placeholderData.doesTriggerInt, placeholderData.xCordinateTrigger);
+                    ringType.GetRing(placeholderData.position, placeholderData.rotation, placeholderData.scale, placeholderData.speed);
                     // If you have special logic for the last ring or a "BucketScript", you can include that here
                 }
 

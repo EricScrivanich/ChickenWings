@@ -35,17 +35,12 @@ public class BucketCollisionState : PlayerBaseState
 
     }
 
-    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    // {
-
-    // }
-
     public override void RotateState(PlayerStateManager player)
     {
 
     }
     public override void ExitState(PlayerStateManager player)
-  
+
     {
 
     }
@@ -61,27 +56,28 @@ public class BucketCollisionState : PlayerBaseState
             // time += Time.deltaTime;
             // if (time > waitDuration)
             // {
-                if (player.transform.position.y > 4)
-                {
-                    yForce = 1f;
-                }
-                else if (player.transform.position.y > 3) 
-                {
-                    yForce = 2.5f;
-                }
-                else
-                {
-                    yForce = 7f;
-                }
+            if (player.transform.position.y > 4)
+            {
+                yForce = 1f;
+            }
+            else if (player.transform.position.y > 3)
+            {
+                yForce = 2.5f;
+            }
+            else
+            {
+                yForce = 7f;
+            }
 
 
-                player.rb.simulated = true;
-                
+            player.rb.simulated = true;
+
             player.AdjustForce(0, yForce);
 
             player.disableButtons = false;
-                player.bucketIsExploded = false;
-                player.SwitchState(player.IdleState);
+            player.bucketIsExploded = false;
+            player.StartCoroutine(player.SetUndamagableCourintine(true, 2.2f));
+            player.SwitchState(player.IdleState);
 
             // }
 

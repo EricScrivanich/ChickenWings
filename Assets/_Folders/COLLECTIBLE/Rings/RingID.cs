@@ -15,7 +15,7 @@ public class RingID : ScriptableObject
     public int nextIndex = 0;
     private int particlesInUse;
     public int IDIndex;
-    
+
     public GameObject ballParticlePrefab;
     private GameObject ballParticle;
     private ParticleSystem ballPS;
@@ -40,23 +40,32 @@ public class RingID : ScriptableObject
 
     public int CorrectRing;
 
+    private int ringOrder;
+
 
 
     private const int poolSize = 5;
     public void ResetVariables()
     {
-        Debug.Log("Resseting: " + this);
+
         CorrectRing = 1;
+        ringOrder = 1;
         currentBucket = null;
         objectsToDeactivate.Clear();
         nextIndex = 0;
         triggeredRingOrder = 0;
-        
+
         ReturnAllParticles();
         ringList.Clear();
         particlesInUse = 0;
         ReadyToSpawn = true;
 
+    }
+
+    public void InitializeVariables()
+    {
+        CorrectRing = 1;
+        ringOrder = 1;
     }
     public List<GameObject> CurrentRingList()
     {
@@ -131,23 +140,23 @@ public class RingID : ScriptableObject
         }
         if (ballParticlePrefab != null)
         {
-            ballParticle = Instantiate(ballParticlePrefab,parent);
+            ballParticle = Instantiate(ballParticlePrefab, parent);
             ballPS = ballParticle.GetComponent<ParticleSystem>();
-        
+
         }
 
         ringList = new List<RingMovement>();
         particleSystemsQueue = new Queue<GameObject>();
         objectsToDeactivate = new List<GameObject>();
 
-       
+
         if (ringParticles != null)
         {
 
 
             for (int i = 0; i < poolSize; i++)
             {
-                GameObject effectInstance = Instantiate(ringParticles,parent); // Instantiate from the prefab
+                GameObject effectInstance = Instantiate(ringParticles, parent); // Instantiate from the prefab
 
                 effectInstance.SetActive(false); // Start with the GameObject disabled
                 particleSystemsQueue.Enqueue(effectInstance);
@@ -174,7 +183,7 @@ public class RingID : ScriptableObject
 
     }
 
-    public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, int ringOrder, float setSpeed, int doesTriggerInt, float xCordinateTrigger)
+    public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, float setSpeed)
     {
         ReadyToSpawn = false;
         RingMovement ringScript = Pool.GetRing(this);
@@ -184,13 +193,13 @@ public class RingID : ScriptableObject
         ringScript.transform.localScale = setScale;
         ringScript.order = ringOrder;
         ringScript.speed = setSpeed;
-        ringScript.doesTriggerInt = doesTriggerInt;
-        ringScript.xCordinateTrigger = xCordinateTrigger;
+
 
         ringScript.gameObject.SetActive(true);
 
 
         ringList.Add(ringScript);
+        ringOrder++;
         if (particlesInUse < poolSize)
         {
             particlesInUse++;
@@ -245,15 +254,8 @@ public class RingID : ScriptableObject
         }
     }
 
-    private void MoveParticleObject()
-    {
 
-    }
-
-
-
-
-    public void GetBucket(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, int bucketOrder, float setSpeed)
+    public void GetBucket(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, float setSpeed)
     {
         BucketScript bucketScript = Pool.GetBucket(this);
 
@@ -261,15 +263,12 @@ public class RingID : ScriptableObject
         bucketScript.transform.position = setPosition;
         bucketScript.transform.rotation = setRotation;
         bucketScript.transform.localScale = setScale;
-        bucketScript.order = bucketOrder;
+        bucketScript.order = ringOrder;
         bucketScript.speed = setSpeed;
         currentBucket = bucketScript.gameObject;
-
-
-
-        // bucketScript.gameObject.SetActive(true);
-
         bucketScript.gameObject.SetActive(true);
+        ringOrder++;
+
     }
 
 
@@ -281,6 +280,7 @@ public class RingID : ScriptableObject
 
         if (targetPos.HasValue)
         {
+
             ballScript.targetPosition = targetPos.Value;
             ballScript.targetObject = null;
         }
