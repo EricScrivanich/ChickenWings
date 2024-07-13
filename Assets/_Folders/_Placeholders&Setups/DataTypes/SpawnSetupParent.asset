@@ -19,10 +19,12 @@ MonoBehaviour:
     - rid: 7051805990084149327
   - dataArray:
     - rid: 7051805990084149323
-    - rid: 7051805990084149324
+    - rid: 7051806030982283265
     - rid: 7051805990084149325
   collectableSetup:
-  - {fileID: 11400000, guid: 0c1943fa4e755483a8eb8552feebd19a, type: 2}
+  - dataArray: []
+  - dataArray:
+    - rid: 7051806030982283264
   references:
     version: 2
     RefIds:
@@ -34,14 +36,6 @@ MonoBehaviour:
         - position: {x: 25.01, y: 1.01}
           scale: {x: 2.16, y: 2.05, z: 1}
           speed: 11.5
-    - rid: 7051805990084149324
-      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 1.3567609
-        data:
-        - position: {x: 16.090298, y: 2.983082}
-          scale: {x: 0.82, y: 0.82, z: 0.82}
-          speed: 6.7
     - rid: 7051805990084149325
       type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -67,3 +61,32 @@ MonoBehaviour:
         - position: {x: 16.090298, y: 2.983082}
           scale: {x: 0.82, y: 0.82, z: 0.82}
           speed: 6.2
+    - rid: 7051806030982283264
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.2033474
+        isRings: 1
+        data:
+        - position: {x: 12.517426, y: -0.17489123}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 14.90046, y: -0.11378765}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 18.016737, y: 0.49724698}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+    - rid: 7051806030982283265
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 1.9970149
+        data:
+        - position: {x: 16.090298, y: 2.983082}
+          scale: {x: 0.82, y: 0.82, z: 0.82}
+          speed: 6.7
+        - position: {x: 20.38, y: 2.983082}
+          scale: {x: 0.82, y: 0.82, z: 0.82}
+          speed: 6.7

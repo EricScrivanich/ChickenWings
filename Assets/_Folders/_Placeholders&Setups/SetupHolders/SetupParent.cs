@@ -13,54 +13,65 @@ public class SetupParent : ScriptableObject
 
     public List<EnemyDataArray> enemySetup = new List<EnemyDataArray>();
     // public SpawnSetupEnemy[] enemySetup;
-    public SpawnSetupCollectable[] collectableSetup;
+    public List<CollectableDataArray> collectableSetup = new List<CollectableDataArray>();
 
-    public int collectableTriggerCount
-    {
-        get
-        {
+    public int collectableTriggerCount => collectableSetup.Count;
 
-            return collectableSetup.Length;
+    public int enemyTriggerCount => enemySetup.Count;
 
-        }
-
-        private set
-        {
-
-        }
-
-    }
-    public int enemyTriggerCount
-    {
-        get
-        {
-            return enemySetup.Count;
-        }
-
-        private set
-        {
-
-        }
-
-    }
 
     public void SpawnEnemiesOnly(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, int currentTrigger)
     {
 
-        foreach(var enemySet in enemySetup[currentTrigger].dataArray)
+        foreach (var enemySet in enemySetup[currentTrigger].dataArray)
         {
             enemySet.InitializeEnemy(enemyManager);
         }
         collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(enemySetup[currentTrigger].dataArray, null)));
-        // foreach (var setup in enemySetup[currentTrigger])
-        // {
-        //     setup.InitializeEnemy(enemyManager);
-        // }
 
-
-        // collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(enemySetup[currentTrigger], null)));
-        // collectableManager.GetTriggerObject(enemySetup[currentTrigger].triggerObjectPosition, enemySetup[currentTrigger].triggerObjectSpeed, enemySetup[currentTrigger].triggerObjectXCordinateTrigger);
     }
+
+    public void SpawnCollectablesOnly(CollectablePoolManager collectableManager, int currentTrigger)
+    {
+        foreach (var coll in collectableSetup[currentTrigger].dataArray)
+        {
+            coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
+        }
+        collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(null, collectableSetup[currentTrigger].dataArray)));
+
+    }
+
+
+
+
+
+    public void SpawnBoth(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, int currentTrigger)
+    {
+        if (collectableSetup[currentTrigger].dataArray.Length > 0)
+        {
+            foreach (var coll in collectableSetup[currentTrigger].dataArray)
+            {
+                coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
+            }
+        }
+
+        if (enemySetup[currentTrigger].dataArray.Length > 0)
+        {
+            foreach (var enemySet in enemySetup[currentTrigger].dataArray)
+            {
+                enemySet.InitializeEnemy(enemyManager);
+            }
+          
+
+        }
+
+        collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(enemySetup[currentTrigger].dataArray, collectableSetup[currentTrigger].dataArray)));
+
+
+
+    }
+
+
 
     public void RecordForEnemyTrigger(List<EnemyData> dataList, int trigger)
     {
@@ -91,10 +102,42 @@ public class SetupParent : ScriptableObject
 
         }
     }
-    
-    public float CheckTime(EnemyData[] dataEnemy, CollectableData dataCollectable)
+
+    public void RecordForColletableTrigger(List<CollectableData> dataList, int trigger)
+    {
+        CollectableData[] data = new CollectableData[dataList.Count];
+        for (int i = 0; i < dataList.Count; i++)
+        {
+            data[i] = dataList[i];
+        }
+
+        var indexData = new CollectableDataArray(data);
+        collectableSetup[trigger] = indexData;
+
+    }
+    public void RecordSpecificCollectable(CollectableData data, int trigger)
+    {
+        if (trigger >= 0 && trigger < enemySetup.Count)
+        {
+            CollectableDataArray array = collectableSetup[trigger];
+
+            for (int i = 0; i < array.dataArray.Length; i++)
+            {
+                if (array.dataArray[i].GetType() == data.GetType())
+                {
+                    array.dataArray[i] = data;
+                    return; // Assuming you want to replace only one matching entry
+                }
+            }
+
+        }
+    }
+
+    public float CheckTime(EnemyData[] dataEnemy, CollectableData[] dataColl)
     {
         float maxTimeToTrigger = 0f;
+
+        int count = 0;
 
         if (dataEnemy != null)
         {
@@ -102,6 +145,17 @@ public class SetupParent : ScriptableObject
             {
                 if (enemySetup.TimeToTrigger > maxTimeToTrigger) maxTimeToTrigger = enemySetup.TimeToTrigger;
             }
+            count++;
+        }
+
+        if (dataColl != null)
+        {
+            foreach (var collSetup in dataColl)
+            {
+                if (collSetup.TimeToTrigger > maxTimeToTrigger) maxTimeToTrigger = collSetup.TimeToTrigger;
+            }
+            count++;
+
         }
 
         // if (dataCollectable != null)
@@ -112,58 +166,12 @@ public class SetupParent : ScriptableObject
         //     }
         // }
 
-        Debug.Log("Trigger Time for next Enemy setup is: " + maxTimeToTrigger + " seconds");
+        Debug.Log("Trigger Time for next Enemy setup is: " + maxTimeToTrigger + " seconds with a count of: " + count);
         return maxTimeToTrigger;
     }
 
-    public void SpawnCollectablesOnly(CollectablePoolManager collectableManager, int currentTrigger)
-    {
-        collectableSetup[currentTrigger].SpawnCollectables(collectableManager, collectableSetup.Length == currentTrigger + 1);
-        collectableManager.GetTriggerObject(collectableSetup[currentTrigger].triggerObjectPosition, collectableSetup[currentTrigger].triggerObjectSpeed, collectableSetup[currentTrigger].triggerObjectXCordinateTrigger);
-    }
 
 
-    public void SpawnBoth(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, int currentTrigger)
-    {
-        // bool hasEnemies = false;
-        // bool hasCollectables = false;
-
-        // if (enemySetup[currentTrigger] == null && collectableSetup[currentTrigger] == null)
-        // {
-        //     Debug.Log("NoIndex");
-        //     return;
-        // }
-
-        // if (enemySetup[currentTrigger] != null)
-        // {
-        //     enemySetup[currentTrigger].SpawnEnemies(enemyManager);
-        //     hasEnemies = true;
-        // }
-
-        // if (collectableSetup[currentTrigger] != null)
-        // {
-        //     collectableSetup[currentTrigger].SpawnCollectables(collectableManager, collectableSetup.Length == currentTrigger + 1);
-        //     hasCollectables = true;
-        // }
-
-        // if (hasEnemies && !hasCollectables) collectableManager.GetTriggerObject(enemySetup[currentTrigger].triggerObjectPosition, enemySetup[currentTrigger].triggerObjectSpeed, enemySetup[currentTrigger].triggerObjectXCordinateTrigger);
-        // else if (!hasEnemies && hasCollectables) collectableManager.GetTriggerObject(collectableSetup[currentTrigger].triggerObjectPosition, collectableSetup[currentTrigger].triggerObjectSpeed, collectableSetup[currentTrigger].triggerObjectXCordinateTrigger);
-        // else if (hasEnemies && hasCollectables)
-        // {
-
-
-
-        // bool useEnemy = CompareTriggers(enemySetup[currentTrigger].triggerObjectPosition, enemySetup[currentTrigger].triggerObjectSpeed, enemySetup[currentTrigger].triggerObjectXCordinateTrigger,
-        // collectableSetup[currentTrigger].triggerObjectPosition, collectableSetup[currentTrigger].triggerObjectSpeed, collectableSetup[currentTrigger].triggerObjectXCordinateTrigger);
-
-        // if (useEnemy) collectableManager.GetTriggerObject(enemySetup[currentTrigger].triggerObjectPosition, enemySetup[currentTrigger].triggerObjectSpeed, enemySetup[currentTrigger].triggerObjectXCordinateTrigger);
-        // else collectableManager.GetTriggerObject(collectableSetup[currentTrigger].triggerObjectPosition, collectableSetup[currentTrigger].triggerObjectSpeed, collectableSetup[currentTrigger].triggerObjectXCordinateTrigger);
-
-        // enemySetup[currentTrigger].SpawnEnemies(enemyManager);
-        // collectableSetup[currentTrigger].SpawnCollectables(collectableManager, collectableSetup.Length == currentTrigger + 1);
-
-
-    }
 
     private bool CompareTriggers(Vector2 posEnemy, float speedEnemy, float xCordEnemy, Vector2 posColl, float speedColl, float xCordColl)
     {

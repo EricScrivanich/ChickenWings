@@ -18,7 +18,8 @@ public class LifeDisplay : MonoBehaviour
     {
 
         player.infiniteLives = infiniteLives;
-       
+        lives = player.Lives;
+
 
 
 
@@ -68,13 +69,8 @@ public class LifeDisplay : MonoBehaviour
         else if (newLives < lives) // Check if lost a life
         {
             int livesLost = lives - newLives;
-            for (int i = 2; i > newLives - 1; i--)
-            {
-                // Assuming eggs are lost from right to left
+            eggAnimators[newLives].SetBool("IsBrokenBool", true);
 
-                eggAnimators[i].SetBool("IsBrokenBool", true);
-
-            }
         }
 
         lives = newLives; // Update the current lives count

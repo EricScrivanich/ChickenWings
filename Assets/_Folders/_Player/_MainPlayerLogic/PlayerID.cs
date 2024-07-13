@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class PlayerID : ScriptableObject
 {
-    
+
     public bool testingNewGravity;
     public bool isTutorial;
-    public float playerJumpForce; 
+    public float playerJumpForce;
     public float playerAddDownForce;
     public bool constantPlayerForceBool;
     public float constantPlayerForce;
@@ -36,14 +36,14 @@ public class PlayerID : ScriptableObject
     public bool UsingClocker;
     private bool hasHitMaxMana;
 
-    
+
 
     public bool isHolding;
     public bool isAlive;
     public float addScoreTime;
     public float CurrentMana
 
-   
+
     {
         get
         {
@@ -66,7 +66,7 @@ public class PlayerID : ScriptableObject
                 globalEvents.AddMana?.Invoke();
                 if (currentMana >= ManaNeeded * (numberOfPowersThatCanBeUsed + 1))
                 {
-                    
+
                     globalEvents.AddPowerUse?.Invoke((ManaNeeded * (numberOfPowersThatCanBeUsed + 1)) / MaxMana);
                     numberOfPowersThatCanBeUsed += 1;
                 }
@@ -152,7 +152,7 @@ public class PlayerID : ScriptableObject
         Score = startingScore;
         Ammo = startingAmmo;
         Lives = startingLives;
-       
+
         resetingValues = false;
         numberOfPowersThatCanBeUsed = Mathf.FloorToInt(CurrentMana / ManaNeeded);
 
@@ -166,7 +166,7 @@ public class PlayerID : ScriptableObject
     {
         globalEvents.OnAddScore?.Invoke(amount);
         Score += amount;
-        
+
 
 
     }

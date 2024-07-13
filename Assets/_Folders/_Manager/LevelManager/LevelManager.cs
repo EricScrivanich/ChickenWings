@@ -7,6 +7,7 @@ using TMPro;
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private LevelManagerID LvlID;
+    public PlayerID player;
     [SerializeField] private GameObject finishedLevelUIPrefab;
     [SerializeField] private bool activateRingsAfterDelay;
     private Canvas canvas;
@@ -17,6 +18,18 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private bool areRingsRequired;
     private bool finishedRings;
     [SerializeField] private int ringsNeeded;
+
+
+
+    [Header("Barns")]
+
+    [SerializeField] private bool areBarnsRequired;
+    [SerializeField] private int barnsNeeded;
+    private bool finishedBarns;
+    private int currentBarnsPassed;
+
+
+    [Header("Other")]
     [SerializeField] private int currentRingsPassed;
     [SerializeField] private List<GameObject> initalGameObjectsToDeactivate;
     [SerializeField] private List<GameObject> sections;
@@ -29,12 +42,21 @@ public class LevelManager : MonoBehaviour
     {
         currentSection = 0;
         hasStartedPlayTimeDelayedPause = false;
-        LvlID.ResetLevel(areRingsRequired, ringsNeeded);
+        LvlID.ResetLevel(areRingsRequired, ringsNeeded, barnsNeeded);
         finishedRings = !areRingsRequired;
+        finishedBarns = !areBarnsRequired;
 
         if (areRingsRequired)
         {
             LvlID.inputEvent.RingParentPass += PassRing;
+
+        }
+
+        if (areBarnsRequired)
+        {
+            currentBarnsPassed = 0;
+            LvlID.barnsNeeded = barnsNeeded;
+            player.globalEvents.OnAddScore += HitBarn;
 
         }
     }
@@ -187,7 +209,7 @@ public class LevelManager : MonoBehaviour
             yield return null;
         }
 
-        
+
 
         Time.timeScale = targetTimeScale;
         hasStartedPlayTimeDelayedPause = false;
@@ -208,9 +230,32 @@ public class LevelManager : MonoBehaviour
 
     }
 
+    void HitBarn(int inARow)
+    {
+        currentBarnsPassed++;
+        Debug.Log("HitBarn");
+
+
+        if (currentBarnsPassed >= LvlID.barnsNeeded)
+        {
+            finishedBarns = true;
+            Debug.Log("SHould Check Goals");
+            CheckGoals();
+        }
+
+    }
+
     private void OnDestroy()
     {
-        LvlID.inputEvent.RingParentPass -= PassRing;
+        if (areRingsRequired)
+        {
+            LvlID.inputEvent.RingParentPass -= PassRing;
+        }
+        if (areBarnsRequired)
+        {
+            player.globalEvents.OnAddScore -= HitBarn;
+        }
+
     }
 
 
@@ -218,11 +263,13 @@ public class LevelManager : MonoBehaviour
     private void CheckGoals()
     {
         currentSection++;
+        Debug.Log("Goals Checked: FinishedRings = " + finishedRings + ": FinishedBarns = " + finishedBarns);
+
         if (currentSection + 1 <= sections.Count)
         {
             ShowSection(true, currentSection);
         }
-        if (finishedRings == true)
+        if (finishedRings && finishedBarns)
         {
             CreateFinish();
         }

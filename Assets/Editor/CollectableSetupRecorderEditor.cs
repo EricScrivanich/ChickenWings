@@ -39,65 +39,65 @@ public class CollectableSetupRecorderEditor : Editor
 
         }
 
-        if (GUILayout.Button("Record For Trigger"))
-        {
+        // if (GUILayout.Button("Record For Trigger"))
+        // {
            
-            // Automatically find the GameObject named "SetupRecorder"
-            GameObject recorder = GameObject.Find("SetupRecorderCollectable");
-            script.collectableSetups = new CollectableData[0];
+        //     // Automatically find the GameObject named "SetupRecorder"
+        //     GameObject recorder = GameObject.Find("SetupRecorderCollectable");
+        //     script.collectableSetups = new CollectableData[0];
 
 
-            if (recorder != null)
-            {
-                var triggerObjectRecorder = recorder.GetComponentInChildren<TriggerSetupObject>();
+        //     if (recorder != null)
+        //     {
+        //         var triggerObjectRecorder = recorder.GetComponentInChildren<TriggerSetupObject>();
 
-                if (triggerObjectRecorder != null)
-                {
-                    script.triggerObjectPosition = triggerObjectRecorder.transform.position;
-                    script.triggerObjectSpeed = triggerObjectRecorder.speed;
-                    script.triggerObjectXCordinateTrigger = triggerObjectRecorder.xCordinateTrigger;
-                }
-                else
-                {
-                    Debug.Log("No Trigger Object Found");
-                    script.triggerObjectPosition = Vector2.zero;
-                    script.triggerObjectSpeed = 0;
-                    script.triggerObjectXCordinateTrigger = 0;
+        //         if (triggerObjectRecorder != null)
+        //         {
+        //             script.triggerObjectPosition = triggerObjectRecorder.transform.position;
+        //             script.triggerObjectSpeed = triggerObjectRecorder.speed;
+        //             script.triggerObjectXCordinateTrigger = triggerObjectRecorder.xCordinateTrigger;
+        //         }
+        //         else
+        //         {
+        //             Debug.Log("No Trigger Object Found");
+        //             script.triggerObjectPosition = Vector2.zero;
+        //             script.triggerObjectSpeed = 0;
+        //             script.triggerObjectXCordinateTrigger = 0;
 
-                }
-                // Use the found GameObject to record placeholders
-                var ringRecorder = recorder.GetComponentsInChildren<RingMovement>();
+        //         }
+        //         // Use the found GameObject to record placeholders
+        //         var ringRecorder = recorder.GetComponentsInChildren<RingMovement>();
 
-                if (ringRecorder.Length > 0)
-                {
-                    // Sort the ringRecorder array by distance from 0 on the X axis
-                    Array.Sort(ringRecorder, (a, b) => Mathf.Abs(a.transform.position.x).CompareTo(Mathf.Abs(b.transform.position.x)));
+        //         if (ringRecorder.Length > 0)
+        //         {
+        //             // Sort the ringRecorder array by distance from 0 on the X axis
+        //             Array.Sort(ringRecorder, (a, b) => Mathf.Abs(a.transform.position.x).CompareTo(Mathf.Abs(b.transform.position.x)));
 
-                    RingSO newRingSO = CreateInstance<RingSO>();
-                    newRingSO.data = new RingData[ringRecorder.Length];
+        //             RingSO newRingSO = new RingSO;
+        //             newRingSO.data = new RingData[ringRecorder.Length];
 
-                    for (int i = 0; i < ringRecorder.Length; i++)
-                    {
-                        newRingSO.data[i] = new RingData
-                        {
-                            position = ringRecorder[i].transform.position,
-                            rotation = ringRecorder[i].transform.rotation,
-                            scale = ringRecorder[i].transform.localScale,
-                            speed = ringRecorder[i].speed
-                        };
-                    }
+        //             for (int i = 0; i < ringRecorder.Length; i++)
+        //             {
+        //                 newRingSO.data[i] = new RingData
+        //                 {
+        //                     position = ringRecorder[i].transform.position,
+        //                     rotation = ringRecorder[i].transform.rotation,
+        //                     scale = ringRecorder[i].transform.localScale,
+        //                     speed = ringRecorder[i].speed
+        //                 };
+        //             }
 
-                    // Add the new instance to the enemySetups array
-                    ArrayUtility.Add(ref script.collectableSetups, newRingSO);
-                    AssetDatabase.AddObjectToAsset(newRingSO, script); // Add the new instance to the SpawnSetup asset
-                    EditorUtility.SetDirty(script); // Marks the object as dirty to ensure the changes are saved
-                }
-            }
+        //             // Add the new instance to the enemySetups array
+        //             ArrayUtility.Add(ref script.collectableSetups, newRingSO);
+        //             AssetDatabase.AddObjectToAsset(newRingSO, script); // Add the new instance to the SpawnSetup asset
+        //             EditorUtility.SetDirty(script); // Marks the object as dirty to ensure the changes are saved
+        //         }
+        //     }
 
 
            
 
-        }
+        // }
         if (GUILayout.Button("Place Setup In Scene"))
         {
 

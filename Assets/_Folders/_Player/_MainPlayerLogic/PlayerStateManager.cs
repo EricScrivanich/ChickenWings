@@ -708,6 +708,7 @@ public class PlayerStateManager : MonoBehaviour
 
             else
             {
+                Debug.Log("NotLoseLife" + ID.infiniteLives);
                 ID.globalEvents.OnInfiniteLives?.Invoke();
             }
             DamageEffects();

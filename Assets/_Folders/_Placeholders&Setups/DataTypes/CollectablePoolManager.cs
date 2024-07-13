@@ -8,10 +8,11 @@ public class CollectablePoolManager : MonoBehaviour
     public SetupParent setup;
     private int trigger = 0;
     private EnemyPoolManager enemyManager;
+    int side = 0;
 
-    [SerializeField] private RingID[] ringTypes;
-    [SerializeField] private GameObject triggerObjectPrefab;
-    private Queue<TriggerSetupObject> triggerObjects;
+    private int currentEggCollectableIndex = 0;
+    [SerializeField] private int eggCollectableCount;
+   
     private int currentRingType;
     private readonly int triggerObjectCount = 3;
     // Start is called before the first frame update
@@ -19,19 +20,43 @@ public class CollectablePoolManager : MonoBehaviour
     {
         ringPool.Initialize();
         enemyManager = GetComponent<EnemyPoolManager>();
-        triggerObjects = new Queue<TriggerSetupObject>();
+        // eggCollectables = new EggCollectableMovement[eggCollectableCount];
 
-        for (int i = 0; i < triggerObjectCount; i++)
-        {
-            var obj = Instantiate(triggerObjectPrefab);
-            var script = obj.GetComponent<TriggerSetupObject>();
-            script.manager = this;
-            triggerObjects.Enqueue(script);
-            obj.SetActive(false);
-        }
+        // for (int i = 0; i < eggCollectableCount; i++)
+        // {
+        //     var obj = Instantiate(eggCollectablePrefab);
+        //     var script = obj.GetComponent<EggCollectableMovement>();
+        //     eggCollectables[i] = script;
+        // }
 
-        Invoke("TriggerNextSpawn", 2f);
+        // var barnObj = Instantiate(barnPrefab);
+        // barnScript = barnObj.GetComponent<BarnMovement>();
+        // barnObj.SetActive(false);
+
+        // Invoke("TriggerNextSpawn", 2f);
+       
     }
+
+
+    // public void GetEggCollectable(Vector2 pos, bool isThree, float speed)
+    // {
+    //     if (currentEggCollectableIndex! < eggCollectableCount) currentEggCollectableIndex = 0;
+    //     var obj = eggCollectables[currentEggCollectableIndex];
+    //     obj.transform.position = pos;
+    //     obj.EnableAmmo(isThree, speed);
+
+    // }
+
+    // public void GetBarn()
+    // {
+    //     if (side > 3) side = 0;
+
+    //     barnScript.transform.position = new Vector2(13.5f, -4.64f);
+    //     Debug.Log("Barn Index Should Be: " + side);
+    //     barnScript.Initilaize(side);
+    //     side++;
+    // }
+
 
 
     public IEnumerator NextTriggerCourintine(float delay)
@@ -44,19 +69,29 @@ public class CollectablePoolManager : MonoBehaviour
 
     public void TriggerNextSpawn()
     {
-        setup.SpawnEnemiesOnly(this, enemyManager, trigger);
+        if (trigger < setup.collectableTriggerCount && trigger < setup.enemyTriggerCount)
+        {
+            setup.SpawnBoth(this, enemyManager, trigger);
+            Debug.Log("SPawnedBoth");
+        }
+        else if (trigger! < setup.collectableTriggerCount && trigger < setup.enemyTriggerCount)
+        {
+            setup.SpawnEnemiesOnly(this, enemyManager, trigger);
+            Debug.Log("SPawnedEnemies");
+
+        }
+
+        else if (trigger < setup.collectableTriggerCount && trigger! < setup.enemyTriggerCount)
+        {
+            setup.SpawnCollectablesOnly(this, trigger);
+            Debug.Log("SPawnedCollectables");
+
+
+        }
+
         trigger++;
     }
-    public void GetTriggerObject(Vector2 pos, float speed, float xCord)
-    {
-        var obj = triggerObjects.Dequeue();
-        obj.transform.position = (Vector2)transform.position + pos;
-        obj.speed = speed;
-        obj.xCordinateTrigger = xCord;
-        obj.gameObject.SetActive(true);
 
-        triggerObjects.Enqueue(obj);
-    }
 
     // Update is called once per frame
     public void GetRing(Vector2 position, Vector3 scale, Quaternion rotation, float speed, bool isBucket)

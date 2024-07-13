@@ -34,7 +34,7 @@ public class TimeManager : MonoBehaviour
         {
             return;
         }
-        StartCoroutine(AddScore());
+        // StartCoroutine(AddScore());
 
 
     }
