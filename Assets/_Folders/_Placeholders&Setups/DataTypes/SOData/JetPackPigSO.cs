@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 // [CreateAssetMenuAttribute(fileName = "JetPackPigSetup", menuName = "IndividualSetups")]
 [System.Serializable]

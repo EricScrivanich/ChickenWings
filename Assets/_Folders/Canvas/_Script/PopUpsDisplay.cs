@@ -8,9 +8,8 @@ public class PopUpsDisplay : MonoBehaviour
     public PlayerID ID;
     [SerializeField] private LevelManagerID LvlID;
 
-    [SerializeField] private GameObject FinishedLevelUI;
+
     [SerializeField] private GameObject Frozen;
-    [SerializeField] private GameObject FrozenOverlay;
     private PlayerMovement playerMove;
     [SerializeField] private float lerpTime = 1f;
     private float currentLerpTime = 0f;
@@ -23,27 +22,21 @@ public class PopUpsDisplay : MonoBehaviour
     private PlayerManager playerMan;
     private ScoreManager scoreMan;
     [SerializeField] private Material frozenMaterial;
-    [SerializeField] private Material frozenOverlayMaterial;
+
 
     [SerializeField] private float fadeInDuration = .9f;
     [SerializeField] private float fadeOutDuration = .2f;
     [SerializeField] private float frozenTime = .2f;
 
     // New variable for fade amount of frozenOverlayMaterial
-    [SerializeField] private float frozenOverlayFadeAmount = 0.5f;
+
 
     void Start()
     {
-        if (FinishedLevelUI != null)
-        {
-            FinishedLevelUI.SetActive(false);
-        }
-        frozenOverlayMaterial.SetFloat("_FadeAmount", 1);
-
 
         gameOver.gameObject.SetActive(false);
         Frozen.SetActive(false);
-        FrozenOverlay.SetActive(false);
+
 
     }
     private void GameOver2()
@@ -119,7 +112,7 @@ public class PopUpsDisplay : MonoBehaviour
         {
             float fadeAmount = Mathf.Lerp(1, 0, elapsedTime / fadeInDuration);
             frozenMaterial.SetFloat("_FadeAmount", fadeAmount);
-            frozenOverlayMaterial.SetFloat("_FadeAmount", Mathf.Lerp(frozenOverlayFadeAmount, 0, elapsedTime / fadeInDuration));
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -134,7 +127,7 @@ public class PopUpsDisplay : MonoBehaviour
         {
             float fadeAmount = Mathf.Lerp(0, 1, elapsedTime / fadeOutDuration);
             frozenMaterial.SetFloat("_FadeAmount", fadeAmount);
-            frozenOverlayMaterial.SetFloat("_FadeAmount", Mathf.Lerp(0, frozenOverlayFadeAmount, elapsedTime / fadeOutDuration));
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -144,6 +137,6 @@ public class PopUpsDisplay : MonoBehaviour
     private void FinishLevel()
     {
         Time.timeScale = 0;
-        FinishedLevelUI.SetActive(true);
+
     }
 }

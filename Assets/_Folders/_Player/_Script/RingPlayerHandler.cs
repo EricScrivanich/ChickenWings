@@ -15,18 +15,24 @@ public class RingPlayerHandler : MonoBehaviour
     public RingID RingPink;
     public RingID RingGold;
     public RingID RingPurple;
+    private CanvasScreenPositions positionScript;
     // Start is called before the first frame update
     void Start()
     {
+        if (GameObject.Find("CanvasScreen") != null)
+        {
 
+            positionScript = GameObject.Find("CanvasScreen").GetComponent<CanvasScreenPositions>();
+
+        }
+        else 
+        {
+            Debug.Log("No Canvas Screen Display Gameobject Found In RingPlayerHandler script");
+        }
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+   
 
     private void AddScore()
     {
@@ -58,7 +64,7 @@ public class RingPlayerHandler : MonoBehaviour
             case 1:
                 if (ID.Lives < 3)
                 {
-                    RingPink.GetBall(transform.position, null, Lives[ID.Lives - 1].transform.position);
+                    RingPink.GetBall(transform.position, null, positionScript.ReturnPinkPosition());
 
                 }
 
@@ -72,7 +78,7 @@ public class RingPlayerHandler : MonoBehaviour
 
                 }
 
-                RingGold.GetBall(transform.position, null, scoreText.transform.position);
+                RingGold.GetBall(transform.position, null, positionScript.ReturnGoldPosition());
 
                 break;
 

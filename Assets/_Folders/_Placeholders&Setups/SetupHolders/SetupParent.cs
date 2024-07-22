@@ -8,8 +8,12 @@ using UnityEngine;
 public class SetupParent : ScriptableObject
 {
 
+    public bool isRandomSetup;
+    public int fillRingWithEnemiesStartIndex;
 
-    public int TriggerToEdit;
+    private Queue<int> lastPickedTriggers = new Queue<int>();
+
+    public int[] enemyTriggerForEachRingIndex;
 
     public List<EnemyDataArray> enemySetup = new List<EnemyDataArray>();
     // public SpawnSetupEnemy[] enemySetup;
@@ -31,6 +35,8 @@ public class SetupParent : ScriptableObject
 
     }
 
+
+
     public void SpawnCollectablesOnly(CollectablePoolManager collectableManager, int currentTrigger)
     {
         foreach (var coll in collectableSetup[currentTrigger].dataArray)
@@ -41,8 +47,88 @@ public class SetupParent : ScriptableObject
 
     }
 
+    public void SpawnRandomSetWithRings(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, bool finalRing)
+    {
+        List<float> tempList = new List<float>();
+
+        int randomRingTrigger = Random.Range(0, collectableSetup.Count);
+
+        int randomRingSetupInTrigger = Random.Range(0, collectableSetup[randomRingTrigger].dataArray.Length);
+        var pickedRingSet = collectableSetup[randomRingTrigger].dataArray[randomRingSetupInTrigger];
+        int randomEnemyTrigger;
+
+        if (randomRingTrigger == 0)
+        {
+            randomEnemyTrigger = Random.Range(0, enemyTriggerForEachRingIndex[0]);
+
+        }
+        else if (randomRingTrigger >= enemyTriggerForEachRingIndex.Length)
+        {
+            randomEnemyTrigger = -1;
+        }
+        else
+        {
+            randomEnemyTrigger = Random.Range(enemyTriggerForEachRingIndex[randomRingTrigger - 1], enemyTriggerForEachRingIndex[randomRingTrigger]);
+
+        }
+
+        pickedRingSet.InitializeCollectable(collectableManager, finalRing);
+        tempList.Add(pickedRingSet.TimeToTrigger);
+
+        if (randomEnemyTrigger >= 0)
+        {
+            foreach (var set in enemySetup[randomEnemyTrigger].dataArray)
+            {
+                set.InitializeEnemy(enemyManager);
+                tempList.Add(set.TimeToTrigger);
+            }
+
+        }
 
 
+        collectableManager.StartCoroutine(collectableManager.NextRandomTriggerCourintine(Mathf.Max(tempList.ToArray())));
+
+    }
+
+
+
+    public void SpawnRandomEnemies(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager)
+    {
+        List<float> tempList = new List<float>();
+        int attempts = 0;
+        int random = -1;
+
+        while (attempts < 5)
+        {
+            random = Random.Range(0, enemySetup.Count);
+            if (!lastPickedTriggers.Contains(random))
+            {
+                break;
+            }
+            attempts++;
+        }
+
+        if (attempts == 5)
+        {
+            random = lastPickedTriggers.Dequeue(); // Get the least recent trigger
+        }
+
+        lastPickedTriggers.Enqueue(random);
+        if (lastPickedTriggers.Count > 3)
+        {
+            lastPickedTriggers.Dequeue(); // Ensure only the last 3 triggers are kept
+        }
+
+        var pickedSet = enemySetup[random].dataArray;
+
+        for (int i = 0; i < pickedSet.Length; i++)
+        {
+            tempList.Add(pickedSet[i].TimeToTrigger);
+            pickedSet[i].InitializeEnemy(enemyManager);
+        }
+
+        collectableManager.StartCoroutine(collectableManager.NextRandomTriggerCourintine(Mathf.Max(tempList.ToArray())));
+    }
 
 
     public void SpawnBoth(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, int currentTrigger)
@@ -61,7 +147,7 @@ public class SetupParent : ScriptableObject
             {
                 enemySet.InitializeEnemy(enemyManager);
             }
-          
+
 
         }
 
@@ -70,6 +156,34 @@ public class SetupParent : ScriptableObject
 
 
     }
+
+    public float CheckTime(EnemyData[] dataEnemy, CollectableData[] dataColl)
+    {
+        float maxTimeToTrigger = 0f;
+
+        int count = 0;
+
+        if (dataEnemy != null)
+        {
+            foreach (var enemySetup in dataEnemy)
+            {
+                if (enemySetup.TimeToTrigger > maxTimeToTrigger) maxTimeToTrigger = enemySetup.TimeToTrigger;
+            }
+            count++;
+        }
+        if (dataColl != null)
+        {
+            foreach (var collSetup in dataColl)
+            {
+                if (collSetup.TimeToTrigger > maxTimeToTrigger) maxTimeToTrigger = collSetup.TimeToTrigger;
+            }
+            count++;
+        }
+
+        Debug.Log("Trigger Time for next Enemy setup is: " + maxTimeToTrigger + " seconds with a count of: " + count);
+        return maxTimeToTrigger;
+    }
+
 
 
 
@@ -82,10 +196,115 @@ public class SetupParent : ScriptableObject
         }
 
         var indexData = new EnemyDataArray(data);
+        Debug.Log("Length is: " + indexData.dataArray.Length);
         enemySetup[trigger] = indexData;
 
     }
-    public void RecordSpecificEnemy(EnemyData data, int trigger)
+
+    public void DuplicateOrRemoveEnemy(int trigger, int indexOfDuplicate, bool duplicate, EnemyData dataType)
+    {
+        if (duplicate)
+        {
+            EnemyData[] data = new EnemyData[(enemySetup[trigger].dataArray.Length + 1)];
+            EnemyData[] reUse = enemySetup[trigger].dataArray;
+
+            int tempInt = 0;
+
+            for (int i = 0; i < enemySetup[trigger].dataArray.Length; i++)
+            {
+                if (i == indexOfDuplicate)
+                {
+                    data[i] = reUse[i];
+                    data[i + 1] = dataType;
+                    tempInt = 1;
+                }
+                else
+                {
+                    data[i + tempInt] = reUse[i];
+                }
+
+            }
+            var indexData = new EnemyDataArray(data);
+            enemySetup[trigger] = indexData;
+        }
+
+        else
+        {
+            EnemyData[] data = new EnemyData[(enemySetup[trigger].dataArray.Length - 1)];
+            EnemyData[] reUse = enemySetup[trigger].dataArray;
+
+            int tempInt = 0;
+
+            for (int i = 0; i < enemySetup[trigger].dataArray.Length; i++)
+            {
+                if (i == indexOfDuplicate)
+                {
+                    tempInt = -1;
+                }
+                else
+                {
+                    data[i + tempInt] = reUse[i];
+                }
+            }
+
+            var indexData = new EnemyDataArray(data);
+            enemySetup[trigger] = indexData;
+        }
+
+
+    }
+
+    public void DuplicateOrRemoveCollectable(int trigger, int indexOfDuplicate, bool duplicate, CollectableData dataType)
+    {
+        if (duplicate)
+        {
+            CollectableData[] data = new CollectableData[collectableSetup[trigger].dataArray.Length + 1];
+            CollectableData[] reUse = collectableSetup[trigger].dataArray;
+
+            int tempInt = 0;
+
+            for (int i = 0; i < reUse.Length; i++)
+            {
+                if (i == indexOfDuplicate)
+                {
+                    // Create a new instance for the duplicate to ensure unique reference
+                    data[i] = reUse[i];
+                    data[i + 1] = dataType;
+                    tempInt = 1;
+                }
+                else
+                {
+                    data[i + tempInt] = reUse[i];
+                }
+            }
+
+            var indexData = new CollectableDataArray(data);
+            collectableSetup[trigger] = indexData;
+        }
+        else
+        {
+            CollectableData[] data = new CollectableData[collectableSetup[trigger].dataArray.Length - 1];
+            CollectableData[] reUse = collectableSetup[trigger].dataArray;
+
+            int tempInt = 0;
+
+            for (int i = 0; i < reUse.Length; i++)
+            {
+                if (i == indexOfDuplicate)
+                {
+                    tempInt = -1;
+                }
+                else
+                {
+                    data[i + tempInt] = reUse[i];
+                }
+            }
+
+            var indexData = new CollectableDataArray(data);
+            collectableSetup[trigger] = indexData;
+        }
+    }
+    public void RecordSpecificEnemy(EnemyData data, int trigger, int index)
     {
         if (trigger >= 0 && trigger < enemySetup.Count)
         {
@@ -93,7 +312,7 @@ public class SetupParent : ScriptableObject
 
             for (int i = 0; i < array.dataArray.Length; i++)
             {
-                if (array.dataArray[i].GetType() == data.GetType())
+                if (array.dataArray[i].GetType() == data.GetType() && index == i)
                 {
                     array.dataArray[i] = data;
                     return; // Assuming you want to replace only one matching entry
@@ -115,15 +334,15 @@ public class SetupParent : ScriptableObject
         collectableSetup[trigger] = indexData;
 
     }
-    public void RecordSpecificCollectable(CollectableData data, int trigger)
+    public void RecordSpecificCollectable(CollectableData data, int trigger, int index)
     {
-        if (trigger >= 0 && trigger < enemySetup.Count)
+        if (trigger >= 0 && trigger < collectableSetup.Count)
         {
             CollectableDataArray array = collectableSetup[trigger];
 
             for (int i = 0; i < array.dataArray.Length; i++)
             {
-                if (array.dataArray[i].GetType() == data.GetType())
+                if (array.dataArray[i].GetType() == data.GetType() && index == i)
                 {
                     array.dataArray[i] = data;
                     return; // Assuming you want to replace only one matching entry
@@ -133,78 +352,11 @@ public class SetupParent : ScriptableObject
         }
     }
 
-    public float CheckTime(EnemyData[] dataEnemy, CollectableData[] dataColl)
-    {
-        float maxTimeToTrigger = 0f;
-
-        int count = 0;
-
-        if (dataEnemy != null)
-        {
-            foreach (var enemySetup in dataEnemy)
-            {
-                if (enemySetup.TimeToTrigger > maxTimeToTrigger) maxTimeToTrigger = enemySetup.TimeToTrigger;
-            }
-            count++;
-        }
-
-        if (dataColl != null)
-        {
-            foreach (var collSetup in dataColl)
-            {
-                if (collSetup.TimeToTrigger > maxTimeToTrigger) maxTimeToTrigger = collSetup.TimeToTrigger;
-            }
-            count++;
-
-        }
-
-        // if (dataCollectable != null)
-        // {
-        //     foreach (var collSetup in dataCollectable)
-        //     {
-        //         if (enemySetup.TimeToTrigger > maxTimeToTrigger) maxTimeToTrigger = enemySetup.TimeToTrigger;
-        //     }
-        // }
-
-        Debug.Log("Trigger Time for next Enemy setup is: " + maxTimeToTrigger + " seconds with a count of: " + count);
-        return maxTimeToTrigger;
-    }
 
 
 
 
-    private bool CompareTriggers(Vector2 posEnemy, float speedEnemy, float xCordEnemy, Vector2 posColl, float speedColl, float xCordColl)
-    {
-        // Calculate the distance each object needs to travel
-        float distanceEnemy = Mathf.Abs(xCordEnemy - posEnemy.x);
-        float distanceColl = Mathf.Abs(xCordColl - posColl.x);
 
-        // Calculate the time it takes for each object to reach the target x-coordinate
-        float timeEnemy = distanceEnemy / speedEnemy;
-        float timeColl = distanceColl / speedColl;
-
-        // Compare the times
-        if (timeEnemy > timeColl)
-        {
-            Debug.Log("The enemy will take longer to reach its x-coordinate.");
-            return true;
-            // Perform any additional logic for when the enemy takes longer
-        }
-        else if (timeColl > timeEnemy)
-        {
-            Debug.Log("The collectible will take longer to reach its x-coordinate.");
-            return false;
-
-            // Perform any additional logic for when the collectible takes longer
-        }
-        else
-        {
-            Debug.Log("Both will take the same time to reach their x-coordinates.");
-            return true;
-
-            // Perform any additional logic for when both take the same time
-        }
-    }
 
     // Start is called before the first frame update
 

@@ -20,7 +20,7 @@ public class PlayerEggScript : MonoBehaviour
     //
 
 
-    private List<GameObject> eggPool; 
+    private List<GameObject> eggPool;
 
 
     private int ammo;
@@ -95,17 +95,26 @@ public class PlayerEggScript : MonoBehaviour
             {
                 anim.SetTrigger("ShootGunTrigger");
 
-               
+
                 canShootBool = false;
 
             }
-           
+
 
         }
         else if (ID.Ammo > 0)
         {
             GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
-egg.GetComponent<Rigidbody2D>().AddForce(new Vector2(rb.velocity.x / 2, -1),ForceMode2D.Impulse);
+
+            if (rb.velocity.x < 0)
+            {
+                egg.GetComponent<Rigidbody2D>().AddForce(new Vector2(rb.velocity.x / 1.6f, -1), ForceMode2D.Impulse);
+            }
+            else
+            {
+                egg.GetComponent<Rigidbody2D>().AddForce(new Vector2(rb.velocity.x / 2, -1), ForceMode2D.Impulse);
+            }
+
 
             // GameObject egg = GetPooledObject(eggPool);
 

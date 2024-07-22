@@ -981,6 +981,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 148217480}
   m_CullTransparentMesh: 1
+--- !u!1001 &149753261
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2425336107443998327, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_Name
+      value: NormalPig
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 15.874456
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.5630245
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
 --- !u!4 &174041488 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7309991000954744796, guid: 0339eda331b6545529bdd54e9007cf06, type: 3}
@@ -3746,8 +3803,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07dca2a4d2ec44289b33981b4ccb7352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RingPanel: {fileID: 0}
-  RingNumber: {fileID: 1907177394}
+  player: {fileID: 0}
+  isRing: 1
+  isBarn: 0
+  isPig: 0
+  numberText: {fileID: 1907177394}
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
 --- !u!1 &637752801
 GameObject:
@@ -5409,11 +5469,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   finishedLevelUIPrefab: {fileID: 5334835317810689662, guid: cc29a0545327f4ad58db75e42563aa82, type: 3}
   activateRingsAfterDelay: 1
   showSectionAtStart: 1
   areRingsRequired: 1
   ringsNeeded: 5
+  areBarnsRequired: 0
+  barnsNeeded: 0
   currentRingsPassed: 0
   initalGameObjectsToDeactivate: []
   sections:
@@ -5423,7 +5486,7 @@ MonoBehaviour:
   - {fileID: 964599569}
   playSections: 0200000004000000
   playSectionDelayToUI:
-  - 12
+  - 9
 --- !u!114 &949611669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5436,6 +5499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5728d6d89fd7444bb35960d6a84e88c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   Index: 0
   disableSpawnRanges: {x: -3.2, y: 1}
   timeAfterPigSpawn: 2
@@ -9654,6 +9718,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1756565544}
   m_CullTransparentMesh: 1
+--- !u!114 &1760445997 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8517268454288290076, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+  m_PrefabInstance: {fileID: 3219504513452907754}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1763747411
 GameObject:
   m_ObjectHideFlags: 0
@@ -10382,7 +10457,7 @@ MonoBehaviour:
     timeSincePoolLastInitializedAnInstance: 0
     timeSincePoolLastSpawnedAnInstance: 0
     timeSincePoolLastDespawnedAnInstance: 0
-    tab: 1
+    tab: 0
     instanceSpawnedProgressBar: 0
     instanceSpawnedProgressBarLerped: 0
     prefabTabIsOpen: 1
@@ -12510,6 +12585,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[4].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6573991289420130777, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6617124750898684435, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -12709,6 +12788,10 @@ PrefabInstance:
     - target: {fileID: 8341004098092530541, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 1760445997}
+    - target: {fileID: 8341004098092530541, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ResetGame
       objectReference: {fileID: 0}
     - target: {fileID: 8556181105269460930, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Name
@@ -13352,3 +13435,4 @@ SceneRoots:
   - {fileID: 1849891060}
   - {fileID: 949611667}
   - {fileID: 549969673}
+  - {fileID: 149753261}

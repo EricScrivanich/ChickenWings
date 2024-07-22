@@ -20,16 +20,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     private Material instanceMaterial;
 
 
-    [Header("SpriteObjects")]
-    [SerializeField] private Transform BackLegs;
-    [SerializeField] private Transform FrontLegs;
-    [SerializeField] private Transform Wings;
-    [SerializeField] private Transform Tail;
-    [Header("SpritePositions")]
-    [SerializeField] private Transform BackLegsPosition;
-    [SerializeField] private Transform FrontLegsPosition;
-    [SerializeField] private Transform WingsPosition;
-    [SerializeField] private Transform TailPosition;
+   
 
 
     private void Awake()
@@ -43,17 +34,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     {
         explosionPool = PoolKit.GetPool("ExplosionPool");
 
-        // float randomScale = Random.Range(.74f, .92f);
-        // transform.localScale = new Vector3(randomScale, randomScale, randomScale);
-
-
-        // float newBodyScale = (.83f - randomScale) + 1.02f;
-        // body.localScale = new Vector3(newBodyScale, 1, 1);
-
-
-
-
-        // Invoke("RandomColorChange", 3);
+      
 
 
 
@@ -110,22 +91,24 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     public void Damage(int damageAmount)
     {
+        if (!isHit)
+        {
+            isHit = true;
+            instanceMaterial = new Material(pigMaterial);
+            foreach (var col in colls)
+            {
+                col.enabled = false;
+            }
+
+            foreach (var pig in sprites)
+            {
+                pig.material = instanceMaterial;
+            }
+
+
+            StartCoroutine(Explode(.45f));
+        }
         // instanceMaterial.SetColor("_ColorChangeNewCol", new Color(Random.Range(250, 255), Random.Range(80, 170), Random.Range(160, 180), 1));
-        isHit = true;
-        instanceMaterial = new Material(pigMaterial);
-        foreach (var col in colls)
-        {
-            col.enabled = false;
-        }
-
-        foreach (var pig in sprites)
-        {
-            pig.material = instanceMaterial;
-        }
-
-
-        StartCoroutine(Explode(.45f));
-
     }
 
     private IEnumerator Explode(float time)

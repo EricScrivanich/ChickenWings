@@ -18,6 +18,8 @@ public class RingPool : ScriptableObject
     public GameObject bucketPrefab;
     public GameObject ballPrefab;
 
+    private int currentRingIndex;
+
     private int ringAmount = 25;
     private int bucketAmount = 4;
 
@@ -26,53 +28,53 @@ public class RingPool : ScriptableObject
     public bool isTutorial;
     // private Queue<GameObject> ringPool;
     private List<BucketScript> bucketPool;
-    private List<RingMovement> ringPool;
+    private RingMovement[] ringPool;
     private List<BallMaterialMovement> ballPool;
     private List<BucketScript> currentBucket;
 
     private Transform parent;
 
-    public List<RingID> RingType;
-
-public void Initialize()
-{
-        SpawnRingPool();
-        SpawnBallPool();
-        SpawnBucketPool();
-
-        foreach (var ring in RingType)
-        {
-            ring.InitializeVariables();
-            ring.InitializeEffectsPool();
-        }
-    }
+    public RingID[] RingType;
     public void SpawnRingPool()
     {
-        ringPool = new List<RingMovement>();
+        ringPool = new RingMovement[ringAmount];
         ringsToDeactivate = new List<List<GameObject>>();
 
-        for (int i = 0; i < RingType.Count; i++)
+        for (int i = 0; i < RingType.Length; i++)
         {
             List<GameObject> list = new List<GameObject>();
-
             ringsToDeactivate.Add(list);
         }
-
 
         if (!parent)
         {
             parent = new GameObject(name).transform;
         }
 
-        while (ringPool.Count < ringAmount)
+        for (int i = 0; i < ringAmount; i++)
         {
-            // GameObject obj = Instantiate(prefab, parent);
             GameObject obj = Instantiate(ringPrefab, parent);
             obj.gameObject.SetActive(false);
             RingMovement ringScript = obj.GetComponent<RingMovement>();
-            ringPool.Add(ringScript);
+            ringPool[i] = ringScript;
         }
     }
+    public void Initialize()
+    {
+        SpawnRingPool();
+        SpawnBallPool();
+        SpawnBucketPool();
+        currentRingIndex = 0;
+
+        foreach (var ring in RingType)
+        {
+            ring.InitializeVariables();
+            ring.InitializeEffectsPool();
+        }
+
+        ResetAllMaterials();
+    }
+
     public void SpawnBallPool()
     {
         ballPool = new List<BallMaterialMovement>();
@@ -112,20 +114,25 @@ public void Initialize()
 
     public RingMovement GetRing(RingID ID)
     {
-        if (ringPool == null || ringPool.Count == 0)
+        // if (ringPool == null || ringPool.Length == 0)
+        // {
+        //     SpawnRingPool();
+        //     Debug.LogWarning($"{name} spawned mid-game. Consider spawning it at the start of the game");
+        // }
+
+        if (currentRingIndex >= ringAmount)
         {
-            SpawnRingPool();
-            Debug.LogWarning($"{name} spawned mid-game. Consider spawning it at the start of the game");
+            currentRingIndex = 0;
         }
-        foreach (RingMovement ringScript in ringPool)
-        {
-            if (!ringScript.gameObject.activeInHierarchy)
-            {
-                ringScript.ID = ID;
-                return ringScript;
-            }
-        }
-        return null;
+        var ring = ringPool[currentRingIndex];
+        ring.ID = ID;
+        currentRingIndex++;
+        return ring;
+
+
+
+
+
     }
 
     public void DisableRings(int index)
@@ -213,6 +220,7 @@ public void Initialize()
             float fadeAmount = Mathf.Lerp(0, 1, time / 2f);
             RingType[0].defaultMaterial.SetFloat("_FadeAmount", fadeAmount);
             // RingType[0].highlightedMaterial.SetFloat("_FadeAmount", fadeAmount);
+            RingType[0].passedMaterial.SetFloat("_FadeAmount", fadeAmount);
             RingType[0].passedMaterial.SetFloat("_FadeAmount", fadeAmount);
 
             yield return null;

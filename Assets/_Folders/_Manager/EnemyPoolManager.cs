@@ -10,14 +10,18 @@ public class EnemyPoolManager : MonoBehaviour
     [SerializeField] private int jetPackPigPoolSize;
     [SerializeField] private int tenderizerPigPoolSize;
     [SerializeField] private int normalPigPoolSize;
+    [SerializeField] private int bigPigPoolSize;
     [SerializeField] private GameObject jetPackPigPrefab; // Reference to the JetPackPig prefab
     [SerializeField] private GameObject tenderizerPigPrefab; // Reference to the JetPackPig prefab
     [SerializeField] private GameObject normalPigPrefab; // Reference to the JetPackPig prefab
+    [SerializeField] private GameObject bigPigPrefab; // Reference to the JetPackPig prefab
 
     private int jetPackPigIndex;
     private int normalPigIndex;
+    private int bigPigIndex;
     private int tenderizerPigIndex;
     private JetPackPigMovement[] jetPackPig;
+    private BigPigMovement[] bigPig;
     private TenderizerPig[] tenderizerPig;
     private PigMovementBasic[] normalPig;
 
@@ -63,6 +67,18 @@ public class EnemyPoolManager : MonoBehaviour
             normalPig[i] = obj.GetComponent<PigMovementBasic>();
         }
 
+        bigPig = new BigPigMovement[bigPigPoolSize];
+
+        for (int i = 0; i < bigPig.Length; i++)
+        {
+            // Instantiate the prefab and assign it to the pool array
+            var obj = Instantiate(bigPigPrefab);
+            obj.SetActive(false);
+
+            // Get the bigPigMovement component and store it in the array
+            bigPig[i] = obj.GetComponent<BigPigMovement>();
+        }
+
 
     }
     public void GetNormalPig(Vector2 pos, Vector3 scale, float speed)
@@ -72,7 +88,7 @@ public class EnemyPoolManager : MonoBehaviour
         script.transform.position = (Vector2)transform.position + pos;
         script.transform.localScale = scale;
         script.xSpeed = speed;
-        script.gameObject.SetActive(true);
+        script.InitializePig();
         normalPigIndex++;
     }
     public void GetJetPackPig(Vector2 pos, Vector3 scale, float speed)
@@ -86,6 +102,20 @@ public class EnemyPoolManager : MonoBehaviour
         script.gameObject.SetActive(true);
         jetPackPigIndex++;
     }
+
+    public void GetBigPig(Vector2 pos, Vector3 scale, float speed, float yForce, float distanceToFlap)
+    {
+        if (bigPigIndex >= bigPig.Length) bigPigIndex = 0;
+        var script = bigPig[bigPigIndex];
+        script.transform.position = (Vector2)transform.position + pos;
+        script.transform.localScale = scale;
+        script.speed = speed;
+        script.yForce = yForce;
+        script.distanceToFlap = distanceToFlap;
+        script.gameObject.SetActive(true);
+        bigPigIndex++;
+    }
+
     public void GetTenderizerPig(Vector2 pos, Vector3 scale, float speed, bool hasHammer)
     {
         if (tenderizerPigIndex >= tenderizerPig.Length) tenderizerPigIndex = 0;

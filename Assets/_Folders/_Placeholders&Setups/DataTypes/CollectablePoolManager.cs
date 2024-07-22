@@ -4,21 +4,40 @@ using UnityEngine;
 
 public class CollectablePoolManager : MonoBehaviour
 {
+    [SerializeField] private bool TestRandom;
     public RingPool ringPool;
     public SetupParent setup;
+    public LevelManagerID LvlID;
+    private int randomEnemyIntensity = 0;
+    public SetupParent randomRing;
+    public SetupParent[] enemyOnlySetsByIntensity;
+    public Vector4[] spawnEnemySetRatioByIntensity;
+
     private int trigger = 0;
     private EnemyPoolManager enemyManager;
     int side = 0;
 
     private int currentEggCollectableIndex = 0;
     [SerializeField] private int eggCollectableCount;
-   
-    private int currentRingType;
+
+    [SerializeField] private int currentRingType;
     private readonly int triggerObjectCount = 3;
+
+    private int randomCountBeforeRings;
+    private int currentAmountOfSpawns;
+    private int numberOfRingSpawns;
+    private bool spawnRingsBool;
     // Start is called before the first frame update
     void Start()
     {
         ringPool.Initialize();
+        currentAmountOfSpawns = 0;
+
+        randomCountBeforeRings = Random.Range(3, 6);
+        numberOfRingSpawns = Random.Range(3, 5);
+        Debug.Log("Number of Ring spawns is: " + numberOfRingSpawns);
+        spawnRingsBool = false;
+
         enemyManager = GetComponent<EnemyPoolManager>();
         // eggCollectables = new EggCollectableMovement[eggCollectableCount];
 
@@ -32,9 +51,27 @@ public class CollectablePoolManager : MonoBehaviour
         // var barnObj = Instantiate(barnPrefab);
         // barnScript = barnObj.GetComponent<BarnMovement>();
         // barnObj.SetActive(false);
+        if (TestRandom)
+            Invoke("TriggerNextRandomSpawn", 2f);
+        else
+            Invoke("TriggerNextSpawn", 2f);
 
-        // Invoke("TriggerNextSpawn", 2f);
-       
+    }
+    private void OnEnable()
+    {
+        foreach (var type in ringPool.RingType)
+        {
+            type.ringEvent.OnCreateNewSequence += SequenceFinished;
+        }
+
+    }
+    private void OnDisable()
+    {
+        foreach (var type in ringPool.RingType)
+        {
+            type.ringEvent.OnCreateNewSequence -= SequenceFinished;
+        }
+
     }
 
 
@@ -66,22 +103,99 @@ public class CollectablePoolManager : MonoBehaviour
 
 
     }
+    public IEnumerator NextRandomTriggerCourintine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        TriggerNextRandomSpawn();
 
+
+    }
+
+    public void TriggerNextRandomSpawn()
+    {
+        if (currentAmountOfSpawns >= randomCountBeforeRings && !spawnRingsBool)
+        {
+            spawnRingsBool = true;
+            currentAmountOfSpawns = 0;
+        }
+
+        if (spawnRingsBool)
+        {
+            if (currentAmountOfSpawns >= numberOfRingSpawns)
+            {
+                randomRing.SpawnRandomSetWithRings(this, enemyManager, true);
+                spawnRingsBool = false;
+                currentAmountOfSpawns = 0;
+                Debug.Log("Final Ring Spawn");
+
+            }
+            else
+            {
+                randomRing.SpawnRandomSetWithRings(this, enemyManager, false);
+                Debug.Log("Normal Ring Spawn, current number is: " + currentAmountOfSpawns + " - number of ring spawns: " + numberOfRingSpawns);
+            }
+
+        }
+
+        else
+        {
+            float randomChanceOfSpawn = Random.Range(0f, 1f);
+
+            float xChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].x;
+            float yChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].y + xChance;
+            float zChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].z + yChance;
+            float wChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].w + zChance;
+            SetupParent pickedEnemySetup;
+
+
+            Debug.Log("Random chance is: " + randomChanceOfSpawn + " :wChance: " + wChance + " :xChance: " + xChance + " :yChance: " + yChance + " :zChance: " + zChance);
+            if (randomChanceOfSpawn < xChance)
+            {
+                pickedEnemySetup = enemyOnlySetsByIntensity[0];
+            }
+            else if (randomChanceOfSpawn < yChance)
+            {
+                pickedEnemySetup = enemyOnlySetsByIntensity[1];
+            }
+            else if (randomChanceOfSpawn < zChance)
+            {
+                pickedEnemySetup = enemyOnlySetsByIntensity[2];
+            }
+            else if (randomChanceOfSpawn < wChance)
+            {
+                pickedEnemySetup = enemyOnlySetsByIntensity[3];
+            }
+            else
+            {
+                pickedEnemySetup = enemyOnlySetsByIntensity[0];
+            }
+            pickedEnemySetup.SpawnRandomEnemies(this, enemyManager);
+        }
+
+        currentAmountOfSpawns++;
+
+    }
+    private void BoostLevelIntensity(int newIntensity)
+    {
+        randomEnemyIntensity = newIntensity;
+
+    }
     public void TriggerNextSpawn()
     {
+        Debug.Log("Trigger Next Spawn");
         if (trigger < setup.collectableTriggerCount && trigger < setup.enemyTriggerCount)
         {
             setup.SpawnBoth(this, enemyManager, trigger);
             Debug.Log("SPawnedBoth");
         }
-        else if (trigger! < setup.collectableTriggerCount && trigger < setup.enemyTriggerCount)
+        else if (trigger >= setup.collectableTriggerCount && trigger < setup.enemyTriggerCount)
         {
             setup.SpawnEnemiesOnly(this, enemyManager, trigger);
             Debug.Log("SPawnedEnemies");
 
         }
 
-        else if (trigger < setup.collectableTriggerCount && trigger! < setup.enemyTriggerCount)
+        else if (trigger < setup.collectableTriggerCount && trigger >= setup.enemyTriggerCount)
         {
             setup.SpawnCollectablesOnly(this, trigger);
             Debug.Log("SPawnedCollectables");
@@ -121,9 +235,11 @@ public class CollectablePoolManager : MonoBehaviour
 
             // Pool.RingType[index].ResetVariables();
             // SpawnRings(4f);
-
-
         }
+        randomCountBeforeRings = Random.Range(3, 6);
+        numberOfRingSpawns = Random.Range(3, 6);
+        spawnRingsBool = false;
+        currentAmountOfSpawns = 0;
 
     }
 

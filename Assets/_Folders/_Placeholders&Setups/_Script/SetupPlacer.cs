@@ -1,16 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SetupPlacer: MonoBehaviour
+public class SetupPlacer : MonoBehaviour
 {
     [SerializeField] private Transform CollectableSetupTransform;
     [SerializeField] private Transform EnemySetupTransform;
     public GameObject JetPackPigPrefab;
     public GameObject NormalPigPrefab;
     public GameObject TenderizerPigPrefab;
+    public GameObject BigPigPrefab;
     public GameObject RingPrefab;
 
+    [SerializeField] private SpriteRenderer[] borderLines;
 
+    private void Start()
+    {
+        ShowBorderLines(false);
+    }
 
     public void PlaceColllectableSetup(CollectableData[] dataArray)
     {
@@ -44,7 +50,7 @@ public class SetupPlacer: MonoBehaviour
         }
     }
 
-    
+
 
     public void PlaceEnemies(EnemyData data)
     {
@@ -83,6 +89,31 @@ public class SetupPlacer: MonoBehaviour
                 script.hasHammer = pigData.hasHammer;
                 obj.transform.localScale = pigData.scale;
             }
+        }
+
+        else if (data is BigPigSO dataType)
+        {
+            foreach (var pigData in dataType.data)
+            {
+                var obj = Object.Instantiate(BigPigPrefab, pigData.position, Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+
+                var script = obj.GetComponent<BigPigMovement>();
+                script.speed = pigData.speed;
+                script.yForce = pigData.yForce;
+                script.distanceToFlap = pigData.distanceToFlap;
+
+                obj.transform.localScale = pigData.scale;
+
+            }
+        }
+    }
+
+    public void ShowBorderLines(bool show)
+    {
+        foreach (var border in borderLines)
+        {
+            border.enabled = show;
         }
     }
 }

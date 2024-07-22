@@ -31,7 +31,7 @@ public class RingID : ScriptableObject
     public RingEvents ringEvent;
     public int triggeredRingOrder = 0;
     private List<RingMovement> ringList;
-    public Queue<GameObject> particleSystemsQueue;
+    public Queue<ParticleFollowScript> particleSystemsQueue;
     private GameObject currentBucket;
     private List<GameObject> objectsToDeactivate;
     private Transform parent;
@@ -89,18 +89,20 @@ public class RingID : ScriptableObject
         // {
         //     return;
         // }
-        GameObject grabbedPS = particleSystemsQueue.Dequeue();
 
-        ParticleFollowScript script = grabbedPS.GetComponent<ParticleFollowScript>();
+        Debug.Log("Getting Effect for: " + this);
+
+
+        ParticleFollowScript script = particleSystemsQueue.Dequeue();
         script.ringTransform = ring;
 
 
 
-        grabbedPS.SetActive(true);
+        script.gameObject.SetActive(true);
 
 
 
-        particleSystemsQueue.Enqueue(grabbedPS);
+        particleSystemsQueue.Enqueue(script);
 
         // particlesInUse++;
 
@@ -116,8 +118,8 @@ public class RingID : ScriptableObject
         {
             for (int i = 0; i < poolSize; i++)
             {
-                GameObject effect = particleSystemsQueue.Dequeue();
-                effect.SetActive(false);
+                var effect = particleSystemsQueue.Dequeue();
+                effect.gameObject.SetActive(false);
                 particleSystemsQueue.Enqueue(effect);
 
             }
@@ -144,9 +146,10 @@ public class RingID : ScriptableObject
             ballPS = ballParticle.GetComponent<ParticleSystem>();
 
         }
+        particlesInUse = 0;
 
         ringList = new List<RingMovement>();
-        particleSystemsQueue = new Queue<GameObject>();
+        particleSystemsQueue = new Queue<ParticleFollowScript>();
         objectsToDeactivate = new List<GameObject>();
 
 
@@ -157,9 +160,10 @@ public class RingID : ScriptableObject
             for (int i = 0; i < poolSize; i++)
             {
                 GameObject effectInstance = Instantiate(ringParticles, parent); // Instantiate from the prefab
+                var script = effectInstance.GetComponent<ParticleFollowScript>();
 
                 effectInstance.SetActive(false); // Start with the GameObject disabled
-                particleSystemsQueue.Enqueue(effectInstance);
+                particleSystemsQueue.Enqueue(script);
             }
         }
 
@@ -202,10 +206,12 @@ public class RingID : ScriptableObject
         ringOrder++;
         if (particlesInUse < poolSize)
         {
+            Debug.Log("YES PARTILCE");
             particlesInUse++;
 
             GetEffect(ringScript);
         }
+       
     }
 
 

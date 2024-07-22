@@ -5,13 +5,14 @@ using UnityEngine;
 public class PigMovementBasic : MonoBehaviour
 {
     [Header("SpriteObjects")]
-    [SerializeField] private Transform BackLegs;
-    [SerializeField] private Transform FrontLegs;
-    [SerializeField] private Transform Wings;
+    [SerializeField] private Transform backLegs;
+    [SerializeField] private Transform wings;
+    [SerializeField] private Transform tail;
+    [SerializeField] private Transform body;
     [Header("SpritePositions")]
-    [SerializeField] private Transform BackLegsPosition;
-    [SerializeField] private Transform FrontLegsPosition;
-    [SerializeField] private Transform WingsPosition;
+    [SerializeField] private Transform backLegsPosition;
+    [SerializeField] private Transform wingsPosition;
+    [SerializeField] private Transform tailPosition;
 
 
 
@@ -19,6 +20,7 @@ public class PigMovementBasic : MonoBehaviour
     [Header("MovementRB")]
     private Transform player;
     [SerializeField] private float addYForce;
+    private bool hasInitialized = false;
 
     private Vector2 jumpForce;
     [SerializeField] private float belowAmount;
@@ -49,12 +51,14 @@ public class PigMovementBasic : MonoBehaviour
     private bool upGlide;
     private float time;
     private bool sinDown;
+
     [SerializeField] private float sinDownSpeed;
 
 
     // Start is called before the first frame update
     void Start()
     {
+
         player = GameObject.Find("Player").GetComponent<Transform>();
         jumpForce = new Vector2(xSpeed, addYForce);
         anim = GetComponent<Animator>();
@@ -70,22 +74,73 @@ public class PigMovementBasic : MonoBehaviour
         // Invoke("GlideUp", invokeTime);
 
     }
-    private void OnEnable()
-    {
-        // sinDown = false;
 
+    public void InitializePig()
+    {
+        if (gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(false);
+        }
         initialY = transform.position.y;
 
-        // if (initialY > 3f)
-        // {
-        //     float r = Random.Range(0f, 1f);
-        //     if (r > .4f)
-        //     {
-      
-        //         sinDown = true;
-        //     }
-        // }
+
+        body.localScale = new Vector3(.75f - transform.localScale.x + 1, 1, 1);
+
+        backLegs.position = backLegsPosition.position;
+        wings.position = wingsPosition.position;
+        tail.position = tailPosition.position;
+        hasInitialized = true;
+
+        gameObject.SetActive(true);
+
     }
+
+    private void OnEnable()
+    {
+        if (!hasInitialized)
+        {
+            initialY = transform.position.y;
+
+            if (body != null)
+            {
+                body.localScale = new Vector3(.75f - transform.localScale.x + 1, 1, 1);
+                backLegs.position = backLegsPosition.position;
+                wings.position = wingsPosition.position;
+                tail.position = tailPosition.position;
+            }
+
+
+        }
+    }
+    // private void OnEnable()
+    // {
+    //     // sinDown = false;
+
+
+    //     if (hasInitialized)
+    //     {
+    //         Debug.Log("Initilized");
+    //         initialY = transform.position.y;
+
+
+    //         body.localScale = new Vector3(.75f - transform.localScale.x + 1, 1, 1);
+
+    //         backLegs.position = backLegsPosition.position;
+    //         wings.position = wingsPosition.position;
+    //         tail.position = tailPosition.position;
+
+    //     }
+
+    //     // if (initialY > 3f)
+    //     // {
+    //     //     float r = Random.Range(0f, 1f);
+    //     //     if (r > .4f)
+    //     //     {
+
+    //     //         sinDown = true;
+    //     //     }
+    //     // }
+    // }
 
     private void GlideDown()
     {
@@ -108,6 +163,8 @@ public class PigMovementBasic : MonoBehaviour
     {
         justJumped = false;
     }
+
+
     void Update()
     {
 
@@ -147,10 +204,7 @@ public class PigMovementBasic : MonoBehaviour
 
         transform.Translate(Vector2.left * xSpeed * Time.deltaTime);
 
-        if (sinDown)
-        {
-            initialY -= sinDownSpeed * Time.deltaTime;
-        }
+
         float y = Mathf.Sin(transform.position.x * frequency) * amplitude + initialY;
         transform.position = new Vector2(transform.position.x, y);
 

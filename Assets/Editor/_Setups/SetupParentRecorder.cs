@@ -7,7 +7,17 @@ using UnityEngine;
 [CustomEditor(typeof(SetupParent))]
 public class EnemySetupRecorderEditor : Editor
 {
+    public string[] options = new string[] { "Ring", "pNormal", "pBig", "pJetPack", "pTenderizer" };
+    public int indexDropDown = 0;
     private int selectedTriggerIndex = -1;
+    private int selectedTriggerIndexEnemy = -1;
+    private int selectedTriggerIndexCollectable = -1;
+    private List<int> selctedEnemyTriggers = new List<int>();
+    private List<int> selctedCollTriggers = new List<int>();
+    private GameObject recorderEnemy;
+    private GameObject recorderCollectable;
+    private SetupPlacer placer;
+    private SetupParent script;
     private enum ShowButtons
     {
         None,
@@ -28,12 +38,83 @@ public class EnemySetupRecorderEditor : Editor
     private Color recordButtonColor = new Color(0.9528f, 0.4179f, 0.4179f, 1f);
 
     private Color lastSelectedTriggerColor = new Color(.591f, 1f, .542f, 1f);
+    void RecordForNewType()
+    {
+        var tempListColl = new List<CollectableData>();
+        var tempListEnemy = new List<EnemyData>();
+        switch (indexDropDown)
+        {
+            case 0:
+                RecordRings(tempListColl);
+                break;
+            case 1:
+                RecordNormalPigs(tempListEnemy);
 
+                break;
+            case 2:
+                RecordBigPigs(tempListEnemy);
+
+                break;
+
+            case 3:
+                RecordJetPackPigs(tempListEnemy);
+
+                break;
+
+            case 4:
+                RecordTenderizerPigs(tempListEnemy);
+
+                break;
+
+            default:
+                Debug.LogError("Unrecognized Option");
+                break;
+        }
+        if (script.isRandomSetup)
+        {
+            if (indexDropDown == 0 && selectedTriggerIndexCollectable >= 0)
+            {
+                script.DuplicateOrRemoveCollectable(selectedTriggerIndexCollectable, script.collectableSetup[selectedTriggerIndexCollectable].dataArray.Length - 1, true, tempListColl[0]);
+            }
+            else if (indexDropDown > 0 && selectedTriggerIndexEnemy >= 0)
+            {
+                script.DuplicateOrRemoveEnemy(selectedTriggerIndexEnemy, script.enemySetup[selectedTriggerIndexEnemy].dataArray.Length - 1, true, tempListEnemy[0]);
+            }
+
+        }
+
+        else
+        {
+            if (indexDropDown == 0 && selectedTriggerIndex >= 0)
+            {
+                script.DuplicateOrRemoveCollectable(selectedTriggerIndex, script.collectableSetup[selectedTriggerIndex].dataArray.Length - 1, true, tempListColl[0]);
+            }
+            else if (indexDropDown > 0 && selectedTriggerIndex >= 0)
+            {
+                script.DuplicateOrRemoveEnemy(selectedTriggerIndex, script.enemySetup[selectedTriggerIndex].dataArray.Length - 1, true, tempListEnemy[0]);
+            }
+
+        }
+
+    }
     public override void OnInspectorGUI()
     {
-        SetupParent script = (SetupParent)target;
+        script = (SetupParent)target;
 
         base.OnInspectorGUI(); // Draw the default inspector
+
+        recorderEnemy = GameObject.Find("SetupRecorderEnemy");
+        recorderCollectable = GameObject.Find("SetupRecorderCollectable");
+        placer = GameObject.Find("SetupRecorderParent").GetComponent<SetupPlacer>();
+
+        if (EditorApplication.isPlaying && !EditorApplication.isPaused)
+        {
+            placer.ShowBorderLines(false);
+        }
+        else
+        {
+            placer.ShowBorderLines(true);
+        }
         if (script.enemySetup == null)
         {
             Debug.LogError("EnemySetup list is null BUDDDDYYYY.");
@@ -44,6 +125,10 @@ public class EnemySetupRecorderEditor : Editor
             ClearCollectableRecordArea();
             ClearEnemyRecordArea();
         }
+
+
+
+
         EditorGUILayout.BeginHorizontal();
 
         if (GUILayout.Button("Clear Enemy Record Area", GUILayout.Height(30)))
@@ -58,6 +143,12 @@ public class EnemySetupRecorderEditor : Editor
 
         EditorGUILayout.EndHorizontal();
 
+        GUILayout.Space(10);
+
+        indexDropDown = EditorGUILayout.Popup(indexDropDown, options);
+        if (GUILayout.Button("Create New"))
+            RecordForNewType();
+
         // if (GUILayout.Button("Record For Trigger"))
         // {
         //     RecordForTrigger(script);
@@ -65,8 +156,8 @@ public class EnemySetupRecorderEditor : Editor
 
 
 
-        DrawParentButtons(script); // Draw the parent buttons
-                                   // Draw the show buttons based on parent button selection
+        DrawParentButtons(); // Draw the parent buttons
+                             // Draw the show buttons based on parent button selection
     }
 
 
@@ -97,9 +188,10 @@ public class EnemySetupRecorderEditor : Editor
         // Temporary list to hold new data
         List<EnemyData> newEnemyData = new List<EnemyData>();
 
-        RecordJetPackPigs(recorder, newEnemyData);
-        RecordNormalPigs(recorder, newEnemyData);
-        RecordTenderizerPigs(recorder, newEnemyData);
+        RecordJetPackPigs(newEnemyData);
+        RecordNormalPigs(newEnemyData);
+        RecordTenderizerPigs(newEnemyData);
+        RecordBigPigs(newEnemyData);
 
         // Convert the list to an array and add to SetupParent
         script.RecordForEnemyTrigger(newEnemyData, trigger);
@@ -137,7 +229,7 @@ public class EnemySetupRecorderEditor : Editor
         // Temporary list to hold new data
         List<CollectableData> newCollectableData = new List<CollectableData>();
 
-        RecordRings(recorder, newCollectableData);
+        RecordRings(newCollectableData);
 
         // Convert the list to an array and add to SetupParent
         script.RecordForColletableTrigger(newCollectableData, trigger);
@@ -147,9 +239,9 @@ public class EnemySetupRecorderEditor : Editor
 
 
     }
-    private void RecordJetPackPigs(GameObject recorder, List<EnemyData> newEnemyData)
+    private void RecordJetPackPigs(List<EnemyData> newEnemyData)
     {
-        var jetPackPigsRecorder = recorder.GetComponentsInChildren<JetPackPigMovement>();
+        var jetPackPigsRecorder = recorderEnemy.GetComponentsInChildren<JetPackPigMovement>();
         if (jetPackPigsRecorder.Length > 0)
         {
             JetPackPigSO newJetPackPigSO = new JetPackPigSO
@@ -182,9 +274,9 @@ public class EnemySetupRecorderEditor : Editor
         }
     }
 
-    private void RecordNormalPigs(GameObject recorder, List<EnemyData> newEnemyData)
+    private void RecordNormalPigs(List<EnemyData> newEnemyData)
     {
-        var normalPigsRecorder = recorder.GetComponentsInChildren<PigMovementBasic>();
+        var normalPigsRecorder = recorderEnemy.GetComponentsInChildren<PigMovementBasic>();
         if (normalPigsRecorder.Length > 0)
         {
             NormalPigSO newNormalPigSO = new NormalPigSO
@@ -217,9 +309,46 @@ public class EnemySetupRecorderEditor : Editor
         }
     }
 
-    private void RecordTenderizerPigs(GameObject recorder, List<EnemyData> newEnemyData)
+    private void RecordBigPigs(List<EnemyData> newEnemyData)
     {
-        var targets = recorder.GetComponentsInChildren<TenderizerPig>();
+        var targets = recorderEnemy.GetComponentsInChildren<BigPigMovement>();
+        if (targets.Length > 0)
+        {
+            BigPigSO newClass = new BigPigSO
+            {
+                data = new BigPigData[targets.Length]
+            };
+
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                newClass.data[i] = new BigPigData
+                {
+                    position = targets[i].transform.position,
+                    scale = targets[i].transform.localScale,
+                    speed = targets[i].speed,
+                    yForce = targets[i].yForce,
+                    distanceToFlap = targets[i].distanceToFlap
+                };
+
+                // Calculate time to reach x = 7 or x = -7
+                float distanceToTarget = newClass.data[i].speed > 0 ? 7f - newClass.data[i].position.x : -7f - newClass.data[i].position.x;
+                float timeToTrigger = Mathf.Abs(distanceToTarget / newClass.data[i].speed);
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            // Set the highest time to trigger
+            newClass.TimeToTrigger = timesToTrigger.Max();
+
+            // Add the new instance to the temporary list
+            newEnemyData.Add(newClass);
+        }
+    }
+
+    private void RecordTenderizerPigs(List<EnemyData> newEnemyData)
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<TenderizerPig>();
         if (targets.Length > 0)
         {
             TenderizerPigSO newClass = new TenderizerPigSO
@@ -254,28 +383,30 @@ public class EnemySetupRecorderEditor : Editor
     }
 
 
-    private void RecordRings(GameObject recorder, List<CollectableData> newCollectableData)
+    private void RecordRings(List<CollectableData> newCollectableData)
     {
-        var targets = recorder.GetComponentsInChildren<RingMovement>();
+        var targets = recorderCollectable.GetComponentsInChildren<RingMovement>();
+
         if (targets.Length > 0)
         {
+            // Sort targets based on their distance from 0 on the x-axis
+            var sortedTargets = targets.OrderBy(target => Mathf.Abs(target.transform.position.x)).ToArray();
+
             RingSO newClass = new RingSO
             {
-                data = new RingData[targets.Length],
-
+                data = new RingData[sortedTargets.Length],
             };
 
             List<float> timesToTrigger = new List<float>();
 
-            for (int i = 0; i < targets.Length; i++)
+            for (int i = 0; i < sortedTargets.Length; i++)
             {
                 newClass.data[i] = new RingData
                 {
-                    position = targets[i].transform.position,
-                    rotation = targets[i].transform.rotation,
-                    scale = targets[i].transform.localScale,
-                    speed = targets[i].speed,
-
+                    position = sortedTargets[i].transform.position,
+                    rotation = sortedTargets[i].transform.rotation,
+                    scale = sortedTargets[i].transform.localScale,
+                    speed = sortedTargets[i].speed,
                 };
 
                 // Calculate time to reach x = 7 or x = -7
@@ -292,7 +423,6 @@ public class EnemySetupRecorderEditor : Editor
             newCollectableData.Add(newClass);
         }
     }
-
 
     private void ClearEnemyRecordArea()
     {
@@ -349,87 +479,198 @@ public class EnemySetupRecorderEditor : Editor
     //         Debug.LogWarning("Recorder Output GameObject or SpawnSetupCollectable script not found!");
     //     }
     // }
-    private void DrawParentButtons(SetupParent script)
+
+    #region ButtonDrawers
+    private void DrawParentButtons()
     {
         var originalColor = GUI.backgroundColor;
-        for (int i = 0; i < Mathf.Max(script.enemySetup.Count, script.collectableSetup.Count); i++)
-        {
-            GUILayout.Space(15);
-            if (selectedTriggerIndex == i)
-            {
-                GUI.backgroundColor = lastSelectedTriggerColor;
-            }
-            else
-            {
-                GUI.backgroundColor = originalColor;
-            }
 
-            if (GUILayout.Button($"Trigger {i}", GUILayout.Height(50)))
+        if (script.isRandomSetup)
+        {
+            GUILayout.BeginHorizontal();
+
+            GUILayout.BeginVertical();
+            for (int i = 0; i < script.enemySetup.Count; i++)
             {
+                if (selectedTriggerIndexEnemy == i)
+                {
+                    GUI.backgroundColor = lastSelectedTriggerColor;
+                }
+                else
+                {
+                    GUI.backgroundColor = originalColor;
+                }
+                if (GUILayout.Button($"Enemy Trigger: {i} -  (Count {script.enemySetup[i].dataArray.Length})", GUILayout.Height(50)))
+                {
+                    if (selctedEnemyTriggers.Contains(i))
+                    {
+                        selctedEnemyTriggers.Remove(i);
+                    }
+                    else
+                    {
+                        selctedEnemyTriggers.Add(i);
+                        selectedTriggerIndexEnemy = i;
+                    }
+
+                }
+
+                if (selctedEnemyTriggers.Contains(i))
+                {
+                    EditorGUILayout.BeginHorizontal();
+
+                    GUI.backgroundColor = recordButtonColor;
+
+                    if (GUILayout.Button("Record Trigger", GUILayout.Height(40)))
+                    {
+                        RecordForEnemyTrigger(script, i);
+                    }
+
+                    GUI.backgroundColor = originalColor;
+
+                    if (GUILayout.Button("Place Trigger", GUILayout.Height(40)))
+                    {
+                        PlaceEnemySetup(script.enemySetup[i].dataArray);
+                    }
+
+                    EditorGUILayout.EndHorizontal();
+
+                    DrawShowButtons(script.enemySetup[i].dataArray, null, i, script);
+                }
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            for (int i = 0; i < script.collectableSetup.Count; i++)
+            {
+                if (selectedTriggerIndexCollectable == i)
+                {
+                    GUI.backgroundColor = lastSelectedTriggerColor;
+                }
+                else
+                {
+                    GUI.backgroundColor = originalColor;
+                }
+                if (GUILayout.Button($"Collectable Trigger: {i} -  (Count {script.collectableSetup[i].dataArray.Length})", GUILayout.Height(50)))
+                {
+                    if (selctedCollTriggers.Contains(i))
+                    {
+                        selctedCollTriggers.Remove(i);
+                    }
+                    else
+                    {
+                        selctedCollTriggers.Add(i);
+                        selectedTriggerIndexCollectable = i;
+                    }
+
+                }
+
+                if (selctedCollTriggers.Contains(i))
+                {
+                    EditorGUILayout.BeginHorizontal();
+
+                    GUI.backgroundColor = recordButtonColor;
+
+                    if (GUILayout.Button("Record Trigger", GUILayout.Height(40)))
+                    {
+                        RecordForCollectableTrigger(script, i);
+                    }
+
+                    GUI.backgroundColor = originalColor;
+
+                    if (GUILayout.Button("Place Trigger", GUILayout.Height(40)))
+                    {
+                        PlaceCollectableSetup(script.collectableSetup[i].dataArray);
+                    }
+
+                    EditorGUILayout.EndHorizontal();
+
+                    DrawShowButtons(null, script.collectableSetup[i].dataArray, i, script);
+                }
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+        }
+        else
+        {
+            for (int i = 0; i < Mathf.Max(script.enemySetup.Count, script.collectableSetup.Count); i++)
+            {
+                GUILayout.Space(15);
                 if (selectedTriggerIndex == i)
                 {
-                    selectedTriggerIndex = -1; // Deselect if already selected
+                    GUI.backgroundColor = lastSelectedTriggerColor;
                 }
                 else
                 {
-                    selectedTriggerIndex = i;
+                    GUI.backgroundColor = originalColor;
                 }
-            }
 
-            if (selectedTriggerIndex == i)
-            {
-                GUI.backgroundColor = originalColor;
-                EditorGUILayout.BeginHorizontal();
-
-                GUI.backgroundColor = recordButtonColor;
-
-                if (GUILayout.Button("Record Trigger", GUILayout.Height(40)))
+                if (GUILayout.Button($"Trigger {i}", GUILayout.Height(50)))
                 {
-                    RecordForEnemyTrigger(script, i);
-                    RecordForCollectableTrigger(script, i);
+                    if (selectedTriggerIndex == i)
+                    {
+                        selectedTriggerIndex = -1; // Deselect if already selected
+                    }
+                    else
+                    {
+                        selectedTriggerIndex = i;
+                    }
                 }
 
-                GUI.backgroundColor = originalColor;
-
-                if (GUILayout.Button("Place Trigger", GUILayout.Height(40)))
+                if (selectedTriggerIndex == i)
                 {
+                    GUI.backgroundColor = originalColor;
+                    EditorGUILayout.BeginHorizontal();
 
-                    PlaceCollectableSetup(script.collectableSetup[i].dataArray);
-                    PlaceEnemySetup(script.enemySetup[i].dataArray);
+                    GUI.backgroundColor = recordButtonColor;
 
-                }
+                    if (GUILayout.Button("Record Trigger", GUILayout.Height(40)))
+                    {
+                        RecordForEnemyTrigger(script, i);
+                        RecordForCollectableTrigger(script, i);
+                    }
 
-                EditorGUILayout.EndHorizontal();
+                    GUI.backgroundColor = originalColor;
 
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.BeginVertical(GUILayout.Width(EditorGUIUtility.currentViewWidth / 2 - 10));
-                GUILayout.Label($"Enemy Trigger: {i} -  (Count {script.enemySetup[i].dataArray.Length})");
-                if (i < script.enemySetup.Count)
-                {
-                    DrawShowButtons(script.enemySetup[i].dataArray, null, i, script); // Draw ShowHere buttons under the corresponding trigger
-                }
-                else
-                {
-                    GUILayout.Label($"Empty Enemy Trigger: {i}");
-                }
-                GUILayout.EndVertical();
+                    if (GUILayout.Button("Place Trigger", GUILayout.Height(40)))
+                    {
+                        PlaceCollectableSetup(script.collectableSetup[i].dataArray);
+                        PlaceEnemySetup(script.enemySetup[i].dataArray);
+                    }
 
-                GUILayout.BeginVertical(GUILayout.Width(EditorGUIUtility.currentViewWidth / 2 - 10));
-                GUILayout.Label($"Collectable Trigger: {i} -  (Count {script.collectableSetup[i].dataArray.Length})");
-                if (i < script.collectableSetup.Count)
-                {
-                    DrawShowButtons(null, script.collectableSetup[i].dataArray, i, script); // Draw ShowHere buttons under the corresponding trigger
+                    EditorGUILayout.EndHorizontal();
+
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical(GUILayout.Width(EditorGUIUtility.currentViewWidth / 2 - 10));
+
+                    if (i < script.enemySetup.Count)
+                    {
+                        GUILayout.Label($"Enemy Trigger: {i} -  (Count {script.enemySetup[i].dataArray.Length})");
+                        DrawShowButtons(script.enemySetup[i].dataArray, null, i, script); // Draw ShowHere buttons under the corresponding trigger
+                    }
+                    else
+                    {
+                        GUILayout.Label($"Empty Enemy Trigger: {i}");
+                    }
+                    GUILayout.EndVertical();
+
+                    GUILayout.BeginVertical(GUILayout.Width(EditorGUIUtility.currentViewWidth / 2 - 10));
+
+                    if (i < script.collectableSetup.Count)
+                    {
+                        GUILayout.Label($"Collectable Trigger: {i} -  (Count {script.collectableSetup[i].dataArray.Length})");
+                        DrawShowButtons(null, script.collectableSetup[i].dataArray, i, script); // Draw ShowHere buttons under the corresponding trigger
+                    }
+                    else
+                    {
+                        GUILayout.Label($"Empty Collectable Trigger: {i}");
+                    }
+                    GUILayout.EndVertical();
+                    EditorGUILayout.EndHorizontal();
                 }
-                else
-                {
-                    GUILayout.Label($"Empty Collectable Trigger: {i}");
-                }
-                GUILayout.EndVertical();
-                EditorGUILayout.EndHorizontal();
             }
         }
     }
-
     private void DrawShowButtons(EnemyData[] enemyDataArray, CollectableData[] collectableDataArray, int trigger, SetupParent script)
     {
         GUILayout.Space(10);
@@ -471,33 +712,65 @@ public class EnemySetupRecorderEditor : Editor
         {
             foreach (var enemyData in enemyDataArray)
             {
-                int index = -1;
+
                 GUILayout.Space(5);
                 string buttonTitle = "";
 
                 if (enemyData is JetPackPigSO jetPackPigData)
                 {
-                    index = 1;
+
                     buttonTitle = $"JetPackPigs ({jetPackPigData.data.Length})";
                 }
                 else if (enemyData is NormalPigSO normalPigData)
                 {
-                    index = 0;
                     buttonTitle = $"NormalPigs ({normalPigData.data.Length})";
                 }
                 else if (enemyData is TenderizerPigSO tenderizerPigData)
                 {
-                    index = 2;
                     buttonTitle = $"TenderizerPigs ({tenderizerPigData.data.Length})";
                 }
+                else if (enemyData is BigPigSO bigPig)
+                {
+                    buttonTitle = $"BigPigs ({bigPig.data.Length})";
+                }
+
+
+
 
                 EditorGUILayout.BeginHorizontal();
                 GUI.backgroundColor = recordButtonColor;
                 if (GUILayout.Button("R", GUILayout.Width(25))) // Adjust width as needed
                 {
-                    RecordSpecificEnemy(index, trigger, script);
+                    RecordOrDuplicateSpecificEnemy(enemyData, trigger, System.Array.IndexOf(script.enemySetup[trigger].dataArray, enemyData), false);
                 }
                 GUI.backgroundColor = originalColor;
+
+                if (GUILayout.Button("P", GUILayout.Width(25))) // Adjust width as needed
+                {
+                    ClearEnemyType(enemyData);
+                    PlaceEnemies(enemyData, false);
+                }
+
+                if (GUILayout.Button("P&", GUILayout.Width(25))) // Adjust width as needed
+                {
+                    PlaceEnemies(enemyData, false);
+                }
+
+                if (GUILayout.Button("+", GUILayout.Width(25))) // Adjust width as needed
+                {
+                    ClearEnemyType(enemyData);
+                    PlaceEnemies(enemyData, false);
+                    RecordOrDuplicateSpecificEnemy(enemyData, trigger, System.Array.IndexOf(script.enemySetup[trigger].dataArray, enemyData), true);
+
+
+                }
+                if (GUILayout.Button("-", GUILayout.Width(25))) // Adjust width as needed
+                {
+                    script.DuplicateOrRemoveEnemy(trigger, System.Array.IndexOf(script.enemySetup[trigger].dataArray, enemyData), false, null);
+
+                }
+
+
 
                 float newTimeToTrigger = EditorGUILayout.FloatField(enemyData.TimeToTrigger, GUILayout.Width(60)); // Adjust width as needed
                 if (newTimeToTrigger != enemyData.TimeToTrigger)
@@ -518,7 +791,7 @@ public class EnemySetupRecorderEditor : Editor
                     }
                     else
                     {
-                        PlaceEnemies(enemyData);
+                        PlaceEnemies(enemyData, true);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
@@ -528,13 +801,13 @@ public class EnemySetupRecorderEditor : Editor
         {
             foreach (var collData in collectableDataArray)
             {
-                int index = -1;
+
                 GUILayout.Space(5);
                 string buttonTitle = "";
 
                 if (collData is RingSO data)
                 {
-                    index = 0;
+
                     buttonTitle = $"Rings ({data.data.Length})";
                 }
 
@@ -542,7 +815,46 @@ public class EnemySetupRecorderEditor : Editor
                 GUI.backgroundColor = recordButtonColor;
                 if (GUILayout.Button("R", GUILayout.Width(25))) // Adjust width as needed
                 {
-                    RecordSpecificCollectable(index, trigger, script);
+                    RecordOrDuplicateSpecificCollectable(collData, trigger, System.Array.IndexOf(script.collectableSetup[trigger].dataArray, collData), false);
+                }
+                GUI.backgroundColor = originalColor;
+                if (GUILayout.Button("P", GUILayout.Width(25))) // Adjust width as needed
+                {
+                    ClearCollectableType(collData);
+                    PlaceCollectables(collData, false);
+                }
+                if (GUILayout.Button("P&", GUILayout.Width(25))) // Adjust width as needed
+                {
+
+                    PlaceCollectables(collData, false);
+                }
+
+                if (GUILayout.Button("+", GUILayout.Width(25))) // Adjust width as needed
+                {
+                    ClearCollectableType(collData);
+                    PlaceCollectables(collData, false);
+
+                    RecordOrDuplicateSpecificCollectable(collData, trigger, System.Array.IndexOf(script.collectableSetup[trigger].dataArray, collData), true);
+
+
+
+                }
+                if (GUILayout.Button("-", GUILayout.Width(25))) // Adjust width as needed
+                {
+
+
+                    script.DuplicateOrRemoveCollectable(trigger, System.Array.IndexOf(script.collectableSetup[trigger].dataArray, collData), false, null);
+
+
+                }
+
+                if (GUILayout.Button("T", GUILayout.Width(25))) // Adjust width as needed
+                {
+
+
+                    Debug.Log("Index is: " + System.Array.IndexOf(script.collectableSetup[trigger].dataArray, collData));
+
+
                 }
 
                 float newTimeToTrigger = EditorGUILayout.FloatField(collData.TimeToTrigger, GUILayout.Width(60)); // Adjust width as needed
@@ -552,7 +864,7 @@ public class EnemySetupRecorderEditor : Editor
                     EditorUtility.SetDirty(script); // Mark scriptable object as dirty to ensure changes are saved
                 }
 
-                GUI.backgroundColor = originalColor;
+
 
                 if (GUILayout.Button(buttonTitle, GUILayout.Width(90))) // Adjust width as needed
                 {
@@ -562,51 +874,84 @@ public class EnemySetupRecorderEditor : Editor
                     }
                     else
                     {
-                        PlaceCollectables(collData);
+                        PlaceCollectables(collData, true);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
             }
         }
+
         GUILayout.Space(15);
     }
 
-    public void RecordSpecificEnemy(int index, int trigger, SetupParent script)
+    #endregion
+
+    public void RecordOrDuplicateSpecificEnemy(EnemyData dataTypeEnemy, int trigger, int index, bool isDuplicate)
     {
         List<EnemyData> tempList = new List<EnemyData>();
-        GameObject recorder = GameObject.Find("SetupRecorderEnemy");
 
-        if (index == 0)
+
+        if (dataTypeEnemy is NormalPigSO so0)
         {
-            RecordNormalPigs(recorder, tempList);
-            script.RecordSpecificEnemy(tempList[0], trigger);
+            RecordNormalPigs(tempList);
+
 
         }
-        else if (index == 1)
+        else if (dataTypeEnemy is JetPackPigSO so1)
         {
-            RecordJetPackPigs(recorder, tempList);
-            script.RecordSpecificEnemy(tempList[0], trigger);
+            RecordJetPackPigs(tempList);
+
 
         }
-        else if (index == 2)
+        else if (dataTypeEnemy is TenderizerPigSO so2)
         {
-            RecordTenderizerPigs(recorder, tempList);
-            script.RecordSpecificEnemy(tempList[0], trigger);
+            RecordTenderizerPigs(tempList);
+
 
         }
+
+        else if (dataTypeEnemy is BigPigSO so3)
+        {
+            RecordBigPigs(tempList);
+
+
+        }
+        if (isDuplicate)
+        {
+            script.DuplicateOrRemoveEnemy(trigger, index, true, tempList[0]);
+        }
+        else
+        {
+            script.RecordSpecificEnemy(tempList[0], trigger, index);
+        }
+
+
 
     }
 
-    public void RecordSpecificCollectable(int index, int trigger, SetupParent script)
+
+
+
+    public void RecordOrDuplicateSpecificCollectable(CollectableData dataTypeCollectable, int trigger, int index, bool isDuplicate)
     {
         List<CollectableData> tempList = new List<CollectableData>();
-        GameObject recorder = GameObject.Find("SetupRecorderCollectable");
 
-        if (index == 0)
+
+        if (dataTypeCollectable is RingSO so)
         {
-            RecordRings(recorder, tempList);
-            script.RecordSpecificCollectable(tempList[0], trigger);
+            RecordRings(tempList);
 
+
+        }
+
+        if (isDuplicate)
+        {
+            script.DuplicateOrRemoveCollectable(trigger, index, true, tempList[0]);
+        }
+
+        else
+        {
+            script.RecordSpecificCollectable(tempList[0], trigger, index);
         }
 
     }
@@ -617,13 +962,13 @@ public class EnemySetupRecorderEditor : Editor
         output.PlaceEnemySetup(data);
         EditorSceneManager.MarkSceneDirty(output.gameObject.scene);
     }
-    private void PlaceEnemies(EnemyData data)
+    private void PlaceEnemies(EnemyData data, bool clearAll)
     {
-        SetupPlacer output = GameObject.Find("SetupRecorderParent").GetComponent<SetupPlacer>();
-        ClearEnemyRecordArea();
+        if (clearAll)
+            ClearEnemyRecordArea();
 
-        output.PlaceEnemies(data);
-        EditorSceneManager.MarkSceneDirty(output.gameObject.scene);
+        placer.PlaceEnemies(data);
+        EditorSceneManager.MarkSceneDirty(placer.gameObject.scene);
     }
 
     private void PlaceCollectableSetup(CollectableData[] data)
@@ -633,13 +978,82 @@ public class EnemySetupRecorderEditor : Editor
         output.PlaceColllectableSetup(data);
         EditorSceneManager.MarkSceneDirty(output.gameObject.scene);
     }
-    private void PlaceCollectables(CollectableData data)
+    private void PlaceCollectables(CollectableData data, bool clearAll)
     {
-        SetupPlacer output = GameObject.Find("SetupRecorderParent").GetComponent<SetupPlacer>();
-        ClearCollectableRecordArea();
+        if (clearAll)
+            ClearCollectableRecordArea();
 
 
-        output.PlaceColletables(data);
-        EditorSceneManager.MarkSceneDirty(output.gameObject.scene);
+        placer.PlaceColletables(data);
+        EditorSceneManager.MarkSceneDirty(placer.gameObject.scene);
     }
+
+    public void ClearEnemyType(EnemyData data)
+    {
+        GameObject recorderEnemy = GameObject.Find("SetupRecorderEnemy");
+
+        if (recorderEnemy == null)
+        {
+            Debug.LogWarning("SetupRecorderEnemy GameObject not found.");
+            return;
+        }
+
+        if (data is NormalPigSO)
+        {
+            ClearSpecificEnemies<PigMovementBasic>();
+        }
+        else if (data is BigPigSO)
+        {
+            ClearSpecificEnemies<BigPigMovement>();
+        }
+        else if (data is JetPackPigSO)
+        {
+            ClearSpecificEnemies<JetPackPigMovement>();
+        }
+        else if (data is TenderizerPigSO)
+        {
+            ClearSpecificEnemies<TenderizerPig>();
+        }
+
+        // Mark scene as dirty to ensure changes are saved
+        EditorSceneManager.MarkSceneDirty(recorderEnemy.scene);
+    }
+
+    private void ClearSpecificEnemies<T>() where T : MonoBehaviour
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<T>();
+        foreach (var target in targets)
+        {
+            GameObject.DestroyImmediate(target.gameObject);
+        }
+    }
+
+    public void ClearCollectableType(CollectableData data)
+    {
+
+        if (recorderCollectable == null)
+        {
+            Debug.LogWarning("SetupRecorderCollectable GameObject not found.");
+            return;
+        }
+
+        if (data is RingSO)
+        {
+            ClearSpecificCollectable<RingMovement>();
+        }
+
+
+        // Mark scene as dirty to ensure changes are saved
+        EditorSceneManager.MarkSceneDirty(recorderEnemy.scene);
+    }
+
+    private void ClearSpecificCollectable<T>() where T : MonoBehaviour
+    {
+        var targets = recorderCollectable.GetComponentsInChildren<T>();
+        foreach (var target in targets)
+        {
+            GameObject.DestroyImmediate(target.gameObject);
+        }
+    }
+
 }

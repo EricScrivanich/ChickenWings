@@ -175,6 +175,10 @@ public class LevelManager : MonoBehaviour
         {
 
             yield return new WaitForSecondsRealtime(delay);
+            if (!player.isAlive)
+            {
+                yield break;
+            }
             pauseButton.enabled = false;
             sections[section].SetActive(true);
             for (int n = 0; n < playSections.Count; n++)

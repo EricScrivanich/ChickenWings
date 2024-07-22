@@ -61,7 +61,7 @@ public class RingSpawner : MonoBehaviour
 
             ringId.InitializeEffectsPool();
         }
-        for (int i = 0; i < Pool.RingType.Count; i++)
+        for (int i = 0; i < Pool.RingType.Length; i++)
         {
             PlaceholderIndex.Add(new List<GameObject>());
         }

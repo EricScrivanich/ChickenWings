@@ -3,11 +3,11 @@ using System;
 
 public class RingMovement : MonoBehaviour, ICollectible
 {
-    public int doesTriggerInt;
+    // public int doesTriggerInt;
 
     public int index = -1;
-    public float xCordinateTrigger;
-    private bool hasNotTriggered;
+    // public float xCordinateTrigger;
+    // private bool hasNotTriggered;
     public RingID ID;
     public float speed;
     public bool correctCollision = false;
@@ -52,17 +52,17 @@ public class RingMovement : MonoBehaviour, ICollectible
         _transform.position += Vector3.left * speed * Time.deltaTime;
 
 
-        if (doesTriggerInt != 0 && hasNotTriggered)
-        {
-            if ((speed > 0 && _transform.position.x < xCordinateTrigger) || (speed < 0 && _transform.position.x > xCordinateTrigger))
-            {
-                ID.ringEvent.OnRingTrigger?.Invoke(doesTriggerInt);
-                hasNotTriggered = false;
+        // if (doesTriggerInt != 0 && hasNotTriggered)
+        // {
+        //     if ((speed > 0 && _transform.position.x < xCordinateTrigger) || (speed < 0 && _transform.position.x > xCordinateTrigger))
+        //     {
+        //         ID.ringEvent.OnRingTrigger?.Invoke(doesTriggerInt);
+        //         hasNotTriggered = false;
 
 
-            }
+        //     }
 
-        }
+        // }
 
         if (speed > 0)
         {
@@ -177,7 +177,7 @@ public class RingMovement : MonoBehaviour, ICollectible
 
         if (correctSequence == false)
         {
-            hasNotTriggered = false;
+            // hasNotTriggered = false;
             col.enabled = false;
             isFaded = true;
             HandleCorrectRing();
@@ -203,6 +203,7 @@ public class RingMovement : MonoBehaviour, ICollectible
         backRing.material = ID.defaultMaterial;
         centerSprite.color = ID.CenterColor;
         centerCutout.color = ID.CenterColor;
+        Debug.Log("RingParent is: " + ID);
 
         index = ID.IDIndex;
 
@@ -212,7 +213,7 @@ public class RingMovement : MonoBehaviour, ICollectible
         col.enabled = true;
 
         SetCorrectRing();
-        hasNotTriggered = true;
+        // hasNotTriggered = true;
 
     }
 

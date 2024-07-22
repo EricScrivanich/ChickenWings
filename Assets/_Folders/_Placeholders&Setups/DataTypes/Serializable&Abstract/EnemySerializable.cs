@@ -27,3 +27,14 @@ public struct NormalPigData
     public float speed;
     
 }
+
+[System.Serializable]
+public struct BigPigData
+{
+    public Vector2 position;
+    public Vector3 scale;
+    public float speed;
+    public float yForce;
+    public float distanceToFlap;
+
+}

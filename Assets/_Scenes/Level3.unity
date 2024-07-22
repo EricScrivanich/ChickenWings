@@ -4311,8 +4311,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07dca2a4d2ec44289b33981b4ccb7352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RingPanel: {fileID: 0}
-  RingNumber: {fileID: 1907177394}
+  player: {fileID: 0}
+  isRing: 1
+  isBarn: 0
+  isPig: 0
+  numberText: {fileID: 1907177394}
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
 --- !u!1 &637752801
 GameObject:
@@ -6024,11 +6027,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   finishedLevelUIPrefab: {fileID: 5334835317810689662, guid: cc29a0545327f4ad58db75e42563aa82, type: 3}
   activateRingsAfterDelay: 0
   showSectionAtStart: 1
   areRingsRequired: 1
   ringsNeeded: 5
+  areBarnsRequired: 0
+  barnsNeeded: 0
   currentRingsPassed: 0
   initalGameObjectsToDeactivate:
   - {fileID: 1783617406}
@@ -6053,6 +6059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5728d6d89fd7444bb35960d6a84e88c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   Index: 0
   disableSpawnRanges: {x: -1.4, y: 1.4}
   timeAfterPigSpawn: 1.5
@@ -13978,10 +13985,6 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 181261764}
-    - target: {fileID: 8341004098092530541, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8556181105269460930, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Name
       value: Canvas

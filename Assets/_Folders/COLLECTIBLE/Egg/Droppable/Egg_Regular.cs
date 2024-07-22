@@ -15,6 +15,7 @@ public class Egg_Regular : MonoBehaviour
     // private Animator anim;
     private bool isFirstActivation = true;
     private bool ready = false;
+    private bool hasHit = false;
     private Pool pool;
 
 
@@ -32,6 +33,10 @@ public class Egg_Regular : MonoBehaviour
     private void Start()
     {
         pool = PoolKit.GetPool("EggPool");
+    }
+
+    private void OnEnable() {
+        hasHit = false;
     }
 
 
@@ -70,27 +75,28 @@ public class Egg_Regular : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.gameObject.CompareTag("Floor"))
+        if (hasHit) return;
+        else if (collider.gameObject.CompareTag("Floor"))
         {
 
-           
+            hasHit = true;
             // StartCoroutine(YolkMovement());
             AudioManager.instance.PlayCrackSound();
             pool.Spawn("YolkParent", transform.position,Vector3.zero);
             pool.Despawn(gameObject);
+            
             // isCracked = true;
 
 
 
         }
-        if (collider.gameObject.CompareTag("Barn"))
+        else if (collider.gameObject.CompareTag("Barn"))
         {
+            hasHit = true;
             ID.AddScore(5);
             AudioManager.instance.PlayScoreSound();
             pool.Despawn(gameObject);
-
-
-
+            
         }
     }
     // private void OnEnable()

@@ -283,7 +283,7 @@ public class BucketScript : MonoBehaviour, ICollectible
         }
         else
         {
-            ResetBucket();
+            // ResetBucket();
 
         }
 
