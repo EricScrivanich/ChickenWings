@@ -67,21 +67,6 @@ public class RingID : ScriptableObject
         CorrectRing = 1;
         ringOrder = 1;
     }
-    public List<GameObject> CurrentRingList()
-    {
-        foreach (var ringScript in ringList)
-        {
-            objectsToDeactivate.Add(ringScript.gameObject);
-        }
-        if (currentBucket != null)
-        {
-            objectsToDeactivate.Add(currentBucket);
-
-        }
-        return objectsToDeactivate;
-
-    }
-
 
     public void GetEffect(RingMovement ring)
     {
@@ -211,7 +196,7 @@ public class RingID : ScriptableObject
 
             GetEffect(ringScript);
         }
-       
+
     }
 
 

@@ -158,6 +158,7 @@ public class BallMaterialMovement : MonoBehaviour
             yield return null;
         }
 
+
         // Ensure the final values are set
         gameObject.SetActive(false);
         // transform.localScale = endScale;

@@ -11,6 +11,7 @@ public class PanelText : MonoBehaviour
     [SerializeField] private bool isRing;
     [SerializeField] private bool isBarn;
     [SerializeField] private bool isPig;
+    [SerializeField] private bool isBucket;
     [SerializeField] private TextMeshProUGUI numberText;
 
     [SerializeField] private LevelManagerID LvlID;
@@ -23,10 +24,18 @@ public class PanelText : MonoBehaviour
     }
     private void UpdateBarnPanel(int number)
     {
+        if (currentBarns >= LvlID.barnsNeeded)
+            return;
         currentBarns++;
+
 
         numberText.text = currentBarns.ToString() + " / " + LvlID.barnsNeeded.ToString();
 
+    }
+
+    private void UpdateBucketPanel(int number)
+    {
+        numberText.text = number.ToString() + " / " + LvlID.bucketsNeeded.ToString();
     }
 
 
@@ -45,6 +54,12 @@ public class PanelText : MonoBehaviour
             numberText.text = "0" + " / " + LvlID.barnsNeeded.ToString();
 
         }
+        else if (isBucket)
+        {
+            LvlID.outputEvent.setBucketPass += UpdateBucketPanel;
+            numberText.text = "0" + " / " + LvlID.bucketsNeeded.ToString();
+
+        }
 
 
     }
@@ -57,6 +72,11 @@ public class PanelText : MonoBehaviour
         else if (isBarn)
         {
             player.globalEvents.OnAddScore -= UpdateBarnPanel;
+
+        }
+        else if (isBucket)
+        {
+            LvlID.outputEvent.setBucketPass -= UpdateBucketPanel;
 
         }
 

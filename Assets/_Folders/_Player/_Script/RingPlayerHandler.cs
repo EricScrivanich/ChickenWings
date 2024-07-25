@@ -5,11 +5,14 @@ using UnityEngine;
 public class RingPlayerHandler : MonoBehaviour
 {
     public PlayerID ID;
+    [SerializeField] private LevelManagerID lvlID;
 
     [SerializeField] private GameObject scoreText;
     [SerializeField] private GameObject tutorialText;
     [SerializeField] private Transform Mana;
     [SerializeField] private List<GameObject> Lives;
+
+    [SerializeField] private int BucketDifferntObjective;
 
     public RingID RingRed;
     public RingID RingPink;
@@ -25,14 +28,14 @@ public class RingPlayerHandler : MonoBehaviour
             positionScript = GameObject.Find("CanvasScreen").GetComponent<CanvasScreenPositions>();
 
         }
-        else 
+        else
         {
             Debug.Log("No Canvas Screen Display Gameobject Found In RingPlayerHandler script");
         }
 
     }
 
-   
+
 
     private void AddScore()
     {
@@ -100,6 +103,12 @@ public class RingPlayerHandler : MonoBehaviour
             RingGold.ringEvent.OnCheckOrder?.Invoke();
             return;
         }
+        else if (BucketDifferntObjective == 2 && lvlID != null)
+        {
+            Invoke("DelayBeforeGoldAdded", .25f);
+            return;
+
+        }
         ID.AddScore(Mathf.CeilToInt(RingGold.CorrectRing * 2) + 3);
     }
 
@@ -109,6 +118,11 @@ public class RingPlayerHandler : MonoBehaviour
         ID.Lives += 1;
 
 
+    }
+
+    private void DelayBeforeGoldAdded()
+    {
+        lvlID.outputEvent.addBucketPass?.Invoke();
     }
 
     private void PurpleFinish()

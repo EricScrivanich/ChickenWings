@@ -8,7 +8,7 @@ public class BucketScript : MonoBehaviour, ICollectible
     private int ResetCounter = 0;
     public PlayerID Player;
     public float speed;
-    public int index;
+    public int index => ID.IDIndex;
     private bool ready = false;
     private bool isExploded = false;
     private bool isCorrect = false;
@@ -283,8 +283,17 @@ public class BucketScript : MonoBehaviour, ICollectible
         }
         else
         {
-            // ResetBucket();
+            // ResetBucket(); 
 
+        }
+
+    }
+
+    private void DisableBucket(int indexVar)
+    {
+        if (index == indexVar)
+        {
+            gameObject.SetActive(false);
         }
 
     }
@@ -308,11 +317,12 @@ public class BucketScript : MonoBehaviour, ICollectible
     private void OnEnable()
     {
         isCorrect = false;
-        index = ID.IDIndex;
+
         anim.SetBool("RestartBool", true);
         EnableColliders();
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
+        ID.ringEvent.DisableRings += DisableBucket;
         EnableColliders();
         FadeChildren(1f);
         StartCoroutine(ResetRing());
@@ -368,6 +378,8 @@ public class BucketScript : MonoBehaviour, ICollectible
 
         ID.ringEvent.OnCheckOrder -= SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence -= NewSetup;
+        ID.ringEvent.DisableRings -= DisableBucket;
+
 
 
     }

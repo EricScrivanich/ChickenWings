@@ -5,16 +5,17 @@ public class RingMovement : MonoBehaviour, ICollectible
 {
     // public int doesTriggerInt;
 
-    public int index = -1;
     // public float xCordinateTrigger;
     // private bool hasNotTriggered;
     public RingID ID;
+    public int index => ID.IDIndex;
+
     public float speed;
     public bool correctCollision = false;
     public int order;
     private bool isCorrect = false;
 
-    
+
 
     private Transform _transform;
     private Rigidbody2D rb;
@@ -188,6 +189,14 @@ public class RingMovement : MonoBehaviour, ICollectible
 
     }
 
+    private void DisableRings(int indexVar)
+    {
+        if (indexVar == index)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
 
 
     public int GetOrder()
@@ -205,10 +214,11 @@ public class RingMovement : MonoBehaviour, ICollectible
         centerCutout.color = ID.CenterColor;
         Debug.Log("RingParent is: " + ID);
 
-        index = ID.IDIndex;
+
 
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
+        ID.ringEvent.DisableRings += DisableRings;
 
         col.enabled = true;
 
@@ -221,7 +231,9 @@ public class RingMovement : MonoBehaviour, ICollectible
     {
         ID.ringEvent.OnCheckOrder -= SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence -= NewSetup;
-        index = -1;
+        ID.ringEvent.DisableRings -= DisableRings;
+
+
         if (!isFaded)
         {
             anim.SetBool(BurstBoolHash, false);

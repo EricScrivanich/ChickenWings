@@ -6,6 +6,7 @@ public class JetPackPigMovement : MonoBehaviour
 {
     public float speed;
     private float speedVar;
+    private bool hasPlayedAudio;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,10 +22,22 @@ public class JetPackPigMovement : MonoBehaviour
         {
             speedVar = 0;
         }
+
+        if (!hasPlayedAudio)
+        {
+            if (speed > 0 && transform.position.x < BoundariesManager.rightBoundary)
+            {
+                AudioManager.instance.PlayPigJetPackSound();
+                hasPlayedAudio = true;
+
+            }
+
+        }
     }
 
     private void OnEnable()
     {
+        hasPlayedAudio = false;
         speedVar = speed;
 
     }

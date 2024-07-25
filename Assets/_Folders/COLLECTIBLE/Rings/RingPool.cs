@@ -23,7 +23,7 @@ public class RingPool : ScriptableObject
     private int ringAmount = 25;
     private int bucketAmount = 4;
 
-    private List<List<GameObject>> ringsToDeactivate;
+
 
     public bool isTutorial;
     // private Queue<GameObject> ringPool;
@@ -38,13 +38,9 @@ public class RingPool : ScriptableObject
     public void SpawnRingPool()
     {
         ringPool = new RingMovement[ringAmount];
-        ringsToDeactivate = new List<List<GameObject>>();
 
-        for (int i = 0; i < RingType.Length; i++)
-        {
-            List<GameObject> list = new List<GameObject>();
-            ringsToDeactivate.Add(list);
-        }
+
+
 
         if (!parent)
         {
@@ -125,6 +121,13 @@ public class RingPool : ScriptableObject
             currentRingIndex = 0;
         }
         var ring = ringPool[currentRingIndex];
+
+        if (ring.gameObject.activeInHierarchy)
+        {
+            Debug.LogWarning("Taking active ring");
+            ring.gameObject.SetActive(false);
+
+        }
         ring.ID = ID;
         currentRingIndex++;
         return ring;
@@ -137,13 +140,11 @@ public class RingPool : ScriptableObject
 
     public void DisableRings(int index)
     {
-        Debug.Log("number to deactivate: " + ringsToDeactivate[index].Count);
 
-        foreach (var obj in ringsToDeactivate[index])
-        {
-            obj.SetActive(false);
+        Debug.LogWarning("Disabling Index: " + index);
 
-        }
+
+        RingType[index].ringEvent.DisableRings?.Invoke(index);
 
         RingType[index].ResetVariables();
 
@@ -211,7 +212,7 @@ public class RingPool : ScriptableObject
     #region Fading/Disabling
     public IEnumerator FadeOutRed()
     {
-        ringsToDeactivate[0] = RingType[0].CurrentRingList();
+
         yield return new WaitForSeconds(.5f);
         float time = 0;
         while (time < 2f)
@@ -232,7 +233,7 @@ public class RingPool : ScriptableObject
 
     public IEnumerator FadeOutPink()
     {
-        ringsToDeactivate[1] = RingType[1].CurrentRingList();
+
         float time = 0;
         while (time < 1f)
         {
@@ -251,7 +252,7 @@ public class RingPool : ScriptableObject
 
     public IEnumerator FadeOutGold()
     {
-        ringsToDeactivate[2] = RingType[2].CurrentRingList();
+
         float time = 0;
         while (time < .4f)
         {
@@ -282,7 +283,7 @@ public class RingPool : ScriptableObject
 
     public IEnumerator FadeOutPurple()
     {
-        ringsToDeactivate[3] = RingType[3].CurrentRingList();
+
         float time = 0;
         while (time < 1f)
         {
@@ -325,6 +326,7 @@ public class RingPool : ScriptableObject
     }
     private void ResetGoldMaterial()
     {
+        Debug.Log("Reseting Gold Material");
         RingType[2].defaultMaterial.SetFloat("_HitEffectBlend", 0);
         RingType[2].highlightedMaterial.SetFloat("_HitEffectBlend", 0);
         RingType[2].passedMaterial.SetFloat("_HitEffectBlend", 0);

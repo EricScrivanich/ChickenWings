@@ -4,6 +4,7 @@ using DG.Tweening;
 
 public class SignMovement : MonoBehaviour
 {
+    [SerializeField] private FadeInUI uiFade;
     [SerializeField] private bool doesDrop;
     [Header("Movement Settings")]
     [SerializeField] private Button[] NextPrevButtons;
@@ -113,6 +114,10 @@ public class SignMovement : MonoBehaviour
 
         Debug.Log("Retracting with this: " + this.gameObject);
         DisableButtons();
+        if (uiFade != null)
+        {
+            uiFade.FadeOut();
+        }
 
 
 

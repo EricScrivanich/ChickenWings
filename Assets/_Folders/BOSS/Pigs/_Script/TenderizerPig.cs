@@ -60,6 +60,13 @@ public class TenderizerPig : MonoBehaviour, ICollectible
     {
         detection.enabled = false;
         anim.SetTrigger("SwingTrigger");
+        Invoke("PlaySound", .5f);
+
+    }
+
+    private void PlaySound()
+    {
+        AudioManager.instance.PlayPigHammerSwingSound();
     }
     // Update is called once per frame
 

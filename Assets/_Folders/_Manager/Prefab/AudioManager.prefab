@@ -355,13 +355,18 @@ MonoBehaviour:
   downJump: {fileID: 8300000, guid: 98921ac9b312d4b9e90162bfeaece40e, type: 3}
   bounce: {fileID: 8300000, guid: 4717e8c000ebb425183b7ba50478dbd7, type: 3}
   dash: {fileID: 8300000, guid: 2b64e719199234d08a4e609348b06c66, type: 3}
-  crack: {fileID: 8300000, guid: e5146415cf1ba493b9475b058f7f6924, type: 3}
   start: {fileID: 8300000, guid: 8ce8a7739f0584ccd839851b21d05e1a, type: 3}
-  scoreSound: {fileID: 8300000, guid: 678c64c9b28384205ba6b72691e2b8f1, type: 3}
+  swordSlashSound: {fileID: 8300000, guid: f49e10f6906334baf803f016e7f53ff8, type: 3}
   frozenSound: {fileID: 8300000, guid: 9f971a8787bd6426db09ab08357075a0, type: 3}
+  crack: {fileID: 8300000, guid: e5146415cf1ba493b9475b058f7f6924, type: 3}
+  scoreSound: {fileID: 8300000, guid: 678c64c9b28384205ba6b72691e2b8f1, type: 3}
+  ringSuccess: {fileID: 8300000, guid: 8cdad93d05f5744109a33ef54ac92b5d, type: 3}
+  bucketBurstSound: {fileID: 8300000, guid: e977e4a5c1fd540489de1e6ddbc6c6c3, type: 3}
+  ringPassSound: {fileID: 8300000, guid: 59117968211e74630a83f959eb23a852, type: 3}
+  pigDeath: []
+  pigHammerSwing: {fileID: 0}
   planeExplosionSound: {fileID: 8300000, guid: dc234c741a7c54376bc4a9c8ea8013ee, type: 3}
   bombExplosionSound: {fileID: 8300000, guid: 15b44ede18db44b06a52af85cf7c6400, type: 3}
-  swordSlashSound: {fileID: 8300000, guid: f49e10f6906334baf803f016e7f53ff8, type: 3}
   cluckVolume: 0.9
   flipVolume: 0.5
   deathSoundVolume: 0.5
@@ -376,12 +381,11 @@ MonoBehaviour:
   planeExplosionVolume: 0.5
   bombExplosionVolume: 0.5
   swordSlashVolume: 0.7
-  ringSuccess: {fileID: 8300000, guid: 8cdad93d05f5744109a33ef54ac92b5d, type: 3}
-  bucketBurstSound: {fileID: 8300000, guid: e977e4a5c1fd540489de1e6ddbc6c6c3, type: 3}
   ringSuccessVolume: 0.7
-  ringPassSound: {fileID: 8300000, guid: 59117968211e74630a83f959eb23a852, type: 3}
   ringPassVolume: 0.7
   bucketBurstSoundVolume: 0.7
+  pigDeathVolumes: []
+  pigHammerSwingVolume: 0
 --- !u!164 &3233758667693879064
 AudioReverbFilter:
   m_ObjectHideFlags: 0

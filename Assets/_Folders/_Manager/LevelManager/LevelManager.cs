@@ -7,6 +7,8 @@ using TMPro;
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private LevelManagerID LvlID;
+    private StateInputSystem playerInputs;
+    private InputTracker inputTracker;
     public PlayerID player;
     [SerializeField] private GameObject finishedLevelUIPrefab;
     [SerializeField] private bool activateRingsAfterDelay;
@@ -18,6 +20,14 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private bool areRingsRequired;
     private bool finishedRings;
     [SerializeField] private int ringsNeeded;
+    [SerializeField] private int currentRingsPassed;
+
+
+    [Header("Buckets")]
+    [SerializeField] private bool areBucketsRequired;
+    private bool finishedBuckets;
+    [SerializeField] private int bucketsNeeded;
+    private int currentBucketsPassed;
 
 
 
@@ -30,7 +40,6 @@ public class LevelManager : MonoBehaviour
 
 
     [Header("Other")]
-    [SerializeField] private int currentRingsPassed;
     [SerializeField] private List<GameObject> initalGameObjectsToDeactivate;
     [SerializeField] private List<GameObject> sections;
     [SerializeField] private List<int> playSections;
@@ -42,9 +51,10 @@ public class LevelManager : MonoBehaviour
     {
         currentSection = 0;
         hasStartedPlayTimeDelayedPause = false;
-        LvlID.ResetLevel(areRingsRequired, ringsNeeded, barnsNeeded);
+        LvlID.ResetLevel(areRingsRequired, ringsNeeded, barnsNeeded, bucketsNeeded);
         finishedRings = !areRingsRequired;
         finishedBarns = !areBarnsRequired;
+        finishedBuckets = !areBucketsRequired;
 
         if (areRingsRequired)
         {
@@ -59,9 +69,19 @@ public class LevelManager : MonoBehaviour
             player.globalEvents.OnAddScore += HitBarn;
 
         }
+
+        if (areBucketsRequired)
+        {
+            currentBucketsPassed = 0;
+            LvlID.bucketsNeeded = bucketsNeeded;
+            LvlID.outputEvent.addBucketPass += HitBucket;
+
+        }
     }
     void Start()
     {
+        inputTracker = GetComponent<InputTracker>();
+        playerInputs = GameObject.Find("Player").GetComponent<StateInputSystem>();
         pauseButton = GameObject.Find("PauseButton").GetComponent<Button>();
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         foreach (var obj in sections)
@@ -77,11 +97,20 @@ public class LevelManager : MonoBehaviour
         if (showSectionAtStart)
         {
             ShowSection(true, 0);
+            playerInputs.ActivateButtons(false);
         }
+        inputTracker.EnableTracking(false);
 
 
 
     }
+
+    public void NextUIFromInput()
+    {
+        sections[currentSection].GetComponent<SignMovement>().RetractToNextUI(true);
+    }
+
+
 
     private void ShowSection(bool show, int section)
     {
@@ -114,23 +143,21 @@ public class LevelManager : MonoBehaviour
                     {
                         ShowNextUISectionFromPlaytime(playSectionDelayToUI[n], currentSection);
                     }
+                    inputTracker.EnableTracking(false);
+                    playerInputs.ActivateButtons(true);
 
                     return; // Exit the method immediately
                 }
                 else if (currentSection == playSections[n] - 1)
                 {
 
-                    SetButtonsActive buttonScriptvar = GameObject.Find("Buttons").GetComponent<SetButtonsActive>();
-                    buttonScriptvar.SetActive(true);
-                    buttonScriptvar.SetPlayerButtons(true);
+                    inputTracker.EnableTracking(true);
                     StartCoroutine(ShowNextUISection(1.2f, currentSection));
 
                     return; // Exit the method immediately
                 }
             }
-            SetButtonsActive buttonScript = GameObject.Find("Buttons").GetComponent<SetButtonsActive>();
-            buttonScript.SetActive(false);
-            buttonScript.SetPlayerButtons(false);
+            playerInputs.ActivateButtons(false);
             StartCoroutine(ShowNextUISection(1.2f, currentSection));
         }
 
@@ -186,15 +213,13 @@ public class LevelManager : MonoBehaviour
 
                 if (currentSection == playSections[n] - 1)
                 {
-                    SetButtonsActive buttonScript = GameObject.Find("Buttons").GetComponent<SetButtonsActive>();
-                    buttonScript.SetActive(true);
-                    buttonScript.SetPlayerButtons(true);
+                    playerInputs.ActivateButtons(false);
+                    inputTracker.EnableTracking(true);
                 }
                 else if (currentSection != playSections[n])
                 {
-                    SetButtonsActive buttonScript = GameObject.Find("Buttons").GetComponent<SetButtonsActive>();
-                    buttonScript.SetActive(false);
-                    buttonScript.SetPlayerButtons(false);
+                    playerInputs.ActivateButtons(false);
+                    inputTracker.EnableTracking(false);
                 }
             }
 
@@ -223,6 +248,8 @@ public class LevelManager : MonoBehaviour
 
     void PassRing(int inARow)
     {
+        if (finishedRings)
+            return;
         currentRingsPassed++;
         LvlID.outputEvent.RingParentPass(currentRingsPassed);
 
@@ -234,16 +261,34 @@ public class LevelManager : MonoBehaviour
 
     }
 
+    void HitBucket()
+    {
+        if (finishedBuckets)
+            return;
+        currentBucketsPassed++;
+        LvlID.outputEvent.setBucketPass?.Invoke(currentBucketsPassed);
+
+        if (currentBucketsPassed >= LvlID.bucketsNeeded)
+        {
+            finishedBuckets = true;
+            CheckGoals();
+        }
+
+    }
+
     void HitBarn(int inARow)
     {
+        if (finishedBarns)
+            return;
+            
         currentBarnsPassed++;
-        Debug.Log("HitBarn");
+
 
 
         if (currentBarnsPassed >= LvlID.barnsNeeded)
         {
             finishedBarns = true;
-            Debug.Log("SHould Check Goals");
+
             CheckGoals();
         }
 
@@ -259,6 +304,12 @@ public class LevelManager : MonoBehaviour
         {
             player.globalEvents.OnAddScore -= HitBarn;
         }
+        if (areBucketsRequired)
+        {
+
+            LvlID.outputEvent.addBucketPass -= HitBucket;
+
+        }
 
     }
 
@@ -273,7 +324,7 @@ public class LevelManager : MonoBehaviour
         {
             ShowSection(true, currentSection);
         }
-        if (finishedRings && finishedBarns)
+        if (finishedRings && finishedBarns && finishedBuckets)
         {
             CreateFinish();
         }

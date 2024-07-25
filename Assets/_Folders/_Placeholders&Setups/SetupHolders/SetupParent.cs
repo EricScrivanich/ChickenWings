@@ -37,13 +37,14 @@ public class SetupParent : ScriptableObject
 
 
 
-    public void SpawnCollectablesOnly(CollectablePoolManager collectableManager, int currentTrigger)
+    public void SpawnCollectablesOnly(CollectablePoolManager collectableManager, int currentTrigger, bool isFinal)
     {
         foreach (var coll in collectableSetup[currentTrigger].dataArray)
         {
             coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
         }
-        collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(null, collectableSetup[currentTrigger].dataArray)));
+        if (isFinal == null)
+            collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(null, collectableSetup[currentTrigger].dataArray)));
 
     }
 
@@ -131,17 +132,34 @@ public class SetupParent : ScriptableObject
     }
 
 
-    public void SpawnBoth(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, int currentTrigger)
+    public void SpawnTrigger(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, int currentTrigger, bool finalRing)
     {
-        if (collectableSetup[currentTrigger].dataArray.Length > 0)
+        Debug.LogWarning("SpawnTrigger");
+        Debug.LogWarning(this.name + " :Current Trigger: " + currentTrigger + " :Length: " + collectableSetup.Count);
+
+
+        if (collectableSetup.Count > currentTrigger)
         {
+            Debug.LogWarning("Enetered For Each");
             foreach (var coll in collectableSetup[currentTrigger].dataArray)
             {
-                coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
+                if (finalRing)
+                {
+                    Debug.LogWarning("Intitialize with final ring true");
+
+                    coll.InitializeCollectable(collectableManager, true);
+                }
+                else
+                {
+                    Debug.LogWarning("Intitialize with final ring false");
+
+                    coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
+                }
+
             }
         }
 
-        if (enemySetup[currentTrigger].dataArray.Length > 0)
+        if (enemySetup.Count > currentTrigger)
         {
             foreach (var enemySet in enemySetup[currentTrigger].dataArray)
             {

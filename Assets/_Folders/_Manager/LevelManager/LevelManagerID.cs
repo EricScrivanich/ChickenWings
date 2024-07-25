@@ -17,17 +17,22 @@ public class LevelManagerID : ScriptableObject
 
     public int RingsPassed { get; private set; }
 
+    public int bucketsNeeded;
+
+
+
 private void AddRingPass()
 {
 
 }
 
-public void ResetLevel(bool ringsReq,int ringAmountNeeded, int barnsNeed)
+public void ResetLevel(bool ringsReq,int ringAmountNeeded, int barnsNeed, int bucketNeed)
 {
         areRingsRequired = ringsReq;
         ringsNeeded = ringAmountNeeded;
         currentRingsPassed = 0;
         barnsNeeded = barnsNeed;
+        bucketsNeeded = bucketNeed;
 
 
     }

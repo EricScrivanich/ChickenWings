@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
+  m_Name: RingVideo
+  m_EditorClassIdentifier: 
+  isRandomSetup: 0
+  fillRingWithEnemiesStartIndex: 0
+  enemyTriggerForEachRingIndex: 
+  enemySetup:
+  - dataArray:
+    - rid: 7051806302495834133
+    - rid: 7051806302495834134
+    - rid: 7051806302495834135
+  collectableSetup:
+  - dataArray:
+    - rid: 7051806302495834137
+  references:
+    version: 2
+    RefIds:
+    - rid: 7051806302495834133
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 1.573
+        data:
+        - position: {x: 22.73, y: -2.42}
+          scale: {x: 0.87, y: 0.83, z: 1}
+          speed: 10
+    - rid: 7051806302495834134
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 8.465385
+        data:
+        - position: {x: 51.02, y: 2.14}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 5.2
+    - rid: 7051806302495834135
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.2232232
+        data:
+        - position: {x: 22.471472, y: 1.8094158}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4.8
+          yForce: 6
+          distanceToFlap: 1
+    - rid: 7051806302495834137
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 7.53
+        isRings: 1
+        data:
+        - position: {x: 12.347726, y: 1.3838041}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.2164396, w: 0.97629607}
+          speed: 5
+        - position: {x: 14.33, y: 1.88}
+          scale: {x: 1.1, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 16.32, y: 1.3838041}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.21643952, w: 0.97629607}
+          speed: 5
+        - position: {x: 18.8, y: -0.62}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: 5
+        - position: {x: 19.16, y: -1.71}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: 5
+        - position: {x: 19.65, y: -2.89}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: 5
+        - position: {x: 25.436516, y: -2.1600945}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 26.81, y: -2.1600945}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 28.35, y: -2.1600945}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 29.77, y: -2.1600945}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 34.180656, y: 1.75}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.17364816, w: 0.9848078}
+          speed: 5
+        - position: {x: 40.1, y: -0.54}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.2164396, w: 0.97629607}
+          speed: 5
+        - position: {x: 42.31, y: 0.15}
+          scale: {x: 1.1, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 44.65, y: -0.62}
+          scale: {x: 1.1, y: 1.1, z: 1.1}
+          rotation: {x: -0, y: -0, z: -0.21643952, w: 0.97629607}
+          speed: 5

@@ -9,10 +9,13 @@ public class AudioManager : MonoBehaviour
     public static AudioManager instance;
     private float globalAudioSourcePitch;
 
-
+    [Header("Audio Sources")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource ringPassSource;
+    [SerializeField] private AudioSource pigAudioSource;
+
+    [Header("Chicken")]
     [SerializeField] private AudioClip[] cluckSounds;
     [SerializeField] private AudioClip[] flipSounds;
     [SerializeField] private AudioClip deathSound;
@@ -20,18 +23,37 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip downJump;
     [SerializeField] private AudioClip bounce;
     [SerializeField] private AudioClip dash;
-    [SerializeField] private AudioClip crack;
     [SerializeField] private AudioClip start;
-    [SerializeField] private AudioClip scoreSound;
+    [SerializeField] private AudioClip swordSlashSound;
     [SerializeField] private AudioClip frozenSound;
+
+
+    [Header("Eggs")]
+    [SerializeField] private AudioClip crack;
+    [SerializeField] private AudioClip scoreSound;
+
+
+    [Header("Rings")]
+    [SerializeField] private AudioClip ringSuccess;
+    [SerializeField] private AudioClip bucketBurstSound;
+    [SerializeField] private AudioClip ringPassSound; // Assign in Unity Editor
+
+
+    [Header("Pigs")]
+    [SerializeField] private AudioClip[] pigDeath;
+    [SerializeField] private AudioClip pigHammerSwing;
+    [SerializeField] private AudioClip pigJetPack;
+
+
+    [Header("Explosions")]
     [SerializeField] private AudioClip planeExplosionSound;
     [SerializeField] private AudioClip bombExplosionSound;
-    [SerializeField] private AudioClip swordSlashSound;
 
 
 
 
 
+    [Header("Volumes")]
     [SerializeField] private float cluckVolume = 0.7f;
     [SerializeField] private float flipVolume = 0.7f;
     [SerializeField] private float deathSoundVolume = 1f;
@@ -46,17 +68,16 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float planeExplosionVolume = 0.7f;
     [SerializeField] private float bombExplosionVolume = 0.7f;
     [SerializeField] private float swordSlashVolume = 0.7f;
-
-    [SerializeField] private AudioClip ringSuccess;
-    [SerializeField] private AudioClip bucketBurstSound;
-
     [SerializeField] private float ringSuccessVolume = 0.7f;
-    [SerializeField] private AudioClip ringPassSound; // Assign in Unity Editor
     [SerializeField] private float ringPassVolume = 0.7f;
     [SerializeField] private float bucketBurstSoundVolume = 0.7f;
 
-    float semitoneRatio = Mathf.Pow(2, 1f / 12f);
-    private float ringPassPitch = 1f; // Default pitch
+    [SerializeField] private float[] pigDeathVolumes;
+    [SerializeField] private float pigHammerSwingVolume;
+    [SerializeField] private float pigJetPackVolume;
+
+
+
 
     private void Awake()
     {
@@ -74,7 +95,7 @@ public class AudioManager : MonoBehaviour
         BoundariesManager.isDay = false;
 
         // Don't destroy AudioManager on scene change.
-       
+
 
     }
 
@@ -106,6 +127,26 @@ public class AudioManager : MonoBehaviour
     {
         ringPassSource.pitch = Mathf.Pow(2, (order - 1) / 12.0f);
         ringPassSource.PlayOneShot(ringPassSound, ringPassVolume);
+
+    }
+
+    public void PlayPigDeathSound(int type)
+    {
+        // 0 for small, 1 for big, 2 for hammer
+
+        if (type >= 0 && type < pigDeath.Length)
+        {
+            pigAudioSource.PlayOneShot(pigDeath[type], pigDeathVolumes[type]);
+        }
+    }
+    public void PlayPigHammerSwingSound()
+    {
+        pigAudioSource.PlayOneShot(pigHammerSwing, pigHammerSwingVolume);
+
+    }
+    public void PlayPigJetPackSound()
+    {
+        pigAudioSource.PlayOneShot(pigJetPack, pigJetPackVolume);
 
     }
 

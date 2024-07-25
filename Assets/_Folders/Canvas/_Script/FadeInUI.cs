@@ -8,6 +8,8 @@ public class FadeInUI : MonoBehaviour
 {
     [SerializeField] private CanvasGroup FadeGroup;
 
+    [SerializeField] private bool setCanvasGroupUnactive;
+
     [SerializeField] private List<GameObject> SetActiveObjects;
     [SerializeField] private List<GameObject> SetUnactiveObjects;
 
@@ -51,6 +53,8 @@ public class FadeInUI : MonoBehaviour
     private void OnEnable()
     {
         hasFaded = false;
+       if(setCanvasGroupUnactive) FadeGroup.gameObject.SetActive(true);
+
         foreach (var item in SetActiveObjects)
         {
             item.SetActive(false);
@@ -63,6 +67,10 @@ public class FadeInUI : MonoBehaviour
         FadeGroup.DOFade(endAlpha, fadeDuration).SetEase(Ease.InOutSine).From(startAlpha).SetUpdate(true);
 
         StartCoroutine(SetObjectsActive());
+    }
+    private void OnDisable()
+    {
+        if (setCanvasGroupUnactive) FadeGroup.gameObject.SetActive(false);
     }
 
     public void FadeOut()
