@@ -5857,6 +5857,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1642033380}
     m_Modifications:
+    - target: {fileID: 107412689077373414, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: dashIconLargeScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2596011660906285811, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -5871,7 +5875,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3304498880910268721, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: manaUsed
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3304498880910268721, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3549554370242709108, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5999,9 +6007,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3359180396602676623, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 270.8
+      objectReference: {fileID: 0}
     - target: {fileID: 4333359594649889521, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: dropImage
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4368737578592481974, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_ControlPath
+      value: <Gamepad>/buttonEast
+      objectReference: {fileID: 0}
+    - target: {fileID: 4854256708913574081, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 270.8
       objectReference: {fileID: 0}
     - target: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Pivot.x
@@ -6082,6 +6102,14 @@ PrefabInstance:
     - target: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -7.233
+      objectReference: {fileID: 0}
+    - target: {fileID: 6694601227340741160, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 270.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8364315067125074635, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -34
       objectReference: {fileID: 0}
     - target: {fileID: 8556181105269460930, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Name

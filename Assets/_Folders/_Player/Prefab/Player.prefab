@@ -427,7 +427,6 @@ GameObject:
   - component: {fileID: 851630593813869172}
   - component: {fileID: 7007111118875938752}
   - component: {fileID: 5933627762509172735}
-  - component: {fileID: 3304498880910268721}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -571,6 +570,18 @@ MonoBehaviour:
   normalButtonColor: {r: 1, g: 1, b: 1, a: 0.6313726}
   highlightButtonColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
   disabledButtonColor: {r: 0.9811321, g: 0.36561054, b: 0.36561054, a: 0.7607843}
+  DashImageManaHighlight: {r: 0.8901961, g: 0.45882353, b: 1, a: 1}
+  DashImageManaDisabled: {r: 0.98039216, g: 0.3647059, b: 0.5764706, a: 0}
+  DashImageManaDisabledFilling: {r: 0.7176471, g: 0.039215688, b: 0.7647059, a: 0.41960785}
+  coolDownColorRed: {r: 0.972549, g: 0.105882354, b: 0.105882354, a: 0.7647059}
+  coolDownColorBlue: {r: 0.8901961, g: 0.45882353, b: 1, a: 0.7647059}
+  manaUsed: 1
+  moveDashIconX: 25
+  dashIconLargeScale2: {x: 1.1, y: 1.1, z: 1.1}
+  mainManaFillDuration: 1
+  fillingManaColor: {r: 0.5803922, g: 0.039215688, b: 0.7647059, a: 0.6}
+  canUseDashSlashImageColor1: {r: 0.9150943, g: 0.40143287, b: 0.8989527, a: 0.6}
+  canUseDashSlashImageColor2: {r: 0.5803922, g: 0.039215688, b: 0.7647059, a: 0.6}
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   touchButtonRectTransform: {fileID: 0}
 --- !u!114 &2362284218855398748
@@ -680,42 +691,6 @@ MonoBehaviour:
   minimumAddScoreDelay: 0.2
   delayDecreaseDuration: 80
   GlobalTimer: 0
---- !u!114 &3304498880910268721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2938654145027134748}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4a324540c680495aa8f2f04fefdde91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  DisabledButtonColor: {r: 0.98039216, g: 0.3647059, b: 0.3647059, a: 0.7607843}
-  ButtonHeldColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-  ButtonNormalColor: {r: 1, g: 1, b: 1, a: 0.6313726}
-  ButtonCanSlashColor1: {r: 0.28627452, g: 0.21176471, b: 1, a: 0.5019608}
-  ButtonCanSlashColor2: {r: 0.5372549, g: 0.6666667, b: 0.8980392, a: 0.8509804}
-  DashImageManaHighlight: {r: 0.8901961, g: 0.45882353, b: 1, a: 1}
-  DashImageManaDisabled: {r: 0.98039216, g: 0.36470586, b: 0.57526356, a: 0}
-  DashImageManaDisabledFilling: {r: 0.71646273, g: 0.039215684, b: 0.7647059, a: 0.41960785}
-  coolDownColorRed: {r: 0.972549, g: 0.105882354, b: 0.105882354, a: 0.7647059}
-  coolDownColorBlue: {r: 0.8901961, g: 0.45882353, b: 1, a: 0.7647059}
-  moveDashIconX: 25
-  dashIconLargeScale: {x: 1.25, y: 1.2, z: 1.2}
-  dashIconSmallScale: {x: 0.85, y: 0.9, z: 0.9}
-  mainManaFillDuration: 10
-  manaGainedFromCollectable: 40
-  dashSlashCooldown: 0
-  PressedColorNormal: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.8509804}
-  PressedColorMana: {r: 0.5372549, g: 0.6666667, b: 0.8980392, a: 0.8509804}
-  fillingManaColor: {r: 0.5803922, g: 0.039215688, b: 0.7647059, a: 0.6}
-  canUseDashSlashButtonColor: {r: 0.28627452, g: 0.21176471, b: 1, a: 0.5019608}
-  canUseDashSlashImageColor1: {r: 0.6786598, g: 0.35933605, b: 0.8018868, a: 0.6}
-  canUseDashSlashImageColor2: {r: 0.862643, g: 0.64328945, b: 0.9811321, a: 0.6}
-  orignialButtonColor: {r: 0.83137256, g: 0.7647059, b: 0.7647059, a: 0.14901961}
 --- !u!1 &3520994022076439796
 GameObject:
   m_ObjectHideFlags: 0
