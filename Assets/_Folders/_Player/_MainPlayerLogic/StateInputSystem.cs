@@ -58,8 +58,8 @@ public class StateInputSystem : MonoBehaviour
     private float startingDashIconX;
     [SerializeField] private float moveDashIconX;
     private Vector3 dashIconNormalScale = new Vector3(1, 1, 1);
-    private Vector3 dashIconLargeScale = new Vector3(.5f, 1.15f, 1);
-    [SerializeField] private Vector3 dashIconLargeScale2 = new Vector3(1.2f, 1.2f, 1.2f);
+    [SerializeField] private Vector3 dashIconLargeScale;
+    [SerializeField] private Vector3 dashIconLargeScale2;
     private Vector3 dashIconSmallScale = new Vector3(.85f, .9f, 1);
 
 
@@ -298,7 +298,12 @@ public class StateInputSystem : MonoBehaviour
     private void IconTween(int type)
     {
         if (dashIconSequence != null && dashIconSequence.IsPlaying())
+        {
             dashIconSequence.Kill();
+
+
+        }
+        dashIconSequence = DOTween.Sequence();
 
         if (type == 0)
         {
@@ -309,12 +314,12 @@ public class StateInputSystem : MonoBehaviour
         }
         else if (type == 1)
         {
-Debug.Log("YEEERERRERERERER");
-            dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX + (moveDashIconX * .5f), .15f).SetEase(Ease.InSine));
-            dashIconSequence.Join(dashIcon.DOScale(dashIconLargeScale, .15f));
-            dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX + moveDashIconX, .2f).SetEase(Ease.OutSine));
+            Debug.Log("YEEERERRERERERER");
+            dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX + (moveDashIconX * .6f), .15f));
+            dashIconSequence.Join(dashIcon.DOScale(dashIconLargeScale, .15f).SetEase(Ease.InSine));
+            dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX + moveDashIconX , .2f).SetEase(Ease.OutSine));
+            dashIconSequence.Join(dashIcon.DOScale(dashIconLargeScale2, .2f).SetEase(Ease.InSine));
 
-            dashIconSequence.Join(dashIcon.DOScale(dashIconLargeScale2, .2f));
             dashIconSequence.Play();
 
         }
