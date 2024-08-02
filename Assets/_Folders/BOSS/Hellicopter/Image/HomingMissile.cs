@@ -75,7 +75,7 @@ public class HomingMissile : MonoBehaviour
 
     private void OnEnable()
     {
-        
+
         reachedOffset = false;
         rotateSpeed = startingRotateSpeed;
 
@@ -99,7 +99,7 @@ public class HomingMissile : MonoBehaviour
             return;
         }
         OffsetPosition = new Vector2(player.position.x, ID.GetOffset());
-        
+
 
     }
 
@@ -192,15 +192,15 @@ public class HomingMissile : MonoBehaviour
                     reachedOffset = true;
                     rotateSpeed += (Random.Range(130, 150));
                 }
-        
+
                 Vector2 direction = OffsetPosition - rb.position;
 
                 direction.Normalize();
 
-           
+
                 float rotateAmount = Vector3.Cross(direction, transform.up).z;
 
-      
+
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
                 rb.velocity = transform.up * maxVelocity;
             }
@@ -209,7 +209,7 @@ public class HomingMissile : MonoBehaviour
             {
                 Vector2 direction = (Vector2)(player.position) - rb.position;
 
-          
+
                 direction.Normalize();
                 float rotateAmount = Vector3.Cross(direction, transform.up).z;
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
@@ -224,7 +224,7 @@ public class HomingMissile : MonoBehaviour
         Debug.Log(collider.gameObject);
 
         IDamageable damageableEntity = collider.gameObject.GetComponent<IDamageable>();
-       
+
 
         if (collider.gameObject.CompareTag("Floor"))
         {
@@ -238,7 +238,7 @@ public class HomingMissile : MonoBehaviour
             if (damageableEntity != null)
             {
                 damageableEntity.Damage(1);
-               
+
 
             }
             NormalExplosion();
@@ -252,8 +252,8 @@ public class HomingMissile : MonoBehaviour
     {
         pool.Spawn("NormalExplosion", transform.position, transform.rotation, explosionScale);
         pool.Despawn(this.gameObject);
-     
-      
+
+
 
     }
 

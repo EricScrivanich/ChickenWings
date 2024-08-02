@@ -1642,8 +1642,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 297128414}
   setCanvasGroupUnactive: 0
-  SetActiveObjects:
+  SetActiveOnceObjects:
   - {fileID: 633267965}
+  SetActiveObjects: []
   SetUnactiveObjects: []
   startAlpha: 1
   endAlpha: 1
@@ -2338,6 +2339,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 551426447}
   setCanvasGroupUnactive: 0
+  SetActiveOnceObjects: []
   SetActiveObjects:
   - {fileID: 1825712349}
   SetUnactiveObjects: []
@@ -2907,7 +2909,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 177152525710863371, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1195260603289358581, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3223,10 +3225,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a5a7117dd1094197b34b8c84e25af3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LevelIndex: 2
+  reachedCheckpoint: 0
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   finishedLevelUIPrefab: {fileID: 5334835317810689662, guid: cc29a0545327f4ad58db75e42563aa82, type: 3}
-  activateRingsAfterDelay: 0
   showSectionAtStart: 1
   areRingsRequired: 1
   ringsNeeded: 5
@@ -3258,6 +3261,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  TriggerEventSectionNumber: 5
+  listenForNextSectionEventRingsPigs: 0
+  listenForNextSectionEventRingsOnly: 1
+  RingIndex: 1
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   spawnPigsOnly: 0
   Index: 0
   disableSpawnRanges: {x: 0, y: 0}
@@ -3619,8 +3627,12 @@ PrefabInstance:
       value: -226.4
       objectReference: {fileID: 0}
     - target: {fileID: 4277671223572848641, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -296
+      objectReference: {fileID: 0}
+    - target: {fileID: 4277671223572848641, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -80
+      value: -44
       objectReference: {fileID: 0}
     - target: {fileID: 4456868898393751295, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_SizeDelta.x
@@ -3760,8 +3772,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_text
-      value: If you hold the flip longer than the max time the image on the flip
-        button will bounce back.
+      value: 'NOTE: If you hold the flip longer than the max time the image on the
+        flip button will bounce back.'
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7884249210943073328, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
@@ -4837,6 +4849,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 1430156991}
   setCanvasGroupUnactive: 0
+  SetActiveOnceObjects: []
   SetActiveObjects: []
   SetUnactiveObjects: []
   startAlpha: 0
@@ -7106,6 +7119,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 678829615819180669, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 699805567591472915, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 831785042524035940, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}

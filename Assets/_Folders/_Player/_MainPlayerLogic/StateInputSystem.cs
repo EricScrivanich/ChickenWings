@@ -11,21 +11,85 @@ public class StateInputSystem : MonoBehaviour
     private Sequence dropButtonSeq;
     private Coroutine dropButtonCor;
     private Sequence dashButtonSeq;
+    private bool coolingDownDrop;
+
+    [Header("Global Colors")]
     [SerializeField] private Color normalButtonColor;
     [SerializeField] private Color highlightButtonColor;
     [SerializeField] private Color disabledButtonColor;
+    [SerializeField] private Color DashImageManaHighlight;
+    [SerializeField] private Color DashImageManaDisabled;
+    [SerializeField] private Color DashImageManaDisabledFilling;
+    [SerializeField] private Color coolDownColorRed;
+    [SerializeField] private Color coolDownColorBlue;
+
+    [Header("Drop Stuff")]
     private Image DropButton;
     private Image DashButton;
+    private RectTransform dropIcon;
+    private Image dropCooldownIN;
+    private Image dropCooldownOUT;
     private bool canDrop;
-    private bool canDash;
+    private Vector3 largeIconScale = new Vector3(1.2f, .8f, 1f);
+    private Vector3 smallIconScale = new Vector3(.85f, 1.1f, 1);
+    private Vector3 smallIconScale2 = new Vector3(.9f, .9f, .9f);
+    private Vector3 normalIconScale = new Vector3(1, 1, 1);
+
+
+    [Header("Dash Stuff")]
+
+    [SerializeField] private bool manaUsed;
+
+    private Sequence flashSequence;
+    private bool coolingDownDash;
+
+    private bool canDash = true;
+    private RectTransform dashIcon;
+    private float dashTimeLeft;
+    private bool canDashSlash;
+    private Image dashImage;
+    private Image dashImageMana;
+    private Image dashCooldownIN;
+    private CanvasGroup dashCooldownGroup;
+
+
+    [Header("Dash Icon")]
+    private Sequence dashIconSequence;
+    private float startingDashIconX;
+    [SerializeField] private float moveDashIconX;
+    private Vector3 dashIconNormalScale = new Vector3(1, 1, 1);
+    [SerializeField] private Vector3 dashIconLargeScale = new Vector3(1.2f, 1.15f, 1);
+    [SerializeField] private Vector3 dashIconLargeScale2 = new Vector3(1.2f, 1.2f, 1.2f);
+    private Vector3 dashIconSmallScale = new Vector3(.85f, .9f, 1);
+
+
+
+
+    [Header("Mana Settings")]
+    private float maxMana = 100f;
+    private bool manaFull = false;
+    [SerializeField] private float mainManaFillDuration;
+    private int manaGainedFromCollectable = 40;
+    private float flashDuration = .7f;
+
+    private Coroutine mainFillCourintine;
+
+
+    private float currentMana = 0f; // Mana to regenerate per second
+
+    [SerializeField] private Color fillingManaColor;
+    [SerializeField] private Color canUseDashSlashImageColor1;
+    [SerializeField] private Color canUseDashSlashImageColor2;
 
     private bool ButtonsEnabled;
 
     private Vector2 touchStartPosition;
+    private float originalDropY;
     private float touchStartTime;
     private const float swipeThreshold = 0.3f; // Adjust as needed
     private const float tapTimeThreshold = 0.2f; // Adjust as needed
     public PlayerID ID;
+
     [SerializeField] private RectTransform touchButtonRectTransform;
 
     private void Awake()
@@ -64,19 +128,50 @@ public class StateInputSystem : MonoBehaviour
 
         controls.Movement.Dash.performed += ctx =>
         {
-            if (ButtonsEnabled) ID.events.OnDash?.Invoke(true);
+            if (ButtonsEnabled)
+            {
+                if (canDash)
+                {
+                    canDash = false;
+                    ID.events.OnDash?.Invoke(true);
+                    dashImage.color = highlightButtonColor;
+                    StartCoroutine(CalcualteDashTimeLeft());
+                    IconTween(1);
+
+                }
+                else if (canDashSlash)
+                {
+                    manaFull = false;
+
+                    HandleDashSlashImage(false);
+                    ID.events.OnDashSlash?.Invoke();
+                }
+
+            }
         };
         controls.Movement.Dash.canceled += ctx =>
         {
-            if (ButtonsEnabled) ID.events.OnDash?.Invoke(false);
+            if (ButtonsEnabled)
+            {
+                if (!coolingDownDash && !canDash)
+                {
+
+                    ID.events.OnDash?.Invoke(false);
+
+
+                }
+
+            }
         };
+
+
 
         controls.Movement.Drop.performed += ctx =>
         {
             if (ButtonsEnabled && canDrop)
             {
                 ID.events.OnDrop?.Invoke();
-                DropCooldown();
+                StartCoroutine(DropCooldown());
 
             }
         };
@@ -110,83 +205,6 @@ public class StateInputSystem : MonoBehaviour
 
 
 
-
-
-
-
-        // if (TimeManager.DebogLogEnabled)
-        // {
-        //     controls.Movement.Dash.performed += ctx => ID.globalEvents.HighlightDash?.Invoke(true);
-        //     controls.Movement.Drop.performed += ctx => ID.globalEvents.HighlightDrop?.Invoke(true);
-        //     controls.Movement.DropEgg.performed += ctx => ID.globalEvents.HighlightEgg?.Invoke(true);
-
-        //     controls.Movement.Dash.canceled += ctx => ID.globalEvents.HighlightDash?.Invoke(false);
-        //     controls.Movement.Drop.canceled += ctx => ID.globalEvents.HighlightDrop?.Invoke(false);
-        //     controls.Movement.DropEgg.canceled += ctx => ID.globalEvents.HighlightEgg?.Invoke(false);
-
-
-        // }
-        // controls.Movement.Parachute.performed += ctx =>
-        // {
-        //     // if (Input.touchCount == 2)
-        //     // {
-        //     //     ID.events.OnParachute?.Invoke(true);
-        //     // }
-        // };
-
-        // Bind touch input actions
-        // if (touchButtonRectTransform)
-        // {
-        //      controls.Movement.TouchPress.started += ctx => StartTouch(ctx);
-        // controls.Movement.TouchPress.canceled += ctx => EndTouch(ctx);
-        // controls.Movement.TouchPosition.performed += ctx => UpdateTouchPosition(ctx);
-
-        // }
-        // controls.Movement.DashSlash.performed += ctx => ID.events.OnDashSlash?.Invoke();
-
-        //     controls.Movement.HoldJumpRight.performed += ctx =>
-        //    {
-        //        isHoldingFlip = true;
-        //        ID.events.OnHoldFlip?.Invoke(true);
-        //    };
-
-        //     controls.Movement.HoldJumpLeft.performed += ctx =>
-
-        //     {
-        //         isHoldingFlip = true;
-        //         ID.events.OnHoldFlip?.Invoke(true);
-        //     };
-
-        //     controls.Movement.HoldJumpRight.canceled += ctx =>
-        //   {
-
-        //       ID.events.OnHoldFlip?.Invoke(false);
-
-
-
-
-        //   };
-
-        //     controls.Movement.HoldJumpLeft.canceled += ctx =>
-
-        //     {
-
-        //         ID.events.OnHoldFlip?.Invoke(false);
-
-
-        //     };
-
-        // controls.Movement.HoldJumpRight.performed += ctx =>
-        // {
-        //     ID.events.OnHoldFlip?.Invoke(!ID.UsingClocker);
-        // };
-
-        // controls.Movement.HoldJumpLeft.performed += ctx =>
-
-        //     {
-        //         ID.events.OnClocker?.Invoke(!ID.UsingClocker);
-        //     };
-
     }
 
     void Start()
@@ -195,35 +213,380 @@ public class StateInputSystem : MonoBehaviour
         {
             DropButton = GameObject.Find("DropButton").GetComponent<Image>();
             DropButton.color = normalButtonColor;
+            dropCooldownIN = GameObject.Find("DropCooldownIN").GetComponent<Image>();
+            dropIcon = GameObject.Find("DropICON").GetComponent<RectTransform>();
+            dropCooldownOUT = GameObject.Find("DropCooldownOUT").GetComponent<Image>();
+            originalDropY = dropIcon.anchoredPosition.y;
+            dropCooldownIN.DOFade(0, 0);
+            dropCooldownOUT.DOFade(0, 0);
 
 
         }
         canDrop = true;
-        canDash = true;
+
+        coolingDownDash = false;
+        dashImage = GameObject.Find("DashIMG").GetComponent<Image>();
+        dashImageMana = GameObject.Find("DashIMGMana").GetComponent<Image>();
+
+
+        dashCooldownIN = GameObject.Find("DashCooldownIN").GetComponent<Image>();
+        dashIcon = GameObject.Find("DashICON").GetComponent<RectTransform>();
+        dashCooldownGroup = GameObject.Find("DashCooldownGroup").GetComponent<CanvasGroup>();
+
+        startingDashIconX = dashIcon.anchoredPosition.x;
+
+
+        dashCooldownGroup.alpha = 0;
+        dashImageMana.color = fillingManaColor;
+        canDashSlash = false;
+
+
+
+
+        dashImageMana.enabled = true;
+        ID.globalEvents.SetCanDashSlash?.Invoke(false);
+        dashImageMana.fillAmount = (currentMana / maxMana);
+        FullMana(false);
+
+        if (manaUsed)
+            mainFillCourintine = StartCoroutine(RegenerateMana());
+        else
+            dashImageMana.gameObject.SetActive(false);
+
     }
 
 
-    private void DropCooldown()
+
+
+    private IEnumerator DropCooldown()
     {
-        if (dropButtonSeq != null && dropButtonSeq.IsPlaying())
-            dropButtonSeq.Kill();
-
+        coolingDownDrop = true;
         canDrop = false;
-        dropButtonSeq = DOTween.Sequence();
-        dropButtonSeq.Append(DropButton.DOColor(highlightButtonColor, .15f));
-        dropButtonSeq.AppendInterval(.15f);
+        // dashButtonIMG.DOColor(DisabledButtonColor, .25f);
+        DropButton.DOColor(highlightButtonColor, .15f);
+        dropIcon.DOScale(largeIconScale, .3f).SetEase(Ease.OutSine);
+        dropIcon.DOAnchorPosY(originalDropY - 30, .2f).SetEase(Ease.OutSine);
+        dropCooldownIN.DOFade(.7f, .15f);
+        dropCooldownOUT.DOFade(1, .15f);
 
-        dropButtonSeq.Append(DropButton.DOColor(disabledButtonColor, .15f));
-        dropButtonSeq.AppendInterval(1.8f);
-        dropButtonSeq.Append(DropButton.DOColor(normalButtonColor, .1f));
-        dropButtonSeq.OnComplete(() => canDrop = true);
+        dropCooldownIN.DOFillAmount(0, 2.25f).From(1);
+        yield return new WaitForSeconds(.2f);
+        DropButton.DOColor(disabledButtonColor, .2f);
+        dropIcon.DOScale(smallIconScale, .15f).SetEase(Ease.InSine);
+        dropIcon.DOAnchorPosY(originalDropY, .3f).SetEase(Ease.OutSine);
+        yield return new WaitForSeconds(.15f);
+        dropIcon.DOScale(smallIconScale2, .25f).SetEase(Ease.InOutSine);
 
 
 
-        dropButtonSeq.Play();
+        yield return new WaitForSeconds(1.75f);
+        dropCooldownIN.DOFade(0, 0);
+        dropCooldownOUT.DOFade(0, .1f);
+
+        // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
+        DropButton.DOColor(normalButtonColor, .13f);
+        dropIcon.DOScale(normalIconScale, .13f);
+
+
+        yield return new WaitForSeconds(.1f);
+
+        coolingDownDrop = false;
+        canDrop = true;
+
+    }
+
+    private void IconTween(int type)
+    {
+        if (dashIconSequence != null && dashIconSequence.IsPlaying())
+            dashIconSequence.Kill();
+
+        if (type == 0)
+        {
+            dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX, .2f).SetEase(Ease.OutSine));
+            dashIconSequence.Join(dashIcon.DOScale(dashIconNormalScale, .2f));
+            dashIconSequence.Play();
+
+        }
+        else if (type == 1)
+        {
+            dashIcon.DOAnchorPosX(startingDashIconX + moveDashIconX, .35f).SetEase(Ease.InOutSine);
+
+            dashIconSequence.Join(dashIcon.DOScale(dashIconLargeScale, .2f));
+            dashIconSequence.Play();
+
+        }
+        else if (type == 2)
+        {
+            dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX, .4f).SetEase(Ease.OutSine));
+            dashIconSequence.Join(dashIcon.DOScale(dashIconSmallScale, .3f));
+            dashIconSequence.Play();
+
+        }
+
+    }
+
+    void HandleDashNew(bool isDashing)
+    {
+
+
+        if (!coolingDownDash && !isDashing)
+        {
+            StartCoroutine(DashCooldown());
+
+        }
+
 
 
     }
+
+    // private void FlashButton()
+    // {
+    //     canDashSlash = true;
+    //     flashButtonSequence = DOTween.Sequence();
+    //     flashButtonSequence.Append(dashButtonIMG.DOColor(ButtonCanSlashColor1, .2f));
+    //     flashButtonSequence.Append(dashButtonIMG.DOColor(ButtonCanSlashColor2, .2f));
+    //     flashButtonSequence.Append(dashButtonIMG.DOColor(ButtonCanSlashColor1, .2f));
+    //     flashButtonSequence.Append(dashButtonIMG.DOColor(ButtonCanSlashColor2, .15f));
+
+
+    //     flashButtonSequence.OnComplete(EndFlashButton);
+    //     flashButtonSequence.Play();
+
+    // }
+
+
+    private void FullMana(bool isFull)
+    {
+        manaFull = isFull;
+
+        if (isFull)
+        {
+            dashCooldownIN.color = coolDownColorBlue;
+
+        }
+        else
+            dashCooldownIN.color = coolDownColorRed;
+
+    }
+    private void ExitDash(bool notExited)
+    {
+        if (!notExited)
+        {
+            canDashSlash = false;
+            if (manaFull)
+            {
+                dashCooldownIN.color = coolDownColorRed;
+                dashImageMana.DOColor(DashImageManaDisabled, .1f);
+
+            }
+            IconTween(2);
+
+        }
+        else
+        {
+            if (manaFull)
+            {
+                canDashSlash = true;
+                dashCooldownIN.color = coolDownColorBlue;
+                FlashDashImage(1);
+
+            }
+            else
+            {
+                dashImageMana.color = fillingManaColor;
+
+            }
+
+        }
+    }
+
+    private IEnumerator CalcualteDashTimeLeft()
+    {
+        dashTimeLeft = .35f;
+        while (dashTimeLeft >= 0 && !coolingDownDash)
+        {
+            dashTimeLeft -= Time.deltaTime;
+            yield return null;
+        }
+    }
+
+
+
+    private IEnumerator DashCooldown()
+    {
+        coolingDownDash = true;
+        canDash = false;
+
+        if (manaFull)
+        {
+            canDashSlash = true;
+            flashSequence.Kill();
+            dashImageMana.DOColor(DashImageManaHighlight, .1f);
+
+        }
+        else
+        {
+            Debug.Log("Waiting for: " + dashTimeLeft + " - seconds");
+            yield return new WaitForSeconds(dashTimeLeft);
+
+            IconTween(2);
+        }
+        // else
+        // {
+        //     dashImageMana.color = DashImageManaDisabledFilling;
+        // }
+        // dashButtonIMG.DOColor(DisabledButtonColor, .25f);
+        dashImage.DOColor(disabledButtonColor, .25f);
+
+        dashCooldownGroup.DOFade(1, .15f);
+
+        dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
+        yield return new WaitForSeconds(1.1f);
+
+        dashCooldownGroup.DOFade(0, .15f);
+
+        // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
+        dashImage.DOColor(normalButtonColor, .15f);
+        IconTween(0);
+
+        canDash = true;
+
+        coolingDownDash = false;
+        ExitDash(true);
+
+    }
+
+    private void FlashDashImage(float duration)
+    {
+        if (flashSequence != null && flashSequence.IsPlaying())
+            flashSequence.Kill();
+
+        if (duration > 0)
+        {
+
+            flashSequence = DOTween.Sequence();
+            flashSequence.Append(dashImageMana.DOColor(canUseDashSlashImageColor1, flashDuration).SetEase(Ease.OutSine).From(canUseDashSlashImageColor2));
+            flashSequence.Append(dashImageMana.DOColor(canUseDashSlashImageColor2, flashDuration).SetEase(Ease.OutSine));
+            flashSequence.SetLoops(-1);
+            flashSequence.Play();
+        }
+
+
+
+
+
+
+
+    }
+
+    void HandleDashSlashImage(bool canSlash)
+    {
+        // canDashSlash = canSlash;
+
+        if (!canSlash)
+        {
+            dashImageMana.color = fillingManaColor;
+            FlashDashImage(0);
+            // HandleDashSlashButton(false);
+            StartCoroutine(SetMana(0, .3f));
+        }
+        else
+        {
+
+            FlashDashImage(.8f);
+        }
+    }
+
+    private void GatherMana()
+    {
+        if (currentMana < maxMana)
+            StartCoroutine(SetMana(currentMana + manaGainedFromCollectable, .5f));
+    }
+
+    private IEnumerator RegenerateMana()
+    {
+        float elapsedTime = 0;
+        float previousMana = currentMana;
+        float duration = (maxMana - currentMana) * (mainManaFillDuration / maxMana);
+
+
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            // Regenerate mana at the specified rate
+            currentMana = Mathf.Lerp(previousMana, maxMana, elapsedTime / duration);
+            dashImageMana.fillAmount = (currentMana / maxMana);
+            yield return null;
+        }
+        // canDashSlash = true;
+
+        HandleDashSlashImage(true);
+        FullMana(true);
+
+        currentMana = maxMana;
+
+
+
+
+    }
+
+
+    private IEnumerator SetMana(float target, float duration)
+    {
+        float elapsedTime = 0;
+        float previousMana = currentMana;
+        bool finished = false;
+        if (target != 0)
+        {
+            StopCoroutine(mainFillCourintine);
+            // if (target >= maxMana)
+            // {
+            //     HandleDashSlashImage(true);
+            //     // player.globalEvents.SetCanDashSlash(true);
+            // }
+
+        }
+
+
+        while (elapsedTime < duration && !finished)
+        {
+            elapsedTime += Time.deltaTime;
+            // Regenerate mana at the specified rate
+            currentMana = Mathf.Lerp(previousMana, target, elapsedTime / duration);
+            dashImageMana.fillAmount = (currentMana / maxMana);
+
+
+            if (currentMana > maxMana)
+            {
+                FullMana(true);
+                HandleDashSlashImage(true);
+                finished = true;
+
+
+            }
+            else if (currentMana <= 0)
+            {
+                finished = true;
+                currentMana = 0;
+                FullMana(false);
+                dashImageMana.fillAmount = (0);
+                yield return new WaitForSeconds(.3f);
+                mainFillCourintine = StartCoroutine(RegenerateMana());
+            }
+            yield return null;
+        }
+
+        if (!finished)
+        {
+            currentMana = target;
+            mainFillCourintine = StartCoroutine(RegenerateMana());
+        }
+
+
+
+    }
+
     public void ActivateButtons(bool IsActive)
     {
         ButtonsEnabled = IsActive;
@@ -235,12 +598,27 @@ public class StateInputSystem : MonoBehaviour
     {
         controls.Movement.Enable();
         ID.events.EnableButtons += ActivateButtons;
+        ID.events.OnDash += HandleDashNew;
+
+
+        ID.globalEvents.CanDashSlash += ExitDash;
+        if (manaUsed)
+            ID.globalEvents.OnGetMana += GatherMana;
     }
 
     private void OnDisable()
     {
         controls.Movement.Disable();
         ID.events.EnableButtons -= ActivateButtons;
+        ID.events.OnDash -= HandleDashNew;
+        ID.globalEvents.CanDashSlash -= ExitDash;
+
+
+
+        // player.globalEvents.SetCanDashSlash -= HandleDashSlashImage;
+        // player.globalEvents.CanDashSlash -= HandleDashSlashButton;
+        if (manaUsed)
+            ID.globalEvents.OnGetMana -= GatherMana;
 
     }
 }

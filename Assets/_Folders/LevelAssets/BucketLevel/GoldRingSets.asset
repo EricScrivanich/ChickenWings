@@ -28,7 +28,7 @@ MonoBehaviour:
     - rid: 7051806302495834140
   collectableSetup:
   - dataArray:
-    - rid: 7051806302495834116
+    - rid: 7051806370768617511
   - dataArray:
     - rid: 7051806302495834132
   - dataArray:
@@ -54,52 +54,10 @@ MonoBehaviour:
           speed: 4.9
           yForce: 5.5
           distanceToFlap: 0.8
-    - rid: 7051806302495834116
-      type: {class: RingSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 8.2
-        isRings: 1
-        data:
-        - position: {x: 12.579599, y: 2.306408}
-          scale: {x: 1.1, y: 1.1, z: 1}
-          rotation: {x: -0, y: -0, z: 0.19080894, w: 0.9816273}
-          speed: 5
-        - position: {x: 20.28, y: -1.22}
-          scale: {x: 1.1, y: 1.1, z: 1}
-          rotation: {x: -0, y: -0, z: 0.19080894, w: 0.9816273}
-          speed: 5
-        - position: {x: 26.06, y: 1.4}
-          scale: {x: 1.1, y: 1.1, z: 1}
-          rotation: {x: -0, y: -0, z: 0.3420201, w: 0.9396927}
-          speed: 5
-        - position: {x: 28.68, y: 2.09}
-          scale: {x: 1.1, y: 1.1, z: 1}
-          rotation: {x: -0, y: -0, z: -0, w: 1}
-          speed: 5
-        - position: {x: 31.48, y: 1.4}
-          scale: {x: 1.1, y: 1.1, z: 1}
-          rotation: {x: -0, y: -0, z: -0.3420201, w: 0.9396927}
-          speed: 5
-        - position: {x: 40.4, y: 0.16533303}
-          scale: {x: 1, y: 1, z: 1}
-          rotation: {x: -0, y: -0, z: -0, w: 1}
-          speed: 5.2
-        - position: {x: 41.86409, y: 0.16533303}
-          scale: {x: 1, y: 1, z: 1}
-          rotation: {x: -0, y: -0, z: -0, w: 1}
-          speed: 5.2
-        - position: {x: 43.43409, y: 0.16533303}
-          scale: {x: 1, y: 1, z: 1}
-          rotation: {x: -0, y: -0, z: -0, w: 1}
-          speed: 5.2
-        - position: {x: 45.05409, y: 0.16533303}
-          scale: {x: 1.15, y: 1.15, z: 1}
-          rotation: {x: -0, y: -0, z: -0, w: 1}
-          speed: 5.2
     - rid: 7051806302495834119
       type: {class: RingSO, ns: , asm: Assembly-CSharp}
       data:
-        TimeToTrigger: 11.4279995
+        TimeToTrigger: 13.5
         isRings: 1
         data:
         - position: {x: 13.01, y: 1.92}
@@ -256,3 +214,45 @@ MonoBehaviour:
           speed: 5
           yForce: 5.8
           distanceToFlap: 0.9
+    - rid: 7051806370768617511
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 7.7
+        isRings: 1
+        data:
+        - position: {x: 12.579599, y: 2.306408}
+          scale: {x: 1.1, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.19080894, w: 0.9816273}
+          speed: 5
+        - position: {x: 20.28, y: -1.22}
+          scale: {x: 1.1, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.19080894, w: 0.9816273}
+          speed: 5
+        - position: {x: 26.06, y: 1.4}
+          scale: {x: 1.1, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.3420201, w: 0.9396927}
+          speed: 5
+        - position: {x: 28.68, y: 2.09}
+          scale: {x: 1.1, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 31.48, y: 1.4}
+          scale: {x: 1.1, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.3420201, w: 0.9396927}
+          speed: 5
+        - position: {x: 40.4, y: 0.16533303}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5.2
+        - position: {x: 41.86409, y: 0.16533303}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5.2
+        - position: {x: 43.43409, y: 0.16533303}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5.2
+        - position: {x: 45, y: 0.16533303}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5.2

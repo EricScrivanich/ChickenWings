@@ -12,10 +12,12 @@ public class BucketCollisionState : PlayerBaseState
     {
 
         time = 0;
-        player.disableButtons = true;
+     
         player.rb.velocity = new Vector2(0, 0);
         player.maxFallSpeed = player.ID.MaxFallSpeed;
         player.rb.simulated = false;
+        player.ID.events.EnableButtons?.Invoke(false);
+
 
         // player.anim.SetTrigger("ResetTrigger");
         if (player.isDropping)
@@ -74,9 +76,9 @@ public class BucketCollisionState : PlayerBaseState
 
             player.AdjustForce(0, yForce);
 
-            player.disableButtons = false;
+            player.ID.events.EnableButtons?.Invoke(true);
             player.bucketIsExploded = false;
-            player.StartCoroutine(player.SetUndamagableCourintine(true, 2.2f));
+            player.StartCoroutine(player.SetUndamagableCourintine(true, 1.4f));
             player.SwitchState(player.IdleState);
 
             // }

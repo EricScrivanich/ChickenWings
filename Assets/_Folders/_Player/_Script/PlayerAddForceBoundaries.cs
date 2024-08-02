@@ -8,12 +8,12 @@ public class PlayerAddForceBoundaries : MonoBehaviour
     private PlayerStateManager stateManager;
     [SerializeField] private GameObject arrowPrefab;
     private Arrow arrow;
-    private float slowDownFallBoundary = -1.55f;
+    private float slowDownFallBoundary = -1.5f;
     private float addForceDownBoundary = 4.65f;
     private float originalMaxFallSpeed;
     private bool hasChangedMaxFallSpeed = false;
     private Vector2 addRightForce = new Vector2(20, 10);
-    private Vector2 addDownForce = new Vector2(0, -5.5f);
+    private Vector2 addDownForce = new Vector2(0, -5.7f);
     private Vector2 addLeftForce = new Vector2(-20, 10);
     private float topBoundary;
     private float leftBoundary;
@@ -37,8 +37,8 @@ public class PlayerAddForceBoundaries : MonoBehaviour
 
         originalMaxFallSpeed = stateManager.maxFallSpeed;
 
-        
-        
+
+
 
 
     }
@@ -58,6 +58,7 @@ public class PlayerAddForceBoundaries : MonoBehaviour
 
     private void FixedUpdate()
     {
+
 
 
         if (playerTransform.position.x < leftBoundary)
@@ -86,19 +87,20 @@ public class PlayerAddForceBoundaries : MonoBehaviour
         {
             hasChangedMaxFallSpeed = true;
             stateManager.maxFallSpeed = originalMaxFallSpeed + ((slowDownFallBoundary - playerTransform.position.y) * 1.5f);
-            
+
 
         }
         else if (hasChangedMaxFallSpeed && !stateManager.isDropping)
         {
             stateManager.maxFallSpeed = originalMaxFallSpeed;
             hasChangedMaxFallSpeed = false;
-            
+
 
         }
         else if (playerTransform.position.y > addForceDownBoundary)
         {
-            rb.AddForce(addDownForce);
+            if (rb.velocity.y > .5f)
+                rb.AddForce(addDownForce);
 
             if (!isTop && playerTransform.position.y > topBoundary)
             {

@@ -18,7 +18,7 @@ public class PigMovementBasic : MonoBehaviour
 
 
     [Header("MovementRB")]
-    private Transform player;
+
     [SerializeField] private float addYForce;
     private bool hasInitialized = false;
 
@@ -59,7 +59,7 @@ public class PigMovementBasic : MonoBehaviour
     void Start()
     {
 
-        player = GameObject.Find("Player").GetComponent<Transform>();
+
         jumpForce = new Vector2(xSpeed, addYForce);
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();

@@ -97,7 +97,8 @@ public class PlayerBounceState : PlayerBaseState
             // player.rb.gravityScale = player.originalGravityScale;
 
             player.AdjustForce(1, 9.5f);
-            player.disableButtons = false;
+            player.ID.events.EnableButtons?.Invoke(true);
+
 
             player.maxFallSpeed = -3f;
             // player.ID.events.FloorCollsion.Invoke(true);

@@ -356,8 +356,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1036.196, y: -119}
-  m_SizeDelta: {x: 376.2785, y: 247.9}
+  m_AnchoredPosition: {x: -1059.9335, y: -109.76884}
+  m_SizeDelta: {x: 423.7533, y: 292.7372}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &123749242
 MonoBehaviour:
@@ -487,63 +487,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 148217480}
   m_CullTransparentMesh: 1
---- !u!1001 &149753261
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2425336107443998327, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_Name
-      value: NormalPig
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 15.874456
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.5630245
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663586656694667849, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
 --- !u!21 &181261764
 Material:
   serializedVersion: 8
@@ -1946,6 +1889,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 551426447}
   setCanvasGroupUnactive: 0
+  SetActiveOnceObjects:
+  - {fileID: 633267965}
   SetActiveObjects:
   - {fileID: 1825712349}
   SetUnactiveObjects: []
@@ -2564,15 +2509,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_text
-      value: Try using your drop now. Press the DROP button to continue.
+      value: Try dropping through the rings now. Press the DROP button to continue.
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_fontSize
       value: 44.2
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
+      propertyPath: m_margin.x
+      value: -172.85672
+      objectReference: {fileID: 0}
+    - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_margin.z
-      value: -639.3649
+      value: -769.2703
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_lineSpacing
@@ -2636,10 +2585,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a5a7117dd1094197b34b8c84e25af3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LevelIndex: 4
+  reachedCheckpoint: 0
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   finishedLevelUIPrefab: {fileID: 5334835317810689662, guid: cc29a0545327f4ad58db75e42563aa82, type: 3}
-  activateRingsAfterDelay: 1
   showSectionAtStart: 1
   areRingsRequired: 1
   ringsNeeded: 5
@@ -2652,11 +2602,8 @@ MonoBehaviour:
   sections:
   - {fileID: 1891796128}
   - {fileID: 473649646}
-  - {fileID: 964599569}
-  - {fileID: 964599569}
-  playSections: 0200000004000000
-  playSectionDelayToUI:
-  - 9
+  playSections: 02000000
+  playSectionDelayToUI: []
 --- !u!114 &949611669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2670,6 +2617,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  TriggerEventSectionNumber: 2
+  listenForNextSectionEventRingsPigs: 1
+  listenForNextSectionEventRingsOnly: 0
+  RingIndex: 3
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   spawnPigsOnly: 0
   Index: 0
   disableSpawnRanges: {x: -3.2, y: 1}
@@ -2707,11 +2659,6 @@ MonoBehaviour:
   allInputsCount: 0
   inputsChecked:
   - Drop
---- !u!1 &964599569 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 177152525710863371, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
-  m_PrefabInstance: {fileID: 967898055}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &964599570 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8042003448894185996, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
@@ -2722,7 +2669,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7884249210943073328, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
   m_PrefabInstance: {fileID: 967898055}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 964599569}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ed5cfe91351542e0a9144f66692a166, type: 3}
@@ -2962,7 +2909,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_text
-      value: Now try and dropthrough the rings without losing all of your lives.
+      value: Now try and drop through the rings without losing all of your lives.
         Press the DROP button to continue. Good luck!
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
@@ -2970,7 +2917,8 @@ PrefabInstance:
       value: -732.4356
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4066078822529207156, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 8042003448894185996, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       insertIndex: 0
@@ -3476,8 +3424,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 1430156991}
   setCanvasGroupUnactive: 0
-  SetActiveObjects:
+  SetActiveOnceObjects:
   - {fileID: 633267965}
+  SetActiveObjects: []
   SetUnactiveObjects: []
   startAlpha: 0
   endAlpha: 1
@@ -4962,6 +4911,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 699805567591472915, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 831785042524035940, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -4977,26 +4930,6 @@ PrefabInstance:
     - target: {fileID: 2449275482745518818, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2561904521809799068, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_Color.a
-      value: 0.14901961
-      objectReference: {fileID: 0}
-    - target: {fileID: 2561904521809799068, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_Color.b
-      value: 0.7647059
-      objectReference: {fileID: 0}
-    - target: {fileID: 2561904521809799068, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_Color.g
-      value: 0.7647059
-      objectReference: {fileID: 0}
-    - target: {fileID: 2561904521809799068, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_Color.r
-      value: 0.83137256
-      objectReference: {fileID: 0}
-    - target: {fileID: 2561904521809799068, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2575474324596084166, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive
@@ -5949,4 +5882,3 @@ SceneRoots:
   - {fileID: 1849891060}
   - {fileID: 949611667}
   - {fileID: 549969673}
-  - {fileID: 149753261}

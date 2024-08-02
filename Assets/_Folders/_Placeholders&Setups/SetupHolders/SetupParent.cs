@@ -37,16 +37,16 @@ public class SetupParent : ScriptableObject
 
 
 
-    public void SpawnCollectablesOnly(CollectablePoolManager collectableManager, int currentTrigger, bool isFinal)
-    {
-        foreach (var coll in collectableSetup[currentTrigger].dataArray)
-        {
-            coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
-        }
-        if (isFinal == null)
-            collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(null, collectableSetup[currentTrigger].dataArray)));
+    // public void SpawnCollectablesOnly(CollectablePoolManager collectableManager, int currentTrigger, bool isFinal)
+    // {
+    //     foreach (var coll in collectableSetup[currentTrigger].dataArray)
+    //     {
+    //         coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
+    //     }
+    //     if (isFinal == null)
+    //         collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(null, collectableSetup[currentTrigger].dataArray)));
 
-    }
+    // }
 
     public void SpawnRandomSetWithRings(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, bool finalRing)
     {
@@ -136,6 +136,7 @@ public class SetupParent : ScriptableObject
     {
         Debug.LogWarning("SpawnTrigger");
         Debug.LogWarning(this.name + " :Current Trigger: " + currentTrigger + " :Length: " + collectableSetup.Count);
+        List<float> tempList = new List<float>();
 
 
         if (collectableSetup.Count > currentTrigger)
@@ -155,6 +156,8 @@ public class SetupParent : ScriptableObject
 
                     coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
                 }
+                tempList.Add(coll.TimeToTrigger);
+
 
             }
         }
@@ -164,12 +167,13 @@ public class SetupParent : ScriptableObject
             foreach (var enemySet in enemySetup[currentTrigger].dataArray)
             {
                 enemySet.InitializeEnemy(enemyManager);
+                tempList.Add(enemySet.TimeToTrigger);
             }
 
 
         }
 
-        collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(enemySetup[currentTrigger].dataArray, collectableSetup[currentTrigger].dataArray)));
+        collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(Mathf.Max(tempList.ToArray())));
 
 
 

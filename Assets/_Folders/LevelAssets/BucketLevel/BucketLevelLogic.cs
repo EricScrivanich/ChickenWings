@@ -7,15 +7,23 @@ public class BucketLevelLogic : MonoBehaviour
     [SerializeField] private int objectiveRingType;
     [SerializeField] private Vector2Int numberOfRandomRingsToSpawnRange;
     [SerializeField] private Vector2Int numberOfRandomEnemiesToSpawnRange;
+    [SerializeField] private PlayerID player;
     private int currentConstantRingTrigger;
     private int numberOfEnemySetupsToSpawn;
     private int setupsSpawned;
     private int numberOfRandomRingsToSpawn;
 
+    private int indexTracker;
+
     private int currentIntensity;
     private bool spawnRandomRingSet;
 
+
+
     private bool spawningRings;
+    private bool spawnPinkRings;
+    private bool hasSpawnedLives;
+
     private int currentConstantRingSetup;
     private int numberOfConstantRingsSpawned;
     [SerializeField] private int[] constantRingTriggerStartEnd;
@@ -33,6 +41,7 @@ public class BucketLevelLogic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        indexTracker = 0;
         setupsSpawned = 0;
         currentConstantRingTrigger = 0;
         spawnRandomRingSet = true;
@@ -45,26 +54,58 @@ public class BucketLevelLogic : MonoBehaviour
         numberOfRandomRingsToSpawn = SetRandomInt(numberOfRandomRingsToSpawnRange);
 
         Invoke("NextTrigger", 2f);
+        InvokeRepeating("AddTracker", 1f, .2f);
 
 
+    }
+
+    private void AddTracker()
+    {
+        indexTracker++;
     }
 
     private void SpawnRingSetup()
     {
 
+
         if (spawningRings)
         {
-            if (spawnRandomRingSet)
+            if (spawnPinkRings)
+            {
+                numberOfRandomRingsToSpawn = 1;
+                spawnManager.currentRingType = 1;
+
+
+                if (setupsSpawned >= numberOfRandomRingsToSpawn)
+                {
+                    spawnManager.TriggerRandomSpawnWithRings(ringSetupRandom, true);
+
+                    spawnRandomRingSet = false;
+                    setupsSpawned = 0;
+
+                    numberOfRandomRingsToSpawn = SetRandomInt(numberOfRandomRingsToSpawnRange);
+                    spawningRings = false;
+                    spawnPinkRings = false;
+                }
+                else
+                {
+                    spawnManager.TriggerRandomSpawnWithRings(ringSetupRandom, false);
+                }
+                setupsSpawned++;
+
+            }
+            else if (spawnRandomRingSet)
             {
                 spawnManager.currentRingType = 0;
                 if (setupsSpawned >= numberOfRandomRingsToSpawn)
                 {
                     spawnManager.TriggerRandomSpawnWithRings(ringSetupRandom, true);
-                    spawningRings = false;
+
                     spawnRandomRingSet = false;
                     setupsSpawned = 0;
 
                     numberOfRandomRingsToSpawn = SetRandomInt(numberOfRandomRingsToSpawnRange);
+                    spawningRings = false;
                 }
                 else
                 {
@@ -76,15 +117,18 @@ public class BucketLevelLogic : MonoBehaviour
             {
                 spawnManager.currentRingType = 2;
 
-                if (currentConstantRingTrigger < constantRingTriggerStartEnd[currentConstantRingSetup])
+
+
+                if (constantRingTriggerStartEnd.Length > currentConstantRingTrigger + 1 && currentConstantRingTrigger < constantRingTriggerStartEnd[currentConstantRingSetup + 1])
                 {
+                    Debug.LogWarning("Spawning First trigger" + indexTracker);
                     spawnManager.TriggerNextSpawnFromEvent(ringSetupConstant, currentConstantRingTrigger, false);
                     currentConstantRingTrigger++;
 
                 }
                 else
                 {
-                    Debug.Log("Trying to spawn ring setup with trigger of: " + currentConstantRingTrigger);
+                    Debug.LogWarning("Trying to spawn ring setup with trigger of: " + currentConstantRingTrigger);
 
                     spawnManager.TriggerNextSpawnFromEvent(ringSetupConstant, currentConstantRingTrigger, true);
                     spawningRings = false;
@@ -106,8 +150,11 @@ public class BucketLevelLogic : MonoBehaviour
 
     }
 
+
+
     private void SpawnRandomEnemyOnlySet()
     {
+        Debug.LogWarning("Spawning Enemies with range of: " + numberOfEnemySetupsToSpawn + "    " + indexTracker);
         if (setupsSpawned > numberOfEnemySetupsToSpawn)
         {
             setupsSpawned = 0;
@@ -164,10 +211,14 @@ public class BucketLevelLogic : MonoBehaviour
 
         if (spawningRings)
         {
+            Debug.LogWarning("Spawn Rings" + indexTracker);
+
             SpawnRingSetup();
         }
         else
         {
+            Debug.LogWarning("Spawn Enemies" + indexTracker);
+
             SpawnRandomEnemyOnlySet();
         }
 
@@ -177,23 +228,21 @@ public class BucketLevelLogic : MonoBehaviour
 
     private void RingSequenceFinished(bool isCorrect, int index)
     {
+        Debug.LogWarning("Finsished Sequence with index of: " + index + "     " + indexTracker);
+        indexTracker++;
+
         if (index == objectiveRingType)
         {
 
             if (isCorrect)
             {
-                
-
                 currentConstantRingSetup++;
                 currentConstantRingTrigger++;
-                Debug.Log("Passed Goal Ring");
             }
             else
             {
                 currentConstantRingTrigger = constantRingTriggerStartEnd[currentConstantRingSetup];
             }
-
-
         }
 
         if (!isCorrect && spawningRings)
@@ -204,7 +253,42 @@ public class BucketLevelLogic : MonoBehaviour
 
         }
 
-        spawningRings = false;
+        if (index == 1 && !isCorrect)
+        {
+            spawnPinkRings = false;
+        }
+
+
+
+
+    }
+
+    void CheckLives(int lives)
+    {
+        if (lives == 1 && !hasSpawnedLives)
+        {
+            hasSpawnedLives = true;
+            StartCoroutine(ResetHasSpawnedLives());
+            StartCoroutine(PinkRingSpawn());
+
+        }
+
+    }
+    private IEnumerator ResetHasSpawnedLives()
+    {
+        yield return new WaitForSeconds(17);
+        hasSpawnedLives = false;
+    }
+
+    private IEnumerator PinkRingSpawn()
+    {
+        while (spawningRings)
+        {
+            yield return null;
+        }
+        spawnPinkRings = true;
+        numberOfEnemySetupsToSpawn = 1;
+
 
 
     }
@@ -214,6 +298,7 @@ public class BucketLevelLogic : MonoBehaviour
     {
         lvlID.outputEvent.ringSequenceFinished += RingSequenceFinished;
         lvlID.outputEvent.triggerFinshed += NextTrigger;
+        player.globalEvents.OnUpdateLives += CheckLives;
 
 
     }
@@ -221,6 +306,8 @@ public class BucketLevelLogic : MonoBehaviour
     {
         lvlID.outputEvent.ringSequenceFinished -= RingSequenceFinished;
         lvlID.outputEvent.triggerFinshed -= NextTrigger;
+        player.globalEvents.OnUpdateLives -= CheckLives;
+
 
 
     }

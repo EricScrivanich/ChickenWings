@@ -1,89 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class ParticleFollowScript : MonoBehaviour
 {
-    public RingMovement ringTransform;
-    public RingID ID;
-    private bool following;
     private ParticleSystem ps;
-    public bool canPlay;
-    private bool hasPlayed;
+    private float speed;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         ps = GetComponent<ParticleSystem>();
-
     }
 
-   
-   
-    private void LateUpdate() {
-        if (ringTransform != null)
-        {
-            gameObject.transform.position = ringTransform.transform.position;
-
-        }
-       
-
-
-    }
-
-    void Update()
+    private void Update()
     {
-        if (ringTransform != null)
-        {
-            if (ringTransform.correctCollision && canPlay)
-            {
-                ps.Play();
-                canPlay = false;
-                hasPlayed = true;
-            }
-            // Debug.Log(ps.isStopped);
+        transform.position += Vector3.left * speed * Time.deltaTime;
 
-            if ((ps.isStopped && hasPlayed))
-            {
-                ringTransform.correctCollision = false;
-                canPlay = true;
-                hasPlayed = false;
-
-                ID.ReturnEffect(this);
-                // ResetRing();
-                // ID.particleSystemsQueue.Enqueue(this.gameObject);
-                // // gameObject.SetActive(false);
-                // ID.GetEffect(ID.ringList[ID.nextIndex]);
-
-                // Return this gameobject to pool to then be attachted to the next ring based on its order in list 
-            }
-           
-        }
     }
 
-   
 
-    // private void ResetRing()
-    // {
-    //     if (ID.ringList != null && ID.ringList.Count > 0)
-    //     {
-    //         ringTransform = ID.GetNewRing(); // Ensure GetNewRing() handles null safely
-    //     }
-    //     else
-    //     {
-    //         Debug.LogWarning("ringList is null or empty.");
-    //     }
-    // }
 
-   
-    private void OnEnable()
+    public void PlayParticle(float speedVar)
     {
-        // ID.ringEvent.ResetQuueue += 
-        following = true;
-        canPlay = true;
-        hasPlayed = false;
-        if (ringTransform != null)
+        if (!this.gameObject.activeInHierarchy)
         {
-            gameObject.transform.rotation = ringTransform.transform.rotation;
+            this.gameObject.SetActive(true);
         }
+        speed = speedVar;
+        ps.Play();
     }
+
 }

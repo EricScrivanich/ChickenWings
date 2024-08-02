@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneLoader: {fileID: 0}
 --- !u!1 &1434302524972317038
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,6 +1357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ed5cfe91351542e0a9144f66692a166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiFade: {fileID: 0}
   doesDrop: 1
   NextPrevButtons:
   - {fileID: 7620167946994231658}
@@ -1546,6 +1548,7 @@ GameObject:
   - component: {fileID: 5304995634253474584}
   - component: {fileID: 2077022004660386661}
   - component: {fileID: 745179742035076799}
+  - component: {fileID: 604531757402750158}
   m_Layer: 5
   m_Name: Next
   m_TagString: Untagged
@@ -1655,7 +1658,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2077022004660386661}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 604531757402750158}
+        m_TargetAssemblyTypeName: PauseButtonActions, Assembly-CSharp
+        m_MethodName: NextLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &604531757402750158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7147562871024536101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneLoader: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
 --- !u!1 &7202039522853237995
 GameObject:
   m_ObjectHideFlags: 0
@@ -1953,6 +1981,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneLoader: {fileID: 0}
 --- !u!1 &7398682278843069919
 GameObject:
   m_ObjectHideFlags: 0

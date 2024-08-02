@@ -14,7 +14,9 @@ public class CircleHighlightTween : MonoBehaviour
     [SerializeField] private float duration;
     [SerializeField] private float startAlpha;
     // Start is called before the first frame update
-    void Start()
+  
+
+    void OnEnable()
     {
         Tween();
 
@@ -26,10 +28,8 @@ public class CircleHighlightTween : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  
+    
     private void OnDisable() {
         if (sequence != null && sequence.IsPlaying())
             sequence.Kill();

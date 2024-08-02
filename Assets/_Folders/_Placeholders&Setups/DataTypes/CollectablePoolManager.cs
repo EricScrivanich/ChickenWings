@@ -61,7 +61,7 @@ public class CollectablePoolManager : MonoBehaviour
 
         if (triggerEvents)
         {
-return;
+            return;
         }
         else if (TestRandom)
             Invoke("TriggerNextRandomSpawn", 2f);
@@ -199,19 +199,56 @@ return;
 
     }
 
-    public void TriggerRandomSpawnWithRings(SetupParent setupVar, bool finalRing)
+    private IEnumerator WaitForRingsToReset(SetupParent setupVar, int triggerVar, bool finalRing)
     {
-        setupVar.SpawnRandomSetWithRings(this, enemyManager, finalRing);
+        while (!ringPool.RingType[currentRingType].ReadyToSpawn)
+        {
+            yield return null;
+        }
+
+        if (triggerVar > -1)
+        {
+            setupVar.SpawnTrigger(this, enemyManager, triggerVar, finalRing);
+        }
+        else
+        {
+            setupVar.SpawnRandomSetWithRings(this, enemyManager, finalRing);
+        }
+    }
+
+    
+    public void TriggerNextSpawnFromEvent(SetupParent setupVar, int triggerVar, bool finalRing)
+    {
+        if (!ringPool.RingType[currentRingType].ReadyToSpawn)
+        {
+            StartCoroutine(WaitForRingsToReset(setupVar, triggerVar, finalRing));
+        }
+        else
+        {
+            setupVar.SpawnTrigger(this, enemyManager, triggerVar, finalRing);
+        }
+
 
     }
+
+    public void TriggerRandomSpawnWithRings(SetupParent setupVar, bool finalRing)
+    {
+        if (!ringPool.RingType[currentRingType].ReadyToSpawn)
+        {
+            StartCoroutine(WaitForRingsToReset(setupVar, -1, finalRing));
+        }
+        else
+        {
+            setupVar.SpawnRandomSetWithRings(this, enemyManager, finalRing);
+        }
+
+
+    }
+
+
     public void TriggerRandomEnemySpawn(SetupParent setupVar)
     {
         setupVar.SpawnRandomEnemies(this, enemyManager);
-    }
-    public void TriggerNextSpawnFromEvent(SetupParent setupVar, int triggerVar, bool finalRing)
-    {
-        setupVar.SpawnTrigger(this, enemyManager, triggerVar, finalRing);
-
     }
     private void BoostLevelIntensity(int newIntensity)
     {

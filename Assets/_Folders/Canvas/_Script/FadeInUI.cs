@@ -7,9 +7,11 @@ using UnityEngine.UI;
 public class FadeInUI : MonoBehaviour
 {
     [SerializeField] private CanvasGroup FadeGroup;
+    private bool hasSetActive = false;
 
     [SerializeField] private bool setCanvasGroupUnactive;
 
+    [SerializeField] private List<GameObject> SetActiveOnceObjects;
     [SerializeField] private List<GameObject> SetActiveObjects;
     [SerializeField] private List<GameObject> SetUnactiveObjects;
 
@@ -42,10 +44,22 @@ public class FadeInUI : MonoBehaviour
         }
     }
 
-    private void SetObjectUnactive()
+    private void SetActiveOnce()
     {
+        if (!hasSetActive)
+        {
+            foreach (var item in SetActiveOnceObjects)
+            {
+                item.SetActive(true);
+            }
+            hasSetActive = true;
+
+        }
+
 
     }
+
+
 
     // Update is called once per frame
 
@@ -53,7 +67,8 @@ public class FadeInUI : MonoBehaviour
     private void OnEnable()
     {
         hasFaded = false;
-       if(setCanvasGroupUnactive) FadeGroup.gameObject.SetActive(true);
+        if (setCanvasGroupUnactive) FadeGroup.gameObject.SetActive(true);
+        SetActiveOnce();
 
         foreach (var item in SetActiveObjects)
         {

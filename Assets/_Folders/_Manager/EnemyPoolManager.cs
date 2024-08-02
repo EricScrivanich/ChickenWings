@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyPoolManager : MonoBehaviour
 {
     [Header("Pool Sizes")]
-    public SpawnSetupEnemy setup;
+   
 
     [SerializeField] private int jetPackPigPoolSize;
     [SerializeField] private int tenderizerPigPoolSize;
@@ -85,6 +85,8 @@ public class EnemyPoolManager : MonoBehaviour
     {
         if (normalPigIndex >= normalPig.Length) normalPigIndex = 0;
         var script = normalPig[normalPigIndex];
+        if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
+
         script.transform.position = (Vector2)transform.position + pos;
         script.transform.localScale = scale;
         script.xSpeed = speed;
@@ -95,6 +97,8 @@ public class EnemyPoolManager : MonoBehaviour
     {
         if (jetPackPigIndex >= jetPackPig.Length) jetPackPigIndex = 0;
         var script = jetPackPig[jetPackPigIndex];
+        if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
+
         if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
         script.transform.position = (Vector2)transform.position + pos;
         script.transform.localScale = scale;
@@ -107,6 +111,7 @@ public class EnemyPoolManager : MonoBehaviour
     {
         if (bigPigIndex >= bigPig.Length) bigPigIndex = 0;
         var script = bigPig[bigPigIndex];
+        if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
         script.transform.position = (Vector2)transform.position + pos;
         script.transform.localScale = scale;
         script.speed = speed;
@@ -120,6 +125,8 @@ public class EnemyPoolManager : MonoBehaviour
     {
         if (tenderizerPigIndex >= tenderizerPig.Length) tenderizerPigIndex = 0;
         var script = tenderizerPig[tenderizerPigIndex];
+        if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
+
         script.transform.position = (Vector2)transform.position + pos;
         script.transform.localScale = scale;
         script.speed = speed;

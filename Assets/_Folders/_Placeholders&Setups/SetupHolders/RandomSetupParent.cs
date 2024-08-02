@@ -1,63 +1,181 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+[CreateAssetMenu(fileName = "RandokmSpawnSetupParent", menuName = "Setups/RandomSetupParent")]
 
 
-[CreateAssetMenu(fileName = "RandomSpawnSetupParent", menuName = "Setups/RandomSetupParent")]
 public class RandomSetupParent : ScriptableObject
 {
-    [SerializeField] public List<NormalPigSO> pigNormalArray;
-    [SerializeField] public List<JetPackPigSO> pigJetPackArray = new List<JetPackPigSO>();
-    [SerializeField] public List<TenderizerPigSO> pigTenderizerArray = new List<TenderizerPigSO>();
-    [SerializeField] public List<BigPigSO> pigBigArray = new List<BigPigSO>();
-    [SerializeField] public List<RingSO> ringArray = new List<RingSO>();
-
+    public List<EnemyDataArray> enemySetup = new List<EnemyDataArray>();
+    public Vector2[] enemySetupYOffset;
+    public Vector2[] enemyPercentFilled;
+    
+    public List<CollectableDataArray> collectableSetup = new List<CollectableDataArray>();
     // Start is called before the first frame update
-    private void EnsureListSize<T>(List<T> list, int index) where T : new()
+    public void RecordForEnemyTrigger(List<EnemyData> dataList, int trigger)
     {
-        while (list.Count <= index)
+        EnemyData[] data = new EnemyData[dataList.Count];
+        for (int i = 0; i < dataList.Count; i++)
         {
-            list.Add(new T());
+            data[i] = dataList[i];
         }
+
+        var indexData = new EnemyDataArray(data);
+        Debug.Log("Length is: " + indexData.dataArray.Length);
+        enemySetup[trigger] = indexData;
+
     }
 
-    public void FillEnemyArrays(EnemyData data, int index)
+    public void DuplicateOrRemoveEnemy(int trigger, int indexOfDuplicate, bool duplicate, EnemyData dataType)
     {
-        EnsureListSize(pigNormalArray, index);
-        EnsureListSize(pigBigArray, index);
-        EnsureListSize(pigJetPackArray, index);
-        EnsureListSize(pigTenderizerArray, index);
-
-        if (data is NormalPigSO so)
+        if (duplicate)
         {
-            if (pigNormalArray == null)
+            EnemyData[] data = new EnemyData[(enemySetup[trigger].dataArray.Length + 1)];
+            EnemyData[] reUse = enemySetup[trigger].dataArray;
+
+            int tempInt = 0;
+
+            for (int i = 0; i < enemySetup[trigger].dataArray.Length; i++)
             {
-                pigNormalArray = new List<NormalPigSO>();
-                pigNormalArray.Add(so);
+                if (i == indexOfDuplicate)
+                {
+                    data[i] = reUse[i];
+                    data[i + 1] = dataType;
+                    tempInt = 1;
+                }
+                else
+                {
+                    data[i + tempInt] = reUse[i];
+                }
+
             }
-            else pigNormalArray[index] = so;
+            var indexData = new EnemyDataArray(data);
+            enemySetup[trigger] = indexData;
         }
-        else if (data is BigPigSO so1)
+
+        else
         {
-            pigBigArray[index] = so1;
+            EnemyData[] data = new EnemyData[(enemySetup[trigger].dataArray.Length - 1)];
+            EnemyData[] reUse = enemySetup[trigger].dataArray;
+
+            int tempInt = 0;
+
+            for (int i = 0; i < enemySetup[trigger].dataArray.Length; i++)
+            {
+                if (i == indexOfDuplicate)
+                {
+                    tempInt = -1;
+                }
+                else
+                {
+                    data[i + tempInt] = reUse[i];
+                }
+            }
+
+            var indexData = new EnemyDataArray(data);
+            enemySetup[trigger] = indexData;
         }
-        else if (data is JetPackPigSO so2)
-        {
-            pigJetPackArray[index] = so2;
-        }
-        else if (data is TenderizerPigSO so3)
-        {
-            pigTenderizerArray[index] = so3;
-        }
+
+
     }
 
-    public void FillCollectableArrays(CollectableData data, int index)
+    public void DuplicateOrRemoveCollectable(int trigger, int indexOfDuplicate, bool duplicate, CollectableData dataType)
     {
-        EnsureListSize(ringArray, index);
-
-        if (data is RingSO so)
+        if (duplicate)
         {
-            ringArray[index] = so;
+            CollectableData[] data = new CollectableData[collectableSetup[trigger].dataArray.Length + 1];
+            CollectableData[] reUse = collectableSetup[trigger].dataArray;
+
+            int tempInt = 0;
+
+            for (int i = 0; i < reUse.Length; i++)
+            {
+                if (i == indexOfDuplicate)
+                {
+                    // Create a new instance for the duplicate to ensure unique reference
+                    data[i] = reUse[i];
+                    data[i + 1] = dataType;
+                    tempInt = 1;
+                }
+                else
+                {
+                    data[i + tempInt] = reUse[i];
+                }
+            }
+
+            var indexData = new CollectableDataArray(data);
+            collectableSetup[trigger] = indexData;
+        }
+        else
+        {
+            CollectableData[] data = new CollectableData[collectableSetup[trigger].dataArray.Length - 1];
+            CollectableData[] reUse = collectableSetup[trigger].dataArray;
+
+            int tempInt = 0;
+
+            for (int i = 0; i < reUse.Length; i++)
+            {
+                if (i == indexOfDuplicate)
+                {
+                    tempInt = -1;
+                }
+                else
+                {
+                    data[i + tempInt] = reUse[i];
+                }
+            }
+
+            var indexData = new CollectableDataArray(data);
+            collectableSetup[trigger] = indexData;
         }
     }
+    public void RecordSpecificEnemy(EnemyData data, int trigger, int index)
+    {
+        if (trigger >= 0 && trigger < enemySetup.Count)
+        {
+            EnemyDataArray array = enemySetup[trigger];
+
+            for (int i = 0; i < array.dataArray.Length; i++)
+            {
+                if (array.dataArray[i].GetType() == data.GetType() && index == i)
+                {
+                    array.dataArray[i] = data;
+                    return; // Assuming you want to replace only one matching entry
+                }
+            }
+
+        }
+    }
+
+    public void RecordForColletableTrigger(List<CollectableData> dataList, int trigger)
+    {
+        CollectableData[] data = new CollectableData[dataList.Count];
+        for (int i = 0; i < dataList.Count; i++)
+        {
+            data[i] = dataList[i];
+        }
+
+        var indexData = new CollectableDataArray(data);
+        collectableSetup[trigger] = indexData;
+
+    }
+    public void RecordSpecificCollectable(CollectableData data, int trigger, int index)
+    {
+        if (trigger >= 0 && trigger < collectableSetup.Count)
+        {
+            CollectableDataArray array = collectableSetup[trigger];
+
+            for (int i = 0; i < array.dataArray.Length; i++)
+            {
+                if (array.dataArray[i].GetType() == data.GetType() && index == i)
+                {
+                    array.dataArray[i] = data;
+                    return; // Assuming you want to replace only one matching entry
+                }
+            }
+
+        }
+    }
+
 }

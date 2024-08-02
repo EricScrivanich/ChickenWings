@@ -354,9 +354,9 @@ public class BucketScript : MonoBehaviour, ICollectible
     private IEnumerator ResetRing()
     {
         ringTransform.gameObject.SetActive(false);
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.3f);
         ringTransform.localPosition = ringTransformOriginal;
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.2f);
 
         ringTransform.gameObject.SetActive(true);
         anim.SetBool("RestartBool", false);

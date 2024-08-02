@@ -8,7 +8,8 @@ public class PlayerDashState : PlayerBaseState
 
     private bool switchSlash;
 
-    [SerializeField] private float dashPower = 10.4f;
+
+    [SerializeField] private float dashPower = 11f;
     // [SerializeField] private float dashPower = 12.5f;
 
     private int rotationSpeed = 100;
@@ -16,10 +17,11 @@ public class PlayerDashState : PlayerBaseState
     private bool passedTime;
     private float dashingTime;
     private float dragDuration = .4f;
+    private float ableToDashSlashDuration = .6f;
     private float dragAmount = 2.5f;
     private float dragTime;
     private float dashDurationMin = .35f;
-    private float dashDurationMax = .52f;
+    private float dashDurationMax = .65f;
     private float currentSpeed;
     private float currentGravity;
     private float slowdownSpeed = 16.2f;
@@ -30,6 +32,7 @@ public class PlayerDashState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.isDashing = true;
+   
         hasFinishedDash = false;
         player.stillDashing = true;
         switchSlash = false;
@@ -38,6 +41,7 @@ public class PlayerDashState : PlayerBaseState
         {
             player.ID.globalEvents.CanDashSlash?.Invoke(true);
         }
+        player.rb.drag = .4f;
 
         rotZ = 0;
         passedTime = false;
@@ -55,13 +59,12 @@ public class PlayerDashState : PlayerBaseState
 
     }
     public override void ExitState(PlayerStateManager player)
-
     {
-        if (player.canDashSlash)
-        {
-            player.ID.globalEvents.CanDashSlash?.Invoke(false);
+       
+        player.ID.events.OnDash?.Invoke(false);
 
-        }
+        player.stillDashing = false;
+        player.ID.globalEvents.CanDashSlash?.Invoke(false);
 
         if (!hasFinishedDash)
         {
@@ -69,9 +72,7 @@ public class PlayerDashState : PlayerBaseState
             player.anim.SetTrigger(player.FinishDashTrigger);
 
         }
-
         player.rb.gravityScale = player.originalGravityScale;
-        player.stillDashing = false;
         player.rb.drag = 0f;
         player.ChangeCollider(0);
 
@@ -108,6 +109,7 @@ public class PlayerDashState : PlayerBaseState
     {
         switchSlash = true;
 
+
     }
 
 
@@ -120,15 +122,19 @@ public class PlayerDashState : PlayerBaseState
 
 
             player.rb.gravityScale = player.originalGravityScale;
-            player.ID.globalEvents.CanDash?.Invoke(false);
+            // player.ID.globalEvents.CanDash?.Invoke(false);
             if (!hasFinishedDash)
             {
                 hasFinishedDash = true;
                 player.anim.SetTrigger(player.FinishDashTrigger);
 
-            }
+                if (player.isDashing)
+                    player.ID.events.OnDash?.Invoke(false);
 
+            }
             passedTime = true;
+          
+
             player.rb.drag = dragAmount;
             // player.rb.gravityScale = player.originalGravityScale;
             // player.rb.velocity = new Vector2(2, player.rb.velocity.y);
@@ -136,21 +142,24 @@ public class PlayerDashState : PlayerBaseState
 
             // player.CheckIfIsTryingToParachute();
         }
+        
+
 
         if (passedTime && player.stillDashing)
         {
             if (switchSlash)
             {
-                player.SwitchState(player.DashSlash);
+
                 if (!hasFinishedDash)
                 {
                     hasFinishedDash = true;
                     player.anim.SetTrigger(player.FinishDashTrigger);
 
                 }
+                player.SwitchState(player.DashSlash);
 
 
-                player.ID.globalEvents.SetCanDashSlash?.Invoke(false); 
+
                 return;
             }
             dragTime += Time.deltaTime;
@@ -161,14 +170,19 @@ public class PlayerDashState : PlayerBaseState
             if (dragTime > dragDuration)
             {
                 player.rb.drag = 0;
-                player.stillDashing = false;
-                if (player.canDashSlash)
-                {
-                    player.ID.globalEvents.CanDashSlash?.Invoke(false);
 
-
-                }
             }
+
+            // if (dragTime > ableToDashSlashDuration)
+            // {
+            //     player.stillDashing = false;
+            //     if (player.canDashSlash)
+            //     {
+            //         player.ID.globalEvents.CanDashSlash?.Invoke(false);
+
+
+            //     }
+            // }
 
         }
 

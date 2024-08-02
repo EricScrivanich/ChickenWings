@@ -12,4 +12,6 @@ public struct OutputLvlEvent
     public Action<bool,int> ringSequenceFinished;
     public Action addBucketPass;
     public Action<int> setBucketPass;
+
+    public Action<int> nextSection;
 }

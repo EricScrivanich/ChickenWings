@@ -717,12 +717,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 359615f741359444eb5b59985b4112a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BackLegs: {fileID: 876612362594969489}
-  FrontLegs: {fileID: 0}
-  Wings: {fileID: 186289132723885649}
-  BackLegsPosition: {fileID: 7739352847732186187}
-  FrontLegsPosition: {fileID: 0}
-  WingsPosition: {fileID: 6007872805090000927}
+  backLegs: {fileID: 0}
+  wings: {fileID: 0}
+  tail: {fileID: 0}
+  body: {fileID: 0}
+  backLegsPosition: {fileID: 0}
+  wingsPosition: {fileID: 0}
+  tailPosition: {fileID: 0}
   addYForce: 1
   belowAmount: 0.2
   ySpeed: 4
@@ -786,7 +787,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.6299348, y: -0.0054891407}
+  m_Offset: {x: 0.6063615, y: 0.018084139}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -797,7 +798,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.772359, y: 1.0109782}
+  m_Size: {x: 2.3480394, y: 0.7988182}
   m_EdgeRadius: 0
 --- !u!114 &-2259727775895193576
 MonoBehaviour:
@@ -843,6 +844,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isScalable: 0
+  pigTypeAudio: 0
   explosionScale: {x: 0.8, y: 0.8, z: 0.8}
   colls:
   - {fileID: 8593314813052039977}
@@ -858,14 +860,6 @@ MonoBehaviour:
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   body: {fileID: 0}
-  BackLegs: {fileID: 0}
-  FrontLegs: {fileID: 0}
-  Wings: {fileID: 0}
-  Tail: {fileID: 0}
-  BackLegsPosition: {fileID: 0}
-  FrontLegsPosition: {fileID: 0}
-  WingsPosition: {fileID: 0}
-  TailPosition: {fileID: 0}
 --- !u!1 &7531350597852955848
 GameObject:
   m_ObjectHideFlags: 0

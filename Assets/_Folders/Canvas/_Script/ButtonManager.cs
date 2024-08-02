@@ -21,6 +21,8 @@ public class ButtonManager : MonoBehaviour
     [SerializeField] private Color canUseDashSlashImageColor;
     [SerializeField] private Color orignialButtonColor;
 
+    
+
     [Header("Drop")]
     [SerializeField] private Button dropButton;
     [SerializeField] private Image dropImage;

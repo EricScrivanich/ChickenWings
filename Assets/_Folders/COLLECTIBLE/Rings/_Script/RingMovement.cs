@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class RingMovement : MonoBehaviour, ICollectible
 {
@@ -9,6 +10,11 @@ public class RingMovement : MonoBehaviour, ICollectible
     // private bool hasNotTriggered;
     public RingID ID;
     public int index => ID.IDIndex;
+    [SerializeField] private SpriteRenderer center;
+    // [SerializeField] private SpriteRenderer burst;
+    private Vector3 startBurstScale = new Vector3(.5f, 1, 1);
+    private Vector3 endBurstScale = new Vector3(1.1f, 1, 1);
+
 
     public float speed;
     public bool correctCollision = false;
@@ -21,8 +27,7 @@ public class RingMovement : MonoBehaviour, ICollectible
     private Rigidbody2D rb;
     [SerializeField] private SpriteRenderer backRing;
 
-    [SerializeField] private SpriteRenderer centerSprite;
-    [SerializeField] private SpriteRenderer centerCutout;
+
 
 
     private bool isFaded = false;
@@ -33,8 +38,8 @@ public class RingMovement : MonoBehaviour, ICollectible
     private Animator anim;
 
     // Declare the hash
-    private static readonly int BurstBoolHash = Animator.StringToHash("BurstBool");
-    private static readonly int FadeCenterHash = Animator.StringToHash("FadeCenterBool");
+    // private static readonly int BurstBoolHash = Animator.StringToHash("BurstBool");
+    // private static readonly int FadeCenterHash = Animator.StringToHash("FadeCenterBool");
 
 
     private void Awake()
@@ -109,6 +114,64 @@ public class RingMovement : MonoBehaviour, ICollectible
 
     }
 
+    private IEnumerator FadeCenter()
+    {
+        // Duration of the fade
+        float elapsedTime = 0f;
+
+        Color startColor = center.color;
+        Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0); // Target color with 0 alpha
+
+        while (elapsedTime < 1)
+        {
+            elapsedTime += Time.deltaTime;
+            center.color = Color.Lerp(startColor, endColor, elapsedTime / 1);
+            // burst.color = center.color;
+            yield return null;
+        }
+
+        center.color = endColor;
+        // burst.color = endColor;
+
+    }
+
+    private IEnumerator BurstCenter()
+    {
+        // Duration of the fade
+        float elapsedTime = 0f;
+
+
+        ID.GetParticles(transform, speed);
+        Color startColor = center.color;
+        Color endColor = new Color(startColor.r, startColor.g, startColor.b, .4f); // Target color with 0 alpha
+
+        while (elapsedTime < .22f)
+        {
+            elapsedTime += Time.deltaTime;
+            center.transform.localScale = Vector3.Lerp(startBurstScale, endBurstScale, elapsedTime / .22f);
+            center.color = Color.Lerp(startColor, endColor, elapsedTime / .22f);
+            // burst.color = center.color;
+
+            yield return null;
+        }
+        
+        elapsedTime = 0;
+        startColor = endColor;
+        endColor = new Color(startColor.r, startColor.g, startColor.b, 0);
+        while (elapsedTime < .2f)
+        {
+            elapsedTime += Time.deltaTime;
+            center.transform.localScale = Vector3.Lerp(endBurstScale, startBurstScale, elapsedTime / .2f);
+            center.color = Color.Lerp(startColor, endColor, elapsedTime / .2f);
+            // burst.color = center.color;
+            yield return null;
+
+        }
+
+        center.color = endColor;
+        // burst.color = center.color;
+
+    }
     private void HandleCorrectRing()
     {
         if (isCorrect)
@@ -153,7 +216,7 @@ public class RingMovement : MonoBehaviour, ICollectible
             col.enabled = false;
 
             AudioManager.instance.PlayRingPassSound(order);
-            anim.SetBool(BurstBoolHash, true);
+            StartCoroutine(BurstCenter());
             sprite.material = ID.passedMaterial;
             backRing.material = ID.passedMaterial;
             Debug.Log(isCorrect);
@@ -183,7 +246,7 @@ public class RingMovement : MonoBehaviour, ICollectible
             isFaded = true;
             HandleCorrectRing();
 
-            anim.SetBool(FadeCenterHash, true);
+            StartCoroutine(FadeCenter());
         }
 
 
@@ -210,9 +273,10 @@ public class RingMovement : MonoBehaviour, ICollectible
         correctCollision = false;
         sprite.material = ID.defaultMaterial;
         backRing.material = ID.defaultMaterial;
-        centerSprite.color = ID.CenterColor;
-        centerCutout.color = ID.CenterColor;
-        Debug.Log("RingParent is: " + ID);
+        center.color = ID.CenterColor;
+        // burst.color = ID.CenterColor;
+        // burst.transform.localScale = startBurstScale;
+
 
 
 
@@ -234,16 +298,16 @@ public class RingMovement : MonoBehaviour, ICollectible
         ID.ringEvent.DisableRings -= DisableRings;
 
 
-        if (!isFaded)
-        {
-            anim.SetBool(BurstBoolHash, false);
-        }
-        else
-        {
-            anim.SetBool(FadeCenterHash, false);
-            isFaded = false;
+        // if (!isFaded)
+        // {
+        //     anim.SetBool(BurstBoolHash, false);
+        // }
+        // else
+        // {
+        //     anim.SetBool(FadeCenterHash, false);
+        //     isFaded = false;
 
-        }
+        // }
         // isCorrect = false;
     }
 }

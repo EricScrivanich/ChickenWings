@@ -16,6 +16,10 @@ public class PlayerDashSlashState : PlayerBaseState
     private bool hasSlashed;
     private float time;
     private float currentXVelocity;
+
+    private bool hasExited;
+    private bool buttonsEnabled;
+    private float buttonsDisabledTimer;
     private bool ignoreForce;
 
     public override void EnterState(PlayerStateManager player)
@@ -24,9 +28,13 @@ public class PlayerDashSlashState : PlayerBaseState
 
 
         time = 0;
+        buttonsEnabled = false;
+        buttonsDisabledTimer = 0;
         rotationSpeedVar = startingRotationSpeed;
         player.rotateSlash = false;
         player.ChangeCollider(-1);
+
+
 
 
         // player.Sword.SetActive(true);
@@ -50,6 +58,11 @@ public class PlayerDashSlashState : PlayerBaseState
         player.ChangeCollider(0);
 
         player.maxFallSpeed = player.ID.MaxFallSpeed;
+
+        if (!hasSlashed)
+        {
+            player.anim.SetTrigger(player.DashSlashFinishTrigger);
+        }
 
     }
 
@@ -128,10 +141,11 @@ public class PlayerDashSlashState : PlayerBaseState
             if (currentRotation <= -400)
             {
 
-                player.disableButtons = false;
+
                 // player.Sword.SetActive(false);
                 player.ChangeCollider(0);
                 player.anim.SetTrigger(player.DashSlashFinishTrigger);
+                hasExited = true;
 
                 startRotation = false;
                 hasSlashed = true;
@@ -150,17 +164,18 @@ public class PlayerDashSlashState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+        if (!buttonsEnabled)
+        {
+            buttonsDisabledTimer += Time.deltaTime;
+            if (buttonsDisabledTimer > .3f)
+            {
+                player.ID.events.EnableButtons(true);
+            }
 
-        // time += Time.deltaTime;
-        // if (time > .1f)
-        // {
-        //     startRotation = true;
+        }
 
-        // }
-        // else
-        // {
 
-        // }
+
 
     }
 

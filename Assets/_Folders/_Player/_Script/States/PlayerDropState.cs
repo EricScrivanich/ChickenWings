@@ -15,7 +15,7 @@ public class PlayerDropState : PlayerBaseState
         AudioManager.instance.PlayDownJumpSound();
         player.maxFallSpeed = -50;
         // player.anim.SetTrigger("DropTrigger");
-        player.disableButtons = true;
+       
         // player.rb.velocity = new Vector2 (0,dropPower);
         player.AdjustForce(0, dropPower);
         player.rb.freezeRotation = true;

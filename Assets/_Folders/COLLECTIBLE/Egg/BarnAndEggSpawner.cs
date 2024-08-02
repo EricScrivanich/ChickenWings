@@ -6,6 +6,9 @@ public class BarnAndEggSpawner : MonoBehaviour
 {
     public PlayerID player;
 
+    [SerializeField] private bool usingAmmo;
+    [SerializeField] private bool usingMana;
+
     [Header("Egg")]
     [SerializeField] private GameObject eggCollectablePrefab;
     [SerializeField] private int eggCollectableCount;
@@ -25,49 +28,121 @@ public class BarnAndEggSpawner : MonoBehaviour
     [SerializeField] private float barnBigChance;
     [SerializeField] private float barnMidChance;
 
+    [Header("Mana")]
+    [SerializeField] private Vector2 manaTimeRange;
+
+
     private Vector2 barnSpawnPos = new Vector2(13.5f, -4.64f);
     private EggCollectableMovement[] eggCollectables;
     private int currentBarnIndex = 0;
     private BarnMovement[] barnScript = new BarnMovement[2];
 
+    private int currentAmmoParticle = 0;
+    private int currentManaParticle = 0;
+    [SerializeField] private ParticleSystem ammoParticlePrefab;
+    [SerializeField] private ParticleSystem manaParticlePrefab;
+
+    private ParticleSystem[] ammoParticles = new ParticleSystem[2];
+    private ParticleSystem[] manaParticles = new ParticleSystem[2];
+
     // Start is called before the first frame update
     void Start()
     {
-        eggThreeChance = baseEggThreeChance;
-
         eggCollectables = new EggCollectableMovement[eggCollectableCount];
+        currentEggCollectableIndex = 0;
 
         for (int i = 0; i < eggCollectableCount; i++)
         {
             var obj = Instantiate(eggCollectablePrefab);
             var script = obj.GetComponent<EggCollectableMovement>();
+            script.spawner = this;
             eggCollectables[i] = script;
             script.gameObject.SetActive(false);
         }
-
-        for (int i = 0; i < 2; i++)
+        if (usingAmmo)
         {
-            var barnObj = Instantiate(barnPrefab);
-            barnScript[i] = barnObj.GetComponent<BarnMovement>();
-            barnObj.SetActive(false);
+
+
+            eggThreeChance = baseEggThreeChance;
+
+            for (int i = 0; i < 2; i++)
+            {
+                var barnObj = Instantiate(barnPrefab);
+                barnScript[i] = barnObj.GetComponent<BarnMovement>();
+                barnObj.SetActive(false);
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                var ps = Instantiate(ammoParticlePrefab);
+                ammoParticles[i] = ps;
+
+            }
+
+            StartCoroutine(SpawnEggs());
+            StartCoroutine(SpawnBarn());
+        }
+        if (usingMana)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                var ps = Instantiate(manaParticlePrefab);
+                manaParticles[i] = ps;
+
+            }
+
+            StartCoroutine(SpawnMana());
+
         }
 
 
 
+        
 
-        StartCoroutine(SpawnEggs());
-        StartCoroutine(SpawnBarn());
+
+
+
+       
 
 
     }
 
-    // Update is called once per frame
-    public void GetEggCollectable(Vector2 pos, bool isThree, float speed)
+    public void GetParticles(bool isNormal, Vector2 pos)
     {
-        if (currentEggCollectableIndex !< eggCollectableCount) currentEggCollectableIndex = 0;
+        if (isNormal)
+        {
+            if (currentAmmoParticle > 1)
+            {
+                currentAmmoParticle = 0;
+            }
+
+            ammoParticles[currentAmmoParticle].transform.position = pos;
+            ammoParticles[currentAmmoParticle].Play();
+            currentAmmoParticle++;
+
+        }
+        else
+        {
+            if (currentManaParticle > 1)
+            {
+                currentManaParticle = 0;
+            }
+
+            manaParticles[currentManaParticle].transform.position = pos;
+            manaParticles[currentManaParticle].Play();
+            currentManaParticle++;
+
+        }
+
+    }
+
+    // Update is called once per frame
+    public void GetEggCollectable(Vector2 pos,bool isMana, bool isThree, float speed)
+    {
+        if (currentEggCollectableIndex >= eggCollectableCount) currentEggCollectableIndex = 0;
         var obj = eggCollectables[currentEggCollectableIndex];
         obj.transform.position = pos;
-        obj.EnableAmmo(isThree, speed);
+        obj.EnableAmmo(isThree, isMana, speed);
+        currentEggCollectableIndex++;
 
     }
 
@@ -98,10 +173,26 @@ public class BarnAndEggSpawner : MonoBehaviour
             Vector2 pos = new Vector2(13, Random.Range(-2.2f, 4.2f));
             bool three = Random.Range(0f, 1f) < eggThreeChance;
 
-            GetEggCollectable(pos, three, 0);
+            GetEggCollectable(pos, false, three, 0);
             yield return new WaitForSeconds(Random.Range(eggTimeRange.x, eggTimeRange.y) + eggOffsetTime);
         }
 
+
+    }
+
+    private IEnumerator SpawnMana()
+    {
+        yield return new WaitForSeconds(Random.Range(4f, 6f));
+
+        while (true)
+        {
+
+            Vector2 pos = new Vector2(13, Random.Range(-2.2f, 4.2f));
+           
+
+            GetEggCollectable(pos, true, false, 0);
+            yield return new WaitForSeconds(Random.Range(manaTimeRange.x, manaTimeRange.y));
+        }
 
     }
     private IEnumerator SpawnBarn()

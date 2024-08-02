@@ -427,6 +427,7 @@ GameObject:
   - component: {fileID: 851630593813869172}
   - component: {fileID: 7007111118875938752}
   - component: {fileID: 5933627762509172735}
+  - component: {fileID: 3304498880910268721}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -551,7 +552,7 @@ MonoBehaviour:
   rotationLerpSpeed: 20
   jumpRotSpeed: 200
   maxRotUp: 15
-  disableButtons: 0
+  isFrozen: 0
   rotateSlash: 0
   justStartedClocker: 1
   rb: {fileID: 0}
@@ -567,9 +568,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937f1c2bdbd274c02a8bc85eb100cc93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalButtonColor: {r: 0.83137256, g: 0.7647059, b: 0.7647059, a: 0.14901961}
-  highlightButtonColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.8509804}
-  disabledButtonColor: {r: 1, g: 0.60784316, b: 0.60784316, a: 0.5019608}
+  normalButtonColor: {r: 1, g: 1, b: 1, a: 0.6313726}
+  highlightButtonColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+  disabledButtonColor: {r: 0.9811321, g: 0.36561054, b: 0.36561054, a: 0.7607843}
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   touchButtonRectTransform: {fileID: 0}
 --- !u!114 &2362284218855398748
@@ -585,9 +586,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  bulletSpawnPos: {fileID: 807761569753537909}
-  egg_Regular: {fileID: 1449390570128243431, guid: 82dc55e1f51944aaea3f6c5f029f240d, type: 3}
-  egg_Bullet: {fileID: 3347543397961977174, guid: ce24e87af8d644185a004d8487f09581, type: 3}
   eggPoolAmount: 10
 --- !u!114 &5055586104776929628
 MonoBehaviour:
@@ -618,12 +616,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  lvlID: {fileID: 0}
   scoreText: {fileID: 0}
   tutorialText: {fileID: 0}
   Mana: {fileID: 0}
   Lives:
   - {fileID: 0}
   - {fileID: 0}
+  BucketDifferntObjective: 0
   RingRed: {fileID: 11400000, guid: d5428165d140444d991bb0c5e34af16f, type: 2}
   RingPink: {fileID: 11400000, guid: e549d978ef2c84652a50f724fc25a6f8, type: 2}
   RingGold: {fileID: 11400000, guid: dd58f32a2dde245e48fabe5bd1b5e711, type: 2}
@@ -680,6 +680,42 @@ MonoBehaviour:
   minimumAddScoreDelay: 0.2
   delayDecreaseDuration: 80
   GlobalTimer: 0
+--- !u!114 &3304498880910268721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2938654145027134748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4a324540c680495aa8f2f04fefdde91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  DisabledButtonColor: {r: 0.98039216, g: 0.3647059, b: 0.3647059, a: 0.7607843}
+  ButtonHeldColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+  ButtonNormalColor: {r: 1, g: 1, b: 1, a: 0.6313726}
+  ButtonCanSlashColor1: {r: 0.28627452, g: 0.21176471, b: 1, a: 0.5019608}
+  ButtonCanSlashColor2: {r: 0.5372549, g: 0.6666667, b: 0.8980392, a: 0.8509804}
+  DashImageManaHighlight: {r: 0.8901961, g: 0.45882353, b: 1, a: 1}
+  DashImageManaDisabled: {r: 0.98039216, g: 0.36470586, b: 0.57526356, a: 0}
+  DashImageManaDisabledFilling: {r: 0.71646273, g: 0.039215684, b: 0.7647059, a: 0.41960785}
+  coolDownColorRed: {r: 0.972549, g: 0.105882354, b: 0.105882354, a: 0.7647059}
+  coolDownColorBlue: {r: 0.8901961, g: 0.45882353, b: 1, a: 0.7647059}
+  moveDashIconX: 25
+  dashIconLargeScale: {x: 1.25, y: 1.2, z: 1.2}
+  dashIconSmallScale: {x: 0.85, y: 0.9, z: 0.9}
+  mainManaFillDuration: 10
+  manaGainedFromCollectable: 40
+  dashSlashCooldown: 0
+  PressedColorNormal: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.8509804}
+  PressedColorMana: {r: 0.5372549, g: 0.6666667, b: 0.8980392, a: 0.8509804}
+  fillingManaColor: {r: 0.5803922, g: 0.039215688, b: 0.7647059, a: 0.6}
+  canUseDashSlashButtonColor: {r: 0.28627452, g: 0.21176471, b: 1, a: 0.5019608}
+  canUseDashSlashImageColor1: {r: 0.6786598, g: 0.35933605, b: 0.8018868, a: 0.6}
+  canUseDashSlashImageColor2: {r: 0.862643, g: 0.64328945, b: 0.9811321, a: 0.6}
+  orignialButtonColor: {r: 0.83137256, g: 0.7647059, b: 0.7647059, a: 0.14901961}
 --- !u!1 &3520994022076439796
 GameObject:
   m_ObjectHideFlags: 0

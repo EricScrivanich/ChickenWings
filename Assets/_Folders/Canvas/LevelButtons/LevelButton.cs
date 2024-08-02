@@ -7,6 +7,7 @@ using DG.Tweening;
 
 public class LevelButton : MonoBehaviour
 {
+    [SerializeField] private SceneManagerSO sceneLoader;
     public int levelNum;
     [SerializeField] private bool isUnlocked;
     [SerializeField] private Color buttonColorUnlocked;
@@ -53,31 +54,35 @@ public class LevelButton : MonoBehaviour
         sequence.Play();
     }
 
-    public void PressOnLocked()
+    public void PressButton()
     {
         if (isUnlocked)
         {
-            return;
+            sceneLoader.LoadLevel(levelNum);
         }
-        // Button but = ButtonImage.GetComponent<Button>();
-        // but.interactable = false;
-        GameObject.Find("MenuButtons").GetComponent<LevelLockedManager>().CheckLockedLevel(levelNum);
 
-        if (lockMoveTween != null && lockMoveTween.IsPlaying())
-            lockMoveTween.Kill();
-        lockMoveTween = DOTween.Sequence();
+        else
+        {
+            GameObject.Find("MenuButtons").GetComponent<LevelLockedManager>().CheckLockedLevel(levelNum);
 
-        lockMoveTween.Append(Lock.DOAnchorPosY(10, .2f).SetEase(Ease.OutSine));
-        lockMoveTween.Join(Lock.DORotate(new Vector3(0, 0, 15), .3f).SetEase(Ease.InOutSine));
-        lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, -15), .2f).SetEase(Ease.InOutSine));
-        lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, 10), .2f).SetEase(Ease.InOutSine));
-        lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, -10), .2f).SetEase(Ease.InOutSine));
-        lockMoveTween.Append(Lock.DORotate(Vector3.zero, .3f).SetEase(Ease.OutSine));
-        lockMoveTween.Join(Lock.DOAnchorPosY(0, .3f).SetEase(Ease.OutSine));
-        // lockMoveTween.OnComplete(() => but.interactable = true);
+            if (lockMoveTween != null && lockMoveTween.IsPlaying())
+                lockMoveTween.Kill();
+            lockMoveTween = DOTween.Sequence();
+
+            lockMoveTween.Append(Lock.DOAnchorPosY(10, .2f).SetEase(Ease.OutSine));
+            lockMoveTween.Join(Lock.DORotate(new Vector3(0, 0, 15), .3f).SetEase(Ease.InOutSine));
+            lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, -15), .2f).SetEase(Ease.InOutSine));
+            lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, 10), .2f).SetEase(Ease.InOutSine));
+            lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, -10), .2f).SetEase(Ease.InOutSine));
+            lockMoveTween.Append(Lock.DORotate(Vector3.zero, .3f).SetEase(Ease.OutSine));
+            lockMoveTween.Join(Lock.DOAnchorPosY(0, .3f).SetEase(Ease.OutSine));
+            // lockMoveTween.OnComplete(() => but.interactable = true);
 
 
-        lockMoveTween.Play();
+            lockMoveTween.Play();
+        }
+
+
 
     }
 

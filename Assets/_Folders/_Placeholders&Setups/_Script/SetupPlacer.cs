@@ -11,6 +11,8 @@ public class SetupPlacer : MonoBehaviour
     public GameObject BigPigPrefab;
     public GameObject RingPrefab;
 
+    public GameObject SquareArea;
+
     [SerializeField] private SpriteRenderer[] borderLines;
 
     private void Start()

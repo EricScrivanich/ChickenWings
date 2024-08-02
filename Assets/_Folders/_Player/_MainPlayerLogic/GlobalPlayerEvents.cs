@@ -7,6 +7,8 @@ public struct GlobalPlayerEvents
     public Action OnInfiniteLives;
     public Action<float> OnAdjustConstantSpeed;
     public Action OnUpdateAmmo;
+
+    public Action OnGetMana;
     public Action<int> OnAddAmmo;  
     public Action<int> OnUpdateScore;
     public Action<int> OnAddScore;
@@ -27,6 +29,8 @@ public struct GlobalPlayerEvents
 
     public Action<bool> CanDashSlash;
     public Action<bool> SetCanDashSlash;
+    public Action<float> timeLeftOfMinDash;
+
 
     public Action<float, float> ShakeCamera;
 

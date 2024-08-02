@@ -103,6 +103,8 @@ public class EnemySetupRecorderEditor : Editor
 
         base.OnInspectorGUI(); // Draw the default inspector
 
+        if (GameObject.Find("SetupRecorderParent") == null) return;
+
         recorderEnemy = GameObject.Find("SetupRecorderEnemy");
         recorderCollectable = GameObject.Find("SetupRecorderCollectable");
         placer = GameObject.Find("SetupRecorderParent").GetComponent<SetupPlacer>();

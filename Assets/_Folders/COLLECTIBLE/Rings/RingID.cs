@@ -40,6 +40,8 @@ public class RingID : ScriptableObject
 
     public int CorrectRing;
 
+    public bool hasCompleted;
+
     private int ringOrder;
 
 
@@ -68,33 +70,43 @@ public class RingID : ScriptableObject
         ringOrder = 1;
     }
 
-    public void GetEffect(RingMovement ring)
+    // public void GetEffect(RingMovement ring)
+    // {
+    //     // if (ring == null)
+    //     // {
+    //     //     return;
+    //     // }
+
+    //     Debug.Log("Getting Effect for: " + this);
+
+
+    //     ParticleFollowScript script = particleSystemsQueue.Dequeue();
+    //     script.ringTransform = ring;
+
+
+
+    //     script.gameObject.SetActive(true);
+
+
+
+    //     particleSystemsQueue.Enqueue(script);
+
+    //     // particlesInUse++;
+
+    //     nextIndex++;
+    //     // grabbedPS.SetActive(true);
+
+
+    // }
+
+    public void GetParticles(Transform trans,float speed)
     {
-        // if (ring == null)
-        // {
-        //     return;
-        // }
+        var ps = particleSystemsQueue.Dequeue();
+        ps.transform.position = trans.position;
+        ps.transform.rotation = trans.rotation;
+        ps.PlayParticle(speed);
 
-        Debug.Log("Getting Effect for: " + this);
-
-
-        ParticleFollowScript script = particleSystemsQueue.Dequeue();
-        script.ringTransform = ring;
-
-
-
-        script.gameObject.SetActive(true);
-
-
-
-        particleSystemsQueue.Enqueue(script);
-
-        // particlesInUse++;
-
-        nextIndex++;
-        // grabbedPS.SetActive(true);
-
-
+        particleSystemsQueue.Enqueue(ps);
     }
 
     public void ReturnAllParticles()
@@ -171,10 +183,11 @@ public class RingID : ScriptableObject
         Pool.GetSonicWave(position);
 
     }
+    
 
     public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, float setSpeed)
     {
-        ReadyToSpawn = false;
+        
         RingMovement ringScript = Pool.GetRing(this);
 
         ringScript.transform.position = setPosition;
@@ -194,7 +207,7 @@ public class RingID : ScriptableObject
             Debug.Log("YES PARTILCE");
             particlesInUse++;
 
-            GetEffect(ringScript);
+            // GetEffect(ringScript);
         }
 
     }
@@ -214,41 +227,43 @@ public class RingID : ScriptableObject
     // }
 
 
-    public void ReturnEffect(ParticleFollowScript effect)
-    {
-        if (effect != null) // Check if the GameObject is not null
-        {
+    // public void ReturnEffect(ParticleFollowScript effect)
+    // {
+    //     if (effect != null) // Check if the GameObject is not null
+    //     {
 
-            // effect.gameObject.SetActive(false);
+    //         // effect.gameObject.SetActive(false);
 
-            if (nextIndex < ringList.Count)
-            {
-                effect.gameObject.SetActive(false);
-                // particleSystemsQueue.Enqueue(effect.gameObject);
-                GetEffect(GetNewRing());
-            }
-            else
-            {
-                effect.gameObject.SetActive(false);
-                particlesInUse--;
-            }
-            // else{
-            //     effect.gameObject.SetActive(false);
-            //     particleSystemsQueue.Enqueue(effect.gameObject);
+    //         if (nextIndex < ringList.Count)
+    //         {
+    //             effect.gameObject.SetActive(false);
+    //             // particleSystemsQueue.Enqueue(effect.gameObject);
+    //             GetEffect(GetNewRing());
+    //         }
+    //         else
+    //         {
+    //             effect.gameObject.SetActive(false);
+    //             particlesInUse--;
+    //         }
+    //         // else{
+    //         //     effect.gameObject.SetActive(false);
+    //         //     particleSystemsQueue.Enqueue(effect.gameObject);
 
-            // }
+    //         // }
 
-            // effect.SetActive(false); // Deactivate the GameObject
-            // particleSystemsQueue.Enqueue(effect.gameObject); // Return it to the queue for reuse
+    //         // effect.SetActive(false); // Deactivate the GameObject
+    //         // particleSystemsQueue.Enqueue(effect.gameObject); // Return it to the queue for reuse
 
 
-        }
-    }
+    //     }
+    // }
 
 
     public void GetBucket(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, float setSpeed)
     {
+        ReadyToSpawn = false;
         BucketScript bucketScript = Pool.GetBucket(this);
+
 
 
         bucketScript.transform.position = setPosition;

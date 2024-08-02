@@ -47,6 +47,8 @@ public class MainMenuScript : MonoBehaviour
     [SerializeField] private RectTransform sunGlassesStartPos;
     [SerializeField] private RectTransform sunGlassesTargetPos;
 
+    [SerializeField] private RectTransform[] buttonRects;
+    [SerializeField] private RectTransform titleRect;
     [SerializeField] private Button[] buttons;
 
     public bool buttonPressed;
@@ -62,6 +64,32 @@ public class MainMenuScript : MonoBehaviour
         buttonPressed = false;
     }
 
+    private void IntitialMenuTween(RectTransform target, float pos, bool doX)
+    {
+        if (doX)
+            target.DOAnchorPosX(pos, 1.5f).SetEase(Ease.OutSine);
+
+        else
+            target.DOAnchorPosY(pos, 1.5f).SetEase(Ease.OutSine);
+
+
+
+    }
+
+    private IEnumerator InitialTweenCourintine()
+    {
+        coverPanel.SetActive(true);
+        yield return new WaitForSeconds(.1f);
+        IntitialMenuTween(titleRect, 0, false);
+        foreach (var rect in buttonRects)
+        {
+            IntitialMenuTween(rect, -373, true);
+            yield return new WaitForSeconds(.33f);
+
+        }
+        coverPanel.SetActive(false);
+    }
+
     private void Start()
     {
 
@@ -70,9 +98,17 @@ public class MainMenuScript : MonoBehaviour
         currentMenu = 0;
         Bosses.anchoredPosition = new Vector2(2700, 0);
         Levels.anchoredPosition = new Vector2(2700, 0);
-        coverPanel.SetActive(false);
+        titleRect.anchoredPosition = new Vector2(titleRect.anchoredPosition.x, 740);
+
+        foreach (var rect in buttonRects)
+        {
+            rect.anchoredPosition = new Vector2(-1000, rect.anchoredPosition.y);
+        }
+
 
         sunGlassCache = sunGlasses.GetComponent<RectTransform>();
+
+        StartCoroutine(InitialTweenCourintine());
 
 
 
@@ -120,31 +156,31 @@ public class MainMenuScript : MonoBehaviour
         if (switchTo == 0)
         {
             float initialRightShift = 50f;
-            float durationRightShift = 0.4f;  // Duration of the initial right shift
-            float finalLeftShiftDuration = 1.3f;  // Duration for moving to the final position
+            float durationRightShift = 0.6f;  // Duration of the initial right shift
+            float finalLeftShiftDuration = 1.6f;  // Duration for moving to the final position
 
             // First move to the right
-            Main.DOAnchorPos(new Vector2(Main.anchoredPosition.x + initialRightShift, Main.anchoredPosition.y), durationRightShift)
+            Main.DOAnchorPos(new Vector2(Main.anchoredPosition.x + initialRightShift, Main.anchoredPosition.y), durationRightShift).SetEase(Ease.InOutSine)
                 .OnComplete(() =>
                 {
-                    Levels.DOAnchorPos(new Vector2(0, Levels.anchoredPosition.y), finalLeftShiftDuration);
+                    Levels.DOAnchorPos(new Vector2(0, Levels.anchoredPosition.y), finalLeftShiftDuration).SetEase(Ease.OutSine);
                     // After completing the move to the right, move to the final position to the left
                     Main.DOAnchorPos(new Vector2(-2700, Main.anchoredPosition.y), finalLeftShiftDuration);
-                }); 
+                });
         }
         else if (switchTo == 1)
         {
             float initialLeftShift = 50f;
-            float durationLeftShift = 0.4f;  // Duration of the initial Left shift
-            float finalRightShiftDuration = 1.3f;  // Duration for moving to the final position
+            float durationLeftShift = 0.6f;  // Duration of the initial Left shift
+            float finalRightShiftDuration = 1.6f;  // Duration for moving to the final position
 
             // First move to the Left
-            Levels.DOAnchorPos(new Vector2(Bosses.anchoredPosition.x - initialLeftShift, Main.anchoredPosition.y), durationLeftShift)
+            Levels.DOAnchorPos(new Vector2(Levels.anchoredPosition.x - initialLeftShift, Levels.anchoredPosition.y), durationLeftShift).SetEase(Ease.InOutSine)
                 .OnComplete(() =>
                 {
-                    Main.DOAnchorPos(new Vector2(0, Main.anchoredPosition.y), finalRightShiftDuration);
+                    Main.DOAnchorPos(new Vector2(0, Main.anchoredPosition.y), finalRightShiftDuration).SetEase(Ease.OutSine);
                     // After completing the move to the right, move to the final position to the left
-                    Levels.DOAnchorPos(new Vector2(2700, Bosses.anchoredPosition.y), finalRightShiftDuration);
+                    Levels.DOAnchorPos(new Vector2(2700, Levels.anchoredPosition.y), finalRightShiftDuration);
                 });
         }
         else if (switchTo == 2)
@@ -304,7 +340,7 @@ public class MainMenuScript : MonoBehaviour
 
     public void LoadSceneFromSO(int levelIndex)
     {
-smSO.LoadLevel(levelIndex);
+        smSO.LoadLevel(levelIndex);
     }
 
 

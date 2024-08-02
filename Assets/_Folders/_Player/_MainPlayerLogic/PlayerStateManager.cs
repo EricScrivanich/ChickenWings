@@ -154,7 +154,7 @@ public class PlayerStateManager : MonoBehaviour
     private bool canDash;
     public bool canDrop;
     private bool canSlash;
-    private float dashCooldownTime = 1.5f;
+    private float dashCooldownTime = 1.2f;
     private float dropCooldownTime = 2f;
     public bool jumpHeld;
     public bool isParachuting = false;
@@ -174,7 +174,7 @@ public class PlayerStateManager : MonoBehaviour
     private int remainingLeftFlips = 0;
     private int remainingRightFlips = 0;
     public float addEggVelocity { get; private set; } = 2.5f;
-    public bool disableButtons;
+    public bool isFrozen;
     public bool rotateSlash;
 
     public bool justStartedClocker;
@@ -214,7 +214,7 @@ public class PlayerStateManager : MonoBehaviour
         jumpHeld = false;
         canDash = true;
         canDrop = true;
-        disableButtons = true;
+        isFrozen = false;
         ID.StaminaUsed = 0;
         rb = GetComponent<Rigidbody2D>();
         justDashedSlashed = false;
@@ -322,26 +322,26 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    private IEnumerator LerpToOriginalPosition(float duration)
-    {
-        float timeElapsed = 0;
-        Vector2 startPosition = transform.position;
-        disableButtons = true;
+    // private IEnumerator LerpToOriginalPosition(float duration)
+    // {
+    //     float timeElapsed = 0;
+    //     Vector2 startPosition = transform.position;
+    //     disableButtons = true;
 
-        while (timeElapsed < duration)
-        {
-            // Use Mathf.SmoothStep for easing; it smoothly interpolates between the start and end values
-            float t = timeElapsed / duration;
-            t = Mathf.SmoothStep(0.0f, 1.0f, t);  // Apply smoothing to t
-            transform.position = Vector2.Lerp(startPosition, originalPosition, t);
-            timeElapsed += Time.deltaTime;
-            yield return null; // Wait for the next frame
-        }
+    //     while (timeElapsed < duration)
+    //     {
+    //         // Use Mathf.SmoothStep for easing; it smoothly interpolates between the start and end values
+    //         float t = timeElapsed / duration;
+    //         t = Mathf.SmoothStep(0.0f, 1.0f, t);  // Apply smoothing to t
+    //         transform.position = Vector2.Lerp(startPosition, originalPosition, t);
+    //         timeElapsed += Time.deltaTime;
+    //         yield return null; // Wait for the next frame
+    //     }
 
-        transform.position = originalPosition;
-        AdjustForce(0, 0);
-        disableButtons = false; // Ensure the position is set exactly at the original
-    }
+    //     transform.position = originalPosition;
+    //     AdjustForce(0, 0);
+    //     disableButtons = false; // Ensure the position is set exactly at the original
+    // }
 
     void FixedUpdate()
     {
@@ -398,10 +398,11 @@ public class PlayerStateManager : MonoBehaviour
 
         currentState.UpdateState(this);
         // currentState.RotateState(this);
-        if (transform.position.y > BoundariesManager.TopPlayerBoundary && !disableButtons && !ID.constantPlayerForceBool)
+        if (transform.position.y > BoundariesManager.TopPlayerBoundary && !isFrozen && !ID.constantPlayerForceBool)
         {
             // ResetHoldJump();
             anim.SetBool(FrozenBool, true);
+            isFrozen = true;
 
             SwitchState(FrozenState);
             ID.events.EnableButtons?.Invoke(false);
@@ -413,6 +414,7 @@ public class PlayerStateManager : MonoBehaviour
 
         // If it does, limit it to the max fall speed
         rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, maxFallSpeed, 15f));
+
 
 
 
@@ -477,19 +479,19 @@ public class PlayerStateManager : MonoBehaviour
 
     void HandleJump()
     {
-        if (!disableButtons && !ID.IsTwoTouchPoints)
-        {
+        // if (!disableButtons && !ID.IsTwoTouchPoints)
 
-            // ResetHoldJump();
-            anim.SetTrigger(JumpTrigger);
-            var obj = jumpAir.Dequeue();
-            obj.transform.position = airSpawnPos.position;
-            obj.transform.eulerAngles = Vector3.zero;
-            obj.SetActive(true);
-            jumpAir.Enqueue(obj);
 
-            SwitchState(JumpState);
-        }
+        // ResetHoldJump();
+        anim.SetTrigger(JumpTrigger);
+        var obj = jumpAir.Dequeue();
+        obj.transform.position = airSpawnPos.position;
+        obj.transform.eulerAngles = Vector3.zero;
+        obj.SetActive(true);
+        jumpAir.Enqueue(obj);
+
+        SwitchState(JumpState);
+
 
     }
     void HandleHoldJump(bool isHolding)
@@ -527,31 +529,27 @@ public class PlayerStateManager : MonoBehaviour
 
     void HandleRightFlip(bool holding)
     {
-        if (!disableButtons)
+
+        if (holding)
         {
+            holdingRightFlip = true;
+            anim.SetTrigger(FlipTrigger);
+            var obj = jumpAir.Dequeue();
+            obj.transform.position = airSpawnPos.position;
 
+            obj.transform.eulerAngles = new Vector3(0, 0, 315);
+            obj.SetActive(true);
+            jumpAir.Enqueue(obj);
 
+            // ResetHoldJump();
+            SwitchState(FlipRightState);
 
-            if (holding)
-            {
-                holdingRightFlip = true;
-                anim.SetTrigger(FlipTrigger);
-                var obj = jumpAir.Dequeue();
-                obj.transform.position = airSpawnPos.position;
-
-                obj.transform.eulerAngles = new Vector3(0, 0, 315);
-                obj.SetActive(true);
-                jumpAir.Enqueue(obj);
-
-                // ResetHoldJump();
-                SwitchState(FlipRightState);
-
-            }
-            else
-            {
-                holdingRightFlip = false;
-            }
         }
+        else
+        {
+            holdingRightFlip = false;
+        }
+
 
     }
 
@@ -559,39 +557,32 @@ public class PlayerStateManager : MonoBehaviour
 
     void HandleLeftFlip(bool holding)
     {
-        if (!disableButtons)
 
+        if (holding)
         {
-            if (holding)
-            {
-                holdingLeftFlip = true;
+            holdingLeftFlip = true;
 
-                // ResetHoldJump();
-                anim.SetTrigger(FlipTrigger);
-                var obj = jumpAir.Dequeue();
-                obj.transform.position = airSpawnPos.position;
+            // ResetHoldJump();
+            anim.SetTrigger(FlipTrigger);
+            var obj = jumpAir.Dequeue();
+            obj.transform.position = airSpawnPos.position;
 
-                obj.transform.eulerAngles = new Vector3(0, 0, 42);
-                obj.SetActive(true);
-                jumpAir.Enqueue(obj);
+            obj.transform.eulerAngles = new Vector3(0, 0, 42);
+            obj.SetActive(true);
+            jumpAir.Enqueue(obj);
 
-                SwitchState(FlipLeftState);
-            }
-            else
-            {
-                holdingLeftFlip = false;
-            }
+            SwitchState(FlipLeftState);
+        }
+        else
+        {
+            holdingLeftFlip = false;
         }
 
 
-    }
-
-    private void HandleHoldFlip(bool isHolding)
-    {
-        // holdingFlip = isHolding;
-
 
     }
+
+
 
     public void SetFlipDirection(bool isRight)
     {
@@ -610,16 +601,18 @@ public class PlayerStateManager : MonoBehaviour
 
     void HandleDash(bool holding)
     {
-        if (stillDashing && holding && canDashSlash)
-        {
-            DashState.SwitchSlash();
+        // if (stillDashing && holding && canDashSlash)
+        // {
+        //     DashState.SwitchSlash();
 
-            justDashedSlashed = true;
-        }
-        else if (holding && canDash && !disableButtons)
+        //     justDashedSlashed = true;
+        //     ID.globalEvents.SetCanDashSlash?.Invoke(false);
+        //     ID.events.EnableButtons(false);
+        // }
+        if (holding)
         {
             // ResetHoldJump();
-            StartCoroutine(DashCooldown(dashCooldownTime));
+       
             // airResistance.localPosition = airDashPos;
             // airResistance.localEulerAngles = Vector3.zero;
             anim.SetTrigger(DashTrigger);
@@ -630,47 +623,56 @@ public class PlayerStateManager : MonoBehaviour
 
 
         }
-        if (!holding && !justDashedSlashed)
+        else 
         {
-            ID.globalEvents.CanDash?.Invoke(false);
             isDashing = false;
         }
-        else if (!holding && justDashedSlashed)
-        {
-            justDashedSlashed = false;
-        }
-
-    }
-
-    private void HandleDashSlash(bool canSlash)
-    {
-
-        canDashSlash = canSlash;
-        // if (!disableButtons)
+        // if (!holding && !justDashedSlashed)
         // {
-        //     ChangeCollider(-1);
-        //     disableButtons = true;
-        //     SwitchState(DashSlash);
-
-
+        //     ID.globalEvents.CanDash?.Invoke(false);
+        //     isDashing = false;
         // }
+        // else if (!holding && justDashedSlashed)
+        // {
+        //     justDashedSlashed = false;
+        // }
+
     }
+
+    // private void HandleDashSlash(bool canSlash)
+    // {
+
+    //     canDashSlash = canSlash;
+
+    // }
+
+    private void HandleDashSlash()
+    {
+        Debug.Log("Slash Called");
+        if (stillDashing)
+            ID.events.EnableButtons(false);
+        DashState.SwitchSlash();
+
+    }
+
+
 
     private void HandleDrop()
     {
-        if (!disableButtons)
-        {
-            // ResetHoldJump();
-            isDropping = true;
-            SwitchState(DropState);
-            // airResistance.localPosition = airDropPos;
-            // airResistance.localEulerAngles = airDropRot;
-            anim.SetTrigger(DropTrigger);
 
-            // ID.globalEvents.CanDrop?.Invoke(false);
 
-            // StartCoroutine(DropCooldown());
-        }
+        // ResetHoldJump();
+        isDropping = true;
+        SwitchState(DropState);
+        ID.events.EnableButtons?.Invoke(false);
+
+        // airResistance.localPosition = airDropPos;
+        // airResistance.localEulerAngles = airDropRot;
+        anim.SetTrigger(DropTrigger);
+
+        // ID.globalEvents.CanDrop?.Invoke(false);
+
+        // StartCoroutine(DropCooldown());
 
     }
 
@@ -755,7 +757,7 @@ public class PlayerStateManager : MonoBehaviour
             SwitchState(IdleState);
             HandleDamaged();
             isDropping = false;
-            disableButtons = false;
+
             foreach (ContactPoint2D pos in collision.contacts)
             {
                 Debug.Log(pos.normal);
@@ -971,8 +973,10 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnBucketExplosion += BucketExplosion;
         ID.events.LoseLife += HandleDamaged;
         ID.events.HitGround += HandleGroundCollision;
-        ID.globalEvents.SetCanDashSlash += HandleDashSlash;
-        ID.events.OnHoldFlip += HandleHoldFlip;
+        // ID.globalEvents.SetCanDashSlash += HandleDashSlash;
+        ID.events.OnDashSlash += HandleDashSlash;
+
+
         ID.globalEvents.OnAdjustConstantSpeed += ChangeConstantForce;
         ID.globalEvents.OnOffScreen += OffScreen;
         ID.events.HitBoss += HitBoss;
@@ -996,9 +1000,10 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnBucketExplosion -= BucketExplosion;
         ID.events.LoseLife -= HandleDamaged;
         ID.events.HitGround -= HandleGroundCollision;
-        ID.globalEvents.SetCanDashSlash -= HandleDashSlash;
+        // ID.globalEvents.SetCanDashSlash -= HandleDashSlash;
+        ID.events.OnDashSlash -= HandleDashSlash;
 
-        ID.events.OnHoldFlip -= HandleHoldFlip;
+
         ID.globalEvents.OnAdjustConstantSpeed -= ChangeConstantForce;
         ID.globalEvents.OnOffScreen -= OffScreen;
         ID.events.HitBoss -= HitBoss;

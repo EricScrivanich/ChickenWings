@@ -14,6 +14,7 @@ public class BigPigMovement : MonoBehaviour
     public float speed;
     public float yForce;
     public float distanceToFlap;
+    private static readonly int FlapTriggerHash = Animator.StringToHash("FlapTrigger");
 
 
 
@@ -54,31 +55,31 @@ public class BigPigMovement : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < (initialY - distanceToFlap) && !addedForce)
+        if (speed > 0)
         {
-            rb.velocity = addForce;
-            anim.SetTrigger("FlapTrigger");
-            Debug.Log("flyingg");
-
-            addedForce = true;
+            if (transform.position.x < BoundariesManager.leftBoundary)
+            {
+                gameObject.SetActive(false);
+            }
         }
-       if (transform.position.y > (initialY - distanceToFlap) && addedForce)
+        else
         {
-            addedForce = false;
-            Debug.Log("Over");
-
+            if (transform.position.x > BoundariesManager.rightBoundary)
+            {
+                gameObject.SetActive(false);
+            }
         }
+
 
         if (transform.position.y < (initialY - distanceToFlap))
         {
             rb.velocity = addForce;
 
-            Debug.Log("flyingg");
 
-            addedForce = true;
             if (!addedForce)
             {
-                anim.SetTrigger("FlapTrigger");
+                anim.SetTrigger(FlapTriggerHash);
+                addedForce = true;
             }
         }
         else if (transform.position.y > (initialY - distanceToFlap) && addedForce)

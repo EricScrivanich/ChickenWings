@@ -27,13 +27,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7572917999428659864}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.2334963, w: 0.97235775}
-  m_LocalPosition: {x: 2.472004, y: 0.49446416, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: -0.9580729, w: 0.28652462}
+  m_LocalPosition: {x: -0.84, y: 1.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -27.006}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -146.7}
 --- !u!198 &7559790221187366152
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -43,7 +43,7 @@ ParticleSystem:
   m_GameObject: {fileID: 7572917999428659864}
   serializedVersion: 8
   lengthInSec: 0.29
-  simulationSpeed: 1.5
+  simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
@@ -605,7 +605,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 1
-    maxNumParticles: 200
+    maxNumParticles: 20
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -669,10 +669,10 @@ ParticleSystem:
     angle: 25
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
-    radiusThickness: 1
+    radiusThickness: 0.85
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
-    m_Rotation: {x: 0, y: 0, z: -37.7}
+    m_Rotation: {x: 0, y: 0, z: -40.5}
     m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
@@ -750,9 +750,9 @@ ParticleSystem:
     m_TextureBilinearFiltering: 0
     randomDirectionAmount: 0
     sphericalDirectionAmount: 0
-    randomPositionAmount: 0.09
+    randomPositionAmount: 0
     radius:
-      value: 0.54
+      value: 0.55
       mode: 0
       spread: 0
       speed:
@@ -809,9 +809,9 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
     arc:
-      value: 70.5
+      value: 79.9
       mode: 0
-      spread: 0
+      spread: 0.03
       speed:
         serializedVersion: 2
         minMaxState: 0
@@ -4854,8 +4854,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1166210541
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -4873,7 +4873,7 @@ ParticleSystemRenderer:
   m_Flip: {x: 0, y: 0, z: 0}
   m_EnableGPUInstancing: 1
   m_ApplyActiveColorSpace: 1
-  m_AllowRoll: 1
+  m_AllowRoll: 0
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
   m_UseCustomVertexStreams: 0
@@ -4901,6 +4901,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e1bffd30ced848249ce1abae4aa61b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ringTransform: {fileID: 0}
-  ID: {fileID: 11400000, guid: d5428165d140444d991bb0c5e34af16f, type: 2}
-  canPlay: 0

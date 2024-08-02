@@ -346,7 +346,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Pink will retrore a life if one is lost upon completion.
+  m_text: Pink will restore one of your lost lives.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ce4f86a906eb84129a844995d45ca85b, type: 2}
   m_sharedMaterial: {fileID: 4406120982727850755, guid: ce4f86a906eb84129a844995d45ca85b, type: 2}
@@ -2231,6 +2231,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SetupRecorderParent
       objectReference: {fileID: 0}
+    - target: {fileID: 8133776359316159504, guid: 917be6cb443294381927d7116dc9367f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2362,10 +2366,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a5a7117dd1094197b34b8c84e25af3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LevelIndex: 6
+  reachedCheckpoint: 0
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   finishedLevelUIPrefab: {fileID: 5334835317810689662, guid: cc29a0545327f4ad58db75e42563aa82, type: 3}
-  activateRingsAfterDelay: 0
   showSectionAtStart: 1
   areRingsRequired: 0
   ringsNeeded: 5
@@ -2374,7 +2379,8 @@ MonoBehaviour:
   bucketsNeeded: 2
   areBarnsRequired: 0
   barnsNeeded: 0
-  initalGameObjectsToDeactivate: []
+  initalGameObjectsToDeactivate:
+  - {fileID: 1413235406}
   sections:
   - {fileID: 1891796128}
   - {fileID: 2131364814}
@@ -2547,6 +2553,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7884249210943073328, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
+      propertyPath: uiFade
+      value: 
+      objectReference: {fileID: 1430156990}
     - target: {fileID: 7884249210943073328, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: doesDrop
       value: 1
@@ -2929,7 +2939,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1413235407
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3056,9 +3066,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 1451452158}
-  setCanvasGroupUnactive: 0
-  SetActiveObjects:
+  setCanvasGroupUnactive: 1
+  SetActiveOnceObjects:
   - {fileID: 1413235406}
+  SetActiveObjects:
   - {fileID: 1437487067}
   SetUnactiveObjects: []
   startAlpha: 0
@@ -4254,7 +4265,8 @@ MonoBehaviour:
   objectiveRingType: 2
   numberOfRandomRingsToSpawnRange: {x: 1, y: 2}
   numberOfRandomEnemiesToSpawnRange: {x: 1, y: 2}
-  constantRingTriggerStartEnd: 0100000002000000
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  constantRingTriggerStartEnd: 0000000002000000
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   ringSetupConstant: {fileID: 11400000, guid: 8eee1fbc13eda4092ae3713850ac09a2, type: 2}
   ringSetupRandom: {fileID: 11400000, guid: 8101605b65b1b4f88a3b618d517e3e83, type: 2}

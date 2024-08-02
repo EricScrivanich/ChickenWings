@@ -429,6 +429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isScalable: 0
+  pigTypeAudio: 0
   explosionScale: {x: 0.9, y: 0.9, z: 0.9}
   colls:
   - {fileID: 5604807484404649569}
@@ -447,14 +448,6 @@ MonoBehaviour:
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   body: {fileID: 357748487732977913}
-  BackLegs: {fileID: 6840480931914924450}
-  FrontLegs: {fileID: 2752491233751144196}
-  Wings: {fileID: 642074383968923899}
-  Tail: {fileID: 3834485154131804242}
-  BackLegsPosition: {fileID: 6813974260692759026}
-  FrontLegsPosition: {fileID: 0}
-  WingsPosition: {fileID: 4438767337380101504}
-  TailPosition: {fileID: 5731793649703512238}
 --- !u!210 &2454187349646226091
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -817,9 +810,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.41456962, y: 0.002119806}
+  m_Offset: {x: -0.41017398, y: -0.050627586}
   serializedVersion: 2
-  m_Radius: 0.56139416
+  m_Radius: 0.4075474
 --- !u!114 &5955217724864859783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1438,7 +1431,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.8973986, y: 0.015130937}
+  m_Offset: {x: 0.78311217, y: -0.011242807}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.005444747, y: 0.4896925}
@@ -1449,7 +1442,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.8165762, y: 1.2386693}
+  m_Size: {x: 1.5880034, y: 0.90460193}
   m_EdgeRadius: 0
 --- !u!114 &3917444832092316971
 MonoBehaviour:

@@ -17,8 +17,8 @@ public class PlayerStartingState : PlayerBaseState
        
     }
     public override void ExitState(PlayerStateManager player)
-
     {
+        player.rb.gravityScale = player.originalGravityScale;
 
     }
 
@@ -44,7 +44,7 @@ public class PlayerStartingState : PlayerBaseState
         if (time > .5f)
         {
             player.rb.gravityScale = player.originalGravityScale;
-            player.disableButtons = false;
+            
         }
         else 
         {

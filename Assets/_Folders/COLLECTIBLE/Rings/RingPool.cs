@@ -66,6 +66,7 @@ public class RingPool : ScriptableObject
         {
             ring.InitializeVariables();
             ring.InitializeEffectsPool();
+            ring.ResetVariables();
         }
 
         ResetAllMaterials();
@@ -212,7 +213,7 @@ public class RingPool : ScriptableObject
     #region Fading/Disabling
     public IEnumerator FadeOutRed()
     {
-
+        RingType[0].ReadyToSpawn = false;
         yield return new WaitForSeconds(.5f);
         float time = 0;
         while (time < 2f)
@@ -233,7 +234,7 @@ public class RingPool : ScriptableObject
 
     public IEnumerator FadeOutPink()
     {
-
+        RingType[1].ReadyToSpawn = false;
         float time = 0;
         while (time < 1f)
         {
@@ -253,6 +254,7 @@ public class RingPool : ScriptableObject
     public IEnumerator FadeOutGold()
     {
 
+        RingType[2].ReadyToSpawn = false;
         float time = 0;
         while (time < .4f)
         {
@@ -283,6 +285,7 @@ public class RingPool : ScriptableObject
 
     public IEnumerator FadeOutPurple()
     {
+        RingType[3].ReadyToSpawn = false;
 
         float time = 0;
         while (time < 1f)

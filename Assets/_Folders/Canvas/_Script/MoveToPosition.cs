@@ -11,6 +11,7 @@ public class MoveToPosition : MonoBehaviour
     [SerializeField] private Vector2 startPosition;
     [SerializeField] private Vector2 endPosition;
     private Sequence sequence;
+    private bool hasMoved = false;
     // Start is called before the first frame update\
 
     void Awake()
@@ -24,13 +25,15 @@ public class MoveToPosition : MonoBehaviour
 
     private void OnEnable()
     {
-        if (!isSpecial)
+        if (!isSpecial && !hasMoved)
         {
             rectTransform.anchoredPosition = startPosition; // Set the start position directly
             rectTransform.DOAnchorPos(endPosition, duration).SetEase(Ease.OutSine).SetUpdate(true);
+            hasMoved = true;
         }
         else
         {
+            if (!hasMoved)
             MoveLivesThenActivate();
         }
 
@@ -40,11 +43,14 @@ public class MoveToPosition : MonoBehaviour
         if (sequence != null && sequence.IsPlaying())
         {
             sequence.Kill();
+            rectTransform.position = endPosition;
         }
     }
+    
 
     public void MoveLivesThenActivate()
     {
+        
         rectTransform.anchoredPosition = startPosition; // Set the start position directly
         sequence = DOTween.Sequence();
 

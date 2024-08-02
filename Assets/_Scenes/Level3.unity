@@ -319,7 +319,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 3219504513452907754}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
@@ -684,8 +684,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 939, y: -119}
-  m_SizeDelta: {x: 395.86, y: 247.9}
+  m_AnchoredPosition: {x: 939, y: -120.548515}
+  m_SizeDelta: {x: 395.86, y: 278.8029}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &123749242
 MonoBehaviour:
@@ -1198,18 +1198,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 949611669}
-        m_TargetAssemblyTypeName: RingParentSpawner, Assembly-CSharp
-        m_MethodName: SpawnRingsAndPigs
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
 --- !u!114 &186246130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1534,7 +1522,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_text
-      value: Dashing shortens your hitbox. Use it to pass through small openings.
+      value: Dashing shortens the height of your hitbox. Use it to pass through small
+        openings.
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_margin.w
@@ -1730,9 +1719,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 297128414}
   setCanvasGroupUnactive: 0
-  SetActiveObjects:
-  - {fileID: 633267965}
+  SetActiveOnceObjects:
   - {fileID: 1783617406}
+  - {fileID: 633267965}
+  SetActiveObjects: []
   SetUnactiveObjects: []
   startAlpha: 1
   endAlpha: 1
@@ -2415,6 +2405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 551426447}
   setCanvasGroupUnactive: 0
+  SetActiveOnceObjects: []
   SetActiveObjects:
   - {fileID: 1825712349}
   SetUnactiveObjects: []
@@ -3105,7 +3096,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 177152525710863371, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1195260603289358581, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3421,10 +3412,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a5a7117dd1094197b34b8c84e25af3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LevelIndex: 3
+  reachedCheckpoint: 0
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   finishedLevelUIPrefab: {fileID: 5334835317810689662, guid: cc29a0545327f4ad58db75e42563aa82, type: 3}
-  activateRingsAfterDelay: 0
   showSectionAtStart: 1
   areRingsRequired: 1
   ringsNeeded: 5
@@ -3457,6 +3449,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  TriggerEventSectionNumber: 5
+  listenForNextSectionEventRingsPigs: 1
+  listenForNextSectionEventRingsOnly: 0
+  RingIndex: 2
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   spawnPigsOnly: 0
   Index: 0
   disableSpawnRanges: {x: -1.4, y: 1.4}
@@ -4838,6 +4835,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 1430156991}
   setCanvasGroupUnactive: 0
+  SetActiveOnceObjects: []
   SetActiveObjects: []
   SetUnactiveObjects: []
   startAlpha: 0
@@ -6984,6 +6982,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 678829615819180669, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 699805567591472915, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 831785042524035940, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}

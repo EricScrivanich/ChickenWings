@@ -6,12 +6,19 @@ using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
+    public int LevelIndex;
+
+    
+
+   
+
+    public int reachedCheckpoint;
     [SerializeField] private LevelManagerID LvlID;
     private StateInputSystem playerInputs;
     private InputTracker inputTracker;
     public PlayerID player;
     [SerializeField] private GameObject finishedLevelUIPrefab;
-    [SerializeField] private bool activateRingsAfterDelay;
+    
     private Canvas canvas;
     private Button pauseButton;
     private int currentSection;
@@ -93,13 +100,30 @@ public class LevelManager : MonoBehaviour
             obj.SetActive(false);
         }
 
+        int checkPoint = 0;
+        if (GameObject.Find("GameManager") != null)
+        {
+            checkPoint = GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint;
 
-        if (showSectionAtStart)
+        }
+
+        if (checkPoint > 0)
+        {
+            Debug.Log("Loading CheckPoint");
+            ShowSection(true, checkPoint);
+            currentSection = checkPoint;
+            playerInputs.ActivateButtons(false);
+            inputTracker.EnableTracking(true);
+
+        }
+
+        else if (showSectionAtStart)
         {
             ShowSection(true, 0);
             playerInputs.ActivateButtons(false);
+            inputTracker.EnableTracking(false);
+
         }
-        inputTracker.EnableTracking(false);
 
 
 
@@ -138,6 +162,8 @@ public class LevelManager : MonoBehaviour
                 if (currentSection == playSections[n])
                 {
                     ShowSection(false, currentSection);
+                    LvlID.outputEvent.nextSection?.Invoke(currentSection);
+                    Debug.Log("CUrrent Play section is: " + currentSection);
 
                     if (n < playSectionDelayToUI.Count)
                     {
@@ -151,6 +177,7 @@ public class LevelManager : MonoBehaviour
                 else if (currentSection == playSections[n] - 1)
                 {
 
+                    reachedCheckpoint = playSections[n] - 1;
                     inputTracker.EnableTracking(true);
                     StartCoroutine(ShowNextUISection(1.2f, currentSection));
 
@@ -178,11 +205,6 @@ public class LevelManager : MonoBehaviour
     {
         currentSection++;
         hasStartedPlayTimeDelayedPause = true;
-
-        if (activateRingsAfterDelay)
-        {
-            Invoke("SetRingsActiveAfterDelay", delay);
-        }
 
         StartCoroutine(SmoothTimeScaleTransition(0, .5f, delay, true, currentSection));
     }
@@ -215,6 +237,7 @@ public class LevelManager : MonoBehaviour
                 {
                     playerInputs.ActivateButtons(false);
                     inputTracker.EnableTracking(true);
+                    reachedCheckpoint = playSections[n] - 1;
                 }
                 else if (currentSection != playSections[n])
                 {
@@ -280,7 +303,7 @@ public class LevelManager : MonoBehaviour
     {
         if (finishedBarns)
             return;
-            
+
         currentBarnsPassed++;
 
 

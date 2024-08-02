@@ -10,6 +10,14 @@ public class RingParentSpawner : MonoBehaviour
     private Pool pigPool;
     public PlayerID player;
 
+    [SerializeField] private int TriggerEventSectionNumber;
+
+    [SerializeField] private bool listenForNextSectionEventRingsPigs;
+    [SerializeField] private bool listenForNextSectionEventRingsOnly;
+    private bool hasTriggeredEvent;
+    [SerializeField] private int RingIndex;
+    [SerializeField] private LevelManagerID lvlID;
+
     [SerializeField] private bool spawnPigsOnly;
     [SerializeField] private int Index;
 
@@ -34,6 +42,7 @@ public class RingParentSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        hasTriggeredEvent = false;
         ringPool = PoolKit.GetPool("RingPool");
 
         if (spawnPigsOnly)
@@ -46,20 +55,27 @@ public class RingParentSpawner : MonoBehaviour
 
     }
 
-    public void SpawnRings(int index)
+    public void SpawnRings(int section)
     {
 
-        currentCourintine = StartCoroutine(SpawnRingsCourintine(index));
+        if (section == TriggerEventSectionNumber && !hasTriggeredEvent)
+        {
+            currentCourintine = StartCoroutine(SpawnRingsCourintine());
+            hasTriggeredEvent = true;
+            Debug.Log("SPawningRIngs");
+
+
+        }
 
     }
 
-    private IEnumerator SpawnRingsCourintine(int index)
+    private IEnumerator SpawnRingsCourintine()
     {
         yield return new WaitForSeconds(1.5f);
         while (player.isAlive)
         {
-            Vector2 position = new Vector2(BoundariesManager.rightBoundary, Random.Range(minMax[index].x, minMax[index].y));
-            ringPool.Spawn(ringParentTypes[index], position, Vector3.zero);
+            Vector2 position = new Vector2(BoundariesManager.rightBoundary, Random.Range(minMax[RingIndex].x, minMax[RingIndex].y));
+            ringPool.Spawn(ringParentTypes[RingIndex], position, Vector3.zero);
             yield return new WaitForSeconds(waitTime);
         }
 
@@ -193,14 +209,45 @@ public class RingParentSpawner : MonoBehaviour
         }
     }
 
-    public void SpawnRingsAndPigs(int index)
+    public void SpawnRingsAndPigs(int section)
     {
-        pigPool = PoolKit.GetPool("PigPool");
-        pigCannotSpawnRanges = new Queue<Vector2>();
-        ringCannotSpawnRanges = new Queue<Vector2>();
+        if (section == TriggerEventSectionNumber && !hasTriggeredEvent)
+        {
+            Debug.Log("SPawningRIngs");
+            hasTriggeredEvent = true;
 
-        StartCoroutine(SpawnRingsWithPigsCoroutine(index));
-        StartCoroutine(SpawnPigsCoroutine());
+
+            pigPool = PoolKit.GetPool("PigPool");
+            pigCannotSpawnRanges = new Queue<Vector2>();
+            ringCannotSpawnRanges = new Queue<Vector2>();
+
+            StartCoroutine(SpawnRingsWithPigsCoroutine(RingIndex));
+            StartCoroutine(SpawnPigsCoroutine());
+
+        }
+
+
+    }
+
+    private void OnEnable()
+    {
+        if (listenForNextSectionEventRingsPigs)
+            lvlID.outputEvent.nextSection += SpawnRingsAndPigs;
+
+        if (listenForNextSectionEventRingsOnly)
+            lvlID.outputEvent.nextSection += SpawnRings;
+
+    }
+
+    private void OnDisable()
+    {
+        if (listenForNextSectionEventRingsPigs)
+            lvlID.outputEvent.nextSection -= SpawnRingsAndPigs;
+
+        if (listenForNextSectionEventRingsOnly)
+            lvlID.outputEvent.nextSection -= SpawnRings;
+
+
 
     }
 

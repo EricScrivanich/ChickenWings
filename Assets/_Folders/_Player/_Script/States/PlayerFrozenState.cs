@@ -57,12 +57,13 @@ public class PlayerFrozenState : PlayerBaseState
             rotate = true;
 
         }
-        if (player.transform.position.y < 1)
+        if (player.transform.position.y < 1.5f)
         {
             // player.disableButtons = false;
             player.ID.events.EnableButtons?.Invoke(true);
 
             player.anim.SetBool(player.FrozenBool, false);
+            player.isFrozen = false;
 
             player.maxFallSpeed = player.ID.MaxFallSpeed;
 

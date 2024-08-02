@@ -27,13 +27,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1092322343417782680}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.9507865, w: 0.30984694}
   m_LocalPosition: {x: 4.74, y: 1.23, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -143.9}
 --- !u!198 &8310033538899180522
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -4854,8 +4854,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1166210541
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -4901,6 +4901,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e1bffd30ced848249ce1abae4aa61b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ringTransform: {fileID: 0}
-  ID: {fileID: 11400000, guid: e549d978ef2c84652a50f724fc25a6f8, type: 2}
-  canPlay: 0

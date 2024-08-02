@@ -27,7 +27,5 @@ public struct PlayerEvents
 
     public Action<bool> EnableButtons;
 
-    public Action<bool> OnHoldFlip;
-
     public Action<int> OnStopJumpAir;
 }
