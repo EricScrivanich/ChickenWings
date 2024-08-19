@@ -8,7 +8,7 @@ public class RingSO : CollectableData
     public RingData[] data;
 
     
-    public override void InitializeCollectable(CollectablePoolManager manager,bool finalTrigger)
+    public override void InitializeCollectable(SpawnStateManager manager,bool finalTrigger)
     {
         
         for (int i = 0; i < data.Length; i++)

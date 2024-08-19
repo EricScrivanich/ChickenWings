@@ -5,11 +5,13 @@ using UnityEngine;
 public class PigMovementBasic : MonoBehaviour
 {
     [Header("SpriteObjects")]
+    [SerializeField] private Transform frontLegs;
     [SerializeField] private Transform backLegs;
     [SerializeField] private Transform wings;
     [SerializeField] private Transform tail;
     [SerializeField] private Transform body;
     [Header("SpritePositions")]
+    [SerializeField] private Transform frontLegsPosition;
     [SerializeField] private Transform backLegsPosition;
     [SerializeField] private Transform wingsPosition;
     [SerializeField] private Transform tailPosition;
@@ -86,10 +88,12 @@ public class PigMovementBasic : MonoBehaviour
 
         body.localScale = new Vector3(.75f - transform.localScale.x + 1, 1, 1);
 
+        frontLegs.position = frontLegsPosition.position;
         backLegs.position = backLegsPosition.position;
         wings.position = wingsPosition.position;
         tail.position = tailPosition.position;
         hasInitialized = true;
+
 
         gameObject.SetActive(true);
 
@@ -101,9 +105,12 @@ public class PigMovementBasic : MonoBehaviour
         {
             initialY = transform.position.y;
 
+
+
             if (body != null)
             {
                 body.localScale = new Vector3(.75f - transform.localScale.x + 1, 1, 1);
+                frontLegs.position = frontLegsPosition.position;
                 backLegs.position = backLegsPosition.position;
                 wings.position = wingsPosition.position;
                 tail.position = tailPosition.position;
@@ -165,6 +172,7 @@ public class PigMovementBasic : MonoBehaviour
     }
 
 
+
     void Update()
     {
 
@@ -200,7 +208,8 @@ public class PigMovementBasic : MonoBehaviour
         // }
 
 
-
+        if (transform.position.x < BoundariesManager.leftBoundary)
+            gameObject.SetActive(false);
 
         transform.Translate(Vector2.left * xSpeed * Time.deltaTime);
 

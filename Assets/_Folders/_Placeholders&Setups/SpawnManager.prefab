@@ -12,6 +12,9 @@ GameObject:
   - component: {fileID: 8325398982399372854}
   - component: {fileID: 4484704900751443655}
   - component: {fileID: 3392471311240913473}
+  - component: {fileID: 6557949900701251094}
+  - component: {fileID: 2097905072585742827}
+  - component: {fileID: 4797102283079309879}
   m_Layer: 0
   m_Name: SpawnManager
   m_TagString: Untagged
@@ -46,13 +49,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6228783363c1f4068ace645275e543ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setup: {fileID: 11400000, guid: 1687cd37d78024f9691eec8eeb0970f7, type: 2}
   jetPackPigPoolSize: 10
   tenderizerPigPoolSize: 3
   normalPigPoolSize: 5
+  bigPigPoolSize: 5
   jetPackPigPrefab: {fileID: 8554680807245287772, guid: 7c7bfbfcf2af741b88609dea94b27826, type: 3}
   tenderizerPigPrefab: {fileID: 5053118216464345145, guid: cbe51417ff78d4bc6b43eb6c60603036, type: 3}
   normalPigPrefab: {fileID: 2425336107443998327, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+  bigPigPrefab: {fileID: 2529404850862653700, guid: d7c9315e94d5f4db9840df6684866cd4, type: 3}
 --- !u!114 &4484704900751443655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,9 +69,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56b285f9902e54a259cf9681c8190a69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TestRandom: 0
+  triggerEvents: 0
+  testTrigger: 0
   ringPool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
   setup: {fileID: 11400000, guid: d7f47fec4a97e4547894877d678d9bc5, type: 2}
+  LvlID: {fileID: 0}
+  randomRing: {fileID: 0}
+  enemyOnlySetsByIntensity: []
+  spawnEnemySetRatioByIntensity: []
   eggCollectableCount: 0
+  currentRingType: 0
+  randomEnemyCountRange: {x: 0, y: 0}
+  randomRingCountRange: {x: 0, y: 0}
 --- !u!114 &3392471311240913473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,6 +95,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  usingAmmo: 0
+  usingMana: 0
   eggCollectablePrefab: {fileID: 4351014547753438834, guid: 6671afaf7b99244b0846e32d3e79bec6, type: 3}
   eggCollectableCount: 4
   eggTimeRange: {x: 9, y: 15}
@@ -89,3 +105,97 @@ MonoBehaviour:
   barnTimeRange: {x: 9, y: 18}
   barnBigChance: 0.3
   barnMidChance: 0.6
+  manaTimeRange: {x: 0, y: 0}
+  ammoParticlePrefab: {fileID: 6982175600085930321, guid: 384f1b05875fa4f5b87dd972f848869d, type: 3}
+  manaParticlePrefab: {fileID: 6982175600085930321, guid: 40a90e8fd351a400a96c42aa6f9a799c, type: 3}
+--- !u!114 &6557949900701251094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6077076932047564787}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b8dc9fdc661d48faad20cee1ebcd7bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position1: {x: 13, y: 5}
+  position2: {x: 13, y: 1}
+  position3: {x: 15, y: -1}
+  position4: {x: 19, y: 0}
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  intensityDataSet: []
+  initialDelayToSpawn: 0
+  normalPigBoundingBoxBase: {fileID: 11400000, guid: 759415d4b2c764238a04bc3724ca2422, type: 2}
+  jetPackPigBoundingBoxBase: {fileID: 11400000, guid: 6b6372b78ffca44bc880be6ad5c45c52, type: 2}
+  bigPigBoundingBoxBase: {fileID: 11400000, guid: 7ed159b9f20d44a6b96ff7f56c251e32, type: 2}
+  tenderizerPigBoundingBoxBase: {fileID: 0}
+  xTargetToStartSpawn: 0
+  spawnIntervalRangeAfterTarget: {x: 0, y: 0}
+  waveSizeRange: {x: 1, y: 4}
+  normalPigWeight: 5
+  jetPackPigWeight: 3
+  bigPigWeight: 2
+  tenderizerPigWeight: 0
+  useSceneGizmos: 0
+  normalPigScaleMultiplier: 1
+  normalPigSpeed: 6.4
+  jetPackPigScaleMultiplier: 1
+  jetPackPigSpeed: 9.5
+  bigPigScaleMultiplier: 1
+  bigPigSpeed: 5
+  tenderizerPigScaleMultiplier: 1
+  tenderizerPigSpeed: 4.5
+--- !u!114 &2097905072585742827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6077076932047564787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 709e9581fe97840f09b75dff153ede22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  transitionLogic: {fileID: 0}
+  pureSetups: []
+  randomEnemySetups: []
+  randomRingSetups: []
+  spawnIntervalRangeAfterTarget: {x: 0, y: 0}
+  normalPigBoundingBoxBase: {fileID: 11400000, guid: 759415d4b2c764238a04bc3724ca2422, type: 2}
+  jetPackPigBoundingBoxBase: {fileID: 11400000, guid: 6b6372b78ffca44bc880be6ad5c45c52, type: 2}
+  bigPigBoundingBoxBase: {fileID: 11400000, guid: 7ed159b9f20d44a6b96ff7f56c251e32, type: 2}
+  tenderizerPigBoundingBoxBase: {fileID: 11400000, guid: 240ac2cf5013f456397250825a1be48c, type: 2}
+  jetPackPigPoolSize: 10
+  tenderizerPigPoolSize: 0
+  normalPigPoolSize: 10
+  bigPigPoolSize: 6
+  jetPackPigPrefab: {fileID: 8554680807245287772, guid: 7c7bfbfcf2af741b88609dea94b27826, type: 3}
+  tenderizerPigPrefab: {fileID: 5053118216464345145, guid: cbe51417ff78d4bc6b43eb6c60603036, type: 3}
+  normalPigPrefab: {fileID: 2425336107443998327, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+  bigPigPrefab: {fileID: 2529404850862653700, guid: d7c9315e94d5f4db9840df6684866cd4, type: 3}
+  ringPool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
+  currentRingType: 0
+  recentlySpanwnedPositions: []
+--- !u!114 &4797102283079309879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6077076932047564787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4c46495ddaa847c5a04a3ee6f6c0ea5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  spawnIntensitiesNormal:
+  - {fileID: 11400000, guid: ab34d3f50697b42d7807a7de11d1e4bc, type: 2}
+  spawnIntensitiesHealth: []
+  nextIntentisityObjectiveValues: 00000000
+  objectivesTracked: []

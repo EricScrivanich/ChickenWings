@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53cf86658065a4389aa89e491714cfdd, type: 3}
+  m_Name: BB_Jetpack
+  m_EditorClassIdentifier: 
+  baseScale: {x: 0.86, y: 0.77, z: 1}
+  scaleMinMax: {x: 0.95, y: 1.05}
+  baseSpeed: 9.5
+  speedMinMax: {x: 8.5, y: 11.5}
+  ySpawnRange: {x: -2.4, y: 4.3}
+  PreferredDistanceRange: {x: 0, y: 0}
+  leftOffset: 4.92
+  rightOffset: 1.04
+  topOffset: 0.65
+  bottomOffset: 0.89
+  scaleInfluence: 0.7
+  leftSpeedInfluence: 0.7
+  rightSpeedInfluence: -0.2
+  useYForceInfluence: 0
+  baseYForce: 5
+  yForceRange: {x: 3, y: 10}
+  baseDistanceToFlap: 2
+  yForceToDistanceFlapRatio: 1
+  yForceInfluence: 0.5
+  activeDuration: 0.55

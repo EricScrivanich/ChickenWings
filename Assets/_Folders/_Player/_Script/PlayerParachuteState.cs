@@ -39,7 +39,7 @@ public class PlayerParachuteState : PlayerBaseState
         startRotation = false;
 
         // Adjust rotationTarget based on the sign of the x velocity
-        rotationTarget = Mathf.Sign(player.rb.velocity.x) * Mathf.Abs(player.rb.velocity.x * player.ID.rotationFactor);
+        rotationTarget = Mathf.Sign(player.rb.velocity.x) * Mathf.Abs(player.rb.velocity.x * 8);
         if (Mathf.Abs(player.transform.eulerAngles.z) < 5)
         {
 
@@ -60,7 +60,7 @@ public class PlayerParachuteState : PlayerBaseState
         player.ImageTransform.localRotation = Quaternion.Euler(0, 0, 0);
         // player.anim.SetTrigger("IdleTrigger");
         // player.StartFillStaminaCoroutine();
-        player.maxFallSpeed = player.ID.MaxFallSpeed;
+        player.maxFallSpeed = player.originalMaxFallSpeed;
       
     }
 
@@ -120,15 +120,15 @@ public class PlayerParachuteState : PlayerBaseState
             else
             {
                 // Continue with your existing logic for the ImageTransform rotation
-                player.ImageTransform.localRotation = Quaternion.Lerp(player.ImageTransform.localRotation, Quaternion.Euler(0, 0, -rotationTarget), Time.deltaTime * player.ID.parachuteRotationSpeed);
+                player.ImageTransform.localRotation = Quaternion.Lerp(player.ImageTransform.localRotation, Quaternion.Euler(0, 0, -rotationTarget), Time.deltaTime * 1.5f);
             }
 
         }
 
         else
         {
-            rotationTarget = Mathf.Sign(player.rb.velocity.x) * Mathf.Abs(player.rb.velocity.x * player.ID.rotationFactor);
-            player.ImageTransform.localRotation = Quaternion.Lerp(player.ImageTransform.localRotation, Quaternion.Euler(0, 0, rotationTarget), Time.deltaTime * player.ID.parachuteRotationSpeed);
+            rotationTarget = Mathf.Sign(player.rb.velocity.x) * Mathf.Abs(player.rb.velocity.x * 8);
+            player.ImageTransform.localRotation = Quaternion.Lerp(player.ImageTransform.localRotation, Quaternion.Euler(0, 0, rotationTarget), Time.deltaTime *1.5f);
         }
 
     }

@@ -602,7 +602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3.5
-  hasHammer: 0
+  hasHammer: 1
   Hammer: {fileID: 8348745121236027227}
   eye: {fileID: 2178203410720884215}
   pupil: {fileID: 2264921388805220126}
@@ -654,7 +654,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54bbe5eb74e0e4d9dbddff75cebbbe31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  pigType: 0
   isScalable: 0
+  pigTypeAudio: 0
   explosionScale: {x: 1.2, y: 1.2, z: 1.2}
   colls:
   - {fileID: 3931671498933699676}
@@ -677,14 +680,6 @@ MonoBehaviour:
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   body: {fileID: 0}
-  BackLegs: {fileID: 0}
-  FrontLegs: {fileID: 0}
-  Wings: {fileID: 0}
-  Tail: {fileID: 0}
-  BackLegsPosition: {fileID: 0}
-  FrontLegsPosition: {fileID: 0}
-  WingsPosition: {fileID: 0}
-  TailPosition: {fileID: 0}
 --- !u!210 &1565752338713386670
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -111,7 +111,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5364243562215700170
 Transform:
   m_ObjectHideFlags: 0
@@ -813,7 +813,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4499605837949859629
 Transform:
   m_ObjectHideFlags: 0
@@ -1662,6 +1662,7 @@ MonoBehaviour:
   frontRange: -10
   backRange: -2
   aimTime: 1
+  startPos: {x: 0, y: 0}
   launchAim: {fileID: 942944371239007562}
   missileSpawnPos: {fileID: 6021091469362872583}
   missileImage: {fileID: 5965919679269796104}

@@ -34,24 +34,21 @@ public class SignMovement : MonoBehaviour
 
         hasRetracted = false;
         target.anchoredPosition = startPosition;
-
+        sequence = DOTween.Sequence();
         // Create the main drop tween
-        Tweener mainDropTween = target.DOAnchorPos(endPosition, mainDropDuration)
-            .SetEase(Ease.Linear)
-            .SetUpdate(true);
+
+        sequence.Append(target.DOAnchorPos(endPosition, mainDropDuration).SetEase(Ease.OutBack));
+        // sequence.Append(target.DOAnchorPos(endPosition, overshootDuration).SetEase(Ease.OutBounce));
+
+
 
         // Create the overshoot tween
-        Vector3 overshootPosition = endPosition - new Vector3(0, overshootAmount, 0);
-        Tweener overshootTween = target.DOAnchorPos(overshootPosition, overshootDuration)
-            .SetEase(Ease.OutElastic)
-            .SetUpdate(true);
+
 
         // Chain the tweens together
-        sequence = DOTween.Sequence();
-        sequence.Append(mainDropTween)
-                .Append(overshootTween)
-                 .OnComplete(EnableButtons)
-                .SetUpdate(true);
+
+        sequence.Play().SetUpdate(true).OnComplete(EnableButtons);
+
     }
 
     private void OnEnable()
@@ -89,6 +86,7 @@ public class SignMovement : MonoBehaviour
     }
     private void DisableButtons()
     {
+        if (NextPrevButtons == null || NextPrevButtons.Length == 0) return;
         foreach (var button in NextPrevButtons)
         {
             button.enabled = false;
@@ -123,6 +121,50 @@ public class SignMovement : MonoBehaviour
 
 
         LM.NextUI(isNext);
+
+
+        Vector3 overshootPosition = endPosition - new Vector3(0, overshootAmount, 0) - new Vector3(0, RetractBounceAmount, 0);
+        Tweener overshootTween = target.DOAnchorPos(overshootPosition, RetractBounceDuration)
+            .SetEase(Ease.InSine)
+            .SetUpdate(true);
+
+
+        Tweener riseTween = target.DOAnchorPos(startPosition, RetractDuration)
+           .SetEase(Ease.InSine)
+           .SetUpdate(true);
+
+
+        sequence = DOTween.Sequence();
+        sequence.Append(overshootTween)
+                .Append(riseTween)
+                .OnComplete(SetUnactive)
+                .SetUpdate(true);
+
+
+    }
+
+    public void RetractToNextUILocal(bool isNext)
+    {
+        if (LM == null || hasRetracted || !this.gameObject.activeInHierarchy)
+        {
+            return;
+        }
+        else
+        {
+            hasRetracted = true;
+        }
+
+        Debug.Log("Retracting with this: " + this.gameObject);
+        DisableButtons();
+        if (uiFade != null)
+        {
+            uiFade.FadeOut();
+        }
+
+
+
+
+
 
 
         Vector3 overshootPosition = endPosition - new Vector3(0, overshootAmount, 0) - new Vector3(0, RetractBounceAmount, 0);

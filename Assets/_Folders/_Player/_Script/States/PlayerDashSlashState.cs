@@ -14,7 +14,7 @@ public class PlayerDashSlashState : PlayerBaseState
     private float currentRotationVar;
     private float startingRotationSpeed = 900f;
     private bool hasSlashed;
-    private float time;
+    private float time; 
     private float currentXVelocity;
 
     private bool hasExited;
@@ -57,7 +57,7 @@ public class PlayerDashSlashState : PlayerBaseState
     {
         player.ChangeCollider(0);
 
-        player.maxFallSpeed = player.ID.MaxFallSpeed;
+        player.maxFallSpeed = player.originalMaxFallSpeed;
 
         if (!hasSlashed)
         {
@@ -82,7 +82,7 @@ public class PlayerDashSlashState : PlayerBaseState
 
         if (ignoreForce)
         {
-            player.AdjustForce(-3, .1f);
+            player.AdjustForce(new Vector2(-3, .1f));
             if (hasSlashed)
             {
                 player.SwitchState(player.IdleState);
@@ -93,12 +93,12 @@ public class PlayerDashSlashState : PlayerBaseState
         {
 
             // player.rb.velocity = new Vector2(5, 0);
-            player.AdjustForce(4, 0);
+            player.AdjustForce(new Vector2(4, 0));
         }
         else if (!hasSlashed && !ignoreForce)
         {
             // player.rb.velocity = new Vector2(1, -.1f);
-            player.AdjustForce(1, -.1f);
+            player.AdjustForce(new Vector2(1, -.1f));
 
 
         }

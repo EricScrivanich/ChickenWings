@@ -6,10 +6,13 @@ using UnityEngine.UI;
 public class SidewaysSignMovement : MonoBehaviour
 {
     [SerializeField] private RectTransform target;
+    [SerializeField] private LevelManagerID lvlID;
 
     public int TipSignIndex;
 
     [SerializeField] private Button[] NextPrevButtons;
+
+    [SerializeField] private GameObject NextSign;
 
     private readonly Vector3[] rotations = new Vector3[]
       {
@@ -105,6 +108,10 @@ public class SidewaysSignMovement : MonoBehaviour
 
     public void DropSign()
     {
+        if (lvlID != null)
+        {
+            lvlID.outputEvent.setButtonsReadyToPress?.Invoke(false);
+        }
         rectTransform = GetComponent<RectTransform>();
         if (signSequence != null && signSequence.IsActive())
         {
@@ -145,8 +152,10 @@ public class SidewaysSignMovement : MonoBehaviour
         }
 
         DisableButtons();
-        LevelManager LM = GameObject.Find("LevelManager").GetComponent<LevelManager>();
-        LM.NextUI(isNext);
+        // LevelManager LM = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+        // LM.NextUI(isNext);
+
+
         Vector3 overshootPosition = endPosition - new Vector2(0, 40) - new Vector2(0, 70);
         Tweener overshootTween = target.DOAnchorPos(overshootPosition, .4f)
             .SetEase(Ease.InSine)
@@ -171,7 +180,23 @@ public class SidewaysSignMovement : MonoBehaviour
     {
         if (transform.parent != null)
         {
+            if (lvlID != null)
+            {
+                Debug.Log("Showing press buttons");
+
+                lvlID.outputEvent.setButtonsReadyToPress?.Invoke(true);
+            }
+
+            Debug.Log("Setting sign active: " + NextSign);
+
+            NextSign.SetActive(true);
+
             transform.parent.gameObject.SetActive(false);
+        }
+
+        else
+        {
+            Debug.Log("Transform Parent is null");
         }
     }
 

@@ -251,6 +251,8 @@ public class RingPool : ScriptableObject
         ResetPinkMaterial();
     }
 
+   
+
     public IEnumerator FadeOutGold()
     {
 

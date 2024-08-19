@@ -178,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3237138396820530507}
   - component: {fileID: 67340760414320012}
-  - component: {fileID: 2124254080332208605}
+  - component: {fileID: -8075698736591796226}
   m_Layer: 0
   m_Name: YolkParent
   m_TagString: Untagged
@@ -219,101 +219,23 @@ MonoBehaviour:
   eggYolk: {fileID: 437309159688602730}
   eggWhite: {fileID: 4563708272807990285}
   yolkTargetScale: {x: 1, y: 1, z: 1}
-  yolkScaleDuration: 0.2
   yolkTargetPosition: {x: 0, y: -0.05}
-  yolkPositionDuration: 0.2
   whiteTargetScale: {x: 1, y: 1, z: 1}
-  whiteScaleDuration: 0.2
   yolkInitialScale: {x: 0.6, y: 1.7, z: 1}
   yolkInitialPosition: {x: 0, y: 0.55}
   whiteInitialScale: {x: 0.7, y: 2.2, z: 1}
---- !u!114 &2124254080332208605
-MonoBehaviour:
+--- !u!210 &-8075698736591796226
+SortingGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7524944140492399940}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfeb76cabbfdd47a1b1db9ef7bdd0e66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tab: 1
-  pool: {fileID: 0}
-  aliveTime: 0
-  despawnMode: 4
-  despawnCountdown: 5
-  despawnCountdownRandomMin: 4
-  despawnCountdownRandomMax: 6
-  particleSystemToUse: 0
-  useThisParticleSystem: {fileID: 0}
-  playParticleSystemOnSpawn: 1
-  audioSourceToUse: 0
-  useThisAudioSource: {fileID: 0}
-  playAudioSourceOnSpawn: 1
-  overlapType: 3
-  overlapOffset: {x: 0, y: 0, z: 0}
-  overlapRadius: 1
-  overlapScale: {x: 1, y: 1, z: 1}
-  overlapAlsoDespawnAfterCountdown: 0
-  overlapCountdown: 5
-  colliderAlsoDespawnAfterCountdown: 1
-  colliderCountdown: 5
-  useCollisionEnter: 1
-  useCollisionStay: 0
-  useCollisionExit: 0
-  triggerAlsoDespawnAfterCountdown: 1
-  triggerCountdown: 5
-  useTriggerEnter: 1
-  useTriggerStay: 0
-  useTriggerExit: 0
-  collider2DAlsoDespawnAfterCountdown: 1
-  collider2DCountdown: 5
-  useCollisionEnter2D: 1
-  useCollisionStay2D: 0
-  useCollisionExit2D: 0
-  trigger2DAlsoDespawnAfterCountdown: 1
-  trigger2DCountdown: 5
-  useTriggerEnter2D: 1
-  useTriggerStay2D: 0
-  useTriggerExit2D: 0
-  raycast3DAlsoDespawnAfterCountdown: 1
-  raycast3DCountdown: 5
-  raycast3DmaxHits: 30
-  raycast3DDistance: 1.5
-  raycast3DDirection: {x: 0, y: 0, z: 1}
-  raycast2DAlsoDespawnAfterCountdown: 1
-  raycast2DCountdown: 5
-  raycast2DmaxHits: 30
-  raycast2DDistance: 1.5
-  raycast2DDirection: {x: 1, y: 0}
-  raycast2DMinZDepth: -Infinity
-  raycast2DMaxZDepth: Infinity
-  sourceOfCollisions: 0
-  collisionSourceGameObject: {fileID: 0}
-  resetRigidbodyVelocitiesOnSpawn: 0
-  filterLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  filterTags: []
-  queryTriggerInteraction: 0
-  lastCollisionPoint: {x: 0, y: 0, z: 0}
-  lastCollidedPhysicsGameObject: {fileID: 0}
-  chainableSpawns: []
-  enableDespawnerEvents: 0
-  useOnDespawnUnityEvent: 0
-  OnDespawnUnityEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  useOnChainSpawnUnityEvent: 0
-  OnChainSpawnUnityEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  useOnPhysicsCollidedUnityEvent: 0
-  OnPhysicsCollidedUnityEvent:
-    m_PersistentCalls:
-      m_Calls: []
+  m_SortingLayerID: 1166210541
+  m_SortingLayer: 6
+  m_SortingOrder: 11
+  m_SortAtRoot: 0
 --- !u!1001 &8927620264620418008
 PrefabInstance:
   m_ObjectHideFlags: 0

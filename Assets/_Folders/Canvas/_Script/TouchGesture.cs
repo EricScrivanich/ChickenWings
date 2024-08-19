@@ -66,7 +66,7 @@ public class TouchGesture : MonoBehaviour
     private void AnimateTapGesture()
     {
         // Create a sequence
-        gestureSequence = DOTween.Sequence().SetUpdate(true);
+        gestureSequence = DOTween.Sequence();
 
         // Hand animation: Rotate and scale up
         gestureSequence.Append(hand.DOScale(handScaleFactor, handAnimationDuration).SetEase(Ease.InOutSine).From(handStartScale).SetUpdate(true));
@@ -86,10 +86,33 @@ public class TouchGesture : MonoBehaviour
         gestureSequence.SetLoops(-1, LoopType.Restart).SetUpdate(true);
     }
 
+    private void Main()
+    {
+        gestureSequence = DOTween.Sequence().SetUpdate(true);
+
+        // Hand animation: Rotate and scale up
+        gestureSequence.Append(hand.DOScale(handScaleFactor, handAnimationDuration).SetEase(Ease.InOutSine).From(handStartScale).SetUpdate(true));
+        gestureSequence.Join(hand.DORotate(handRotationAngle, handAnimationDuration, RotateMode.FastBeyond360).SetEase(Ease.InOutSine).From(handStartRotation).SetUpdate(true));
+
+        // gestureSequence.AppendCallback(() => player.events.OnJump?.Invoke());
+        // Hand animation: Scale and rotate back to original
+        gestureSequence.Append(hand.DOScale(handStartScale, circleAnimationDuration).SetEase(Ease.InOutSine).SetUpdate(true));
+
+        gestureSequence.Join(hand.DORotate(handStartRotation, circleAnimationDuration).SetEase(Ease.InOutSine).SetUpdate(true));
+
+        // Circle animation: Scale and change opacity
+        gestureSequence.Join(circle.DOScale(circleScaleFactor, circleAnimationDuration).SetEase(Ease.InOutSine).From(circleStartScale).SetUpdate(true));
+        gestureSequence.Join(circleImage.DOFade(circleEndAlpha, circleAnimationDuration).SetEase(Ease.InOutSine).From(circleStartAlpha).SetUpdate(true));
+
+        // Loop the sequence indefinitely
+        gestureSequence.SetLoops(-1, LoopType.Restart).SetUpdate(true);
+
+    }
+
     private void AnimateHoldGesture()
     {
         // Create a sequence
-        gestureSequence = DOTween.Sequence().SetUpdate(true);
+        gestureSequence = DOTween.Sequence();
 
         // Hand animation: Rotate and scale up to the target
         gestureSequence.Append(hand.DOScale(handScaleFactor, handAnimationDuration).SetEase(Ease.InOutSine).From(handStartScale).SetUpdate(true));

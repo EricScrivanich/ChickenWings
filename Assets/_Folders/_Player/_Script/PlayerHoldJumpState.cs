@@ -24,7 +24,7 @@ public class PlayerHoldJumpState : PlayerBaseState
     {
         player.jumpHeld = false;
         // player.anim.SetTrigger("IdleTrigger");
-        player.maxFallSpeed = player.ID.MaxFallSpeed;
+        player.maxFallSpeed = player.originalMaxFallSpeed;
         // player.StartFillStaminaCoroutine();
 
     }

@@ -14,6 +14,8 @@ public class BigPigMovement : MonoBehaviour
     public float speed;
     public float yForce;
     public float distanceToFlap;
+
+
     private static readonly int FlapTriggerHash = Animator.StringToHash("FlapTrigger");
 
 
@@ -41,7 +43,7 @@ public class BigPigMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        Body.localScale = new Vector3(1 + (.9f - transform.localScale.x), 1, 1);
+        Body.localScale = new Vector3(1 + ((.9f - transform.localScale.x) * .7f), 1, 1);
         wingObject.position = wingPosition.position;
         legObject.position = legPosition.position;
         tailObject.position = tailPosition.position;
@@ -50,6 +52,8 @@ public class BigPigMovement : MonoBehaviour
         addForce = new Vector2(-speed, yForce);
 
     }
+
+
     // Update is called once per frame
 
 

@@ -39,21 +39,13 @@ public class RingPlayerHandler : MonoBehaviour
 
     private void AddScore()
     {
-        if (ID.isTutorial)
-        {
-            return;
-        }
+       
 
         ID.AddScore(3);
 
     }
 
-    private void AddMana()
-    {
-
-
-        ID.CurrentMana += 40;
-    }
+   
 
 
     private void BucketCompletion(int index)
@@ -74,12 +66,7 @@ public class RingPlayerHandler : MonoBehaviour
                 break;
 
             case 2:
-                if (ID.isTutorial)
-                {
-                    RingGold.GetBall(transform.position, null, tutorialText.transform.position);
-                    return;
-
-                }
+               
 
                 RingGold.GetBall(transform.position, null, positionScript.ReturnGoldPosition());
 
@@ -98,12 +85,8 @@ public class RingPlayerHandler : MonoBehaviour
     }
     private void GoldFinish()
     {
-        if (ID.isTutorial)
-        {
-            RingGold.ringEvent.OnCheckOrder?.Invoke();
-            return;
-        }
-        else if (BucketDifferntObjective == 2 && lvlID != null)
+       
+       if (BucketDifferntObjective == 2 && lvlID != null)
         {
             Invoke("DelayBeforeGoldAdded", .25f);
             return;
@@ -127,7 +110,7 @@ public class RingPlayerHandler : MonoBehaviour
 
     private void PurpleFinish()
     {
-        ID.CurrentMana += (Mathf.CeilToInt(RingPurple.CorrectRing * 10));
+       
     }
 
     private void RedFinish()
@@ -164,7 +147,7 @@ public class RingPlayerHandler : MonoBehaviour
     private void OnEnable()
     {
         RingGold.ringEvent.OnCheckOrder += AddScore;
-        RingPurple.ringEvent.OnCheckOrder += AddMana;
+       
         RingRed.ringEvent.OnGetBall += LoseLife;
 
         ID.globalEvents.OnBucketExplosion += BucketCompletion;
@@ -187,7 +170,7 @@ public class RingPlayerHandler : MonoBehaviour
 
 
         RingGold.ringEvent.OnCheckOrder -= AddScore;
-        RingPurple.ringEvent.OnCheckOrder -= AddMana;
+      
 
         RingRed.ringEvent.OnGetBall -= LoseLife;
 

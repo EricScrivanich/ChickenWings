@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class PlayerDashState : PlayerBaseState
 {
-    private bool canDash;
+
 
     private bool switchSlash;
-
-
-    [SerializeField] private float dashPower = 11f;
-    // [SerializeField] private float dashPower = 12.5f;
-
+    private readonly Vector2 dashForce = new Vector2(11, 0);
     private int rotationSpeed = 100;
     private float rotZ;
     private bool passedTime;
@@ -21,18 +17,15 @@ public class PlayerDashState : PlayerBaseState
     private float dragAmount = 2.5f;
     private float dragTime;
     private float dashDurationMin = .35f;
-    private float dashDurationMax = .65f;
-    private float currentSpeed;
-    private float currentGravity;
-    private float slowdownSpeed = 16.2f;
-    private float addGravitySpeed = 3.3f;
+    private float dashDurationMax = .69f;
+
     private bool hasFinishedDash;
 
 
     public override void EnterState(PlayerStateManager player)
     {
         player.isDashing = true;
-   
+
         hasFinishedDash = false;
         player.stillDashing = true;
         switchSlash = false;
@@ -41,7 +34,7 @@ public class PlayerDashState : PlayerBaseState
         {
             player.ID.globalEvents.CanDashSlash?.Invoke(true);
         }
-        player.rb.drag = .4f;
+        player.rb.drag = .35f;
 
         rotZ = 0;
         passedTime = false;
@@ -54,14 +47,15 @@ public class PlayerDashState : PlayerBaseState
         AudioManager.instance.PlayDashSound();
         dashingTime = 0;
         // player.rb.velocity = new Vector2(dashPower, 0);
-        player.AdjustForce(dashPower, 0);
-        currentSpeed = dashPower;
+        player.AdjustForce(dashForce);
+
 
     }
     public override void ExitState(PlayerStateManager player)
     {
-       
-        player.ID.events.OnDash?.Invoke(false);
+
+        if (player.isDashing)
+            player.ID.events.OnDash?.Invoke(false);
 
         player.stillDashing = false;
         player.ID.globalEvents.CanDashSlash?.Invoke(false);
@@ -133,7 +127,7 @@ public class PlayerDashState : PlayerBaseState
 
             }
             passedTime = true;
-          
+
 
             player.rb.drag = dragAmount;
             // player.rb.gravityScale = player.originalGravityScale;
@@ -142,7 +136,7 @@ public class PlayerDashState : PlayerBaseState
 
             // player.CheckIfIsTryingToParachute();
         }
-        
+
 
 
         if (passedTime && player.stillDashing)

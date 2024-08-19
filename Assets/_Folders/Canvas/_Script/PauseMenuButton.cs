@@ -33,6 +33,7 @@ public class PauseMenuButton : MonoBehaviour
     // Update is called once per frame
     public void InstantPause()
     {
+        if (Time.timeScale == 0) return;
         PauseMenu.SetActive(true);
         pmm.InstantPause();
 
@@ -47,15 +48,18 @@ public class PauseMenuButton : MonoBehaviour
         {
             isPaused = true;
             PauseMenu.SetActive(true);
-            StartCoroutine(SmoothTimeScaleTransition(0, .15f,0));
+            StartCoroutine(SmoothTimeScaleTransition(0, .15f, 0));
             pmm.DropSignTween();
+            Debug.Log("yuh");
+
 
 
         }
         else
         {
+            Debug.Log("Huh");
             isPaused = false;
-            StartCoroutine(SmoothTimeScaleTransition(1, .25f,.9f));
+            StartCoroutine(SmoothTimeScaleTransition(1, .25f, .9f));
             pmm.RetractOnly();
         }
     }

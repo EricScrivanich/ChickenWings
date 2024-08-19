@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class PlayerJumpState : PlayerBaseState
 {
-    private float jumpForce = 11.3f;
+  
     private bool hasFadedJumpAir;
 
-    public int jumpAirIndex;
+    private int jumpAirIndex;
     // private float slightUpwardsForce = 12f;
     private float slightUpwardsForce = 15f;
+
+    private Vector2 jumpForce;
+    // private Vector2 removerAddedJumpForce;
+    private float addJumpForce;
 
     private bool startHoldJumpAnimation;
 
@@ -22,7 +26,7 @@ public class PlayerJumpState : PlayerBaseState
         jumpAirIndex = player.CurrentJumpAirIndex;
 
         // player.rb.velocity = new Vector2(0, player.jumpForce);
-        player.AdjustForce(0, player.jumpForce);
+        player.AdjustForce(jumpForce);
         // player.rb.AddForce(new Vector2(0, player.jumpForce),ForceMode2D.Impulse);
         AudioManager.instance.PlayCluck();
 
@@ -41,12 +45,20 @@ public class PlayerJumpState : PlayerBaseState
 
     }
 
+    public void CacheVaraibles(Vector2 initialForce,float addForce)
+    {
+        jumpForce = initialForce;
+        
+        addJumpForce = addForce;
+
+    }
+
     public override void FixedUpdateState(PlayerStateManager player)
     {
         if (player.ID.isHolding)
         {
 
-            player.rb.AddForce(new Vector2(0, player.ID.addJumpForce - Mathf.Abs(player.rb.velocity.y)));
+            player.rb.AddForce(new Vector2(0, addJumpForce - Mathf.Abs(player.rb.velocity.y)));
             startHoldJumpAnimation = true;
 
             if (player.rb.velocity.y < -5)
@@ -56,19 +68,15 @@ public class PlayerJumpState : PlayerBaseState
 
 
         }
-        else if (Mathf.Abs(player.rb.velocity.y) < 0.5f && !player.ID.testingNewGravity)
-        {
-            player.rb.AddForce(new Vector2(0, slightUpwardsForce));
-
-        }
-        else if (player.rb.velocity.y < player.ID.startAddDownForce && player.rb.velocity.y > player.ID.endAddDownForce)
-        {
-            // Apply a small upwards force
-            // You can adjust this value as needed
-            player.rb.AddForce(new Vector2(0, -player.ID.playerAddDownForce));
+       
+        // else if (player.rb.velocity.y < -.5f && player.rb.velocity.y > -2)
+        // {
+        //     // Apply a small upwards force
+        //     // You can adjust this value as needed
+        //     player.rb.AddForce(removerAddedJumpForce);
 
 
-        }
+        // }
 
     }
 

@@ -9,11 +9,11 @@ public class PlayerAddForceBoundaries : MonoBehaviour
     [SerializeField] private GameObject arrowPrefab;
     private Arrow arrow;
     private float slowDownFallBoundary = -1.5f;
-    private float addForceDownBoundary = 4.65f;
+    private float addForceDownBoundary = 4.62f;
     private float originalMaxFallSpeed;
     private bool hasChangedMaxFallSpeed = false;
     private Vector2 addRightForce = new Vector2(20, 10);
-    private Vector2 addDownForce = new Vector2(0, -5.7f);
+    private Vector2 addDownForce = new Vector2(0, -6.3f);
     private Vector2 addLeftForce = new Vector2(-20, 10);
     private float topBoundary;
     private float leftBoundary;
@@ -35,7 +35,7 @@ public class PlayerAddForceBoundaries : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
 
-        originalMaxFallSpeed = stateManager.maxFallSpeed;
+        originalMaxFallSpeed = stateManager.originalMaxFallSpeed;
 
 
 
@@ -99,7 +99,7 @@ public class PlayerAddForceBoundaries : MonoBehaviour
         }
         else if (playerTransform.position.y > addForceDownBoundary)
         {
-            if (rb.velocity.y > .5f)
+            if (rb.velocity.y > -4.4f && rb.velocity.y < 7.5f)
                 rb.AddForce(addDownForce);
 
             if (!isTop && playerTransform.position.y > topBoundary)

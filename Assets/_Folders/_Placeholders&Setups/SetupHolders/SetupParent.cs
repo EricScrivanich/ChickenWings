@@ -8,9 +8,10 @@ using UnityEngine;
 public class SetupParent : ScriptableObject
 {
 
-    public bool isRandomSetup;
-    public int fillRingWithEnemiesStartIndex;
 
+
+
+    public bool mustCompleteRingSequence;
     private Queue<int> lastPickedTriggers = new Queue<int>();
 
     public int[] enemyTriggerForEachRingIndex;
@@ -22,18 +23,10 @@ public class SetupParent : ScriptableObject
     public int collectableTriggerCount => collectableSetup.Count;
 
     public int enemyTriggerCount => enemySetup.Count;
+    public bool isRandomSetup;
 
 
-    public void SpawnEnemiesOnly(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, int currentTrigger)
-    {
 
-        foreach (var enemySet in enemySetup[currentTrigger].dataArray)
-        {
-            enemySet.InitializeEnemy(enemyManager);
-        }
-        collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(enemySetup[currentTrigger].dataArray, null)));
-
-    }
 
 
 
@@ -48,7 +41,7 @@ public class SetupParent : ScriptableObject
 
     // }
 
-    public void SpawnRandomSetWithRings(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, bool finalRing)
+    public void SpawnRandomSetWithRings(SpawnStateManager manager, bool finalRing)
     {
         List<float> tempList = new List<float>();
 
@@ -73,27 +66,28 @@ public class SetupParent : ScriptableObject
 
         }
 
-        pickedRingSet.InitializeCollectable(collectableManager, finalRing);
+        pickedRingSet.InitializeCollectable(manager, finalRing);
         tempList.Add(pickedRingSet.TimeToTrigger);
 
         if (randomEnemyTrigger >= 0)
         {
             foreach (var set in enemySetup[randomEnemyTrigger].dataArray)
             {
-                set.InitializeEnemy(enemyManager);
+                set.InitializeEnemy(manager);
                 tempList.Add(set.TimeToTrigger);
             }
 
         }
 
 
-        collectableManager.StartCoroutine(collectableManager.NextRandomTriggerCourintine(Mathf.Max(tempList.ToArray())));
+        // manager.StartCoroutine(manager.SetupDuration(Mathf.Max(tempList.ToArray())));
+        manager.TimerForNextWave(Mathf.Max(tempList.ToArray()));
 
     }
 
 
 
-    public void SpawnRandomEnemies(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager)
+    public void SpawnRandomEnemies(SpawnStateManager manager)
     {
         List<float> tempList = new List<float>();
         int attempts = 0;
@@ -125,36 +119,36 @@ public class SetupParent : ScriptableObject
         for (int i = 0; i < pickedSet.Length; i++)
         {
             tempList.Add(pickedSet[i].TimeToTrigger);
-            pickedSet[i].InitializeEnemy(enemyManager);
+            pickedSet[i].InitializeEnemy(manager);
         }
 
-        collectableManager.StartCoroutine(collectableManager.NextRandomTriggerCourintine(Mathf.Max(tempList.ToArray())));
+        manager.TimerForNextWave(Mathf.Max(tempList.ToArray()));
+
     }
 
 
-    public void SpawnTrigger(CollectablePoolManager collectableManager, EnemyPoolManager enemyManager, int currentTrigger, bool finalRing)
+    public void SpawnTrigger(SpawnStateManager manager, int currentTrigger)
     {
-        Debug.LogWarning("SpawnTrigger");
-        Debug.LogWarning(this.name + " :Current Trigger: " + currentTrigger + " :Length: " + collectableSetup.Count);
+       
         List<float> tempList = new List<float>();
 
 
         if (collectableSetup.Count > currentTrigger)
         {
-            Debug.LogWarning("Enetered For Each");
+            
             foreach (var coll in collectableSetup[currentTrigger].dataArray)
             {
-                if (finalRing)
+                if (currentTrigger == collectableSetup.Count - 1)
                 {
-                    Debug.LogWarning("Intitialize with final ring true");
+                   
 
-                    coll.InitializeCollectable(collectableManager, true);
+                    coll.InitializeCollectable(manager, true);
                 }
                 else
                 {
-                    Debug.LogWarning("Intitialize with final ring false");
+                  
 
-                    coll.InitializeCollectable(collectableManager, collectableSetup.Count == currentTrigger + 1);
+                    coll.InitializeCollectable(manager, collectableSetup.Count == currentTrigger + 1);
                 }
                 tempList.Add(coll.TimeToTrigger);
 
@@ -166,14 +160,15 @@ public class SetupParent : ScriptableObject
         {
             foreach (var enemySet in enemySetup[currentTrigger].dataArray)
             {
-                enemySet.InitializeEnemy(enemyManager);
+                enemySet.InitializeEnemy(manager);
                 tempList.Add(enemySet.TimeToTrigger);
             }
 
 
         }
 
-        collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(Mathf.Max(tempList.ToArray())));
+        manager.TimerForNextWave(Mathf.Max(tempList.ToArray()));
+
 
 
 

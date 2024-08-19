@@ -86,9 +86,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9114015588899894226}
-  - component: {fileID: 1769585220814932129}
   - component: {fileID: 380991197594460456}
-  - component: {fileID: 2767121321017850616}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -112,27 +110,6 @@ Transform:
   - {fileID: 4831659309462398064}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1769585220814932129
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4456766109796165030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81ea88fec80fa493dbbc8bbc45d8f653, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  LvlID: {fileID: 0}
-  RingPanel: {fileID: 0}
-  RingNumber: {fileID: 0}
-  scoreText: {fileID: 0}
-  finalScore: {fileID: 0}
-  ammoText: {fileID: 0}
-  lightRed: {r: 0, g: 0, b: 0, a: 0}
-  temporaryScoreText: {fileID: 0}
 --- !u!114 &380991197594460456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,34 +124,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: {fileID: 0}
   LvlID: {fileID: 0}
-  FinishedLevelUI: {fileID: 0}
   Frozen: {fileID: 0}
-  FrozenOverlay: {fileID: 0}
   lerpTime: 1
   gameOver: {fileID: 0}
   frozenMaterial: {fileID: 0}
-  frozenOverlayMaterial: {fileID: 0}
   fadeInDuration: 0.9
   fadeOutDuration: 0.2
   frozenTime: 0.2
-  frozenOverlayFadeAmount: 0.5
---- !u!114 &2767121321017850616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4456766109796165030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 365a9e276d7df495393b99cdb79d0e12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  infiniteLives: 0
-  infinitySymbol: {fileID: 0}
-  livesPanel: {fileID: 0}
-  player: {fileID: 0}
-  eggAnimators: []
 --- !u!1001 &3070530295514379880
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -70,7 +70,7 @@ public class PlayerFlipLeftState : PlayerBaseState
         }
         currentRotation = player.transform.rotation.eulerAngles.z;
         rotationSpeedVar = rotationSpeed;
-        player.AdjustForce(JumpForce.x, JumpForce.y);
+        player.AdjustForce(JumpForce);
         AudioManager.instance.PlayCluck();
     }
 

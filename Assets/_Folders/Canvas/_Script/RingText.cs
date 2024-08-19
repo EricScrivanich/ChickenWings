@@ -12,7 +12,7 @@ public class PanelText : MonoBehaviour
     [SerializeField] private bool isBarn;
     [SerializeField] private bool isPig;
     [SerializeField] private bool isBucket;
-    [SerializeField] private TextMeshProUGUI numberText;
+       [SerializeField] private TextMeshProUGUI numberText;
 
     [SerializeField] private LevelManagerID LvlID;
 
@@ -38,6 +38,12 @@ public class PanelText : MonoBehaviour
         numberText.text = number.ToString() + " / " + LvlID.bucketsNeeded.ToString();
     }
 
+    private void UpdatePigPannel(int number, int needed)
+    {
+        numberText.text = number.ToString() + " / " + needed.ToString();
+
+    }
+
 
 
     private void OnEnable()
@@ -60,6 +66,12 @@ public class PanelText : MonoBehaviour
             numberText.text = "0" + " / " + LvlID.bucketsNeeded.ToString();
 
         }
+        else if (isPig)
+        {
+            LvlID.outputEvent.killedPig += UpdatePigPannel;
+
+
+        }
 
 
     }
@@ -77,6 +89,12 @@ public class PanelText : MonoBehaviour
         else if (isBucket)
         {
             LvlID.outputEvent.setBucketPass -= UpdateBucketPanel;
+
+        }
+        else if (isPig)
+        {
+            LvlID.outputEvent.killedPig -= UpdatePigPannel;
+
 
         }
 

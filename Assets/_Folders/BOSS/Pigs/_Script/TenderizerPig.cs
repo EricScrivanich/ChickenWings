@@ -8,7 +8,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible
     public bool hasHammer;
     private CircleCollider2D detection;
     private float amplitude = .3f;
-    private int frequency = 2;
+    private float frequency = 1.4f;
     private float initialY;
     private Animator anim;
     [SerializeField] private GameObject Hammer;
@@ -36,7 +36,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible
         initialY = transform.position.y;
         detection.enabled = hasHammer;
         Hammer.SetActive(hasHammer);
-        Debug.Log("Hashammer: " + hasHammer);
+
     }
     void Update()
     {
@@ -45,7 +45,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible
 
         float y = Mathf.Sin(transform.position.x * frequency) * amplitude + initialY;
         transform.position = new Vector2(transform.position.x, y);
-        if (player != null)
+        if (player != null && hasHammer)
         {
             Vector3 direction = player.position - eye.position; // Calculate the direction to the player
             direction.z = 0; // Ensure it's 2D

@@ -14,6 +14,7 @@ public class FadeInUI : MonoBehaviour
     [SerializeField] private List<GameObject> SetActiveOnceObjects;
     [SerializeField] private List<GameObject> SetActiveObjects;
     [SerializeField] private List<GameObject> SetUnactiveObjects;
+    [SerializeField] private FlashGroup pressButton;
 
     [SerializeField] private float startAlpha;
     [SerializeField] private float endAlpha;
@@ -94,6 +95,11 @@ public class FadeInUI : MonoBehaviour
         {
             hasFaded = true;
             FadeGroup.DOFade(startAlpha, fadeDuration / 2).SetEase(Ease.InOutSine).From(endAlpha).SetUpdate(true);
+
+            if (pressButton != null)
+            {
+                pressButton.FadeOut();
+            }
 
         }
 

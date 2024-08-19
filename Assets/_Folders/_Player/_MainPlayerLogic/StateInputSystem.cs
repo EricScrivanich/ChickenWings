@@ -26,6 +26,7 @@ public class StateInputSystem : MonoBehaviour
     [Header("Drop Stuff")]
     private Image DropButton;
     private Image DashButton;
+    private bool finsihedCooldownDelay;
     private RectTransform dropIcon;
     private Image dropCooldownIN;
     private Image dropCooldownOUT;
@@ -53,6 +54,7 @@ public class StateInputSystem : MonoBehaviour
     private CanvasGroup dashCooldownGroup;
 
 
+
     [Header("Dash Icon")]
     private Sequence dashIconSequence;
     private float startingDashIconX;
@@ -65,11 +67,13 @@ public class StateInputSystem : MonoBehaviour
 
 
 
+
+
     [Header("Mana Settings")]
     private float maxMana = 100f;
     private bool manaFull = false;
     [SerializeField] private float mainManaFillDuration;
-    private int manaGainedFromCollectable = 40;
+    private int manaGainedFromCollectable = 50;
     private float flashDuration = .7f;
 
     private Coroutine mainFillCourintine;
@@ -108,7 +112,7 @@ public class StateInputSystem : MonoBehaviour
             if (ButtonsEnabled) ID.events.OnJump?.Invoke();
         };
 
-        controls.Movement.JumpRight.started += ctx =>
+        controls.Movement.JumpRight.performed += ctx =>
         {
             if (ButtonsEnabled) ID.events.OnFlipRight?.Invoke(true);
         };
@@ -117,7 +121,7 @@ public class StateInputSystem : MonoBehaviour
             if (ButtonsEnabled) ID.events.OnFlipRight?.Invoke(false);
         };
 
-        controls.Movement.JumpLeft.started += ctx =>
+        controls.Movement.JumpLeft.performed += ctx =>
         {
             if (ButtonsEnabled) ID.events.OnFlipLeft?.Invoke(true);
         };
@@ -132,13 +136,11 @@ public class StateInputSystem : MonoBehaviour
             {
                 if (canDash)
                 {
-                    canDash = false;
                     ID.events.OnDash?.Invoke(true);
-                    dashImage.color = highlightButtonColor;
-                    StartCoroutine(CalcualteDashTimeLeft());
-                    IconTween(1);
 
                 }
+
+
                 else if (canDashSlash)
                 {
                     manaFull = false;
@@ -146,6 +148,8 @@ public class StateInputSystem : MonoBehaviour
                     HandleDashSlashImage(false);
                     ID.events.OnDashSlash?.Invoke();
                 }
+
+
 
             }
         };
@@ -224,35 +228,59 @@ public class StateInputSystem : MonoBehaviour
         }
         canDrop = true;
 
-        coolingDownDash = false;
-        dashImage = GameObject.Find("DashIMG").GetComponent<Image>();
-        dashImageMana = GameObject.Find("DashIMGMana").GetComponent<Image>();
+        if (GameObject.Find("DashButton") != null)
+        {
+            dashImage = GameObject.Find("DashIMG").GetComponent<Image>();
 
 
-        dashCooldownIN = GameObject.Find("DashCooldownIN").GetComponent<Image>();
-        dashIcon = GameObject.Find("DashICON").GetComponent<RectTransform>();
-        dashCooldownGroup = GameObject.Find("DashCooldownGroup").GetComponent<CanvasGroup>();
+            dashCooldownIN = GameObject.Find("DashCooldownIN").GetComponent<Image>();
+            dashIcon = GameObject.Find("DashICON").GetComponent<RectTransform>();
+            dashCooldownGroup = GameObject.Find("DashCooldownGroup").GetComponent<CanvasGroup>();
 
-        startingDashIconX = dashIcon.anchoredPosition.x;
-
-
-        dashCooldownGroup.alpha = 0;
-        dashImageMana.color = fillingManaColor;
-        canDashSlash = false;
+            startingDashIconX = dashIcon.anchoredPosition.x;
 
 
+            dashCooldownGroup.alpha = 0;
+
+            canDashSlash = false;
+            coolingDownDash = false;
 
 
-        dashImageMana.enabled = true;
-        ID.globalEvents.SetCanDashSlash?.Invoke(false);
-        dashImageMana.fillAmount = (currentMana / maxMana);
-        FullMana(false);
 
-        if (manaUsed)
-            mainFillCourintine = StartCoroutine(RegenerateMana());
+            dashImageMana = GameObject.Find("DashIMGMana").GetComponent<Image>();
+
+
+            ID.globalEvents.SetCanDashSlash?.Invoke(false);
+
+            FullMana(false);
+
+            if (manaUsed)
+            {
+
+                dashImageMana.color = fillingManaColor;
+                dashImageMana.enabled = true;
+                dashImageMana.fillAmount = (currentMana / maxMana);
+                mainFillCourintine = StartCoroutine(RegenerateMana());
+
+
+
+            }
+            else
+                dashImageMana.gameObject.SetActive(false);
+
+
+        }
+
+
+
+    }
+
+    public bool dashSlashReady()
+    {
+        if (!coolingDownDash && manaFull)
+            return true;
         else
-            dashImageMana.gameObject.SetActive(false);
-
+            return false;
     }
 
 
@@ -314,10 +342,10 @@ public class StateInputSystem : MonoBehaviour
         }
         else if (type == 1)
         {
-            Debug.Log("YEEERERRERERERER");
+
             dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX + (moveDashIconX * .6f), .15f));
             dashIconSequence.Join(dashIcon.DOScale(dashIconLargeScale, .15f).SetEase(Ease.InSine));
-            dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX + moveDashIconX , .2f).SetEase(Ease.OutSine));
+            dashIconSequence.Append(dashIcon.DOAnchorPosX(startingDashIconX + moveDashIconX, .2f).SetEase(Ease.OutSine));
             dashIconSequence.Join(dashIcon.DOScale(dashIconLargeScale2, .2f).SetEase(Ease.InSine));
 
             dashIconSequence.Play();
@@ -335,11 +363,24 @@ public class StateInputSystem : MonoBehaviour
 
     void HandleDashNew(bool isDashing)
     {
+        if (isDashing)
+        {
+            if (canDash)
+            {
+                canDash = false;
+                dashImage.color = highlightButtonColor;
+                StartCoroutine(CalcualteDashTimeLeft());
+                IconTween(1);
+
+            }
+
+        }
 
 
-        if (!coolingDownDash && !isDashing)
+        if (!coolingDownDash && !isDashing && !canDash)
         {
             StartCoroutine(DashCooldown());
+
 
         }
 
@@ -369,11 +410,19 @@ public class StateInputSystem : MonoBehaviour
 
         if (isFull)
         {
+            ID.globalEvents.SetCanDashSlash?.Invoke(true);
+
             dashCooldownIN.color = coolDownColorBlue;
 
         }
         else
+        {
+            ID.globalEvents.SetCanDashSlash?.Invoke(false);
             dashCooldownIN.color = coolDownColorRed;
+            Debug.Log("Set Color");
+
+
+        }
 
     }
     private void ExitDash(bool notExited)
@@ -396,7 +445,7 @@ public class StateInputSystem : MonoBehaviour
             {
                 canDashSlash = true;
                 dashCooldownIN.color = coolDownColorBlue;
-                FlashDashImage(1);
+                FlashDashImage(.8f);
 
             }
             else
@@ -418,12 +467,77 @@ public class StateInputSystem : MonoBehaviour
         }
     }
 
+    public void FinishCooldowns()
+    {
+        // type 0 = dash;  type 1 = drop;
+
+        ID.events.OnDash?.Invoke(false);
+        StopAllCoroutines();
+
+        dashCooldownGroup.alpha = 0;
+        if (dashIconSequence != null && dashIconSequence.IsPlaying())
+            dashIconSequence.Kill();
+
+        dashIcon.DOAnchorPosX(startingDashIconX, .2f).SetEase(Ease.OutSine).SetUpdate(true);
+        dashIcon.DOScale(dashIconNormalScale, .2f).SetUpdate(true);
+        // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
+        dashImage.DOColor(normalButtonColor, .15f);
+
+        canDash = true;
+
+        coolingDownDash = false;
+        if (manaFull)
+        {
+            canDashSlash = true;
+            dashCooldownIN.color = coolDownColorBlue;
+            if (flashSequence != null && flashSequence.IsPlaying())
+                flashSequence.Kill();
+
+            flashSequence = DOTween.Sequence();
+            flashSequence.Append(dashImageMana.DOColor(canUseDashSlashImageColor1, flashDuration).SetEase(Ease.OutSine).From(canUseDashSlashImageColor2).SetUpdate(true));
+            flashSequence.Append(dashImageMana.DOColor(canUseDashSlashImageColor2, flashDuration).SetEase(Ease.OutSine).SetUpdate(true));
+            flashSequence.SetLoops(-1).SetUpdate(true);
+            flashSequence.Play().SetUpdate(true);
+
+
+        }
+        else if (manaUsed)
+        {
+            dashImageMana.color = fillingManaColor;
+
+            StartCoroutine(RegenerateMana());
+
+        }
+
+        dropCooldownIN.DOFade(0, .13f).SetUpdate(true);
+        dropCooldownOUT.DOFade(0, .13f).SetUpdate(true);
+
+        // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
+        DropButton.DOColor(normalButtonColor, .13f).SetUpdate(true);
+        dropIcon.DOScale(normalIconScale, .13f).SetUpdate(true);
+
+
+
+
+        coolingDownDrop = false;
+        canDrop = true;
+
+
+
+    }
+
+    private void SetFinishedCooldownDelayFalse()
+    {
+        coolingDownDash = false;
+    }
+
 
 
     private IEnumerator DashCooldown()
     {
         coolingDownDash = true;
         canDash = false;
+        Debug.Log("COOOOLING");
 
         if (manaFull)
         {
@@ -450,6 +564,7 @@ public class StateInputSystem : MonoBehaviour
 
         dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
         yield return new WaitForSeconds(1.1f);
+        Debug.Log("Finsihed cooling bug");
 
         dashCooldownGroup.DOFade(0, .15f);
 
@@ -501,6 +616,7 @@ public class StateInputSystem : MonoBehaviour
         else
         {
 
+
             FlashDashImage(.8f);
         }
     }
@@ -513,6 +629,7 @@ public class StateInputSystem : MonoBehaviour
 
     private IEnumerator RegenerateMana()
     {
+        Debug.Log("Please Regen");
         float elapsedTime = 0;
         float previousMana = currentMana;
         float duration = (maxMana - currentMana) * (mainManaFillDuration / maxMana);

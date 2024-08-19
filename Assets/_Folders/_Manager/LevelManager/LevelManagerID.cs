@@ -10,8 +10,11 @@ public class LevelManagerID : ScriptableObject
 
     [Header("RingPass")]
     public bool areRingsRequired;
+    public bool PauseSpawning;
     public int ringsNeeded;
 
+
+    public int LevelIntensity { get; private set; }
     public int barnsNeeded;
     public int currentRingsPassed;
 
@@ -21,19 +24,27 @@ public class LevelManagerID : ScriptableObject
 
 
 
-private void AddRingPass()
-{
+    private void AddRingPass()
+    {
 
-}
+    }
 
-public void ResetLevel(bool ringsReq,int ringAmountNeeded, int barnsNeed, int bucketNeed)
-{
+    public void ResetLevel(bool ringsReq, int ringAmountNeeded, int barnsNeed, int bucketNeed)
+    {
         areRingsRequired = ringsReq;
+        PauseSpawning = false;
         ringsNeeded = ringAmountNeeded;
+        LevelIntensity = 0;
         currentRingsPassed = 0;
         barnsNeeded = barnsNeed;
         bucketsNeeded = bucketNeed;
 
+
+    }
+
+    public void SetNewIntensity(int newVal)
+    {
+        LevelIntensity = newVal;
 
     }
 

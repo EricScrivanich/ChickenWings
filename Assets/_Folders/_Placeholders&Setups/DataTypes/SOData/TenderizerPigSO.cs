@@ -8,7 +8,7 @@ public class TenderizerPigSO : EnemyData
 {
     public TenderizerPigData[] data;
     // Start is called before the first frame update
-    public override void InitializeEnemy(EnemyPoolManager manager)
+    public override void InitializeEnemy(SpawnStateManager manager)
     {
         
 

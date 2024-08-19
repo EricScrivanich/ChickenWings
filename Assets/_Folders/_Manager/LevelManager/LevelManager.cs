@@ -8,26 +8,39 @@ public class LevelManager : MonoBehaviour
 {
     public int LevelIndex;
 
-    
 
-   
+
+    [SerializeField] private GameObject TriggerSectionActivateAfterEventType;
+    private bool hasInvokedSpecialEvent = false;
+    [SerializeField] private float activicationDelay;
+    [SerializeField] private GameObject[] activateAfterDelay;
+
+    public GameObject pressButtonPrefab;
+
+    private FlashGroup pressButton;
 
     public int reachedCheckpoint;
+
+    public bool PauseSpawning;
     [SerializeField] private LevelManagerID LvlID;
     private StateInputSystem playerInputs;
     private InputTracker inputTracker;
     public PlayerID player;
     [SerializeField] private GameObject finishedLevelUIPrefab;
-    
+
     private Canvas canvas;
     private Button pauseButton;
     private int currentSection;
     [SerializeField] private bool showSectionAtStart;
+    [SerializeField] private float showSectionAfterDelay;
     [Header("RingPass")]
     [SerializeField] private bool areRingsRequired;
     private bool finishedRings;
     [SerializeField] private int ringsNeeded;
     [SerializeField] private int currentRingsPassed;
+
+
+    private int objectivesComplete;
 
 
     [Header("Buckets")]
@@ -45,23 +58,51 @@ public class LevelManager : MonoBehaviour
     private bool finishedBarns;
     private int currentBarnsPassed;
 
+    [Header("Pigs")]
+
+    [SerializeField] private int pigTypeTracked = -1;
+    [SerializeField] private int pigsNeeded;
+    private bool finishedPigs;
+    private int currentPigsKilled;
+
 
     [Header("Other")]
     [SerializeField] private List<GameObject> initalGameObjectsToDeactivate;
     [SerializeField] private List<GameObject> sections;
+
     [SerializeField] private List<int> playSections;
     [SerializeField] private List<float> playSectionDelayToUI;
 
     private bool hasStartedPlayTimeDelayedPause;
 
+    public enum EventTypeTracked
+    {
+        None,
+        Mana,
+
+        Jump
+    }
+
+    public EventTypeTracked currentEventTracked;
+
+
     private void Awake()
     {
         currentSection = 0;
+        objectivesComplete = 0;
         hasStartedPlayTimeDelayedPause = false;
         LvlID.ResetLevel(areRingsRequired, ringsNeeded, barnsNeeded, bucketsNeeded);
         finishedRings = !areRingsRequired;
         finishedBarns = !areBarnsRequired;
         finishedBuckets = !areBucketsRequired;
+
+        LvlID.outputEvent.ShowSection += HandleSection;
+        LvlID.outputEvent.SetObjectActiveWithDelay += SetObjectActiveWithDelay;
+        LvlID.inputEvent.ActivateObjFromEvent += TriggerObjectsFromEvent;
+        LvlID.inputEvent.SetCheckPoint += SetNewCheckPoint;
+
+
+
 
         if (areRingsRequired)
         {
@@ -84,6 +125,47 @@ public class LevelManager : MonoBehaviour
             LvlID.outputEvent.addBucketPass += HitBucket;
 
         }
+
+        if (pigTypeTracked > -1)
+        {
+            currentPigsKilled = 0;
+            finishedPigs = false;
+            player.globalEvents.OnKillPig += OnKillPig;
+        }
+        else
+            finishedPigs = true;
+
+        switch (currentEventTracked)
+        {
+            case EventTypeTracked.None:
+                // Implement logic for GlideUp
+
+                break;
+            case EventTypeTracked.Mana:
+                player.globalEvents.SetCanDashSlash += ShowNextSectionFromEvent;
+
+                // Implement logic for GlideUp
+
+                break;
+        }
+        LvlID.inputEvent.StartSpawnerInput += TriggerSpawnerFromDelay;
+
+
+
+    }
+
+    private void SetNewCheckPoint(int val)
+    {
+        reachedCheckpoint = val;
+    }
+
+    private IEnumerator ActivateAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        foreach (var obj in activateAfterDelay)
+        {
+            obj.SetActive(true);
+        }
     }
     void Start()
     {
@@ -95,10 +177,15 @@ public class LevelManager : MonoBehaviour
         {
             obj.SetActive(false);
         }
-        foreach (var obj in initalGameObjectsToDeactivate)
-        {
-            obj.SetActive(false);
-        }
+
+
+
+
+
+        pressButton = Instantiate(pressButtonPrefab).GetComponent<FlashGroup>();
+        pressButton.transform.parent = canvas.transform;
+        pressButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -355);
+        pressButton.gameObject.SetActive(false);
 
         int checkPoint = 0;
         if (GameObject.Find("GameManager") != null)
@@ -106,33 +193,177 @@ public class LevelManager : MonoBehaviour
             checkPoint = GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint;
 
         }
+        Debug.Log("Check point is: " + checkPoint);
 
         if (checkPoint > 0)
         {
-            Debug.Log("Loading CheckPoint");
-            ShowSection(true, checkPoint);
-            currentSection = checkPoint;
-            playerInputs.ActivateButtons(false);
-            inputTracker.EnableTracking(true);
+            reachedCheckpoint = checkPoint;
+            LvlID.outputEvent.SetCheckPoint?.Invoke(checkPoint);
 
         }
-
-        else if (showSectionAtStart)
+        else
         {
-            ShowSection(true, 0);
-            playerInputs.ActivateButtons(false);
-            inputTracker.EnableTracking(false);
+            foreach (var obj in initalGameObjectsToDeactivate)
+            {
+                obj.SetActive(false);
+            }
+            StartCoroutine(ActivateAfterDelay(activicationDelay));
 
         }
 
 
+        // if (checkPoint > 0)
+        // {
+
+        //     ShowSection(true, checkPoint);
+        //     currentSection = checkPoint;
+        //     playerInputs.ActivateButtons(false);
+        //     inputTracker.EnableTracking(true);
+
+        // }
+
+        // else if (showSectionAtStart)
+        // {
+        //     ShowSection(true, 0);
+        //     playerInputs.ActivateButtons(false);
+        //     inputTracker.EnableTracking(false);
+
+        // }
+        // else if (showSectionAfterDelay > 0)
+        // {
+        //     ShowNextUISectionFromPlaytime(showSectionAfterDelay, 0);
+        //     playerInputs.ActivateButtons(true);
+
+        //     inputTracker.EnableTracking(false);
+        // }
+        // else
+        // {
+        //     playerInputs.ActivateButtons(true);
+        //     inputTracker.EnableTracking(false);
+
+
+        // }
+
+
 
     }
 
-    public void NextUIFromInput()
+    private void TriggerObjectsFromEvent(TriggerNextSection bubbleScript, bool stopSpawning, GameObject obj)
     {
-        sections[currentSection].GetComponent<SignMovement>().RetractToNextUI(true);
+        StartCoroutine(WaitForEvent(bubbleScript, stopSpawning, obj));
+
     }
+    public IEnumerator WaitForEvent(TriggerNextSection script, bool stopSpawn, GameObject obj)
+    {
+        switch (script.currentEventTracked)
+        {
+            case TriggerNextSection.EventTypeTracked.ObjectiveCount:
+                // Implement logic for ObjectiveCount
+                Debug.Log("Waiting for ObjectiveCount event");
+                // Placeholder for your logic
+                yield return new WaitUntil(() => objectivesComplete >= script.objectivesNeeded);
+                if (stopSpawn) LvlID.PauseSpawning = true;
+                obj.SetActive(true);
+                break;
+
+            case TriggerNextSection.EventTypeTracked.Mana:
+                // Implement logic for Mana
+                Debug.Log("Waiting for Mana event");
+                // Placeholder for your logic
+                // yield return new WaitUntil(() => /* your condition for Mana */);
+                break;
+
+            case TriggerNextSection.EventTypeTracked.Jump:
+                // Implement logic for Jump
+                Debug.Log("Waiting for Jump event");
+                // Placeholder for your logic
+                // yield return new WaitUntil(() => /* your condition for Jump */);
+                break;
+
+            default:
+                yield break;
+        }
+
+    }
+
+
+    public void SetInputs()
+    {
+
+    }
+
+    public void TriggerSpawnerFromDelay(int type, float delay)
+    {
+        StartCoroutine(TriggerSpawnerFromDelayCoroutine(type, delay));
+
+    }
+    private IEnumerator TriggerSpawnerFromDelayCoroutine(int type, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        LvlID.outputEvent.StartSpawner?.Invoke(type);
+    }
+
+
+    public void HandleSection(int sectionNum, bool useSection)
+    {
+        if (useSection)
+        {
+            sections[sectionNum].SetActive(true);
+        }
+        else
+        {
+            if (sections[sectionNum] != null && sections[sectionNum].activeInHierarchy)
+                sections[sectionNum].GetComponent<SignMovement>().RetractToNextUILocal(true);
+        }
+    }
+
+    private void SetObjectActiveWithDelay(GameObject obj, float delay)
+    {
+        StartCoroutine(SetObjectActiveWithDelayCoroutine(obj, delay));
+
+    }
+
+    private IEnumerator SetObjectActiveWithDelayCoroutine(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        obj.SetActive(true);
+    }
+
+
+
+
+    private void EnableButtonTracking()
+    {
+
+        StartCoroutine(SetButtons());
+
+
+    }
+
+    private IEnumerator SetButtons()
+    {
+        yield return new WaitForSecondsRealtime(1.7f);
+
+
+        inputTracker.EnableTracking(true);
+
+    }
+
+    public void NextUIFromInput(float quickNext)
+    {
+
+        sections[currentSection].GetComponent<SignMovement>().RetractToNextUI(true);
+
+
+    }
+
+    private void ShortPlayTime(float playDuration)
+    {
+        Time.timeScale = 1;
+        StartCoroutine(SmoothTimeScaleTransition(0, .5f, playDuration, true, currentSection));
+
+    }
+
 
 
 
@@ -148,12 +379,14 @@ public class LevelManager : MonoBehaviour
         {
 
             StartCoroutine(SmoothTimeScaleTransition(1, .3f, .4f, show, section));
+
         }
 
     }
 
     public void NextUI(bool isNext)
     {
+
         if (isNext)
         {
             currentSection++;
@@ -169,8 +402,14 @@ public class LevelManager : MonoBehaviour
                     {
                         ShowNextUISectionFromPlaytime(playSectionDelayToUI[n], currentSection);
                     }
+
                     inputTracker.EnableTracking(false);
                     playerInputs.ActivateButtons(true);
+
+
+
+
+
 
                     return; // Exit the method immediately
                 }
@@ -178,7 +417,9 @@ public class LevelManager : MonoBehaviour
                 {
 
                     reachedCheckpoint = playSections[n] - 1;
-                    inputTracker.EnableTracking(true);
+                    EnableButtonTracking();
+                    playerInputs.FinishCooldowns();
+
                     StartCoroutine(ShowNextUISection(1.2f, currentSection));
 
                     return; // Exit the method immediately
@@ -198,7 +439,7 @@ public class LevelManager : MonoBehaviour
 
     private void SetRingsActiveAfterDelay()
     {
-        GetComponent<RingParentSpawner>().SpawnRingsAndPigs(3);
+        // GetComponent<RingParentSpawner>().SpawnRingsAndPigs(3);
     }
 
     public void ShowNextUISectionFromPlaytime(float delay, int section)
@@ -206,7 +447,31 @@ public class LevelManager : MonoBehaviour
         currentSection++;
         hasStartedPlayTimeDelayedPause = true;
 
+
+
         StartCoroutine(SmoothTimeScaleTransition(0, .5f, delay, true, currentSection));
+    }
+    public void ShowNextSectionFromEvent(bool boolVar)
+    {
+
+        switch (currentEventTracked)
+        {
+
+            case EventTypeTracked.Mana:
+                Debug.Log("Will track this: " + boolVar);
+                if (!boolVar || hasInvokedSpecialEvent) return;
+
+
+                hasInvokedSpecialEvent = true;
+                TriggerSectionActivateAfterEventType.SetActive(true);
+
+                // Implement logic for GlideUp
+
+                break;
+        }
+
+
+
     }
 
     private IEnumerator ShowNextUISection(float delay, int section)
@@ -222,6 +487,7 @@ public class LevelManager : MonoBehaviour
         float elapsed = 0f;
         if (show)
         {
+            Debug.Log("If play section is intended it should be: " + currentSection + " plus one");
 
             yield return new WaitForSecondsRealtime(delay);
             if (!player.isAlive)
@@ -236,7 +502,9 @@ public class LevelManager : MonoBehaviour
                 if (currentSection == playSections[n] - 1)
                 {
                     playerInputs.ActivateButtons(false);
-                    inputTracker.EnableTracking(true);
+
+                    EnableButtonTracking();
+                    playerInputs.FinishCooldowns();
                     reachedCheckpoint = playSections[n] - 1;
                 }
                 else if (currentSection != playSections[n])
@@ -274,7 +542,8 @@ public class LevelManager : MonoBehaviour
         if (finishedRings)
             return;
         currentRingsPassed++;
-        LvlID.outputEvent.RingParentPass(currentRingsPassed);
+        objectivesComplete++;
+        LvlID.outputEvent.RingParentPass?.Invoke(currentRingsPassed);
 
         if (currentRingsPassed == LvlID.ringsNeeded)
         {
@@ -289,6 +558,8 @@ public class LevelManager : MonoBehaviour
         if (finishedBuckets)
             return;
         currentBucketsPassed++;
+        objectivesComplete++;
+
         LvlID.outputEvent.setBucketPass?.Invoke(currentBucketsPassed);
 
         if (currentBucketsPassed >= LvlID.bucketsNeeded)
@@ -298,6 +569,23 @@ public class LevelManager : MonoBehaviour
         }
 
     }
+    private void OnKillPig(int type)
+    {
+        if (type == pigTypeTracked)
+        {
+            currentPigsKilled++;
+            LvlID.inputEvent.OnUpdateObjective?.Invoke("Pig", 1);
+            LvlID.outputEvent.killedPig?.Invoke(currentPigsKilled, pigsNeeded);
+        }
+
+        if (currentPigsKilled >= pigsNeeded)
+        {
+            finishedPigs = true;
+            CheckGoals();
+        }
+
+    }
+
 
     void HitBarn(int inARow)
     {
@@ -305,6 +593,9 @@ public class LevelManager : MonoBehaviour
             return;
 
         currentBarnsPassed++;
+        objectivesComplete++;
+        LvlID.inputEvent.OnUpdateObjective?.Invoke("Barn", 1);
+
 
 
 
@@ -319,6 +610,11 @@ public class LevelManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        LvlID.outputEvent.ShowSection -= HandleSection;
+        LvlID.outputEvent.SetObjectActiveWithDelay -= SetObjectActiveWithDelay;
+        LvlID.inputEvent.ActivateObjFromEvent -= TriggerObjectsFromEvent;
+        LvlID.inputEvent.SetCheckPoint -= SetNewCheckPoint;
+
         if (areRingsRequired)
         {
             LvlID.inputEvent.RingParentPass -= PassRing;
@@ -334,6 +630,27 @@ public class LevelManager : MonoBehaviour
 
         }
 
+        if (pigTypeTracked > -1)
+        {
+            player.globalEvents.OnKillPig -= OnKillPig;
+        }
+
+        switch (currentEventTracked)
+        {
+            case EventTypeTracked.None:
+                // Implement logic for GlideUp
+
+                break;
+            case EventTypeTracked.Mana:
+                player.globalEvents.SetCanDashSlash -= ShowNextSectionFromEvent;
+
+                // Implement logic for GlideUp
+
+                break;
+        }
+
+        LvlID.inputEvent.StartSpawnerInput -= TriggerSpawnerFromDelay;
+
     }
 
 
@@ -343,11 +660,11 @@ public class LevelManager : MonoBehaviour
         currentSection++;
         Debug.Log("Goals Checked: FinishedRings = " + finishedRings + ": FinishedBarns = " + finishedBarns);
 
-        if (currentSection + 1 <= sections.Count)
-        {
-            ShowSection(true, currentSection);
-        }
-        if (finishedRings && finishedBarns && finishedBuckets)
+        // if (currentSection + 1 <= sections.Count)
+        // {
+        //     ShowSection(true, currentSection);
+        // }
+        if (finishedRings && finishedBarns && finishedBuckets && finishedPigs)
         {
             CreateFinish();
         }
@@ -356,8 +673,9 @@ public class LevelManager : MonoBehaviour
 
     private void CreateFinish()
     {
-        StartCoroutine(SmoothTimeScaleTransition(0, .5f, .4f, false, 0));
+        StartCoroutine(SmoothTimeScaleTransition(0, .3f, .3f, false, 0));
         GameObject finishedLevelUI = Instantiate(finishedLevelUIPrefab);
+        PauseButtonActions.lockButtons = false;
 
         // Set the parent to the canvas and maintain world position
         finishedLevelUI.transform.SetParent(canvas.transform, false);

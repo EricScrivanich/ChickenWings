@@ -8,13 +8,14 @@ public class BucketCollisionState : PlayerBaseState
     private float yForce;
     private float time;
     private float waitDuration = .15f;
+    private Transform targetPos;
     public override void EnterState(PlayerStateManager player)
     {
 
         time = 0;
      
         player.rb.velocity = new Vector2(0, 0);
-        player.maxFallSpeed = player.ID.MaxFallSpeed;
+        player.maxFallSpeed = player.originalMaxFallSpeed;
         player.rb.simulated = false;
         player.ID.events.EnableButtons?.Invoke(false);
 
@@ -27,6 +28,12 @@ public class BucketCollisionState : PlayerBaseState
             player.isDropping = false;
         }
 
+
+    }
+
+    public void SetValues(Transform target)
+    {
+        targetPos = target;
 
     }
 
@@ -51,7 +58,7 @@ public class BucketCollisionState : PlayerBaseState
     {
         if (!player.bucketIsExploded)
         {
-            player.transform.position = player.bucket.position;
+            player.transform.position = targetPos.position;
         }
         else
         {
@@ -74,7 +81,7 @@ public class BucketCollisionState : PlayerBaseState
 
             player.rb.simulated = true;
 
-            player.AdjustForce(0, yForce);
+            player.AdjustForce(new Vector2(0, yForce));
 
             player.ID.events.EnableButtons?.Invoke(true);
             player.bucketIsExploded = false;

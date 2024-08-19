@@ -427,6 +427,7 @@ GameObject:
   - component: {fileID: 851630593813869172}
   - component: {fileID: 7007111118875938752}
   - component: {fileID: 5933627762509172735}
+  - component: {fileID: 8906076204811435144}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -497,6 +498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db215764949cf44d8bd66b9c5b42a2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableButtonsAtStart: 0
   airSpawnPos: {fileID: 4305018266838528776}
   THETHING: {fileID: 3615536453794694547}
   arrowPlayerPosition: {fileID: 556582436784589314, guid: fa20cd46945f74d07837495e6aa8ab83, type: 3}
@@ -507,54 +509,33 @@ MonoBehaviour:
   Cam: {fileID: 11400000, guid: 459b289478fca45e7bcf249442f62f34, type: 2}
   Dust: {fileID: 4295892072133194518}
   initialConstantForce: 0
-  currentForce: 0
-  isTutorial: 0
-  airResistance: {fileID: 7925714788662196650}
   playerParts: {fileID: 11400000, guid: 985b73365ea814b258007007881a2590, type: 2}
-  parchutePoint: {fileID: 0}
-  holdingRightFlip: 0
-  holdingLeftFlip: 0
-  Sword: {fileID: 4720979472372408846}
   ColliderType:
   - {fileID: 1246830404484255609}
   - {fileID: 3092764549856272514}
   - {fileID: 3685543581245196271}
   - {fileID: 3181357376606399063}
-  isDropping: 0
-  isSlow: 0
-  justFlipped: 0
   DeadEvent: {fileID: 11400000, guid: 640dc4253f94c442ea1eaf7ca15c382a, type: 2}
-  jumpForce: 11
-  flipLeftForceX: -6.9
-  flipLeftForceY: 7.8
-  flipRightForceX: 4
-  flipRightForceY: 9.2
-  isDashing: 0
-  canDashSlash: 0
-  stillDashing: 0
   ImageTransform: {fileID: 321073335050485285}
-  ParachuteObject: {fileID: 4367852547350734217}
-  staminaDeplete: 60
-  staminaFill: 30
   attackObject: {fileID: 3841359900090050893}
   bucketIsExploded: 0
   maxFallSpeed: -2
-  bucket: {fileID: 0}
+  holdingRightFlip: 0
+  holdingLeftFlip: 0
   justFlippedRight: 0
   justFlippedLeft: 0
-  hasFlippedRight: 0
-  hasFlippedLeft: 0
+  isDashing: 0
+  canDashSlash: 0
   canDrop: 0
-  jumpHeld: 0
-  isParachuting: 0
-  isTryingToParachute: 0
-  rotationLerpSpeed: 20
-  jumpRotSpeed: 200
-  maxRotUp: 15
+  stillDashing: 0
+  isDropping: 0
+  justFlipped: 0
   isFrozen: 0
   rotateSlash: 0
   justStartedClocker: 1
-  rb: {fileID: 0}
+  jumpHeld: 0
+  isParachuting: 0
+  isTryingToParachute: 0
 --- !u!114 &107412689077373414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,6 +673,19 @@ MonoBehaviour:
   minimumAddScoreDelay: 0.2
   delayDecreaseDuration: 80
   GlobalTimer: 0
+--- !u!114 &8906076204811435144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2938654145027134748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91f8fe13af1bd48819dd0707dbd2207a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arrowPrefab: {fileID: 556582436784589314, guid: fa20cd46945f74d07837495e6aa8ab83, type: 3}
 --- !u!1 &3520994022076439796
 GameObject:
   m_ObjectHideFlags: 0
@@ -2865,6 +2859,10 @@ PrefabInstance:
       value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 2282438384830233658, guid: 7697a49ea05824642b45a2fab61c81c4, type: 3}
+      propertyPath: emitterVelocityMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2282438384830233658, guid: 7697a49ea05824642b45a2fab61c81c4, type: 3}
       propertyPath: ShapeModule.arc.value
       value: 26.4
       objectReference: {fileID: 0}
@@ -2879,6 +2877,10 @@ PrefabInstance:
     - target: {fileID: 2282438384830233658, guid: 7697a49ea05824642b45a2fab61c81c4, type: 3}
       propertyPath: ShapeModule.radiusThickness
       value: 0.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 2282438384830233658, guid: 7697a49ea05824642b45a2fab61c81c4, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 2282438384830233658, guid: 7697a49ea05824642b45a2fab61c81c4, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar

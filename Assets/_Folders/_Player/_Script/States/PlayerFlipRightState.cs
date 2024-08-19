@@ -16,7 +16,7 @@ public class PlayerFlipRightState : PlayerBaseState
         new Vector3(0, 180, 20),
         new Vector3(0, 180, -15),
         new Vector3(0, 180, 5),
-        new Vector3(0, 180, -3),
+        new Vector3(0, 180, -3), 
        new Vector3(0,180,0)
 };
     private Vector2 JumpForce;
@@ -65,7 +65,7 @@ public class PlayerFlipRightState : PlayerBaseState
         }
         currentRotation = player.transform.rotation.eulerAngles.z;
         rotationSpeedVar = rotationSpeed;
-        player.AdjustForce(JumpForce.x, JumpForce.y);
+        player.AdjustForce(JumpForce);
         AudioManager.instance.PlayCluck();
     }
     public void ReEnterState()
@@ -101,7 +101,7 @@ public class PlayerFlipRightState : PlayerBaseState
             }
             else if (!player.holdingRightFlip && addForceDownTimer < addForceDownTime)
             {
-                addForceDownTimer += Time.fixedDeltaTime;
+                addForceDownTimer += Time.fixedDeltaTime; 
                 player.rb.AddForce(AddForceDownVector);
             }
         }
@@ -166,8 +166,8 @@ public class PlayerFlipRightState : PlayerBaseState
         JumpForce = jf;
         AddForceVector = afv;
         AddForceDownVector = afdv;
-        addForceTime = .8f;
-        addForceDownTime = .3f;
+        addForceTime = at;
+        addForceDownTime = adt;
         if (GameObject.Find("FlipRightIMG") != null)
             flipImage = GameObject.Find("FlipRightIMG").GetComponent<RectTransform>();
 

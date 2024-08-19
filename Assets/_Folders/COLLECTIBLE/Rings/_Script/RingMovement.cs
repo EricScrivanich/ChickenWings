@@ -35,7 +35,7 @@ public class RingMovement : MonoBehaviour, ICollectible
     // private Rigidbody2D rb;
 
     private SpriteRenderer sprite;
-    private Animator anim;
+
 
     // Declare the hash
     // private static readonly int BurstBoolHash = Animator.StringToHash("BurstBool");
@@ -46,7 +46,7 @@ public class RingMovement : MonoBehaviour, ICollectible
     {
         rb = GetComponent<Rigidbody2D>();
         _transform = GetComponent<Transform>();
-        anim = GetComponent<Animator>();
+      
         sprite = GetComponent<SpriteRenderer>();
         col = GetComponent<EdgeCollider2D>();
 

@@ -4,34 +4,26 @@ using UnityEngine;
 
 public class PlayerBounceState : PlayerBaseState
 {
-    private bool bounce = false; 
+    private bool bounce = false;
     private Vector2 position;
+
     private float bounceTime;
     private float bounceDuration = .5f;
     private float afterBounceDuration = .55f;
-    private Vector2 afterBounceForce = new Vector2(0, 15);
+    private Vector2 afterBounceForce = new Vector2(1, 9.5f);
     private bool hasBounced = false;
     private bool hasEnabledColliders;
     public override void EnterState(PlayerStateManager player)
     {
         player.rb.gravityScale = 0;
+        player.anim.SetBool(player.BounceBool, true);
 
         position = player.transform.position;
         player.rb.velocity = Vector2.zero;
         hasEnabledColliders = false;
         hasBounced = false;
         player.ChangeCollider(-1);
-        // player.rb.gravityScale = 0;
-        // player.rb.constraints |= RigidbodyConstraints2D.FreezePositionY;
         bounceTime = 0;
-
-
-
-        // player.anim.SetTrigger("BounceTrigger");
-
-
-
-
 
     }
     public override void ExitState(PlayerStateManager player)
@@ -39,15 +31,8 @@ public class PlayerBounceState : PlayerBaseState
     {
         player.ChangeCollider(0);
         player.rb.gravityScale = player.originalGravityScale;
-        player.maxFallSpeed = player.ID.MaxFallSpeed;
-
-
-
-
-
-
+        player.maxFallSpeed = player.originalMaxFallSpeed;
     }
-
     public override void FixedUpdateState(PlayerStateManager player)
     {
         if (!hasBounced && !player.ID.constantPlayerForceBool)
@@ -63,11 +48,6 @@ public class PlayerBounceState : PlayerBaseState
         }
 
     }
-
-    // public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
-    // {
-
-    // }
 
     public override void RotateState(PlayerStateManager player)
     {
@@ -96,7 +76,7 @@ public class PlayerBounceState : PlayerBaseState
             // player.rb.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
             // player.rb.gravityScale = player.originalGravityScale;
 
-            player.AdjustForce(1, 9.5f);
+            player.AdjustForce(afterBounceForce);
             player.ID.events.EnableButtons?.Invoke(true);
 
 
@@ -107,11 +87,5 @@ public class PlayerBounceState : PlayerBaseState
 
 
     }
-    private IEnumerator ApplyBounceAfterDelay()
-    {
-        yield return new WaitForSeconds(.08f);
-        bounce = true;
 
-
-    }
 }

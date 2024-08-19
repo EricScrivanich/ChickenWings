@@ -18,8 +18,9 @@ public class PauseMenuManager : MonoBehaviour
 
     [SerializeField] private RectTransform target;
 
-    [SerializeField] private Button[] buttons;
-    private Vector2 endPosition = new Vector2(0, -800);
+
+    private Vector2 endPosition = new Vector2(0, -880);
+    private Vector2 startPos = new Vector2(0, 80);
 
     private Sequence sequence;
 
@@ -39,8 +40,10 @@ public class PauseMenuManager : MonoBehaviour
     public void DropSignTween()
     {
         FadeDarkPanel(true);
+        StartCoroutine(UnlockButtons());
+        PauseButtonActions.lockButtons = true;
 
-        target.anchoredPosition = Vector2.zero;
+        target.anchoredPosition = startPos;
 
         // Create the main drop tween
         Tweener mainDropTween = target.DOAnchorPos(endPosition, .6f)
@@ -57,7 +60,6 @@ public class PauseMenuManager : MonoBehaviour
         sequence = DOTween.Sequence();
         sequence.Append(mainDropTween)
                 .Append(overshootTween)
-                 .OnComplete(EnableButtons)
                 .SetUpdate(true);
     }
 
@@ -88,9 +90,18 @@ public class PauseMenuManager : MonoBehaviour
 
     public void InstantPause()
     {
+        PauseButtonActions.lockButtons = false;
         target.anchoredPosition = endPosition;
-        EnableButtons();
+
         DarkPanel.DOFade(.4f, 0);
+
+    }
+
+    private IEnumerator UnlockButtons()
+    {
+        yield return new WaitForSecondsRealtime(.6f);
+        PauseButtonActions.lockButtons = false;
+
 
     }
 
@@ -98,7 +109,8 @@ public class PauseMenuManager : MonoBehaviour
 
     public void RetractOnly()
     {
-        DisableButtons();
+
+
         FadeDarkPanel(false);
         float currentPos = target.anchoredPosition.y - 70;
 
@@ -109,7 +121,7 @@ public class PauseMenuManager : MonoBehaviour
 
 
 
-        Tweener riseTween = target.DOAnchorPosY(0, .5f)
+        Tweener riseTween = target.DOAnchorPosY(startPos.y, .5f)
            .SetEase(Ease.InSine)
            .SetUpdate(true);
 
@@ -122,23 +134,7 @@ public class PauseMenuManager : MonoBehaviour
 
     }
 
-    private void DisableButtons()
-    {
-        foreach (var but in buttons)
-        {
-            but.enabled = false;
-        }
 
-    }
-
-    private void EnableButtons()
-    {
-        foreach (var but in buttons)
-        {
-            but.enabled = true;
-        }
-
-    }
 
     private void SetUnactive()
     {

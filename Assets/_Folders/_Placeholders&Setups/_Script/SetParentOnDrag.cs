@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [ExecuteInEditMode]
 public class SetParentOnDrag : MonoBehaviour
 {
@@ -36,3 +37,4 @@ public class SetParentOnDrag : MonoBehaviour
         }
     }
 }
+#endif

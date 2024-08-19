@@ -5,9 +5,15 @@ using HellTap.PoolKit;
 
 public class PigMaterialHandler : MonoBehaviour, IDamageable
 {
+    // 0 normal, 1 jetPack, 2 bigPig, 3 tenderizer
+
+    [SerializeField] private PlayerID player;
+    [SerializeField] private int pigType;
     [SerializeField] private bool isScalable;
     [SerializeField] private int pigTypeAudio;
     [SerializeField] private Vector3 explosionScale;
+
+
 
     private Pool explosionPool;
 
@@ -162,6 +168,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
             yield return null;
         }
+
+        player.globalEvents.OnKillPig?.Invoke(pigType);
 
         // Ensure the final values are set
         transform.localScale = new Vector3(endScale, endScale, endScale);

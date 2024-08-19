@@ -11,6 +11,7 @@ public class TouchGestureVideo : MonoBehaviour
 
     public bool isLeft;
     public bool isDash;
+    public bool isDashSlash;
     public bool isDrop;
     public bool isJump;
     public bool isEggDrop;
@@ -56,6 +57,7 @@ public class TouchGestureVideo : MonoBehaviour
         else if (isEggDrop) player.events.OnEggDrop += InitialTap;
         else if (isDash) player.events.OnDash += FlipListener;
         else if (isDrop) player.events.OnDrop += InitialTap;
+        else if (isDashSlash) player.events.OnDashSlash += InitialTap;
         else if (isLeft) player.events.OnFlipLeft += FlipListener;
         else player.events.OnFlipRight += FlipListener;
     }
@@ -72,6 +74,8 @@ public class TouchGestureVideo : MonoBehaviour
         else if (isDash) player.events.OnDash -= FlipListener;
         else if (isDrop) player.events.OnDrop -= InitialTap;
         else if (isLeft) player.events.OnFlipLeft -= FlipListener;
+        else if (isDashSlash) player.events.OnDashSlash -= InitialTap;
+
         else player.events.OnFlipRight -= FlipListener;
 
     }
@@ -131,7 +135,7 @@ public class TouchGestureVideo : MonoBehaviour
         gestureSequence.OnComplete(() =>
        {
            hasCompleted = true;
-           if (isHolding && !isDrop && !isEggDrop)
+           if (isHolding && !isDrop && !isEggDrop && !isDashSlash)
            {
                if (isJump)
                    AnimateHoldingJump();
@@ -192,6 +196,7 @@ public class TouchGestureVideo : MonoBehaviour
     private void FlipListener(bool holding)
     {
         isHolding = holding;
+        Debug.Log("Called");
         if (hasCompleted && !isHolding)
         {
             AnimateRelease();

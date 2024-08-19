@@ -2,7 +2,7 @@
 public class BigPigSO : EnemyData
 {
     public BigPigData[] data;
-    public override void InitializeEnemy(EnemyPoolManager manager)
+    public override void InitializeEnemy(SpawnStateManager manager)
     {
 
         for (int i = 0; i < data.Length; i++)

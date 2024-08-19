@@ -4,78 +4,50 @@ using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
 {
+    [SerializeField] private bool disableButtonsAtStart;
+    public bool DisableButtonsAtStart { get { return disableButtonsAtStart; } set { return; } }
     [SerializeField] private Transform airSpawnPos;
     [SerializeField] private GameObject THETHING;
 
+
+
     [SerializeField] private GameObject arrowPlayerPosition;
+    private bool addedArrow = false;
     private bool USINGTHING = false;
     [SerializeField] private float SlowFactor;
+
+    [Header("Scriptable Objects")]
     [ExposedScriptableObject]
     public PlayerID ID;
     [SerializeField] private GameObject jumpAirPrefab;
-    private Queue<GameObject> jumpAir;
+
 
     [ExposedScriptableObject]
     public PlayerMovementData MovementData;
     public CameraID Cam;
     public ParticleSystem Dust;
-
+    private Queue<GameObject> jumpAir;
     [SerializeField] private float initialConstantForce;
-    public float currentForce;
-    [SerializeField] private bool isTutorial;
-
-    [SerializeField] private Transform airResistance;
-
-
 
     private LineRenderer line;
     public PlayerParts playerParts;
-    public Transform parchutePoint;
-    // public bool holdingFlip;
-    public bool holdingRightFlip;
-    public bool holdingLeftFlip;
-
-
-    public GameObject Sword;
-    // private SpriteRenderer SwordSprite;
-
     [SerializeField] private List<Collider2D> ColliderType;
-    public bool isDropping;
-
-    [SerializeField] private bool isSlow;
-    public bool justFlipped;
     public GameEvent DeadEvent;
-    public float jumpForce;
     public bool isDamaged { get; private set; }
-    public float flipLeftForceX;
-    public float flipLeftForceY;
-    public float flipRightForceX;
-    public float flipRightForceY;
     private Queue<ParticleSystem> FeatherParticleQueue;
     private ParticleSystem SmokeParticle;
 
-    private float originalTimeScale;
-    public bool isDashing;
-    public bool canDashSlash;
-    private bool justDashedSlashed;
-    public bool stillDashing;
-
-
     public Transform ImageTransform;
-    private bool CanUseStamina = true;
-    public GameObject ParachuteObject;
-    private Coroutine fillStaminaCoroutine;
-    [SerializeField] private float staminaDeplete;
-    [SerializeField] private float staminaFill;
     public GameObject attackObject;
     public bool bucketIsExploded = false;
+    [HideInInspector]
     public float maxFallSpeed;
+    public float originalMaxFallSpeed { get; private set; }
     public float originalGravityScale { get; private set; }
-
 
     #region States
     PlayerBaseState currentState;
-    PlayerBaseState previousState;
+   
     public PlayerStartingState StartingState = new PlayerStartingState();
     public PlayerFlipRightState FlipRightState = new PlayerFlipRightState();
     public PlayerFlipLeftState FlipLeftState = new PlayerFlipLeftState();
@@ -86,19 +58,19 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerSlashState SlashState = new PlayerSlashState();
 
     public PlayerDashSlashState DashSlash = new PlayerDashSlashState();
-
     public PlayerIdleState IdleState = new PlayerIdleState();
     public PlayerFrozenState FrozenState = new PlayerFrozenState();
     public PlayerHoldJumpState HoldJumpState = new PlayerHoldJumpState();
     public BucketCollisionState BucketState = new BucketCollisionState();
     public PlayerParachuteState ParachuteState = new PlayerParachuteState();
+    public PlayerNextSectionState NextSectionState = new PlayerNextSectionState();
 
-    #endregion
+    #endregion 
 
     #region AnimationHashes
     public readonly int DashTrigger = Animator.StringToHash("DashTrigger");
     public readonly int DropTrigger = Animator.StringToHash("DropTrigger");
-    public readonly int BounceTrigger = Animator.StringToHash("BounceTrigger");
+    public readonly int BounceBool = Animator.StringToHash("BounceBool");
     public readonly int IdleTrigger = Animator.StringToHash("IdleTrigger");
     public readonly int FlipTrigger = Animator.StringToHash("FlipTrigger");
     public readonly int JumpTrigger = Animator.StringToHash("JumpTrigger");
@@ -111,15 +83,12 @@ public class PlayerStateManager : MonoBehaviour
     public readonly int GetGunBool = Animator.StringToHash("GetGunBool");
     public readonly int ReloadGunTrigger = Animator.StringToHash("ReloadGunTrigger");
     public readonly int FinishDashTrigger = Animator.StringToHash("FinishDashTrigger");
+    public readonly int FinishDropTrigger = Animator.StringToHash("FinishDropAir");
 
 
     #endregion
-    public Transform bucket;
+
     private bool isAttacking = false;
-
-    public bool justFlippedRight;
-    public bool justFlippedLeft;
-
     private readonly int jumpAirAmount = 7;
     private int currentJumpAirIndex;
     public int CurrentJumpAirIndex
@@ -143,48 +112,53 @@ public class PlayerStateManager : MonoBehaviour
 
 
     }
-
-
-    public bool hasFlippedRight = false;
-    public bool hasFlippedLeft = false;
-
-
-
-
-    private bool canDash;
+    [HideInInspector]
+    public bool holdingRightFlip;
+    [HideInInspector]
+    public bool holdingLeftFlip;
+    [HideInInspector]
+    public bool justFlippedRight;
+    [HideInInspector]
+    public bool justFlippedLeft;
+    [HideInInspector]
+    public bool isDashing;
+    [HideInInspector]
+    public bool canDashSlash;
+    [HideInInspector]
     public bool canDrop;
-    private bool canSlash;
-    private float dashCooldownTime = 1.2f;
-    private float dropCooldownTime = 2f;
-    public bool jumpHeld;
-    public bool isParachuting = false;
-    public bool isTryingToParachute = false;
-
-
-    public int rotationLerpSpeed = 20;
-    public int jumpRotSpeed = 200;
-    private int frozenRotSpeed = 350;
-    public int maxRotUp = 15;
-    private int maxRotDown = -30;
-    private float rotZ;
-    private float frozenRotZ;
-    private float totalRotation = 0.0f; // Total rotation done so far
-    private float targetRotation = 0.0f;
-    private float currentRotation = 0;
-    private int remainingLeftFlips = 0;
-    private int remainingRightFlips = 0;
-    public float addEggVelocity { get; private set; } = 2.5f;
+    [HideInInspector]
+    public bool stillDashing;
+    [HideInInspector]
+    public bool isDropping;
+    [HideInInspector]
+    public bool justFlipped;
+    [HideInInspector]
     public bool isFrozen;
+    [HideInInspector]
     public bool rotateSlash;
-
+    [HideInInspector]
     public bool justStartedClocker;
+    [HideInInspector]
+    public bool jumpHeld;
+    [HideInInspector]
+    public bool isParachuting = false;
+    [HideInInspector]
+    public bool isTryingToParachute = false;
+    private bool justDashedSlashed;
+    private bool canDash;
+    private float dropCooldownTime = 2f;
+    private readonly int rotationLerpSpeed = 20;
+    private readonly int jumpRotSpeed = 200;
+    private int frozenRotSpeed = 350;
+    private readonly int maxRotUp = 15;
+    private readonly int maxRotDown = -30;
+    private float rotZ;
+    private PlayerAddForceBoundaries playerBoundaries;
 
-    private Vector2 originalPosition;
+    public bool usingConstantForce { get; private set; }
 
 
-
-
-    public Rigidbody2D rb;
+    public Rigidbody2D rb { get; private set; }
     public Animator anim { get; private set; }
     // 
 
@@ -196,13 +170,15 @@ public class PlayerStateManager : MonoBehaviour
         if (initialConstantForce == 0)
         {
             ID.constantPlayerForceBool = false;
+            usingConstantForce = false;
         }
         else
         {
             ID.constantPlayerForceBool = true;
+            usingConstantForce = true;
 
         }
-        ID.isTutorial = isTutorial;
+
         stillDashing = false;
 
         ID.ResetValues();
@@ -215,9 +191,10 @@ public class PlayerStateManager : MonoBehaviour
         canDash = true;
         canDrop = true;
         isFrozen = false;
-        ID.StaminaUsed = 0;
+
         rb = GetComponent<Rigidbody2D>();
         justDashedSlashed = false;
+        originalMaxFallSpeed = MovementData.MaxFallSpeed;
 
         FlipRightState.CachVariables(MovementData.FlipRightInitialForceVector, MovementData.FlipRightAddForce,
         MovementData.FlipRightDownForce, MovementData.flipRightAddForceTime, MovementData.flipRightDownForceTime);
@@ -225,11 +202,21 @@ public class PlayerStateManager : MonoBehaviour
         FlipLeftState.CachVariables(MovementData.FlipLeftInitialForceVector, MovementData.FlipLeftAddForce,
         MovementData.FlipLeftDownForce, MovementData.flipLeftAddForceTime, MovementData.flipLeftDownForceTime);
 
+        JumpState.CacheVaraibles(MovementData.JumpForce, MovementData.addJumpForce);
+
+
+        // NextSectionState.CacheVaraibles(MovementData.maxAmpRadRatio, MovementData.outerAmp, MovementData.innerAmp, MovementData.innerCutoff, MovementData.drag);
+
+
+
+
 
     }
     // Start is called before the first frame update
     void Start()
     {
+        playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
+        playerBoundaries.enabled = false;
         jumpAir = new Queue<GameObject>();
 
         for (int i = 0; i < jumpAirAmount; i++)
@@ -246,38 +233,27 @@ public class PlayerStateManager : MonoBehaviour
 
         currentJumpAirIndex = 0;
 
-        originalPosition = transform.position;
 
-        originalTimeScale = Time.timeScale;
+
+
 
 
         ChangeCollider(0);
 
         line = GetComponent<LineRenderer>();
         // Feathers.SetActive(false);
-        if (!ID.testingNewGravity)
-        {
-            ID.MaxFallSpeed = -9.7f;
-            jumpForce = 12f;
-            flipLeftForceX = -5f;
-            flipLeftForceY = 10f;
-            flipRightForceX = 2.5f;
-            flipRightForceY = 12f;
-
-            originalGravityScale = 2.3f;
-        }
-        else
-        {
-            ID.MaxFallSpeed = -9.7f;
-            jumpForce = ID.playerJumpForce;
 
 
-            originalGravityScale = rb.gravityScale;
 
-        }
+
+
+        originalGravityScale = rb.gravityScale;
+
+
+
         // SwordSprite = Sword.GetComponent<SpriteRenderer>();
 
-        maxFallSpeed = ID.MaxFallSpeed;
+        maxFallSpeed = originalMaxFallSpeed;
 
         FeatherParticleQueue = new Queue<ParticleSystem>();
         for (int i = 0; i < 2; i++)
@@ -288,24 +264,31 @@ public class PlayerStateManager : MonoBehaviour
         SmokeParticle = Instantiate(playerParts.SmokeParticle);
         line = GetComponent<LineRenderer>();
 
-
-        if (!ID.constantPlayerForceBool)
-        {
-            PlayerAddForceBoundaries script = gameObject.AddComponent<PlayerAddForceBoundaries>();
-            script.CreateArrow(arrowPlayerPosition);
-            // script.SetStateManager(this);
-        }
-
         attackObject.SetActive(false);
         // originalGravityScale = rb.gravityScale;
 
         anim = GetComponent<Animator>();
+        ID.events.EnableButtons(false);
 
         currentState = StartingState;
 
         currentState.EnterState(this);
 
 
+    }
+
+    public void SetAddForceAtBoundaries(bool isActive)
+    {
+        if (isActive)
+        {
+            playerBoundaries.enabled = true;
+            if (!addedArrow)
+            {
+                playerBoundaries.CreateArrow(arrowPlayerPosition);
+                addedArrow = true;
+            }
+
+        }
     }
     // void OnCollisionEnter2D(Collision2D collision)
     // {
@@ -384,11 +367,16 @@ public class PlayerStateManager : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x + difference, rb.velocity.y);
     }
 
-    public void AdjustForce(float xForce, float yForce)
+    public void AdjustForce(Vector2 force)
     {
-        // currentForce = xForce + ID.constantPlayerForce;
 
-        rb.velocity = new Vector2(xForce + ID.constantPlayerForce, yForce);
+        // currentForce = xForce + ID.constantPlayerForce;
+        if (!usingConstantForce)
+            rb.velocity = force;
+
+
+        else
+            rb.velocity = new Vector2(force.x + ID.constantPlayerForce, force.y);
 
 
     }
@@ -454,8 +442,12 @@ public class PlayerStateManager : MonoBehaviour
 
     public void SwitchState(PlayerBaseState newState)
     {
+
+        
+
         currentState.ExitState(this);
         currentState = newState;
+
 
         if (currentState == FlipLeftState || currentState == FlipRightState)
         {
@@ -577,12 +569,7 @@ public class PlayerStateManager : MonoBehaviour
         {
             holdingLeftFlip = false;
         }
-
-
-
     }
-
-
 
     public void SetFlipDirection(bool isRight)
     {
@@ -611,44 +598,22 @@ public class PlayerStateManager : MonoBehaviour
         // }
         if (holding)
         {
-            // ResetHoldJump();
-       
-            // airResistance.localPosition = airDashPos;
-            // airResistance.localEulerAngles = Vector3.zero;
-            anim.SetTrigger(DashTrigger);
-
-
 
             SwitchState(DashState);
-
-
+            anim.SetTrigger(DashTrigger);
         }
-        else 
+        else
         {
             isDashing = false;
         }
-        // if (!holding && !justDashedSlashed)
-        // {
-        //     ID.globalEvents.CanDash?.Invoke(false);
-        //     isDashing = false;
-        // }
-        // else if (!holding && justDashedSlashed)
-        // {
-        //     justDashedSlashed = false;
-        // }
+
 
     }
 
-    // private void HandleDashSlash(bool canSlash)
-    // {
-
-    //     canDashSlash = canSlash;
-
-    // }
 
     private void HandleDashSlash()
     {
-        Debug.Log("Slash Called");
+     
         if (stillDashing)
             ID.events.EnableButtons(false);
         DashState.SwitchSlash();
@@ -664,7 +629,7 @@ public class PlayerStateManager : MonoBehaviour
         // ResetHoldJump();
         isDropping = true;
         SwitchState(DropState);
-        ID.events.EnableButtons?.Invoke(false);
+        // ID.events.EnableButtons?.Invoke(false);
 
         // airResistance.localPosition = airDropPos;
         // airResistance.localEulerAngles = airDropRot;
@@ -676,6 +641,24 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
+    private void HandleNextSectionTrigger(float duration, float centerDuration, bool isClockwise, Transform trans, Vector2 centPos, bool doTween)
+    {
+        NextSectionState.SetValues(duration, centerDuration, isClockwise, trans, centPos, doTween);
+        // currentState = NextSectionState;
+
+
+        // NextSectionState.EnterState(this);
+
+        SwitchState(NextSectionState);
+
+
+    }
+
+    private void HandleBubble(bool isInside)
+    {
+
+
+    }
 
 
 
@@ -684,20 +667,12 @@ public class PlayerStateManager : MonoBehaviour
 
         if (!isDamaged)
         {
-            if (isTutorial)
-            {
-                // StartCoroutine(LerpToOriginalPosition(.8f));
-                DamageEffects();
 
-
-
-                return;
-            }
             isDamaged = true;
 
             if (!ID.infiniteLives)
             {
-                Debug.Log("LoseLife" + ID.infiniteLives);
+
 
                 ID.Lives--;
                 if (ID.Lives <= 0)
@@ -710,16 +685,12 @@ public class PlayerStateManager : MonoBehaviour
 
             else
             {
-                Debug.Log("NotLoseLife" + ID.infiniteLives);
+
                 ID.globalEvents.OnInfiniteLives?.Invoke();
             }
             DamageEffects();
 
 
-        }
-        else
-        {
-            return;
         }
 
     }
@@ -749,37 +720,45 @@ public class PlayerStateManager : MonoBehaviour
         FeatherParticleQueue.Enqueue(Feather);
 
     }
+    public void EnterIdleStateWithVel(Vector2 vel)
+    {
+        SwitchState(IdleState);
+        AdjustForce(vel);
+    }
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Plane"))
         {
-            SwitchState(IdleState);
+
             HandleDamaged();
             isDropping = false;
 
             foreach (ContactPoint2D pos in collision.contacts)
             {
-                Debug.Log(pos.normal);
+                
 
                 if (pos.normal.y > .92f)
                 {
 
-                    AdjustForce(1, 9);
+
+                    EnterIdleStateWithVel(new Vector2(1, 9));
 
                 }
                 else if (pos.normal.x < -.7f)
                 {
 
                     // rb.velocity = new Vector2(-6.5f, 2);
-                    AdjustForce(-6.3f, 2);
+
+                    EnterIdleStateWithVel(new Vector2(-6.3f, 2));
 
 
                 }
                 else if (pos.normal.x > .6f)
                 {
+                    EnterIdleStateWithVel(new Vector2(3, 2));
 
-                    AdjustForce(3, 2);
+
                 }
             }
         }
@@ -793,7 +772,7 @@ public class PlayerStateManager : MonoBehaviour
         if (!isDropping)
         {
             HandleDamaged();
-            AdjustForce(0, 12.5f);
+            AdjustForce(new Vector2(0, 12.5f));
             SwitchState(IdleState);
             // if (isTutorial)
             // {
@@ -805,10 +784,9 @@ public class PlayerStateManager : MonoBehaviour
         else
         {
 
-
-            // CameraShake.instance.ShakeCamera(.2f, .08f);
-            anim.SetTrigger(BounceTrigger);
-
+            ID.events.EnableButtons(false);
+            DropState.SwitchToBounce();
+            // CameraShake.instance.ShakeCamera(.2f, .08f)
             SwitchState(BounceState);
         }
 
@@ -896,11 +874,11 @@ public class PlayerStateManager : MonoBehaviour
         }
         if (transform.position.x < 0)
         {
-            AdjustForce(5, targetYVelocity);
+            AdjustForce(new Vector2(5, targetYVelocity));
         }
         else
         {
-            AdjustForce(-5, targetYVelocity);
+            AdjustForce(new Vector2(-5, targetYVelocity));
         }
     }
     public IEnumerator SetUndamagableCourintine(bool setBoolInitial, float duration)
@@ -937,12 +915,14 @@ public class PlayerStateManager : MonoBehaviour
 
     private void BucketCompletion(Transform position)
     {
-        bucket = position;
+
+
+        BucketState.SetValues(position);
         // ResetHoldJump();
         // ResetParachute();
         if (isDropping)
         {
-            anim.SetTrigger(BounceTrigger);
+            anim.SetBool(BounceBool, true);
         }
         SwitchState(BucketState);
 
@@ -980,6 +960,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnAdjustConstantSpeed += ChangeConstantForce;
         ID.globalEvents.OnOffScreen += OffScreen;
         ID.events.HitBoss += HitBoss;
+        ID.globalEvents.OnEnterNextSectionTrigger += HandleNextSectionTrigger;
 
         // ID.events.OnAttack += HandleSlash;
     }
@@ -1002,6 +983,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.HitGround -= HandleGroundCollision;
         // ID.globalEvents.SetCanDashSlash -= HandleDashSlash;
         ID.events.OnDashSlash -= HandleDashSlash;
+        ID.globalEvents.OnEnterNextSectionTrigger -= HandleNextSectionTrigger;
+
 
 
         ID.globalEvents.OnAdjustConstantSpeed -= ChangeConstantForce;

@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b8c6eee88e2e4ab0ad5f52543fdad70, type: 3}
+  m_Name: INT_Lvl6-1
+  m_EditorClassIdentifier: 
+  overrideStateTransiton: 0
+  ringTypeWeights:
+  - 0
+  - 0
+  - 1
+  randomRingSetupAmountToSpawnWeights:
+  - 0
+  - 0
+  - 0.4
+  - 0.5
+  - 0.1
+  randomRingTypeWeights:
+  - 1
+  randomEnemySetupDifficultyWeights:
+  - 0.6
+  - 0.4
+  randomEnemySetupAmountToSpawnWeights:
+  - 0
+  - 0.2
+  - 0.5
+  - 0.3
+  xTargetToStartSpawn: 1.5
+  spawnRandomRangeAfterTarget: {x: 0, y: 1}
+  waveSizeWeights: []
+  xSpawnRange: {x: 13, y: 22}
+  allowedOverlap: {x: 0, y: 0}
+  activeBoundingBoxTimeAdjustment: 0
+  normalPig_W: 0.5
+  jetpackPig_W: 0.5
+  bigPig_W: 0.3
+  tenderizerPig_W: 0
+  NormalPig_BB: {fileID: 0}
+  JetpackPig_BB: {fileID: 0}
+  BigPig_BB: {fileID: 0}
+  TenderizerPig_BB: {fileID: 0}

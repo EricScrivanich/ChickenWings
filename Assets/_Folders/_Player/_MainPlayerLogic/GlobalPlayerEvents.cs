@@ -1,5 +1,6 @@
 
 using System;
+using UnityEngine;
 
 public struct GlobalPlayerEvents
 {
@@ -9,7 +10,7 @@ public struct GlobalPlayerEvents
     public Action OnUpdateAmmo;
 
     public Action OnGetMana;
-    public Action<int> OnAddAmmo;  
+    public Action<int> OnAddAmmo;
     public Action<int> OnUpdateScore;
     public Action<int> OnAddScore;
     public Action<float> EggVelocity;
@@ -17,9 +18,20 @@ public struct GlobalPlayerEvents
 
     public Action<int> OnBucketExplosion;
     public Action<bool> OnUseStamina;
-    
+
+    public Action<int> OnKillPig;
+// float durationVar, float centerDurationVar, bool clockwise, Transform trans, Vector2 targetPos
+    public Action<float, float,bool, Transform,Vector2,bool> OnEnterNextSectionTrigger;
+
+    public Action ExitSectionTrigger;
+
+    public Action<bool,string[],float,float,bool,bool> OnSetInputs;
+    public Action<bool> OnEnterBubble;
+   
+
+
     public Action OnZeroStamina;
-    public Action AddMana; 
+    public Action AddMana;
     public Action<float> AddPowerUse;
 
     public Action UsePower;

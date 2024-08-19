@@ -158,7 +158,7 @@ public class BarnAndEggSpawner : MonoBehaviour
         var script = barnScript[currentBarnIndex];
 
         script.transform.position = barnSpawnPos;
-        Debug.Log("Barn Index Should Be: " + side);
+       
         script.Initilaize(side);
         currentBarnIndex++;
 

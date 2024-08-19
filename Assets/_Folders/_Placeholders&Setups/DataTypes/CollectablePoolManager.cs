@@ -23,6 +23,8 @@ public class CollectablePoolManager : MonoBehaviour
     [SerializeField] private int eggCollectableCount;
 
     public int currentRingType;
+    [SerializeField] private Vector2Int randomEnemyCountRange;
+    [SerializeField] private Vector2Int randomRingCountRange;
     private readonly int triggerObjectCount = 3;
 
     private int randomCountBeforeRings;
@@ -40,8 +42,8 @@ public class CollectablePoolManager : MonoBehaviour
             trigger = testTrigger;
         }
 
-        randomCountBeforeRings = Random.Range(3, 6);
-        numberOfRingSpawns = Random.Range(3, 5);
+        randomCountBeforeRings = Random.Range(randomEnemyCountRange.x, randomEnemyCountRange.y);
+        numberOfRingSpawns = Random.Range(randomRingCountRange.x, randomRingCountRange.y);
         Debug.Log("Number of Ring spawns is: " + numberOfRingSpawns);
         spawnRingsBool = false;
 
@@ -108,167 +110,167 @@ public class CollectablePoolManager : MonoBehaviour
 
 
 
-    public IEnumerator NextTriggerCourintine(float delay)
-    {
-        yield return new WaitForSeconds(delay);
+    // public IEnumerator NextTriggerCourintine(float delay)
+    // {
+    //     yield return new WaitForSeconds(delay);
 
-        if (triggerEvents)
-        {
-            LvlID.outputEvent.triggerFinshed?.Invoke();
-        }
-        else
-            TriggerNextSpawn();
-
-
-    }
-    public IEnumerator NextRandomTriggerCourintine(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        if (triggerEvents)
-        {
-            LvlID.outputEvent.triggerFinshed?.Invoke();
-        }
-        else
-            TriggerNextRandomSpawn();
+    //     if (triggerEvents)
+    //     {
+    //         LvlID.outputEvent.triggerFinshed?.Invoke();
+    //     }
+    //     else
+    //         TriggerNextSpawn();
 
 
-    }
-
-    public void TriggerNextRandomSpawn()
-    {
-        if (currentAmountOfSpawns >= randomCountBeforeRings && !spawnRingsBool)
-        {
-            spawnRingsBool = true;
-            currentAmountOfSpawns = 0;
-        }
-
-        if (spawnRingsBool)
-        {
-            if (currentAmountOfSpawns >= numberOfRingSpawns)
-            {
-                randomRing.SpawnRandomSetWithRings(this, enemyManager, true);
-                spawnRingsBool = false;
-                currentAmountOfSpawns = 0;
-                Debug.Log("Final Ring Spawn");
-
-            }
-            else
-            {
-                randomRing.SpawnRandomSetWithRings(this, enemyManager, false);
-                Debug.Log("Normal Ring Spawn, current number is: " + currentAmountOfSpawns + " - number of ring spawns: " + numberOfRingSpawns);
-            }
-
-        }
-
-        else
-        {
-            float randomChanceOfSpawn = Random.Range(0f, 1f);
-
-            float xChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].x;
-            float yChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].y + xChance;
-            float zChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].z + yChance;
-            float wChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].w + zChance;
-            SetupParent pickedEnemySetup;
+    // }
+    // public IEnumerator NextRandomTriggerCourintine(float delay)
+    // {
+    //     yield return new WaitForSeconds(delay);
+    //     if (triggerEvents)
+    //     {
+    //         LvlID.outputEvent.triggerFinshed?.Invoke();
+    //     }
+    //     else
+    //         TriggerNextRandomSpawn();
 
 
-            Debug.Log("Random chance is: " + randomChanceOfSpawn + " :wChance: " + wChance + " :xChance: " + xChance + " :yChance: " + yChance + " :zChance: " + zChance);
-            if (randomChanceOfSpawn < xChance)
-            {
-                pickedEnemySetup = enemyOnlySetsByIntensity[0];
-            }
-            else if (randomChanceOfSpawn < yChance)
-            {
-                pickedEnemySetup = enemyOnlySetsByIntensity[1];
-            }
-            else if (randomChanceOfSpawn < zChance)
-            {
-                pickedEnemySetup = enemyOnlySetsByIntensity[2];
-            }
-            else if (randomChanceOfSpawn < wChance)
-            {
-                pickedEnemySetup = enemyOnlySetsByIntensity[3];
-            }
-            else
-            {
-                pickedEnemySetup = enemyOnlySetsByIntensity[0];
-            }
-            pickedEnemySetup.SpawnRandomEnemies(this, enemyManager);
-        }
+    // }
 
-        currentAmountOfSpawns++;
+    // public void TriggerNextRandomSpawn()
+    // {
+    //     if (currentAmountOfSpawns >= randomCountBeforeRings && !spawnRingsBool)
+    //     {
+    //         spawnRingsBool = true;
+    //         currentAmountOfSpawns = 0;
+    //     }
 
-    }
+    //     if (spawnRingsBool)
+    //     {
+    //         if (currentAmountOfSpawns >= numberOfRingSpawns)
+    //         {
+    //             randomRing.SpawnRandomSetWithRings(this, enemyManager, true);
+    //             spawnRingsBool = false;
+    //             currentAmountOfSpawns = 0;
+    //             Debug.Log("Final Ring Spawn");
 
-    private IEnumerator WaitForRingsToReset(SetupParent setupVar, int triggerVar, bool finalRing)
-    {
-        while (!ringPool.RingType[currentRingType].ReadyToSpawn)
-        {
-            yield return null;
-        }
+    //         }
+    //         else
+    //         {
+    //             randomRing.SpawnRandomSetWithRings(this, enemyManager, false);
+    //             Debug.Log("Normal Ring Spawn, current number is: " + currentAmountOfSpawns + " - number of ring spawns: " + numberOfRingSpawns);
+    //         }
 
-        if (triggerVar > -1)
-        {
-            setupVar.SpawnTrigger(this, enemyManager, triggerVar, finalRing);
-        }
-        else
-        {
-            setupVar.SpawnRandomSetWithRings(this, enemyManager, finalRing);
-        }
-    }
+    //     }
 
-    
-    public void TriggerNextSpawnFromEvent(SetupParent setupVar, int triggerVar, bool finalRing)
-    {
-        if (!ringPool.RingType[currentRingType].ReadyToSpawn)
-        {
-            StartCoroutine(WaitForRingsToReset(setupVar, triggerVar, finalRing));
-        }
-        else
-        {
-            setupVar.SpawnTrigger(this, enemyManager, triggerVar, finalRing);
-        }
+    //     else
+    //     {
+    //         float randomChanceOfSpawn = Random.Range(0f, 1f);
+
+    //         float xChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].x;
+    //         float yChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].y + xChance;
+    //         float zChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].z + yChance;
+    //         float wChance = spawnEnemySetRatioByIntensity[randomEnemyIntensity].w + zChance;
+    //         SetupParent pickedEnemySetup;
 
 
-    }
+    //         Debug.Log("Random chance is: " + randomChanceOfSpawn + " :wChance: " + wChance + " :xChance: " + xChance + " :yChance: " + yChance + " :zChance: " + zChance);
+    //         if (randomChanceOfSpawn < xChance)
+    //         {
+    //             pickedEnemySetup = enemyOnlySetsByIntensity[0];
+    //         }
+    //         else if (randomChanceOfSpawn < yChance)
+    //         {
+    //             pickedEnemySetup = enemyOnlySetsByIntensity[1];
+    //         }
+    //         else if (randomChanceOfSpawn < zChance)
+    //         {
+    //             pickedEnemySetup = enemyOnlySetsByIntensity[2];
+    //         }
+    //         else if (randomChanceOfSpawn < wChance)
+    //         {
+    //             pickedEnemySetup = enemyOnlySetsByIntensity[3];
+    //         }
+    //         else
+    //         {
+    //             pickedEnemySetup = enemyOnlySetsByIntensity[0];
+    //         }
+    //         pickedEnemySetup.SpawnRandomEnemies(this, enemyManager);
+    //     }
 
-    public void TriggerRandomSpawnWithRings(SetupParent setupVar, bool finalRing)
-    {
-        if (!ringPool.RingType[currentRingType].ReadyToSpawn)
-        {
-            StartCoroutine(WaitForRingsToReset(setupVar, -1, finalRing));
-        }
-        else
-        {
-            setupVar.SpawnRandomSetWithRings(this, enemyManager, finalRing);
-        }
+    //     currentAmountOfSpawns++;
+
+    // }
+
+    // private IEnumerator WaitForRingsToReset(SetupParent setupVar, int triggerVar, bool finalRing)
+    // {
+    //     while (!ringPool.RingType[currentRingType].ReadyToSpawn)
+    //     {
+    //         yield return null;
+    //     }
+
+    //     if (triggerVar > -1)
+    //     {
+    //         setupVar.SpawnTrigger(this, enemyManager, triggerVar, finalRing);
+    //     }
+    //     else
+    //     {
+    //         setupVar.SpawnRandomSetWithRings(this, enemyManager, finalRing);
+    //     }
+    // }
 
 
-    }
+    // public void TriggerNextSpawnFromEvent(SetupParent setupVar, int triggerVar, bool finalRing)
+    // {
+    //     if (!ringPool.RingType[currentRingType].ReadyToSpawn)
+    //     {
+    //         StartCoroutine(WaitForRingsToReset(setupVar, triggerVar, finalRing));
+    //     }
+    //     else
+    //     {
+    //         setupVar.SpawnTrigger(this, enemyManager, triggerVar, finalRing);
+    //     }
 
 
-    public void TriggerRandomEnemySpawn(SetupParent setupVar)
-    {
-        setupVar.SpawnRandomEnemies(this, enemyManager);
-    }
-    private void BoostLevelIntensity(int newIntensity)
-    {
-        randomEnemyIntensity = newIntensity;
+    // }
 
-    }
-
-    private void ChangeRingSetup()
-    {
-
-    }
-    public void TriggerNextSpawn()
-    {
-        Debug.Log("Trigger Next Spawn");
-
-        setup.SpawnTrigger(this, enemyManager, trigger, false);
+    // public void TriggerRandomSpawnWithRings(SetupParent setupVar, bool finalRing)
+    // {
+    //     if (!ringPool.RingType[currentRingType].ReadyToSpawn)
+    //     {
+    //         StartCoroutine(WaitForRingsToReset(setupVar, -1, finalRing));
+    //     }
+    //     else
+    //     {
+    //         setupVar.SpawnRandomSetWithRings(this, enemyManager, finalRing);
+    //     }
 
 
-        trigger++;
-    }
+    // }
+
+
+    // public void TriggerRandomEnemySpawn(SetupParent setupVar)
+    // {
+    //     setupVar.SpawnRandomEnemies(this, enemyManager);
+    // }
+    // private void BoostLevelIntensity(int newIntensity)
+    // {
+    //     randomEnemyIntensity = newIntensity;
+
+    // }
+
+    // private void ChangeRingSetup()
+    // {
+
+    // }
+    // public void TriggerNextSpawn()
+    // {
+    //     Debug.Log("Trigger Next Spawn");
+
+    //     setup.SpawnTrigger(this, enemyManager, trigger, false);
+
+
+    //     trigger++;
+    // }
 
 
     // Update is called once per frame
