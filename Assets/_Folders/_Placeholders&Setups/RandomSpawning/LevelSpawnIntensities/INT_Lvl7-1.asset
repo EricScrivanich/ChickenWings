@@ -20,16 +20,17 @@ MonoBehaviour:
   randomRingSetupAmountToSpawnWeights: []
   randomRingTypeWeights: []
   randomEnemySetupDifficultyWeights:
-  - 0.6
+  - 0
+  - 1
   randomEnemySetupAmountToSpawnWeights:
   - 0
   - 1
-  xTargetToStartSpawn: 1.2
-  spawnRandomRangeAfterTarget: {x: 0.5, y: 1.5}
+  xTargetToStartSpawn: 1.5
+  spawnRandomRangeAfterTarget: {x: 0.5, y: 1}
   amountOfWaveWeights:
   - 0
   - 0
-  - 0
+  - 0.3
   - 0.3
   - 0.5
   - 0.2
@@ -40,7 +41,13 @@ MonoBehaviour:
   - 0.3
   - 0.4
   - 0.1
-  xSpawnRange: {x: 13, y: 22}
+  xSpawnRange: {x: 13, y: 20}
+  xSpawnRangeMissilePig: {x: 12, y: 15}
+  shootingRangeAdjustment: 0
+  minMissilePigDelay: 15
+  missileBasePigChance: 0.8
+  missilePigFlipPChance: 0.3
+  missilePigFlipWChance: 0
   allowedOverlap: {x: -0.2, y: -0.2}
   activeBoundingBoxTimeAdjustment: 0
   normalPig_W: 0.5

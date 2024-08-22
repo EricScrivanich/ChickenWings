@@ -7,7 +7,7 @@ using UnityEngine;
 [CustomEditor(typeof(SetupParent))]
 public class EnemySetupRecorderEditor : Editor
 {
-    public string[] options = new string[] { "Ring", "pNormal", "pBig", "pJetPack", "pTenderizer" };
+    public string[] options = new string[] { "Ring", "pNormal", "pBig", "pJetPack", "pTenderizer", "pPilot" };
     public int indexDropDown = 0;
     private int selectedTriggerIndex = -1;
     private int selectedTriggerIndexEnemy = -1;
@@ -45,25 +45,29 @@ public class EnemySetupRecorderEditor : Editor
         switch (indexDropDown)
         {
             case 0:
-                RecordRings(tempListColl);
+                RecordRings(tempListColl, script.XTriggerForRecording);
                 break;
             case 1:
-                RecordNormalPigs(tempListEnemy);
+                RecordNormalPigs(tempListEnemy, script.XTriggerForRecording);
 
                 break;
             case 2:
-                RecordBigPigs(tempListEnemy);
+                RecordBigPigs(tempListEnemy, script.XTriggerForRecording);
 
                 break;
 
             case 3:
-                RecordJetPackPigs(tempListEnemy);
+                RecordJetPackPigs(tempListEnemy, script.XTriggerForRecording);
 
                 break;
 
             case 4:
-                RecordTenderizerPigs(tempListEnemy);
+                RecordTenderizerPigs(tempListEnemy, script.XTriggerForRecording);
 
+                break;
+
+            case 5:
+                RecordPilotPigs(tempListEnemy, script.XTriggerForRecording);  // New case for Pilot Pigs
                 break;
 
             default:
@@ -190,10 +194,11 @@ public class EnemySetupRecorderEditor : Editor
         // Temporary list to hold new data
         List<EnemyData> newEnemyData = new List<EnemyData>();
 
-        RecordJetPackPigs(newEnemyData);
-        RecordNormalPigs(newEnemyData);
-        RecordTenderizerPigs(newEnemyData);
-        RecordBigPigs(newEnemyData);
+        RecordJetPackPigs(newEnemyData, script.XTriggerForRecording);
+        RecordNormalPigs(newEnemyData, script.XTriggerForRecording);
+        RecordTenderizerPigs(newEnemyData, script.XTriggerForRecording);
+        RecordBigPigs(newEnemyData, script.XTriggerForRecording);
+        RecordPilotPigs(newEnemyData, script.XTriggerForRecording);
 
         // Convert the list to an array and add to SetupParent
         script.RecordForEnemyTrigger(newEnemyData, trigger);
@@ -231,7 +236,7 @@ public class EnemySetupRecorderEditor : Editor
         // Temporary list to hold new data
         List<CollectableData> newCollectableData = new List<CollectableData>();
 
-        RecordRings(newCollectableData);
+        RecordRings(newCollectableData, script.XTriggerForRecording);
 
         // Convert the list to an array and add to SetupParent
         script.RecordForColletableTrigger(newCollectableData, trigger);
@@ -241,7 +246,7 @@ public class EnemySetupRecorderEditor : Editor
 
 
     }
-    private void RecordJetPackPigs(List<EnemyData> newEnemyData)
+    private void RecordJetPackPigs(List<EnemyData> newEnemyData, float xTrigger)
     {
         var jetPackPigsRecorder = recorderEnemy.GetComponentsInChildren<JetPackPigMovement>();
         if (jetPackPigsRecorder.Length > 0)
@@ -263,7 +268,7 @@ public class EnemySetupRecorderEditor : Editor
                 };
 
                 // Calculate time to reach x = 7 or x = -7
-                float distanceToTarget = jetPackPigsRecorder[i].speed > 0 ? 7f - jetPackPigsRecorder[i].transform.position.x : -7f - jetPackPigsRecorder[i].transform.position.x;
+                float distanceToTarget = jetPackPigsRecorder[i].speed > 0 ? xTrigger - jetPackPigsRecorder[i].transform.position.x : -xTrigger - jetPackPigsRecorder[i].transform.position.x;
                 float timeToTrigger = Mathf.Abs(distanceToTarget / jetPackPigsRecorder[i].speed);
                 timesToTrigger.Add(timeToTrigger);
             }
@@ -276,7 +281,7 @@ public class EnemySetupRecorderEditor : Editor
         }
     }
 
-    private void RecordNormalPigs(List<EnemyData> newEnemyData)
+    private void RecordNormalPigs(List<EnemyData> newEnemyData, float xTrigger)
     {
         var normalPigsRecorder = recorderEnemy.GetComponentsInChildren<PigMovementBasic>();
         if (normalPigsRecorder.Length > 0)
@@ -298,7 +303,7 @@ public class EnemySetupRecorderEditor : Editor
                 };
 
                 // Calculate time to reach x = 7 or x = -7
-                float distanceToTarget = newNormalPigSO.data[i].speed > 0 ? 7f - newNormalPigSO.data[i].position.x : -7f - newNormalPigSO.data[i].position.x;
+                float distanceToTarget = newNormalPigSO.data[i].speed > 0 ? xTrigger - newNormalPigSO.data[i].position.x : -xTrigger - newNormalPigSO.data[i].position.x;
                 float timeToTrigger = Mathf.Abs(distanceToTarget / newNormalPigSO.data[i].speed);
                 timesToTrigger.Add(timeToTrigger);
             }
@@ -311,7 +316,7 @@ public class EnemySetupRecorderEditor : Editor
         }
     }
 
-    private void RecordBigPigs(List<EnemyData> newEnemyData)
+    private void RecordBigPigs(List<EnemyData> newEnemyData, float xTrigger)
     {
         var targets = recorderEnemy.GetComponentsInChildren<BigPigMovement>();
         if (targets.Length > 0)
@@ -331,11 +336,12 @@ public class EnemySetupRecorderEditor : Editor
                     scale = targets[i].transform.localScale,
                     speed = targets[i].speed,
                     yForce = targets[i].yForce,
-                    distanceToFlap = targets[i].distanceToFlap
+                    distanceToFlap = targets[i].distanceToFlap,
+                    startingFallSpot = targets[i].startingFallSpot
                 };
 
                 // Calculate time to reach x = 7 or x = -7
-                float distanceToTarget = newClass.data[i].speed > 0 ? 7f - newClass.data[i].position.x : -7f - newClass.data[i].position.x;
+                float distanceToTarget = newClass.data[i].speed > 0 ? xTrigger - newClass.data[i].position.x : -xTrigger - newClass.data[i].position.x;
                 float timeToTrigger = Mathf.Abs(distanceToTarget / newClass.data[i].speed);
                 timesToTrigger.Add(timeToTrigger);
             }
@@ -347,8 +353,48 @@ public class EnemySetupRecorderEditor : Editor
             newEnemyData.Add(newClass);
         }
     }
+    private void RecordPilotPigs(List<EnemyData> newEnemyData, float xTrigger)
+    {
+        var pilotPigsRecorder = recorderEnemy.GetComponentsInChildren<PilotPig>();
+        if (pilotPigsRecorder.Length > 0)
+        {
+            PilotPigSO newPilotPigSO = new PilotPigSO
+            {
+                data = new PilotPigData[pilotPigsRecorder.Length]
+            };
 
-    private void RecordTenderizerPigs(List<EnemyData> newEnemyData)
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < pilotPigsRecorder.Length; i++)
+            {
+                newPilotPigSO.data[i] = new PilotPigData
+                {
+                    position = pilotPigsRecorder[i].transform.position,
+                    scale = pilotPigsRecorder[i].transform.localScale,
+                    speed = pilotPigsRecorder[i].initialSpeed,
+                    flightMode = pilotPigsRecorder[i].flightMode,
+                    minY = pilotPigsRecorder[i].minY,
+                    maxY = pilotPigsRecorder[i].maxY,
+                    yForce = pilotPigsRecorder[i].addForceY,
+                    maxYSpeed = pilotPigsRecorder[i].maxYSpeed,
+                    xTrigger = pilotPigsRecorder[i].xTrigger
+                };
+
+                // Calculate time to reach x = 7 or x = -7
+                float distanceToTarget = pilotPigsRecorder[i].initialSpeed > 0 ? xTrigger - pilotPigsRecorder[i].transform.position.x : -xTrigger - pilotPigsRecorder[i].transform.position.x;
+                float timeToTrigger = Mathf.Abs(distanceToTarget / pilotPigsRecorder[i].initialSpeed);
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            // Set the highest time to trigger
+            newPilotPigSO.TimeToTrigger = timesToTrigger.Max();
+
+            // Add the new instance to the temporary list
+            newEnemyData.Add(newPilotPigSO);
+        }
+    }
+
+    private void RecordTenderizerPigs(List<EnemyData> newEnemyData, float xTrigger)
     {
         var targets = recorderEnemy.GetComponentsInChildren<TenderizerPig>();
         if (targets.Length > 0)
@@ -371,7 +417,7 @@ public class EnemySetupRecorderEditor : Editor
                 };
 
                 // Calculate time to reach x = 7 or x = -7
-                float distanceToTarget = newClass.data[i].speed > 0 ? 7f - newClass.data[i].position.x : -7f - newClass.data[i].position.x;
+                float distanceToTarget = newClass.data[i].speed > 0 ? xTrigger - newClass.data[i].position.x : -xTrigger - newClass.data[i].position.x;
                 float timeToTrigger = Mathf.Abs(distanceToTarget / newClass.data[i].speed);
                 timesToTrigger.Add(timeToTrigger);
             }
@@ -385,7 +431,7 @@ public class EnemySetupRecorderEditor : Editor
     }
 
 
-    private void RecordRings(List<CollectableData> newCollectableData)
+    private void RecordRings(List<CollectableData> newCollectableData, float xTrigger)
     {
         var targets = recorderCollectable.GetComponentsInChildren<RingMovement>();
 
@@ -412,7 +458,7 @@ public class EnemySetupRecorderEditor : Editor
                 };
 
                 // Calculate time to reach x = 7 or x = -7
-                float distanceToTarget = newClass.data[i].speed > 0 ? 7f - newClass.data[i].position.x : -7f - newClass.data[i].position.x;
+                float distanceToTarget = newClass.data[i].speed > 0 ? xTrigger - newClass.data[i].position.x : -xTrigger - newClass.data[i].position.x;
                 float timeToTrigger = Mathf.Abs(distanceToTarget / newClass.data[i].speed);
                 timesToTrigger.Add(timeToTrigger);
             }
@@ -735,6 +781,10 @@ public class EnemySetupRecorderEditor : Editor
                 {
                     buttonTitle = $"BigPigs ({bigPig.data.Length})";
                 }
+                else if (enemyData is PilotPigSO pilotPig)
+                {
+                    buttonTitle = $"PilotPigs ({pilotPig.data.Length})";
+                }
 
 
 
@@ -895,26 +945,32 @@ public class EnemySetupRecorderEditor : Editor
 
         if (dataTypeEnemy is NormalPigSO so0)
         {
-            RecordNormalPigs(tempList);
+            RecordNormalPigs(tempList, script.XTriggerForRecording);
 
 
         }
         else if (dataTypeEnemy is JetPackPigSO so1)
         {
-            RecordJetPackPigs(tempList);
+            RecordJetPackPigs(tempList, script.XTriggerForRecording);
 
 
         }
         else if (dataTypeEnemy is TenderizerPigSO so2)
         {
-            RecordTenderizerPigs(tempList);
+            RecordTenderizerPigs(tempList, script.XTriggerForRecording);
 
 
         }
 
         else if (dataTypeEnemy is BigPigSO so3)
         {
-            RecordBigPigs(tempList);
+            RecordBigPigs(tempList, script.XTriggerForRecording);
+
+
+        }
+        else if (dataTypeEnemy is PilotPigSO so4)
+        {
+            RecordPilotPigs(tempList, script.XTriggerForRecording);
 
 
         }
@@ -941,7 +997,7 @@ public class EnemySetupRecorderEditor : Editor
 
         if (dataTypeCollectable is RingSO so)
         {
-            RecordRings(tempList);
+            RecordRings(tempList, script.XTriggerForRecording);
 
 
         }
@@ -1015,6 +1071,10 @@ public class EnemySetupRecorderEditor : Editor
         else if (data is TenderizerPigSO)
         {
             ClearSpecificEnemies<TenderizerPig>();
+        }
+        else if (data is PilotPigSO)
+        {
+            ClearSpecificEnemies<PilotPig>();
         }
 
         // Mark scene as dirty to ensure changes are saved

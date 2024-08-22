@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
+  m_Name: _TESTPILOT
+  m_EditorClassIdentifier: 
+  XTriggerForRecording: -15
+  mustCompleteRingSequence: 0
+  enemyTriggerForEachRingIndex: 
+  enemySetup:
+  - dataArray:
+    - rid: 3018405104128884799
+  - dataArray:
+    - rid: 3018405104128884798
+  collectableSetup: []
+  isRandomSetup: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3018405104128884798
+      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 6.5
+        data:
+        - position: {x: 12.23, y: 2.79}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 1
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+        - position: {x: 15.56, y: 2.79}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 1
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+        - position: {x: 18.84, y: 2.9}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 1
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+        - position: {x: 22.12, y: 2.9}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 1
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+        - position: {x: 25.34, y: 2.96}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 1
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+    - rid: 3018405104128884799
+      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 6.2
+        data:
+        - position: {x: 12.23, y: -2.04}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 0
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+        - position: {x: 15.56, y: -2.04}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 0
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+        - position: {x: 18.84, y: -1.9299998}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 0
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+        - position: {x: 22.12, y: -1.9299998}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 0
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4
+        - position: {x: 25.34, y: -1.8699999}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 7
+          flightMode: 0
+          minY: 0
+          maxY: 5
+          yForce: 3
+          maxYSpeed: 3.5
+          xTrigger: 4

@@ -8,6 +8,10 @@ public class BigPigMovement : MonoBehaviour
     private Animator anim;
     private float initialY;
 
+    public bool startAtTop;
+    public bool startAtBottom;
+
+    public float startingFallSpot; // -1 for below flap position, 1 for above, 0 for initial position
 
     private Vector2 addForce;
     private bool addedForce = false;
@@ -15,10 +19,9 @@ public class BigPigMovement : MonoBehaviour
     public float yForce;
     public float distanceToFlap;
 
+     // The height the pig would reach after applying yForce
 
     private static readonly int FlapTriggerHash = Animator.StringToHash("FlapTrigger");
-
-
 
     [Header("Positions")]
     [SerializeField] private Transform wingPosition;
@@ -30,15 +33,19 @@ public class BigPigMovement : MonoBehaviour
     [SerializeField] private Transform wingObject;
     [SerializeField] private Transform legObject;
     [SerializeField] private Transform tailObject;
-    // Start is called before the first frame update
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+
+        // Calculate the maximum height the pig would reach after applying yForce
+       
     }
+
     public void InitializeObject()
     {
-
+        // Any additional initialization logic can go here
     }
 
     private void OnEnable()
@@ -47,15 +54,23 @@ public class BigPigMovement : MonoBehaviour
         wingObject.position = wingPosition.position;
         legObject.position = legPosition.position;
         tailObject.position = tailPosition.position;
+
         initialY = transform.position.y;
+
+        // Determine initial position based on startingFallSpot
+        if (startingFallSpot > 0)
+        {
+            float maxHeightFromYForce = ((yForce * yForce) / (2 * Mathf.Abs(Physics2D.gravity.y * rb.gravityScale))) * startingFallSpot;
+            transform.position = new Vector3(transform.position.x, initialY + maxHeightFromYForce - distanceToFlap, transform.position.z);
+        }
+        else if (startingFallSpot < 0)
+        {
+            transform.position = new Vector3(transform.position.x, initialY - (distanceToFlap * -startingFallSpot), transform.position.z);
+        }
+
         rb.velocity = new Vector2(-speed, 0);
         addForce = new Vector2(-speed, yForce);
-
     }
-
-
-    // Update is called once per frame
-
 
     void Update()
     {
@@ -74,11 +89,9 @@ public class BigPigMovement : MonoBehaviour
             }
         }
 
-
         if (transform.position.y < (initialY - distanceToFlap))
         {
             rb.velocity = addForce;
-
 
             if (!addedForce)
             {
@@ -90,8 +103,5 @@ public class BigPigMovement : MonoBehaviour
         {
             addedForce = false;
         }
-
-
-
     }
 }

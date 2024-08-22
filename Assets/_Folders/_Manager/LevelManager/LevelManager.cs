@@ -199,6 +199,13 @@ public class LevelManager : MonoBehaviour
         {
             reachedCheckpoint = checkPoint;
             LvlID.outputEvent.SetCheckPoint?.Invoke(checkPoint);
+            if (currentEventTracked == EventTypeTracked.Mana)
+            {
+                Debug.Log("Filling Mana from check");
+                hasInvokedSpecialEvent = true;
+                player.globalEvents.FillPlayerMana?.Invoke();
+
+            }
 
         }
         else
@@ -207,6 +214,7 @@ public class LevelManager : MonoBehaviour
             {
                 obj.SetActive(false);
             }
+            LvlID.outputEvent.StartCustomBoundingBoxWithDelay?.Invoke();
             StartCoroutine(ActivateAfterDelay(activicationDelay));
 
         }

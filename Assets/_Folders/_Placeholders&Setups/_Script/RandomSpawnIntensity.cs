@@ -76,6 +76,15 @@ public class RandomSpawnIntensity : ScriptableObject
         private set => xSpawnRange = value;
     }
 
+    [Header("MissilePigSpawning")]
+
+    public Vector2 xSpawnRangeMissilePig;
+    public float shootingRangeAdjustment;
+    public float minMissilePigDelay;
+    public float missileBasePigChance;
+    public float missilePigFlipPChance;
+    public float missilePigFlipWChance;
+
     [Header("Bounding Box Adjustment")]
     [SerializeField] private Vector2 allowedOverlap;
     public Vector2 AllowedOverlap
@@ -134,7 +143,7 @@ public class RandomSpawnIntensity : ScriptableObject
     {
         if (amountOfWaveWeights == null || amountOfWaveWeights.Length == 0)
         {
-            
+
             return 0; // Default to 1 if not set
         }
 

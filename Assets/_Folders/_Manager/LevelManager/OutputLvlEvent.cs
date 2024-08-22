@@ -5,6 +5,8 @@ public struct OutputLvlEvent
 {
     public Action<int> RingParentPass;
 
+    public Action StartCustomBoundingBoxWithDelay;
+
     public Action<int> SetCheckPoint;
 
     public Action<bool> setButtonsReadyToPress;

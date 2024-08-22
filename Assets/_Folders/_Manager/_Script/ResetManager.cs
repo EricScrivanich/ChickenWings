@@ -8,6 +8,7 @@ using System.Collections;
 public class ResetManager : MonoBehaviour
 {
     public static ResetManager Instance;
+    public LevelManagerID lvlID;
     private bool loadedAssets;
 
     private GameObject blockButtons;
@@ -46,6 +47,8 @@ public class ResetManager : MonoBehaviour
         resetTriggered = false;
         if (SceneManager.GetActiveScene().name == "MainMenu")
             StartCoroutine(PreloadAssetsCoroutine());
+
+        
 
 
 
@@ -145,9 +148,11 @@ public class ResetManager : MonoBehaviour
         {
 
             checkPoint = GameObject.Find("LevelManager").GetComponent<LevelManager>().reachedCheckpoint;
+            
             Debug.Log("Check Point is: " + checkPoint);
         }
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        lvlID.usingCheckPoint = true;
 
     }
 

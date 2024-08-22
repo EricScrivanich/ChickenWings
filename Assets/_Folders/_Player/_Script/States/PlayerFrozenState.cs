@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerFrozenState : PlayerBaseState
 {
 
-    private float waitAtTopDuration = .4f;
+    private float waitAtTopDuration = .35f;
     private float time;
     private bool rotate;
     // Start is called before the first frame update
@@ -27,6 +27,7 @@ public class PlayerFrozenState : PlayerBaseState
 
     {
         player.rb.freezeRotation = false;
+        player.maxFallSpeed = player.originalMaxFallSpeed;
 
     }
 
@@ -53,19 +54,21 @@ public class PlayerFrozenState : PlayerBaseState
         time += Time.deltaTime;
         if (time > waitAtTopDuration)
         {
-            player.maxFallSpeed = -4.6f;
+            player.maxFallSpeed = -4.7f;
             rotate = true;
 
         }
-        if (player.transform.position.y < 1.5f)
+        if (player.transform.position.y < 1.7f)
         {
             // player.disableButtons = false;
             player.ID.events.EnableButtons?.Invoke(true);
 
             player.anim.SetBool(player.FrozenBool, false);
+            player.maxFallSpeed = player.originalMaxFallSpeed;
+
             player.isFrozen = false;
 
-            player.maxFallSpeed = player.originalMaxFallSpeed;
+
 
             // player.CheckIfIsTryingToParachute();
         }

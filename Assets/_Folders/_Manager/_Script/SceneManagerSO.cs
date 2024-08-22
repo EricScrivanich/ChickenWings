@@ -16,6 +16,8 @@ public class SceneManagerSO : ScriptableObject
     public void LoadLevel(int levelNumber)
     {
         if (levelNumber == 0 || levelNumber >= Levels_Scene.Count) return;
+
+        if (Time.timeScale == 0) Time.timeScale = 1;
         SceneManager.LoadScene(Levels_Scene[levelNumber]);
 
     }

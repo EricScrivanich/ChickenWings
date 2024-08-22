@@ -10,7 +10,7 @@ public class SetupParent : ScriptableObject
 
 
 
-
+    public float XTriggerForRecording;
     public bool mustCompleteRingSequence;
     private Queue<int> lastPickedTriggers = new Queue<int>();
 

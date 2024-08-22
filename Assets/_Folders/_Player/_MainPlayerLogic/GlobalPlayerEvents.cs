@@ -9,6 +9,8 @@ public struct GlobalPlayerEvents
     public Action<float> OnAdjustConstantSpeed;
     public Action OnUpdateAmmo;
 
+    public Action FillPlayerMana;
+
     public Action OnGetMana;
     public Action<int> OnAddAmmo;
     public Action<int> OnUpdateScore;

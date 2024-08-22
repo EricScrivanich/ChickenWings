@@ -9,6 +9,7 @@ public class SetupPlacer : MonoBehaviour
     public GameObject NormalPigPrefab;
     public GameObject TenderizerPigPrefab;
     public GameObject BigPigPrefab;
+    public GameObject PilotPigPrefab;
     public GameObject RingPrefab;
 
     public GameObject SquareArea;
@@ -104,9 +105,29 @@ public class SetupPlacer : MonoBehaviour
                 script.speed = pigData.speed;
                 script.yForce = pigData.yForce;
                 script.distanceToFlap = pigData.distanceToFlap;
+                script.startingFallSpot = pigData.startingFallSpot;
 
                 obj.transform.localScale = pigData.scale;
 
+            }
+        }
+        else if (data is PilotPigSO pilotPigData)
+        {
+            foreach (var pigData in pilotPigData.data)
+            {
+                var obj = Object.Instantiate(PilotPigPrefab, pigData.position, Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+
+                var script = obj.GetComponent<PilotPig>();
+                script.initialSpeed = pigData.speed;
+                script.flightMode = pigData.flightMode;
+                script.minY = pigData.minY;
+                script.maxY = pigData.maxY;
+                script.addForceY = pigData.yForce;
+                script.maxYSpeed = pigData.maxYSpeed;
+                script.xTrigger = pigData.xTrigger;
+
+                obj.transform.localScale = pigData.scale;
             }
         }
     }

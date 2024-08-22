@@ -984,67 +984,6 @@ MonoBehaviour:
   maxHeight: 0.7
   smoothTimeY: 0.3
   smoothTimeZoom: 0.1
---- !u!1 &582893774 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
-  m_PrefabInstance: {fileID: 1769241864}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &582893779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582893774}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b59a90aee919f491791c7a6fa5966ea7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectiveRingType: 2
-  numberOfRandomRingsToSpawnRange: {x: 1, y: 2}
-  numberOfRandomEnemiesToSpawnRange: {x: 1, y: 2}
-  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  constantRingTriggerStartEnd: 0100000002000000
-  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
-  ringSetupConstant: {fileID: 11400000, guid: 8eee1fbc13eda4092ae3713850ac09a2, type: 2}
-  ringSetupRandom: {fileID: 11400000, guid: 8101605b65b1b4f88a3b618d517e3e83, type: 2}
-  enemyOnlySetups:
-  - {fileID: 11400000, guid: 1ec426eab2c1e4754b741ab4893a0a2a, type: 2}
-  - {fileID: 11400000, guid: c5932b857f0fa4b848394102ff9bf0ab, type: 2}
-  spawnEnemySetRatioByIntensity:
-  - {x: 0.9, y: 0.1, z: 0, w: 0}
-  - {x: 0.7, y: 0.3, z: 0, w: 0}
-  - {x: 0, y: 0, z: 0, w: 0}
-  startRingType: 0
---- !u!114 &582893780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582893774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 709e9581fe97840f09b75dff153ede22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentRandomSpawnData: {fileID: 11400000, guid: 3f9121a53926c49708ccd7b7c963572c, type: 2}
-  spawnIntervalRangeAfterTarget: {x: 0, y: 1}
-  normalPigBoundingBoxBase: {fileID: 11400000, guid: 759415d4b2c764238a04bc3724ca2422, type: 2}
-  jetPackPigBoundingBoxBase: {fileID: 11400000, guid: 6b6372b78ffca44bc880be6ad5c45c52, type: 2}
-  bigPigBoundingBoxBase: {fileID: 11400000, guid: 7ed159b9f20d44a6b96ff7f56c251e32, type: 2}
-  tenderizerPigBoundingBoxBase: {fileID: 11400000, guid: 240ac2cf5013f456397250825a1be48c, type: 2}
-  jetPackPigPoolSize: 10
-  tenderizerPigPoolSize: 5
-  normalPigPoolSize: 10
-  bigPigPoolSize: 8
-  jetPackPigPrefab: {fileID: 8554680807245287772, guid: 7c7bfbfcf2af741b88609dea94b27826, type: 3}
-  tenderizerPigPrefab: {fileID: 5053118216464345145, guid: cbe51417ff78d4bc6b43eb6c60603036, type: 3}
-  normalPigPrefab: {fileID: 2425336107443998327, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
-  bigPigPrefab: {fileID: 2529404850862653700, guid: d7c9315e94d5f4db9840df6684866cd4, type: 3}
-  ringPool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
-  recentlySpanwnedPositions: []
 --- !u!4 &585739675 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3350126952456784682, guid: 95ceacd50805548e7b6574acb5d7cd16, type: 3}
@@ -2153,14 +2092,6 @@ PrefabInstance:
       propertyPath: m_BodyType
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
-      propertyPath: xSpeed
-      value: -5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
-      propertyPath: amplitude
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6486611625296097448, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2174,7 +2105,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2749,6 +2680,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 153982486243658428, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
+      propertyPath: missileLaunch
+      value: 
+      objectReference: {fileID: 8300000, guid: 7da6a57c71b41482a8f9e8d378897729, type: 3}
+    - target: {fileID: 153982486243658428, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
+      propertyPath: missileLaunchVolume
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 1053351938702816589, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
       propertyPath: m_Name
       value: --------Managers-------
@@ -2899,14 +2838,6 @@ PrefabInstance:
       propertyPath: m_BodyType
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
-      propertyPath: xSpeed
-      value: -5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
-      propertyPath: amplitude
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6486611625296097448, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2920,7 +2851,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4135,14 +4066,6 @@ PrefabInstance:
       propertyPath: m_BodyType
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
-      propertyPath: xSpeed
-      value: -5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
-      propertyPath: amplitude
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6486611625296097448, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4156,7 +4079,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 4507103270016417565, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4950,9 +4873,53 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: startingState
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: bigPigPoolSize
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: pilotPigPoolSize
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: jetPackPigPoolSize
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: missilePigPoolSize
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: startingStateDelay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: pureSetups.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: tenderizerPigPoolSize
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: pureSetups.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8cf256bae904c46039a30faf24c83462, type: 2}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: randomRingSetups.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: randomRingSetups.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 78bf1db52259e4c34bd25360cf2889f0, type: 2}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: usingAmmo
@@ -4963,17 +4930,29 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: eggTimeRange.x
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: eggTimeRange.y
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: manaTimeRange.x
-      value: 5
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: manaTimeRange.y
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: ammoParticlePrefab
       value: 
       objectReference: {fileID: 6982175600085930321, guid: 384f1b05875fa4f5b87dd972f848869d, type: 3}
+    - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: baseEggThreeChance
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: manaParticlePrefab
       value: 
@@ -5054,6 +5033,10 @@ PrefabInstance:
       propertyPath: spawnEnemySetRatioByIntensity.Array.data[2].y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 4797102283079309879, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: spawnIntensitiesNormal.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 3f9121a53926c49708ccd7b7c963572c, type: 2}
     - target: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: m_Name
       value: SpawnManager
@@ -5186,16 +5169,13 @@ PrefabInstance:
       propertyPath: normalPigPoolSize
       value: 10
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6557949900701251094, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+    - {fileID: 8325398982399372854, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+    - {fileID: 4484704900751443655, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
-      insertIndex: 4
-      addedObject: {fileID: 582893779}
-    - targetCorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 582893780}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
 --- !u!1001 &1799044146
 PrefabInstance:
@@ -6052,6 +6032,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SetupRecorderParent
       objectReference: {fileID: 0}
+    - target: {fileID: 8133776359316159504, guid: 917be6cb443294381927d7116dc9367f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6228,7 +6212,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2938654145027134748, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3304498880910268721, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: manaUsed

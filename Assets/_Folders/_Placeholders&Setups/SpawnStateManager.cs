@@ -10,8 +10,12 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private int startingState = -1;
     [SerializeField] private int startingStateDelay = 3;
 
+    public bool startedMissileTimer = false;
+
     public Coroutine SpawnWithDelayRoutine;
     public Coroutine WaitForWaveFinishRoutine;
+    public Coroutine MissilePigTimer;
+    public bool canSpawnMissilePig = false;
     public SpawnStateTransitionLogic transitionLogic;
 
     private bool transitionLogicOverriden = false;
@@ -64,6 +68,7 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private int normalPigPoolSize;
     [SerializeField] private int bigPigPoolSize;
     [SerializeField] private int missilePigPoolSize;
+    [SerializeField] private int pilotPigPoolSize;
 
     [Header("Enemy Pool Prefabs")]
     [SerializeField] private GameObject jetPackPigPrefab;
@@ -71,7 +76,7 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private GameObject normalPigPrefab;
     [SerializeField] private GameObject bigPigPrefab;
     [SerializeField] private GameObject missilePigPrefab;
-    private MissilePigScript missilePig;
+    [SerializeField] private GameObject pilotPigPrefab;
 
 
     [Header("Collectable Pool Prefabs")]
@@ -87,11 +92,15 @@ public class SpawnStateManager : MonoBehaviour
     private int normalPigIndex = 0;
     private int bigPigIndex = 0;
     private int tenderizerPigIndex = 0;
-    private int missilePigIndex;
+    private int missilePigIndex = 0;
+    private int pilotPigIndex = 0;
     private JetPackPigMovement[] jetPackPig;
     private BigPigMovement[] bigPig;
     private TenderizerPig[] tenderizerPig;
     private PigMovementBasic[] normalPig;
+    private MissilePigScript[] missilePig;
+    private PilotPig[] pilotPig;
+
 
 
 
@@ -116,7 +125,7 @@ public class SpawnStateManager : MonoBehaviour
 
         if (startingState > -1)
         {
-            StartCoroutine(SwitchToSpecificStateAfterDelay(startingStateDelay));
+            StartCoroutine(SwitchToStartingStateAfterDelay(startingStateDelay));
 
         }
 
@@ -248,6 +257,7 @@ public class SpawnStateManager : MonoBehaviour
             case (3):
                 {
                     currentState = pureRandomEnemyState;
+
                     break;
                 }
         }
@@ -332,6 +342,43 @@ public class SpawnStateManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
         currentState.SetupHitTarget(this);
         if (stopRandomSpawning) stopRandomSpawning = false;
+        WaitForWaveFinishRoutine = null;
+
+    }
+
+    public IEnumerator MissilePigTimerCoroutine(float delay)
+    {
+        canSpawnMissilePig = false;
+        yield return new WaitForSeconds(delay);
+        canSpawnMissilePig = true;
+    }
+
+    public bool GetMissilePigIfReady(float delay, float chance)
+    {
+        if (!startedMissileTimer && chance > 0)
+        {
+            startedMissileTimer = true;
+            MissilePigTimer = StartCoroutine(MissilePigTimerCoroutine(delay));
+            return false;
+
+        }
+        else if (delay <= 0 || chance <= 0 || !canSpawnMissilePig || missilePig[missilePigIndex].gameObject.activeInHierarchy) return false;
+
+
+        else
+        {
+            float ran = Random.Range(0f, 1f);
+
+            if (ran < chance)
+            {
+                MissilePigTimer = StartCoroutine(MissilePigTimerCoroutine(delay));
+
+                return true;
+            }
+            else
+                return false;
+        }
+
 
     }
 
@@ -386,6 +433,8 @@ public class SpawnStateManager : MonoBehaviour
     {
 
         currentRandomSpawnIntensityData = newIntensitySet;
+        if (newIntensitySet.missileBasePigChance > 0 && MissilePigTimer == null && canSpawnMissilePig == false)
+            MissilePigTimer = StartCoroutine(MissilePigTimerCoroutine(newIntensitySet.minMissilePigDelay));
         Debug.Log("Set Intensity: " + currentRandomSpawnIntensityData);
 
         if (newIntensitySet.OverrideStateTransiton > 0)
@@ -466,9 +515,26 @@ public class SpawnStateManager : MonoBehaviour
             // Get the JetPackPigMovement component and store it in the array
             jetPackPig[i] = obj.GetComponent<JetPackPigMovement>();
         }
+        missilePig = new MissilePigScript[missilePigPoolSize];
+        for (int i = 0; i < missilePig.Length; i++)
+        {
+            var obj = Instantiate(missilePigPrefab).GetComponent<MissilePigScript>();
+            obj.gameObject.SetActive(false);
+            missilePig[i] = obj;
 
-        missilePig = Instantiate(missilePigPrefab).GetComponent<MissilePigScript>();
-        missilePig.gameObject.SetActive(false);
+        }
+
+        pilotPig = new PilotPig[pilotPigPoolSize];
+        for (int i = 0; i < pilotPig.Length; i++)
+        {
+            // Instantiate the prefab and assign it to the pool array
+            var obj = Instantiate(pilotPigPrefab);
+            obj.SetActive(false);
+
+            // Get the pilotPigMovement component and store it in the array
+            pilotPig[i] = obj.GetComponent<PilotPig>();
+        }
+
 
         tenderizerPig = new TenderizerPig[tenderizerPigPoolSize];
 
@@ -530,6 +596,25 @@ public class SpawnStateManager : MonoBehaviour
         script.InitializePig();
         normalPigIndex++;
     }
+
+    public void GetPilotPig(Vector2 pos, Vector3 scale, float speed, int flightMode,float minY,float maxY, float yForce, float maxYSpeed, float xTrigger)
+    {
+        if (pilotPigIndex >= pilotPig.Length) pilotPigIndex = 0;
+        var script = pilotPig[pilotPigIndex];
+        if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
+
+        script.transform.position = (Vector2)transform.position + pos;
+        script.transform.localScale = scale;
+        script.initialSpeed = speed;
+        script.flightMode = flightMode;
+        script.minY = minY;
+        script.maxY = maxY;
+        script.addForceY = yForce;
+        script.maxYSpeed = maxYSpeed;
+        script.xTrigger = xTrigger;
+        script.gameObject.SetActive(true);
+        pilotPigIndex++;
+    }
     public void GetJetPackPig(Vector2 pos, Vector3 scale, float speed)
     {
         if (jetPackPigIndex >= jetPackPig.Length) jetPackPigIndex = 0;
@@ -544,17 +629,20 @@ public class SpawnStateManager : MonoBehaviour
         jetPackPigIndex++;
     }
 
-    public void GetMissilePig()
+    public void GetMissilePig(bool flippedP, bool flippedW, float rangeAdj, float x)
     {
-        // if (missilePigIndex >= missilePig.Length) missilePigIndex = 0;
-        // var script = missilePig[missilePigIndex];
 
+        missilePig[missilePigIndex].Initialize(flippedP, flippedW, rangeAdj, x);
 
-        // if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
-        // script.SetActive(true);
+        missilePigIndex++;
+
+        if (missilePigIndex >= missilePigPoolSize)
+        {
+            missilePigIndex = 0;
+        }
     }
 
-    public void GetBigPig(Vector2 pos, Vector3 scale, float speed, float yForce, float distanceToFlap)
+    public void GetBigPig(Vector2 pos, Vector3 scale, float speed, float yForce, float distanceToFlap, float startingFallSpot)
     {
         if (bigPigIndex >= bigPig.Length) bigPigIndex = 0;
         var script = bigPig[bigPigIndex];
@@ -564,6 +652,7 @@ public class SpawnStateManager : MonoBehaviour
         script.speed = speed;
         script.yForce = yForce;
         script.distanceToFlap = distanceToFlap;
+        script.startingFallSpot = startingFallSpot;
         script.gameObject.SetActive(true);
         bigPigIndex++;
     }

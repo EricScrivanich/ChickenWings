@@ -9,11 +9,11 @@ public class PlayerAddForceBoundaries : MonoBehaviour
     [SerializeField] private GameObject arrowPrefab;
     private Arrow arrow;
     private float slowDownFallBoundary = -1.5f;
-    private float addForceDownBoundary = 4.62f;
+    private float addForceDownBoundary = 4.8f;
     private float originalMaxFallSpeed;
     private bool hasChangedMaxFallSpeed = false;
     private Vector2 addRightForce = new Vector2(20, 10);
-    private Vector2 addDownForce = new Vector2(0, -6.3f);
+    private Vector2 addDownForce = new Vector2(0, -6.1f);
     private Vector2 addLeftForce = new Vector2(-20, 10);
     private float topBoundary;
     private float leftBoundary;

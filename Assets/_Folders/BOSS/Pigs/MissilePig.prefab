@@ -288,8 +288,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1210218925614590339}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.36, y: 0.03, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.36, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -376,7 +376,7 @@ Transform:
   m_GameObject: {fileID: 1330105597580452645}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.40319335, y: 1.061, z: 0}
+  m_LocalPosition: {x: 0.40319335, y: 1.055, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -939,7 +939,7 @@ Transform:
   m_GameObject: {fileID: 3194270073463360595}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.9800001, y: 0.18, z: 0}
+  m_LocalPosition: {x: -1, y: 0.18, z: 0}
   m_LocalScale: {x: 1.111111, y: 1.111111, z: 1.1111112}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1170,7 +1170,7 @@ Transform:
   m_GameObject: {fileID: 5323986004774098523}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.105, y: 1.2, z: 0}
+  m_LocalPosition: {x: -0.024, y: 1.426, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1656,13 +1656,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad8a3a6194fa44414b4fdfedfaea27d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5.2
+  turn_speed: 5
+  flippedPig: 1
+  flippedWeapon: 1
+  weaponStrap: {fileID: 2825096613548665020}
+  downYAmountForReload: -0.345
+  reloadTimeRotationToMissileRatio: 0.6
   ps: {fileID: 8179711675367912816}
-  shootTime: 3
-  frontRange: -10
+  frontRange: -6
   backRange: -2
-  aimTime: 1
-  startPos: {x: 0, y: 0}
+  rangesMinMax: {x: -13, y: -1}
+  aimTime: 0.8
+  reloadTime: 0.9
+  startPos: {x: 13, y: -3.56}
+  entireWeaponAndStrap: {fileID: 0}
   launchAim: {fileID: 942944371239007562}
   missileSpawnPos: {fileID: 6021091469362872583}
   missileImage: {fileID: 5965919679269796104}
@@ -1831,7 +1838,7 @@ Transform:
   m_GameObject: {fileID: 8491092371901522747}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.4, y: 1.4, z: 0}
+  m_LocalPosition: {x: 0.4, y: 1.445, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -37,4 +37,23 @@ public struct BigPigData
     public float yForce;
     public float distanceToFlap;
 
+    public float startingFallSpot;
+
+}
+
+[System.Serializable]
+public struct PilotPigData
+{
+    public Vector2 position;
+    public Vector3 scale;
+    public float speed;
+
+    public int flightMode;
+    public float minY;
+    public float maxY;
+    public float yForce;
+    public float maxYSpeed;
+    public float xTrigger;
+   
+
 }

@@ -12,16 +12,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b8c6eee88e2e4ab0ad5f52543fdad70, type: 3}
   m_Name: INT_Lvl69-0
   m_EditorClassIdentifier: 
+  overrideStateTransiton: 0
+  ringTypeWeights: []
+  randomRingSetupAmountToSpawnWeights:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 0
+  randomRingTypeWeights:
+  - 0.2
+  - 0.2
+  - 0.2
   randomEnemySetupDifficultyWeights: []
   randomEnemySetupAmountToSpawnWeights: []
   xTargetToStartSpawn: 2
   spawnRandomRangeAfterTarget: {x: 0, y: 0}
+  amountOfWaveWeights: []
   waveSizeWeights:
   - 0
   - 0.5
   - 0.5
-  - 0.99
+  - 0.7
   xSpawnRange: {x: 12, y: 22}
+  xSpawnRangeMissilePig: {x: 13, y: 15}
+  shootingRangeAdjustment: 0
+  minMissilePigDelay: 5
+  missileBasePigChance: 1
+  missilePigFlipPChance: 0.5
+  missilePigFlipWChance: 1
   allowedOverlap: {x: 0, y: 0.3}
   activeBoundingBoxTimeAdjustment: 0
   normalPig_W: 0.8

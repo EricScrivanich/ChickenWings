@@ -648,7 +648,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1354772606353539940}
   - component: {fileID: 3999063571078010261}
-  - component: {fileID: 4507103270016417565}
   - component: {fileID: 1466411344348881338}
   - component: {fileID: 8593314813052039977}
   - component: {fileID: -2259727775895193576}
@@ -705,35 +704,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &4507103270016417565
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7067416515346818908}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 359615f741359444eb5b59985b4112a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  backLegs: {fileID: 0}
-  wings: {fileID: 0}
-  tail: {fileID: 0}
-  body: {fileID: 0}
-  backLegsPosition: {fileID: 0}
-  wingsPosition: {fileID: 0}
-  tailPosition: {fileID: 0}
-  addYForce: 1
-  belowAmount: 0.2
-  ySpeed: 4
-  xSpeed: -6
-  amplitude: 0.8
-  frequency: 1
-  R: 2
-  duration: 1.5
-  invokeTime: 2
-  sinDownSpeed: 0
 --- !u!95 &1466411344348881338
 Animator:
   serializedVersion: 5
@@ -812,13 +782,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ddb33d42f3d4ea3aa9e68f03933811, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialSpeed: {x: 0, y: 0}
+  flightMode: 0
+  initialSpeed: 0
   addForceY: 0
   minY: 0
   maxY: 0
   maxYSpeed: 0
   xTrigger: 0
-  currentFlightMode: 0
 --- !u!210 &-8150473846529898941
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -843,6 +813,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54bbe5eb74e0e4d9dbddff75cebbbe31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  pigType: 4
   isScalable: 0
   pigTypeAudio: 0
   explosionScale: {x: 0.8, y: 0.8, z: 0.8}

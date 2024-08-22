@@ -43,6 +43,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip[] pigDeath;
     [SerializeField] private AudioClip pigHammerSwing;
     [SerializeField] private AudioClip pigJetPack;
+    [SerializeField] private AudioClip missileLaunch;
 
 
     [Header("Explosions")]
@@ -75,6 +76,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float[] pigDeathVolumes;
     [SerializeField] private float pigHammerSwingVolume;
     [SerializeField] private float pigJetPackVolume;
+    [SerializeField] private float missileLaunchVolume;
 
 
 
@@ -158,6 +160,11 @@ public class AudioManager : MonoBehaviour
     public void ResetRingPassPitch()
     {
         ringPassSource.pitch = 1f; // Reset to default pitch
+    }
+
+    public void PlayMissileLaucnh()
+    {
+        pigAudioSource.PlayOneShot(missileLaunch, missileLaunchVolume);
     }
     public void PlayRingSuccessSound()
     {

@@ -10,14 +10,19 @@ public class BoundariesManager : MonoBehaviour
     public static float rightViewBoundary = 11.4f;
     public static float leftViewBoundary = -11.4f;
     public static float rightPlayerBoundary = 10.8f;
-    public static float TopPlayerBoundary = 7.1f;
+    public static float TopPlayerBoundary = 6.8f;
     public static float leftPlayerBoundary = -10.8f;
 
     public static float GroundSpeed = 5;
     // Start is called before the first frame update
     void Awake()
     {
+        Debug.unityLogger.logEnabled = false;
+
+
+#if UNITY_EDITOR
         Debug.unityLogger.logEnabled = true;
+#endif
         // Time.timeScale = .1f;
 
     }

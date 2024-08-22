@@ -12,6 +12,7 @@ public class SpecialStateInputSystem : MonoBehaviour
     [SerializeField] private bool useDash;
     [SerializeField] private bool useDrop;
     [SerializeField] private bool useEgg;
+    private bool fillAllMana = false;
 
 
     private Color originalButtonColor;
@@ -413,6 +414,27 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     }
 
+    private void FillAllMana()
+    {
+        fillAllMana = true;
+
+
+    }
+
+    // private void WaitForFinishToFillMana()
+    // {
+    //     currentMana = maxMana;
+    //     ID.globalEvents.SetCanDashSlash?.Invoke(true);
+    //     Debug.LogError("FDFDFDFDFDFD");
+
+
+    //     HandleDashSlashImage(true);
+    //     FullMana(true);
+
+
+    // }
+
+
     void Start()
     {
         if (useFlips)
@@ -467,17 +489,33 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
 
-            ID.globalEvents.SetCanDashSlash?.Invoke(false);
+
 
             usingDash = true;
             dashImageMana = GameObject.Find("DashIMGMana").GetComponent<Image>();
             if (manaUsed)
             {
-                dashImageMana.enabled = true;
-                dashImageMana.color = fillingManaColor;
 
-                dashImageMana.fillAmount = (currentMana / maxMana);
-                mainFillCourintine = StartCoroutine(RegenerateMana());
+                dashImageMana.enabled = true;
+
+                if (fillAllMana)
+                {
+                    currentMana = maxMana;
+
+                    dashImageMana.fillAmount = (1);
+                    HandleDashSlashImage(true);
+
+
+
+                }
+                else
+                {
+                    dashImageMana.color = fillingManaColor;
+
+                    dashImageMana.fillAmount = (currentMana / maxMana);
+                    mainFillCourintine = StartCoroutine(RegenerateMana());
+                }
+
 
 
 
@@ -485,7 +523,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             else
                 dashImageMana.gameObject.SetActive(false);
 
-            FullMana(false);
+            FullMana(fillAllMana);
 
 
         }
@@ -690,6 +728,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
 
+
         if (useDash)
 
         {
@@ -760,7 +799,7 @@ public class SpecialStateInputSystem : MonoBehaviour
     {
         coolingDownDash = true;
         canDash = false;
-        Debug.Log("COOOOLING");
+      
 
         if (manaFull)
         {
@@ -771,7 +810,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         }
         else
         {
-            Debug.Log("Waiting for: " + dashTimeLeft + " - seconds");
+           
             yield return new WaitForSeconds(dashTimeLeft);
 
             IconTween(2);
@@ -787,7 +826,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
         yield return new WaitForSeconds(1.1f);
-        Debug.Log("Finsihed cooling bug");
+
 
         dashCooldownGroup.DOFade(0, .15f);
 
@@ -852,7 +891,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     private IEnumerator RegenerateMana()
     {
-        Debug.Log("Please Regen");
+
         float elapsedTime = 0;
         float previousMana = currentMana;
         float duration = (maxMana - currentMana) * (mainManaFillDuration / maxMana);
@@ -1109,7 +1148,6 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         lockAfterInputCheck = lockInputsAfterCheck;
 
-        Debug.Log("Locked after inputs check is: " + lockAfterInputCheck);
 
         if (!lockAfterInputCheck && doCooldownsBool)
         {
@@ -1235,6 +1273,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         ID.events.EnableButtons += ActivateButtons;
         ID.events.OnDash += HandleDashNew;
         ID.globalEvents.OnSetInputs += SetInputs;
+        ID.globalEvents.FillPlayerMana += FillAllMana;
 
 
         ID.globalEvents.CanDashSlash += ExitDash;
@@ -1248,6 +1287,8 @@ public class SpecialStateInputSystem : MonoBehaviour
         controls.Movement.Disable();
         ID.events.EnableButtons -= ActivateButtons;
         ID.globalEvents.OnSetInputs -= SetInputs;
+        ID.globalEvents.FillPlayerMana -= FillAllMana;
+
 
         ID.events.OnDash -= HandleDashNew;
         ID.globalEvents.CanDashSlash -= ExitDash;

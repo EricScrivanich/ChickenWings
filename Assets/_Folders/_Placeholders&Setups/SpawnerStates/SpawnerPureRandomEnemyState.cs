@@ -10,6 +10,8 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     private EnemyBoundingBox bigPigBoundingBox;
     private EnemyBoundingBox tenderizerPigBoundingBox;
 
+    private float minYAdj;
+
     private int amountOfWavesToSpawn;
     private int currentAmountOfWavesSpawned;
     private bool useWaveAmount;
@@ -38,21 +40,41 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     // Start is called before the first frame update
     public override void EnterState(SpawnStateManager spawner)
     {
+        minYAdj = 0;
+        Debug.LogError("Entering pure random state");
         useWaveAmount = true;
         currentAmountOfWavesSpawned = 0;
         amountOfWavesToSpawn = currentIntensityData.GetRandomAmountOfWaves();
         Debug.LogError("Random amount of waves to spawn is: " + amountOfWavesToSpawn);
-        if (amountOfWavesToSpawn == 0) useWaveAmount = false;
+        if (amountOfWavesToSpawn == 0)
+        {
+            useWaveAmount = false;
+            Debug.LogError("Ignoring use wave amount ");
+        }
+        else
+            Debug.LogError("using wave amount ");
         if (!spawner.stopRandomSpawning)
         {
             timeSinceLastWave = 0;
             int waveSize = currentIntensityData.GetRandomWaveSize();
+            if (spawner.GetMissilePigIfReady(currentIntensityData.minMissilePigDelay, currentIntensityData.missileBasePigChance))
+            {
+                Debug.Log("Getting missile pig");
+                minYAdj = .8f;
+                waveSize--;
+                float rFlipP = Random.Range(0f, 1f);
+                float rFlipW = Random.Range(0f, 1f);
+
+                spawner.GetMissilePig(rFlipP < currentIntensityData.missilePigFlipPChance, rFlipW > currentIntensityData.missilePigFlipWChance, currentIntensityData.shootingRangeAdjustment, Random.Range(currentIntensityData.xSpawnRangeMissilePig.x, currentIntensityData.xSpawnRangeMissilePig.y));
+            }
             spawner.recentlySpanwnedPositions = new List<Vector2>();
             pigTypeList = DeterminePigTypesForWave(waveSize);
 
             spawner.SpawnWithDelayRoutine = spawner.StartCoroutine(SpawnWaveWithDelay(spawner));
             Debug.Log("EMEerere");
         }
+        else
+            Debug.Log("Cant spawnfoo ");
 
 
 
@@ -271,7 +293,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
             attempts++;
             spawnPos = new Vector2(
                 Random.Range(currentIntensityData.XSpawnRange.x, currentIntensityData.XSpawnRange.y),
-                Random.Range(ySpawnRange.x, ySpawnRange.y)
+                Random.Range(ySpawnRange.x + minYAdj, ySpawnRange.y)
             );
 
             Rect adjustedBoundingBox = new Rect(
@@ -363,7 +385,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
                 spawnCache.GetJetPackPig(spawnPos, scale, speed);
                 break;
             case 2:
-                spawnCache.GetBigPig(spawnPos, scale, speed, yForce, distanceToFlap);
+                spawnCache.GetBigPig(spawnPos, scale, speed, yForce, distanceToFlap,0);
                 break;
             case 3:
 
@@ -375,6 +397,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     public override void SetupHitTarget(SpawnStateManager spawner)
     {
         timeSinceLastWave = 0;
+        minYAdj = 0;
 
         if (useWaveAmount && currentAmountOfWavesSpawned >= amountOfWavesToSpawn)
         {
@@ -383,6 +406,17 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
         }
         int waveSize = currentIntensityData.GetRandomWaveSize();
+        if (spawner.GetMissilePigIfReady(currentIntensityData.minMissilePigDelay, currentIntensityData.missileBasePigChance))
+        {
+            Debug.Log("Getting missile pig");
+            minYAdj = .8f;
+
+            waveSize--;
+            float rFlipP = Random.Range(0f, 1f);
+            float rFlipW = Random.Range(0f, 1f);
+
+            spawner.GetMissilePig(rFlipP < currentIntensityData.missilePigFlipPChance, rFlipW < currentIntensityData.missilePigFlipWChance, currentIntensityData.shootingRangeAdjustment, Random.Range(currentIntensityData.xSpawnRangeMissilePig.x, currentIntensityData.xSpawnRangeMissilePig.y));
+        }
         spawner.recentlySpanwnedPositions = new List<Vector2>();
 
         pigTypeList = DeterminePigTypesForWave(waveSize);

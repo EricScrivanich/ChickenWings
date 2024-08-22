@@ -5,6 +5,7 @@ using UnityEngine;
 public class CreateCustomSpawnBoundary : MonoBehaviour
 {
     private SpawnStateManager manager;
+    [SerializeField] private LevelManagerID lvlID;
     [SerializeField] private Vector2[] boxDataXRange;
 
     [SerializeField] private Vector2[] boxDataYRange;
@@ -21,12 +22,21 @@ public class CreateCustomSpawnBoundary : MonoBehaviour
         }
 
 
+
+    }
+
+    private void StartBoxWithDelay()
+    {
+
         if (StartWithBox > -1)
         {
             Invoke("AddBoudingBoxAtStart", startWithBoxDelay);
         }
 
+
     }
+
+
 
     public void AddBoudingBoxAtStart()
     {
@@ -38,6 +48,17 @@ public class CreateCustomSpawnBoundary : MonoBehaviour
             manager.CreateCustomBoundingBox(boxDataYRange[StartWithBox], boxDataXRange[StartWithBox]);
         else
             manager.CreateCustomBoundingBox(boxDataYRange[StartWithBox], Vector2.zero);
+
+    }
+    private void OnEnable()
+    {
+
+        lvlID.outputEvent.StartCustomBoundingBoxWithDelay += StartBoxWithDelay;
+
+    }
+    private void OnDisable()
+    {
+        lvlID.outputEvent.StartCustomBoundingBoxWithDelay -= StartBoxWithDelay;
 
     }
 

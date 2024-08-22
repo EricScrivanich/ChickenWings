@@ -8,6 +8,8 @@ public class LevelManagerID : ScriptableObject
     public InputLvlEvent inputEvent;
     public OutputLvlEvent outputEvent;
 
+    public bool usingCheckPoint;
+
     [Header("RingPass")]
     public bool areRingsRequired;
     public bool PauseSpawning;

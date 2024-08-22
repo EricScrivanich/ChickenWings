@@ -5,13 +5,20 @@ using HellTap.PoolKit;
 
 public class MissilePigScript : MonoBehaviour
 {
+    [SerializeField] private float turn_speed;
     public bool flippedPig;
     public bool flippedWeapon;
     private bool flipped;
     private bool canShoot = true;
+    private float flippedAngleAdj;
+    private int flippedXAdj;
     private Vector3 aimAdjustment = new Vector3(0, 180, 0);
     [SerializeField] private Transform weaponStrap;
     private Vector3 aimAdjustmentVar;
+
+    private Vector3 initalLaunchAimPosition;
+    private Vector3 initalLaunchAimRotation;
+    private Vector3 initalMissilePosition;
 
     private int maxMissiles;
     private int currentMissilesShot;
@@ -19,15 +26,15 @@ public class MissilePigScript : MonoBehaviour
 
     private Vector3 adjustAimAngle;
 
-    private float normalMoveSpeed = 4.9f;
-    private float flippedMoveSpeed = -3.2f;
+    private float normalMoveSpeed = 5.3f;
+    private float flippedMoveSpeed = -3.3f;
 
     private float speed;
     [SerializeField] private float downYAmountForReload;
     [SerializeField] private float reloadTimeRotationToMissileRatio;
     [SerializeField] private ParticleSystem ps;
     private Transform player;
-    [SerializeField] private float shootTime;
+
     [SerializeField] private float frontRange;
     [SerializeField] private float backRange;
 
@@ -44,29 +51,27 @@ public class MissilePigScript : MonoBehaviour
     [SerializeField] private SpriteRenderer missileImage;
     private Animator anim;
 
+    private float yPos = -3.56f;
+
     private Pool pool; // Drag your pool reference here in the inspector
 
 
     // Start is called before the first frame update
     void Start()
     {
-        anim = GetComponent<Animator>();
+
 
         pool = PoolKit.GetPool("ExplosionPool");
 
         player = GameObject.Find("Player").GetComponent<Transform>();
+    }
+    void Awake()
+    {
+        anim = GetComponent<Animator>();
+        initalMissilePosition = missileImage.transform.localPosition;
+        initalLaunchAimPosition = launchAim.localPosition;
+        initalLaunchAimRotation = launchAim.localEulerAngles;
 
-        if (flippedPig)
-            anim.speed = 1.3f;
-        else
-            anim.speed = 1f;
-
-
-        // Adjust speed and ranges based on the flipped state
-
-
-
-        // Adjust rotation based on the flipped state
 
     }
 
@@ -79,18 +84,85 @@ public class MissilePigScript : MonoBehaviour
             gameObject.SetActive(false);
         }
 
-        if (player != null && canShoot)
+        if (player != null && canShoot && transform.position.x < 10 && transform.position.x > -9.5f)
         {
             float distance = player.transform.position.x - transform.position.x;
             bool inRange = (distance > rangesMinMaxVar.x && distance < rangesMinMaxVar.y);
 
             if (inRange)
             {
-                StartCoroutine(LaunchMissile());
+                StartCoroutine(LaunchMissileNew());
                 canShoot = false;
-                missileTimer = 0;
+
             }
         }
+    }
+
+    private IEnumerator LaunchMissileNew()
+    {
+        float elapsedTime = 0f;
+
+
+
+        while (elapsedTime < aimTime)
+        {
+            elapsedTime += Time.deltaTime;
+
+            // Calculate direction to the player
+            Vector3 direction = player.position - launchAim.position;
+
+            // Use LookAt to rotate the launchAim towards the player
+            // Since we're working in 2D, we only want to adjust the Z axis (ignoring the Y and X axes)
+            float angle = Mathf.Atan2(direction.y, flippedXAdj * direction.x) * Mathf.Rad2Deg - 90;
+
+            // if (angle < 5)
+            // {
+            //     Debug.LogError("angle at 5: " + angle);
+            //     Debug.Log("Rotation is" + launchAim.localRotation.eulerAngles);
+            //     yield return null;
+
+
+            // }
+            // else if (angle > 90)
+            // {
+            //     Debug.Log("Rotation is" + launchAim.localRotation.eulerAngles);
+            //     Debug.LogError("angle at 95");
+            //     yield return null;
+            // }
+            Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
+
+            float currentRotZ = launchAim.localEulerAngles.z;
+
+            if (currentRotZ > 95 && currentRotZ < 320)
+            {
+                launchAim.localRotation = Quaternion.Euler(0, 0, 95);
+                Debug.LogError("angle at 95");
+
+
+            }
+
+            else if (currentRotZ > 330 || currentRotZ < 2)
+            {
+                launchAim.localRotation = Quaternion.Euler(0, 0, 2);
+                Debug.LogError("angle at 5");
+
+            }
+
+            else
+                launchAim.localRotation = Quaternion.Slerp(launchAim.localRotation, targetRotation, Time.deltaTime * turn_speed);
+
+            yield return null;
+        }
+        AudioManager.instance.PlayMissileLaucnh();
+
+        ps.Play();
+        yield return new WaitForSeconds(.2f);
+
+        // Spawn the missile from the pool with the final rotation
+        pool.Spawn("missile", missileImage.transform.position, launchAim.rotation);
+        missileImage.enabled = false;
+        yield return new WaitForSeconds(.2f);
+        Reload();
     }
 
     private IEnumerator LaunchMissile()
@@ -133,13 +205,13 @@ public class MissilePigScript : MonoBehaviour
 
 
                 // Clamp the rotation to not exceed 90 degrees and not go below 10 degrees
-                // if (flippedPig)
-                // {
-                //     angle = Mathf.Clamp(angle, -90f, -10f);  // Adjust clamping for flipped pig
-                // }
-                // else
-                // {
-                angle = Mathf.Clamp(angle, 10f, 90f);
+                if (flippedPig)
+                {
+                    angle = Mathf.Clamp(angle, -90f, -10f);  // Adjust clamping for flipped pig
+                }
+                else
+                    // {
+                    angle = Mathf.Clamp(angle, 10f, 90f);
                 // }
 
 
@@ -224,64 +296,158 @@ public class MissilePigScript : MonoBehaviour
         StartCoroutine(ReloadCoroutine());
     }
 
-    private void OnEnable()
+    public void Initialize(bool flippedP, bool flippedW, float rangeAdj, float xPos)
     {
+
         missileImage.enabled = true;
         canShoot = true;
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+        missileImage.transform.localPosition = initalMissilePosition;
+        launchAim.localPosition = initalLaunchAimPosition;
+        launchAim.localRotation = Quaternion.Euler(0, 0, 90);
+        weaponStrap.localRotation = Quaternion.Euler(0f, 0, 0f);
 
-        if (flippedPig)
+
+        Debug.Log("FLIPPED PIG, FLIPPED WEAPON: = " + flippedP + flippedW);
+
+        if (flippedP)
         {
-            rangesMinMaxVar = new Vector2(-rangesMinMax.y, -rangesMinMax.x);
+
             speed = flippedMoveSpeed;
+            anim.speed = 1.4f;
             transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-            if (flippedWeapon)
+
+            if (flippedW)
             {
                 flipped = false;
 
-                weaponStrap.rotation = Quaternion.identity;
+
+                weaponStrap.localRotation = Quaternion.Euler(0, 180, 0);
             }
             else
             {
+                Debug.Log("UsignFLFFDFDFDF");
+                weaponStrap.localRotation = Quaternion.Euler(0, 0, 0);
                 flipped = true;
-                weaponStrap.rotation = Quaternion.Euler(0f, 180f, 0f);
+
             }
-
-
 
         }
         else
         {
             speed = normalMoveSpeed;
-            transform.rotation = Quaternion.identity;
+            anim.speed = 1f;
 
-            if (flippedWeapon)
+
+            if (flippedW)
             {
                 flipped = true;
-                weaponStrap.rotation = Quaternion.Euler(0f, 180f, 0f);
-
-
+                weaponStrap.localRotation = Quaternion.Euler(0f, 180f, 0f);
             }
             else
             {
-                weaponStrap.rotation = Quaternion.identity;
+
                 flipped = false;
-
             }
-
-
         }
+
+
 
         if (flipped)
         {
 
-            rangesMinMaxVar = new Vector2(-rangesMinMax.y, -rangesMinMax.x);
+            rangesMinMaxVar = new Vector2(-rangesMinMax.y, -rangesMinMax.x + rangeAdj);
+            flippedAngleAdj = 180;
+            flippedXAdj = -1;
 
         }
         else
-            rangesMinMaxVar = rangesMinMax;
+        {
+            rangesMinMaxVar = new Vector2(rangesMinMax.x - rangeAdj, rangesMinMax.y);
+            flippedAngleAdj = 0;
+            flippedXAdj = 1;
 
-        missileTimer = shootTime;
 
-        transform.position = startPos;
+        }
+
+
+        transform.position = new Vector2(xPos, yPos);
+        gameObject.SetActive(true);
+
     }
-} // Flip rotation on the Y-axis
+
+    // private void OnEnable()
+    // {
+    //     missileImage.enabled = true;
+    //     canShoot = true;
+    //     transform.rotation = Quaternion.Euler(0, 0, 0);
+    //     missileImage.transform.localPosition = initalMissilePosition;
+    //     launchAim.localPosition = initalLaunchAimPosition;
+    //     launchAim.localRotation = Quaternion.Euler(0, 0, 90);
+    //     weaponStrap.localRotation = Quaternion.Euler(0f, 0, 0f);
+
+
+
+
+    //     if (flippedPig)
+    //     {
+
+    //         speed = flippedMoveSpeed;
+    //         anim.speed = 1.4f;
+    //         transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+
+    //         if (flippedWeapon)
+    //         {
+    //             flipped = false;
+
+
+    //             weaponStrap.localRotation = Quaternion.Euler(0, 180, 0);
+    //         }
+    //         else
+    //         {
+    //             Debug.Log("UsignFLFFDFDFDF");
+    //             weaponStrap.localRotation = Quaternion.Euler(0, 0, 0);
+    //             flipped = true;
+
+    //         }
+
+    //     }
+    //     else
+    //     {
+    //         speed = normalMoveSpeed;
+    //         anim.speed = 1f;
+
+
+    //         if (flippedWeapon)
+    //         {
+    //             flipped = true;
+    //             weaponStrap.localRotation = Quaternion.Euler(0f, 180f, 0f);
+    //         }
+    //         else
+    //         {
+
+    //             flipped = false;
+    //         }
+    //     }
+
+
+
+    //     if (flipped)
+    //     {
+
+    //         rangesMinMaxVar = new Vector2(-rangesMinMax.y, -rangesMinMax.x);
+    //         flippedAngleAdj = 180;
+    //         flippedXAdj = -1;
+
+    //     }
+    //     else
+    //     {
+    //         rangesMinMaxVar = new Vector2(rangesMinMax.x, rangesMinMax.y);
+    //         flippedAngleAdj = 0;
+    //         flippedXAdj = 1;
+
+
+    //     }
+
+    // }
+}
