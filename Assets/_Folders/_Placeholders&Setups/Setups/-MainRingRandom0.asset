@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
-  m_Name: -MainRingRandom
+  m_Name: -MainRingRandom0
   m_EditorClassIdentifier: 
   XTriggerForRecording: 3
   mustCompleteRingSequence: 0
-  enemyTriggerForEachRingIndex: 030000000600000009000000
+  enemyTriggerForEachRingIndex: 0300000006000000090000000a000000
   enemySetup:
   - dataArray:
     - rid: 3018405082130808843
@@ -40,6 +40,8 @@ MonoBehaviour:
   - dataArray:
     - rid: 3018405104128884822
     - rid: 3018405104128884823
+  - dataArray:
+    - rid: 3018405125616566272
   collectableSetup:
   - dataArray:
     - rid: 3018405082130808849
@@ -57,6 +59,8 @@ MonoBehaviour:
     - rid: 3018405104128884837
     - rid: 3018405104128884838
     - rid: 3018405104128884839
+  - dataArray:
+    - rid: 3018405125616566273
   isRandomSetup: 1
   references:
     version: 2
@@ -564,3 +568,42 @@ MonoBehaviour:
           scale: {x: 1.1, y: 1.1, z: 1}
           rotation: {x: -0, y: -0, z: 0.603208, w: 0.797584}
           speed: 4.8
+    - rid: 3018405125616566272
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.065385
+        data:
+        - position: {x: 12.173591, y: -1.5914454}
+          scale: {x: 0.87, y: 0.87, z: 0.87}
+          speed: 5.2
+        - position: {x: 17.36, y: 1.47}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 5.2
+        - position: {x: 23.93, y: -1.59}
+          scale: {x: 0.87, y: 0.87, z: 0.87}
+          speed: 5.2
+        - position: {x: 29.34, y: 1.69}
+          scale: {x: 0.82, y: 0.82, z: 0.82}
+          speed: 5.2
+    - rid: 3018405125616566273
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.1820517
+        isRings: 1
+        data:
+        - position: {x: 12.675026, y: 1.751453}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.12013682, w: 0.9927574}
+          speed: 5.2
+        - position: {x: 18.29, y: -1.7585905}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.12013682, w: 0.9927574}
+          speed: 5.2
+        - position: {x: 24.319456, y: 2.0300279}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.12013682, w: 0.9927574}
+          speed: 5.2
+        - position: {x: 29.946669, y: -1.5357305}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.12013682, w: 0.9927574}
+          speed: 5.2

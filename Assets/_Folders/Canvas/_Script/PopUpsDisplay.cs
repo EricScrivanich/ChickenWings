@@ -1,11 +1,15 @@
 using System.Collections;
 using UnityEngine;
-
+using TMPro;
 using DG.Tweening;
 
 public class PopUpsDisplay : MonoBehaviour
 {
     public PlayerID ID;
+
+    [SerializeField] private bool showScore;
+
+    [SerializeField] private GameObject GameOverPrefab;
     [SerializeField] private LevelManagerID LvlID;
 
 
@@ -15,7 +19,7 @@ public class PopUpsDisplay : MonoBehaviour
     private float currentLerpTime = 0f;
     private GameObject player;
 
-    public RectTransform gameOver;
+    private RectTransform gameOver;
     private Vector2 initialPosition;
     private Vector2 targetPosition;
     private float positionArrivalThreshold = 1f;
@@ -42,7 +46,7 @@ public class PopUpsDisplay : MonoBehaviour
     private void GameOver2()
     {
         gameOver.anchoredPosition = new Vector2(0, Screen.height + 30);
-        gameOver.DOAnchorPos(new Vector2(0, 10), 1.5f);
+        gameOver.DOAnchorPos(new Vector2(0, 140), 1.2f);
     }
 
     void Update()
@@ -73,9 +77,20 @@ public class PopUpsDisplay : MonoBehaviour
 
     public void GameOver()
     {
-        gameOver.anchoredPosition = new Vector2(0, Screen.height + 30);
-        gameOver.gameObject.SetActive(true);
-        gameOver.DOAnchorPos(new Vector2(0, 10), 1.5f);
+        gameOver = Instantiate(GameOverPrefab).GetComponent<RectTransform>();
+        gameOver.SetParent(GameObject.Find("Canvas").transform);
+        var scoreText = gameOver.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+
+        if (showScore)
+        {
+            scoreText.text = ("Final Score: " + ID.Score.ToString());
+        }
+        else
+            scoreText.gameObject.SetActive(false);
+        gameOver.localScale = new Vector3(2, 2, 2);
+        gameOver.anchoredPosition = new Vector2(0, Screen.height + 100);
+
+        gameOver.DOAnchorPos(new Vector2(0, 110), 1.4f).SetEase(Ease.OutSine);
 
         // gameoverImage.gameObject.SetActive(true);
         // targetPosition = new Vector2(0, 1);

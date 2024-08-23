@@ -109,7 +109,7 @@ public class PigMovementBasic : MonoBehaviour
 
             if (body != null)
             {
-                body.localScale = new Vector3(.75f - transform.localScale.x + 1, 1, 1);
+                body.localScale = new Vector3(((.85f - transform.localScale.x) * .5f) + 1, 1, 1);
                 frontLegs.position = frontLegsPosition.position;
                 backLegs.position = backLegsPosition.position;
                 wings.position = wingsPosition.position;

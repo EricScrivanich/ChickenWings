@@ -153,6 +153,7 @@ public class TriggerNextSection : MonoBehaviour
 
     private void HandleOnCheckpoint(int id)
     {
+        Debug.Log("Check point is: " + id + " comparing to sections check of: " + setCheckPoint);
         if (id == setCheckPoint)
         {
             isCheckPoint = true;
@@ -164,7 +165,11 @@ public class TriggerNextSection : MonoBehaviour
 
         }
         else
+        {
             gameObject.SetActive(false);
+            Debug.Log("Not correct checkpoint");
+        }
+
 
 
     }
@@ -172,7 +177,7 @@ public class TriggerNextSection : MonoBehaviour
     private IEnumerator DelayToActivateSectionsAndPlayer(float delay)
     {
         yield return new WaitForSecondsRealtime(delay);
-        yield return null;
+       
         player.globalEvents.OnEnterNextSectionTrigger?.Invoke(0, 0, clockwise, transform, setPlayerPositionTransform.position, tweenPlayerBool);
         lvlID.outputEvent.ShowSection?.Invoke(setCheckPoint - 1, true);
         ReadyForExitAndPressButtons(true);

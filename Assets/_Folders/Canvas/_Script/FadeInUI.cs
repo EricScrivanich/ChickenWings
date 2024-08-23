@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class FadeInUI : MonoBehaviour
 {
     [SerializeField] private CanvasGroup FadeGroup;
+
+    [SerializeField] private float setSelfUnactiveAfterDelay;
+    [SerializeField] private float setSelfActiveAfterDelay;
     private bool hasSetActive = false;
 
     [SerializeField] private bool setCanvasGroupUnactive;
@@ -70,6 +73,7 @@ public class FadeInUI : MonoBehaviour
         hasFaded = false;
         if (setCanvasGroupUnactive) FadeGroup.gameObject.SetActive(true);
         SetActiveOnce();
+        FadeGroup.alpha = startAlpha;
 
         foreach (var item in SetActiveObjects)
         {
@@ -80,13 +84,47 @@ public class FadeInUI : MonoBehaviour
             item.SetActive(false);
         }
 
-        FadeGroup.DOFade(endAlpha, fadeDuration).SetEase(Ease.InOutSine).From(startAlpha).SetUpdate(true);
+        if (setSelfActiveAfterDelay > 0)
+            StartCoroutine(DelayToFunction(true, setSelfActiveAfterDelay));
+        else
+        {
+            FadeGroup.DOFade(endAlpha, fadeDuration).SetEase(Ease.InOutSine).From(startAlpha).SetUpdate(true);
+
+            if (setSelfUnactiveAfterDelay > 0)
+            {
+                StartCoroutine(DelayToFunction(false, setSelfUnactiveAfterDelay));
+            }
+
+        }
+
+
+
 
         StartCoroutine(SetObjectsActive());
     }
     private void OnDisable()
     {
         if (setCanvasGroupUnactive) FadeGroup.gameObject.SetActive(false);
+
+        
+    }
+
+    private IEnumerator DelayToFunction(bool setActive, float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        if (setActive)
+        {
+            FadeGroup.DOFade(endAlpha, fadeDuration).SetEase(Ease.InOutSine).From(startAlpha).SetUpdate(true);
+            if (setSelfUnactiveAfterDelay > 0)
+            {
+                StartCoroutine(DelayToFunction(false, setSelfUnactiveAfterDelay));
+            }
+        }
+        else
+        {
+            FadeOut();
+        }
+
     }
 
     public void FadeOut()

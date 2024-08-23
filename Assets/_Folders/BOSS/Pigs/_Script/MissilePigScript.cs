@@ -136,7 +136,7 @@ public class MissilePigScript : MonoBehaviour
             if (currentRotZ > 95 && currentRotZ < 320)
             {
                 launchAim.localRotation = Quaternion.Euler(0, 0, 95);
-                Debug.LogError("angle at 95");
+
 
 
             }
@@ -144,7 +144,7 @@ public class MissilePigScript : MonoBehaviour
             else if (currentRotZ > 330 || currentRotZ < 2)
             {
                 launchAim.localRotation = Quaternion.Euler(0, 0, 2);
-                Debug.LogError("angle at 5");
+
 
             }
 
@@ -308,7 +308,7 @@ public class MissilePigScript : MonoBehaviour
         weaponStrap.localRotation = Quaternion.Euler(0f, 0, 0f);
 
 
-        Debug.Log("FLIPPED PIG, FLIPPED WEAPON: = " + flippedP + flippedW);
+
 
         if (flippedP)
         {
@@ -326,7 +326,7 @@ public class MissilePigScript : MonoBehaviour
             }
             else
             {
-                Debug.Log("UsignFLFFDFDFDF");
+
                 weaponStrap.localRotation = Quaternion.Euler(0, 0, 0);
                 flipped = true;
 

@@ -87,7 +87,7 @@ public class SpawnStateManager : MonoBehaviour
     public List<Vector2> recentlySpanwnedPositions;
     private float timeSinceLastWave;
 
-
+    private Vector3 bucketDefaultScale = new Vector3(1.1f, 1.1f, 1.1f);
     private int jetPackPigIndex = 0;
     private int normalPigIndex = 0;
     private int bigPigIndex = 0;
@@ -581,7 +581,7 @@ public class SpawnStateManager : MonoBehaviour
         {
             ringPool.RingType[currentRingType].GetRing((Vector2)transform.position + position, rotation, scale, speed);
         }
-        else ringPool.RingType[currentRingType].GetBucket((Vector2)transform.position + position, rotation, scale, speed);
+        else ringPool.RingType[currentRingType].GetBucket((Vector2)transform.position + position, rotation, bucketDefaultScale, speed);
     }
 
     public void GetNormalPig(Vector2 pos, Vector3 scale, float speed)
@@ -597,7 +597,7 @@ public class SpawnStateManager : MonoBehaviour
         normalPigIndex++;
     }
 
-    public void GetPilotPig(Vector2 pos, Vector3 scale, float speed, int flightMode,float minY,float maxY, float yForce, float maxYSpeed, float xTrigger)
+    public void GetPilotPig(Vector2 pos, Vector3 scale, float speed, int flightMode, float minY, float maxY, float yForce, float maxYSpeed, float xTrigger)
     {
         if (pilotPigIndex >= pilotPig.Length) pilotPigIndex = 0;
         var script = pilotPig[pilotPigIndex];

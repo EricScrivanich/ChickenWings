@@ -939,6 +939,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
+      propertyPath: setCheckPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
       propertyPath: pressButtonText
       value: the DASH
       objectReference: {fileID: 0}
@@ -996,7 +1000,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1099,6 +1103,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
+      propertyPath: setCheckPoint
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
       propertyPath: activateSection
       value: 1
       objectReference: {fileID: 0}
@@ -1164,7 +1172,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1238,7 +1246,9 @@ MonoBehaviour:
   barnsNeeded: 0
   pigTypeTracked: -1
   pigsNeeded: 0
-  initalGameObjectsToDeactivate: []
+  initalGameObjectsToDeactivate:
+  - {fileID: 1351717974}
+  - {fileID: 1853352850}
   sections:
   - {fileID: 851127558}
   - {fileID: 2032950702}
@@ -1272,8 +1282,8 @@ MonoBehaviour:
   timeAfterPigSpawn: 1.5
   timeAfterRingSpawn: 3.8
   currentRingParentType: 0
-  waitTime: 5.2
-  ringSpawnMinMaxDelay: {x: 3.5, y: 5.3}
+  waitTime: 4.5
+  ringSpawnMinMaxDelay: {x: 3.2, y: 4}
   ringParentTypes:
   - {fileID: 7404809993316919412, guid: 2bba167d8e0244a84aec2cb6ea0bc90d, type: 3}
   - {fileID: 7253889041876223930, guid: 9c0b66cccf28a47aa9d9f56c3f843348, type: 3}
@@ -2104,11 +2114,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawner: {fileID: 0}
---- !u!224 &1736450411 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6486068709625014960, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-  m_PrefabInstance: {fileID: 3219504513452907754}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1756405134 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
@@ -2582,7 +2587,7 @@ PrefabInstance:
 
 
         NOTE: There is a slight
-        cooldown after using a dash. Also, dashing shrinks the height of your hitox.'
+        cooldown after using a dash. Also, dashing shrinks the height of your hitbox.'
       objectReference: {fileID: 0}
     - target: {fileID: 7435656509726015610, guid: ff7194501f43f42ba85ea96a02524fdd, type: 3}
       propertyPath: m_fontSize
@@ -2874,7 +2879,7 @@ PrefabInstance:
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: gameOver
       value: 
-      objectReference: {fileID: 1736450411}
+      objectReference: {fileID: 0}
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: FinishedLevelUI
       value: 
@@ -2910,6 +2915,14 @@ PrefabInstance:
     - target: {fileID: 4000236330787534884, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: RingNumber
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060819351333379118, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_Name
+      value: GameOverTitle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060819351333379118, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4162663993449095872, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3452,6 +3465,7 @@ PrefabInstance:
     - {fileID: 2129300320309518276, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
     - {fileID: 4980555442502380094, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
     - {fileID: 7126211409168868919, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+    - {fileID: 6573991289420130777, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       insertIndex: -1

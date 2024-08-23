@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 
 public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
+    [SerializeField] private bool gameOverButton;
     [SerializeField] private ButtonColorsSO colorSO;
     [SerializeField] private SceneManagerSO sceneLoader;
     [SerializeField] private TextMeshProUGUI text;
@@ -36,21 +37,47 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Sequence hoverSeq;
     private Sequence pressSeq;
 
+    private Color pressColor;
+    private Color unPressColor;
+
     private void Awake()
     {
+        if (gameOverButton)
+        {
+            unPressColor = colorSO.goUnPressedColor;
+            pressColor = colorSO.goPressedColor;
+        }
+        else
+        {
+            unPressColor = colorSO.pmUnPressedColor;
+            pressColor = colorSO.pmPressedColor;
+        }
+
         lockButtons = false;
         button = GetComponent<Button>();
         rect = GetComponent<RectTransform>();
-        originalPosition = imageRect.anchoredPosition;
-        movedPosition1 = new Vector2(originalPosition.x + moveAmountOnPress.x, originalPosition.y + moveAmountOnPress.y);
-        movedPosition2 = new Vector2(originalPosition.x + moveAmountOnPress2.x, originalPosition.y + moveAmountOnPress2.y);
-        text.color = colorSO.pmUnPressedColor;
-        buttonColor.color = colorSO.pmUnPressedColor;
-        imageRect.localScale = normalScale;
-        rect.localScale = normalScale;
+
+
 
         // if (text != null) text.color = colorSO.unPressedColor;
         // buttonColor.color = colorSO.unPressedColor;
+    }
+    private void Start()
+    {
+        originalPosition = imageRect.anchoredPosition;
+        imageRect.localScale = normalScale;
+        movedPosition1 = new Vector2(originalPosition.x + moveAmountOnPress.x, originalPosition.y + moveAmountOnPress.y);
+        movedPosition2 = new Vector2(originalPosition.x + moveAmountOnPress2.x, originalPosition.y + moveAmountOnPress2.y);
+
+
+        if (text != null)
+            text.color = unPressColor;
+
+
+        buttonColor.color = unPressColor;
+        rect.localScale = normalScale;
+
+
     }
 
     public void ResetGame()
@@ -131,16 +158,20 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
         hoverSeq = DOTween.Sequence();
         if (hovering)
         {
-            hoverSeq.Append(text.DOColor(colorSO.pmPressedColor, .23f));
-            hoverSeq.Join(buttonColor.DOColor(colorSO.pmPressedColor, .23f));
+
+            hoverSeq.Append(buttonColor.DOColor(pressColor, .23f));
+            if (text != null)
+                hoverSeq.Join(text.DOColor(pressColor, .23f));
             // hoverSeq.Join(imageRect.DOAnchorPos(movedPosition, .23f).SetEase(Ease.OutSine));
 
             hoverSeq.Play().SetUpdate(true);
         }
         else
         {
-            hoverSeq.Append(text.DOColor(colorSO.pmUnPressedColor, .2f));
-            hoverSeq.Join(buttonColor.DOColor(colorSO.pmUnPressedColor, .2f));
+            hoverSeq.Append(buttonColor.DOColor(unPressColor, .2f));
+            if (text != null)
+                hoverSeq.Join(text.DOColor(unPressColor, .2f));
+
             // hoverSeq.Join(imageRect.DOAnchorPos(originalPosition, .2f).SetEase(Ease.OutSine));
 
             // hoverSeq.Join(rect.DOScale(normalScale, .2f));
@@ -202,8 +233,8 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
 
                 break;
             case (1):
-                SceneManager.LoadScene("MainMenu");
                 GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint = 0;
+                SceneManager.LoadScene("MainMenu");
                 Time.timeScale = 1;  // Ensure game time is running normally in the main menu.
                 break;
             case (2):

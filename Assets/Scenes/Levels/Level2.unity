@@ -1447,7 +1447,7 @@ MonoBehaviour:
   showSectionAtStart: 0
   showSectionAfterDelay: 0
   areRingsRequired: 1
-  ringsNeeded: 7
+  ringsNeeded: 6
   currentRingsPassed: 0
   areBucketsRequired: 0
   bucketsNeeded: 0
@@ -1495,7 +1495,7 @@ MonoBehaviour:
   - {fileID: 5162795527161614452, guid: 0e85ec3f7a14b48d59e569243e3904c4, type: 3}
   - {fileID: 6363324987140401340, guid: a7a3e3dd1e973455aaea0f7f0743681d, type: 3}
   minMax:
-  - {x: -1, y: 3.7}
+  - {x: -0.3, y: 3.9}
   setPigCanNeverSpawnAfterThisManyObjectives: 0
   disablePigCanNeverSpawnAfterThisManyObjectives: 0
   pigsWillNotSpawnEverRange: {x: 0, y: 0}
@@ -2026,11 +2026,6 @@ Material:
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShineColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
---- !u!224 &1736450411 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6486068709625014960, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-  m_PrefabInstance: {fileID: 3219504513452907754}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1756405134 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
@@ -3167,7 +3162,7 @@ PrefabInstance:
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: gameOver
       value: 
-      objectReference: {fileID: 1736450411}
+      objectReference: {fileID: 0}
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: FinishedLevelUI
       value: 

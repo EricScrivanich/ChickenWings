@@ -18,6 +18,7 @@ public class RandomSpawnIntensity : ScriptableObject
 
 
     [Header("Random Setup Rings Logic")]
+    [SerializeField] private float[] randomRingSetupDifficultyWeights;
     [SerializeField] private float[] randomRingSetupAmountToSpawnWeights;
     public float[] RandomRingSetupAmountToSpawnWeights
     {
@@ -197,6 +198,37 @@ public class RandomSpawnIntensity : ScriptableObject
         }
 
         return waveSizeWeights.Length - 1; // Return the max size if something goes wrong
+    }
+
+    public int GetRingDifficultyIndex()
+    {
+        if (randomRingSetupDifficultyWeights == null || randomRingSetupDifficultyWeights.Length == 0)
+        {
+            Debug.LogWarning("Ring diff weights are not set!");
+            return 0; // Default to 0 if not set
+        }
+
+        float totalWeight = 0f;
+        foreach (var weight in randomRingSetupDifficultyWeights)
+        {
+            totalWeight += weight;
+        }
+
+        float Value = Random.Range(0f, totalWeight);
+        float cumulativeWeight = 0f;
+
+        for (int i = 0; i < randomRingSetupDifficultyWeights.Length; i++)
+        {
+            cumulativeWeight += randomRingSetupDifficultyWeights[i];
+            if (Value < cumulativeWeight)
+            {
+                Debug.LogError("Ring difficulty Index is: " + i);
+                return i; // Return the index
+            }
+        }
+
+        return randomRingSetupDifficultyWeights.Length - 1; // Return the max index if something goes wrong
+
     }
     public int GetRingTypeIndex()
     {

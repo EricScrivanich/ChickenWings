@@ -30,4 +30,12 @@ public class ButtonColorsSO : ScriptableObject
     [Header("Pause Menu Colors")]
     public Color pmUnPressedColor;
     public Color pmPressedColor;
+
+    [Header("Gameover Colors")]
+    public Color goUnPressedColor;
+    public Color goPressedColor;
+
+
+
+
 }

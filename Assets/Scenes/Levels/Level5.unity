@@ -2013,18 +2013,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 194135172}
-        m_TargetAssemblyTypeName: BarnMovement, Assembly-CSharp
-        m_MethodName: Initilaize
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &642601660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2127,6 +2115,7 @@ MonoBehaviour:
   ColorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
   manaUsed: 0
   mainManaFillDuration: 0
+  manaGainedFromCollectable: 40
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   touchButtonRectTransform: {fileID: 0}
   cannotUseManaUntilLockedInputCheck: 0
@@ -2503,6 +2492,14 @@ PrefabInstance:
       propertyPath: startPosition.x
       value: -125
       objectReference: {fileID: 0}
+    - target: {fileID: 7884249210943073328, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
+      propertyPath: NextPrevButtons.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7884249210943073328, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
+      propertyPath: NextPrevButtons.Array.data[0]
+      value: 
+      objectReference: {fileID: 1249602022}
     - target: {fileID: 8042003448894185996, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2684,8 +2681,11 @@ MonoBehaviour:
   bucketsNeeded: 0
   areBarnsRequired: 1
   barnsNeeded: 8
+  pigTypeTracked: -1
+  pigsNeeded: 0
   initalGameObjectsToDeactivate:
   - {fileID: 194135171}
+  - {fileID: 711481369}
   sections:
   - {fileID: 1891796128}
   - {fileID: 473649646}
@@ -3296,6 +3296,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3368904065585685089, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
   m_PrefabInstance: {fileID: 985318664}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1249602022 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
+  m_PrefabInstance: {fileID: 949345862}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1283764369 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 699805567591472915, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
@@ -4049,7 +4060,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1891796129
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4322,6 +4333,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
+      propertyPath: setCheckPoint
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
       propertyPath: pressButtonText
       value: the EGG
       objectReference: {fileID: 0}
@@ -4375,7 +4390,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

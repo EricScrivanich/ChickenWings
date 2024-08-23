@@ -35,16 +35,17 @@ public class FlashGroup : MonoBehaviour
         lvlID.outputEvent.SetPressButtonText -= SetText;
     }
 
+    private void OnEnable()
+    {
+
+    }
+
 
     public void SetText(bool show, int type, string s)
     {
         if (show)
         {
-            if (fadeOutSeq != null && fadeOutSeq.IsPlaying())
-                fadeOutSeq.Kill();
 
-            if (enlargeSeq != null && enlargeSeq.IsPlaying())
-                enlargeSeq.Kill();
 
             group.gameObject.transform.localScale = startScale;
             if (type == 0) text.text = ("Press any button to continue.");
@@ -53,6 +54,11 @@ public class FlashGroup : MonoBehaviour
             else if (type == 3) text.text = ("Continue holding the " + s + " button to continue.");
 
             gameObject.SetActive(true);
+            if (fadeOutSeq != null && fadeOutSeq.IsPlaying())
+                fadeOutSeq.Kill();
+
+            if (enlargeSeq != null && enlargeSeq.IsPlaying())
+                enlargeSeq.Kill();
             flashCor = StartCoroutine(Flash());
 
         }
@@ -66,11 +72,6 @@ public class FlashGroup : MonoBehaviour
 
     }
 
-    private void OnEnable()
-    {
-
-
-    }
 
     private void OnDisable()
     {
@@ -78,6 +79,12 @@ public class FlashGroup : MonoBehaviour
         {
             StopCoroutine(flashCor);
         }
+
+        if (fadeOutSeq != null && fadeOutSeq.IsPlaying())
+            fadeOutSeq.Kill();
+
+        if (enlargeSeq != null && enlargeSeq.IsPlaying())
+            enlargeSeq.Kill();
     }
 
     public void FadeOut()

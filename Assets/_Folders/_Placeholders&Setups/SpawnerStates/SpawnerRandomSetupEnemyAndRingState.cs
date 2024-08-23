@@ -7,7 +7,7 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
     private int amount;
     private int currentTriggerAmount;
     private int ringType;
-    private RandomSpawnIntensity currentIntensityData;
+
     private bool hasSwitched;
     // Start is called before the first frame update
     public override void EnterState(SpawnStateManager spawner)
@@ -18,7 +18,8 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
 
         amount = spawner.currentRandomSpawnIntensityData.GetRandomRingSetupAmountIndex();
 
-        spawner.randomRingSetups[0].SpawnRandomSetWithRings(spawner, currentTriggerAmount >= amount);
+
+        spawner.randomRingSetups[spawner.currentRandomSpawnIntensityData.GetRingDifficultyIndex()].SpawnRandomSetWithRings(spawner, currentTriggerAmount >= amount);
         currentTriggerAmount++;
 
     }
@@ -51,7 +52,7 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
             return;
         }
 
-        spawner.randomRingSetups[0].SpawnRandomSetWithRings(spawner, currentTriggerAmount >= amount);
+        spawner.randomRingSetups[spawner.currentRandomSpawnIntensityData.GetRingDifficultyIndex()].SpawnRandomSetWithRings(spawner, currentTriggerAmount >= amount);
         currentTriggerAmount++;
 
     }

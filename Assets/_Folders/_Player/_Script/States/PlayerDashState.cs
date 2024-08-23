@@ -25,6 +25,7 @@ public class PlayerDashState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.isDashing = true;
+        // player.rb.freezeRotation = true;
 
         hasFinishedDash = false;
         player.stillDashing = true;
@@ -64,6 +65,7 @@ public class PlayerDashState : PlayerBaseState
         {
             hasFinishedDash = true;
             player.anim.SetTrigger(player.FinishDashTrigger);
+            // player.rb.freezeRotation = false;
 
         }
         player.rb.gravityScale = player.originalGravityScale;
@@ -126,6 +128,8 @@ public class PlayerDashState : PlayerBaseState
                     player.ID.events.OnDash?.Invoke(false);
 
             }
+            // player.rb.freezeRotation = false;
+
             passedTime = true;
 
 

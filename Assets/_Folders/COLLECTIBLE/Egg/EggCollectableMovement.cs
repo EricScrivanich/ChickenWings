@@ -104,7 +104,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
 
         if (speedVar == 0)
         {
-            speed = Random.Range(5.5f, 8.5f);
+            speed = Random.Range(5.5f, 7.6f);
         }
         else speed = speedVar;
 

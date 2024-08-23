@@ -13,26 +13,38 @@ MonoBehaviour:
   m_Name: INT_Lvl69-0
   m_EditorClassIdentifier: 
   overrideStateTransiton: 0
-  ringTypeWeights: []
+  ringTypeWeights:
+  - 0
+  randomRingSetupDifficultyWeights:
+  - 0.6
+  - 0.4
   randomRingSetupAmountToSpawnWeights:
   - 0
   - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 1
-  - 0
+  - 0.2
+  - 0.5
+  - 0.3
   randomRingTypeWeights:
   - 0.2
+  - 0
   - 0.2
-  - 0.2
-  randomEnemySetupDifficultyWeights: []
-  randomEnemySetupAmountToSpawnWeights: []
+  randomEnemySetupDifficultyWeights:
+  - 0.6
+  - 0.4
+  randomEnemySetupAmountToSpawnWeights:
+  - 0
+  - 0
+  - 0
+  - 0.5
+  - 0.5
   xTargetToStartSpawn: 2
   spawnRandomRangeAfterTarget: {x: 0, y: 0}
-  amountOfWaveWeights: []
+  amountOfWaveWeights:
+  - 0
+  - 0
+  - 0.5
+  - 0.3
+  - 0.2
   waveSizeWeights:
   - 0
   - 0.5
@@ -48,9 +60,9 @@ MonoBehaviour:
   allowedOverlap: {x: 0, y: 0.3}
   activeBoundingBoxTimeAdjustment: 0
   normalPig_W: 0.8
-  jetpackPig_W: 0.2
-  bigPig_W: 0.2
-  tenderizerPig_W: 0.4
+  jetpackPig_W: 0.5
+  bigPig_W: 0.3
+  tenderizerPig_W: 0.2
   NormalPig_BB: {fileID: 0}
   JetpackPig_BB: {fileID: 0}
   BigPig_BB: {fileID: 0}
