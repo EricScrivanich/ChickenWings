@@ -15,6 +15,7 @@ public class SetupParent : ScriptableObject
     private Queue<int> lastPickedTriggers = new Queue<int>();
 
     public int[] enemyTriggerForEachRingIndex;
+    public int[] enemyTriggerForEachRingIndexWeights;
 
     public List<EnemyDataArray> enemySetup = new List<EnemyDataArray>();
     // public SpawnSetupEnemy[] enemySetup;
@@ -45,7 +46,7 @@ public class SetupParent : ScriptableObject
     {
         List<float> tempList = new List<float>();
 
-        int randomRingTrigger = Random.Range(0, collectableSetup.Count);
+        int randomRingTrigger = GetRandomRingIndexByWeight();
 
         int randomRingSetupInTrigger = Random.Range(0, collectableSetup[randomRingTrigger].dataArray.Length);
         var pickedRingSet = collectableSetup[randomRingTrigger].dataArray[randomRingSetupInTrigger];
@@ -83,6 +84,34 @@ public class SetupParent : ScriptableObject
         // manager.StartCoroutine(manager.SetupDuration(Mathf.Max(tempList.ToArray())));
         manager.TimerForNextWave(Mathf.Max(tempList.ToArray()));
 
+    }
+
+    private int GetRandomRingIndexByWeight()
+    {
+        if (enemyTriggerForEachRingIndexWeights == null || enemyTriggerForEachRingIndexWeights.Length == 0)
+        {
+            return Random.Range(0, collectableSetup.Count); // Fallback to random if weights are not set
+        }
+
+        int totalWeight = 0;
+        foreach (var weight in enemyTriggerForEachRingIndexWeights)
+        {
+            totalWeight += weight;
+        }
+
+        int randomValue = Random.Range(0, totalWeight);
+        int cumulativeWeight = 0;
+
+        for (int i = 0; i < enemyTriggerForEachRingIndexWeights.Length; i++)
+        {
+            cumulativeWeight += enemyTriggerForEachRingIndexWeights[i];
+            if (randomValue < cumulativeWeight)
+            {
+                return i; // Return the ring index based on weight
+            }
+        }
+
+        return enemyTriggerForEachRingIndexWeights.Length - 1; // Return the last index if something goes wrong
     }
 
 
@@ -129,24 +158,24 @@ public class SetupParent : ScriptableObject
 
     public void SpawnTrigger(SpawnStateManager manager, int currentTrigger)
     {
-       
+
         List<float> tempList = new List<float>();
 
 
         if (collectableSetup.Count > currentTrigger)
         {
-            
+
             foreach (var coll in collectableSetup[currentTrigger].dataArray)
             {
                 if (currentTrigger == collectableSetup.Count - 1)
                 {
-                   
+
 
                     coll.InitializeCollectable(manager, true);
                 }
                 else
                 {
-                  
+
 
                     coll.InitializeCollectable(manager, collectableSetup.Count == currentTrigger + 1);
                 }

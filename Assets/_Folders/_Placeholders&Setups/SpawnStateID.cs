@@ -24,6 +24,8 @@ public class SpawnStateTransitionLogic : ScriptableObject
     }
 
 
+    public int[] ringSpawnSetTypeOrder;
+
     public int GetRandomSequenceIndex()
     {
         if (RandomSequenceWithWeights == null || RandomSequenceWithWeights.Length == 0)
@@ -53,6 +55,13 @@ public class SpawnStateTransitionLogic : ScriptableObject
 
         return RandomSequenceWithWeights.Length - 1; // Return the max index if something goes wrong
     }
+
+    public void NextTransitionState()
+    {
+        
+    }
+
+   
 
   
 

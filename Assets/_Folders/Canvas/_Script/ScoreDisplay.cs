@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ScoreDisplay : MonoBehaviour
 {
     public PlayerID player;
+    public LevelManagerID lvlID;
     [SerializeField] private TextMeshProUGUI scoreText;
     private TextMeshProUGUI finalScore;
     [SerializeField] private TextMeshProUGUI temporaryScoreText;
@@ -19,10 +20,10 @@ public class ScoreDisplay : MonoBehaviour
     {
         scoreDisplayed = player.Score;
         scoreText.text = "Score: " + scoreDisplayed.ToString();
-       
+
         temporaryScoreText.alpha = 0;
-        
-        
+
+
     }
 
     // Update is called once per frame
@@ -40,6 +41,7 @@ public class ScoreDisplay : MonoBehaviour
 
     void UpdateScore(int scoreAdded)
     {
+        lvlID.inputEvent.OnUpdateObjective?.Invoke("score",scoreAdded);
         if (scoreAdded == 1)
         {
 
@@ -49,6 +51,7 @@ public class ScoreDisplay : MonoBehaviour
             return;
 
         }
+
         temporaryScore += scoreAdded; // Accumulate the temporary score
         temporaryScoreText.text = "+" + temporaryScore.ToString(); // Update the temporary score display
 
@@ -81,7 +84,7 @@ public class ScoreDisplay : MonoBehaviour
 
     private IEnumerator ParseScore(int tempScoreVar)
     {
-        
+
         float parseTime = .1f;
         if (tempScoreVar < 15)
         {

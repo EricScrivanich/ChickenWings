@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
-  m_Name: NewRingRandom
+  m_Name: SET_Lvl6-RANRing
   m_EditorClassIdentifier: 
-  isRandomSetup: 1
-  fillRingWithEnemiesStartIndex: 0
+  XTriggerForRecording: 0
+  mustCompleteRingSequence: 0
   enemyTriggerForEachRingIndex: 0300000006000000
+  enemyTriggerForEachRingIndexWeights: 010000000100000001000000
   enemySetup:
   - dataArray:
     - rid: 7051806370768617503
@@ -51,6 +52,7 @@ MonoBehaviour:
     - rid: 7051806169589350610
     - rid: 7051806169589350611
     - rid: 7051806169589350612
+  isRandomSetup: 1
   references:
     version: 2
     RefIds:
@@ -72,6 +74,7 @@ MonoBehaviour:
           speed: 5.3
           yForce: 5.5
           distanceToFlap: 0.7
+          startingFallSpot: 0
     - rid: 7051806169589350554
       type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -453,6 +456,7 @@ MonoBehaviour:
           speed: 5.3
           yForce: 6.3
           distanceToFlap: 0.9
+          startingFallSpot: 0
     - rid: 7051806370768617503
       type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
       data:

@@ -1202,9 +1202,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1641434571}
-    - targetCorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1641434572}
     - targetCorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       insertIndex: -1
@@ -3076,6 +3073,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 1451452158}
+  setSelfUnactiveAfterDelay: 0
+  setSelfActiveAfterDelay: 0
   setCanvasGroupUnactive: 1
   SetActiveOnceObjects:
   - {fileID: 7932044655770186105}
@@ -4272,18 +4271,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
   m_PrefabInstance: {fileID: 239074801}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1641434571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1641434565}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b59a90aee919f491791c7a6fa5966ea7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1641434572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4346,7 +4333,7 @@ MonoBehaviour:
   jetPackPigPoolSize: 10
   tenderizerPigPoolSize: 0
   normalPigPoolSize: 10
-  bigPigPoolSize: 6
+  bigPigPoolSize: 7
   missilePigPoolSize: 0
   pilotPigPoolSize: 0
   jetPackPigPrefab: {fileID: 8554680807245287772, guid: 7c7bfbfcf2af741b88609dea94b27826, type: 3}
@@ -4377,8 +4364,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 25cf6b47ac13343d9bb2691e5cd7edf2, type: 2}
   spawnIntensitiesHealth:
   - {fileID: 11400000, guid: 6ff05494c99cc44c1a0c50f1af143e39, type: 2}
+  delaysToSpawnNextHealthAfterSpawn: 14000000
   nextIntentisityObjectiveValues: 00000000
   objectivesTracked: []
+  initialDelayForHealthRingsToSpawn: 0
 --- !u!1 &1642033379
 GameObject:
   m_ObjectHideFlags: 0
@@ -4433,11 +4422,6 @@ GameObject:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 139666800986216572, guid: 57f836ef3caaf455d9395f57f0ab50b5, type: 3}
   m_PrefabInstance: {fileID: 3668042682405739272}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1736450411 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6486068709625014960, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-  m_PrefabInstance: {fileID: 3219504513452907754}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1752611261 stripped
 GameObject:
@@ -5258,7 +5242,7 @@ PrefabInstance:
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: gameOver
       value: 
-      objectReference: {fileID: 1736450411}
+      objectReference: {fileID: 0}
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: FinishedLevelUI
       value: 
@@ -5926,7 +5910,7 @@ PrefabInstance:
     - target: {fileID: 8341004098092530541, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 3219504513452907755}
+      objectReference: {fileID: 0}
     - target: {fileID: 8341004098092530541, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ResetGame
@@ -6058,17 +6042,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 892326174}
   m_SourcePrefab: {fileID: 100100000, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
---- !u!114 &3219504513452907755 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8517268454288290076, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-  m_PrefabInstance: {fileID: 3219504513452907754}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &3668042682405739272
 PrefabInstance:
   m_ObjectHideFlags: 0

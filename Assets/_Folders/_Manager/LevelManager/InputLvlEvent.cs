@@ -9,4 +9,5 @@ public struct InputLvlEvent
     public Action<TriggerNextSection, bool, GameObject> ActivateObjFromEvent;
     public Action<string, int> OnUpdateObjective;
     public Action finishedOverrideStateLogic;
+    public Action<SpawnStateTransitionLogic> switchTransitionLogic;
 }

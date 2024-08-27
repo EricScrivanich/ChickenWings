@@ -9,6 +9,8 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private Transform airSpawnPos;
     [SerializeField] private GameObject THETHING;
 
+    public bool rotateWithLastState = false;
+
 
 
     [SerializeField] private GameObject arrowPlayerPosition;
@@ -47,7 +49,8 @@ public class PlayerStateManager : MonoBehaviour
 
     #region States
     PlayerBaseState currentState;
-   
+    public PlayerBaseState lastState;
+
     public PlayerStartingState StartingState = new PlayerStartingState();
     public PlayerFlipRightState FlipRightState = new PlayerFlipRightState();
     public PlayerFlipLeftState FlipLeftState = new PlayerFlipLeftState();
@@ -328,13 +331,23 @@ public class PlayerStateManager : MonoBehaviour
 
     void FixedUpdate()
     {
+
         // rb.velocity = new Vector2(currentForce, rb.velocity.y);
         MaxFallSpeed();
         if (rb.freezeRotation == false)
         {
+            // if (rotateWithLastState)
+            // {
+            //     lastState.RotateState(this);
+            //     Debug.Log("Rorerere");
+
+            // }
+
+            // else
             currentState.RotateState(this);
 
         }
+
 
         currentState.FixedUpdateState(this);
 
@@ -443,7 +456,7 @@ public class PlayerStateManager : MonoBehaviour
     public void SwitchState(PlayerBaseState newState)
     {
 
-        
+
 
         currentState.ExitState(this);
         currentState = newState;
@@ -613,11 +626,23 @@ public class PlayerStateManager : MonoBehaviour
 
     private void HandleDashSlash()
     {
-     
+
         if (stillDashing)
             ID.events.EnableButtons(false);
         DashState.SwitchSlash();
 
+    }
+
+    private void HandleNewSlash(bool none)
+    {
+        if (none)
+        {
+            Debug.Log("YDFD");
+            lastState = currentState;
+            rotateWithLastState = true;
+            SwitchState(ParachuteState);
+
+        }
     }
 
 
@@ -736,7 +761,7 @@ public class PlayerStateManager : MonoBehaviour
 
             foreach (ContactPoint2D pos in collision.contacts)
             {
-                
+
 
                 if (pos.normal.y > .92f)
                 {
@@ -955,6 +980,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.HitGround += HandleGroundCollision;
         // ID.globalEvents.SetCanDashSlash += HandleDashSlash;
         ID.events.OnDashSlash += HandleDashSlash;
+        ID.events.OnAttack += HandleNewSlash;
 
 
         ID.globalEvents.OnAdjustConstantSpeed += ChangeConstantForce;
@@ -967,6 +993,8 @@ public class PlayerStateManager : MonoBehaviour
     private void OnDisable()
     {
         ID.events.OnJump -= HandleJump;
+        ID.events.OnAttack -= HandleNewSlash;
+
         // ID.events.OnAttack -= HandleClocker;
 
         ID.events.OnFlipRight -= HandleRightFlip;

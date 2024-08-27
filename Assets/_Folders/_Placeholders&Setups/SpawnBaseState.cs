@@ -7,7 +7,7 @@ public abstract class SpawnBaseState
     public abstract void SetSpeedAndPos(SpawnStateManager spawner);
     public abstract void SetNewIntensity(SpawnStateManager spawner,RandomSpawnIntensity spawnIntensity);
     public abstract void SetupHitTarget(SpawnStateManager spawner);
-    public abstract void RingsFinished(SpawnStateManager spawner, bool isCorrect);
+    public abstract void RingsFinished(SpawnStateManager spawner, int type, bool isCorrect);
 
 
     // Start is called before the first frame update

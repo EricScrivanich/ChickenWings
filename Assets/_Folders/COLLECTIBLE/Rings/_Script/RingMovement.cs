@@ -46,7 +46,7 @@ public class RingMovement : MonoBehaviour, ICollectible
     {
         rb = GetComponent<Rigidbody2D>();
         _transform = GetComponent<Transform>();
-      
+
         sprite = GetComponent<SpriteRenderer>();
         col = GetComponent<EdgeCollider2D>();
 
@@ -154,7 +154,7 @@ public class RingMovement : MonoBehaviour, ICollectible
 
             yield return null;
         }
-        
+
         elapsedTime = 0;
         startColor = endColor;
         endColor = new Color(startColor.r, startColor.g, startColor.b, 0);
@@ -219,7 +219,6 @@ public class RingMovement : MonoBehaviour, ICollectible
             StartCoroutine(BurstCenter());
             sprite.material = ID.passedMaterial;
             backRing.material = ID.passedMaterial;
-            Debug.Log(isCorrect);
             ID.ringEvent.OnCheckOrder?.Invoke();
 
         }

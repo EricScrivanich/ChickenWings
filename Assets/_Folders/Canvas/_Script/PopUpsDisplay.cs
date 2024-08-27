@@ -9,6 +9,8 @@ public class PopUpsDisplay : MonoBehaviour
 
     [SerializeField] private bool showScore;
 
+    private Vector3 gameOverScale = new Vector3(1, 1, 1);
+
     [SerializeField] private GameObject GameOverPrefab;
     [SerializeField] private LevelManagerID LvlID;
 
@@ -43,11 +45,7 @@ public class PopUpsDisplay : MonoBehaviour
 
 
     }
-    private void GameOver2()
-    {
-        gameOver.anchoredPosition = new Vector2(0, Screen.height + 30);
-        gameOver.DOAnchorPos(new Vector2(0, 140), 1.2f);
-    }
+
 
     void Update()
     {
@@ -87,7 +85,7 @@ public class PopUpsDisplay : MonoBehaviour
         }
         else
             scoreText.gameObject.SetActive(false);
-        gameOver.localScale = new Vector3(2, 2, 2);
+        gameOver.localScale = gameOverScale;
         gameOver.anchoredPosition = new Vector2(0, Screen.height + 100);
 
         gameOver.DOAnchorPos(new Vector2(0, 110), 1.4f).SetEase(Ease.OutSine);

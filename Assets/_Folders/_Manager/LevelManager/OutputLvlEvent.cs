@@ -33,9 +33,10 @@ public struct OutputLvlEvent
 
     public Action<int> nextSection;
 
-    public Action<int,int> killedPig;
+    public Action<int, int> killedPig;
 
 
 
     public Action<RandomSpawnIntensity> OnSetNewIntensity;
+    public Action<SpawnStateTransitionLogic, bool> OnSetNewTransitionLogic;
 }

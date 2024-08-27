@@ -17,6 +17,7 @@ public class SpawnStateManager : MonoBehaviour
     public Coroutine MissilePigTimer;
     public bool canSpawnMissilePig = false;
     public SpawnStateTransitionLogic transitionLogic;
+    private SpawnStateTransitionLogic prevTransitonLogic;
 
     private bool transitionLogicOverriden = false;
     private int currentTransitionLogicIndex;
@@ -101,6 +102,8 @@ public class SpawnStateManager : MonoBehaviour
     private MissilePigScript[] missilePig;
     private PilotPig[] pilotPig;
 
+    private int currentSetRingOrderIndex = 0;
+
 
 
 
@@ -117,6 +120,7 @@ public class SpawnStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        prevTransitonLogic = transitionLogic;
         stopRandomSpawning = false;
         currentTransitionLogicIndex = 0;
 
@@ -164,7 +168,30 @@ public class SpawnStateManager : MonoBehaviour
 
 
     // }
+    public int NextRingType()
+    {
+        if (currentSetRingOrderIndex > transitionLogic.ringSpawnSetTypeOrder.Length - 1)
+            currentSetRingOrderIndex = 0;
+        if (transitionLogic.ringSpawnSetTypeOrder != null && transitionLogic.ringSpawnSetTypeOrder.Length > 0)
+        {
+            currentRingType = transitionLogic.ringSpawnSetTypeOrder[currentSetRingOrderIndex];
+            Debug.Log("Getting next ring type from order: " + transitionLogic.ringSpawnSetTypeOrder[currentSetRingOrderIndex]);
 
+
+            currentSetRingOrderIndex++;
+            return currentRingType;
+
+
+
+        }
+        else
+        {
+            currentRingType = currentRandomSpawnIntensityData.GetRandomRingTypeIndex();
+            return currentRingType;
+
+        }
+
+    }
     public void ChangePureSetupIndex(int newValue)
     {
         currentPureSetup = newValue;
@@ -179,15 +206,22 @@ public class SpawnStateManager : MonoBehaviour
     public void SwitchStateWithLogic()
     {
         int type = 0;
-        if (!transitionLogic.loopStates)
-        {
-            type = transitionLogic.GetRandomSequenceIndex();
-        }
-        else
-            type = transitionLogic.OrderedSequnece[currentTransitionLogicIndex];
+        // if (!transitionLogic.loopStates)
+        // {
+        //     type = transitionLogic.GetRandomSequenceIndex();
+        // }
+        // else
+        Debug.LogError("Current Tanstion logic: " + transitionLogic + " : index- " + currentTransitionLogicIndex);
+
+        type = transitionLogic.OrderedSequnece[currentTransitionLogicIndex];
 
 
         if (SpawnWithDelayRoutine != null) StopCoroutine(SpawnWithDelayRoutine);
+
+
+        if (currentState != null)
+            currentState.ExitState(this);
+
         // currentState.ExitState(this);
 
         switch (type)
@@ -195,11 +229,17 @@ public class SpawnStateManager : MonoBehaviour
             case (0):
                 {
                     currentState = pureSetupState;
+                    
+                    pureSetupState.SetRingType(NextRingType());
                     break;
                 }
             case (1):
                 {
                     currentState = ringAndEnemyRandomSetupState;
+
+                    ringAndEnemyRandomSetupState.SetRingType(NextRingType());
+                 
+
                     break;
                 }
             case (2):
@@ -213,25 +253,33 @@ public class SpawnStateManager : MonoBehaviour
                     break;
                 }
         }
-        Debug.LogError("Type spawend is: " + currentState);
+        Debug.LogError("Entered New State: " + currentState);
         currentState.EnterState(this);
 
+        currentTransitionLogicIndex++;
 
-        if (transitionLogicOverriden)
+
+
+        if (currentTransitionLogicIndex >= transitionLogic.OrderedSequnece.Length)
         {
-            LvlID.inputEvent.finishedOverrideStateLogic?.Invoke();
-            transitionLogicOverriden = false;
-        }
 
 
-        if (transitionLogic.loopStates)
-        {
-            currentTransitionLogicIndex++;
-            if (currentTransitionLogicIndex >= transitionLogic.OrderedSequnece.Length)
+            if (transitionLogic.loopStates)
             {
+
                 currentTransitionLogicIndex = 0;
+
             }
+            else
+            {
+
+                currentRandomSpawnIntensityData.CheckForNextTranstion();
+
+            }
+
+
         }
+
 
     }
 
@@ -242,11 +290,14 @@ public class SpawnStateManager : MonoBehaviour
             case (0):
                 {
                     currentState = pureSetupState;
+                    pureSetupState.SetRingType(NextRingType());
+
                     break;
                 }
             case (1):
                 {
                     currentState = ringAndEnemyRandomSetupState;
+                    ringAndEnemyRandomSetupState.SetRingType(NextRingType());
                     break;
                 }
             case (2):
@@ -327,7 +378,7 @@ public class SpawnStateManager : MonoBehaviour
         if (WaitForWaveFinishRoutine != null)
         {
             StopCoroutine(WaitForWaveFinishRoutine);
-            Debug.LogError("Overriden current timer");
+
         }
 
         WaitForWaveFinishRoutine = StartCoroutine(SetupDuration(duration));
@@ -338,7 +389,7 @@ public class SpawnStateManager : MonoBehaviour
 
     public IEnumerator SetupDuration(float delay)
     {
-        Debug.LogError("waiting for " + delay + " seconds for next spawn");
+        // Debug.LogError("waiting for " + delay + " seconds for next spawn");
         yield return new WaitForSeconds(delay);
         currentState.SetupHitTarget(this);
         if (stopRandomSpawning) stopRandomSpawning = false;
@@ -408,6 +459,7 @@ public class SpawnStateManager : MonoBehaviour
     private void OnEnable()
     {
         LvlID.outputEvent.OnSetNewIntensity += SetNewIntensity;
+        LvlID.outputEvent.OnSetNewTransitionLogic += SetNewTransitionLogic;
         foreach (var ringId in ringPool.RingType)
         {
             ringId.ringEvent.OnCreateNewSequence += RingSequenceFinished;
@@ -418,6 +470,8 @@ public class SpawnStateManager : MonoBehaviour
     private void OnDisable()
     {
         LvlID.outputEvent.OnSetNewIntensity -= SetNewIntensity;
+        LvlID.outputEvent.OnSetNewTransitionLogic -= SetNewTransitionLogic;
+
         foreach (var ringId in ringPool.RingType)
         {
             ringId.ringEvent.OnCreateNewSequence -= RingSequenceFinished;
@@ -428,20 +482,41 @@ public class SpawnStateManager : MonoBehaviour
 
 
     #region EventListeners
+    private void SetNewTransitionLogic(SpawnStateTransitionLogic logic, bool revert)
+    {
+        if (revert)
+        {
+            transitionLogic = prevTransitonLogic;
+            currentTransitionLogicIndex = 0;
+            currentSetRingOrderIndex = 0;
+            return;
+        }
+        else if (!logic.loopStates)
+        {
+            if (transitionLogic.loopStates)
+                prevTransitonLogic = transitionLogic;
 
+            transitionLogic = logic;
+            currentTransitionLogicIndex = 0;
+            currentSetRingOrderIndex = 0;
+        }
+
+
+    }
     private void SetNewIntensity(RandomSpawnIntensity newIntensitySet)
     {
 
         currentRandomSpawnIntensityData = newIntensitySet;
+        newIntensitySet.EnterIntensity();
         if (newIntensitySet.missileBasePigChance > 0 && MissilePigTimer == null && canSpawnMissilePig == false)
             MissilePigTimer = StartCoroutine(MissilePigTimerCoroutine(newIntensitySet.minMissilePigDelay));
         Debug.Log("Set Intensity: " + currentRandomSpawnIntensityData);
 
-        if (newIntensitySet.OverrideStateTransiton > 0)
-        {
-            currentTransitionLogicIndex = newIntensitySet.OverrideStateTransiton - 1;
-            transitionLogicOverriden = true;
-        }
+        // if (newIntensitySet.OverrideStateTransiton > 0)
+        // {
+        //     currentTransitionLogicIndex = newIntensitySet.OverrideStateTransiton - 1;
+        //     transitionLogicOverriden = true;
+        // }
 
         pureRandomEnemyState.SetNewIntensity(this, currentRandomSpawnIntensityData);
 
@@ -466,7 +541,7 @@ public class SpawnStateManager : MonoBehaviour
 
         }
 
-        currentState.RingsFinished(this, correctSequence);
+        currentState.RingsFinished(this, index, correctSequence);
 
     }
 

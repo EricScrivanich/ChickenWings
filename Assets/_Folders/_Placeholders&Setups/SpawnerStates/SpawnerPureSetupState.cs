@@ -7,17 +7,28 @@ public class SpawnerPureSetupState : SpawnBaseState
     private int currentTrigger = 0;
     private bool canContinueToNextSetup;
     private bool hasFinishedFullSetup;
+
+    private bool completedRings;
+    private int ringTypeSpawned;
+
     // Start is called before the first frame update
     public override void EnterState(SpawnStateManager spawner)
     {
         hasFinishedFullSetup = false;
         canContinueToNextSetup = false;
         currentTrigger = 0;
-        spawner.currentRingType = spawner.currentRandomSpawnIntensityData.GetRingTypeIndex();
+        // spawner.currentRingType = spawner.currentRandomSpawnIntensityData.GetRingTypeIndex();
         spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger);
         currentTrigger++;
 
 
+    }
+
+    public void SetRingType(int type)
+    {
+        Debug.Log("Set new ring type in set Ring: " + type);
+
+        ringTypeSpawned = type;
     }
 
     public override void ExitState(SpawnStateManager spawner)
@@ -62,9 +73,9 @@ public class SpawnerPureSetupState : SpawnBaseState
 
     }
 
-    public override void RingsFinished(SpawnStateManager spawner, bool isCorrect)
+    public override void RingsFinished(SpawnStateManager spawner, int type, bool isCorrect)
     {
-        if (spawner.pureSetups[spawner.CurrentPureSetup].mustCompleteRingSequence)
+        if (spawner.pureSetups[spawner.CurrentPureSetup].mustCompleteRingSequence && type == ringTypeSpawned)
         {
             if (isCorrect)
             {

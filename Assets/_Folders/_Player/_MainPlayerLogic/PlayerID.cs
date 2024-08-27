@@ -7,8 +7,10 @@ public class PlayerID : ScriptableObject
 {
 
 
-
+    [SerializeField] private LevelManagerID lvlID;
     public bool constantPlayerForceBool;
+
+
     public float constantPlayerForce;
     private bool resetingValues;
     public bool UsingClocker;
@@ -87,6 +89,7 @@ public class PlayerID : ScriptableObject
     {
         globalEvents.OnAddScore?.Invoke(amount);
         Score += amount;
+
     }
 
 

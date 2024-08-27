@@ -22,14 +22,14 @@ public struct GlobalPlayerEvents
     public Action<bool> OnUseStamina;
 
     public Action<int> OnKillPig;
-// float durationVar, float centerDurationVar, bool clockwise, Transform trans, Vector2 targetPos
-    public Action<float, float,bool, Transform,Vector2,bool> OnEnterNextSectionTrigger;
+    // float durationVar, float centerDurationVar, bool clockwise, Transform trans, Vector2 targetPos
+    public Action<float, float, bool, Transform, Vector2, bool> OnEnterNextSectionTrigger;
 
     public Action ExitSectionTrigger;
 
-    public Action<bool,string[],float,float,bool,bool> OnSetInputs;
+    public Action<bool, string[], float, float, bool, bool> OnSetInputs;
     public Action<bool> OnEnterBubble;
-   
+
 
 
     public Action OnZeroStamina;

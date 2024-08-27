@@ -41,25 +41,30 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     public override void EnterState(SpawnStateManager spawner)
     {
         minYAdj = 0;
-        Debug.LogError("Entering pure random state");
+       
         useWaveAmount = true;
         currentAmountOfWavesSpawned = 0;
         amountOfWavesToSpawn = currentIntensityData.GetRandomAmountOfWaves();
-        Debug.LogError("Random amount of waves to spawn is: " + amountOfWavesToSpawn);
-        if (amountOfWavesToSpawn == 0)
+      
+        if (amountOfWavesToSpawn < 0)
         {
             useWaveAmount = false;
-            Debug.LogError("Ignoring use wave amount ");
+          
+        }
+        else if (amountOfWavesToSpawn == 0)
+        {
+            spawner.TimerForNextWave(.4f);
+            return;
         }
         else
-            Debug.LogError("using wave amount ");
+          
         if (!spawner.stopRandomSpawning)
         {
             timeSinceLastWave = 0;
             int waveSize = currentIntensityData.GetRandomWaveSize();
             if (spawner.GetMissilePigIfReady(currentIntensityData.minMissilePigDelay, currentIntensityData.missileBasePigChance))
             {
-                Debug.Log("Getting missile pig");
+              
                 minYAdj = .8f;
                 waveSize--;
                 float rFlipP = Random.Range(0f, 1f);
@@ -71,10 +76,9 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
             pigTypeList = DeterminePigTypesForWave(waveSize);
 
             spawner.SpawnWithDelayRoutine = spawner.StartCoroutine(SpawnWaveWithDelay(spawner));
-            Debug.Log("EMEerere");
+
         }
-        else
-            Debug.Log("Cant spawnfoo ");
+       
 
 
 
@@ -92,24 +96,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     }
 
 
-    // public override void UpdateState(SpawnStateManager spawner)
-    // {
-    //     if (!isSpawning)
-    //         timeSinceLastWave += Time.deltaTime;
-
-    //     if (timeSinceLastWave >= spawnInterval && !isSpawning)
-    //     {
-    //         isSpawning = true;
-    //         timeSinceLastWave = 0;
-    //         int waveSize = currentIntensityData.GetRandomWaveSize();
-    //         spawner.recentlySpanwnedPositions = new List<Vector2>();
-    //         pigTypeList = DeterminePigTypesForWave(waveSize);
-
-    //         spawner.StartCoroutine(SpawnWaveWithDelay());
-
-    //     }
-
-    // }
+  
 
     public void Initialize()
     {
@@ -118,7 +105,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
     public override void SetNewIntensity(SpawnStateManager spawner, RandomSpawnIntensity spawnIntensity)
     {
-        Debug.LogError("Set new intensity in script");
+        // Debug.LogError("Set new intensity in script");
         spawnCache = spawner;
         currentIntensityData = spawnIntensity;
         normalPigBoundingBox = currentIntensityData.NormalPig_BB ?? spawner.normalPigBoundingBoxBase;
@@ -127,8 +114,13 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
         tenderizerPigBoundingBox = currentIntensityData.TenderizerPig_BB ?? spawner.tenderizerPigBoundingBoxBase;
 
         amountOfWavesToSpawn = currentIntensityData.GetRandomAmountOfWaves();
-        Debug.LogError("Random amount of waves to spawn is: " + amountOfWavesToSpawn);
-        if (amountOfWavesToSpawn == 0) useWaveAmount = false;
+        // Debug.LogError("Random amount of waves to spawn is: " + amountOfWavesToSpawn);
+        if (amountOfWavesToSpawn < 0) useWaveAmount = false;
+        // else if (amountOfWavesToSpawn == 0)
+        // {
+        //     spawner.TimerForNextWave(.4f);
+        //     return;
+        // }
         else useWaveAmount = true;
 
         // Calculate and cache the center and half range for Big Pig's ySpawnRange
@@ -174,7 +166,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
         float bigPigProb = currentIntensityData.BigPig_W / totalWeight;
         float tenderizerPigProb = currentIntensityData.TenderizerPig_W / totalWeight;
 
-        Debug.Log($"Probabilities - Normal: {normalPigProb}, JetPack: {jetPackPigProb}, Big: {bigPigProb}, Tenderizer: {tenderizerPigProb}");
+        // Debug.Log($"Probabilities - Normal: {normalPigProb}, JetPack: {jetPackPigProb}, Big: {bigPigProb}, Tenderizer: {tenderizerPigProb}");
 
         // Randomly determine the pig types for the wave based on the probabilities
         for (int i = 0; i < waveSize; i++)
@@ -209,7 +201,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
         if (useWaveAmount)
         {
             currentAmountOfWavesSpawned++;
-            Debug.LogError("Amount of waves spawned is: " + currentAmountOfWavesSpawned);
+            // Debug.LogError("Amount of waves spawned is: " + currentAmountOfWavesSpawned);
         }
 
 
@@ -385,7 +377,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
                 spawnCache.GetJetPackPig(spawnPos, scale, speed);
                 break;
             case 2:
-                spawnCache.GetBigPig(spawnPos, scale, speed, yForce, distanceToFlap,0);
+                spawnCache.GetBigPig(spawnPos, scale, speed, yForce, distanceToFlap, 0);
                 break;
             case 3:
 
@@ -408,7 +400,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
         int waveSize = currentIntensityData.GetRandomWaveSize();
         if (spawner.GetMissilePigIfReady(currentIntensityData.minMissilePigDelay, currentIntensityData.missileBasePigChance))
         {
-            Debug.Log("Getting missile pig");
+          
             minYAdj = .8f;
 
             waveSize--;
@@ -425,7 +417,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
     }
 
-    public override void RingsFinished(SpawnStateManager spawner, bool isCorrect)
+    public override void RingsFinished(SpawnStateManager spawner,int n, bool isCorrect)
     {
 
     }

@@ -5,8 +5,13 @@ using UnityEngine;
 public class RandomSpawnIntensity : ScriptableObject
 {
     [Header("State Switch Logic, 0 is null, index greater is subrtracted")]
+    [SerializeField] private LevelManagerID lvlID;
 
     [SerializeField] private int overrideStateTransiton;
+
+
+    public SpawnStateTransitionLogic transtionLogicStart;
+    public SpawnStateTransitionLogic transtionLogicEnd;
 
     public int OverrideStateTransiton
     {
@@ -14,11 +19,14 @@ public class RandomSpawnIntensity : ScriptableObject
         private set => overrideStateTransiton = value;
     }
     [Header("Pure Setup Logic")]
+
     [SerializeField] private float[] ringTypeWeights;
 
 
     [Header("Random Setup Rings Logic")]
+
     [SerializeField] private float[] randomRingSetupDifficultyWeights;
+    [SerializeField] private float[] randomRingOrder;
     [SerializeField] private float[] randomRingSetupAmountToSpawnWeights;
     public float[] RandomRingSetupAmountToSpawnWeights
     {
@@ -139,13 +147,38 @@ public class RandomSpawnIntensity : ScriptableObject
     public EnemyBoundingBox BigPig_BB;
     [ExposedScriptableObject]
     public EnemyBoundingBox TenderizerPig_BB;
+    public void CheckForNextTranstion()
+    {
+        Debug.Log("Checking for next transition in Random Spawn Instensity");
+        if (transtionLogicEnd == null && lvlID != null)
+        {
+            lvlID.inputEvent.finishedOverrideStateLogic?.Invoke();
+            lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(null, true);
+            
 
+        }
+        else if (transtionLogicEnd != null)
+        {
+            lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(transtionLogicEnd, false);
+
+
+        }
+
+    }
+
+    public void EnterIntensity()
+    {
+        if (transtionLogicStart != null)
+        {
+            lvlID.outputEvent.OnSetNewTransitionLogic(transtionLogicStart, false);
+        }
+    }
     public int GetRandomAmountOfWaves()
     {
         if (amountOfWaveWeights == null || amountOfWaveWeights.Length == 0)
         {
 
-            return 0; // Default to 1 if not set
+            return -1; // Default to 1 if not set
         }
 
         float totalWeight = 0f;
@@ -230,8 +263,15 @@ public class RandomSpawnIntensity : ScriptableObject
         return randomRingSetupDifficultyWeights.Length - 1; // Return the max index if something goes wrong
 
     }
-    public int GetRingTypeIndex()
+    public int GetRingTypeIndex(int index)
     {
+
+        // if (ringTypeSetOrder != null && ringTypeSetOrder.Length > 0)
+        // {
+
+        //     return ringTypeSetOrder[index];
+
+        // }
         if (ringTypeWeights == null || ringTypeWeights.Length == 0)
         {
             Debug.LogWarning("Ring type weights are not set!");

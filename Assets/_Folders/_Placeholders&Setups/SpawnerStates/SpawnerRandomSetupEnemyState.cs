@@ -62,7 +62,7 @@ public class SpawnerRandomSetupEnemyState : SpawnBaseState
         }
 
     }
-    public override void RingsFinished(SpawnStateManager spawner, bool isCorrect)
+    public override void RingsFinished(SpawnStateManager spawner, int n, bool isCorrect)
     {
 
     }

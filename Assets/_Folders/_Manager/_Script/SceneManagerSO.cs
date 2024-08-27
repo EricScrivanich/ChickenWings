@@ -18,7 +18,11 @@ public class SceneManagerSO : ScriptableObject
         if (levelNumber == 0 || levelNumber >= Levels_Scene.Count) return;
 
         if (Time.timeScale == 0) Time.timeScale = 1;
-        SceneManager.LoadScene(Levels_Scene[levelNumber]);
+
+        if (levelNumber == -1)
+            SceneManager.LoadScene("BasicsPig");
+        else
+            SceneManager.LoadScene(Levels_Scene[levelNumber]);
 
     }
 }
