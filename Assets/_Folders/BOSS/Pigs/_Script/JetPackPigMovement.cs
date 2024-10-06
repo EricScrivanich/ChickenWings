@@ -8,6 +8,8 @@ public class JetPackPigMovement : MonoBehaviour
     private float speedVar;
     private bool hasPlayedAudio;
     private float finishedTime;
+
+    [SerializeField] private Transform smokePoint;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +40,7 @@ public class JetPackPigMovement : MonoBehaviour
         {
             if (speed > 0 && transform.position.x < BoundariesManager.rightBoundary)
             {
+                SmokeTrailPool.GetJetpackSmokeTrail?.Invoke(smokePoint.position, speed);
                 AudioManager.instance.PlayPigJetPackSound();
                 hasPlayedAudio = true;
 

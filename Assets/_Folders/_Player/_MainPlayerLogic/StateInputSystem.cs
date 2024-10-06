@@ -4,14 +4,26 @@ using System;
 using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.EventSystems;
+using Lofelt.NiceVibrations;
 
-public class StateInputSystem : MonoBehaviour
+
+
+
+
+public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
+
+
     private InputController controls;
+
+    private bool usingShotgun = false;
     private Sequence dropButtonSeq;
     private Coroutine dropButtonCor;
     private Sequence dashButtonSeq;
     private bool coolingDownDrop;
+
+    private bool eggButtonHidden = false;
 
     [Header("Global Colors")]
     [SerializeField] private Color normalButtonColor;
@@ -102,6 +114,8 @@ public class StateInputSystem : MonoBehaviour
 
 
 
+
+
         controls = new InputController();
 
         // Bind existing actions to methods
@@ -109,12 +123,22 @@ public class StateInputSystem : MonoBehaviour
 
         controls.Movement.Jump.performed += ctx =>
         {
-            if (ButtonsEnabled) ID.events.OnJump?.Invoke();
+            if (ButtonsEnabled)
+            {
+                ID.events.OnJump?.Invoke();
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
+            }
         };
 
         controls.Movement.JumpRight.performed += ctx =>
         {
-            if (ButtonsEnabled) ID.events.OnFlipRight?.Invoke(true);
+            if (ButtonsEnabled)
+            {
+                ID.events.OnFlipRight?.Invoke(true);
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
+            }
         };
         controls.Movement.JumpRight.canceled += ctx =>
         {
@@ -123,12 +147,31 @@ public class StateInputSystem : MonoBehaviour
 
         controls.Movement.JumpLeft.performed += ctx =>
         {
-            if (ButtonsEnabled) ID.events.OnFlipLeft?.Invoke(true);
+            if (ButtonsEnabled)
+            {
+                ID.events.OnFlipLeft?.Invoke(true);
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
+            }
         };
         controls.Movement.JumpLeft.canceled += ctx =>
         {
             if (ButtonsEnabled) ID.events.OnFlipLeft?.Invoke(false);
         };
+
+        controls.Movement.EggJoystick.performed += ctx =>
+        {
+            float xMoveAmount = ctx.ReadValue<Vector2>().x;
+            if (xMoveAmount < -.25f)
+                ID.events.OnAimJoystick(1);
+            else if (xMoveAmount > .25f)
+                ID.events.OnAimJoystick(-1);
+
+
+            // ID.events.OnAimJoystick(ctx.ReadValue<Vector2>());
+        };
+        // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
+        controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
 
         controls.Movement.Dash.performed += ctx =>
         {
@@ -137,6 +180,8 @@ public class StateInputSystem : MonoBehaviour
                 if (canDash)
                 {
                     ID.events.OnDash?.Invoke(true);
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
 
                 }
 
@@ -168,6 +213,15 @@ public class StateInputSystem : MonoBehaviour
             }
         };
 
+        controls.Movement.SwitchAmmoRight.performed += ctx =>
+        {
+            if (!eggButtonHidden)
+                ID.globalEvents.OnSwitchAmmo?.Invoke(false);
+        };
+
+
+
+
 
 
         controls.Movement.Drop.performed += ctx =>
@@ -175,22 +229,63 @@ public class StateInputSystem : MonoBehaviour
             if (ButtonsEnabled && canDrop)
             {
                 ID.events.OnDrop?.Invoke();
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
+
                 StartCoroutine(DropCooldown());
 
             }
         };
         controls.Movement.DropEgg.performed += ctx =>
         {
-            if (ButtonsEnabled) ID.events.OnEggDrop?.Invoke();
+            if (ButtonsEnabled && !eggButtonHidden)
+            {
+                // ID.globalEvents.OnEggButton?.Invoke(true);
+                if (!usingShotgun)
+                {
+
+
+                    ID.events.OnEggDrop?.Invoke();
+
+
+                    // ID.Ammo--;
+                    // if (ID.Ammo <= 0)
+                    // {
+                    //     ID.globalEvents.OnEmptyAmmo?.Invoke(0);
+
+                    // }
+                }
+                // else if (!usingShotgun && ID.Ammo <= 0)
+                // {
+                //     ID.globalEvents.OnEmptyAmmo?.Invoke(-1);
+                // }
+
+                else if (usingShotgun)
+                    ID.events.OnAttack?.Invoke(true);
+
+
+            }
         };
-        controls.Movement.Fireball.performed += ctx =>
-        {
-            if (ButtonsEnabled) ID.events.OnAttack?.Invoke(true);
-        };
-        controls.Movement.Fireball.canceled += ctx =>
-        {
-            if (ButtonsEnabled) ID.events.OnAttack?.Invoke(false);
-        };
+
+        controls.Movement.DropEgg.canceled += ctx =>
+       {
+           //    ID.globalEvents.OnEggButton?.Invoke(false);
+
+
+           if (usingShotgun)
+               ID.events.OnAttack?.Invoke(false);
+
+
+
+       };
+        // controls.Movement.Fireball.performed += ctx =>
+        // {
+        //     if (ButtonsEnabled) ID.events.OnAttack?.Invoke(true);
+        // };
+        // controls.Movement.Fireball.canceled += ctx =>
+        // {
+        //     if (ButtonsEnabled) ID.events.OnAttack?.Invoke(false);
+        // };
 
         controls.Movement.JumpHold.performed += ctx =>
         {
@@ -203,10 +298,28 @@ public class StateInputSystem : MonoBehaviour
 
         };
 
-        controls.Movement.Fireball.performed += ctx => ID.events.OnAttack?.Invoke(!ID.UsingClocker);
+
         controls.Movement.Parachute.performed += ctx => ID.events.OnParachute?.Invoke(true);
         controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
 
+
+
+    }
+
+    private void OnJoystickMove(Vector2 val)
+    {
+        Debug.Log(val);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log("Down");
+
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Debug.Log("Up");
 
 
     }
@@ -321,6 +434,11 @@ public class StateInputSystem : MonoBehaviour
         coolingDownDrop = false;
         canDrop = true;
 
+    }
+
+    private void HideEggButton(bool hidden)
+    {
+        eggButtonHidden = hidden;
     }
 
     private void IconTween(int type)
@@ -719,11 +837,24 @@ public class StateInputSystem : MonoBehaviour
 
     }
 
+    private void SetUsingShotgun(int type)
+    {
+        if (type == 1)
+            usingShotgun = true;
+        else
+            usingShotgun = false;
+
+    }
+
     private void OnEnable()
     {
         controls.Movement.Enable();
+        ID.globalEvents.OnHideEggButton += HideEggButton;
+
         ID.events.EnableButtons += ActivateButtons;
         ID.events.OnDash += HandleDashNew;
+
+        ID.events.OnSwitchAmmoType += SetUsingShotgun;
 
 
         ID.globalEvents.CanDashSlash += ExitDash;
@@ -734,9 +865,13 @@ public class StateInputSystem : MonoBehaviour
     private void OnDisable()
     {
         controls.Movement.Disable();
+        ID.globalEvents.OnHideEggButton -= HideEggButton;
+
         ID.events.EnableButtons -= ActivateButtons;
         ID.events.OnDash -= HandleDashNew;
         ID.globalEvents.CanDashSlash -= ExitDash;
+        ID.events.OnSwitchAmmoType -= SetUsingShotgun;
+
 
 
 

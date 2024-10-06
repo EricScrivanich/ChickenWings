@@ -5,6 +5,8 @@ using UnityEngine;
 public class SpawnStateManager : MonoBehaviour
 {
     [SerializeField] private LevelManagerID LvlID;
+
+    private BarnAndEggSpawner eggSpawner;
     public bool stopRandomSpawning { get; private set; }
 
     [SerializeField] private int startingState = -1;
@@ -70,6 +72,13 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private int bigPigPoolSize;
     [SerializeField] private int missilePigPoolSize;
     [SerializeField] private int pilotPigPoolSize;
+    [SerializeField] private int siloPoolSize;
+    [SerializeField] private int windMillPoolSize;
+    [SerializeField] private int gasPigPoolSize;
+    [SerializeField] private int hotAirBalloonPoolSize;
+    [SerializeField] private int flappyPigPoolSize;
+    [SerializeField] private int bomberPlanePoolSize;
+
 
     [Header("Enemy Pool Prefabs")]
     [SerializeField] private GameObject jetPackPigPrefab;
@@ -78,6 +87,13 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private GameObject bigPigPrefab;
     [SerializeField] private GameObject missilePigPrefab;
     [SerializeField] private GameObject pilotPigPrefab;
+
+    [SerializeField] private GameObject siloPrefab;
+    [SerializeField] private GameObject windMillPrefab;
+    [SerializeField] private GameObject gasPigPrefab;
+    [SerializeField] private GameObject hotAirBalloonPrefab;
+    [SerializeField] private GameObject flappyPigPrefab;
+    [SerializeField] private GameObject bomberPlanePrefab;
 
 
     [Header("Collectable Pool Prefabs")]
@@ -89,18 +105,32 @@ public class SpawnStateManager : MonoBehaviour
     private float timeSinceLastWave;
 
     private Vector3 bucketDefaultScale = new Vector3(1.1f, 1.1f, 1.1f);
+    private int siloIndex = 0;
+    private int windMillIndex = 0;
+    private int gasPigIndex = 0;
+    private int hotAirBalloonIndex = 0;
+    private int flappyPigIndex = 0;
+    private int bomberPlaneIndex = 0;
     private int jetPackPigIndex = 0;
     private int normalPigIndex = 0;
     private int bigPigIndex = 0;
     private int tenderizerPigIndex = 0;
-    private int missilePigIndex = 0;
     private int pilotPigIndex = 0;
+    private int missilePigIndex = 0;
+
     private JetPackPigMovement[] jetPackPig;
     private BigPigMovement[] bigPig;
     private TenderizerPig[] tenderizerPig;
     private PigMovementBasic[] normalPig;
     private MissilePigScript[] missilePig;
     private PilotPig[] pilotPig;
+
+    private SiloMovement[] silos;
+    private Windmill[] windMills;
+    private GasPig[] gasPigs;
+    private HotAirBalloon[] hotAirBalloons;
+    private FlappyPigMovement[] flappyPigs;
+    private DropBomb[] bomberPlanes;
 
     private int currentSetRingOrderIndex = 0;
 
@@ -123,6 +153,9 @@ public class SpawnStateManager : MonoBehaviour
         prevTransitonLogic = transitionLogic;
         stopRandomSpawning = false;
         currentTransitionLogicIndex = 0;
+        eggSpawner = GetComponent<BarnAndEggSpawner>();
+
+        LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
 
 
         SpawnPools();
@@ -143,6 +176,26 @@ public class SpawnStateManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
         SwitchToSpecficState(startingState);
 
+
+
+    }
+
+    public float TotalTime()
+    {
+        float totalTime = 0;
+
+        if (pureSetups != null && pureSetups.Length > 0)
+        {
+            foreach (var set in pureSetups)
+            {
+                totalTime += set.TotalTime();
+            }
+        }
+
+        totalTime += startingStateDelay;
+
+        Debug.Log("Total level time is: " + totalTime);
+        return totalTime;
 
 
     }
@@ -192,6 +245,31 @@ public class SpawnStateManager : MonoBehaviour
         }
 
     }
+
+    public void GetEggByType(Vector2 pos, int type, float speed)
+    {
+        bool shotgun = false;
+        bool three = false;
+
+        if (type == 1)
+        {
+
+            three = true;
+        }
+        else if (type == 2)
+        {
+            shotgun = true;
+        }
+        else if (type == 3)
+        {
+            three = true;
+            shotgun = true;
+        }
+        eggSpawner.GetEggCollectable(pos, shotgun, three, speed);
+
+
+
+    }
     public void ChangePureSetupIndex(int newValue)
     {
         currentPureSetup = newValue;
@@ -229,7 +307,7 @@ public class SpawnStateManager : MonoBehaviour
             case (0):
                 {
                     currentState = pureSetupState;
-                    
+
                     pureSetupState.SetRingType(NextRingType());
                     break;
                 }
@@ -238,7 +316,7 @@ public class SpawnStateManager : MonoBehaviour
                     currentState = ringAndEnemyRandomSetupState;
 
                     ringAndEnemyRandomSetupState.SetRingType(NextRingType());
-                 
+
 
                     break;
                 }
@@ -579,6 +657,53 @@ public class SpawnStateManager : MonoBehaviour
     private void SpawnPools()
     {
         ringPool.Initialize();
+
+        silos = new SiloMovement[siloPoolSize];
+
+        windMills = new Windmill[windMillPoolSize];
+        gasPigs = new GasPig[gasPigPoolSize];
+        hotAirBalloons = new HotAirBalloon[hotAirBalloonPoolSize];
+        flappyPigs = new FlappyPigMovement[flappyPigPoolSize];
+        bomberPlanes = new DropBomb[bomberPlanePoolSize];
+
+        // Fill each pool with instances of the prefabs
+        for (int i = 0; i < siloPoolSize; i++)
+        {
+            silos[i] = Instantiate(siloPrefab).GetComponent<SiloMovement>();
+            silos[i].gameObject.SetActive(false);  // Set inactive right after instantiation
+        }
+
+        for (int i = 0; i < windMillPoolSize; i++)
+        {
+            windMills[i] = Instantiate(windMillPrefab).GetComponent<Windmill>();
+            windMills[i].gameObject.SetActive(false);  // Ensure all windmills are initially inactive
+        }
+
+        for (int i = 0; i < gasPigPoolSize; i++)
+        {
+            gasPigs[i] = Instantiate(gasPigPrefab).GetComponent<GasPig>();
+            gasPigs[i].gameObject.SetActive(false);  // Set inactive right after instantiation
+        }
+
+        for (int i = 0; i < hotAirBalloonPoolSize; i++)
+        {
+            hotAirBalloons[i] = Instantiate(hotAirBalloonPrefab).GetComponent<HotAirBalloon>();
+            hotAirBalloons[i].gameObject.SetActive(false);  // Set inactive right after instantiation
+        }
+
+        for (int i = 0; i < flappyPigPoolSize; i++)
+        {
+            flappyPigs[i] = Instantiate(flappyPigPrefab).GetComponent<FlappyPigMovement>();
+            flappyPigs[i].gameObject.SetActive(false);  // Set inactive right after instantiation
+        }
+
+        for (int i = 0; i < bomberPlanePoolSize; i++)
+        {
+            bomberPlanes[i] = Instantiate(bomberPlanePrefab).GetComponent<DropBomb>();
+            bomberPlanes[i].gameObject.SetActive(false);  // Set inactive right after instantiation
+        }
+
+
         jetPackPig = new JetPackPigMovement[jetPackPigPoolSize];
 
         for (int i = 0; i < jetPackPig.Length; i++)
@@ -704,10 +829,10 @@ public class SpawnStateManager : MonoBehaviour
         jetPackPigIndex++;
     }
 
-    public void GetMissilePig(bool flippedP, bool flippedW, float rangeAdj, float x)
+    public void GetMissilePig(float x, int type, int wepaonType)
     {
 
-        missilePig[missilePigIndex].Initialize(flippedP, flippedW, rangeAdj, x);
+        missilePig[missilePigIndex].Initialize(x, type, wepaonType);
 
         missilePigIndex++;
 
@@ -746,5 +871,75 @@ public class SpawnStateManager : MonoBehaviour
         tenderizerPigIndex++;
     }
 
+
+    public void GetSilo(Vector2 position, int type, float baseHeightMultiplier)
+    {
+        if (siloIndex >= silos.Length) siloIndex = 0;
+        SiloMovement silo = silos[siloIndex];
+        silo.transform.position = position;
+        silo.type = type;
+        silo.baseHeightMultiplier = baseHeightMultiplier;
+        silo.gameObject.SetActive(true);
+        siloIndex++;
+    }
+
+    public void GetWindMill(Vector2 position, int bladeAmount, float bladeScaleMultiplier, float bladeSpeed, float heightMultiplier)
+    {
+        if (windMillIndex >= windMills.Length) windMillIndex = 0;
+        Windmill windMill = windMills[windMillIndex];
+        windMill.transform.position = position;
+        windMill.bladeAmount = bladeAmount;
+        windMill.bladeScaleMultiplier = bladeScaleMultiplier;
+        windMill.bladeSpeed = bladeSpeed;
+        windMill.heightMultiplier = heightMultiplier;
+        windMill.gameObject.SetActive(true);
+        windMillIndex++;
+    }
+
+    public void GetGasPig(Vector2 position, float speed, float delay)
+    {
+        if (gasPigIndex >= gasPigs.Length) gasPigIndex = 0;
+        GasPig gasPig = gasPigs[gasPigIndex];
+        gasPig.transform.position = position;
+        gasPig.speed = speed;
+        gasPig.delay = delay;
+        gasPig.gameObject.SetActive(true);
+        gasPigIndex++;
+    }
+
+    public void GetHotAirBalloon(Vector2 position, int type, float xTrigger, float yTarget, float speed, float delay)
+    {
+        if (hotAirBalloonIndex >= hotAirBalloons.Length) hotAirBalloonIndex = 0;
+        HotAirBalloon hotAirBalloon = hotAirBalloons[hotAirBalloonIndex];
+        hotAirBalloon.transform.position = position;
+        hotAirBalloon.type = type;
+        hotAirBalloon.xTrigger = xTrigger;
+        hotAirBalloon.yTarget = yTarget;
+        hotAirBalloon.speed = speed;
+        hotAirBalloon.delay = delay;
+        hotAirBalloon.gameObject.SetActive(true);
+        hotAirBalloonIndex++;
+    }
+
+    public void GetFlappyPig(Vector2 position, float scaleFactor)
+    {
+        if (flappyPigIndex >= flappyPigs.Length) flappyPigIndex = 0;
+        FlappyPigMovement flappyPig = flappyPigs[flappyPigIndex];
+        flappyPig.transform.position = position;
+        flappyPig.scaleFactor = scaleFactor;
+        flappyPig.gameObject.SetActive(true);
+        flappyPigIndex++;
+    }
+
+    public void GetBomberPlane(float xDropPosition, float dropAreaScaleMultiplier, float speedTarget)
+    {
+        if (bomberPlaneIndex >= bomberPlanes.Length) bomberPlaneIndex = 0;
+        DropBomb bomberPlane = bomberPlanes[bomberPlaneIndex];
+        bomberPlane.xDropPosition = xDropPosition;
+        bomberPlane.dropAreaScaleMultiplier = dropAreaScaleMultiplier;
+        bomberPlane.speedTarget = speedTarget;
+        bomberPlane.gameObject.SetActive(true);
+        bomberPlaneIndex++;
+    }
     #endregion
 }

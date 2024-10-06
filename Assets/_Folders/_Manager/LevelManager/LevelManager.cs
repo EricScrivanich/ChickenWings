@@ -149,6 +149,8 @@ public class LevelManager : MonoBehaviour
                 break;
         }
         LvlID.inputEvent.StartSpawnerInput += TriggerSpawnerFromDelay;
+        LvlID.inputEvent.OnEggFinishLine += CreateFinish;
+
 
 
 
@@ -622,6 +624,7 @@ public class LevelManager : MonoBehaviour
         LvlID.outputEvent.SetObjectActiveWithDelay -= SetObjectActiveWithDelay;
         LvlID.inputEvent.ActivateObjFromEvent -= TriggerObjectsFromEvent;
         LvlID.inputEvent.SetCheckPoint -= SetNewCheckPoint;
+        LvlID.inputEvent.OnEggFinishLine -= CreateFinish;
 
         if (areRingsRequired)
         {
@@ -693,5 +696,6 @@ public class LevelManager : MonoBehaviour
 
         // Set the anchored position
         rectTransform.anchoredPosition = new Vector2(0, 645);
+        AudioManager.instance.PlayLevelFinishSounds(0);
     }
 }

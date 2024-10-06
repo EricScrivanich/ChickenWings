@@ -18,14 +18,14 @@ public class MissileScript : MonoBehaviour
     {
         StartCoroutine(LaunchMissile());
     }
-   
+
 
     private IEnumerator LaunchMissile()
     {
         // Wait for 0.5 seconds before starting the launch
 
 
-        Vector2 forward = transform.up; // Assuming the missile sprite points 'up' along the local y-axis
+        // Vector2 forward = transform.up; // Assuming the missile sprite points 'up' along the local y-axis
         float initialForce = 2f;
         float elapsedTime = 0f;
 
@@ -34,11 +34,11 @@ public class MissileScript : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             float currentForce = Mathf.Lerp(initialForce, force, elapsedTime / accelerationTime);
-            rb.velocity = forward * currentForce;
+            rb.velocity = transform.up * currentForce;
             yield return null;
         }
 
         // Set the final velocity to the desired force speed
-        rb.velocity = forward * force;
+        rb.velocity = transform.up * force;
     }
 }

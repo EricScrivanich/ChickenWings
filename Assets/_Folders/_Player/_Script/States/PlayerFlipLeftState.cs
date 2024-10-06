@@ -31,7 +31,7 @@ public class PlayerFlipLeftState : PlayerBaseState
     private float addForceDownTimer;
     private float currentRotation = 0;
     private float rotationSpeedVar;
-    private float rotationSpeed = 360;
+    private float rotationSpeed;
     private float rotationSlowDownTime;
     private float time;
     private float rotationTimer;
@@ -69,6 +69,21 @@ public class PlayerFlipLeftState : PlayerBaseState
             prolongRotation = false;
         }
         currentRotation = player.transform.rotation.eulerAngles.z;
+
+        if (player.shotgunEquipped)
+        {
+            rotationSpeed = 300;
+            rotationSlowDownTime = .8f;
+            // addForceDownMultiplier = 1.25f;
+
+        }
+        else
+        {
+            rotationSpeed = 340;
+            rotationSlowDownTime = .6f;
+            // addForceDownMultiplier = 1f;
+
+        }
         rotationSpeedVar = rotationSpeed;
         player.AdjustForce(JumpForce);
         AudioManager.instance.PlayCluck();

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7963859704338382654}
   - component: {fileID: 31410360209661810}
+  - component: {fileID: 6171100274374043004}
   m_Layer: 0
   m_Name: ExplosionPool
   m_TagString: Untagged
@@ -250,3 +251,16 @@ MonoBehaviour:
   spawnedObjectsList: []
   tab: 1
   fixedSizeSpawnCount: 0
+--- !u!114 &6171100274374043004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6383507924709307812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13bae42a6e5bc4200982473c94cceade, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pool: {fileID: 11400000, guid: f589c2cd9877c4b6597ee259d04c7c5d, type: 2}

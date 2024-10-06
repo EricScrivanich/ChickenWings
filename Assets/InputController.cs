@@ -152,6 +152,24 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Hold(duration=0.2)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EggJoystick"",
+                    ""type"": ""Value"",
+                    ""id"": ""35f59893-3e75-40e2-a4d0-0dee34bd09a0"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SwitchAmmoRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""c40449bd-286c-47ed-a608-ea7c16437bc2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -440,6 +458,28 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""action"": ""HoldJumpLeft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9f4be38a-3bd6-42be-b8dd-b1d9cd33a48c"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": ""NormalizeVector2"",
+                    ""groups"": ""Mobile"",
+                    ""action"": ""EggJoystick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f47d7a75-c16b-4703-b2e2-e8a745cb011e"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""SwitchAmmoRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -535,6 +575,8 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_Movement_DashSlash = m_Movement.FindAction("DashSlash", throwIfNotFound: true);
         m_Movement_HoldJumpRight = m_Movement.FindAction("HoldJumpRight", throwIfNotFound: true);
         m_Movement_HoldJumpLeft = m_Movement.FindAction("HoldJumpLeft", throwIfNotFound: true);
+        m_Movement_EggJoystick = m_Movement.FindAction("EggJoystick", throwIfNotFound: true);
+        m_Movement_SwitchAmmoRight = m_Movement.FindAction("SwitchAmmoRight", throwIfNotFound: true);
         // Special
         m_Special = asset.FindActionMap("Special", throwIfNotFound: true);
         m_Special_ResetGame = m_Special.FindAction("ResetGame", throwIfNotFound: true);
@@ -613,6 +655,8 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private readonly InputAction m_Movement_DashSlash;
     private readonly InputAction m_Movement_HoldJumpRight;
     private readonly InputAction m_Movement_HoldJumpLeft;
+    private readonly InputAction m_Movement_EggJoystick;
+    private readonly InputAction m_Movement_SwitchAmmoRight;
     public struct MovementActions
     {
         private @InputController m_Wrapper;
@@ -631,6 +675,8 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         public InputAction @DashSlash => m_Wrapper.m_Movement_DashSlash;
         public InputAction @HoldJumpRight => m_Wrapper.m_Movement_HoldJumpRight;
         public InputAction @HoldJumpLeft => m_Wrapper.m_Movement_HoldJumpLeft;
+        public InputAction @EggJoystick => m_Wrapper.m_Movement_EggJoystick;
+        public InputAction @SwitchAmmoRight => m_Wrapper.m_Movement_SwitchAmmoRight;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -682,6 +728,12 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @HoldJumpLeft.started += instance.OnHoldJumpLeft;
             @HoldJumpLeft.performed += instance.OnHoldJumpLeft;
             @HoldJumpLeft.canceled += instance.OnHoldJumpLeft;
+            @EggJoystick.started += instance.OnEggJoystick;
+            @EggJoystick.performed += instance.OnEggJoystick;
+            @EggJoystick.canceled += instance.OnEggJoystick;
+            @SwitchAmmoRight.started += instance.OnSwitchAmmoRight;
+            @SwitchAmmoRight.performed += instance.OnSwitchAmmoRight;
+            @SwitchAmmoRight.canceled += instance.OnSwitchAmmoRight;
         }
 
         private void UnregisterCallbacks(IMovementActions instance)
@@ -728,6 +780,12 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @HoldJumpLeft.started -= instance.OnHoldJumpLeft;
             @HoldJumpLeft.performed -= instance.OnHoldJumpLeft;
             @HoldJumpLeft.canceled -= instance.OnHoldJumpLeft;
+            @EggJoystick.started -= instance.OnEggJoystick;
+            @EggJoystick.performed -= instance.OnEggJoystick;
+            @EggJoystick.canceled -= instance.OnEggJoystick;
+            @SwitchAmmoRight.started -= instance.OnSwitchAmmoRight;
+            @SwitchAmmoRight.performed -= instance.OnSwitchAmmoRight;
+            @SwitchAmmoRight.canceled -= instance.OnSwitchAmmoRight;
         }
 
         public void RemoveCallbacks(IMovementActions instance)
@@ -825,6 +883,8 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnDashSlash(InputAction.CallbackContext context);
         void OnHoldJumpRight(InputAction.CallbackContext context);
         void OnHoldJumpLeft(InputAction.CallbackContext context);
+        void OnEggJoystick(InputAction.CallbackContext context);
+        void OnSwitchAmmoRight(InputAction.CallbackContext context);
     }
     public interface ISpecialActions
     {

@@ -13,8 +13,8 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
 
     private Color whiteColorStart = new Color(1, 1, 1, 1);
     private Color whiteColorEnd = new Color(1, 1, 1, 0);
-    private Color blueColorStart = new Color(.1556f, .4784f, 1, 1);
-    private Color blueColorEnd = new Color(.1556f, .4784f, 1, 0);
+    private Color blueColorStart = new Color(.809f, .05f, .05f, 1);
+    private Color blueColorEnd = new Color(.809f, .05f, .05f, 0);
     private Color startColor;
     private Color endColor;
 
@@ -51,31 +51,51 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
     public bool isThreeAmmo;
     public bool isMana;
     private SpriteRenderer mainSprite;
+
+    [SerializeField] private Sprite[] blurImage;
     [SerializeField] private SpriteRenderer threeImage;
-    [SerializeField] private SpriteRenderer manaImage;
+    [SerializeField] private SpriteRenderer shotgunImage;
+    [SerializeField] private SpriteRenderer threeImageShotgun;
 
     void Awake()
     {
         mainSprite = GetComponent<SpriteRenderer>();
     }
-    public void EnableAmmo(bool isThree, bool mana, float speedVar)
+    public void EnableAmmo(Sprite mainImage, Sprite ThreeImage, bool mana, float speedVar)
     {
         if (this.gameObject.activeInHierarchy)
         {
             gameObject.SetActive(false);
         }
 
-        isThreeAmmo = isThree;
+        mainSprite.sprite = mainImage;
+        if (ThreeImage != null)
+        {
+            threeImage.gameObject.SetActive(true);
+            threeImage.sprite = ThreeImage;
+            ammoAmount = 3;
+            isThreeAmmo = true;
+
+
+        }
+
+        else
+        {
+            ammoAmount = 1;
+
+            threeImage.gameObject.SetActive(false);
+            isThreeAmmo = false;
+        }
+
+
+
         isMana = mana;
 
         if (isMana)
         {
             eggSinFrequency = Random.Range(.4f, .75f);
             eggSinAmplitude = Random.Range(.5f, .9f);
-
-
-            isThreeAmmo = false;
-            ammoAmount = 3;
+            blur.sprite = blurImage[1];
             startColor = blueColorStart;
             endColor = blueColorEnd;
 
@@ -85,7 +105,9 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         {
             eggSinFrequency = Random.Range(.1f, .5f);
             eggSinAmplitude = Random.Range(.3f, .7f);
-            ammoAmount = 1;
+            blur.sprite = blurImage[0];
+
+
             startColor = whiteColorStart;
             endColor = whiteColorEnd;
 
@@ -95,7 +117,9 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         {
             eggSinFrequency = Random.Range(.4f, .75f);
             eggSinAmplitude = Random.Range(.5f, .9f);
-            ammoAmount = 3;
+            blur.sprite = blurImage[0];
+
+
             startColor = whiteColorStart;
             endColor = whiteColorEnd;
 
@@ -115,8 +139,6 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         blur.color = endColor;
         blur.enabled = false;
         isPostiveXSpeed = speed > 0;
-        manaImage.enabled = isMana;
-        threeImage.enabled = isThreeAmmo;
         transform.localScale = startScale;
         endScale = startScale * 1.4f;
 
@@ -201,7 +223,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         burstTimer = 0;
         duration = .2f;
         mainSprite.enabled = false;
-        manaImage.enabled = false;
+
         threeImage.enabled = false;
         while (burstTimer < duration)
         {
@@ -250,13 +272,14 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         isCollected = true;
         if (isMana)
         {
-            ID.globalEvents.OnGetMana?.Invoke();
+            // ID.globalEvents.OnGetMana?.Invoke();
+            ID.ShotgunAmmo += ammoAmount;
 
         }
         else
         {
             ID.Ammo += ammoAmount;
-            ID.globalEvents.OnUpdateAmmo?.Invoke();
+
         }
         StartCoroutine(Burst());
         bursted = true;

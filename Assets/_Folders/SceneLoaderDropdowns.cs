@@ -4,12 +4,16 @@ namespace KingdomOfNight
     public partial class SceneLoader
     {
 #if UNITY_EDITOR
+        [MenuItem("Scenes/BrickBoi")]
+        public static void LoadBrickBoi() { OpenScene("Assets/scenes/BrickBoi.unity"); }
         [MenuItem("Scenes/Boss/Deviled Egg")]
         public static void LoadDeviledEgg() { OpenScene("Assets/scenes/Boss/Deviled Egg.unity"); }
         [MenuItem("Scenes/Boss/DrumStick")]
         public static void LoadDrumStick() { OpenScene("Assets/scenes/Boss/DrumStick.unity"); }
         [MenuItem("Scenes/Boss/Helicopter")]
         public static void LoadHelicopter() { OpenScene("Assets/scenes/Boss/Helicopter.unity"); }
+        [MenuItem("Scenes/Boss/KingPig")]
+        public static void LoadKingPig() { OpenScene("Assets/scenes/Boss/KingPig.unity"); }
         [MenuItem("Scenes/Levels/Level1")]
         public static void LoadLevel1() { OpenScene("Assets/scenes/Levels/Level1.unity"); }
         [MenuItem("Scenes/Levels/Level2")]
@@ -24,6 +28,8 @@ namespace KingdomOfNight
         public static void LoadLevel6() { OpenScene("Assets/scenes/Levels/Level6.unity"); }
         [MenuItem("Scenes/Levels/Level7")]
         public static void LoadLevel7() { OpenScene("Assets/scenes/Levels/Level7.unity"); }
+        [MenuItem("Scenes/Levels/Level8")]
+        public static void LoadLevel8() { OpenScene("Assets/scenes/Levels/Level8.unity"); }
         [MenuItem("Scenes/Main/Basics")]
         public static void LoadBasics() { OpenScene("Assets/scenes/Main/Basics.unity"); }
         [MenuItem("Scenes/Main/BasicsPig")]

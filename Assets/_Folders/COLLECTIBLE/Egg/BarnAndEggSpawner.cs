@@ -7,7 +7,15 @@ public class BarnAndEggSpawner : MonoBehaviour
     public PlayerID player;
 
     [SerializeField] private bool usingAmmo;
-    [SerializeField] private bool usingMana;
+    [SerializeField] private bool usingShotgun;
+    [SerializeField] private bool spawnNormalRandom = true;
+    [SerializeField] private bool spawnShotgunRandom = true;
+
+
+    [SerializeField] private Sprite eggImage;
+    [SerializeField] private Sprite eggThreeImage;
+    [SerializeField] private Sprite shotgunImage;
+    [SerializeField] private Sprite shotgunThreeImage;
 
     [Header("Egg")]
     [SerializeField] private GameObject eggCollectablePrefab;
@@ -18,6 +26,8 @@ public class BarnAndEggSpawner : MonoBehaviour
     private float eggOffsetTime = 0;
     [SerializeField] private float baseEggThreeChance;
     private float eggThreeChance;
+    [SerializeField] private float baseShotgunThreeChance;
+    private float shotgunThreeChance;
 
     [Header("Barn")]
     [SerializeField] private GameObject barnPrefab;
@@ -32,7 +42,7 @@ public class BarnAndEggSpawner : MonoBehaviour
     [SerializeField] private Vector2 manaTimeRange;
 
 
-    private Vector2 barnSpawnPos = new Vector2(13.5f, -4.64f);
+    private Vector2 barnSpawnPos = new Vector2(13.5f, -5.17f);
     private EggCollectableMovement[] eggCollectables;
     private int currentBarnIndex = 0;
     private BarnMovement[] barnScript = new BarnMovement[2];
@@ -78,10 +88,15 @@ public class BarnAndEggSpawner : MonoBehaviour
 
             }
 
-            StartCoroutine(SpawnEggs());
-            StartCoroutine(SpawnBarn());
+            if (spawnNormalRandom)
+            {
+                StartCoroutine(SpawnEggs());
+                StartCoroutine(SpawnBarn());
+            }
+
+
         }
-        if (usingMana)
+        if (usingShotgun)
         {
             for (int i = 0; i < 2; i++)
             {
@@ -90,18 +105,19 @@ public class BarnAndEggSpawner : MonoBehaviour
 
             }
 
-            StartCoroutine(SpawnMana());
+            if (spawnShotgunRandom)
+                StartCoroutine(SpawnMana());
 
         }
 
 
 
-        
 
 
 
 
-       
+
+
 
 
     }
@@ -136,12 +152,29 @@ public class BarnAndEggSpawner : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void GetEggCollectable(Vector2 pos,bool isMana, bool isThree, float speed)
+    public void GetEggCollectable(Vector2 pos, bool isShotgun, bool isThree, float speed)
     {
         if (currentEggCollectableIndex >= eggCollectableCount) currentEggCollectableIndex = 0;
         var obj = eggCollectables[currentEggCollectableIndex];
         obj.transform.position = pos;
-        obj.EnableAmmo(isThree, isMana, speed);
+
+        if (isShotgun)
+        {
+            if (isThree)
+                obj.EnableAmmo(shotgunImage, shotgunThreeImage, isShotgun, speed);
+            else
+                obj.EnableAmmo(shotgunImage, null, isShotgun, speed);
+        }
+        else
+        {
+            if (isThree)
+                obj.EnableAmmo(eggImage, eggThreeImage, isShotgun, speed);
+            else
+                obj.EnableAmmo(eggImage, null, isShotgun, speed);
+
+        }
+
+
         currentEggCollectableIndex++;
 
     }
@@ -158,7 +191,7 @@ public class BarnAndEggSpawner : MonoBehaviour
         var script = barnScript[currentBarnIndex];
 
         script.transform.position = barnSpawnPos;
-       
+
         script.Initilaize(side);
         currentBarnIndex++;
 
@@ -188,9 +221,10 @@ public class BarnAndEggSpawner : MonoBehaviour
         {
 
             Vector2 pos = new Vector2(13, Random.Range(-2.2f, 4.2f));
-           
+            bool three = Random.Range(0f, 1f) < baseShotgunThreeChance;
 
-            GetEggCollectable(pos, true, false, 0);
+
+            GetEggCollectable(pos, true, three, 0);
             yield return new WaitForSeconds(Random.Range(manaTimeRange.x, manaTimeRange.y));
         }
 
@@ -206,22 +240,22 @@ public class BarnAndEggSpawner : MonoBehaviour
         }
 
     }
-    private void AdjustTimeAndChance()
+    private void AdjustTimeAndChance(int amount)
     {
-        if (player.Ammo == 0)
+        if (amount == 0)
         {
             eggOffsetTime = -5;
             eggThreeChance = baseEggThreeChance + .3f;
             barnTimeOffset = 6f;
         }
-        else if (player.Ammo < 3)
+        else if (amount < 3)
         {
             eggOffsetTime = -4;
             eggThreeChance = baseEggThreeChance + .2f;
             barnTimeOffset = 3f;
 
         }
-        else if (player.Ammo < 6)
+        else if (amount < 6)
         {
             eggOffsetTime = 0;
             eggThreeChance = baseEggThreeChance;
@@ -229,7 +263,7 @@ public class BarnAndEggSpawner : MonoBehaviour
 
 
         }
-        else if (player.Ammo < 9)
+        else if (amount < 9)
         {
             eggOffsetTime = 4;
             eggThreeChance = baseEggThreeChance - .1f;
@@ -237,7 +271,7 @@ public class BarnAndEggSpawner : MonoBehaviour
 
 
         }
-        else if (player.Ammo < 12)
+        else if (amount < 12)
         {
             eggOffsetTime = 9;
             eggThreeChance = 0;
@@ -245,7 +279,7 @@ public class BarnAndEggSpawner : MonoBehaviour
 
 
         }
-        else if (player.Ammo < 15)
+        else if (amount < 15)
         {
             eggOffsetTime = 15;
             eggThreeChance = 0;

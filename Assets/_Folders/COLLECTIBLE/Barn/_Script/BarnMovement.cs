@@ -58,7 +58,7 @@ public class BarnMovement : MonoBehaviour
 
                 smallHay.transform.localPosition = new Vector2(Random.Range(-2f, -.7f), 0);
                 smallHay.sprite = ID.GetRandomSmallHay();
-                
+
                 break;
 
             case 2:
@@ -118,7 +118,7 @@ public class BarnMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector2.left * 5 * Time.deltaTime);
+        transform.Translate(Vector2.left * BoundariesManager.GroundSpeed * Time.deltaTime);
 
         if (transform.position.x < -13)
         {

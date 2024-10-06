@@ -10,6 +10,13 @@ public class SetupPlacer : MonoBehaviour
     public GameObject TenderizerPigPrefab;
     public GameObject BigPigPrefab;
     public GameObject PilotPigPrefab;
+    public GameObject MissilePigPrefab;  // New addition for Missile Pig
+    public GameObject SiloPrefab;        // New addition for Silo
+    public GameObject WindMillPrefab;    // New addition for Wind Mill
+    public GameObject GasPigPrefab;      // New addition for Gas Pig
+    public GameObject HotAirBalloonPrefab;  // New addition for Hot Air Balloon
+    public GameObject FlappyPigPrefab;   // New addition for Flappy Pig
+    public GameObject BomberPlanePrefab;
     public GameObject RingPrefab;
 
     public GameObject SquareArea;
@@ -128,6 +135,96 @@ public class SetupPlacer : MonoBehaviour
                 script.xTrigger = pigData.xTrigger;
 
                 obj.transform.localScale = pigData.scale;
+            }
+        }
+
+        else if (data is MissilePigSO missilePigData)
+        {
+            foreach (var pigData in missilePigData.data)
+            {
+                var obj = Object.Instantiate(MissilePigPrefab, pigData.position, Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+                var script = obj.GetComponent<MissilePigScript>();
+                script.missileType = pigData.missileType;
+                script.movementType = pigData.movementType;
+
+            }
+        }
+        else if (data is SiloSO siloData)
+        {
+            foreach (var siloDataItem in siloData.data)
+            {
+                var obj = Object.Instantiate(SiloPrefab, siloDataItem.position, Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+                var script = obj.GetComponent<SiloMovement>();
+                script.type = siloDataItem.type;
+                script.baseHeightMultiplier = siloDataItem.baseHeightMultiplier;
+                obj.transform.localScale = new Vector3(1, 1, 1);  // Assuming uniform scaling
+            }
+        }
+        else if (data is WindMillSO windMillData)
+        {
+            foreach (var windMillDataItem in windMillData.data)
+            {
+                var obj = Object.Instantiate(WindMillPrefab, windMillDataItem.position, Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+                var script = obj.GetComponent<Windmill>();
+                script.bladeAmount = windMillDataItem.bladeAmount;
+                script.bladeScaleMultiplier = windMillDataItem.bladeScaleMultiplier;
+                script.bladeSpeed = windMillDataItem.bladeSpeed;
+                script.heightMultiplier = windMillDataItem.heightMultiplier;
+                // Assuming uniform scaling
+            }
+        }
+        else if (data is GasPigSO gasPigData)
+        {
+            foreach (var gasPigDataItem in gasPigData.data)
+            {
+                var obj = Object.Instantiate(GasPigPrefab, gasPigDataItem.position, Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+                var script = obj.GetComponent<GasPig>();
+                script.speed = gasPigDataItem.speed;
+                script.delay = gasPigDataItem.delay;
+
+            }
+        }
+        else if (data is HotAirBalloonSO hotAirBalloonData)
+        {
+            foreach (var hotAirBalloonDataItem in hotAirBalloonData.data)
+            {
+                var obj = Object.Instantiate(HotAirBalloonPrefab, hotAirBalloonDataItem.position, Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+                var script = obj.GetComponent<HotAirBalloon>();
+                script.type = hotAirBalloonDataItem.type;
+                script.xTrigger = hotAirBalloonDataItem.xTrigger;
+                script.yTarget = hotAirBalloonDataItem.yTarget;
+                script.speed = hotAirBalloonDataItem.speed;
+                script.delay = hotAirBalloonDataItem.delay;
+
+            }
+        }
+        else if (data is FlappyPigSO flappyPigData)
+        {
+            foreach (var flappyPigDataItem in flappyPigData.data)
+            {
+                var obj = Object.Instantiate(FlappyPigPrefab, flappyPigDataItem.position, Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+                var script = obj.GetComponent<FlappyPigMovement>();
+                script.scaleFactor = flappyPigDataItem.scaleFactor;
+                float s = flappyPigDataItem.scaleFactor;
+                obj.transform.localScale = new Vector3(s, s, s);  // Assuming uniform scaling
+            }
+        }
+        else if (data is BomberPlaneSO bomberPlaneData)
+        {
+            foreach (var bomberPlaneDataItem in bomberPlaneData.data)
+            {
+                var obj = Object.Instantiate(BomberPlanePrefab, new Vector2(12, 8), Quaternion.identity);
+                obj.transform.parent = EnemySetupTransform;
+                var script = obj.GetComponent<DropBomb>();
+                script.dropAreaScaleMultiplier = bomberPlaneDataItem.dropAreaScaleMultiplier;
+                script.speedTarget = bomberPlaneDataItem.speedTarget;
+
             }
         }
     }

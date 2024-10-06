@@ -5,15 +5,20 @@ using UnityEngine;
 public class BoundariesManager : MonoBehaviour
 {
     public static int rightBoundary = 14;
+
+    public static Vector3 vectorThree1 = new Vector3(1, 1, 1);
     public static bool isDay;
     public static int leftBoundary = -14;
-    public static float rightViewBoundary = 11.4f;
-    public static float leftViewBoundary = -11.4f;
-    public static float rightPlayerBoundary = 10.8f;
+    public static float rightViewBoundary = 11.9f;
+    public static float leftViewBoundary = -11.9f;
+    public static float rightPlayerBoundary = 11.8f;
     public static float TopPlayerBoundary = 6.8f;
-    public static float leftPlayerBoundary = -10.8f;
+    public static float leftPlayerBoundary = -11.8f;
 
-    public static float GroundSpeed = 5;
+    public static float GroundSpeed = 4.7f;
+
+    public static float GroundPosition = -4.9f;
+
     // Start is called before the first frame update
     void Awake()
     {

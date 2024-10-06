@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &573034961402899157
 Transform:
   m_ObjectHideFlags: 0
@@ -320,8 +320,12 @@ MonoBehaviour:
   eggTime: 0
   isThreeAmmo: 0
   isMana: 0
+  blurImage:
+  - {fileID: 1738032234, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
+  - {fileID: -533808599, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
   threeImage: {fileID: 2646299460662274537}
-  manaImage: {fileID: 3113106064737583279}
+  shotgunImage: {fileID: 0}
+  threeImageShotgun: {fileID: 0}
 --- !u!1 &5297586868003393239
 GameObject:
   m_ObjectHideFlags: 0

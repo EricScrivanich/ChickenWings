@@ -8,9 +8,13 @@ using UnityEngine;
 public class SetupParent : ScriptableObject
 {
 
+    [Header("Egg stuff, 0 and 1 normal, 2 and 3 shotgun")]
+    [SerializeField] private Vector3Int[] eggTriggerAndIndexAndType;
+    [SerializeField] private Vector2[] eggPosition;
+    [SerializeField] private float[] eggSpeed;
 
 
-    public float XTriggerForRecording;
+    [Header("Ring Stuff")]
     public bool mustCompleteRingSequence;
     private Queue<int> lastPickedTriggers = new Queue<int>();
 
@@ -25,6 +29,8 @@ public class SetupParent : ScriptableObject
 
     public int enemyTriggerCount => enemySetup.Count;
     public bool isRandomSetup;
+
+    public float XTriggerForRecording;
 
 
 
@@ -72,6 +78,18 @@ public class SetupParent : ScriptableObject
 
         if (randomEnemyTrigger >= 0)
         {
+
+            if (eggTriggerAndIndexAndType != null && eggTriggerAndIndexAndType.Length > 0)
+            {
+                foreach (var item in eggTriggerAndIndexAndType)
+                {
+                    if (item.x == randomEnemyTrigger)
+                    {
+                        SpawnEgg(manager, item.y, item.z);
+
+                    }
+                }
+            }
             foreach (var set in enemySetup[randomEnemyTrigger].dataArray)
             {
                 set.InitializeEnemy(manager);
@@ -83,6 +101,12 @@ public class SetupParent : ScriptableObject
 
         // manager.StartCoroutine(manager.SetupDuration(Mathf.Max(tempList.ToArray())));
         manager.TimerForNextWave(Mathf.Max(tempList.ToArray()));
+
+    }
+
+    private void SpawnEgg(SpawnStateManager manager, int index, int type)
+    {
+        manager.GetEggByType(eggPosition[index], type, eggSpeed[index]);
 
     }
 
@@ -145,6 +169,18 @@ public class SetupParent : ScriptableObject
 
         var pickedSet = enemySetup[random].dataArray;
 
+        if (eggTriggerAndIndexAndType != null && eggTriggerAndIndexAndType.Length > 0)
+        {
+            foreach (var item in eggTriggerAndIndexAndType)
+            {
+                if (item.x == random)
+                {
+                    SpawnEgg(manager, item.y, item.z);
+
+                }
+            }
+        }
+
         for (int i = 0; i < pickedSet.Length; i++)
         {
             tempList.Add(pickedSet[i].TimeToTrigger);
@@ -160,6 +196,19 @@ public class SetupParent : ScriptableObject
     {
 
         List<float> tempList = new List<float>();
+
+
+        if (eggTriggerAndIndexAndType != null && eggTriggerAndIndexAndType.Length > 0)
+        {
+            foreach (var item in eggTriggerAndIndexAndType)
+            {
+                if (item.x == currentTrigger)
+                {
+                    SpawnEgg(manager, item.y, item.z);
+
+                }
+            }
+        }
 
 
         if (collectableSetup.Count > currentTrigger)
@@ -201,6 +250,56 @@ public class SetupParent : ScriptableObject
 
 
 
+    }
+
+    public float TotalTime()
+    {
+        float totalTime = 0;
+        int length;
+
+        if (collectableSetup.Count > enemySetup.Count)
+            length = collectableSetup.Count;
+        else
+            length = enemySetup.Count;
+
+
+        for (int i = 0; i < length; i++)
+        {
+            float t = 0;
+
+            if (collectableSetup != null && collectableSetup.Count > i)
+            {
+                foreach (var col in collectableSetup[i].dataArray)
+                {
+                    if (col.TimeToTrigger > t)
+                    {
+                        t = col.TimeToTrigger;
+                    }
+
+                }
+
+            }
+            if (enemySetup != null && enemySetup.Count > i)
+            {
+                foreach (var enemy in enemySetup[i].dataArray)
+                {
+                    if (enemy.TimeToTrigger > t)
+                    {
+                        t = enemy.TimeToTrigger;
+                    }
+
+                }
+
+            }
+
+            totalTime += t;
+
+        }
+
+
+
+
+        return totalTime;
     }
 
     public float CheckTime(EnemyData[] dataEnemy, CollectableData[] dataColl)

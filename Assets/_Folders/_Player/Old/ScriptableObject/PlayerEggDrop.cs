@@ -10,7 +10,7 @@ public class PlayerEggDrop : PlayerSystem
     [SerializeField] private int yolkPoolAmount = 10;
 
     private List<GameObject> eggPool;
-    public List<GameObject> yolkPool {get; private set;}
+    public List<GameObject> yolkPool { get; private set; }
 
     private int ammo;
 
@@ -18,7 +18,7 @@ public class PlayerEggDrop : PlayerSystem
     void Start()
     {
         ammo = player.ID.Ammo;
-        
+
 
         // Initialize eggPool and yolkPool
         eggPool = new List<GameObject>();
@@ -37,8 +37,8 @@ public class PlayerEggDrop : PlayerSystem
         //     yolk.SetActive(false);
         //     yolkPool.Add(yolk);
         // }
-    
-   
+
+
     }
 
     public GameObject GetPooledObject(List<GameObject> pool)
@@ -54,27 +54,27 @@ public class PlayerEggDrop : PlayerSystem
     }
 
     private void EggDrop()
-{
-    if (player.ID.Ammo > 0)
     {
-        GameObject egg = GetPooledObject(eggPool);
-
-        if (egg != null)
+        if (player.ID.Ammo > 0)
         {
-            egg.transform.position = new Vector2(_transform.position.x, _transform.position.y - .25f);
-            
-            
-            egg.SetActive(true);
-            // player.ID.globalEvents.eggVelocity?.Invoke(rb.velocity.x);
-        }
+            GameObject egg = GetPooledObject(eggPool);
+
+            if (egg != null)
+            {
+                egg.transform.position = new Vector2(_transform.position.x, _transform.position.y - .25f);
+
+
+                egg.SetActive(true);
+                // player.ID.globalEvents.eggVelocity?.Invoke(rb.velocity.x);
+            }
             player.ID.Ammo -= 1;
-            player.ID.globalEvents.OnUpdateAmmo?.Invoke();
+
+        }
     }
-}
-private void getPlayerVelocity()
-{
-   
-}
+    private void getPlayerVelocity()
+    {
+
+    }
 
 
     // private void AddAmmo(int amount)

@@ -6,14 +6,18 @@ public class AudioManager : MonoBehaviour
 {
     public float musicPitch;
     public float sfxPitch;
+    private float currentWindmillPitch;
+    public float newPitchSlow = 1;
     public static AudioManager instance;
     private float globalAudioSourcePitch;
 
     [Header("Audio Sources")]
     [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSource nonSlowSource;
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource ringPassSource;
     [SerializeField] private AudioSource pigAudioSource;
+    [SerializeField] private AudioSource windMillAudioSource;
 
     [Header("Chicken")]
     [SerializeField] private AudioClip[] cluckSounds;
@@ -26,9 +30,17 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip start;
     [SerializeField] private AudioClip swordSlashSound;
     [SerializeField] private AudioClip frozenSound;
+    [SerializeField] private AudioClip slowMotionEnter;
+    [SerializeField] private AudioClip slowMotionExit;
+    [SerializeField] private AudioClip shotgunReload;
+    [SerializeField] private AudioClip shotgunBlast;
+    [SerializeField] private AudioClip shotgunShell;
+    [SerializeField] private AudioClip shotgunFutureBlast;
+    [SerializeField] private AudioClip[] shotgunShells;
 
 
     [Header("Eggs")]
+    [SerializeField] private AudioClip eggDropPop;
     [SerializeField] private AudioClip crack;
     [SerializeField] private AudioClip scoreSound;
 
@@ -37,6 +49,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip ringSuccess;
     [SerializeField] private AudioClip bucketBurstSound;
     [SerializeField] private AudioClip ringPassSound; // Assign in Unity Editor
+    [SerializeField] private AudioClip bucketSuccessSound; // Assign in Unity Editor
 
 
     [Header("Pigs")]
@@ -44,17 +57,47 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip pigHammerSwing;
     [SerializeField] private AudioClip pigJetPack;
     [SerializeField] private AudioClip missileLaunch;
+    [SerializeField] private AudioClip[] farts;
+    [SerializeField] private AudioClip[] flappyPigCackles;
+
 
 
     [Header("Explosions")]
     [SerializeField] private AudioClip planeExplosionSound;
     [SerializeField] private AudioClip bombExplosionSound;
+    [SerializeField] private AudioClip bombDropped;
+    [SerializeField] private AudioClip airRaid;
+    [SerializeField] private AudioClip flyOver;
+    [SerializeField] private AudioClip bombLaunch;
+    [SerializeField] private AudioClip windMill;
 
+    [Header("UI")]
+    [SerializeField] private AudioClip chamberClick;
+    [SerializeField] private AudioClip chamberCock;
+    [SerializeField] private AudioClip errorSound;
+    [SerializeField] private AudioClip levelFinishSound;
+    [SerializeField] private AudioClip starHitSound;
 
 
 
 
     [Header("Volumes")]
+    [SerializeField] private float levelFinishVolume;
+    [SerializeField] private float bucketSuccessVolume;
+    [SerializeField] private float starHitVolume;
+    [SerializeField] private float fartVolume;
+    [SerializeField] private float flappyPigCackleVolume;
+    [SerializeField] private float bombDroppedVolume;
+    [SerializeField] private float bombLaunchVolume;
+    [SerializeField] private float windMillVolume;
+    [SerializeField] private float airRaidVolume;
+    [SerializeField] private float flyOverVolume;
+    [SerializeField] private float errorVolume = 0.7f;
+    [SerializeField] private float chamberClickVolume = 0.7f;
+    [SerializeField] private float chamberCockVolume = 0.7f;
+    [SerializeField] private float eggDropPopVolume = 0.7f;
+    [SerializeField] private float shotGunShellVolume = 0.7f;
+
     [SerializeField] private float cluckVolume = 0.7f;
     [SerializeField] private float flipVolume = 0.7f;
     [SerializeField] private float deathSoundVolume = 1f;
@@ -77,6 +120,17 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float pigHammerSwingVolume;
     [SerializeField] private float pigJetPackVolume;
     [SerializeField] private float missileLaunchVolume;
+
+
+    [SerializeField] private float slowMoVolume;
+    [SerializeField] private float shotgunBlastVolume;
+    [SerializeField] private float shotgunReloadVolume;
+
+
+    private bool canPlayJetPackNoise = true;
+    private float jetPackNoiseTime;
+    private readonly float minJetPackNoiseDelay = .15f;
+
 
 
 
@@ -105,6 +159,25 @@ public class AudioManager : MonoBehaviour
     {
         PlayMusic();
     }
+
+
+    void Update()
+    {
+
+        if (!canPlayJetPackNoise)
+        {
+            jetPackNoiseTime += Time.deltaTime;
+
+            if (jetPackNoiseTime > minJetPackNoiseDelay)
+            {
+                canPlayJetPackNoise = true;
+                jetPackNoiseTime = 0;
+
+            }
+
+        }
+
+    }
     public void SlowMotionPitch(bool isSlow)
     {
         if (isSlow)
@@ -124,12 +197,136 @@ public class AudioManager : MonoBehaviour
 
     }
 
+    public void PlayLevelFinishSounds(int type)
+    {
+        if (type == 0)
+            nonSlowSource.PlayOneShot(levelFinishSound, levelFinishVolume);
+
+        else if (type == 1)
+            nonSlowSource.PlayOneShot(starHitSound, starHitVolume);
+    }
+
+
+    public void ChangeWindMillPitch(float change)
+    {
+        currentWindmillPitch = change;
+        windMillAudioSource.pitch = change;
+    }
+    public void PlayWindMillSound()
+    {
+        windMillAudioSource.PlayOneShot(windMill, windMillVolume);
+    }
+
+    public void PlayFartSound()
+    {
+        int rand = Random.Range(0, 4);
+        audioSource.PlayOneShot(farts[rand], fartVolume);
+    }
+
+    public void PlayFlappyPigCackleSound()
+    {
+        int rand = Random.Range(0, 4);
+        audioSource.PlayOneShot(flappyPigCackles[rand], flappyPigCackleVolume);
+    }
+
+    public void PlayBombDroppedSound()
+    {
+        audioSource.PlayOneShot(bombDropped, bombDroppedVolume);
+    }
+
+    public void PlayBombLaunchSound()
+    {
+        audioSource.PlayOneShot(bombLaunch, bombLaunchVolume);
+    }
+
+    public void PlayAirRaidSiren()
+    {
+        audioSource.PlayOneShot(airRaid, airRaidVolume);
+
+    }
+
+    public void PlayFlyOver()
+    {
+        audioSource.PlayOneShot(flyOver, flyOverVolume);
+    }
+
+    public void PlayErrorSound()
+    {
+        nonSlowSource.PlayOneShot(errorSound, errorVolume);
+    }
+    public void SlowAudioPitch(float newPitch)
+    {
+        pigAudioSource.pitch = newPitch;
+        audioSource.pitch = newPitch;
+        newPitchSlow = newPitch;
+
+        windMillAudioSource.pitch = currentWindmillPitch * newPitch;
+    }
+
 
     public void PlayRingPassSound(int order)
     {
-        ringPassSource.pitch = Mathf.Pow(2, (order - 1) / 12.0f);
+        ringPassSource.pitch = Mathf.Pow(2, (order - 1) / 12.0f) * newPitchSlow;
         ringPassSource.PlayOneShot(ringPassSound, ringPassVolume);
 
+    }
+
+    public void PlayEggDrop()
+    {
+        audioSource.PlayOneShot(eggDropPop, eggDropPopVolume);
+
+    }
+
+    public void PlayShotgunShell(int ind)
+    {
+        if (ind == 1)
+        {
+            ind = Random.Range(1, 3);
+        }
+
+        audioSource.PlayOneShot(shotgunShells[ind], shotGunShellVolume);
+    }
+
+    public void PlayChamberClick()
+    {
+        // int ran = Random.Range(0, 4);
+        audioSource.PlayOneShot(chamberClick, chamberClickVolume);
+    }
+    public void PlayChamberCock()
+    {
+
+        audioSource.PlayOneShot(chamberCock, chamberCockVolume);
+    }
+
+
+    public void PlayShoutgunNoise(int type)
+    {
+        switch (type)
+        {
+            case (0):
+                audioSource.PlayOneShot(shotgunBlast, shotgunBlastVolume);
+                break;
+            case (1):
+                audioSource.PlayOneShot(shotgunReload, shotgunReloadVolume);
+
+
+                break;
+            case (2):
+                audioSource.PlayOneShot(shotgunShell);
+
+
+                break;
+            case (3):
+                audioSource.PlayOneShot(shotgunFutureBlast);
+
+                break;
+        }
+    }
+
+    public void PlaySlowMotionSound(bool enter)
+    {
+        if (enter) nonSlowSource.PlayOneShot(slowMotionEnter, slowMoVolume);
+        else nonSlowSource.PlayOneShot(slowMotionExit, slowMoVolume);
     }
 
     public void PlayPigDeathSound(int type)
@@ -148,13 +345,21 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayPigJetPackSound()
     {
+        if (!canPlayJetPackNoise) return;
+
         pigAudioSource.PlayOneShot(pigJetPack, pigJetPackVolume);
+        canPlayJetPackNoise = false;
 
     }
 
     public void PlayBucketBurstSound()
     {
         audioSource.PlayOneShot(bucketBurstSound, bucketBurstSoundVolume);
+    }
+    public void PlayBucketSuccessSound()
+    {
+        audioSource.PlayOneShot(bucketSuccessSound, bucketSuccessVolume);
+
     }
 
     public void ResetRingPassPitch()
@@ -238,9 +443,12 @@ public class AudioManager : MonoBehaviour
     {
         audioSource.PlayOneShot(dash, dashVolume);
     }
-    public void PlayCrackSound()
+    public void PlayCrackSound(int type = 0)
     {
-        audioSource.PlayOneShot(crack, crackVolume);
+        if (type == 0)
+            audioSource.PlayOneShot(crack, crackVolume);
+        else if (type == 1)
+            audioSource.PlayOneShot(crack, crackVolume * 1.4f);
     }
     public void PlayStartSound()
     {

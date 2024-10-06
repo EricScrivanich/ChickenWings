@@ -16,7 +16,7 @@ public class PlayerFlipRightState : PlayerBaseState
         new Vector3(0, 180, 20),
         new Vector3(0, 180, -15),
         new Vector3(0, 180, 5),
-        new Vector3(0, 180, -3), 
+        new Vector3(0, 180, -3),
        new Vector3(0,180,0)
 };
     private Vector2 JumpForce;
@@ -27,14 +27,22 @@ public class PlayerFlipRightState : PlayerBaseState
     private float addForceDownTime;
     private float addForceDownTimer;
     private float currentRotation = 0;
+    private float rotationSpeed;
     private float rotationSpeedVar;
-    private float rotationSpeed = 370;
+    private float rotationSpeedNormal = 320;
+    private float rotationSpeedShotgun = 200;
+    private float rotationSlowDownTimeNormal = .7f;
+    private float rotationSlowDownTimeShotgun = 1f;
     private float rotationSlowDownTime;
+
     private float time;
     private float rotationTimer;
     private bool hitSlowTarget;
     private bool prolongRotation;
     private int jumpAirIndex;
+
+    private float slowTimeMultiplier = 1;
+    private float addForceDownMultiplier = 1;
 
     public override void EnterState(PlayerStateManager player)
     {
@@ -50,7 +58,7 @@ public class PlayerFlipRightState : PlayerBaseState
         jumpAirIndex = player.CurrentJumpAirIndex;
         hitSlowTarget = false;
         addForceDownTimer = 0;
-        rotationSlowDownTime = .6f;
+       
         time = 0;
         rotationTimer = 0;
         player.SetFlipDirection(true);
@@ -64,10 +72,29 @@ public class PlayerFlipRightState : PlayerBaseState
             prolongRotation = false;
         }
         currentRotation = player.transform.rotation.eulerAngles.z;
+
+        if (player.shotgunEquipped)
+        {
+            rotationSpeed = 230;
+           
+            rotationSlowDownTime = 1f;
+            addForceDownMultiplier = 1.2f;
+
+        }
+        else
+        {
+            rotationSpeed = 320;
+            rotationSlowDownTime = .7f;
+            addForceDownMultiplier = 1f;
+
+        }
+
         rotationSpeedVar = rotationSpeed;
         player.AdjustForce(JumpForce);
         AudioManager.instance.PlayCluck();
     }
+
+   
     public void ReEnterState()
     {
         rotationSpeedVar = 300;
@@ -101,8 +128,8 @@ public class PlayerFlipRightState : PlayerBaseState
             }
             else if (!player.holdingRightFlip && addForceDownTimer < addForceDownTime)
             {
-                addForceDownTimer += Time.fixedDeltaTime; 
-                player.rb.AddForce(AddForceDownVector);
+                addForceDownTimer += Time.fixedDeltaTime;
+                player.rb.AddForce(AddForceDownVector * addForceDownMultiplier);
             }
         }
     }

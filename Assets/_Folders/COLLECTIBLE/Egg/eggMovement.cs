@@ -15,16 +15,16 @@ public class eggMovement : MonoBehaviour, ICollectible
     private float minY;
     private float maxY;
     private float yPos;
-    
+
 
     // private StatsManager statsMan;
 
     [SerializeField] private float minAmmoSpeed;
     [SerializeField] private float maxAmmoSpeed;
 
-   
 
-   
+
+
 
 
 
@@ -32,29 +32,29 @@ public class eggMovement : MonoBehaviour, ICollectible
 
     void Awake()
     {
-        
-        speed = Random.Range(minAmmoSpeed,maxAmmoSpeed);
+
+        speed = Random.Range(minAmmoSpeed, maxAmmoSpeed);
         parent = GetComponentInParent<ammoParentScript>();
         ammoBool = false;
         ammoCollected = false;
         eggTimer = 0;
-        
+
 
         minY = -2.5f;
         maxY = 4.5f;
 
 
-       
+
 
     }
     void Start()
     {
-        
-       
+
+
         // statsMan = GameObject.FindGameObjectWithTag("Manager").GetComponent<StatsManager>();
-       
-        
-        
+
+
+
     }
 
 
@@ -66,32 +66,32 @@ public class eggMovement : MonoBehaviour, ICollectible
         }
 
         Restart();
-             
-   
-        
+
+
+
     }
     void Movement()
     {
-    
-        transform.Translate(Vector3.left * speed* Time.deltaTime);
-   
-    
- 
+
+        transform.Translate(Vector3.left * speed * Time.deltaTime);
+
+
+
     }
     public int GetAmmo()
     {
         return amount;
     }
-    
+
     void Restart()
     {
-     
+
         if ((transform.position.x < -13 && ammoBool) || ammoCollected)
         {
             ammoCollected = false;
             yPos = Random.Range(minY, maxY);
-            speed = Random.Range(minAmmoSpeed,maxAmmoSpeed);
-            transform.position = new Vector3(BoundariesManager.rightBoundary,yPos, 0);
+            speed = Random.Range(minAmmoSpeed, maxAmmoSpeed);
+            transform.position = new Vector3(BoundariesManager.rightBoundary, yPos, 0);
             ammoBool = false;
         }
         if (!ammoBool)
@@ -113,13 +113,13 @@ public class eggMovement : MonoBehaviour, ICollectible
         ammoCollected = true;
 
         ID.Ammo += 1;
-        ID.globalEvents.OnUpdateAmmo?.Invoke();
-        
+
+
     }
 
-    
 
-  
+
+
 }
-    
+
 

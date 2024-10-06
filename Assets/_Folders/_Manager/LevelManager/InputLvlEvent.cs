@@ -10,4 +10,6 @@ public struct InputLvlEvent
     public Action<string, int> OnUpdateObjective;
     public Action finishedOverrideStateLogic;
     public Action<SpawnStateTransitionLogic> switchTransitionLogic;
+
+    public Action OnEggFinishLine;
 }

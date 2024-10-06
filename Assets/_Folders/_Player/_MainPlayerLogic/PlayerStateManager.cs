@@ -1,15 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using HellTap.PoolKit;
 public class PlayerStateManager : MonoBehaviour
 {
+    [SerializeField] private GasCloudParticleCollider particleCollider;
+    [SerializeField] private GameObject shotgunObj;
+    [SerializeField] private PlayerStartingStatsForLevels stats;
+    [SerializeField] private Pool pool;
+    [SerializeField] private int yForceMultiplier;
+    [SerializeField] private int yForceSubtractMultiplier;
+    public bool useChainedAmmo = false;
+
+    private Coroutine aimCouroutine;
+    private Coroutine reloadCouroutine;
+    private Coroutine MaxSlowTimeCouroutine;
+
+
+
+
+    private Coroutine ShotgunNormalRotationRoutine;
+    private Coroutine ShotgunAimingRotationRoutine;
+
+    private float shotgunRotationTarget;
+    private float shotgunAimRotationTarget;
+    [SerializeField] private float shotgunRotationSpeed;
+    [SerializeField] private float shotgunAimRotationSpeed;
+
+    [SerializeField] private Transform blastPoint;
+    [SerializeField] private Transform shellSpawnPoint;
+    [SerializeField] private float slowTimeTarget;
+    [SerializeField] private float velocityMagnitude;
+    [SerializeField] private float slowTimeDuration;
+    [SerializeField] private float aimToShootDelay;
+
+    [SerializeField] private float reloadDelay;
+    [SerializeField] private float canShootDelay;
+    [SerializeField] private float reloadDuration;
+    [SerializeField] private float reloadTimeTarget;
+
+    [SerializeField] private float speedTimeDuration;
     [SerializeField] private bool disableButtonsAtStart;
     public bool DisableButtonsAtStart { get { return disableButtonsAtStart; } set { return; } }
     [SerializeField] private Transform airSpawnPos;
     [SerializeField] private GameObject THETHING;
 
     public bool rotateWithLastState = false;
+    private Coroutine shotgunSlow;
 
 
 
@@ -67,6 +104,7 @@ public class PlayerStateManager : MonoBehaviour
     public BucketCollisionState BucketState = new BucketCollisionState();
     public PlayerParachuteState ParachuteState = new PlayerParachuteState();
     public PlayerNextSectionState NextSectionState = new PlayerNextSectionState();
+    public PlayerShotgunState ShotgunState = new PlayerShotgunState();
 
     #endregion 
 
@@ -87,6 +125,9 @@ public class PlayerStateManager : MonoBehaviour
     public readonly int ReloadGunTrigger = Animator.StringToHash("ReloadGunTrigger");
     public readonly int FinishDashTrigger = Animator.StringToHash("FinishDashTrigger");
     public readonly int FinishDropTrigger = Animator.StringToHash("FinishDropAir");
+    public readonly int EquipShotgunTrigger = Animator.StringToHash("Equip");
+    public readonly int UnEquipShotgunTrigger = Animator.StringToHash("UnEquip");
+    public readonly int ShootShotgunTrigger = Animator.StringToHash("Shoot");
 
 
     #endregion
@@ -149,13 +190,30 @@ public class PlayerStateManager : MonoBehaviour
     public bool isTryingToParachute = false;
     private bool justDashedSlashed;
     private bool canDash;
+    private bool shotgunReleased = false;
+    public bool shotgunEquipped { get; private set; }
+    private bool startedAim = false;
+    private bool movingJoystick = false;
+    private bool ignoreChainedShotgunReset;
+
+    private bool canShootShotgun = true;
+    private bool inSlowMo = false;
     private float dropCooldownTime = 2f;
     private readonly int rotationLerpSpeed = 20;
     private readonly int jumpRotSpeed = 200;
     private int frozenRotSpeed = 350;
     private readonly int maxRotUp = 15;
     private readonly int maxRotDown = -30;
+
+    private float targetRotateSpeedShotgun;
+    [SerializeField] private float baseRotateSpeedShotgun;
+    [SerializeField] private float lerpTargetRotateSpeedSpeed;
+
+
+
     private float rotZ;
+
+    private bool ignoreRotation;
     private PlayerAddForceBoundaries playerBoundaries;
 
     public bool usingConstantForce { get; private set; }
@@ -167,6 +225,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
+        shotgunEquipped = false;
         CurrentJumpAirIndex = 0;
         ID.constantPlayerForce = initialConstantForce;
         ID.events.EnableButtons?.Invoke(true);
@@ -184,7 +243,7 @@ public class PlayerStateManager : MonoBehaviour
 
         stillDashing = false;
 
-        ID.ResetValues();
+        ID.ResetValues(stats);
         // holdingFlip = false;
         ID.UsingClocker = false;
         rotateSlash = false;
@@ -196,6 +255,10 @@ public class PlayerStateManager : MonoBehaviour
         isFrozen = false;
 
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        if (shotgunObj != null)
+            shotgunObj.SetActive(false);
+
         justDashedSlashed = false;
         originalMaxFallSpeed = MovementData.MaxFallSpeed;
 
@@ -218,6 +281,7 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
         playerBoundaries.enabled = false;
         jumpAir = new Queue<GameObject>();
@@ -229,6 +293,7 @@ public class PlayerStateManager : MonoBehaviour
 
             obj.SetActive(false);
             jumpAir.Enqueue(obj);
+
 
         }
 
@@ -270,7 +335,6 @@ public class PlayerStateManager : MonoBehaviour
         attackObject.SetActive(false);
         // originalGravityScale = rb.gravityScale;
 
-        anim = GetComponent<Animator>();
         ID.events.EnableButtons(false);
 
         currentState = StartingState;
@@ -332,6 +396,7 @@ public class PlayerStateManager : MonoBehaviour
     void FixedUpdate()
     {
 
+
         // rb.velocity = new Vector2(currentForce, rb.velocity.y);
         MaxFallSpeed();
         if (rb.freezeRotation == false)
@@ -343,8 +408,15 @@ public class PlayerStateManager : MonoBehaviour
 
             // }
 
+            if (!ignoreRotation)
+                currentState.RotateState(this);
+
+            else
+                rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, targetRotateSpeedShotgun, lerpTargetRotateSpeedSpeed * Time.fixedDeltaTime);
+
+
             // else
-            currentState.RotateState(this);
+
 
         }
 
@@ -385,7 +457,12 @@ public class PlayerStateManager : MonoBehaviour
 
         // currentForce = xForce + ID.constantPlayerForce;
         if (!usingConstantForce)
+        {
             rb.velocity = force;
+            ID.globalEvents.OnPlayerVelocityChange?.Invoke(force, rb.gravityScale);
+
+
+        }
 
 
         else
@@ -459,6 +536,14 @@ public class PlayerStateManager : MonoBehaviour
 
 
         currentState.ExitState(this);
+
+        if (ignoreRotation)
+            ignoreRotation = false;
+
+        if (useChainedAmmo && newState != ShotgunState)
+        {
+            ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+        }
         currentState = newState;
 
 
@@ -488,6 +573,8 @@ public class PlayerStateManager : MonoBehaviour
 
 
         // ResetHoldJump();
+        SetShotgunRotTarget(5);
+
         anim.SetTrigger(JumpTrigger);
         var obj = jumpAir.Dequeue();
         obj.transform.position = airSpawnPos.position;
@@ -513,6 +600,8 @@ public class PlayerStateManager : MonoBehaviour
         {
             if (currentState == JumpState)
             {
+                SetShotgunRotTarget(-8);
+
                 ID.events.OnStopJumpAir?.Invoke(currentJumpAirIndex);
 
                 if (ID.isHolding)
@@ -538,6 +627,8 @@ public class PlayerStateManager : MonoBehaviour
         if (holding)
         {
             holdingRightFlip = true;
+            SetShotgunRotTarget(20);
+
             anim.SetTrigger(FlipTrigger);
             var obj = jumpAir.Dequeue();
             obj.transform.position = airSpawnPos.position;
@@ -566,6 +657,7 @@ public class PlayerStateManager : MonoBehaviour
         if (holding)
         {
             holdingLeftFlip = true;
+            SetShotgunRotTarget(-15);
 
             // ResetHoldJump();
             anim.SetTrigger(FlipTrigger);
@@ -599,6 +691,27 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
+    private void HandleDrop()
+    {
+
+
+        // ResetHoldJump();
+        isDropping = true;
+        SetShotgunRotTarget(10);
+
+        SwitchState(DropState);
+        // ID.events.EnableButtons?.Invoke(false);
+
+        // airResistance.localPosition = airDropPos;
+        // airResistance.localEulerAngles = airDropRot;
+        anim.SetTrigger(DropTrigger);
+
+        // ID.globalEvents.CanDrop?.Invoke(false);
+
+        // StartCoroutine(DropCooldown());
+
+    }
+
     void HandleDash(bool holding)
     {
         // if (stillDashing && holding && canDashSlash)
@@ -611,6 +724,7 @@ public class PlayerStateManager : MonoBehaviour
         // }
         if (holding)
         {
+            SetShotgunRotTarget(5);
 
             SwitchState(DashState);
             anim.SetTrigger(DashTrigger);
@@ -627,44 +741,516 @@ public class PlayerStateManager : MonoBehaviour
     private void HandleDashSlash()
     {
 
+
         if (stillDashing)
             ID.events.EnableButtons(false);
         DashState.SwitchSlash();
 
     }
 
-    private void HandleNewSlash(bool none)
+    private void HandleNewSlash(bool holding)
     {
-        if (none)
+        Debug.LogError("Can Shoot is: " + canShootShotgun + " shotgun release is: " + shotgunReleased + " in slow mo is: " + inSlowMo);
+        // if (shotgunReleased) return;
+        if (holding && canShootShotgun)
         {
-            Debug.Log("YDFD");
-            lastState = currentState;
-            rotateWithLastState = true;
-            SwitchState(ParachuteState);
+
+            if (ID.ShotgunAmmo <= 0 && !useChainedAmmo)
+            {
+                Debug.Log("ShotgunAmmo is 0 or less and not using chained ammo. Exiting.");
+                return;
+            }
+
+
+
+
+
+
+
+
+
+
+
+            if (inSlowMo)
+            {
+                // StopCoroutine(shotgunSlow);
+                StopCoroutine(reloadCouroutine);
+            }
+
+            if (MaxSlowTimeCouroutine != null)
+                StopCoroutine(MaxSlowTimeCouroutine);
+
+            MaxSlowTimeCouroutine = StartCoroutine(ShootIfOverTime());
+
+
+            startedAim = true;
+            ID.events.EnableButtons?.Invoke(false);
+
+            anim.SetTrigger("Aim");
+            aimCouroutine = StartCoroutine(AimShotgunCourintine());
+            // shotgunSlow = StartCoroutine(SlowTime(slowTimeDuration, slowTimeTarget));
+
+
+
+            // Debug.Log("YDFD");
+            // lastState = currentState;
+            // rotateWithLastState = true;
+            // SwitchState(ParachuteState);
+
+        }
+        else if (!holding && startedAim)
+        {
+            Debug.Log("Realeased");
+            ID.events.EnableButtons?.Invoke(true);
+
+
+            if (ID.ShotgunAmmo > 0)
+            {
+                Debug.Log($"ShotgunAmmo is greater than 0. Current ShotgunAmmo: {ID.ShotgunAmmo}");
+                ID.ShotgunAmmo--;
+                Debug.Log($"ShotgunAmmo decremented. New ShotgunAmmo: {ID.ShotgunAmmo}");
+            }
+
+            if (useChainedAmmo)
+            {
+                Debug.Log($"Using chained ammo. Current ChainedShotgunAmmo: {ID.ChainedShotgunAmmo}");
+
+                ID.ChainedShotgunAmmo--;
+
+
+
+            }
+
+            else if (ID.ShotgunAmmo == 0 && !useChainedAmmo)
+            {
+                Debug.Log("ShotgunAmmo is 0 and not using chained ammo. Triggering event to start using chained ammo.");
+
+                ID.globalEvents.OnUseChainedAmmo?.Invoke(true);
+            }
+
+            if (useChainedAmmo && ID.ChainedShotgunAmmo <= 0)
+            {
+                Debug.Log("ChainedShotgunAmmo is less than 0. Triggering event to stop using chained ammo.");
+                ignoreChainedShotgunReset = true;
+                ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+
+            }
+            shotgunReleased = true;
+            canShootShotgun = false;
+            startedAim = false;
+
 
         }
     }
 
 
 
-    private void HandleDrop()
+    private void UsingChainedAmmo(bool use)
+    {
+        if (use)
+        {
+            useChainedAmmo = true;
+            ID.globalEvents.OnUpdateChainedShotgunAmmo?.Invoke(ID.ChainedShotgunAmmo);
+            Debug.Log("Using chained ammo, event called");
+        }
+
+
+        else
+        {
+            useChainedAmmo = false;
+            ID.ChainedShotgunAmmo = -1;
+            if (ignoreChainedShotgunReset)
+            {
+                ignoreChainedShotgunReset = false;
+                return;
+            }
+            if (!inSlowMo && aimCouroutine != null)
+            {
+                StopCoroutine(aimCouroutine);
+                reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
+            }
+
+        }
+    }
+
+
+
+
+
+    private void GetShotgunBlast()
+    {
+        // Debug.LogError("Gettting blast");
+        pool.Spawn("ShotgunBlast", blastPoint.position, shotgunObj.transform.rotation);
+        AudioManager.instance.PlayShoutgunNoise(0);
+        // float rotationInDegrees = transform.eulerAngles.z;
+
+        // // Convert rotation to radians for trigonometric functions
+        // float rotationInRadians = rotationInDegrees * Mathf.Deg2Rad;
+
+        // // Calculate the direction vector
+        // Vector2 direction = new Vector2(Mathf.Cos(rotationInRadians), Mathf.Sin(rotationInRadians));
+
+        // Apply the velocity (note that we negate the direction because your example implies leftward motion at 0 degrees)
+        // rb.velocity = -direction * velocityMagnitude;
+
+
+
+        Vector2 force = -shotgunObj.transform.right * velocityMagnitude;
+
+
+        float yVelRatio = force.y / velocityMagnitude;
+        float addedY = 0;
+        float subtractY = 0;
+        int xVal = 1;
+
+        if (force.x < 0) xVal = -1;
+
+        float yPos = transform.position.y;
+
+
+        if (yVelRatio > .5f && transform.position.y > 0)
+        {
+            subtractY = yForceSubtractMultiplier * (yPos / 5);
+
+        }
+        else if (yVelRatio < .5f && transform.position.y < 0)
+        {
+            subtractY = -yForceSubtractMultiplier * (yPos / -5);
+
+        }
+
+
+
+
+
+        // if (yVelRatio > 0) addedY = yVelRatio * yForceMultiplier;
+        // else if (yVelRatio < 0) addedY = yVelRatio * yForceMultiplier * -1;
+        addedY = Mathf.Abs(yVelRatio * yForceMultiplier);
+        Vector2 og = new Vector2(force.x, force.y + addedY);
+        Vector2 finalForce = new Vector2(force.x + (subtractY * xVal), force.y + addedY - subtractY);
+
+        Debug.LogError("Subtract y of: " + subtractY + "OriginalForce: " + og + " new force: " + finalForce);
+
+        AdjustForce(finalForce);
+        SwitchState(ShotgunState);
+
+    }
+
+    // private IEnumerator SlowTime(float duration, float target)
+    // {
+    //     Debug.LogError("Starting slow time with duration of: " + duration + " target is: " + target);
+    //     inSlowMo = true;
+    //     float currentTimeScale = Time.timeScale;
+
+    //     float time = 0;
+    //     if (target < .9f)
+    //         AudioManager.instance.PlaySlowMotionSound(true);
+    //     else
+    //     {
+    //         // yield return new WaitForSecondsRealtime(.15f);
+    //         while (time < duration * .35f)
+    //         {
+    //             time += Time.unscaledDeltaTime;
+    //             float newTime = Mathf.Lerp(currentTimeScale, 1 * .35f, time / duration);
+    //             AudioManager.instance.SlowAudioPitch(newTime);
+    //             Time.timeScale = newTime;
+
+
+    //             yield return null;
+    //         }
+    //         time = 0;
+
+    //         pool.Spawn("ShotgunShell", shellSpawnPoint.position, shellSpawnPoint.rotation);
+    //         AudioManager.instance.PlaySlowMotionSound(false);
+    //         canShootShotgun = true;
+    //         Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
+    //         AudioManager.instance.PlayShoutgunNoise(1);
+    //     }
+
+    //     while (time < duration * .75f)
+    //     {
+    //         time += Time.unscaledDeltaTime;
+    //         float newTime = Mathf.Lerp(currentTimeScale, target, time / duration);
+    //         AudioManager.instance.SlowAudioPitch(newTime);
+    //         Time.timeScale = newTime;
+
+
+    //         yield return null;
+    //     }
+
+    //     if (target < .9f)
+    //     {
+    //         yield return new WaitUntil(() => shotgunReleased);
+    //         shotgunReleased = false;
+    //         anim.SetTrigger("Shoot");
+    //         GetShotgunBlast();
+    //         // yield return new WaitForSecondsRealtime(.2f);
+    //         shotgunReleased = false;
+    //         shotgunSlow = StartCoroutine(SlowTime(speedTimeDuration, 1));
+
+    //         // yield break;
+
+    //     }
+    //     else
+    //     {
+
+
+
+    //         inSlowMo = false;
+
+    //     }
+    // }
+    private IEnumerator AimShotgunCourintine()
+    {
+        movingJoystick = false;
+        float currentTimeScale = Time.timeScale;
+        float currentFallSpeed = maxFallSpeed;
+
+        float time = 0;
+        shotgunRotationTarget *= .7f;
+        AudioManager.instance.PlaySlowMotionSound(true);
+        while (time < slowTimeDuration)
+        {
+            time += Time.unscaledDeltaTime;
+            float newTime = Mathf.Lerp(currentTimeScale, slowTimeTarget, time / slowTimeDuration);
+            maxFallSpeed = Mathf.Lerp(currentFallSpeed, -8, time / slowTimeDuration);
+            Time.timeScale = newTime;
+            AudioManager.instance.SlowAudioPitch(newTime);
+
+
+            yield return null;
+        }
+        StopCoroutine(ShotgunNormalRotationRoutine);
+        ShotgunAimingRotationRoutine = StartCoroutine(RotateWhileAiming());
+        // yield return new WaitForSeconds(aimToShootDelay);
+        yield return new WaitUntil(() => shotgunReleased);
+        shotgunReleased = false;
+        GetShotgunBlast();
+
+        // anim.SetTrigger("Shoot");
+        anim.SetTrigger(ShootShotgunTrigger);
+        // yield return new WaitForSecondsRealtime(.2f);
+
+        reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
+    }
+
+    private IEnumerator ShootIfOverTime()
+    {
+        yield return new WaitForSeconds(1.2f);
+
+        if (startedAim == true)
+        {
+            startedAim = false;
+            StopCoroutine(aimCouroutine);
+            shotgunReleased = false;
+            GetShotgunBlast();
+            // anim.SetTrigger("Shoot");
+            anim.SetTrigger(ShootShotgunTrigger);
+            // yield return new WaitForSecondsRealtime(.2f);
+
+            reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
+
+        }
+    }
+
+    private IEnumerator ReloadShotgunCourintine()
+    {
+        StopCoroutine(ShotgunAimingRotationRoutine);
+        movingJoystick = false;
+
+        shotgunRotationTarget = 45;
+
+        ShotgunNormalRotationRoutine = StartCoroutine(RotateShotgun());
+        inSlowMo = true;
+        float currentTimeScale = Time.timeScale;
+
+        float time = 0;
+        pool.Spawn("ShotgunShell", shellSpawnPoint.position, shellSpawnPoint.rotation);
+        // yield return new WaitForSeconds(canShootDelay);
+        shotgunRotationTarget = -20;
+        canShootShotgun = true;
+        Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
+        yield return new WaitForSecondsRealtime(reloadDelay);
+        while (time < reloadDuration)
+        {
+            time += Time.unscaledDeltaTime;
+            float newTime = Mathf.Lerp(currentTimeScale, reloadTimeTarget, time / reloadDuration);
+            AudioManager.instance.SlowAudioPitch(newTime);
+            Time.timeScale = newTime;
+
+
+            yield return null;
+        }
+        AudioManager.instance.PlaySlowMotionSound(false);
+        AudioManager.instance.PlayShoutgunNoise(1);
+
+
+
+        time = 0;
+
+
+
+        float mfs = maxFallSpeed;
+
+        while (time < speedTimeDuration)
+        {
+            time += Time.deltaTime;
+            float newTime = Mathf.Lerp(reloadTimeTarget, 1, time / speedTimeDuration);
+            maxFallSpeed = Mathf.Lerp(mfs, originalMaxFallSpeed, time / speedTimeDuration);
+            AudioManager.instance.SlowAudioPitch(newTime);
+            Time.timeScale = newTime;
+
+
+            yield return null;
+        }
+        inSlowMo = false;
+        Time.timeScale = 1;
+
+    }
+
+    private void SwitchAmmo(int type)
+    {
+        if (type == 1)
+        {
+            shotgunEquipped = true;
+            movingJoystick = false;
+
+            // anim.SetTrigger("Equip");
+            shotgunObj.transform.localEulerAngles = new Vector3(0, 0, -45);
+            shotgunObj.SetActive(true);
+            anim.SetTrigger(EquipShotgunTrigger);
+
+
+
+            shotgunRotationTarget = -20;
+            ShotgunNormalRotationRoutine = StartCoroutine(RotateShotgun());
+
+        }
+        else if (shotgunEquipped)
+        {
+            movingJoystick = false;
+
+            if (ShotgunNormalRotationRoutine != null)
+
+                StopCoroutine(ShotgunNormalRotationRoutine);
+
+            if (ShotgunAimingRotationRoutine != null)
+                StopCoroutine(ShotgunAimingRotationRoutine);
+
+            // anim.SetTrigger("UnEquip");
+            anim.SetTrigger(UnEquipShotgunTrigger);
+
+            shotgunObj.SetActive(false);
+            shotgunEquipped = false;
+
+        }
+
+    }
+    private void SetShotgunRotTarget(int rot)
+    {
+        if (shotgunEquipped)
+            shotgunRotationTarget = rot;
+    }
+
+    public void ReloadShotgun()
+    {
+        // canShootShotgun = true;
+        // Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
+        // AudioManager.instance.PlayShoutgunNoise(1);
+
+
+        //get shell here
+
+    }
+
+    private IEnumerator RotateShotgun()
+    {
+        while (true)
+        {
+            Quaternion currentRotation = shotgunObj.transform.localRotation;
+            Quaternion targetRotation = Quaternion.Euler(0, 0, shotgunRotationTarget);
+
+            // Calculate the angular difference between the current and target rotations
+            float angleDifference = Quaternion.Angle(currentRotation, targetRotation);
+            if (angleDifference < 1f)
+            {
+                // shotgunObj.transform.localRotation = targetRotation; // Snap to the final rotation to avoid any minor differences
+                yield return null;
+            }
+
+            // Lerp the rotation towards the target
+            shotgunObj.transform.localRotation = Quaternion.Lerp(currentRotation, targetRotation, shotgunRotationSpeed * Time.deltaTime);
+
+            // If the angular difference is less than 1 degree, stop yielding (rotation complete)
+
+
+            yield return null; // Wait for the next frame
+        }
+    }
+
+    private IEnumerator RotateWhileAiming()
     {
 
 
-        // ResetHoldJump();
-        isDropping = true;
-        SwitchState(DropState);
-        // ID.events.EnableButtons?.Invoke(false);
+        while (shotgunEquipped)
+        {
+            if (!movingJoystick) yield return null;
 
-        // airResistance.localPosition = airDropPos;
-        // airResistance.localEulerAngles = airDropRot;
-        anim.SetTrigger(DropTrigger);
 
-        // ID.globalEvents.CanDrop?.Invoke(false);
 
-        // StartCoroutine(DropCooldown());
+
+
+            // Quaternion currentRotation = shotgunObj.transform.rotation;
+            // Quaternion targetRotation = Quaternion.Euler(0, 0, shotgunAimRotationTarget);
+
+            // // Calculate the angular difference between the current and target rotations
+            // float angleDifference = Quaternion.Angle(currentRotation, targetRotation);
+            // if (angleDifference < 1f)
+            // {
+            //     // shotgunObj.transform.localRotation = targetRotation; // Snap to the final rotation to avoid any minor differences
+            //     yield return null;
+            // }
+
+            // Lerp the rotation towards the target
+            // shotgunObj.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, shotgunAimRotationSpeed * Time.deltaTime);
+
+            // If the angular difference is less than 1 degree, stop yielding (rotation complete)
+
+
+            yield return null; // Wait for the next frame
+        }
+    }
+
+
+
+    public void CalculateGlobalRotationTarget(int val)
+    {
+        // movingJoystick = true;
+        // // Convert joystick input to an angle
+        // shotgunAimRotationTarget = Mathf.Atan2(joystickInput.y, joystickInput.x) * Mathf.Rad2Deg;
+
+        // if (joystickInput.x < -.4f)
+        //     targetRotateSpeedShotgun = baseRotateSpeedShotgun;
+        // else if (joystickInput.x > .4f)
+        //     targetRotateSpeedShotgun = -baseRotateSpeedShotgun;
+
+        // if (joystickInput == Vector2.zero)
+        //     ignoreRotation = false;
+        // else
+        //     ignoreRotation = true;
+
+
+        movingJoystick = true;
+        // Convert joystick input to an angle
+
+        if (val == 0) return;
+        targetRotateSpeedShotgun = baseRotateSpeedShotgun * val;
+
+        if (!ignoreRotation) ignoreRotation = true;
+
 
     }
+
 
     private void HandleNextSectionTrigger(float duration, float centerDuration, bool isClockwise, Transform trans, Vector2 centPos, bool doTween)
     {
@@ -692,6 +1278,10 @@ public class PlayerStateManager : MonoBehaviour
 
         if (!isDamaged)
         {
+            if (useChainedAmmo)
+            {
+                ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+            }
 
             isDamaged = true;
 
@@ -787,6 +1377,22 @@ public class PlayerStateManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void OnParticleCollision(GameObject other)
+    {
+        if (!isDamaged)
+        {
+            HandleDamaged();
+            particleCollider.Initialize(transform.position, rb.velocity);
+
+        }
+
+
+        // particleCollider.transform.position = 
+
+        // ID.events.LoseLife?.Invoke();
+
     }
 
 
@@ -966,6 +1572,7 @@ public class PlayerStateManager : MonoBehaviour
     private void OnEnable()
     {
         ID.events.OnJump += HandleJump;
+        ID.events.OnAimJoystick += CalculateGlobalRotationTarget;
         // ID.events.OnAttack += HandleClocker;
         ID.events.OnFlipRight += HandleRightFlip;
         ID.events.OnFlipLeft += HandleLeftFlip;
@@ -982,18 +1589,24 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDashSlash += HandleDashSlash;
         ID.events.OnAttack += HandleNewSlash;
 
+        ID.globalEvents.OnUseChainedAmmo += UsingChainedAmmo;
+
 
         ID.globalEvents.OnAdjustConstantSpeed += ChangeConstantForce;
         ID.globalEvents.OnOffScreen += OffScreen;
         ID.events.HitBoss += HitBoss;
         ID.globalEvents.OnEnterNextSectionTrigger += HandleNextSectionTrigger;
-
+        ID.events.OnSwitchAmmoType += SwitchAmmo;
         // ID.events.OnAttack += HandleSlash;
     }
     private void OnDisable()
     {
         ID.events.OnJump -= HandleJump;
         ID.events.OnAttack -= HandleNewSlash;
+        ID.events.OnAimJoystick -= CalculateGlobalRotationTarget;
+        ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;
+
+
 
         // ID.events.OnAttack -= HandleClocker;
 
@@ -1018,6 +1631,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnAdjustConstantSpeed -= ChangeConstantForce;
         ID.globalEvents.OnOffScreen -= OffScreen;
         ID.events.HitBoss -= HitBoss;
+        ID.events.OnSwitchAmmoType -= SwitchAmmo;
+
 
 
 

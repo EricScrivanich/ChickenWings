@@ -52,10 +52,10 @@ public class MountainController : MonoBehaviour
 
     private void Start()
     {
-        foreach (GameObject obj in DeActivate)
-        {
-            obj.SetActive(false);
-        }
+        // foreach (GameObject obj in DeActivate)
+        // {
+        //     obj.SetActive(false);
+        // }
         speed = player.constantPlayerForce;
 
         Debug.Log(targetCamera.aspect * targetCamera.orthographicSize * 2);

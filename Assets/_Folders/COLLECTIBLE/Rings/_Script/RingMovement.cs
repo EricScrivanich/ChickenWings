@@ -35,6 +35,15 @@ public class RingMovement : MonoBehaviour, ICollectible
     // private Rigidbody2D rb;
 
     private SpriteRenderer sprite;
+    [SerializeField] private float originalSpeed;
+    [SerializeField] private float lerpStartOffset = 5.0f; // Start lerping 5 units before the boundary
+    [SerializeField] private float lerpEndBoundary;
+    [SerializeField] private float lerpStartBoundary;
+
+    private Vector2 lerpOffsetRangeBasedOnSpeed = new Vector2(3.8f, 7.3f);
+    private Vector2 lerpOffsetSpeedBasedOnRange = new Vector2(3, 7.5f);
+    private float lerpedSpeedPercentage = .7f;
+
 
 
     // Declare the hash
@@ -49,6 +58,10 @@ public class RingMovement : MonoBehaviour, ICollectible
 
         sprite = GetComponent<SpriteRenderer>();
         col = GetComponent<EdgeCollider2D>();
+
+
+        Debug.Log("lerp start boundary is: " + lerpStartBoundary);
+
 
     }
 
@@ -72,6 +85,10 @@ public class RingMovement : MonoBehaviour, ICollectible
 
         if (speed > 0)
         {
+            if (!correctCollision && transform.position.x <= -lerpStartBoundary)
+                LerpSpeedTowardsBoundary();
+
+
 
             if (isCorrect && _transform.position.x < BoundariesManager.leftViewBoundary)
             {
@@ -90,6 +107,8 @@ public class RingMovement : MonoBehaviour, ICollectible
 
         else
         {
+            if (!correctCollision && transform.position.x >= lerpStartBoundary)
+                LerpSpeedTowardsBoundary();
             if (isCorrect && _transform.position.x > BoundariesManager.rightViewBoundary)
             {
                 HandleCorrectRing();
@@ -112,6 +131,16 @@ public class RingMovement : MonoBehaviour, ICollectible
         }
 
 
+
+
+
+    }
+
+    private void LerpSpeedTowardsBoundary()
+    {
+        float distanceToBoundary = Mathf.Abs(_transform.position.x - lerpEndBoundary);
+        float lerpFactor = Mathf.Clamp01(distanceToBoundary / lerpStartOffset);
+        speed = Mathf.Lerp(originalSpeed * lerpedSpeedPercentage, originalSpeed, lerpFactor);
     }
 
     private IEnumerator FadeCenter()
@@ -273,6 +302,24 @@ public class RingMovement : MonoBehaviour, ICollectible
         sprite.material = ID.defaultMaterial;
         backRing.material = ID.defaultMaterial;
         center.color = ID.CenterColor;
+        originalSpeed = speed;
+
+        float speedPercentage = Mathf.InverseLerp(lerpOffsetSpeedBasedOnRange.x, lerpOffsetSpeedBasedOnRange.y, MathF.Abs(originalSpeed));
+        lerpStartOffset = Mathf.Lerp(lerpOffsetRangeBasedOnSpeed.x, lerpOffsetRangeBasedOnSpeed.y, speedPercentage);
+        Debug.LogError("Lerp Offset is: " + lerpStartOffset);
+        if (speed > 0)
+        {
+            lerpEndBoundary = BoundariesManager.leftViewBoundary;
+            lerpStartBoundary = lerpEndBoundary + lerpStartOffset;
+
+        }
+        else
+        {
+            lerpEndBoundary = BoundariesManager.rightViewBoundary;
+            lerpStartBoundary = lerpEndBoundary - lerpStartOffset;
+        }
+
+
         // burst.color = ID.CenterColor;
         // burst.transform.localScale = startBurstScale;
 

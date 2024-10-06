@@ -1,0 +1,201 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
+  m_Name: SET_LVL8-0
+  m_EditorClassIdentifier: 
+  eggTriggerAndIndexAndType:
+  - {x: 3, y: 0, z: 3}
+  eggPosition:
+  - {x: 14, y: 2}
+  eggSpeed:
+  - 5.3
+  mustCompleteRingSequence: 0
+  enemyTriggerForEachRingIndex: 00000000
+  enemyTriggerForEachRingIndexWeights: 
+  enemySetup:
+  - dataArray:
+    - rid: 2683166299127283717
+    - rid: 2683166299127283718
+  - dataArray:
+    - rid: 2683166299127283722
+    - rid: 2683166299127283723
+    - rid: 2683166299127283724
+  - dataArray:
+    - rid: 2683166349587644434
+  - dataArray:
+    - rid: 2683166349587644433
+  - dataArray:
+    - rid: 2683166349587644438
+    - rid: 2683166349587644439
+  - dataArray:
+    - rid: 2683166349587644443
+  - dataArray:
+    - rid: 2683166349587644514
+  collectableSetup: []
+  isRandomSetup: 0
+  XTriggerForRecording: -1
+  references:
+    version: 2
+    RefIds:
+    - rid: 2683166299127283717
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.648792
+        data:
+        - position: {x: 16.87, y: 2.43}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+        - position: {x: 20.29, y: 0.16}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.2
+        - position: {x: 30.503475, y: 2.1747878}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 5.4
+        - position: {x: 35.563797, y: -1.22}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 7
+    - rid: 2683166299127283718
+      type: {class: MissilePigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.5643315
+        data:
+        - position: {x: 22.365225, y: -4.18974}
+          missileType: 0
+          movementType: 0
+    - rid: 2683166299127283722
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.886667
+        data:
+        - position: {x: 31.26, y: 2.56}
+          scale: {x: 0.95, y: 0.95, z: 0.95}
+          speed: 6.2
+        - position: {x: 36.32, y: 1.37}
+          scale: {x: 0.85, y: 0.85, z: 0.85}
+          speed: 6
+    - rid: 2683166299127283723
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.2633805
+        data:
+        - position: {x: 21.921831, y: -1.6277398}
+          scale: {x: 1.1, y: 1.1, z: 1.1}
+          speed: 3.5
+          hasHammer: 1
+    - rid: 2683166299127283724
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.065
+        data:
+        - position: {x: 15.26, y: 4.48}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4
+          yForce: 6.5
+          distanceToFlap: 1.5
+          startingFallSpot: 0
+    - rid: 2683166349587644433
+      type: {class: FlappyPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.5
+        data:
+        - position: {x: 23.31, y: 0.93}
+          scaleFactor: 0.9
+    - rid: 2683166349587644434
+      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.4
+        data:
+        - position: {x: 16, y: -2.32}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 5
+          flightMode: 2
+          minY: -2.7
+          maxY: 3
+          yForce: 11
+          maxYSpeed: 4
+          xTrigger: 11
+        - position: {x: 24, y: -2.32}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 5
+          flightMode: 2
+          minY: -2.7
+          maxY: 3
+          yForce: 11
+          maxYSpeed: 4
+          xTrigger: 19
+        - position: {x: 20, y: 3.6}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 5
+          flightMode: 3
+          minY: -2.7
+          maxY: 3
+          yForce: 11
+          maxYSpeed: 4
+          xTrigger: 15
+    - rid: 2683166349587644438
+      type: {class: MissilePigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.1875
+        data:
+        - position: {x: 20.4, y: -3.4518175}
+          missileType: 0
+          movementType: 3
+    - rid: 2683166349587644439
+      type: {class: HotAirBalloonSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 7
+        data:
+        - position: {x: -14.83, y: 2.24}
+          type: 0
+          xTrigger: 0
+          yTarget: 3.5
+          speed: 1
+          delay: 0
+    - rid: 2683166349587644443
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.6
+        data:
+        - position: {x: 17.13, y: 1.48}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 11.5
+        - position: {x: 17.43, y: -1.29}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 11.5
+        - position: {x: 18.51, y: -2.8}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 11.5
+        - position: {x: 19.28, y: 2.48}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 11.5
+        - position: {x: 39.52, y: -0.27}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 11.5
+        - position: {x: 39, y: 0.96}
+          scale: {x: 0.87, y: 0.8, z: 1}
+          speed: 11.5
+        - position: {x: 40.13, y: -3.52}
+          scale: {x: 0.93, y: 0.85, z: 1}
+          speed: 11.5
+        - position: {x: 38.52, y: 2.3}
+          scale: {x: 0.93, y: 0.85, z: 1}
+          speed: 11.5
+    - rid: 2683166349587644514
+      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.6765957
+        data:
+        - position: {x: 20.98, y: 2.81}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1.1
+          bladeSpeed: 133
+          heightMultiplier: 0

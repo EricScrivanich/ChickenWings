@@ -1,0 +1,183 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5609617747852223854
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3559798322871699999}
+  - component: {fileID: 5619941984373922225}
+  - component: {fileID: 181520417636617702}
+  - component: {fileID: 1237960647493614051}
+  - component: {fileID: 8825740233988290671}
+  - component: {fileID: 1289930387296832898}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3559798322871699999
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609617747852223854}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5619941984373922225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609617747852223854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d56943d01ee54dd9a2326bbb2db87e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  usingAmmo: 1
+  usingShotgun: 0
+  spawnNormalRandom: 1
+  spawnShotgunRandom: 1
+  eggImage: {fileID: 713175351, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
+  eggThreeImage: {fileID: -374112729, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
+  shotgunImage: {fileID: -1455860897, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
+  shotgunThreeImage: {fileID: 16208088, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
+  eggCollectablePrefab: {fileID: 4351014547753438834, guid: 6671afaf7b99244b0846e32d3e79bec6, type: 3}
+  eggCollectableCount: 8
+  eggTimeRange: {x: 11, y: 17}
+  baseEggThreeChance: 0.2
+  baseShotgunThreeChance: 0.35
+  barnPrefab: {fileID: 8654073525470006207, guid: 7131881ab36ec45f4be6bf514b5e7b10, type: 3}
+  barnTimeRange: {x: 9, y: 18}
+  barnBigChance: 0.3
+  barnMidChance: 0.6
+  manaTimeRange: {x: 17, y: 25}
+  ammoParticlePrefab: {fileID: 6982175600085930321, guid: 384f1b05875fa4f5b87dd972f848869d, type: 3}
+  manaParticlePrefab: {fileID: 6982175600085930321, guid: 40a90e8fd351a400a96c42aa6f9a799c, type: 3}
+--- !u!114 &181520417636617702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609617747852223854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 709e9581fe97840f09b75dff153ede22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  startingState: 3
+  startingStateDelay: 2
+  startedMissileTimer: 0
+  canSpawnMissilePig: 0
+  transitionLogic: {fileID: 11400000, guid: 89377f25acbce4b1caeb82dbcf4ce310, type: 2}
+  pureSetups: []
+  randomEnemySetups:
+  - {fileID: 11400000, guid: 8cf256bae904c46039a30faf24c83462, type: 2}
+  - {fileID: 11400000, guid: 27d6ae58b3e8d487fa911f025d15b831, type: 2}
+  randomRingSetups:
+  - {fileID: 11400000, guid: 78bf1db52259e4c34bd25360cf2889f0, type: 2}
+  - {fileID: 11400000, guid: a1aa690ecbfed454fbabeaa2948f9002, type: 2}
+  spawnIntervalRangeAfterTarget: {x: 0, y: 0}
+  normalPigBoundingBoxBase: {fileID: 11400000, guid: 759415d4b2c764238a04bc3724ca2422, type: 2}
+  jetPackPigBoundingBoxBase: {fileID: 11400000, guid: 6b6372b78ffca44bc880be6ad5c45c52, type: 2}
+  bigPigBoundingBoxBase: {fileID: 11400000, guid: 7ed159b9f20d44a6b96ff7f56c251e32, type: 2}
+  tenderizerPigBoundingBoxBase: {fileID: 11400000, guid: 240ac2cf5013f456397250825a1be48c, type: 2}
+  jetPackPigPoolSize: 15
+  tenderizerPigPoolSize: 7
+  normalPigPoolSize: 11
+  bigPigPoolSize: 8
+  missilePigPoolSize: 3
+  pilotPigPoolSize: 10
+  siloPoolSize: 0
+  windMillPoolSize: 0
+  gasPigPoolSize: 0
+  hotAirBalloonPoolSize: 0
+  flappyPigPoolSize: 0
+  bomberPlanePoolSize: 0
+  jetPackPigPrefab: {fileID: 8554680807245287772, guid: 7c7bfbfcf2af741b88609dea94b27826, type: 3}
+  tenderizerPigPrefab: {fileID: 5053118216464345145, guid: cbe51417ff78d4bc6b43eb6c60603036, type: 3}
+  normalPigPrefab: {fileID: 2425336107443998327, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
+  bigPigPrefab: {fileID: 2529404850862653700, guid: d7c9315e94d5f4db9840df6684866cd4, type: 3}
+  missilePigPrefab: {fileID: 7973203611187281368, guid: 1c70a31229daf4cb7b4fba99e50009ad, type: 3}
+  pilotPigPrefab: {fileID: 7067416515346818908, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
+  siloPrefab: {fileID: 0}
+  windMillPrefab: {fileID: 0}
+  gasPigPrefab: {fileID: 0}
+  hotAirBalloonPrefab: {fileID: 0}
+  flappyPigPrefab: {fileID: 0}
+  bomberPlanePrefab: {fileID: 0}
+  ringPool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
+  currentRingType: 0
+  recentlySpanwnedPositions: []
+--- !u!114 &1237960647493614051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609617747852223854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4c46495ddaa847c5a04a3ee6f6c0ea5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  spawnIntensitiesNormal:
+  - {fileID: 11400000, guid: 3f9121a53926c49708ccd7b7c963572c, type: 2}
+  - {fileID: 11400000, guid: 3aac55ef68e464255bc3d0ba73b8d66e, type: 2}
+  spawnIntensitiesHealth:
+  - {fileID: 11400000, guid: 740c7ed335b4a42269fe49c860cd3321, type: 2}
+  delaysToSpawnNextHealthAfterSpawn: 2800000064000000
+  nextIntentisityObjectiveValues: 0000000046000000
+  objectivesTracked:
+  - score
+  - time
+  initialDelayForHealthRingsToSpawn: 0
+--- !u!114 &8825740233988290671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609617747852223854}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a11048850bce4dc2b7da1636e802ea6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  timeForNextIntensity: 10
+  objectivesAddedPerTimeCycle: 5
+--- !u!114 &1289930387296832898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609617747852223854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23971b591fd19432991d178d8e4a447d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jetPackSmokeTrailPrefab: {fileID: 6740367233385968640, guid: c1c768f7e77594832b18468e8e73b185, type: 3}
+  jetPackSmokeMaterial: {fileID: 2100000, guid: 54fbbb562e0644af896f34ac9e3ef70f, type: 2}
+  smokeTrailOffsetSpeed: 2.8

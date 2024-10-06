@@ -46,6 +46,7 @@ public class PlayerEggScript : MonoBehaviour
         else if (ID.Ammo > 0)
         {
             GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
+            AudioManager.instance.PlayEggDrop();
 
             if (rb.velocity.x < 0)
             {
@@ -57,7 +58,7 @@ public class PlayerEggScript : MonoBehaviour
             }
 
             ID.Ammo -= 1;
-            ID.globalEvents.OnUpdateAmmo?.Invoke();
+
 
         }
     }

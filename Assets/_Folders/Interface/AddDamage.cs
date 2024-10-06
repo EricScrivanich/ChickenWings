@@ -30,6 +30,6 @@ public class AddDamage : MonoBehaviour
     public void AttackFinished()
     {
         Debug.Log("finished");
-        ID.events.OnAttack?.Invoke(false);
+        // ID.events.OnAttack?.Invoke(false);
     }
 }

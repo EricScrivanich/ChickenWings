@@ -24,6 +24,10 @@ public class PlayerDashState : PlayerBaseState
 
     public override void EnterState(PlayerStateManager player)
     {
+        if (player.rb.angularVelocity != 0)
+        {
+            player.rb.angularVelocity = 0;
+        }
         player.isDashing = true;
         // player.rb.freezeRotation = true;
 

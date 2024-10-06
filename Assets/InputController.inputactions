@@ -130,6 +130,24 @@
                     "processors": "",
                     "interactions": "Hold(duration=0.2)",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "EggJoystick",
+                    "type": "Value",
+                    "id": "35f59893-3e75-40e2-a4d0-0dee34bd09a0",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SwitchAmmoRight",
+                    "type": "Button",
+                    "id": "c40449bd-286c-47ed-a608-ea7c16437bc2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -416,6 +434,28 @@
                     "processors": "",
                     "groups": "Mobile",
                     "action": "HoldJumpLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9f4be38a-3bd6-42be-b8dd-b1d9cd33a48c",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "NormalizeVector2",
+                    "groups": "Mobile",
+                    "action": "EggJoystick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f47d7a75-c16b-4703-b2e2-e8a745cb011e",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "SwitchAmmoRight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

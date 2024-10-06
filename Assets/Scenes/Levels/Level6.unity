@@ -4336,12 +4336,24 @@ MonoBehaviour:
   bigPigPoolSize: 7
   missilePigPoolSize: 0
   pilotPigPoolSize: 0
+  siloPoolSize: 0
+  windMillPoolSize: 0
+  gasPigPoolSize: 0
+  hotAirBalloonPoolSize: 0
+  flappyPigPoolSize: 0
+  bomberPlanePoolSize: 0
   jetPackPigPrefab: {fileID: 8554680807245287772, guid: 7c7bfbfcf2af741b88609dea94b27826, type: 3}
   tenderizerPigPrefab: {fileID: 5053118216464345145, guid: cbe51417ff78d4bc6b43eb6c60603036, type: 3}
   normalPigPrefab: {fileID: 2425336107443998327, guid: 89ba5e5e2224541bb823c7c0e019a80c, type: 3}
   bigPigPrefab: {fileID: 2529404850862653700, guid: d7c9315e94d5f4db9840df6684866cd4, type: 3}
   missilePigPrefab: {fileID: 7973203611187281368, guid: 1c70a31229daf4cb7b4fba99e50009ad, type: 3}
   pilotPigPrefab: {fileID: 7067416515346818908, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
+  siloPrefab: {fileID: 0}
+  windMillPrefab: {fileID: 0}
+  gasPigPrefab: {fileID: 0}
+  hotAirBalloonPrefab: {fileID: 0}
+  flappyPigPrefab: {fileID: 0}
+  bomberPlanePrefab: {fileID: 0}
   ringPool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
   currentRingType: 0
   recentlySpanwnedPositions: []
@@ -5922,6 +5934,10 @@ PrefabInstance:
     - target: {fileID: 8556181105269460930, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623305132479715059, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8777603749694732327, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Camera

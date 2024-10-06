@@ -12,10 +12,16 @@ public class TenderizerPig : MonoBehaviour, ICollectible
     private float initialY;
     private Animator anim;
     [SerializeField] private GameObject Hammer;
+
+    private Vector2 flippedDirection = new Vector2(-1, 1);
     private Transform player; // Reference to the player
     public Transform eye; // Reference to the eye
     public Transform pupil; // Reference to the pupil
     public float eyeRadius = 0.5f; // Radius within which the pupil can move
+
+    private bool flipped;
+
+
 
     private void Awake()
     {
@@ -31,9 +37,19 @@ public class TenderizerPig : MonoBehaviour, ICollectible
 
 
     }
+
+
     private void OnEnable()
     {
         initialY = transform.position.y;
+        flipped = false;
+        if (speed < 0)
+        {
+            flipped = true;
+            transform.eulerAngles = new Vector3(0, 180, 0);
+            speed *= -1;
+        }
+
         detection.enabled = hasHammer;
         Hammer.SetActive(hasHammer);
 
@@ -47,20 +63,37 @@ public class TenderizerPig : MonoBehaviour, ICollectible
         transform.position = new Vector2(transform.position.x, y);
         if (player != null && hasHammer)
         {
-            Vector3 direction = player.position - eye.position; // Calculate the direction to the player
-            direction.z = 0; // Ensure it's 2D
+            Vector2 direction = player.position - eye.position; // Calculate the direction to the player
+            // Ensure it's 2D
             direction.Normalize(); // Normalize the direction
+
+            if (flipped)
+            {
+                direction *= flippedDirection;
+            }
 
             // Move the pupil within the eye's radius
             pupil.localPosition = direction * eyeRadius;
         }
     }
 
+    private IEnumerator AfterSwing()
+    {
+        yield return new WaitForSeconds(.45f);
+        AudioManager.instance.PlayPigHammerSwingSound();
+        yield return new WaitForSeconds(1.9f);
+        detection.enabled = true;
+
+
+
+    }
+
     public void Collected()
     {
         detection.enabled = false;
         anim.SetTrigger("SwingTrigger");
-        Invoke("PlaySound", .5f);
+        StartCoroutine(AfterSwing());
+        // Invoke("PlaySound", .5f);
 
     }
 

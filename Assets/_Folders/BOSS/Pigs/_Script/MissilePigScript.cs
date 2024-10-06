@@ -6,6 +6,9 @@ using HellTap.PoolKit;
 public class MissilePigScript : MonoBehaviour
 {
     [SerializeField] private float turn_speed;
+
+    public int movementType;
+    public int missileType;
     public bool flippedPig;
     public bool flippedWeapon;
     private bool flipped;
@@ -51,7 +54,9 @@ public class MissilePigScript : MonoBehaviour
     [SerializeField] private SpriteRenderer missileImage;
     private Animator anim;
 
-    private float yPos = -3.56f;
+
+
+    private bool isInitialized = false;
 
     private Pool pool; // Drag your pool reference here in the inspector
 
@@ -79,10 +84,10 @@ public class MissilePigScript : MonoBehaviour
     void Update()
     {
         transform.Translate(Vector2.left * speed * Time.deltaTime);
-        if (transform.position.x < BoundariesManager.leftBoundary)
-        {
-            gameObject.SetActive(false);
-        }
+        // if (transform.position.x < BoundariesManager.leftBoundary)
+        // {
+        //     gameObject.SetActive(false);
+        // }
 
         if (player != null && canShoot && transform.position.x < 10 && transform.position.x > -9.5f)
         {
@@ -296,9 +301,108 @@ public class MissilePigScript : MonoBehaviour
         StartCoroutine(ReloadCoroutine());
     }
 
-    public void Initialize(bool flippedP, bool flippedW, float rangeAdj, float xPos)
+    private void OnEnable()
     {
+        if (!isInitialized)
+        {
+            missileImage.enabled = true;
+            canShoot = true;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            missileImage.transform.localPosition = initalMissilePosition;
+            launchAim.localPosition = initalLaunchAimPosition;
+            launchAim.localRotation = Quaternion.Euler(0, 0, 90);
+            weaponStrap.localRotation = Quaternion.Euler(0f, 0, 0f);
 
+            bool flippedP = false;
+            bool flippedW = false;
+
+            if (movementType == 1)
+            {
+                flippedP = true;
+            }
+            else if (movementType == 2)
+            {
+                flippedW = true;
+            }
+            else if (movementType == 3)
+            {
+                flippedW = true;
+                flippedP = true;
+            }
+
+
+
+
+
+
+
+            if (flippedP)
+            {
+
+                speed = flippedMoveSpeed;
+                anim.speed = 1.4f;
+                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+
+                if (flippedW)
+                {
+                    flipped = false;
+
+
+                    weaponStrap.localRotation = Quaternion.Euler(0, 180, 0);
+                }
+                else
+                {
+
+                    weaponStrap.localRotation = Quaternion.Euler(0, 0, 0);
+                    flipped = true;
+
+                }
+
+            }
+            else
+            {
+                speed = normalMoveSpeed;
+                anim.speed = 1f;
+
+
+                if (flippedW)
+                {
+                    flipped = true;
+                    weaponStrap.localRotation = Quaternion.Euler(0f, 180f, 0f);
+                }
+                else
+                {
+
+                    flipped = false;
+                }
+            }
+
+
+
+            if (flipped)
+            {
+
+                rangesMinMaxVar = new Vector2(-rangesMinMax.y, -rangesMinMax.x);
+                flippedAngleAdj = 180;
+                flippedXAdj = -1;
+
+            }
+            else
+            {
+                rangesMinMaxVar = new Vector2(rangesMinMax.x, rangesMinMax.y);
+                flippedAngleAdj = 0;
+                flippedXAdj = 1;
+
+
+            }
+
+
+        }
+    }
+
+    public void Initialize(float xPos, int type, int moveType)
+    {
+        isInitialized = true;
         missileImage.enabled = true;
         canShoot = true;
         transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -306,6 +410,26 @@ public class MissilePigScript : MonoBehaviour
         launchAim.localPosition = initalLaunchAimPosition;
         launchAim.localRotation = Quaternion.Euler(0, 0, 90);
         weaponStrap.localRotation = Quaternion.Euler(0f, 0, 0f);
+
+        bool flippedP = false;
+        bool flippedW = false;
+
+        if (type == 1)
+        {
+            flippedP = true;
+        }
+        else if (type == 2)
+        {
+            flippedW = true;
+        }
+        else if (type == 3)
+        {
+            flippedW = true;
+            flippedP = true;
+        }
+
+
+
 
 
 
@@ -356,14 +480,14 @@ public class MissilePigScript : MonoBehaviour
         if (flipped)
         {
 
-            rangesMinMaxVar = new Vector2(-rangesMinMax.y, -rangesMinMax.x + rangeAdj);
+            rangesMinMaxVar = new Vector2(-rangesMinMax.y, -rangesMinMax.x);
             flippedAngleAdj = 180;
             flippedXAdj = -1;
 
         }
         else
         {
-            rangesMinMaxVar = new Vector2(rangesMinMax.x - rangeAdj, rangesMinMax.y);
+            rangesMinMaxVar = new Vector2(rangesMinMax.x, rangesMinMax.y);
             flippedAngleAdj = 0;
             flippedXAdj = 1;
 
@@ -371,7 +495,7 @@ public class MissilePigScript : MonoBehaviour
         }
 
 
-        transform.position = new Vector2(xPos, yPos);
+        transform.position = new Vector2(xPos, BoundariesManager.GroundPosition + .85f);
         gameObject.SetActive(true);
 
     }

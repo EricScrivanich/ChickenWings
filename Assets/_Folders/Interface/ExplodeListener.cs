@@ -23,7 +23,8 @@ public class ExplodeListener : MonoBehaviour, IExplodable, IDamageable
     public void Damage(int damageAmount)
     {
         pool.Spawn("NormalExplosion", transform.position, Vector3.zero, normalExplosionScale, null);
-        pool.Despawn(this.gameObject);
+        if (isBomberBomb) gameObject.SetActive(false);
+        else pool.Despawn(this.gameObject);
 
     }
 
@@ -31,10 +32,13 @@ public class ExplodeListener : MonoBehaviour, IExplodable, IDamageable
     {
         if (isGround)
         {
-            pool.Spawn("GroundExplosion", transform.position, Vector3.zero, groundExplosionScale, null);
+            // pool.Spawn("GroundExplosion", transform.position, Vector3.zero, groundExplosionScale, null);
             pool.Spawn("ExplosionBlemish", transform.position, Vector3.zero, groundExplosionScale, null);
 
-            pool.Despawn(this.gameObject);
+            AudioManager.instance.PlayBombExplosionSound();
+
+            if (isBomberBomb) gameObject.SetActive(false);
+            else pool.Despawn(this.gameObject);
         }
         // else if (isGround && isBomberBomb)
         // {
@@ -47,7 +51,9 @@ public class ExplodeListener : MonoBehaviour, IExplodable, IDamageable
         else
         {
             pool.Spawn("NormalExplosion", transform.position, Vector3.zero, normalExplosionScale, null);
-            pool.Despawn(this.gameObject);
+
+            if (isBomberBomb) gameObject.SetActive(false);
+            else pool.Despawn(this.gameObject);
 
 
         }

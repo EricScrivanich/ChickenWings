@@ -35,6 +35,8 @@ public struct OutputLvlEvent
 
     public Action<int, int> killedPig;
 
+    public Action<float> OnGetLevelTime;
+
 
 
     public Action<RandomSpawnIntensity> OnSetNewIntensity;

@@ -69,6 +69,8 @@ public class PilotPig : MonoBehaviour
         anim.SetBool("GlidingUpBool", false);
         anim.SetBool("GlidingDownBool", false);
 
+        anim.SetTrigger("Restart");
+
         goUp = false;
         goDown = false;
         downUp = false;
@@ -82,7 +84,14 @@ public class PilotPig : MonoBehaviour
     private void OnEnable()
     {
         startMotion = false;
+        if (initialSpeed < 0)
+        {
+            transform.eulerAngles = new Vector3(0, 180, 0);
+        }
+        
         rb.velocity = new Vector2(-initialSpeed, 0);
+
+        
 
 
 
@@ -149,12 +158,7 @@ public class PilotPig : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.x < BoundariesManager.leftBoundary)
-        {
-            gameObject.SetActive(false);
 
-            anim.SetTrigger("Restart");
-        }
         if (transform.position.x < xTrigger && !startMotion)
         {
             startMotion = true;

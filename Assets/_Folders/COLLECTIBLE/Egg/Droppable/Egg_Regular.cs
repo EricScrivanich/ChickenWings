@@ -35,7 +35,8 @@ public class Egg_Regular : MonoBehaviour
         pool = PoolKit.GetPool("EggPool");
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         hasHit = false;
     }
 
@@ -61,7 +62,7 @@ public class Egg_Regular : MonoBehaviour
 
     // IEnumerator YolkMovement()
     // {
-       
+
     //     while (transform.position.x > BoundariesManager.leftBoundary)
     //     {
     //         transform.Translate(Vector2.left * BoundariesManager.GroundSpeed * Time.deltaTime);
@@ -73,31 +74,57 @@ public class Egg_Regular : MonoBehaviour
     //     gameObject.SetActive(false);
     // }
 
-    private void OnTriggerEnter2D(Collider2D collider)
+    private void OnCollisionEnter2D(Collision2D collider)
     {
         if (hasHit) return;
-        else if (collider.gameObject.CompareTag("Floor"))
-        {
-
-            hasHit = true;
-            // StartCoroutine(YolkMovement());
-            AudioManager.instance.PlayCrackSound();
-            pool.Spawn("YolkParent", transform.position,Vector3.zero);
-            pool.Despawn(gameObject);
-            
-            // isCracked = true;
-
-
-
-        }
         else if (collider.gameObject.CompareTag("Barn"))
         {
             hasHit = true;
             ID.AddScore(5);
             AudioManager.instance.PlayScoreSound();
             pool.Despawn(gameObject);
-            
+            return;
+
         }
+
+
+        else if (collider.gameObject.CompareTag("Floor"))
+        {
+
+            hasHit = true;
+            // pool.Spawn("EggParticle", transform.position, Vector3.zero);
+            // StartCoroutine(YolkMovement());
+            AudioManager.instance.PlayCrackSound();
+            pool.Spawn("YolkParent", transform.position, Vector3.zero);
+            pool.Despawn(gameObject);
+
+            // isCracked = true;
+
+
+
+        }
+        else if (collider.gameObject.CompareTag("Plane"))
+        {
+            IEggable eggableEntity = collider.gameObject.GetComponent<IEggable>();
+
+            if (eggableEntity != null)
+            {
+                AudioManager.instance.PlayCrackSound();
+
+                pool.Despawn(gameObject);
+                // pool.Spawn("EggParticle", transform.position, Vector3.zero);
+
+                eggableEntity.OnEgged();
+            }
+        }
+
+
+    }
+
+
+    private void OnParticleCollision(GameObject other)
+    {
+        // Debug.LogError("Egg Hit Smoke");
     }
     // private void OnEnable()
     // {

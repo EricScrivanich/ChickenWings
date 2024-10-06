@@ -5,9 +5,25 @@ using UnityEngine;
 public struct GlobalPlayerEvents
 {
     public Action<int> OnUpdateLives;
+
+    public Action<int> OnUpdateChainedShotgunAmmo;
+    public Action<float> OnUpdateChainedShotgunMaxWait;
+
+    public Action<bool> OnHideEggButton;
+
+    public Action<bool> OnUseChainedAmmo;
     public Action OnInfiniteLives;
     public Action<float> OnAdjustConstantSpeed;
-    public Action OnUpdateAmmo;
+    public Action<int> OnUpdateAmmo;
+    public Action<int> OnUpdateShotgunAmmo;
+
+    public Action<bool> OnSwitchAmmo;
+
+    public Action<bool> OnEggButton;
+
+    public Action<int> OnEmptyAmmo;
+
+    public Action<Vector2, float> OnPlayerVelocityChange;
 
     public Action FillPlayerMana;
 

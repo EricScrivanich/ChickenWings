@@ -5,50 +5,59 @@ public class Bombs : MonoBehaviour
     public PlaneManagerID ID;
     // private DropBomb dropBombController;
     private Animator anim;
+
+    private Vector2 dropForceAverage = new Vector2(.2f, .2f);
+
+    private Rigidbody2D rb;
+
+    private bool isDropped;
+
+    private float rotationSpeed;
     private void Awake()
     {
-        // anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
 
     }
-    void Start()
+
+
+    private void FixedUpdate()
     {
-        // Find the DropBomb script in the scene
-        // dropBombController = FindObjectOfType<DropBomb>();
+        // Only rotate if the object is moving
+        if (rb.velocity != Vector2.zero && !isDropped)
+        {
+            // Get the angle in degrees of the current velocity vector
+            Quaternion targetRot = Quaternion.LookRotation(Vector3.forward, rb.velocity.normalized);
+
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, rotationSpeed * Time.fixedDeltaTime);
+        }
     }
 
-    public void ResetBomb()
+    public void GetBomb(float force, bool dropped)
     {
-        // gameObject.SetActive(false);
-    }
-    private void Update()
-    {
+        
+        gameObject.SetActive(true);
+        if (dropped)
+        {
+
+            rb.velocity = force * dropForceAverage;
+            isDropped = true;
+            rb.angularVelocity = 50;
+
+        }
+
+        else
+        {
+            isDropped = false;
+            rb.angularVelocity = 0;
+
+
+            rotationSpeed = 100;
+            rb.velocity = transform.up * force;
+        }
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        //     if (collider.gameObject.tag == "Player")
-        //     {
-        //         ID.GetExplosion(transform.position, ID.droppedBombExplosionScale);
 
-        //         AudioManager.instance.PlayBombExplosionSound();
-        //         gameObject.SetActive(false);
 
-        //         // gameObject.SetActive(false);
-        //         // // Return the bomb to the pool
-        //         // dropBombController.ReturnBombToPool(gameObject);
-        //     }
 
-        //     else if (collider.gameObject.tag == "Floor")
-        //     {
-        //         anim.SetTrigger("ExplodeTrigger");
-
-        //         AudioManager.instance.PlayBombExplosionSound();
-
-        //         // gameObject.SetActive(false);
-        //         // // Return the bomb to the pool
-        //         // dropBombController.ReturnBombToPool(gameObject);
-        //     }
-        // }
-    }
 }

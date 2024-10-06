@@ -39,13 +39,13 @@ public class RingPlayerHandler : MonoBehaviour
 
     private void AddScore()
     {
-       
 
-        ID.AddScore(3);
+
+        ID.AddScore(2);
 
     }
 
-   
+
 
 
     private void BucketCompletion(int index)
@@ -66,7 +66,7 @@ public class RingPlayerHandler : MonoBehaviour
                 break;
 
             case 2:
-               
+
 
                 RingGold.GetBall(transform.position, null, positionScript.ReturnGoldPosition());
 
@@ -85,20 +85,21 @@ public class RingPlayerHandler : MonoBehaviour
     }
     private void GoldFinish()
     {
-       
-       if (BucketDifferntObjective == 2 && lvlID != null)
+
+        if (BucketDifferntObjective == 2 && lvlID != null)
         {
             Invoke("DelayBeforeGoldAdded", .25f);
             return;
 
         }
-        ID.AddScore(Mathf.CeilToInt(RingGold.CorrectRing * 2) + 3);
+        ID.AddScore(Mathf.CeilToInt(RingGold.CorrectRing * 1.5f));
     }
 
     private void PinkFinish()
     {
 
         ID.Lives += 1;
+        AudioManager.instance.PlayBucketSuccessSound();
 
 
     }
@@ -110,7 +111,7 @@ public class RingPlayerHandler : MonoBehaviour
 
     private void PurpleFinish()
     {
-       
+
     }
 
     private void RedFinish()
@@ -147,7 +148,7 @@ public class RingPlayerHandler : MonoBehaviour
     private void OnEnable()
     {
         RingGold.ringEvent.OnCheckOrder += AddScore;
-       
+
         RingRed.ringEvent.OnGetBall += LoseLife;
 
         ID.globalEvents.OnBucketExplosion += BucketCompletion;
@@ -170,7 +171,7 @@ public class RingPlayerHandler : MonoBehaviour
 
 
         RingGold.ringEvent.OnCheckOrder -= AddScore;
-      
+
 
         RingRed.ringEvent.OnGetBall -= LoseLife;
 

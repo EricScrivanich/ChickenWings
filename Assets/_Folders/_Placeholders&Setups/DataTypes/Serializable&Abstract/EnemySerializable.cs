@@ -11,7 +11,7 @@ public struct JetPackPigData
 }
 
 [System.Serializable]
-public struct TenderizerPigData 
+public struct TenderizerPigData
 {
     public Vector2 position;
     public Vector3 scale;
@@ -25,7 +25,7 @@ public struct NormalPigData
     public Vector2 position;
     public Vector3 scale;
     public float speed;
-    
+
 }
 
 [System.Serializable]
@@ -54,6 +54,100 @@ public struct PilotPigData
     public float yForce;
     public float maxYSpeed;
     public float xTrigger;
-   
+
 
 }
+
+[System.Serializable]
+
+// class name: SiloMovement
+public struct SiloData
+{
+    public Vector2 position;
+    public int type;
+
+    public float baseHeightMultiplier;
+
+}
+
+[System.Serializable]
+// class name: MissilePigScript
+public struct MissilePigData
+{
+    public Vector2 position;
+    public int missileType;
+
+    public int movementType;
+
+
+}
+
+
+[System.Serializable]
+// class name: Windmill
+
+public struct WindMillData
+{
+    public Vector2 position;
+    public int bladeAmount;
+
+    public float bladeScaleMultiplier;
+    public float bladeSpeed;
+
+    public float heightMultiplier;
+
+
+}
+
+[System.Serializable]
+public struct GasPigData
+{
+    public Vector2 position;
+
+    public float speed;
+
+    public float delay;
+}
+
+[System.Serializable]
+
+// class name: HotAirBalloon
+public struct HotAirBalloonData
+{
+    public Vector2 position;
+
+    public int type;
+
+    public float xTrigger;
+
+    public float yTarget;
+
+    public float speed;
+
+    public float delay;
+}
+
+
+[System.Serializable]
+// class name: FlappyPigMovement
+public struct FlappyPigData
+{
+    public Vector2 position;
+
+    public float scaleFactor;
+
+}
+
+[System.Serializable]
+// class name: DropBomb
+public struct BomberPlaneData
+{
+    public float xDropPosition;
+    public float dropAreaScaleMultiplier;
+
+    public float speedTarget;
+
+
+}
+
+

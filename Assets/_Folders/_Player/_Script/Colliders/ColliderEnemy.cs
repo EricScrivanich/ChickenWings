@@ -36,6 +36,8 @@ public class ColliderEnemy : MonoBehaviour
     // Start is called before the first frame update
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("collide solid");
+
         if (collision.gameObject.tag == "Floor") //&& floorCollision
         {
 
@@ -48,23 +50,26 @@ public class ColliderEnemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
+        Debug.Log("collide trig");
         Debug.Log(collider.gameObject);
+
+        if (collider.CompareTag("Plane")) // && !isFlashing 
+        {
+            ID.events.LoseLife?.Invoke();
+
+        }
         IExplodable explodableEntity = collider.gameObject.GetComponent<IExplodable>();
         if (explodableEntity != null)
         {
             explodableEntity.Explode(false);
         }
 
-        if (collider.CompareTag("Plane")) // && !isFlashing 
-        {
-            ID.events.LoseLife?.Invoke();
-            Debug.Log("Player hit: " + collider.gameObject);
-
-        }
 
 
     }
 
+
+   
 
 
 

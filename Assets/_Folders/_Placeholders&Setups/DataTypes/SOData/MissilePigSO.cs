@@ -1,18 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class MissilePigSO : MonoBehaviour
+[System.Serializable]
+public class MissilePigSO : EnemyData
 {
-    // Start is called before the first frame update
-    void Start()
+    public MissilePigData[] data;
+    public override void InitializeEnemy(SpawnStateManager manager)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        for (int i = 0; i < data.Length; i++)
+        {
+            manager.GetMissilePig(data[i].position.x, data[i].movementType, data[i].missileType);
+        }
     }
 }

@@ -7,7 +7,21 @@ using UnityEngine;
 [CustomEditor(typeof(SetupParent))]
 public class EnemySetupRecorderEditor : Editor
 {
-    public string[] options = new string[] { "Ring", "pNormal", "pBig", "pJetPack", "pTenderizer", "pPilot" };
+    public string[] options = new string[] {
+    "Ring",
+    "Normal Pig",
+    "Big Pig",
+    "JetPack Pig",
+    "Tenderizer Pig",
+    "Pilot Pig",
+    "Missile Pig",      // New option for Missile Pig
+    "Silo",             // New option for Silo
+    "Wind Mill",        // New option for Wind Mill
+    "Gas Pig",          // New option for Gas Pig
+    "Hot Air Balloon",  // New option for Hot Air Balloon
+    "Flappy Pig",       // New option for Flappy Pig
+    "Bomber Plane"      // New option for Bomber Plane
+};
     public int indexDropDown = 0;
     private int selectedTriggerIndex = -1;
     private int selectedTriggerIndexEnemy = -1;
@@ -68,6 +82,28 @@ public class EnemySetupRecorderEditor : Editor
 
             case 5:
                 RecordPilotPigs(tempListEnemy, script.XTriggerForRecording);  // New case for Pilot Pigs
+                break;
+
+            case 6:
+                RecordMissilePigs(tempListEnemy, script.XTriggerForRecording);  // New case for Missile Pigs
+                break;
+            case 7:
+                RecordSilos(tempListEnemy, script.XTriggerForRecording);  // New case for Silos
+                break;
+            case 8:
+                RecordWindMills(tempListEnemy, script.XTriggerForRecording);  // New case for WindMills
+                break;
+            case 9:
+                RecordGasPigs(tempListEnemy, script.XTriggerForRecording);  // New case for Gas Pigs
+                break;
+            case 10:
+                RecordHotAirBalloons(tempListEnemy, script.XTriggerForRecording);  // New case for Hot Air Balloons
+                break;
+            case 11:
+                RecordFlappyPigs(tempListEnemy, script.XTriggerForRecording);  // New case for Flappy Pigs
+                break;
+            case 12:
+                RecordBomberPlanes(tempListEnemy, script.XTriggerForRecording);  // New case for Bomber Planes
                 break;
 
             default:
@@ -199,6 +235,14 @@ public class EnemySetupRecorderEditor : Editor
         RecordTenderizerPigs(newEnemyData, script.XTriggerForRecording);
         RecordBigPigs(newEnemyData, script.XTriggerForRecording);
         RecordPilotPigs(newEnemyData, script.XTriggerForRecording);
+        RecordMissilePigs(newEnemyData, script.XTriggerForRecording);
+        RecordSilos(newEnemyData, script.XTriggerForRecording);
+        RecordWindMills(newEnemyData, script.XTriggerForRecording);
+        RecordGasPigs(newEnemyData, script.XTriggerForRecording);
+        RecordHotAirBalloons(newEnemyData, script.XTriggerForRecording);
+        RecordFlappyPigs(newEnemyData, script.XTriggerForRecording);
+        RecordBomberPlanes(newEnemyData, script.XTriggerForRecording);
+
 
         // Convert the list to an array and add to SetupParent
         script.RecordForEnemyTrigger(newEnemyData, trigger);
@@ -429,6 +473,232 @@ public class EnemySetupRecorderEditor : Editor
             newEnemyData.Add(newClass);
         }
     }
+
+    private void RecordSilos(List<EnemyData> newEnemyData, float xTrigger)
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<SiloMovement>();
+        if (targets.Length > 0)
+        {
+            SiloSO newClass = new SiloSO
+            {
+                data = new SiloData[targets.Length]
+            };
+
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                newClass.data[i] = new SiloData
+                {
+                    position = targets[i].transform.position,
+                    type = targets[i].type,
+                    baseHeightMultiplier = targets[i].baseHeightMultiplier
+                };
+
+                float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);
+                float timeToTrigger = distanceToTarget / 4.7f; // Assuming moveSpeed exists
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            newClass.TimeToTrigger = timesToTrigger.Max();
+            newEnemyData.Add(newClass);
+        }
+    }
+
+    private void RecordWindMills(List<EnemyData> newEnemyData, float xTrigger)
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<Windmill>();
+        if (targets.Length > 0)
+        {
+            WindMillSO newClass = new WindMillSO
+            {
+                data = new WindMillData[targets.Length]
+            };
+
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                newClass.data[i] = new WindMillData
+                {
+                    position = targets[i].transform.position,
+                    bladeAmount = targets[i].bladeAmount,
+                    bladeScaleMultiplier = targets[i].bladeScaleMultiplier,
+                    bladeSpeed = targets[i].bladeSpeed,
+                    heightMultiplier = targets[i].heightMultiplier
+                };
+
+                float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);
+                float timeToTrigger = distanceToTarget / 4.7f; // Assuming moveSpeed exists
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            newClass.TimeToTrigger = timesToTrigger.Max();
+            newEnemyData.Add(newClass);
+        }
+    }
+
+    private void RecordGasPigs(List<EnemyData> newEnemyData, float xTrigger)
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<GasPig>();
+        if (targets.Length > 0)
+        {
+            GasPigSO newClass = new GasPigSO
+            {
+                data = new GasPigData[targets.Length]
+            };
+
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                newClass.data[i] = new GasPigData
+                {
+                    position = targets[i].transform.position,
+                    speed = targets[i].speed,
+                    delay = targets[i].delay
+                };
+
+                float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);
+                float timeToTrigger = distanceToTarget / targets[i].speed; // Assuming moveSpeed exists
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            newClass.TimeToTrigger = timesToTrigger.Max();
+            newEnemyData.Add(newClass);
+        }
+    }
+
+    private void RecordMissilePigs(List<EnemyData> newEnemyData, float xTrigger)
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<MissilePigScript>();
+        if (targets.Length > 0)
+        {
+            MissilePigSO newClass = new MissilePigSO
+            {
+                data = new MissilePigData[targets.Length]
+            };
+
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                newClass.data[i] = new MissilePigData
+                {
+                    position = targets[i].transform.position,
+                    missileType = targets[i].missileType,
+                    movementType = targets[i].movementType
+                };
+                float speedToCheck = 4.9f;
+                if (newClass.data[i].movementType == 1 || newClass.data[i].movementType == 3)
+                    speedToCheck = 3.2f;
+
+                float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);
+                float timeToTrigger = distanceToTarget / speedToCheck; // Assuming moveSpeed exists
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            newClass.TimeToTrigger = timesToTrigger.Max();
+            newEnemyData.Add(newClass);
+        }
+    }
+
+    private void RecordFlappyPigs(List<EnemyData> newEnemyData, float xTrigger)
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<FlappyPigMovement>();
+        if (targets.Length > 0)
+        {
+            FlappyPigSO newClass = new FlappyPigSO
+            {
+                data = new FlappyPigData[targets.Length]
+            };
+
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                newClass.data[i] = new FlappyPigData
+                {
+                    position = targets[i].transform.position,
+                    scaleFactor = targets[i].scaleFactor
+                };
+
+                float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);
+                float timeToTrigger = 0; // Assume moveSpeed is defined
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            newClass.TimeToTrigger = timesToTrigger.Max();
+            newEnemyData.Add(newClass);
+        }
+    }
+
+    private void RecordBomberPlanes(List<EnemyData> newEnemyData, float xTrigger)
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<DropBomb>();
+        if (targets.Length > 0)
+        {
+            BomberPlaneSO newClass = new BomberPlaneSO
+            {
+                data = new BomberPlaneData[targets.Length]
+            };
+
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                newClass.data[i] = new BomberPlaneData
+                {
+                    xDropPosition = targets[i].xDropPosition,
+                    dropAreaScaleMultiplier = targets[i].dropAreaScaleMultiplier,
+                    speedTarget = targets[i].speedTarget
+                };
+
+                float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);
+                float timeToTrigger = 0; // Assume moveSpeed is defined
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            newClass.TimeToTrigger = timesToTrigger.Max();
+            newEnemyData.Add(newClass);
+        }
+    }
+
+    private void RecordHotAirBalloons(List<EnemyData> newEnemyData, float xTrigger)
+    {
+        var targets = recorderEnemy.GetComponentsInChildren<HotAirBalloon>();
+        if (targets.Length > 0)
+        {
+            HotAirBalloonSO newClass = new HotAirBalloonSO
+            {
+                data = new HotAirBalloonData[targets.Length]
+            };
+
+            List<float> timesToTrigger = new List<float>();
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                newClass.data[i] = new HotAirBalloonData
+                {
+                    position = targets[i].transform.position,
+                    type = targets[i].type,
+                    xTrigger = targets[i].xTrigger,
+                    yTarget = targets[i].yTarget,
+                    speed = targets[i].speed,
+                    delay = targets[i].delay
+                };
+
+                float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);
+                float timeToTrigger = distanceToTarget / targets[i].speed; // Assume moveSpeed is defined
+                timesToTrigger.Add(timeToTrigger);
+            }
+
+            newClass.TimeToTrigger = timesToTrigger.Max();
+            newEnemyData.Add(newClass);
+        }
+    }
+
+
 
 
     private void RecordRings(List<CollectableData> newCollectableData, float xTrigger)
@@ -785,6 +1055,34 @@ public class EnemySetupRecorderEditor : Editor
                 {
                     buttonTitle = $"PilotPigs ({pilotPig.data.Length})";
                 }
+                else if (enemyData is SiloSO siloData)
+                {
+                    buttonTitle = $"Silos ({siloData.data.Length})";
+                }
+                else if (enemyData is WindMillSO windMillData)
+                {
+                    buttonTitle = $"WindMills ({windMillData.data.Length})";
+                }
+                else if (enemyData is GasPigSO gasPigData)
+                {
+                    buttonTitle = $"GasPigs ({gasPigData.data.Length})";
+                }
+                else if (enemyData is HotAirBalloonSO hotAirBalloonData)
+                {
+                    buttonTitle = $"HotAirBalloons ({hotAirBalloonData.data.Length})";
+                }
+                else if (enemyData is FlappyPigSO flappyPigData)
+                {
+                    buttonTitle = $"FlappyPigs ({flappyPigData.data.Length})";
+                }
+                else if (enemyData is BomberPlaneSO bomberPlaneData)
+                {
+                    buttonTitle = $"BomberPlanes ({bomberPlaneData.data.Length})";
+                }
+                else if (enemyData is MissilePigSO missilePigData)
+                {
+                    buttonTitle = $"MissilePigs ({missilePigData.data.Length})";
+                }
 
 
 
@@ -983,9 +1281,70 @@ public class EnemySetupRecorderEditor : Editor
             script.RecordSpecificEnemy(tempList[0], trigger, index);
         }
 
-
-
     }
+    public void ClearEnemyType(EnemyData data)
+    {
+        GameObject recorderEnemy = GameObject.Find("SetupRecorderEnemy");
+
+        if (recorderEnemy == null)
+        {
+            Debug.LogWarning("SetupRecorderEnemy GameObject not found.");
+            return;
+        }
+
+        if (data is NormalPigSO)
+        {
+            ClearSpecificEnemies<PigMovementBasic>();
+        }
+        else if (data is BigPigSO)
+        {
+            ClearSpecificEnemies<BigPigMovement>();
+        }
+        else if (data is JetPackPigSO)
+        {
+            ClearSpecificEnemies<JetPackPigMovement>();
+        }
+        else if (data is TenderizerPigSO)
+        {
+            ClearSpecificEnemies<TenderizerPig>();
+        }
+        else if (data is PilotPigSO)
+        {
+            ClearSpecificEnemies<PilotPig>();
+        }
+        else if (data is SiloSO)
+        {
+            ClearSpecificEnemies<SiloMovement>();
+        }
+        else if (data is WindMillSO)
+        {
+            ClearSpecificEnemies<Windmill>();
+        }
+        else if (data is GasPigSO)
+        {
+            ClearSpecificEnemies<GasPig>();
+        }
+        else if (data is HotAirBalloonSO)
+        {
+            ClearSpecificEnemies<HotAirBalloon>();
+        }
+        else if (data is FlappyPigSO)
+        {
+            ClearSpecificEnemies<FlappyPigMovement>();
+        }
+        else if (data is BomberPlaneSO)
+        {
+            ClearSpecificEnemies<DropBomb>();
+        }
+        else if (data is MissilePigSO)
+        {
+            ClearSpecificEnemies<MissilePigScript>();
+        }
+
+        // Mark scene as dirty to ensure changes are saved
+        EditorSceneManager.MarkSceneDirty(recorderEnemy.scene);
+    }
+
 
 
 
@@ -1046,40 +1405,6 @@ public class EnemySetupRecorderEditor : Editor
         EditorSceneManager.MarkSceneDirty(placer.gameObject.scene);
     }
 
-    public void ClearEnemyType(EnemyData data)
-    {
-        GameObject recorderEnemy = GameObject.Find("SetupRecorderEnemy");
-
-        if (recorderEnemy == null)
-        {
-            Debug.LogWarning("SetupRecorderEnemy GameObject not found.");
-            return;
-        }
-
-        if (data is NormalPigSO)
-        {
-            ClearSpecificEnemies<PigMovementBasic>();
-        }
-        else if (data is BigPigSO)
-        {
-            ClearSpecificEnemies<BigPigMovement>();
-        }
-        else if (data is JetPackPigSO)
-        {
-            ClearSpecificEnemies<JetPackPigMovement>();
-        }
-        else if (data is TenderizerPigSO)
-        {
-            ClearSpecificEnemies<TenderizerPig>();
-        }
-        else if (data is PilotPigSO)
-        {
-            ClearSpecificEnemies<PilotPig>();
-        }
-
-        // Mark scene as dirty to ensure changes are saved
-        EditorSceneManager.MarkSceneDirty(recorderEnemy.scene);
-    }
 
     private void ClearSpecificEnemies<T>() where T : MonoBehaviour
     {

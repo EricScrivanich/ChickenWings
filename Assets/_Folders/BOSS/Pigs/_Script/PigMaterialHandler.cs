@@ -8,6 +8,9 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     // 0 normal, 1 jetPack, 2 bigPig, 3 tenderizer
 
     [SerializeField] private PlayerID player;
+
+
+    [Header("0-Normal; 1-Jetpack; 2-BigPig; 3-Tenderizer; 4-Pilot; 5- Missile; 6-BomberPlane; 7-Flappy; 8-Gas; 9-Balloon")]
     [SerializeField] private int pigType;
     [SerializeField] private bool isScalable;
     [SerializeField] private int pigTypeAudio;
@@ -26,8 +29,10 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     [SerializeField] private Transform body;
     private Material instanceMaterial;
 
+    private bool hasCrossedScreen;
 
-   
+
+
 
 
     private void Awake()
@@ -41,9 +46,26 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     {
         explosionPool = PoolKit.GetPool("ExplosionPool");
 
-      
 
 
+
+
+
+    }
+
+    public void Tick()
+    {
+        float x = transform.position.x;
+        if (!hasCrossedScreen && x > BoundariesManager.leftBoundary && x < BoundariesManager.rightBoundary)
+        {
+            hasCrossedScreen = true;
+        }
+        else if (hasCrossedScreen && (x < BoundariesManager.leftBoundary || x > BoundariesManager.rightBoundary))
+        {
+            gameObject.SetActive(false);
+
+
+        }
 
 
     }
@@ -55,7 +77,10 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     private void OnEnable()
     {
+        Ticker.OnTickAction015 += Tick;
         initialScale = transform.localScale.x;
+
+        hasCrossedScreen = false;
         if (isHit)
         {
             foreach (var pig in sprites)
@@ -96,12 +121,20 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     }
 
+    private void OnDisable()
+    {
+        Ticker.OnTickAction015 -= Tick;
+
+    }
+
     public void Damage(int damageAmount)
     {
         if (!isHit)
         {
             isHit = true;
             AudioManager.instance.PlayPigDeathSound(pigTypeAudio);
+            player.globalEvents.OnKillPig?.Invoke(pigType);
+
             instanceMaterial = new Material(pigMaterial);
             foreach (var col in colls)
             {
@@ -169,7 +202,6 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
             yield return null;
         }
 
-        player.globalEvents.OnKillPig?.Invoke(pigType);
 
         // Ensure the final values are set
         transform.localScale = new Vector3(endScale, endScale, endScale);
