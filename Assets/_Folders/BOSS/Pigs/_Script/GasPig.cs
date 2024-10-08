@@ -4,30 +4,79 @@ using UnityEngine;
 
 public class GasPig : MonoBehaviour
 {
-  
+
 
     [SerializeField] private GameObject cloud;
 
+    public int id;
+
+    private bool hasCrossedBoundary;
+
+
+
     [SerializeField] private Transform cloudSpawn;
+
+
 
     private Animator anim;
 
     public float speed;
-    public float delay;
+    public float delay = 0;
+
+    private float testTimer = 0;
+
+    [SerializeField] private bool flying;
 
 
     // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
         anim = GetComponent<Animator>();
-        StartCoroutine(CloudRoutine());
-
     }
+
+
+    public void Initialize(float s, float d)
+    {
+        speed = s;
+        delay = d;
+        hasCrossedBoundary = false;
+
+        gameObject.SetActive(true);
+
+        if (flying)
+        {
+            anim.SetTrigger("FlyFart");
+
+        }
+        else
+        {
+            anim.SetTrigger("Walk");
+            StartCoroutine(CloudRoutine());
+        }
+    }
+
+
+
+
 
     // Update is called once per frame
     void Update()
     {
+        testTimer += Time.deltaTime;
         transform.Translate(Vector2.left * speed * Time.deltaTime);
+
+        if (flying && !hasCrossedBoundary)
+        {
+            if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
+            {
+                AudioManager.instance.PlayLongFarts();
+                SmokeTrailPool.GetGasSmokeTrail?.Invoke(transform.position, speed, delay, id);
+                hasCrossedBoundary = true;
+            }
+        }
+
+
 
     }
 
@@ -49,5 +98,11 @@ public class GasPig : MonoBehaviour
 
 
 
+    }
+
+    private void OnDisable()
+    {
+        if (flying)
+            SmokeTrailPool.OnDisableGasTrail?.Invoke(id);
     }
 }

@@ -45,7 +45,7 @@ public class GasCloudParticleCollider : MonoBehaviour
         {
             // Move the object downward relative to its local rotation
             // Using local up vector which will be down in world space if rotation is set correctly
-            rb.MovePosition(rb.position + (Vector2)transform.up * (initialVelocity.magnitude * Time.fixedDeltaTime));
+            rb.MovePosition(rb.position - (Vector2)transform.up * (initialVelocity.magnitude * Time.fixedDeltaTime));
         }
         else
         {

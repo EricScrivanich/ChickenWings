@@ -18,7 +18,12 @@ public class SpawnerPureSetupState : SpawnBaseState
         canContinueToNextSetup = false;
         currentTrigger = 0;
         // spawner.currentRingType = spawner.currentRandomSpawnIntensityData.GetRingTypeIndex();
-        spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger);
+
+        if (spawner.pureSetups[spawner.CurrentPureSetup] != null)
+            spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger);
+
+        else
+            return;
         currentTrigger++;
 
 

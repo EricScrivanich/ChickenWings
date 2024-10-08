@@ -30,6 +30,8 @@ public class SetupParent : ScriptableObject
     public int enemyTriggerCount => enemySetup.Count;
     public bool isRandomSetup;
 
+
+    public bool ignoreXTriggetTime;
     public float XTriggerForRecording;
 
 
@@ -331,23 +333,41 @@ public class SetupParent : ScriptableObject
 
 
 
-
+#if UNITY_EDITOR
     public void RecordForEnemyTrigger(List<EnemyData> dataList, int trigger)
     {
+        Undo.RecordObject(this, "Record Enemy Trigger");
         EnemyData[] data = new EnemyData[dataList.Count];
         for (int i = 0; i < dataList.Count; i++)
         {
             data[i] = dataList[i];
+
+
+        }
+
+        if (ignoreXTriggetTime && enemySetup.Count > trigger)
+        {
+            // Existing data at this trigger
+            EnemyDataArray existingData = enemySetup[trigger];
+            for (int i = 0; i < Mathf.Min(existingData.dataArray.Length, data.Length); i++)
+            {
+                // Preserve the old time to trigger values
+                data[i].TimeToTrigger = existingData.dataArray[i].TimeToTrigger;
+            }
         }
 
         var indexData = new EnemyDataArray(data);
+
         Debug.Log("Length is: " + indexData.dataArray.Length);
         enemySetup[trigger] = indexData;
+
+
 
     }
 
     public void DuplicateOrRemoveEnemy(int trigger, int indexOfDuplicate, bool duplicate, EnemyData dataType)
     {
+        Undo.RecordObject(this, "Record Enemy Trigger");
         if (duplicate)
         {
             EnemyData[] data = new EnemyData[(enemySetup[trigger].dataArray.Length + 1)];
@@ -401,6 +421,7 @@ public class SetupParent : ScriptableObject
 
     public void DuplicateOrRemoveCollectable(int trigger, int indexOfDuplicate, bool duplicate, CollectableData dataType)
     {
+        Undo.RecordObject(this, "Record Enemy Trigger");
         if (duplicate)
         {
             CollectableData[] data = new CollectableData[collectableSetup[trigger].dataArray.Length + 1];
@@ -451,6 +472,7 @@ public class SetupParent : ScriptableObject
     }
     public void RecordSpecificEnemy(EnemyData data, int trigger, int index)
     {
+        Undo.RecordObject(this, "Record Enemy Trigger");
         if (trigger >= 0 && trigger < enemySetup.Count)
         {
             EnemyDataArray array = enemySetup[trigger];
@@ -469,6 +491,7 @@ public class SetupParent : ScriptableObject
 
     public void RecordForColletableTrigger(List<CollectableData> dataList, int trigger)
     {
+        Undo.RecordObject(this, "Record Enemy Trigger");
         CollectableData[] data = new CollectableData[dataList.Count];
         for (int i = 0; i < dataList.Count; i++)
         {
@@ -481,6 +504,7 @@ public class SetupParent : ScriptableObject
     }
     public void RecordSpecificCollectable(CollectableData data, int trigger, int index)
     {
+        Undo.RecordObject(this, "Record Enemy Trigger");
         if (trigger >= 0 && trigger < collectableSetup.Count)
         {
             CollectableDataArray array = collectableSetup[trigger];
@@ -498,7 +522,7 @@ public class SetupParent : ScriptableObject
     }
 
 
-
+#endif
 
 
 

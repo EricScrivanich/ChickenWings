@@ -87,7 +87,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.12821326
+        value: 0.0865415
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -95,8 +95,8 @@ LineRenderer:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.44135055
-        value: 0.4000082
+        time: 0.32879004
+        value: 0.15001583
         inSlope: 1.275594
         outSlope: 1.275594
         tangentMode: 0
@@ -104,8 +104,8 @@ LineRenderer:
         inWeight: 0.27439648
         outWeight: 0
       - serializedVersion: 3
-        time: 0.5412225
-        value: 0.9641023
+        time: 0.64943784
+        value: 0.34952027
         inSlope: -1.3246992
         outSlope: -1.3246992
         tangentMode: 0
@@ -149,7 +149,7 @@ LineRenderer:
     numCapVertices: 10
     alignment: 0
     textureMode: 4
-    textureScale: {x: 0.33, y: 1}
+    textureScale: {x: 0.5, y: 1}
     shadowBias: 0
     generateLightingData: 0
   m_MaskInteraction: 0
@@ -168,12 +168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e9b8b4304fe8457c907448bddd3eb6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineRenderer: {fileID: 5205310933629124740}
-  mask: {fileID: 0}
+  point0Speed: 0
   particles: {fileID: 0}
-  initialTextureScrollSpeed: -2.8
-  endTextureScrollSpeed: 0
-  initialTextureWidth: 0.4
-  endTextureWidth: 0.1
-  initialOffsetSpeed: 3
-  finalOffsetSpeed: -0.1
+  sideLength: 0
+  addedRightLength: 0
+  middLength: 24
+  gasCloudDelay: 0

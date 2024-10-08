@@ -21,6 +21,7 @@ public class SpawnStateManager : MonoBehaviour
     public SpawnStateTransitionLogic transitionLogic;
     private SpawnStateTransitionLogic prevTransitonLogic;
 
+
     private bool transitionLogicOverriden = false;
     private int currentTransitionLogicIndex;
 
@@ -75,6 +76,8 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private int siloPoolSize;
     [SerializeField] private int windMillPoolSize;
     [SerializeField] private int gasPigPoolSize;
+    [SerializeField] private int gasPigFlyingPoolSize;
+
     [SerializeField] private int hotAirBalloonPoolSize;
     [SerializeField] private int flappyPigPoolSize;
     [SerializeField] private int bomberPlanePoolSize;
@@ -91,6 +94,7 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private GameObject siloPrefab;
     [SerializeField] private GameObject windMillPrefab;
     [SerializeField] private GameObject gasPigPrefab;
+    [SerializeField] private GameObject gasPigFlyingPrefab;
     [SerializeField] private GameObject hotAirBalloonPrefab;
     [SerializeField] private GameObject flappyPigPrefab;
     [SerializeField] private GameObject bomberPlanePrefab;
@@ -117,6 +121,8 @@ public class SpawnStateManager : MonoBehaviour
     private int tenderizerPigIndex = 0;
     private int pilotPigIndex = 0;
     private int missilePigIndex = 0;
+    private int gasPigFlyingIndex;
+
 
     private JetPackPigMovement[] jetPackPig;
     private BigPigMovement[] bigPig;
@@ -128,6 +134,7 @@ public class SpawnStateManager : MonoBehaviour
     private SiloMovement[] silos;
     private Windmill[] windMills;
     private GasPig[] gasPigs;
+    private GasPig[] gasPigsFlying = new GasPig[2];
     private HotAirBalloon[] hotAirBalloons;
     private FlappyPigMovement[] flappyPigs;
     private DropBomb[] bomberPlanes;
@@ -148,6 +155,15 @@ public class SpawnStateManager : MonoBehaviour
     public SpawnerRandomSetupEnemyState enemyRandomSetupState = new SpawnerRandomSetupEnemyState();
 
     // Start is called before the first frame update
+
+    private void Awake()
+    {
+        if (GetComponent<SmokeTrailPool>() != null)
+        {
+            GetComponent<SmokeTrailPool>().SetGasPigFlyingPoolSize(gasPigFlyingPoolSize);
+
+        }
+    }
     void Start()
     {
         prevTransitonLogic = transitionLogic;
@@ -691,6 +707,14 @@ public class SpawnStateManager : MonoBehaviour
             hotAirBalloons[i].gameObject.SetActive(false);  // Set inactive right after instantiation
         }
 
+        for (int i = 0; i < gasPigFlyingPoolSize; i++)
+        {
+            gasPigsFlying[i] = Instantiate(gasPigFlyingPrefab).GetComponent<GasPig>();
+            gasPigsFlying[i].id = i;
+            gasPigsFlying[i].gameObject.SetActive(false);
+
+        }
+
         for (int i = 0; i < flappyPigPoolSize; i++)
         {
             flappyPigs[i] = Instantiate(flappyPigPrefab).GetComponent<FlappyPigMovement>();
@@ -704,16 +728,21 @@ public class SpawnStateManager : MonoBehaviour
         }
 
 
+
+
         jetPackPig = new JetPackPigMovement[jetPackPigPoolSize];
 
         for (int i = 0; i < jetPackPig.Length; i++)
         {
             // Instantiate the prefab and assign it to the pool array
             var obj = Instantiate(jetPackPigPrefab);
+            jetPackPig[i] = obj.GetComponent<JetPackPigMovement>();
+            jetPackPig[i].id = i;
             obj.SetActive(false);
 
             // Get the JetPackPigMovement component and store it in the array
-            jetPackPig[i] = obj.GetComponent<JetPackPigMovement>();
+
+
         }
         missilePig = new MissilePigScript[missilePigPoolSize];
         for (int i = 0; i < missilePig.Length; i++)
@@ -848,7 +877,11 @@ public class SpawnStateManager : MonoBehaviour
         var script = bigPig[bigPigIndex];
         if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
         script.transform.position = (Vector2)transform.position + pos;
-        script.transform.localScale = scale;
+        int scaleChange = 1;
+
+        if (speed < 0)
+            scaleChange = -1;
+        script.transform.localScale = scale * scaleChange;
         script.speed = speed;
         script.yForce = yForce;
         script.distanceToFlap = distanceToFlap;
@@ -898,13 +931,36 @@ public class SpawnStateManager : MonoBehaviour
 
     public void GetGasPig(Vector2 position, float speed, float delay)
     {
-        if (gasPigIndex >= gasPigs.Length) gasPigIndex = 0;
-        GasPig gasPig = gasPigs[gasPigIndex];
-        gasPig.transform.position = position;
-        gasPig.speed = speed;
-        gasPig.delay = delay;
-        gasPig.gameObject.SetActive(true);
-        gasPigIndex++;
+
+        if (Mathf.Abs(speed) > 0)
+        {
+            if (gasPigIndex >= gasPigs.Length) gasPigIndex = 0;
+            GasPig gasPig = gasPigs[gasPigIndex];
+            gasPig.transform.position = position;
+
+            gasPig.Initialize(speed, delay);
+            
+            gasPigIndex++;
+
+        }
+        else
+        {
+
+
+            GasPig gasPig = gasPigsFlying[gasPigFlyingIndex];
+
+            gasPig.transform.position = position;
+            int s = 8;
+            if (position.x < 0) s = -8;
+            gasPig.Initialize(s, delay);
+            
+            gasPigFlyingIndex++;
+            if (gasPigFlyingIndex >= gasPigFlyingPoolSize) gasPigFlyingIndex = 0;
+
+
+
+        }
+
     }
 
     public void GetHotAirBalloon(Vector2 position, int type, float xTrigger, float yTarget, float speed, float delay)

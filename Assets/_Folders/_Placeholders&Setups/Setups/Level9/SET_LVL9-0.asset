@@ -20,64 +20,24 @@ MonoBehaviour:
   enemyTriggerForEachRingIndexWeights: 
   enemySetup:
   - dataArray:
-    - rid: 2683166349587644530
-    - rid: 2683166349587644531
+    - rid: 3115821498415710247
+    - rid: 3115821498415710248
   - dataArray:
     - rid: 2683166349587644535
   - dataArray:
     - rid: 2683166349587644533
+  - dataArray:
+    - rid: 3115821498415710255
+    - rid: 3115821498415710256
+  - dataArray:
+    - rid: 3115821498415710254
   collectableSetup: []
   isRandomSetup: 0
+  ignoreXTriggetTime: 1
   XTriggerForRecording: 0
   references:
     version: 2
     RefIds:
-    - rid: 2683166349587644530
-      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 4
-        data:
-        - position: {x: 27.4, y: 0.2}
-          scale: {x: 0.87, y: 0.8, z: 1}
-          speed: 10
-        - position: {x: 54.5, y: 0.8}
-          scale: {x: 0.87, y: 0.8, z: 1}
-          speed: 10
-        - position: {x: 51.822205, y: -0.53999996}
-          scale: {x: 0.87, y: 0.8, z: 1}
-          speed: 10
-    - rid: 2683166349587644531
-      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - position: {x: 14.27, y: 2.14}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: 5.1
-          flightMode: 3
-          minY: -1
-          maxY: 2
-          yForce: 6
-          maxYSpeed: 5
-          xTrigger: 11
-        - position: {x: -15.75, y: -1.69}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: -5.1
-          flightMode: 2
-          minY: -1
-          maxY: 2
-          yForce: 6
-          maxYSpeed: 5
-          xTrigger: -11
-        - position: {x: -15.75, y: -1.69}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: -5.1
-          flightMode: 2
-          minY: -1
-          maxY: 2
-          yForce: 6
-          maxYSpeed: 5
-          xTrigger: -11
     - rid: 2683166349587644533
       type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -105,3 +65,78 @@ MonoBehaviour:
           scale: {x: 1.07, y: 1.07, z: 1.07}
           speed: -1.5
           hasHammer: 1
+    - rid: 3115821498415710247
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4
+        data:
+        - position: {x: 29.18, y: 0.46}
+          scale: {x: 0.87, y: 0.8, z: 1}
+          speed: 10
+        - position: {x: 45.27, y: 1.2}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 9.8
+        - position: {x: 47.66, y: -0.11999996}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 9.8
+    - rid: 3115821498415710248
+      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 16.11, y: 3.15}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 4.8
+          flightMode: 3
+          minY: -2.5
+          maxY: 2.5
+          yForce: 7
+          maxYSpeed: 3.5
+          xTrigger: 12
+        - position: {x: -16.97, y: -3.23}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: -4.8
+          flightMode: 3
+          minY: -2.5
+          maxY: 2.5
+          yForce: 7
+          maxYSpeed: 3.5
+          xTrigger: -12
+    - rid: 3115821498415710254
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 30
+        data:
+        - position: {x: 16.95, y: 2.53}
+          scale: {x: 1.05, y: 1.1, z: 1.1}
+          speed: 3
+          hasHammer: 1
+        - position: {x: -15.94, y: -2.9591105}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: -0.7
+          hasHammer: 1
+    - rid: 3115821498415710255
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3
+        data:
+        - position: {x: 26.66, y: -3.49}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10
+        - position: {x: 32.95, y: -2.2}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10
+        - position: {x: 44.3, y: -4.22}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10
+        - position: {x: 24.92, y: -1.13}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10
+    - rid: 3115821498415710256
+      type: {class: GasPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 16.1, y: -0.34}
+          speed: 0
+          delay: 20

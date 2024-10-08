@@ -318,7 +318,8 @@ public class EnemySetupRecorderEditor : Editor
             }
 
             // Set the highest time to trigger
-            newJetPackPigSO.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newJetPackPigSO.TimeToTrigger = timesToTrigger.Max();
 
             // Add the new instance to the temporary list
             newEnemyData.Add(newJetPackPigSO);
@@ -353,7 +354,8 @@ public class EnemySetupRecorderEditor : Editor
             }
 
             // Set the highest time to trigger
-            newNormalPigSO.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newNormalPigSO.TimeToTrigger = timesToTrigger.Max();
 
             // Add the new instance to the temporary list
             newEnemyData.Add(newNormalPigSO);
@@ -370,6 +372,7 @@ public class EnemySetupRecorderEditor : Editor
                 data = new BigPigData[targets.Length]
             };
 
+
             List<float> timesToTrigger = new List<float>();
 
             for (int i = 0; i < targets.Length; i++)
@@ -385,13 +388,18 @@ public class EnemySetupRecorderEditor : Editor
                 };
 
                 // Calculate time to reach x = 7 or x = -7
+
                 float distanceToTarget = newClass.data[i].speed > 0 ? xTrigger - newClass.data[i].position.x : -xTrigger - newClass.data[i].position.x;
                 float timeToTrigger = Mathf.Abs(distanceToTarget / newClass.data[i].speed);
                 timesToTrigger.Add(timeToTrigger);
             }
 
             // Set the highest time to trigger
-            newClass.TimeToTrigger = timesToTrigger.Max();
+
+            if (!script.ignoreXTriggetTime)
+                newClass.TimeToTrigger = timesToTrigger.Max();
+
+          
 
             // Add the new instance to the temporary list
             newEnemyData.Add(newClass);
@@ -431,7 +439,8 @@ public class EnemySetupRecorderEditor : Editor
             }
 
             // Set the highest time to trigger
-            newPilotPigSO.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newPilotPigSO.TimeToTrigger = timesToTrigger.Max();
 
             // Add the new instance to the temporary list
             newEnemyData.Add(newPilotPigSO);
@@ -467,7 +476,8 @@ public class EnemySetupRecorderEditor : Editor
             }
 
             // Set the highest time to trigger
-            newClass.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newClass.TimeToTrigger = timesToTrigger.Max();
 
             // Add the new instance to the temporary list
             newEnemyData.Add(newClass);
@@ -499,8 +509,8 @@ public class EnemySetupRecorderEditor : Editor
                 float timeToTrigger = distanceToTarget / 4.7f; // Assuming moveSpeed exists
                 timesToTrigger.Add(timeToTrigger);
             }
-
-            newClass.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newClass.TimeToTrigger = timesToTrigger.Max();
             newEnemyData.Add(newClass);
         }
     }
@@ -532,8 +542,9 @@ public class EnemySetupRecorderEditor : Editor
                 float timeToTrigger = distanceToTarget / 4.7f; // Assuming moveSpeed exists
                 timesToTrigger.Add(timeToTrigger);
             }
+            if (!script.ignoreXTriggetTime)
 
-            newClass.TimeToTrigger = timesToTrigger.Max();
+                newClass.TimeToTrigger = timesToTrigger.Max();
             newEnemyData.Add(newClass);
         }
     }
@@ -563,8 +574,9 @@ public class EnemySetupRecorderEditor : Editor
                 float timeToTrigger = distanceToTarget / targets[i].speed; // Assuming moveSpeed exists
                 timesToTrigger.Add(timeToTrigger);
             }
+            if (!script.ignoreXTriggetTime)
 
-            newClass.TimeToTrigger = timesToTrigger.Max();
+                newClass.TimeToTrigger = timesToTrigger.Max();
             newEnemyData.Add(newClass);
         }
     }
@@ -597,8 +609,8 @@ public class EnemySetupRecorderEditor : Editor
                 float timeToTrigger = distanceToTarget / speedToCheck; // Assuming moveSpeed exists
                 timesToTrigger.Add(timeToTrigger);
             }
-
-            newClass.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newClass.TimeToTrigger = timesToTrigger.Max();
             newEnemyData.Add(newClass);
         }
     }
@@ -627,8 +639,8 @@ public class EnemySetupRecorderEditor : Editor
                 float timeToTrigger = 0; // Assume moveSpeed is defined
                 timesToTrigger.Add(timeToTrigger);
             }
-
-            newClass.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newClass.TimeToTrigger = timesToTrigger.Max();
             newEnemyData.Add(newClass);
         }
     }
@@ -658,8 +670,8 @@ public class EnemySetupRecorderEditor : Editor
                 float timeToTrigger = 0; // Assume moveSpeed is defined
                 timesToTrigger.Add(timeToTrigger);
             }
-
-            newClass.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newClass.TimeToTrigger = timesToTrigger.Max();
             newEnemyData.Add(newClass);
         }
     }
@@ -692,8 +704,8 @@ public class EnemySetupRecorderEditor : Editor
                 float timeToTrigger = distanceToTarget / targets[i].speed; // Assume moveSpeed is defined
                 timesToTrigger.Add(timeToTrigger);
             }
-
-            newClass.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newClass.TimeToTrigger = timesToTrigger.Max();
             newEnemyData.Add(newClass);
         }
     }
@@ -734,7 +746,8 @@ public class EnemySetupRecorderEditor : Editor
             }
 
             // Set the highest time to trigger
-            newClass.TimeToTrigger = timesToTrigger.Max();
+            if (!script.ignoreXTriggetTime)
+                newClass.TimeToTrigger = timesToTrigger.Max();
             newClass.isRings = true;
 
             // Add the new instance to the temporary list

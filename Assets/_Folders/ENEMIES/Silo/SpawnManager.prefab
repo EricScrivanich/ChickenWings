@@ -108,6 +108,7 @@ MonoBehaviour:
   siloPoolSize: 0
   windMillPoolSize: 0
   gasPigPoolSize: 0
+  gasPigFlyingPoolSize: 0
   hotAirBalloonPoolSize: 0
   flappyPigPoolSize: 0
   bomberPlanePoolSize: 0
@@ -120,6 +121,7 @@ MonoBehaviour:
   siloPrefab: {fileID: 0}
   windMillPrefab: {fileID: 0}
   gasPigPrefab: {fileID: 0}
+  gasPigFlyingPrefab: {fileID: 0}
   hotAirBalloonPrefab: {fileID: 0}
   flappyPigPrefab: {fileID: 0}
   bomberPlanePrefab: {fileID: 0}
@@ -178,6 +180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23971b591fd19432991d178d8e4a447d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jetPackSmokeTrailPrefab: {fileID: 6740367233385968640, guid: c1c768f7e77594832b18468e8e73b185, type: 3}
-  jetPackSmokeMaterial: {fileID: 2100000, guid: 54fbbb562e0644af896f34ac9e3ef70f, type: 2}
-  smokeTrailOffsetSpeed: 2.8
+  jetPackSmokeTrailPrefab: {fileID: 7791189156267300741, guid: 1440243de596647cdbf976a452bceba1, type: 3}
+  gasSmokeTrailPrefab: {fileID: 7376049519909175309, guid: 0c2e6e1988c234eb6870724f0481872f, type: 3}
+  gasParticleSystemPrefab: {fileID: 355320229328744754, guid: da0e2cceb51384f8bb26aebde34ac341, type: 3}
+  playerParticleColliderPrefab: {fileID: 610983590539335886, guid: e1536bec681634d318ae1eb8d323a96c, type: 3}
+  eggParticleColliderPrefab: {fileID: 8411991336060583700, guid: 431fd07ce78564e4b9d2ad5bc1fa994b, type: 3}

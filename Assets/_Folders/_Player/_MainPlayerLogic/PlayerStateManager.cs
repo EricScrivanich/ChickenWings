@@ -4,7 +4,7 @@ using UnityEngine;
 using HellTap.PoolKit;
 public class PlayerStateManager : MonoBehaviour
 {
-    [SerializeField] private GasCloudParticleCollider particleCollider;
+
     [SerializeField] private GameObject shotgunObj;
     [SerializeField] private PlayerStartingStatsForLevels stats;
     [SerializeField] private Pool pool;
@@ -1384,7 +1384,7 @@ public class PlayerStateManager : MonoBehaviour
         if (!isDamaged)
         {
             HandleDamaged();
-            particleCollider.Initialize(transform.position, rb.velocity);
+            SmokeTrailPool.GetPlayerParticleCollider?.Invoke(transform.position, rb.velocity);
 
         }
 

@@ -50,11 +50,11 @@ public class PlayerEggScript : MonoBehaviour
 
             if (rb.velocity.x < 0)
             {
-                egg.GetComponent<Rigidbody2D>().AddForce(new Vector2(rb.velocity.x / 1.6f, -1), ForceMode2D.Impulse);
+                egg.GetComponent<Rigidbody2D>().AddForce(new Vector2(rb.velocity.x * .55f, -1), ForceMode2D.Impulse);
             }
             else
             {
-                egg.GetComponent<Rigidbody2D>().AddForce(new Vector2(rb.velocity.x / 2, -1), ForceMode2D.Impulse);
+                egg.GetComponent<Rigidbody2D>().AddForce(new Vector2(rb.velocity.x * .45f, -1), ForceMode2D.Impulse);
             }
 
             ID.Ammo -= 1;

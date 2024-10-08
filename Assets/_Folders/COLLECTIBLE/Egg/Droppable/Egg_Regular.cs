@@ -10,13 +10,18 @@ public class Egg_Regular : MonoBehaviour
     private Rigidbody2D playerRB;
     public PlayerID ID;
     private Rigidbody2D rb;
-    private Collider2D coll2D;
+    private BoxCollider2D coll2D;
     private bool isCracked;
     // private Animator anim;
     private bool isFirstActivation = true;
-    private bool ready = false;
+    private bool hitParticle = false;
     private bool hasHit = false;
     private Pool pool;
+
+    private Vector2 normalColSize = new Vector2(1, 1.3f);
+    private Vector2 expandedColSize = new Vector2(1.9f, 1.3f);
+
+    private bool colliderIsExpanded = false;
 
 
     // private Vector2 playerForce;
@@ -24,6 +29,7 @@ public class Egg_Regular : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        coll2D = GetComponent<BoxCollider2D>();
         // coll2D = GetComponent<Collider2D>();
         // anim = GetComponent<Animator>();
         // ready = true;
@@ -38,6 +44,9 @@ public class Egg_Regular : MonoBehaviour
     private void OnEnable()
     {
         hasHit = false;
+        hitParticle = false;
+        // if (colliderIsExpanded)
+        //     coll2D.size = normalColSize;
     }
 
 
@@ -121,9 +130,36 @@ public class Egg_Regular : MonoBehaviour
 
     }
 
+    private IEnumerator ExpandColliderForDurationAfterParticleCollision()
+    {
+        yield return new WaitForSeconds(.2f);
+        coll2D.size = normalColSize;
+        colliderIsExpanded = false;
+
+
+    }
+
+    private void ResetParticleColllider()
+    {
+        hitParticle = false;
+
+    }
+
 
     private void OnParticleCollision(GameObject other)
     {
+
+        if (!hitParticle)
+        {
+            SmokeTrailPool.GetEggParticleCollider?.Invoke(transform.position, rb.velocity);
+            hitParticle = true;
+            Invoke("ResetParticleColllider", .13f);
+            // coll2D.size = expandedColSize;
+            // colliderIsExpanded = true;
+            // StartCoroutine(ExpandColliderForDurationAfterParticleCollision());
+
+
+        }
         // Debug.LogError("Egg Hit Smoke");
     }
     // private void OnEnable()

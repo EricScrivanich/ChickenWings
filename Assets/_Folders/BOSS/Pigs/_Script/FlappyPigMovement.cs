@@ -524,12 +524,13 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         if (blinded)
         {
             moveFreeDuration = moveFreeDurationEgg + .2f;
-            rb.velocity = Vector2.zero;
-            rb.AddForce(Vector2.down * eggForceMagnitude * 1.5f, ForceMode2D.Impulse);
+            // rb.velocity = Vector2.zero;
+            rb.velocity *= .4f;
+            rb.AddForce(Vector2.down * eggForceMagnitude * 1.25f, ForceMode2D.Impulse);
         }
         else
         {
-            rb.velocity *= .27f;
+            rb.velocity *= .3f;
             moveFreeDuration = moveFreeDurationEgg;
             rb.AddForce(Vector2.down * eggForceMagnitude, ForceMode2D.Impulse);
         }

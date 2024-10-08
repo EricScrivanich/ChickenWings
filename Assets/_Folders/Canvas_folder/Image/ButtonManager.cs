@@ -11,7 +11,33 @@ public class ButtonManager : MonoBehaviour
     [SerializeField] private Image[] outlines;
     [SerializeField] private Image[] fills;
     [SerializeField] private Image[] fullFills;
+
+    [SerializeField] private float moveAmountForRecording;
+
+    [SerializeField] private RectTransform[] moveRects;
+
+    [SerializeField] private bool moveRectsForRecording;
     // Start is called before the first frame update
+
+
+    void Awake()
+    {
+        if (moveRectsForRecording)
+        {
+            foreach (var r in moveRects)
+            {
+                r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
+            }
+
+            if (GameObject.Find("CanvasScreen") != null)
+            {
+                RectTransform lives = GameObject.Find("Lives3").GetComponent<RectTransform>();
+
+                if (lives != null)
+                    lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
+            }
+        }
+    }
     void Start()
     {
         foreach (Image img in outlines)

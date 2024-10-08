@@ -59,6 +59,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip missileLaunch;
     [SerializeField] private AudioClip[] farts;
     [SerializeField] private AudioClip[] flappyPigCackles;
+    [SerializeField] private AudioClip[] longFarts;
 
 
 
@@ -206,6 +207,13 @@ public class AudioManager : MonoBehaviour
             nonSlowSource.PlayOneShot(starHitSound, starHitVolume);
     }
 
+    public void PlayLongFarts()
+    {
+        int rand = Random.Range(0, 3);
+
+        audioSource.PlayOneShot(longFarts[rand], .4f);
+
+    }
 
     public void ChangeWindMillPitch(float change)
     {
