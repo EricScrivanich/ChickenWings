@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+
+
     public float musicPitch;
     public float sfxPitch;
     private float currentWindmillPitch;
@@ -59,7 +61,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip missileLaunch;
     [SerializeField] private AudioClip[] farts;
     [SerializeField] private AudioClip[] flappyPigCackles;
-    [SerializeField] private AudioClip[] longFarts;
+
+    // 0 ,1 are good, we are using 0
+    // [SerializeField] private AudioClip[] longFarts;
+    [SerializeField] private AudioClip longFart;
 
 
 
@@ -83,6 +88,7 @@ public class AudioManager : MonoBehaviour
 
 
     [Header("Volumes")]
+    [SerializeField] private float longFartVolume;
     [SerializeField] private float levelFinishVolume;
     [SerializeField] private float bucketSuccessVolume;
     [SerializeField] private float starHitVolume;
@@ -209,9 +215,10 @@ public class AudioManager : MonoBehaviour
 
     public void PlayLongFarts()
     {
-        int rand = Random.Range(0, 3);
+        // int rand = Random.Range(0, 3);
 
-        audioSource.PlayOneShot(longFarts[rand], .4f);
+        // audioSource.PlayOneShot(longFarts[rand], .4f);
+        audioSource.PlayOneShot(longFart, longFartVolume);
 
     }
 

@@ -2176,7 +2176,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 424124854}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: bone_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4243,7 +4243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.11792451, b: 0.11792451, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4353,7 +4353,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 784531250}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: bone_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6540,6 +6540,10 @@ PrefabInstance:
       propertyPath: fart
       value: 
       objectReference: {fileID: 8300000, guid: b58104602b2c8497d804aebbf81c88b2, type: 3}
+    - target: {fileID: 153982486243658428, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
+      propertyPath: longFartIndex
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 153982486243658428, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
       propertyPath: farts.Array.data[4]
       value: 
@@ -9173,7 +9177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1514474408}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: bone_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9359,8 +9363,8 @@ RectTransform:
   m_GameObject: {fileID: 1534610403}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 590098426}
   - {fileID: 767234396}
@@ -9371,7 +9375,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -851, y: 473}
+  m_AnchoredPosition: {x: -870, y: 454}
   m_SizeDelta: {x: 670, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1534610405
@@ -9712,6 +9716,33 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1292325207}
   m_SourcePrefab: {fileID: 100100000, guid: 95d80e1a2fe274e03a7c777c85c31aab, type: 3}
+--- !u!1 &1615878896 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 660920359284994812, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+  m_PrefabInstance: {fileID: 1752576957}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1615878901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1615878896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eafc29c3997449a88ad3f03fdf591fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
+  yer: {fileID: 0}
+  outlines:
+  - {fileID: 767234397}
+  fills:
+  - {fileID: 1534610405}
+  fullFills: []
+  moveAmountForRecording: 0
+  moveRects: []
+  moveRectsForRecording: 0
 --- !u!1 &1626042222
 GameObject:
   m_ObjectHideFlags: 0
@@ -10843,6 +10874,18 @@ PrefabInstance:
       propertyPath: goldBucketBallTarget
       value: 
       objectReference: {fileID: 1139830201}
+    - target: {fileID: 6714923539191498780, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 389.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6714923539191498780, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 6714923539191498780, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -206
+      objectReference: {fileID: 0}
     - target: {fileID: 7177378730592135082, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -10888,7 +10931,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2974926059074419141, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 581051045}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 660920359284994812, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1615878901}
   m_SourcePrefab: {fileID: 100100000, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
 --- !u!1 &1810656406
 GameObject:
@@ -12273,7 +12319,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2094100633}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: bone_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13110,9 +13156,17 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4720979472372408846, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 5118979645694407182, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5685237657693911112, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5685237657693911112, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: m_IsActive
@@ -13443,6 +13497,14 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 818468568286403016, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 818468568286403016, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 110
+      objectReference: {fileID: 0}
     - target: {fileID: 906649228695431124, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -571
@@ -13462,6 +13524,14 @@ PrefabInstance:
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: showScore
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3222486909674329710, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: moveRectsForRecording
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3222486909674329710, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: moveAmountForRecording
+      value: 240
       objectReference: {fileID: 0}
     - target: {fileID: 3407464144378043522, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_fontColor.b
@@ -13506,6 +13576,14 @@ PrefabInstance:
     - target: {fileID: 4763388207710993157, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 5174957847518183628, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5174957847518183628, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 5571557343412231257, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_SizeDelta.x
@@ -14374,7 +14452,7 @@ PrefabInstance:
     - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: pureSetups.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 8ecc7b89021c94f64a6565c1ee66f4e2, type: 2}
+      objectReference: {fileID: 11400000, guid: c5e517b7e9e194a4e907c7a8a1ea40c7, type: 2}
     - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: pureSetups.Array.data[1]
       value: 
@@ -14390,6 +14468,10 @@ PrefabInstance:
     - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289930387296832898, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: eggColliderYOffsetMultiplier
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1289930387296832898, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: eggParticleColliderCoverPrefab

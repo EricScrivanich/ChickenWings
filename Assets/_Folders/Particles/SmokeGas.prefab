@@ -749,8 +749,8 @@ ParticleSystem:
     m_TextureColorAffectsParticles: 1
     m_TextureAlphaAffectsParticles: 1
     m_TextureBilinearFiltering: 0
-    randomDirectionAmount: 1
-    sphericalDirectionAmount: 1
+    randomDirectionAmount: 0.05
+    sphericalDirectionAmount: 0
     randomPositionAmount: 0.2
     radius:
       value: 0.1
@@ -2367,7 +2367,7 @@ ParticleSystem:
     randomizePerFrame: 0
   ExternalForcesModule:
     serializedVersion: 2
-    enabled: 0
+    enabled: 1
     multiplierCurve:
       serializedVersion: 2
       minMaxState: 0
@@ -2424,14 +2424,14 @@ ParticleSystem:
     influenceFilter: 0
     influenceMask:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 134217728
     influenceList: []
   ClampVelocityModule:
     enabled: 1
     x:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2.3
+      scalar: 2.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2484,7 +2484,7 @@ ParticleSystem:
     y:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 8
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2537,7 +2537,7 @@ ParticleSystem:
     z:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 0
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3751,7 +3751,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.2
+      scalar: 0.72
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3803,7 +3803,7 @@ ParticleSystem:
         m_RotationOrder: 4
     minKillSpeed: 2
     maxKillSpeed: 8
-    radiusScale: 0.6
+    radiusScale: 0.5
     collidesWith:
       serializedVersion: 2
       m_Bits: 134619136
@@ -4908,9 +4908,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e9b8b4304fe8457c907448bddd3eb6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  point0Speed: 0
-  particles: {fileID: 0}
-  sideLength: 0
-  addedRightLength: 0
-  middLength: 24
-  gasCloudDelay: 0

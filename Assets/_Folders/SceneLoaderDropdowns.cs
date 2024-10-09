@@ -14,6 +14,8 @@ namespace KingdomOfNight
         public static void LoadHelicopter() { OpenScene("Assets/scenes/Boss/Helicopter.unity"); }
         [MenuItem("Scenes/Boss/KingPig")]
         public static void LoadKingPig() { OpenScene("Assets/scenes/Boss/KingPig.unity"); }
+        [MenuItem("Scenes/Levels/EnemyVideo")]
+        public static void LoadEnemyVideo() { OpenScene("Assets/scenes/Levels/EnemyVideo.unity"); }
         [MenuItem("Scenes/Levels/Level1")]
         public static void LoadLevel1() { OpenScene("Assets/scenes/Levels/Level1.unity"); }
         [MenuItem("Scenes/Levels/Level2")]

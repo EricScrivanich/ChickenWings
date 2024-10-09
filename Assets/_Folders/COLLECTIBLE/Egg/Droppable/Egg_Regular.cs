@@ -153,7 +153,7 @@ public class Egg_Regular : MonoBehaviour
         {
             SmokeTrailPool.GetEggParticleCollider?.Invoke(transform.position, rb.velocity);
             hitParticle = true;
-            Invoke("ResetParticleColllider", .13f);
+            Invoke("ResetParticleColllider", .25f);
             // coll2D.size = expandedColSize;
             // colliderIsExpanded = true;
             // StartCoroutine(ExpandColliderForDurationAfterParticleCollision());

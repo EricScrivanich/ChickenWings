@@ -68,7 +68,6 @@ Transform:
   - {fileID: 2649424319782129383}
   - {fileID: 7318803671009453376}
   - {fileID: 2638187226689328034}
-  - {fileID: 7954770649355603934}
   - {fileID: 7925714788662196650}
   - {fileID: 7866949892241363562}
   m_Father: {fileID: 3549554370242709108}
@@ -449,6 +448,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4295892072133194512}
+  - {fileID: 7954770649355603934}
   - {fileID: 4031301714381076948}
   - {fileID: 4763380328371563221}
   - {fileID: 6828131839981561233}
@@ -498,6 +498,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db215764949cf44d8bd66b9c5b42a2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shotgunObj: {fileID: 0}
+  stats: {fileID: 0}
+  pool: {fileID: 0}
+  yForceMultiplier: 0
+  yForceSubtractMultiplier: 0
+  useChainedAmmo: 0
+  shotgunRotationSpeed: 0
+  shotgunAimRotationSpeed: 0
+  blastPoint: {fileID: 0}
+  shellSpawnPoint: {fileID: 0}
+  slowTimeTarget: 0
+  velocityMagnitude: 0
+  slowTimeDuration: 0
+  aimToShootDelay: 0
+  reloadDelay: 0
+  canShootDelay: 0
+  reloadDuration: 0
+  reloadTimeTarget: 0
+  speedTimeDuration: 0
   disableButtonsAtStart: 0
   airSpawnPos: {fileID: 4305018266838528776}
   THETHING: {fileID: 3615536453794694547}
@@ -537,6 +556,8 @@ MonoBehaviour:
   jumpHeld: 0
   isParachuting: 0
   isTryingToParachute: 0
+  baseRotateSpeedShotgun: 0
+  lerpTargetRotateSpeedSpeed: 0
 --- !u!114 &107412689077373414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1540,11 +1561,11 @@ Transform:
   m_GameObject: {fileID: 5562513735801377477}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.29519996, y: -0.34379995, z: 0}
-  m_LocalScale: {x: 0.5999999, y: 0.5999999, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 321073335050485285}
+  m_Father: {fileID: 3549554370242709108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &3837764138875513969
 BoxCollider2D:

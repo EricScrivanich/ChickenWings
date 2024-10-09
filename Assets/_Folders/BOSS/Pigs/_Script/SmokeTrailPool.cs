@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SmokeTrailPool : MonoBehaviour
 {
-
+    [SerializeField] private float eggColliderYOffsetMultiplier;
     private SmokeTrailLineNew[] jetPackSmokeTrails;
     private SmokeTrailLineNew[] gasSmokeTrails = new SmokeTrailLineNew[2];
 
@@ -14,10 +14,12 @@ public class SmokeTrailPool : MonoBehaviour
     [SerializeField] private GameObject gasSmokeTrailPrefab;
     [SerializeField] private GameObject gasParticleSystemPrefab;
     [SerializeField] private GameObject playerParticleColliderPrefab;
+    [SerializeField] private GameObject eggParticleColliderCoverPrefab;
     [SerializeField] private GameObject eggParticleColliderPrefab;
 
     private GasCloudParticleCollider particleCollider;
     private GasCloudParticleCollider[] eggParticleColliders = new GasCloudParticleCollider[2];
+    private GameObject[] eggParticleColliderCovers = new GameObject[2];
 
 
 
@@ -73,9 +75,12 @@ public class SmokeTrailPool : MonoBehaviour
 
             for (int i = 0; i < 2; i++)
             {
-                var obj = Instantiate(eggParticleColliderPrefab);
-                eggParticleColliders[i] = obj.GetComponent<GasCloudParticleCollider>();
-                obj.SetActive(false);
+                // var obj = Instantiate(eggParticleColliderPrefab);
+                // eggParticleColliders[i] = obj.GetComponent<GasCloudParticleCollider>();
+                // obj.SetActive(false);
+                eggParticleColliderCovers[i] = Instantiate(eggParticleColliderCoverPrefab);
+                eggParticleColliderCovers[i].SetActive(false);
+
             }
             for (int i = 0; i < gasPigFlyingPoolSize; i++)
             {
@@ -125,7 +130,10 @@ public class SmokeTrailPool : MonoBehaviour
 
     private void GetEggParticleColldierFunc(Vector2 pos, Vector2 vel)
     {
-        eggParticleColliders[currentEggParticleColliderIndex].Initialize(pos, vel);
+        // eggParticleColliders[currentEggParticleColliderIndex].Initialize(pos - vel.normalized * 1.5f, vel);
+        eggParticleColliderCovers[currentEggParticleColliderIndex].transform.position = pos + (Vector2.up * eggColliderYOffsetMultiplier);
+        eggParticleColliderCovers[currentEggParticleColliderIndex].SetActive(true);
+
         currentEggParticleColliderIndex++;
         if (currentEggParticleColliderIndex >= 2)
             currentEggParticleColliderIndex = 0;

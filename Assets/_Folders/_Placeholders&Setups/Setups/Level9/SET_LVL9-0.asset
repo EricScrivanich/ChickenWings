@@ -30,7 +30,7 @@ MonoBehaviour:
     - rid: 3115821498415710255
     - rid: 3115821498415710256
   - dataArray:
-    - rid: 3115821498415710254
+    - rid: 3115821498415710257
   collectableSetup: []
   isRandomSetup: 0
   ignoreXTriggetTime: 1
@@ -102,19 +102,6 @@ MonoBehaviour:
           yForce: 7
           maxYSpeed: 3.5
           xTrigger: -12
-    - rid: 3115821498415710254
-      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 30
-        data:
-        - position: {x: 16.95, y: 2.53}
-          scale: {x: 1.05, y: 1.1, z: 1.1}
-          speed: 3
-          hasHammer: 1
-        - position: {x: -15.94, y: -2.9591105}
-          scale: {x: 0.9, y: 0.9, z: 0.9}
-          speed: -0.7
-          hasHammer: 1
     - rid: 3115821498415710255
       type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -140,3 +127,12 @@ MonoBehaviour:
         - position: {x: 16.1, y: -0.34}
           speed: 0
           delay: 20
+    - rid: 3115821498415710257
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 30
+        data:
+        - position: {x: 16.95, y: 2.53}
+          scale: {x: 1.05, y: 1.1, z: 1.1}
+          speed: 4.4
+          hasHammer: 1

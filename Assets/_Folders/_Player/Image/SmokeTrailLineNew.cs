@@ -5,55 +5,25 @@ using DG.Tweening;
 
 public class SmokeTrailLineNew : MonoBehaviour
 {
-    private LineRenderer lineRenderer;
 
-    // public float point0Speed;
-    // private float point1Speed = 7;
 
     private float speed;
-
-
-    private Vector3 point1Offset = new Vector3(2, 0, 0);
-
     private bool isStopped = false;
 
 
     private ParticleSystem ps;
     // private Vector2 addedXOnEndPoint = new Vector2(2f, 0,0);
 
-    void Start()
-    {
-        // lineRenderer.material = new Material(lineRenderer.material);
-        // smokeMaterial = lineRenderer.material;
-        // lerpDuration = Mathf.Abs(lineRenderer.GetPosition(0).x + 13) / point0Speed;
-        // textureOffset = Vector2.zero;
-    }
+
 
     private void Awake()
     {
         ps = GetComponent<ParticleSystem>();
-        // lineRenderer = GetComponent<LineRenderer>();
 
     }
 
     public void Initialize(Vector2 pos, float s)
     {
-        // usingGasCloud = false;
-        // lineRenderer.SetPosition(0, new Vector3(pos.x, pos.y, 0));
-
-
-
-        // // if (usingGasCloud)
-        // // {
-        // //     lineRenderer.SetPosition(1, new Vector3(pos.x + sideLength, pos.y, 0));
-        // //     lineRenderer.SetPosition(2, new Vector3(pos.x + middLength + sideLength, pos.y, 0));
-        // //     lineRenderer.SetPosition(3, new Vector3(pos.x + sideLength + middLength + addedRightLength, pos.y, 0));
-
-
-        // // }
-
-        // lineRenderer.SetPosition(1, new Vector3(pos.x, pos.y, 0) + point1Offset);
-        // lineRenderer.SetPosition(2, new Vector3(pos.x + 2.5f, pos.y, 0));
 
         transform.position = pos;
         ps.Play();
@@ -69,28 +39,16 @@ public class SmokeTrailLineNew : MonoBehaviour
 
     void Update()
     {
-
         if (!isStopped)
             transform.Translate(Vector2.left * speed * Time.deltaTime);
-
-
-
-        // UpdateLineRendererPositionsForJetpack();
-
     }
     public void FadeOut()
     {
         if (ps != null)
             ps.Stop();
 
-        Debug.LogError("Stopped in place");
+
         speed = 0;
-        // isStopped = true;
-
-
-        // point0Speed = .5f;
-
-
 
     }
 

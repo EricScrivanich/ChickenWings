@@ -1557,7 +1557,7 @@ ParticleSystem:
     x:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -2.3
+      scalar: -2.1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1716,7 +1716,7 @@ ParticleSystem:
     orbitalX:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.2
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -2415,7 +2415,7 @@ ParticleSystem:
     randomizePerFrame: 0
   ExternalForcesModule:
     serializedVersion: 2
-    enabled: 0
+    enabled: 1
     multiplierCurve:
       serializedVersion: 2
       minMaxState: 0
@@ -2472,7 +2472,7 @@ ParticleSystem:
     influenceFilter: 0
     influenceMask:
       serializedVersion: 2
-      m_Bits: 2097152
+      m_Bits: 134217728
     influenceList:
     - {fileID: 0}
   ClampVelocityModule:
@@ -3747,7 +3747,7 @@ ParticleSystem:
     m_Bounce:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.74
+      scalar: 1.72
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3800,7 +3800,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.25
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3850,8 +3850,8 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    minKillSpeed: 2.5
-    maxKillSpeed: 7.5
+    minKillSpeed: 2
+    maxKillSpeed: 7.9
     radiusScale: 0.45
     collidesWith:
       serializedVersion: 2
