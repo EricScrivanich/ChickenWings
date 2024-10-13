@@ -39,27 +39,37 @@ public class HotAirBalloon : MonoBehaviour
     private bool addingYForce;
     private float targetYVelocity;
 
+    private Animator anim;
+    private bool startedAnim;
+    private float startDelayTimer = 0;
+
 
     // Start is called before the first frame update
-    void Start()
-    {
 
-        rb.velocity = new Vector2(speed, 0);
-
-        // StartCoroutine(DropBombRoutine());
-
-    }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!startedAnim)
+        {
+            startDelayTimer += Time.deltaTime;
+
+            if (startDelayTimer > xTrigger)
+            {
+                anim.speed = Random.Range(.75f, .9f);
+                startedAnim = true;
+            }
+
+        }
 
         time += Time.deltaTime;
+
 
         if (time > spriteSwitchTime)
         {
@@ -73,6 +83,19 @@ public class HotAirBalloon : MonoBehaviour
             time = 0;
 
         }
+
+
+    }
+
+    private void OnEnable()
+    {
+        time = 0;
+        startDelayTimer = 0;
+        startedAnim = false;
+        currentSpriteIndex = Random.Range(0, animData.sprites.Length - 1);
+        sr.sprite = animData.sprites[currentSpriteIndex];
+        rb.velocity = new Vector2(speed, 0);
+        anim.speed = 0;
 
 
     }
@@ -117,11 +140,6 @@ public class HotAirBalloon : MonoBehaviour
         rb.AddForce(Vector2.up * liftForce);
     }
 
-    private void OnEnable()
-    {
-        currentSpriteIndex = Random.Range(0, animData.sprites.Length - 1);
-        sr.sprite = animData.sprites[currentSpriteIndex];
-    }
 
 
 

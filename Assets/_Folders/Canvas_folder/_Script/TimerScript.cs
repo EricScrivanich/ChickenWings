@@ -54,7 +54,7 @@ public class TimerScript : MonoBehaviour
         if (timerActive)
         {
             currentTime += Time.deltaTime;
-            timerText.text = "Time - " + currentTime.ToString("00.00");
+            timerText.text = "Time: " + currentTime.ToString("00.00");
 
         }
 

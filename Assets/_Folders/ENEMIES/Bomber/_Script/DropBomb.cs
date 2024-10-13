@@ -13,6 +13,9 @@ public class DropBomb : MonoBehaviour
     public float speedTarget;
 
 
+
+
+
     [SerializeField] private ExplosivesPool pool;
 
     [SerializeField] private GameObject dropZonePrefab;
@@ -85,8 +88,11 @@ public class DropBomb : MonoBehaviour
     private float speedStart;
     private float speedEnd;
 
+    private bool hasInitialized = false;
+
     void Start()
     {
+
         ID.finsihedDrop = false;
 
 
@@ -100,9 +106,10 @@ public class DropBomb : MonoBehaviour
 
 
 
-        dropZone.Initilaize(xDropPosition);
+        dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier);
 
         StartCoroutine(BomberStart());
+        hasInitialized = true;
 
 
 
@@ -299,6 +306,28 @@ public class DropBomb : MonoBehaviour
         speedStart = speedTarget * startSpeedMultiplier;
         speed = speedStart;
 
+
+        if (hasInitialized)
+        {
+            ID.finsihedDrop = false;
+
+
+            // dropZone = Instantiate(dropZonePrefab).GetComponent<DropZone>();
+            // dropZone.gameObject.SetActive(false);
+
+
+            // pool = PoolKit.GetPool("ExplosionPool");
+
+
+
+
+
+            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier);
+
+            StartCoroutine(BomberStart());
+
+        }
+
     }
 
 
@@ -329,7 +358,7 @@ public class DropBomb : MonoBehaviour
 
             yield return new WaitForSeconds(.1f);
             AudioManager.instance.PlayBombDroppedSound();
-            yield return new WaitForSeconds(.12f);
+            yield return new WaitForSeconds(dropTime);
 
         }
         StartCoroutine(SwitchDropAreaSprite());

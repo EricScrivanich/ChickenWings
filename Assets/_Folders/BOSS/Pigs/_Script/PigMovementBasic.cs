@@ -45,10 +45,11 @@ public class PigMovementBasic : MonoBehaviour
 
     private float initialY;
 
-    [SerializeField] private float duration;
-    [SerializeField] private float invokeTime;
+
+    // [SerializeField] private float duration;
+    // [SerializeField] private float invokeTime;
     private Animator anim;
-    private Rigidbody2D rb;
+
     private bool downGlide;
     private bool upGlide;
     private float time;
@@ -63,8 +64,8 @@ public class PigMovementBasic : MonoBehaviour
 
 
         jumpForce = new Vector2(xSpeed, addYForce);
-        anim = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
+
+
         upGlide = false;
         downGlide = false;
 
@@ -77,6 +78,12 @@ public class PigMovementBasic : MonoBehaviour
 
     }
 
+    private void Awake()
+    {
+        anim = GetComponent<Animator>();
+
+    }
+
     public void InitializePig()
     {
         if (gameObject.activeInHierarchy)
@@ -84,9 +91,12 @@ public class PigMovementBasic : MonoBehaviour
             gameObject.SetActive(false);
         }
         initialY = transform.position.y;
+        anim.speed = 0;
+
+        Invoke("SetAnimSpeed", Random.Range(0f, .5f));
 
 
-        body.localScale = new Vector3(.75f - transform.localScale.x + 1, 1, 1);
+        body.localScale = new Vector3(.75f - Mathf.Abs(transform.localScale.x) + 1, 1, 1);
 
         frontLegs.position = frontLegsPosition.position;
         backLegs.position = backLegsPosition.position;
@@ -107,6 +117,7 @@ public class PigMovementBasic : MonoBehaviour
 
 
 
+
             if (body != null)
             {
                 body.localScale = new Vector3(((.85f - transform.localScale.x) * .5f) + 1, 1, 1);
@@ -118,6 +129,11 @@ public class PigMovementBasic : MonoBehaviour
 
 
         }
+    }
+
+    private void SetAnimSpeed()
+    {
+        anim.speed = 1;
     }
     // private void OnEnable()
     // {
@@ -208,8 +224,7 @@ public class PigMovementBasic : MonoBehaviour
         // }
 
 
-        if (transform.position.x < BoundariesManager.leftBoundary)
-            gameObject.SetActive(false);
+
 
         transform.Translate(Vector2.left * xSpeed * Time.deltaTime);
 

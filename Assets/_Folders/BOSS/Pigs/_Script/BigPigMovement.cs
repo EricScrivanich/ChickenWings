@@ -19,7 +19,7 @@ public class BigPigMovement : MonoBehaviour
     public float yForce;
     public float distanceToFlap;
 
-     // The height the pig would reach after applying yForce
+    // The height the pig would reach after applying yForce
 
     private static readonly int FlapTriggerHash = Animator.StringToHash("FlapTrigger");
 
@@ -40,7 +40,7 @@ public class BigPigMovement : MonoBehaviour
         anim = GetComponent<Animator>();
 
         // Calculate the maximum height the pig would reach after applying yForce
-       
+
     }
 
     public void InitializeObject()
@@ -50,7 +50,7 @@ public class BigPigMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        Body.localScale = new Vector3(1 + ((.9f - transform.localScale.x) * .7f), 1, 1);
+        Body.localScale = new Vector3(1 + ((.9f - Mathf.Abs(transform.localScale.x)) * .7f), 1, 1);
         wingObject.position = wingPosition.position;
         legObject.position = legPosition.position;
         tailObject.position = tailPosition.position;

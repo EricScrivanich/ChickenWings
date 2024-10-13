@@ -20,7 +20,9 @@ MonoBehaviour:
   enemyTriggerForEachRingIndexWeights: 
   enemySetup:
   - dataArray:
-    - rid: 3115821498415710258
+    - rid: 3115821498415710261
+  - dataArray:
+    - rid: 3115821498415710263
   collectableSetup: []
   isRandomSetup: 0
   ignoreXTriggetTime: 1
@@ -28,11 +30,20 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3115821498415710258
+    - rid: 3115821498415710261
       type: {class: GasPigSO, ns: , asm: Assembly-CSharp}
       data:
-        TimeToTrigger: 20
+        TimeToTrigger: 12
         data:
-        - position: {x: 15.81, y: -0.05}
+        - position: {x: 15.81, y: 0.75}
           speed: 0
-          delay: 10
+          delay: 40
+    - rid: 3115821498415710263
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 15
+        data:
+        - position: {x: 14.28, y: 2.146269}
+          scale: {x: 1, y: 1, z: 1}
+          speed: 4
+          hasHammer: 1

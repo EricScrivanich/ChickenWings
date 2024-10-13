@@ -42,7 +42,7 @@ public class RingMovement : MonoBehaviour, ICollectible
 
     private Vector2 lerpOffsetRangeBasedOnSpeed = new Vector2(3.8f, 7.3f);
     private Vector2 lerpOffsetSpeedBasedOnRange = new Vector2(3, 7.5f);
-    private float lerpedSpeedPercentage = .7f;
+    private float lerpedSpeedPercentage = .85f;
 
 
 

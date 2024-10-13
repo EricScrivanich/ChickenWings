@@ -223,6 +223,7 @@ public class SetupPlacer : MonoBehaviour
                 obj.transform.parent = EnemySetupTransform;
                 var script = obj.GetComponent<DropBomb>();
                 script.dropAreaScaleMultiplier = bomberPlaneDataItem.dropAreaScaleMultiplier;
+                script.xDropPosition = bomberPlaneDataItem.xDropPosition;
                 script.speedTarget = bomberPlaneDataItem.speedTarget;
 
             }

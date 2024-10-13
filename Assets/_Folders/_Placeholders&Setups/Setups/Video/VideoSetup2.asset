@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
+  m_Name: VideoSetup2
+  m_EditorClassIdentifier: 
+  eggTriggerAndIndexAndType:
+  - {x: 0, y: 0, z: 3}
+  - {x: 1, y: 1, z: 1}
+  eggPosition:
+  - {x: 32, y: 0}
+  - {x: 16, y: -2}
+  eggSpeed:
+  - 5.5
+  - 5
+  mustCompleteRingSequence: 0
+  enemyTriggerForEachRingIndex: 
+  enemyTriggerForEachRingIndexWeights: 
+  enemySetup:
+  - dataArray:
+    - rid: 3115821498415710287
+  - dataArray:
+    - rid: 3115821498415710288
+  collectableSetup: []
+  isRandomSetup: 0
+  ignoreXTriggetTime: 1
+  XTriggerForRecording: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3115821498415710287
+      type: {class: FlappyPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 11
+        data:
+        - position: {x: 14.38, y: 1.31}
+          scaleFactor: 0.9
+        - position: {x: 16.72, y: -1.72}
+          scaleFactor: 0.75
+    - rid: 3115821498415710288
+      type: {class: FlappyPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 30
+        data:
+        - position: {x: 14.82, y: -0.16}
+          scaleFactor: 0.7

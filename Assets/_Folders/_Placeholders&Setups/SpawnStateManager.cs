@@ -142,7 +142,7 @@ public class SpawnStateManager : MonoBehaviour
     private int currentSetRingOrderIndex = 0;
 
 
-
+    private Vector3 scaleFlip = new Vector3(-1, 1, 1);
 
 
     SpawnBaseState currentState;
@@ -175,6 +175,16 @@ public class SpawnStateManager : MonoBehaviour
 
 
         SpawnPools();
+
+        for (int i = 0; i < pureSetups.Length; i++)
+        {
+            if (pureSetups[i].testFromTrigger)
+            {
+                Debug.Log("Set new trigger for testing, Index of: " + i + " trigger is: " + pureSetups[i].CheckIfTesting());
+                currentPureSetup = i;
+                pureSetupState.SetNewCurrentTrigger(pureSetups[i].CheckIfTesting());
+            }
+        }
 
         if (startingState > -1)
         {
@@ -820,6 +830,8 @@ public class SpawnStateManager : MonoBehaviour
         if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
 
         script.transform.position = (Vector2)transform.position + pos;
+        if (speed < 0) scale = new Vector3(scale.x * -1, scale.y, scale.z);
+
         script.transform.localScale = scale;
         script.xSpeed = speed;
         script.InitializePig();
@@ -852,6 +864,7 @@ public class SpawnStateManager : MonoBehaviour
 
 
         script.transform.position = (Vector2)transform.position + pos;
+        if (speed < 0) scale = new Vector3(scale.x * -1, scale.y, scale.z);
         script.transform.localScale = scale;
         script.speed = speed;
         script.gameObject.SetActive(true);
@@ -877,11 +890,11 @@ public class SpawnStateManager : MonoBehaviour
         var script = bigPig[bigPigIndex];
         if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
         script.transform.position = (Vector2)transform.position + pos;
-        int scaleChange = 1;
 
-        if (speed < 0)
-            scaleChange = -1;
-        script.transform.localScale = scale * scaleChange;
+
+        if (speed < 0) scale = new Vector3(scale.x * -1, scale.y, scale.z);
+
+        script.transform.localScale = scale;
         script.speed = speed;
         script.yForce = yForce;
         script.distanceToFlap = distanceToFlap;
@@ -934,13 +947,23 @@ public class SpawnStateManager : MonoBehaviour
 
         if (Mathf.Abs(speed) > 0)
         {
-            if (gasPigIndex >= gasPigs.Length) gasPigIndex = 0;
+            bool flip = false;
+
+            if (speed < BoundariesManager.GroundSpeed) flip = true;
+
             GasPig gasPig = gasPigs[gasPigIndex];
             gasPig.transform.position = position;
 
+
+
+            Debug.LogError("Scale flip is: " + flip);
+
             gasPig.Initialize(speed, delay);
-            
+            if (flip) gasPig.gameObject.transform.localScale = scaleFlip;
+            else gasPig.transform.localScale = BoundariesManager.vectorThree1;
+
             gasPigIndex++;
+            if (gasPigIndex >= gasPigs.Length) gasPigIndex = 0;
 
         }
         else
@@ -953,7 +976,7 @@ public class SpawnStateManager : MonoBehaviour
             int s = 8;
             if (position.x < 0) s = -8;
             gasPig.Initialize(s, delay);
-            
+
             gasPigFlyingIndex++;
             if (gasPigFlyingIndex >= gasPigFlyingPoolSize) gasPigFlyingIndex = 0;
 

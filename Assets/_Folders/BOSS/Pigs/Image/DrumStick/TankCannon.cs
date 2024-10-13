@@ -4,6 +4,12 @@ using System.Collections;
 
 public class TankCannon : MonoBehaviour
 {
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip moveSound;
+    [SerializeField] private AudioClip shotSound;
+
+    [SerializeField] private float moveSoundVolume;
+    [SerializeField] private float shotSoundVolume;
     [SerializeField] private GameObject player;
     private Transform playerTransform;
     [SerializeField] private GameObject bulletPrefab;
@@ -28,6 +34,8 @@ public class TankCannon : MonoBehaviour
     {
         bullet = Instantiate(bulletPrefab);
         bullet.SetActive(false);
+        audioSource.PlayOneShot(moveSound, moveSoundVolume);
+
         // playerTransform = player.transform;
 
     }
@@ -125,6 +133,7 @@ public class TankCannon : MonoBehaviour
         bullet.transform.position = spawnPos.position;
         bullet.transform.rotation = Quaternion.Euler(0, 0, rot);
         bullet.SetActive(true);
+        audioSource.PlayOneShot(shotSound, shotSoundVolume);
         // Assuming you want the bullet to be instantiated at the tank's position with the same rotation
         // Instantiate(bulletPrefab, transform.position, Quaternion.Euler(0, 0, desiredRotation));
 

@@ -46,13 +46,15 @@ public class GasPig : MonoBehaviour
 
         if (flying)
         {
+            transform.localScale = BoundariesManager.vectorThree1 * .8f;
             anim.SetTrigger("FlyFart");
 
         }
         else
         {
+            transform.localScale = BoundariesManager.vectorThree1;
             anim.SetTrigger("Walk");
-            StartCoroutine(CloudRoutine());
+
         }
     }
 
@@ -75,6 +77,15 @@ public class GasPig : MonoBehaviour
                 hasCrossedBoundary = true;
             }
         }
+        else if (!flying && !hasCrossedBoundary)
+        {
+            if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
+            {
+                StartCoroutine(CloudRoutine());
+                hasCrossedBoundary = true;
+            }
+
+        }
 
 
 
@@ -82,9 +93,11 @@ public class GasPig : MonoBehaviour
 
     private IEnumerator CloudRoutine()
     {
+        yield return new WaitForSeconds(Random.Range(0f, delay));
+
         while (true)
         {
-            yield return new WaitForSeconds(delay);
+
 
             anim.SetTrigger("FartTrigger");
             yield return new WaitForSeconds(.1f);
@@ -93,6 +106,7 @@ public class GasPig : MonoBehaviour
 
 
             Instantiate(cloud, cloudSpawn.position, Quaternion.identity, transform);
+            yield return new WaitForSeconds(delay);
 
         }
 

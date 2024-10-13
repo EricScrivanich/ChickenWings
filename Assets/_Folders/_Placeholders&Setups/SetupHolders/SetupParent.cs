@@ -29,8 +29,11 @@ public class SetupParent : ScriptableObject
 
     public int enemyTriggerCount => enemySetup.Count;
     public bool isRandomSetup;
+    [Header("Testing Data")]
+    public bool testFromTrigger;
+    public int startTestTrigger;
 
-
+    [Header("Recording Data")]
     public bool ignoreXTriggetTime;
     public float XTriggerForRecording;
 
@@ -334,6 +337,12 @@ public class SetupParent : ScriptableObject
 
 
 #if UNITY_EDITOR
+
+    public int CheckIfTesting()
+    {
+        if (!testFromTrigger) return -1;
+        else return startTestTrigger;
+    }
     public void RecordForEnemyTrigger(List<EnemyData> dataList, int trigger)
     {
         Undo.RecordObject(this, "Record Enemy Trigger");

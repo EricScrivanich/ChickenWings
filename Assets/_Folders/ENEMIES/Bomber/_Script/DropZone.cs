@@ -8,6 +8,8 @@ public class DropZone : MonoBehaviour
     private Sequence flashSeq;
     private SpriteRenderer sr;
 
+    private Vector2 normalDropZoneScale = new Vector2(3.2f, 2.8f);
+
     [SerializeField] private Color color1;
     [SerializeField] private Color color2;
 
@@ -22,10 +24,13 @@ public class DropZone : MonoBehaviour
 
     }
 
-    public void Initilaize(float x)
+    public void Initilaize(float x, float scaleMultiplier)
     {
         sr.color = color2;
         transform.position = new Vector2(x, 0);
+
+        if (scaleMultiplier != 0)
+            transform.localScale = normalDropZoneScale * scaleMultiplier;
 
         gameObject.SetActive(true);
 

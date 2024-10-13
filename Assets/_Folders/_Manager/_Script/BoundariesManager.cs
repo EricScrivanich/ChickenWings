@@ -8,7 +8,7 @@ public class BoundariesManager : MonoBehaviour
 
     public static Vector3 vectorThree1 = new Vector3(1, 1, 1);
     public static bool isDay;
-    public static int leftBoundary = -14;
+    public static int leftBoundary = -16;
     public static float rightViewBoundary = 11.9f;
     public static float leftViewBoundary = -11.9f;
     public static float rightPlayerBoundary = 11.8f;

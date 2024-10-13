@@ -231,7 +231,9 @@ public class BarnAndEggSpawner : MonoBehaviour
     }
     private IEnumerator SpawnBarn()
     {
-        yield return new WaitForSeconds(Random.Range(4f, 7f));
+        // yield return new WaitForSeconds(Random.Range(4f, 7f));
+        yield return new WaitForSeconds(2.8f);
+
         while (true)
         {
 

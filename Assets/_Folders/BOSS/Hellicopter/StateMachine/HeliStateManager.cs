@@ -50,13 +50,13 @@ public class HeliStateManager : MonoBehaviour
             pool = PoolKit.GetPoolContainingPrefab("HomingMissile");
 
         }
-        
+
         isHit = false;
         finishedFlipping = false;
         ID.isFlipped = false;
     }
 
-   
+
     // Start is called before the first frame update
     void Start()
     {
@@ -232,6 +232,16 @@ public class HeliStateManager : MonoBehaviour
 
     public IEnumerator RandomRotateAndShootCoroutine(float rotationSpeed, float rotationDuration)
     {
+
+        float chance = UnityEngine.Random.Range(0f, 1f);
+        Debug.Log("Chance: " + chance);
+        if (chance > .6f)
+        {
+
+            homingMissile = StartCoroutine(Missiles(3));
+            yield break;
+
+        }
         float elapsedTime = 0f;
         Quaternion initialRotation = transform.rotation;
 
@@ -283,6 +293,7 @@ public class HeliStateManager : MonoBehaviour
 
 
         }
+        rotateShoot = StartCoroutine(RandomRotateAndShootCoroutine(35, .7f));
         isFiringMissiles = false;
         // StartCoroutine(Missiles(3));
 
