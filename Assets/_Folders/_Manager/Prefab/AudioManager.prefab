@@ -338,9 +338,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicPitch: 0.95
   sfxPitch: 1
+  newPitchSlow: 1
   audioSource: {fileID: 3477819981823733023}
+  nonSlowSource: {fileID: 0}
   musicSource: {fileID: 4951571917034972469}
   ringPassSource: {fileID: 2039888195929267459}
+  pigAudioSource: {fileID: 0}
+  windMillAudioSource: {fileID: 0}
   cluckSounds:
   - {fileID: 8300000, guid: f50b2bd72379746ff87134ceae75eaae, type: 3}
   - {fileID: 8300000, guid: c86349adae0c04032bd8d8c9a95631da, type: 3}
@@ -358,15 +362,55 @@ MonoBehaviour:
   start: {fileID: 8300000, guid: 8ce8a7739f0584ccd839851b21d05e1a, type: 3}
   swordSlashSound: {fileID: 8300000, guid: f49e10f6906334baf803f016e7f53ff8, type: 3}
   frozenSound: {fileID: 8300000, guid: 9f971a8787bd6426db09ab08357075a0, type: 3}
+  slowMotionEnter: {fileID: 0}
+  slowMotionExit: {fileID: 0}
+  shotgunReload: {fileID: 0}
+  shotgunBlast: {fileID: 0}
+  shotgunShell: {fileID: 0}
+  shotgunFutureBlast: {fileID: 0}
+  shotgunShells: []
+  eggDropPop: {fileID: 0}
   crack: {fileID: 8300000, guid: e5146415cf1ba493b9475b058f7f6924, type: 3}
   scoreSound: {fileID: 8300000, guid: 678c64c9b28384205ba6b72691e2b8f1, type: 3}
   ringSuccess: {fileID: 8300000, guid: 8cdad93d05f5744109a33ef54ac92b5d, type: 3}
   bucketBurstSound: {fileID: 8300000, guid: e977e4a5c1fd540489de1e6ddbc6c6c3, type: 3}
   ringPassSound: {fileID: 8300000, guid: 59117968211e74630a83f959eb23a852, type: 3}
+  bucketSuccessSound: {fileID: 0}
   pigDeath: []
   pigHammerSwing: {fileID: 0}
+  pigJetPack: {fileID: 0}
+  missileLaunch: {fileID: 0}
+  farts: []
+  flappyPigCackles: []
+  longFart: {fileID: 0}
   planeExplosionSound: {fileID: 8300000, guid: dc234c741a7c54376bc4a9c8ea8013ee, type: 3}
   bombExplosionSound: {fileID: 8300000, guid: 15b44ede18db44b06a52af85cf7c6400, type: 3}
+  bombDropped: {fileID: 0}
+  airRaid: {fileID: 0}
+  flyOver: {fileID: 0}
+  bombLaunch: {fileID: 0}
+  windMill: {fileID: 0}
+  chamberClick: {fileID: 0}
+  chamberCock: {fileID: 0}
+  errorSound: {fileID: 0}
+  levelFinishSound: {fileID: 0}
+  starHitSound: {fileID: 0}
+  longFartVolume: 0
+  levelFinishVolume: 0
+  bucketSuccessVolume: 0
+  starHitVolume: 0
+  fartVolume: 0
+  flappyPigCackleVolume: 0
+  bombDroppedVolume: 0
+  bombLaunchVolume: 0
+  windMillVolume: 0
+  airRaidVolume: 0
+  flyOverVolume: 0
+  errorVolume: 0.7
+  chamberClickVolume: 0.7
+  chamberCockVolume: 0.7
+  eggDropPopVolume: 0.7
+  shotGunShellVolume: 0.7
   cluckVolume: 0.9
   flipVolume: 0.5
   deathSoundVolume: 0.5
@@ -386,6 +430,11 @@ MonoBehaviour:
   bucketBurstSoundVolume: 0.7
   pigDeathVolumes: []
   pigHammerSwingVolume: 0
+  pigJetPackVolume: 0
+  missileLaunchVolume: 0
+  slowMoVolume: 0
+  shotgunBlastVolume: 0
+  shotgunReloadVolume: 0
 --- !u!164 &3233758667693879064
 AudioReverbFilter:
   m_ObjectHideFlags: 0

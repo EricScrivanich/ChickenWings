@@ -18,6 +18,8 @@ public class HotAirBalloon : MonoBehaviour
     public float yTarget;
     public float delay;
 
+    public readonly int DropTrigger = Animator.StringToHash("DropTrigger");
+
 
 
 
@@ -95,7 +97,7 @@ public class HotAirBalloon : MonoBehaviour
         currentSpriteIndex = Random.Range(0, animData.sprites.Length - 1);
         sr.sprite = animData.sprites[currentSpriteIndex];
         rb.velocity = new Vector2(speed, 0);
-        anim.speed = 0;
+        
 
 
     }
