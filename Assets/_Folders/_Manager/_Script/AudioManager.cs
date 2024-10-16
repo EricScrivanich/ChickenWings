@@ -135,8 +135,11 @@ public class AudioManager : MonoBehaviour
 
 
     private bool canPlayJetPackNoise = true;
+    private bool canPlayWindmillNoise = true;
     private float jetPackNoiseTime;
+    private float windmillNoiseTime;
     private readonly float minJetPackNoiseDelay = .15f;
+    private readonly float minWindmillNoiseDelay = .15f;
 
 
 
@@ -179,6 +182,19 @@ public class AudioManager : MonoBehaviour
             {
                 canPlayJetPackNoise = true;
                 jetPackNoiseTime = 0;
+
+            }
+
+        }
+
+        if (!canPlayWindmillNoise)
+        {
+            windmillNoiseTime += Time.deltaTime;
+
+            if (windmillNoiseTime > minWindmillNoiseDelay)
+            {
+                canPlayWindmillNoise = true;
+                windmillNoiseTime = 0;
 
             }
 
@@ -229,7 +245,13 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayWindMillSound()
     {
-        windMillAudioSource.PlayOneShot(windMill, windMillVolume);
+        if (canPlayWindmillNoise)
+        {
+            windMillAudioSource.PlayOneShot(windMill, windMillVolume);
+            canPlayWindmillNoise = false;
+
+        }
+
     }
 
     public void PlayFartSound()
