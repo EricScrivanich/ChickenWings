@@ -399,7 +399,7 @@ public class EnemySetupRecorderEditor : Editor
             if (!script.ignoreXTriggetTime)
                 newClass.TimeToTrigger = timesToTrigger.Max();
 
-          
+
 
             // Add the new instance to the temporary list
             newEnemyData.Add(newClass);
@@ -567,7 +567,9 @@ public class EnemySetupRecorderEditor : Editor
                 {
                     position = targets[i].transform.position,
                     speed = targets[i].speed,
-                    delay = targets[i].delay
+                    delay = targets[i].delay,
+                    initialDelay = targets[i].initialDelay
+
                 };
 
                 float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);

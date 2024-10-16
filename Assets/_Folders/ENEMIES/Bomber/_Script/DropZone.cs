@@ -26,11 +26,12 @@ public class DropZone : MonoBehaviour
 
     public void Initilaize(float x, float scaleMultiplier)
     {
+
         sr.color = color2;
         transform.position = new Vector2(x, 0);
 
-        if (scaleMultiplier != 0)
-            transform.localScale = normalDropZoneScale * scaleMultiplier;
+
+        transform.localScale = normalDropZoneScale * scaleMultiplier;
 
         gameObject.SetActive(true);
 

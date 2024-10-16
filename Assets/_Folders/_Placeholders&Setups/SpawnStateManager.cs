@@ -942,7 +942,7 @@ public class SpawnStateManager : MonoBehaviour
         windMillIndex++;
     }
 
-    public void GetGasPig(Vector2 position, float speed, float delay)
+    public void GetGasPig(Vector2 position, float speed, float delay, float startDelay)
     {
 
         if (Mathf.Abs(speed) > 0)
@@ -958,7 +958,7 @@ public class SpawnStateManager : MonoBehaviour
 
             Debug.LogError("Scale flip is: " + flip);
 
-            gasPig.Initialize(speed, delay);
+            gasPig.Initialize(speed, delay, flip, startDelay);
             if (flip) gasPig.gameObject.transform.localScale = scaleFlip;
             else gasPig.transform.localScale = BoundariesManager.vectorThree1;
 
@@ -975,7 +975,7 @@ public class SpawnStateManager : MonoBehaviour
             gasPig.transform.position = position;
             int s = 8;
             if (position.x < 0) s = -8;
-            gasPig.Initialize(s, delay);
+            gasPig.Initialize(s, delay, false, 0);
 
             gasPigFlyingIndex++;
             if (gasPigFlyingIndex >= gasPigFlyingPoolSize) gasPigFlyingIndex = 0;
@@ -1012,13 +1012,14 @@ public class SpawnStateManager : MonoBehaviour
 
     public void GetBomberPlane(float xDropPosition, float dropAreaScaleMultiplier, float speedTarget)
     {
-        if (bomberPlaneIndex >= bomberPlanes.Length) bomberPlaneIndex = 0;
+
         DropBomb bomberPlane = bomberPlanes[bomberPlaneIndex];
         bomberPlane.xDropPosition = xDropPosition;
         bomberPlane.dropAreaScaleMultiplier = dropAreaScaleMultiplier;
         bomberPlane.speedTarget = speedTarget;
         bomberPlane.gameObject.SetActive(true);
         bomberPlaneIndex++;
+        if (bomberPlaneIndex >= bomberPlanes.Length) bomberPlaneIndex = 0;
     }
     #endregion
 }

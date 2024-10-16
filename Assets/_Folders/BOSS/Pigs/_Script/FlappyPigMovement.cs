@@ -259,8 +259,11 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         transform.localScale = BoundariesManager.vectorThree1 * scaleFactor;
         anim.speed = 0;
 
+        if (scaleFactor <= 0) scaleFactor = (minMaxScale.x + minMaxScale.y) * .5f;
+
 
         float scalePercentage = Mathf.InverseLerp(minMaxScale.x, minMaxScale.y, scaleFactor);
+
 
         SetVariablesBasedOnScale(scalePercentage);
 

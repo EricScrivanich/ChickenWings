@@ -3807,6 +3807,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 602013174}
   m_CullTransparentMesh: 0
+--- !u!1001 &608996927
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.72
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564708926221332270, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3403766095394183707, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: delay
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3403766095394183707, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: speed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3403766095394183707, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: ejectForce
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3403766095394183707, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: cloudCatchupSpeed
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8404764546911608083, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_Name
+      value: GasPig (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8404764546911608083, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 65a64c4e5473d474491c58874d8e143f, type: 3}
 --- !u!1 &671545248
 GameObject:
   m_ObjectHideFlags: 0
@@ -14369,16 +14446,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: pureSetups.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: pureSetups.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 8ecc7b89021c94f64a6565c1ee66f4e2, type: 2}
+      objectReference: {fileID: 11400000, guid: 562ec6d7cce6847acb5dc00eaf6a42b4, type: 2}
     - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: pureSetups.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: a23f420e634694ac2b4a6a56768d7689, type: 2}
+      objectReference: {fileID: 11400000, guid: 8da311cdcc4e7433d976eedf69f97ee2, type: 2}
     - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: randomRingSetups.Array.size
       value: 0
@@ -14391,6 +14468,18 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1289930387296832898, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: gasCloudPrefab
+      value: 
+      objectReference: {fileID: 7501168065405726369, guid: 68a59a5ecd9804041b0d81d6becae83d, type: 3}
+    - target: {fileID: 1289930387296832898, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: gasCloudPoolSize
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289930387296832898, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: gasCloudHitParticlesPrefab
+      value: 
+      objectReference: {fileID: 4238105998688326948, guid: 46cf02b4a5ffb48c49a74b30057887fe, type: 3}
     - target: {fileID: 1289930387296832898, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: eggParticleColliderCoverPrefab
       value: 
@@ -14815,3 +14904,4 @@ SceneRoots:
   - {fileID: 576291131}
   - {fileID: 8189154791647047713}
   - {fileID: 141153959}
+  - {fileID: 608996927}

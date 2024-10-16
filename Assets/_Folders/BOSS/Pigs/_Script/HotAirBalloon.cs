@@ -19,9 +19,10 @@ public class HotAirBalloon : MonoBehaviour
     public float delay;
 
     public readonly int DropTrigger = Animator.StringToHash("DropTrigger");
+    public readonly int ResetTrigger = Animator.StringToHash("Reset");
 
 
-
+    private bool waitingForDelay;
 
     private Rigidbody2D rb;
     private float time = 0;
@@ -43,7 +44,7 @@ public class HotAirBalloon : MonoBehaviour
 
     private Animator anim;
     private bool startedAnim;
-    private float startDelayTimer = 0;
+    private float delayTimer = 0;
 
 
     // Start is called before the first frame update
@@ -58,17 +59,34 @@ public class HotAirBalloon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!startedAnim)
+        if (waitingForDelay)
         {
-            startDelayTimer += Time.deltaTime;
+            delayTimer += Time.deltaTime;
 
-            if (startDelayTimer > xTrigger)
+            if (delayTimer > delay + .8f)
             {
-                anim.speed = Random.Range(.75f, .9f);
+                anim.SetTrigger(DropTrigger);
+                waitingForDelay = false;
+                delayTimer = 0;
+
+            }
+
+        }
+        else if (!startedAnim)
+        {
+            delayTimer += Time.deltaTime;
+
+            if (delayTimer > xTrigger)
+            {
+                // anim.speed = Random.Range(.75f, .9f);
+                anim.SetTrigger(DropTrigger);
+                delayTimer = 0;
                 startedAnim = true;
             }
 
         }
+
+
 
         time += Time.deltaTime;
 
@@ -89,15 +107,20 @@ public class HotAirBalloon : MonoBehaviour
 
     }
 
+
+
     private void OnEnable()
     {
+        // anim.SetTrigger(ResetTrigger);
+        waitingForDelay = false;
         time = 0;
-        startDelayTimer = 0;
+        delayTimer = 0;
+        // xTrigger += .2f;
         startedAnim = false;
         currentSpriteIndex = Random.Range(0, animData.sprites.Length - 1);
         sr.sprite = animData.sprites[currentSpriteIndex];
         rb.velocity = new Vector2(speed, 0);
-        
+
 
 
     }
@@ -168,7 +191,13 @@ public class HotAirBalloon : MonoBehaviour
 
     public void DropBomb()
     {
-        pool.GetBalloonBomb(dropPosition.position, new Vector2(speed, 0));
+        if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
+        {
+            pool.GetBalloonBomb(dropPosition.position, new Vector2(speed, 0));
+        }
+
+        waitingForDelay = true;
+
 
     }
 }

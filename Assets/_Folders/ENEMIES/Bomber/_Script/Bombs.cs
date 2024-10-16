@@ -32,7 +32,7 @@ public class Bombs : MonoBehaviour
         }
     }
 
-    public void GetBomb(float force, bool dropped)
+    public void GetBomb(float force, bool dropped, int side)
     {
         
         gameObject.SetActive(true);
@@ -41,7 +41,7 @@ public class Bombs : MonoBehaviour
 
             rb.velocity = force * dropForceAverage;
             isDropped = true;
-            rb.angularVelocity = 50;
+            rb.angularVelocity = 50 * side;
 
         }
 

@@ -6,7 +6,7 @@ public class GasPigSO : EnemyData
     {
         for (int i = 0; i < data.Length; i++)
         {
-            manager.GetGasPig(data[i].position, data[i].speed, data[i].delay);
+            manager.GetGasPig(data[i].position, data[i].speed, data[i].delay, data[i].initialDelay);
         }
     }
 }

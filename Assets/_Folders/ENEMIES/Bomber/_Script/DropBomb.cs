@@ -37,7 +37,7 @@ public class DropBomb : MonoBehaviour
 
 
 
-
+    private bool hasEnteredTriggerArea = false;
 
 
     [SerializeField] private SpriteRenderer propellar;
@@ -54,6 +54,8 @@ public class DropBomb : MonoBehaviour
     private int currentDropArea = 0;
 
     private float propTime = 0;
+
+    private int sideSwitchInteger = 1;
 
 
 
@@ -90,26 +92,37 @@ public class DropBomb : MonoBehaviour
 
     private bool hasInitialized = false;
 
+    private Vector3 nomralScale;
+
+    private void Awake()
+    {
+        nomralScale = transform.localScale;
+        dropZone = Instantiate(dropZonePrefab).GetComponent<DropZone>();
+        dropZone.gameObject.SetActive(false);
+
+    }
     void Start()
     {
 
-        ID.finsihedDrop = false;
 
 
-        dropZone = Instantiate(dropZonePrefab).GetComponent<DropZone>();
-        dropZone.gameObject.SetActive(false);
+
+
 
 
         // pool = PoolKit.GetPool("ExplosionPool");
 
-        xPos = Random.Range(minX, maxX);
+        // xPos = Random.Range(minX, maxX);
+        if (!hasInitialized)
+        {
+            if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
+            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger);
+
+            StartCoroutine(BomberStart());
+            hasInitialized = true;
+        }
 
 
-
-        dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier);
-
-        StartCoroutine(BomberStart());
-        hasInitialized = true;
 
 
 
@@ -122,6 +135,7 @@ public class DropBomb : MonoBehaviour
         //     pooledBombs.Enqueue(tmp);
         // }
     }
+
 
     void Update()
     {
@@ -215,9 +229,10 @@ public class DropBomb : MonoBehaviour
 
         if (enter)
         {
-            transform.eulerAngles = new Vector3(0, transform.rotation.y, StartRot);
-            Vector3 endRot = new Vector3(0, transform.rotation.y, 0);
-            transform.position = new Vector2(xDropPosition + xDistanceFromZone, StartY);
+            Debug.LogError("Enter Tween started");
+            transform.eulerAngles = new Vector3(0, 0, StartRot * sideSwitchInteger);
+            Vector3 endRot = new Vector3(0, 0, 0);
+            transform.position = new Vector2(xDropPosition + (xDistanceFromZone * sideSwitchInteger), StartY);
 
 
 
@@ -282,51 +297,52 @@ public class DropBomb : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.gameObject.CompareTag("DropZone"))
+        if (collider.gameObject.CompareTag("DropZone") && !hasEnteredTriggerArea)
         {
-            ID.finsihedDrop = false;
+            hasEnteredTriggerArea = true;
             dropping = true;
             StartCoroutine(DropBombs());
-
         }
     }
 
-    private void Testwait()
+    private void OnDisable()
     {
-        ID.finsihedDrop = true;
-
-
+        DOTween.Kill(this);
+        StopAllCoroutines();
     }
+
 
     private void OnEnable()
     {
-
-
+        enteredZone = false;
+        bomberGoing = false;
+        hasEnteredTriggerArea = false;
+        if (speedTarget < 0)
+        {
+            sideSwitchInteger = -1;
+            transform.localScale = new Vector3(-nomralScale.x, nomralScale.y, nomralScale.z);
+        }
+        else
+        {
+            sideSwitchInteger = 1;
+            transform.localScale = nomralScale;
+        }
         speedEnd = speedTarget;
         speedStart = speedTarget * startSpeedMultiplier;
         speed = speedStart;
 
-
         if (hasInitialized)
         {
-            ID.finsihedDrop = false;
+            if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
 
-
-            // dropZone = Instantiate(dropZonePrefab).GetComponent<DropZone>();
-            // dropZone.gameObject.SetActive(false);
-
-
-            // pool = PoolKit.GetPool("ExplosionPool");
-
-
-
-
-
-            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier);
+            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger);
 
             StartCoroutine(BomberStart());
-
         }
+
+
+
+
 
     }
 
@@ -349,12 +365,14 @@ public class DropBomb : MonoBehaviour
     private IEnumerator DropBombs()
     {
         int dropCount = 2;
+
+        if (sideSwitchInteger == -1) dropCount = 0;
         while (dropping)
         {
             // pool.Spawn("bomberBomb", dropArea.transform.position, bombRotation);
 
-            pool.GetBomb(dropArea.transform.position, bombRotation, dropCount, true);
-            dropCount--;
+            pool.GetBomb(dropArea.transform.position, bombRotation * sideSwitchInteger, dropCount, true);
+            if (sideSwitchInteger == 1) dropCount--;
 
             yield return new WaitForSeconds(.1f);
             AudioManager.instance.PlayBombDroppedSound();
@@ -364,11 +382,11 @@ public class DropBomb : MonoBehaviour
         StartCoroutine(SwitchDropAreaSprite());
         yield return new WaitForSeconds(.2f);
         // TweenWhileDropping(false);
-        Vector3 endRot = new Vector3(0, transform.rotation.y, -StartRot);
+        Vector3 endRot = new Vector3(0, 0, -StartRot * sideSwitchInteger);
         dropZone.FadeOut();
 
         transform.DOLocalMoveY(StartY, exitDuration).SetEase(Ease.InBack);
-        transform.DORotate(endRot, exitDuration);
+        transform.DORotate(endRot, exitDuration).OnComplete(() => gameObject.SetActive(false));
 
     }
 

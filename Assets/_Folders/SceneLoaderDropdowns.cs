@@ -18,6 +18,10 @@ namespace KingdomOfNight
         public static void LoadEnemyVideo() { OpenScene("Assets/scenes/Levels/EnemyVideo.unity"); }
         [MenuItem("Scenes/Levels/Level1")]
         public static void LoadLevel1() { OpenScene("Assets/scenes/Levels/Level1.unity"); }
+        [MenuItem("Scenes/Levels/Level10")]
+        public static void LoadLevel10() { OpenScene("Assets/scenes/Levels/Level10.unity"); }
+        [MenuItem("Scenes/Levels/Level11")]
+        public static void LoadLevel11() { OpenScene("Assets/scenes/Levels/Level11.unity"); }
         [MenuItem("Scenes/Levels/Level2")]
         public static void LoadLevel2() { OpenScene("Assets/scenes/Levels/Level2.unity"); }
         [MenuItem("Scenes/Levels/Level3")]

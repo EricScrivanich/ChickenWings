@@ -91,9 +91,9 @@ public class PigMovementBasic : MonoBehaviour
             gameObject.SetActive(false);
         }
         initialY = transform.position.y;
-        anim.speed = 0;
+        // anim.speed = 0;
 
-        Invoke("SetAnimSpeed", Random.Range(0f, .5f));
+        // Invoke("SetAnimSpeed", Random.Range(0f, .5f));
 
 
         body.localScale = new Vector3(.75f - Mathf.Abs(transform.localScale.x) + 1, 1, 1);

@@ -184,6 +184,7 @@ public class SetupPlacer : MonoBehaviour
                 obj.transform.parent = EnemySetupTransform;
                 var script = obj.GetComponent<GasPig>();
                 script.speed = gasPigDataItem.speed;
+                script.initialDelay = gasPigDataItem.initialDelay;
                 script.delay = gasPigDataItem.delay;
 
             }

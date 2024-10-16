@@ -8,6 +8,8 @@ public class GasCloud : MonoBehaviour
 {
 
     [SerializeField] private AnimationDataSO animData;
+    [SerializeField] private float maxYSpeed;
+
 
     private readonly int spriteCount = 3;
 
@@ -15,7 +17,18 @@ public class GasCloud : MonoBehaviour
 
     private readonly float spriteSwitchTime = .1f;
     private float time = 0;
-    private readonly float tweenTime = .7f;
+    private readonly float tweenTime = .6f;
+    private Rigidbody2D rb;
+    private float endSpeed;
+    private float forceAdded = .7f;
+    private float forceAddedVar;
+    private bool hitTarget = false;
+
+    private bool flipped;
+
+
+
+
 
 
 
@@ -24,14 +37,73 @@ public class GasCloud : MonoBehaviour
     private void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Start()
     {
         float startX = transform.localPosition.x;
-        transform.DOScale(animData.endScale, tweenTime).From(animData.startScale).SetEase(Ease.OutSine);
-        transform.DOLocalMoveX(startX + 1.7f, .5f).SetEase(Ease.OutSine);
-        transform.DOMoveY(7f, 6.5f);
+
+        // transform.DOLocalMoveX(startX + 1.7f, .5f).SetEase(Ease.OutSine);
+        // transform.DOMoveY(7f, 6.5f);
+    }
+
+    private void OnDisable()
+    {
+        DOTween.Kill(this);
+    }
+
+    public void Eject(float endSpeedVar, bool f)
+    {
+        flipped = f;
+        gameObject.SetActive(true);
+        float rand = Random.Range(.95f, 1.05f);
+
+
+        transform.DOScale(animData.endScale * rand, tweenTime).From(animData.startScale).SetEase(Ease.InSine);
+
+        rb.angularVelocity = Random.Range(-60, 60);
+
+        if (flipped)
+        {
+            rb.velocity = Vector2.left * (rand - endSpeedVar) * 1.8f;
+            forceAddedVar = -forceAdded;
+        }
+        else
+        {
+            rb.velocity = Vector2.right * (.05f);
+            forceAddedVar = forceAdded + .35f + Random.Range(.1f, .2f);
+        }
+
+
+        endSpeed = endSpeedVar;
+
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+
+        SmokeTrailPool.GetGasCloudHitParicles(transform.position);
+        gameObject.SetActive(false);
+
+    }
+
+    private void FixedUpdate()
+    {
+
+
+        rb.AddForce(Vector2.left * forceAddedVar);
+
+        if (transform.position.y > 7) gameObject.SetActive(false);
+
+        if (!flipped)
+            rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, endSpeed, 5), Mathf.Clamp(rb.velocity.y, -3, maxYSpeed));
+
+        else
+            rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -10, endSpeed), Mathf.Clamp(rb.velocity.y, -3, maxYSpeed));
+
+
     }
 
     // Update is called once per frame

@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class ExplosivesPool : ScriptableObject
 {
-    private readonly int bombPoolSize = 9;
+    private readonly int bombPoolSize = 14;
     private readonly int balloonBombPoolSize = 8;
 
     [SerializeField] private GameObject bombPrefab;
@@ -47,7 +47,9 @@ public class ExplosivesPool : ScriptableObject
     {
         bombPool[currentBombIndex].transform.position = pos;
         bombPool[currentBombIndex].transform.eulerAngles = rot;
-        bombPool[currentBombIndex].GetBomb(force, dropped);
+        int side = 1;
+        if (rot.z < 0) side = -1;
+        bombPool[currentBombIndex].GetBomb(force, dropped, side);
         currentBombIndex++;
 
         if (currentBombIndex >= bombPoolSize)

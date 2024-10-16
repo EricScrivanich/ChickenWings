@@ -176,9 +176,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eee1955817bd44f4b5036cf1a1d5496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetimeDuration: 0.3
+  lifetimeDuration: 0.33
   moveDownSpeed: 3
-  moveDirectionSpeed: {x: 0.5, y: -3}
+  moveDirectionSpeed: {x: -2.3, y: -3}
 --- !u!330 &9121674317351976282
 ParticleSystemForceField:
   m_ObjectHideFlags: 0
@@ -188,9 +188,9 @@ ParticleSystemForceField:
   m_GameObject: {fileID: 3148713029437857749}
   m_Enabled: 1
   m_Parameters:
-    m_Shape: 0
+    m_Shape: 3
     m_StartRange: 0
-    m_EndRange: 1.2140617
+    m_EndRange: 1.27
     m_Length: 1
     m_GravityFocus: 0
     m_RotationRandomness: {x: 0, y: 0}
@@ -356,7 +356,7 @@ ParticleSystemForceField:
     m_GravityCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -4.02
+      scalar: -2.26
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -515,7 +515,7 @@ ParticleSystemForceField:
     m_DragCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.33
       minScalar: 0
       maxCurve:
         serializedVersion: 2

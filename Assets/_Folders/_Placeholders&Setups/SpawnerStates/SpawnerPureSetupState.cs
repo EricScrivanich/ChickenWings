@@ -69,6 +69,8 @@ public class SpawnerPureSetupState : SpawnBaseState
             {
                 spawner.ChangePureSetupIndex(spawner.CurrentPureSetup + 1);
                 spawner.SwitchStateWithLogic();
+
+                if (ignoreTriggerReset) currentTrigger = 0;
             }
 
         }

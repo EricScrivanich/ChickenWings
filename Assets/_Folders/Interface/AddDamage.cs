@@ -19,11 +19,11 @@ public class AddDamage : MonoBehaviour
 
 
 
-        if (collider.gameObject.CompareTag("SolidEnemy"))
-        {
+        // if (collider.gameObject.CompareTag("SolidEnemy"))
+        // {
             
-            ID.events.HitBoss?.Invoke();
-        }
+        //     ID.events.HitBoss?.Invoke();
+        // }
     }
 
 

@@ -107,6 +107,8 @@ public struct GasPigData
     public float speed;
 
     public float delay;
+
+    public float initialDelay;
 }
 
 [System.Serializable]

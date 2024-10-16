@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class GasPig : MonoBehaviour
 {
+    public float speed;
+    public float delay = 0;
+    public float initialDelay;
 
 
-    [SerializeField] private GameObject cloud;
-
+    [HideInInspector]
     public int id;
 
     private bool hasCrossedBoundary;
+
+    private bool flipped;
 
 
 
@@ -20,8 +24,7 @@ public class GasPig : MonoBehaviour
 
     private Animator anim;
 
-    public float speed;
-    public float delay = 0;
+
 
     private float testTimer = 0;
 
@@ -36,10 +39,12 @@ public class GasPig : MonoBehaviour
     }
 
 
-    public void Initialize(float s, float d)
+    public void Initialize(float s, float d, bool f, float startDelay)
     {
         speed = s;
         delay = d;
+        flipped = f;
+        initialDelay = startDelay;
         hasCrossedBoundary = false;
 
         gameObject.SetActive(true);
@@ -54,6 +59,7 @@ public class GasPig : MonoBehaviour
         {
             transform.localScale = BoundariesManager.vectorThree1;
             anim.SetTrigger("Walk");
+            StartCoroutine(CloudRoutine());
 
         }
     }
@@ -77,15 +83,15 @@ public class GasPig : MonoBehaviour
                 hasCrossedBoundary = true;
             }
         }
-        else if (!flying && !hasCrossedBoundary)
-        {
-            if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
-            {
-                StartCoroutine(CloudRoutine());
-                hasCrossedBoundary = true;
-            }
+        // else if (!flying && !hasCrossedBoundary)
+        // {
+        //     if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
+        //     {
+        //         StartCoroutine(CloudRoutine());
+        //         hasCrossedBoundary = true;
+        //     }
 
-        }
+        // }
 
 
 
@@ -93,20 +99,44 @@ public class GasPig : MonoBehaviour
 
     private IEnumerator CloudRoutine()
     {
-        yield return new WaitForSeconds(Random.Range(0f, delay));
+        yield return new WaitForSeconds(initialDelay);
 
         while (true)
         {
 
+            // if (Mathf.Abs(transform.position.x) > BoundariesManager.rightBoundary)
+            // {
+            //     yield return new WaitForSeconds(.2f + delay);
+
+
+            // }
+            // else
+            // {
+            //     anim.SetTrigger("FartTrigger");
+            //     yield return new WaitForSeconds(.1f);
+            //     AudioManager.instance.PlayFartSound();
+            //     yield return new WaitForSeconds(.1f);
+
+
+            //     // Instantiate(cloud, cloudSpawn.position, Quaternion.identity, transform);
+            //     SmokeTrailPool.GetGasCloud?.Invoke(cloudSpawn.position, -speed, flipped);
+
+            //     yield return new WaitForSeconds(delay);
+
+            // }
 
             anim.SetTrigger("FartTrigger");
             yield return new WaitForSeconds(.1f);
-            AudioManager.instance.PlayFartSound();
+            if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
+                AudioManager.instance.PlayFartSound();
             yield return new WaitForSeconds(.1f);
 
 
-            Instantiate(cloud, cloudSpawn.position, Quaternion.identity, transform);
+            // Instantiate(cloud, cloudSpawn.position, Quaternion.identity, transform);
+            SmokeTrailPool.GetGasCloud?.Invoke(cloudSpawn.position, -speed, flipped);
+
             yield return new WaitForSeconds(delay);
+
 
         }
 

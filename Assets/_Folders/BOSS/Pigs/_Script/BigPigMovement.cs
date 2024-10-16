@@ -74,20 +74,20 @@ public class BigPigMovement : MonoBehaviour
 
     void Update()
     {
-        if (speed > 0)
-        {
-            if (transform.position.x < BoundariesManager.leftBoundary)
-            {
-                gameObject.SetActive(false);
-            }
-        }
-        else
-        {
-            if (transform.position.x > BoundariesManager.rightBoundary)
-            {
-                gameObject.SetActive(false);
-            }
-        }
+        // if (speed > 0)
+        // {
+        //     if (transform.position.x < BoundariesManager.leftBoundary)
+        //     {
+        //         gameObject.SetActive(false);
+        //     }
+        // }
+        // else
+        // {
+        //     if (transform.position.x > BoundariesManager.rightBoundary)
+        //     {
+        //         gameObject.SetActive(false);
+        //     }
+        // }
 
         if (transform.position.y < (initialY - distanceToFlap))
         {

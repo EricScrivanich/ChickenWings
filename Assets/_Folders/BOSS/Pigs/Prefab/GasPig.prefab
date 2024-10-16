@@ -386,7 +386,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: b31dfc1138fa44559b027dca08cea363, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -408,10 +408,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9004762adc53453d99347e66c5c26c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ejectForce: 1
+  cloudCatchupSpeed: 0.7
   cloud: {fileID: 7501168065405726369, guid: 68a59a5ecd9804041b0d81d6becae83d, type: 3}
+  id: 0
   cloudSpawn: {fileID: 2891602274514134490}
   speed: 0
   delay: 0
+  flying: 0
 --- !u!114 &1997734468212161575
 MonoBehaviour:
   m_ObjectHideFlags: 0
