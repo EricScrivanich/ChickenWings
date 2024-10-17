@@ -47,9 +47,14 @@ MonoBehaviour:
   - dataArray:
     - rid: 3115821659791294662
     - rid: 3115821659791294663
+  - dataArray:
+    - rid: 3115821722793672711
+  - dataArray:
+    - rid: 3115821722793672712
+    - rid: 3115821722793672713
   collectableSetup: []
   isRandomSetup: 0
-  testFromTrigger: 1
+  testFromTrigger: 0
   startTestTrigger: 10
   ignoreXTriggetTime: 1
   XTriggerForRecording: 0
@@ -282,3 +287,57 @@ MonoBehaviour:
           yForce: 6.5
           distanceToFlap: 1.5
           startingFallSpot: 0
+    - rid: 3115821722793672711
+      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 7.5
+        data:
+        - position: {x: 17.523993, y: 1.7026656}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1
+          bladeSpeed: -120
+          heightMultiplier: 0
+        - position: {x: 26.6, y: 1.7026656}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1
+          bladeSpeed: -120
+          heightMultiplier: 0
+        - position: {x: 35.79, y: 1.7026656}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1
+          bladeSpeed: -120
+          heightMultiplier: 0
+    - rid: 3115821722793672712
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 6
+        data:
+        - position: {x: 27.81, y: 4.50167}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 5.6
+        - position: {x: 35.29, y: 4.23}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 5.4
+    - rid: 3115821722793672713
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 15.71, y: 2.21}
+          scale: {x: 0.95, y: 0.95, z: 0.95}
+          speed: 4
+          yForce: 6.3
+          distanceToFlap: 1.1
+          startingFallSpot: 0
+        - position: {x: 20.9, y: -2.32}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4
+          yForce: 6.1
+          distanceToFlap: 0.9
+          startingFallSpot: 0
+        - position: {x: 24.81, y: 1.86}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4
+          yForce: 6.1
+          distanceToFlap: 0.9
+          startingFallSpot: -1

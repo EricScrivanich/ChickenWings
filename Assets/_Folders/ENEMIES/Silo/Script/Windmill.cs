@@ -14,6 +14,8 @@ public class Windmill : MonoBehaviour
     public float bladeSpeed;
     public float heightMultiplier;
 
+    
+
     [SerializeField] private Vector2 minMaxWindSoundDelay;
     [SerializeField] private Vector2 minMaxWindSpeed;
     private float windMillSoundDelay;
