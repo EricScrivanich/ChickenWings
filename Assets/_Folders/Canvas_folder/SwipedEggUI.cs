@@ -67,36 +67,29 @@ public class SwipedEggUI : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
-    {
 
-        // Debug.Log("material is: " + eggMaterial);
-
-        // if (initialEgg)
-        // {
-
-        //     isActive = true;
-        //     // parentScript.SetJoystick(eggIMG.rectTransform, currentType);
-        //     currentType = 0;
-
-        //     text.text = player.Ammo.ToString();
-        //     Debug.LogError("Stating ammo is; " + player.Ammo);
-        //     player.events.OnEggDrop += EggPressed;
-
-        //     player.globalEvents.OnUpdateAmmo += UpdateAmmo;
-
-        // }
-
-
-    }
 
     private void Awake()
     {
+
         parentScript = GetComponentInParent<EggAmmoDisplay>();
         rect = GetComponent<RectTransform>();
         text.color = new Color(colorSO.normalButtonColor.r, colorSO.normalButtonColor.g, colorSO.normalButtonColor.b, 1);
         originalEggPos = eggIMG.rectTransform.localPosition.y;
 
+
+    }
+
+    private void Start()
+    {
+        if (currentType == 1)
+        {
+            if (player.ShotgunAmmo == 0)
+            {
+                OnZero = true;
+                FlashAmmoTween(false);
+            }
+        }
 
     }
 
@@ -213,7 +206,7 @@ public class SwipedEggUI : MonoBehaviour
                 mul = -1;
 
             }
-            rect.DORotate(-startRotation * mul, .1f).OnComplete(() => gameObject.SetActive(false));
+            rect.DORotate(-startRotation * mul, .1f).SetUpdate(true).OnComplete(() => gameObject.SetActive(false));
         }
 
 
@@ -273,7 +266,7 @@ public class SwipedEggUI : MonoBehaviour
         // gameObject.SetActive(true);
         // rotationSeq.Append(rect.DORotate(-middleRotation * mul, .2f));
         rotationSeq.Append(rect.DORotate(Vector3.zero, rotateInDuration).SetEase(Ease.OutBack));
-        rotationSeq.Play();
+        rotationSeq.Play().SetUpdate(true);
 
         player.events.OnSwitchAmmoType?.Invoke(type);
 

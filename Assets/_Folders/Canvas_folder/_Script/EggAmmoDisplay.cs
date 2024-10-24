@@ -11,6 +11,8 @@ using System;
 
 public class EggAmmoDisplay : MonoBehaviour
 {
+    [SerializeField] private bool ignoreShotgun;
+    [SerializeField] private bool startHidden;
     private Image buttonImage;
     public static Action<int, int> SwitchAmmoEvent;
     public static Action<int> EquipAmmoEvent;
@@ -172,14 +174,14 @@ public class EggAmmoDisplay : MonoBehaviour
         }
 
 
-        if (shotgunOnZeroAmmo && normalOnZeroAmmo)
+        if ((shotgunOnZeroAmmo && normalOnZeroAmmo) || startHidden)
         {
             currentAmmoType = 0;
             allAmmoZero = true;
 
 
 
-            HideEggButtonEvent?.Invoke(true);
+            EggAmmoDisplay.HideEggButtonEvent?.Invoke(true);
 
 
         }
@@ -235,8 +237,8 @@ public class EggAmmoDisplay : MonoBehaviour
         {
             player.events.OnSwitchAmmoType?.Invoke(0);
             Debug.LogError("Hiding Egg button");
-            scopeRect.DOLocalMoveY(scopeRect.localPosition.y - 420, .3f);
-            swipeRects.DOLocalMoveY(swipeRects.localPosition.y - 420, .3f).OnComplete(() => buttonImage.enabled = false);
+            scopeRect.DOLocalMoveY(scopeRect.localPosition.y - 420, .3f).SetUpdate(true);
+            swipeRects.DOLocalMoveY(swipeRects.localPosition.y - 420, .3f).SetUpdate(true).OnComplete(() => buttonImage.enabled = false);
 
             // if (currentAmmoType >= 0)
             //     eggs[currentAmmoType].UnEquip(false, currentAmmoType);
@@ -273,7 +275,7 @@ public class EggAmmoDisplay : MonoBehaviour
                 {
                     eggs[1].UnEquip(false, 1);
                     eggs[0].Equip(false, 0);
-                    Debug.Log("Doing what i thought");
+
                     EggAmmoDisplay.EquipAmmoEvent(0);
                     EggAmmoDisplay.UnequipAmmoEvent(1);
 
@@ -293,8 +295,8 @@ public class EggAmmoDisplay : MonoBehaviour
             }
 
 
-            scopeRect.DOLocalMoveY(scopeRect.localPosition.y + 420, .3f).SetEase(Ease.OutBack);
-            swipeRects.DOLocalMoveY(swipeRects.localPosition.y + 420, .3f);
+            scopeRect.DOLocalMoveY(scopeRect.localPosition.y + 420, .3f).SetUpdate(true).SetEase(Ease.OutBack);
+            swipeRects.DOLocalMoveY(swipeRects.localPosition.y + 420, .3f).SetUpdate(true);
             // if (currentAmmoType < 0)
             //     currentAmmoType = 0;
             // eggs[currentAmmoType].Equip(false, currentAmmoType);
@@ -342,13 +344,13 @@ public class EggAmmoDisplay : MonoBehaviour
                 // normalOnZeroAmmo = true;
                 // ignoreTweenFinish = true;
 
-                if (shotgunOnZeroAmmo)
+                if (shotgunOnZeroAmmo && (!startHidden || ignoreShotgun))
                 {
                     EggAmmoDisplay.HideEggButtonEvent?.Invoke(true);
 
 
                 }
-                else if (currentAmmoType == type)
+                else if (currentAmmoType == type && (!startHidden || ignoreShotgun))
                 {
                     // eggs[0].UnEquip(false, 0);
                     // eggs[1].Equip(false, 1);
@@ -364,11 +366,11 @@ public class EggAmmoDisplay : MonoBehaviour
                 // ignoreTweenFinish = true;
 
 
-                if (normalOnZeroAmmo)
+                if (normalOnZeroAmmo && (!startHidden || ignoreShotgun))
                 {
                     EggAmmoDisplay.HideEggButtonEvent?.Invoke(true);
                 }
-                else if (currentAmmoType == type)
+                else if (currentAmmoType == type && (!startHidden || ignoreShotgun))
                 {
                     // eggs[1].UnEquip(false, 0);
                     // eggs[0].Equip(false, 1);
@@ -723,7 +725,7 @@ public class EggAmmoDisplay : MonoBehaviour
 
     public void RotateChamber(bool clockwise)
     {
-        if (holdingShotgunButton) return;
+        if (holdingShotgunButton || ignoreShotgun) return;
         onZero = true;
 
         int lastEgg = currentAmmoType;

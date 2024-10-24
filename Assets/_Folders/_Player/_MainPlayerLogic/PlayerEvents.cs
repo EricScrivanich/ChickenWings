@@ -18,7 +18,7 @@ public struct PlayerEvents
     // public Action<bool> FloorCollsion;
     public Action OnEggDrop;
 
-    
+
     public Action<bool> OnAttack;
     public Action<Transform> OnCompletedRingSequence;
 

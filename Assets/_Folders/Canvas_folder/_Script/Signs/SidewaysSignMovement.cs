@@ -7,6 +7,7 @@ public class SidewaysSignMovement : MonoBehaviour
 {
     [SerializeField] private RectTransform target;
     [SerializeField] private LevelManagerID lvlID;
+    
 
     public int TipSignIndex;
 

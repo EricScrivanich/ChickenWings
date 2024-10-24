@@ -15,6 +15,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Audio Sources")]
     [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSource chickenSource;
     [SerializeField] private AudioSource nonSlowSource;
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource ringPassSource;
@@ -36,8 +37,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip slowMotionExit;
     [SerializeField] private AudioClip shotgunReload;
     [SerializeField] private AudioClip shotgunBlast;
-    [SerializeField] private AudioClip shotgunShell;
-    [SerializeField] private AudioClip shotgunFutureBlast;
+    // [SerializeField] private AudioClip shotgunShell;
+    // [SerializeField] private AudioClip shotgunFutureBlast;
     [SerializeField] private AudioClip[] shotgunShells;
 
 
@@ -83,11 +84,15 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip errorSound;
     [SerializeField] private AudioClip levelFinishSound;
     [SerializeField] private AudioClip starHitSound;
+    [SerializeField] private AudioClip blobEnterSound;
+    [SerializeField] private AudioClip blobExitSound;
 
 
 
 
     [Header("Volumes")]
+    [SerializeField] private float blobEnterVolume;
+    [SerializeField] private float blobExitVolume;
     [SerializeField] private float longFartVolume;
     [SerializeField] private float levelFinishVolume;
     [SerializeField] private float bucketSuccessVolume;
@@ -136,10 +141,13 @@ public class AudioManager : MonoBehaviour
 
     private bool canPlayJetPackNoise = true;
     private bool canPlayWindmillNoise = true;
+    private bool canPlayBombNoise = true;
     private float jetPackNoiseTime;
     private float windmillNoiseTime;
+    private float bombNoiseTime;
     private readonly float minJetPackNoiseDelay = .15f;
-    private readonly float minWindmillNoiseDelay = .15f;
+    private readonly float minWindmillNoiseDelay = .25f;
+    private readonly float minBombNoiseDelay = .15f;
 
 
 
@@ -200,6 +208,19 @@ public class AudioManager : MonoBehaviour
 
         }
 
+        if (!canPlayBombNoise)
+        {
+            bombNoiseTime += Time.deltaTime;
+
+            if (bombNoiseTime > minBombNoiseDelay)
+            {
+                canPlayBombNoise = true;
+                bombNoiseTime = 0;
+
+            }
+
+        }
+
     }
     public void SlowMotionPitch(bool isSlow)
     {
@@ -218,6 +239,12 @@ public class AudioManager : MonoBehaviour
 
         }
 
+    }
+
+    public void PlayBlobNoise(bool enter)
+    {
+        if (enter) audioSource.PlayOneShot(blobEnterSound, blobEnterVolume);
+        else audioSource.PlayOneShot(blobExitSound, blobExitVolume);
     }
 
     public void PlayLevelFinishSounds(int type)
@@ -268,7 +295,10 @@ public class AudioManager : MonoBehaviour
 
     public void PlayBombDroppedSound()
     {
+
         audioSource.PlayOneShot(bombDropped, bombDroppedVolume);
+
+
     }
 
     public void PlayBombLaunchSound()
@@ -296,6 +326,7 @@ public class AudioManager : MonoBehaviour
         pigAudioSource.pitch = newPitch;
         audioSource.pitch = newPitch;
         newPitchSlow = newPitch;
+        chickenSource.pitch = newPitch;
 
         windMillAudioSource.pitch = currentWindmillPitch * newPitch;
     }
@@ -348,15 +379,15 @@ public class AudioManager : MonoBehaviour
 
 
                 break;
-            case (2):
-                audioSource.PlayOneShot(shotgunShell);
+                // case (2):
+                //     audioSource.PlayOneShot(shotgunShell);
 
 
-                break;
-            case (3):
-                audioSource.PlayOneShot(shotgunFutureBlast);
+                //     break;
+                // case (3):
+                //     audioSource.PlayOneShot(shotgunFutureBlast);
 
-                break;
+                //     break;
         }
     }
 
@@ -418,8 +449,13 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayBombExplosionSound()
     {
+        if (canPlayBombNoise)
+        {
+            audioSource.PlayOneShot(bombExplosionSound, bombExplosionVolume);
+            canPlayBombNoise = false;
+        }
 
-        audioSource.PlayOneShot(bombExplosionSound, bombExplosionVolume);
+
     }
 
     public void PlaySwordSlashSound()
@@ -443,16 +479,16 @@ public class AudioManager : MonoBehaviour
 
         // Choose a random cluck sound from the array
         int randomIndex = Random.Range(0, cluckSounds.Length);
-        audioSource.PlayOneShot(cluckSounds[randomIndex], cluckVolume);
+        chickenSource.PlayOneShot(cluckSounds[randomIndex], cluckVolume);
     }
-    public void PlayFlipSound()
-    {
-        // Choose a random cluck sound from the array
-        int randomIndex = Random.Range(0, flipSounds.Length);
+    // public void PlayFlipSound()
+    // {
+    //     // Choose a random cluck sound from the array
+    //     int randomIndex = Random.Range(0, flipSounds.Length);
 
 
-        audioSource.PlayOneShot(flipSounds[randomIndex], flipVolume);
-    }
+    //     .PlayOneShot(flipSounds[randomIndex], flipVolume);
+    // }
 
     public void PlayDeathSound()
     {
@@ -467,18 +503,18 @@ public class AudioManager : MonoBehaviour
 
     public void PlayDownJumpSound()
     {
-        audioSource.PlayOneShot(downJump, downJumpVolume);
+        chickenSource.PlayOneShot(downJump, downJumpVolume);
     }
 
     public void PlayBounceSound()
     {
-        audioSource.Stop();
-        audioSource.PlayOneShot(bounce, bounceVolume);
+        chickenSource.Stop();
+        chickenSource.PlayOneShot(bounce, bounceVolume);
     }
 
     public void PlayDashSound()
     {
-        audioSource.PlayOneShot(dash, dashVolume);
+        chickenSource.PlayOneShot(dash, dashVolume);
     }
     public void PlayCrackSound(int type = 0)
     {

@@ -53,7 +53,7 @@ public class MoveToPosition : MonoBehaviour
         }
     }
 
-    
+
 
     public void MoveFromEvent()
     {
@@ -63,6 +63,13 @@ public class MoveToPosition : MonoBehaviour
 
 
 
+    }
+
+    public void OtherMoveFromEvent()
+    {
+        rectTransform.anchoredPosition = startPosition; // Set the start position directly
+        rectTransform.DOAnchorPos(endPosition, duration).SetEase(Ease.OutSine).SetUpdate(true);
+        hasMoved = true;
     }
 
 

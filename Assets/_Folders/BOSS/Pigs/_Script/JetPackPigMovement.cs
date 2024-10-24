@@ -8,6 +8,8 @@ public class JetPackPigMovement : MonoBehaviour
     private bool hasPlayedAudio;
     private float finishedTime;
 
+    private bool hasInitialized = false;
+
     [HideInInspector]
     public int id;
 
@@ -28,14 +30,16 @@ public class JetPackPigMovement : MonoBehaviour
             AudioManager.instance.PlayPigJetPackSound();
             hasPlayedAudio = true;
 
-
-
         }
     }
 
     private void OnDisable()
     {
-        if (Mathf.Abs(transform.position.x) < BoundariesManager.rightPlayerBoundary)
+        if (!hasInitialized)
+        {
+            hasInitialized = true;
+        }
+        else if (Mathf.Abs(transform.position.x) < BoundariesManager.rightPlayerBoundary)
             SmokeTrailPool.OnDisableSmokeTrail?.Invoke(id);
     }
 

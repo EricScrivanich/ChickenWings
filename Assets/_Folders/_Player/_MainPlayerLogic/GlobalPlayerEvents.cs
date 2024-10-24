@@ -70,5 +70,7 @@ public struct GlobalPlayerEvents
 
     public Action OnOffScreen;
 
+    public Action OnFinishedLevel;
+
 
 }

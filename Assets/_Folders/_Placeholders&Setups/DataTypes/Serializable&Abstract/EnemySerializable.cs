@@ -94,7 +94,7 @@ public struct WindMillData
     public float bladeScaleMultiplier;
     public float bladeSpeed;
 
-    public float heightMultiplier;
+    public int startRot;
 
 
 }

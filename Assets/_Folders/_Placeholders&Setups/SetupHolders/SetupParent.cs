@@ -100,6 +100,7 @@ public class SetupParent : ScriptableObject
                 set.InitializeEnemy(manager);
                 tempList.Add(set.TimeToTrigger);
             }
+            Debug.LogError("Ring Trigger: " + randomRingTrigger + "Ring Index in trigger: " + randomRingSetupInTrigger + "Enemy Trigger: " + randomEnemyTrigger);
 
         }
 

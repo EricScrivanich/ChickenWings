@@ -2,10 +2,25 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class PopUpsDisplay : MonoBehaviour
 {
+
     public PlayerID ID;
+    [SerializeField] private SceneManagerSO sceneSO;
+
+    [Header("Level Title Display")]
+    [SerializeField] private GameObject LevelNamePrefab;
+
+    [SerializeField] private float fadeInDuration = 1f; // Duration of the fade-in
+    [SerializeField] private float fadeOutDuration = 1f; // Duration of the fade-out
+    [SerializeField] private float displayDuration = 3f; // How long to display the text before fading out
+    [SerializeField] private float textMoveDuration = 1f; // Duration for the text to move to the target position
+    [SerializeField] private Vector2 textTargetPosition;
+    [SerializeField] private Ease moveInEase;
+
+
 
     [SerializeField] private bool showScore;
 
@@ -30,8 +45,8 @@ public class PopUpsDisplay : MonoBehaviour
     [SerializeField] private Material frozenMaterial;
 
 
-    [SerializeField] private float fadeInDuration = .9f;
-    [SerializeField] private float fadeOutDuration = .2f;
+    private float fadeInDurationFroz = .9f;
+    private float fadeOutDurationFroz = .2f;
     [SerializeField] private float frozenTime = .2f;
 
     // New variable for fade amount of frozenOverlayMaterial
@@ -42,7 +57,86 @@ public class PopUpsDisplay : MonoBehaviour
 
         // gameOver.gameObject.SetActive(false);
         Frozen.SetActive(false);
+        bool isLevel = true;
 
+        string s = SceneManager.GetActiveScene().name;
+        int levelNum = 0;
+
+        for (int i = 0; i < sceneSO.LevelsCount(); i++)
+        {
+            if (sceneSO.ReturnSceneNameLevel(i) == s)
+            {
+                levelNum = i;
+            }
+
+        }
+
+        if (levelNum == 0)
+        {
+            for (int i = 0; i < sceneSO.LevelsCount(); i++)
+            {
+
+                if (sceneSO.ReturnSceneNameGameMode(i) == s)
+                {
+
+                    levelNum = i;
+                    isLevel = false;
+                    break;
+
+                }
+
+            }
+
+        }
+
+        if (levelNum > 0 || !isLevel)
+        {
+            LvlID.inputEvent.OnGetLevelNumber?.Invoke(levelNum);
+            var textObj = Instantiate(LevelNamePrefab, Vector2.zero, Quaternion.identity, gameObject.GetComponentInParent<Transform>());
+            TextMeshProUGUI textLevelName = textObj.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI textLevelNum = textObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
+
+            if (isLevel)
+            {
+                textLevelNum.text = "Level " + levelNum.ToString();
+                textLevelName.text = sceneSO.ReturnLevelName(levelNum);
+            }
+            else
+            {
+                textLevelNum.text = "";
+                textTargetPosition *= 1.1f;
+                displayDuration *= .6f;
+                textMoveDuration *= .7f;
+                textLevelName.text = sceneSO.ReturnGameModeName(levelNum);
+            }
+
+
+            Sequence textSequence = DOTween.Sequence();
+
+            // Move the text from the top of the screen to the target position
+            RectTransform textRectTransform = textLevelName.GetComponent<RectTransform>();
+            textRectTransform.anchoredPosition = new Vector2(0, Screen.height);
+
+            // Add tweens to the sequence
+            textSequence
+                // Fade in both text objects
+                .Append(textLevelName.DOFade(1, fadeInDuration))
+                .Join(textLevelNum.DOFade(1, fadeInDuration))
+
+                // Move the text to the target position
+                .Join(textRectTransform.DOAnchorPos(textTargetPosition, textMoveDuration).SetEase(moveInEase))
+
+                // Keep the text on screen for displayDuration
+                .AppendInterval(displayDuration)
+
+                // Fade out both text objects
+                .Append(textLevelName.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine)
+                .Join(textLevelNum.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine);
+
+            textSequence.Play().SetUpdate(true);
+
+        }
 
     }
 
@@ -123,7 +217,7 @@ public class PopUpsDisplay : MonoBehaviour
         float elapsedTime = 0;
         while (elapsedTime < fadeInDuration)
         {
-            float fadeAmount = Mathf.Lerp(1, 0, elapsedTime / fadeInDuration);
+            float fadeAmount = Mathf.Lerp(1, 0, elapsedTime / fadeInDurationFroz);
             frozenMaterial.SetFloat("_FadeAmount", fadeAmount);
 
             elapsedTime += Time.deltaTime;
@@ -138,7 +232,7 @@ public class PopUpsDisplay : MonoBehaviour
         float elapsedTime = 0;
         while (elapsedTime < fadeOutDuration)
         {
-            float fadeAmount = Mathf.Lerp(0, 1, elapsedTime / fadeOutDuration);
+            float fadeAmount = Mathf.Lerp(0, 1, elapsedTime / fadeOutDurationFroz);
             frozenMaterial.SetFloat("_FadeAmount", fadeAmount);
 
             elapsedTime += Time.deltaTime;

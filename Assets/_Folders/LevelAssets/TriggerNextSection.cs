@@ -5,8 +5,12 @@ using DG.Tweening;
 
 public class TriggerNextSection : MonoBehaviour
 {
-    [SerializeField] private int setCheckPoint;
 
+    private SpriteRenderer spriteRen;
+
+
+    [SerializeField] private int setCheckPoint;
+    private bool ignoreTrigger;
     [SerializeField] private bool continueLockedInputs;
     [SerializeField] private int activateSection;
     [SerializeField] private bool useContactPoint;
@@ -89,16 +93,20 @@ public class TriggerNextSection : MonoBehaviour
     {
         suctionObject.SetActive(isSuction);
         noneInp[0] = "none";
+        lvlID.CreateBlobBurst();
 
 
         GetComponent<SpriteRenderer>().enabled = false;
         playerTransform = GameObject.Find("Player").GetComponent<Transform>();
+        spriteRen = GetComponent<SpriteRenderer>();
 
 
     }
     private void Awake()
     {
+
         col = GetComponent<Collider2D>();
+        ignoreTrigger = false;
         col.enabled = !isSuction;
         isCheckPoint = false;
 
@@ -114,9 +122,16 @@ public class TriggerNextSection : MonoBehaviour
 
     public void TriggerEventOnEnterSuction()
     {
+
         if (triggerEventOnEnterSuction != null)
+        {
+            Debug.LogError("WE HSOIUDL WORK");
             triggerEventOnEnterSuction.TriggerEvent();
+
+        }
+
     }
+
 
     private void HandleSectionActivication(bool show)
     {
@@ -134,22 +149,39 @@ public class TriggerNextSection : MonoBehaviour
 
     }
 
+    public void SpecialEnter()
+    {
+        ignoreTrigger = true;
+        EnterSection();
+    }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (ignoreTrigger) return;
+
         if (useContactPoint)
             setPlayerPositionTransform = other.transform;
 
         // Alternatively, if you need to set it to a specific point on the player's transform:
         // setPlayerPositionTransform = player.transform.position;
         if (tweenPlayerBool)
+        {
+
             player.globalEvents.OnEnterNextSectionTrigger?.Invoke(0, duration, clockwise, transform, setPlayerPositionTransform.position, tweenPlayerBool);
+
+        }
+
 
         else Time.timeScale = 0;
         EnterSection();
 
 
     }
+
+
+
+
 
     private void HandleOnCheckpoint(int id)
     {
@@ -177,7 +209,7 @@ public class TriggerNextSection : MonoBehaviour
     private IEnumerator DelayToActivateSectionsAndPlayer(float delay)
     {
         yield return new WaitForSecondsRealtime(delay);
-       
+
         player.globalEvents.OnEnterNextSectionTrigger?.Invoke(0, 0, clockwise, transform, setPlayerPositionTransform.position, tweenPlayerBool);
         lvlID.outputEvent.ShowSection?.Invoke(setCheckPoint - 1, true);
         ReadyForExitAndPressButtons(true);
@@ -258,9 +290,29 @@ public class TriggerNextSection : MonoBehaviour
     {
 
     }
+    public void ExitSuction()
+    {
+        Vector2 direction = playerTransform.position - transform.position;
+
+        // Calculate the angle in degrees, and add 90 degrees to rotate the sprite
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+
+        lvlID.GetBlobBurst(transform.position, angle);
+        AudioManager.instance.PlayBlobNoise(false);
+
+        this.gameObject.SetActive(false);
+    }
+
 
     private void ExitSection()
     {
+        if (isSuction)
+        {
+
+            Invoke("ExitSuction", .1f);
+
+        }
         if (isCheckPoint)
             lvlID.outputEvent.ShowSection?.Invoke(setCheckPoint - 1, false);
         else
@@ -273,7 +325,7 @@ public class TriggerNextSection : MonoBehaviour
         }
         lvlID.outputEvent.SetPressButtonText?.Invoke(false, 0, "");
         Time.timeScale = 1;
-        this.gameObject.SetActive(false);
+        // this.gameObject.SetActive(false);
 
         if (setActiveAfterDelayObjects.Length > 0)
         {

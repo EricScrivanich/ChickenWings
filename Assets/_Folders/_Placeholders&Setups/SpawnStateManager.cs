@@ -176,15 +176,27 @@ public class SpawnStateManager : MonoBehaviour
 
         SpawnPools();
 
+#if UNITY_EDITOR
+        bool isTesting = false;
         for (int i = 0; i < pureSetups.Length; i++)
         {
             if (pureSetups[i].testFromTrigger)
             {
+                isTesting = true;
                 Debug.Log("Set new trigger for testing, Index of: " + i + " trigger is: " + pureSetups[i].CheckIfTesting());
                 currentPureSetup = i;
                 pureSetupState.SetNewCurrentTrigger(pureSetups[i].CheckIfTesting());
             }
         }
+
+        if (isTesting)
+        {
+            GameObject.Find("SetupRecorderParent").SetActive(false);
+            startingStateDelay = 0;
+
+        }
+
+#endif
 
         if (startingState > -1)
         {
@@ -249,6 +261,7 @@ public class SpawnStateManager : MonoBehaviour
     // }
     public int NextRingType()
     {
+        if (transitionLogic.ringSpawnSetTypeOrder == null) return 0;
         if (currentSetRingOrderIndex > transitionLogic.ringSpawnSetTypeOrder.Length - 1)
             currentSetRingOrderIndex = 0;
         if (transitionLogic.ringSpawnSetTypeOrder != null && transitionLogic.ringSpawnSetTypeOrder.Length > 0)
@@ -929,7 +942,7 @@ public class SpawnStateManager : MonoBehaviour
         siloIndex++;
     }
 
-    public void GetWindMill(Vector2 position, int bladeAmount, float bladeScaleMultiplier, float bladeSpeed, float heightMultiplier)
+    public void GetWindMill(Vector2 position, int bladeAmount, float bladeScaleMultiplier, float bladeSpeed, int startRot)
     {
         if (windMillIndex >= windMills.Length) windMillIndex = 0;
         Windmill windMill = windMills[windMillIndex];
@@ -937,7 +950,7 @@ public class SpawnStateManager : MonoBehaviour
         windMill.bladeAmount = bladeAmount;
         windMill.bladeScaleMultiplier = bladeScaleMultiplier;
         windMill.bladeSpeed = bladeSpeed;
-        windMill.heightMultiplier = heightMultiplier;
+        windMill.startRot = startRot;
         windMill.gameObject.SetActive(true);
         windMillIndex++;
     }

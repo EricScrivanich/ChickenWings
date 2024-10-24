@@ -93,8 +93,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
 
         if (isMana)
         {
-            eggSinFrequency = Random.Range(.4f, .75f);
-            eggSinAmplitude = Random.Range(.5f, .9f);
+
             blur.sprite = blurImage[1];
             startColor = blueColorStart;
             endColor = blueColorEnd;
@@ -103,8 +102,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
 
         else if (!isThreeAmmo)
         {
-            eggSinFrequency = Random.Range(.1f, .5f);
-            eggSinAmplitude = Random.Range(.3f, .7f);
+
             blur.sprite = blurImage[0];
 
 
@@ -115,8 +113,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         }
         else if (isThreeAmmo)
         {
-            eggSinFrequency = Random.Range(.4f, .75f);
-            eggSinAmplitude = Random.Range(.5f, .9f);
+
             blur.sprite = blurImage[0];
 
 
@@ -128,9 +125,16 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
 
         if (speedVar == 0)
         {
+            eggSinFrequency = Random.Range(.4f, .75f);
+            eggSinAmplitude = Random.Range(.5f, .9f);
             speed = Random.Range(5.5f, 7.6f);
         }
-        else speed = speedVar;
+        else
+        {
+            speed = speedVar;
+            eggSinFrequency = .4f;
+            eggSinAmplitude = .5f;
+        }
 
         yPos = transform.position.y;
         mainSprite.enabled = true;

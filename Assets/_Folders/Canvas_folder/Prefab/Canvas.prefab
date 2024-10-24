@@ -9437,25 +9437,53 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3336118132710116098}
     - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: sceneSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
+    - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
       propertyPath: lerpTime
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
       propertyPath: showScore
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
       propertyPath: frozenTime
       value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: moveInEase
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
       propertyPath: fadeInDuration
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
       propertyPath: frozenMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 2b6b2ad5b9b684c04901f814f7bddc92, type: 2}
+    - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: LevelNamePrefab
+      value: 
+      objectReference: {fileID: 8210711121648878857, guid: ad4468f54522446c0be6db13d108b460, type: 3}
+    - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: displayDuration
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: fadeOutDuration
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: textMoveDuration
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: textTargetPosition.y
+      value: 350
+      objectReference: {fileID: 0}
     - target: {fileID: 380991197594460456, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
       propertyPath: frozenOverlayMaterial
       value: 

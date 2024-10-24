@@ -36,8 +36,8 @@ MonoBehaviour:
   - dataArray:
     - rid: 3115821659791294485
   - dataArray:
-    - rid: 3115821659791294487
-    - rid: 3115821659791294488
+    - rid: 3115821742093762673
+    - rid: 3115821742093762674
   - dataArray:
     - rid: 3115821659791294507
   - dataArray:
@@ -190,30 +190,6 @@ MonoBehaviour:
         - xDropPosition: 3.9
           dropAreaScaleMultiplier: 1.3
           speedTarget: 8
-    - rid: 3115821659791294487
-      type: {class: MissilePigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 9
-        data:
-        - position: {x: 17.4, y: -3.8125098}
-          missileType: 0
-          movementType: 3
-        - position: {x: 22.85, y: -3.8125098}
-          missileType: 0
-          movementType: 3
-        - position: {x: 29.07, y: -3.86}
-          missileType: 0
-          movementType: 3
-    - rid: 3115821659791294488
-      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - position: {x: 16.28, y: 2.88}
-          bladeAmount: 3
-          bladeScaleMultiplier: 1.1
-          bladeSpeed: -70
-          heightMultiplier: 0
     - rid: 3115821659791294492
       type: {class: HotAirBalloonSO, ns: , asm: Assembly-CSharp}
       data:
@@ -310,3 +286,27 @@ MonoBehaviour:
         - xDropPosition: -5.5
           dropAreaScaleMultiplier: 1.25
           speedTarget: -6.5
+    - rid: 3115821742093762673
+      type: {class: MissilePigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 9
+        data:
+        - position: {x: 17.4, y: -3.8125098}
+          missileType: 0
+          movementType: 3
+        - position: {x: 22.85, y: -3.8125098}
+          missileType: 0
+          movementType: 3
+        - position: {x: 29.07, y: -3.86}
+          missileType: 0
+          movementType: 3
+    - rid: 3115821742093762674
+      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 16.28, y: 2.11}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1.1
+          bladeSpeed: -70
+          startRot: 0

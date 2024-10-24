@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections.Generic;
+using Lofelt.NiceVibrations;
 
 public class SpecialStateInputSystem : MonoBehaviour
 {
@@ -12,7 +13,18 @@ public class SpecialStateInputSystem : MonoBehaviour
     [SerializeField] private bool useDash;
     [SerializeField] private bool useDrop;
     [SerializeField] private bool useEgg;
+    [SerializeField] private bool useShotgun;
+
+    private bool usingShotgun = false;
     private bool fillAllMana = false;
+
+
+    private bool earlyDropReady;
+    private bool earlyDashReady;
+    private bool earlyDashTriggered;
+    private bool stillHoldingDash;
+    private bool earlyDropTried;
+    private bool earlyDashTried;
 
 
     private Color originalButtonColor;
@@ -28,6 +40,8 @@ public class SpecialStateInputSystem : MonoBehaviour
     private Coroutine dropButtonCor;
     private Sequence dashButtonSeq;
     private bool coolingDownDrop;
+
+    private bool eggButtonHidden = false;
 
     private List<string> inputsTracked = new List<string>();
 
@@ -154,6 +168,8 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
 
+
+
         controls = new InputController();
 
         // Bind existing actions to methods
@@ -164,11 +180,17 @@ public class SpecialStateInputSystem : MonoBehaviour
               if (!trackingInputs)
               {
                   ID.events.OnJump?.Invoke();
+                  HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
               }
               else if (CheckInputs("Jump"))
               {
                   if (!startedHold)
+                  {
                       ID.events.OnJump?.Invoke();
+                      HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
+                  }
+
                   else
                   {
                       Time.timeScale = 1;
@@ -186,17 +208,22 @@ public class SpecialStateInputSystem : MonoBehaviour
               }
           };
 
-        if (useFlips) controls.Movement.JumpRight.started += ctx =>
+        if (useFlips) controls.Movement.JumpRight.performed += ctx =>
         {
             if (!ButtonsEnabled) return;
             if (!trackingInputs)
             {
                 ID.events.OnFlipRight?.Invoke(true);
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
             }
             else if (CheckInputs("FlipRight"))
             {
                 if (!startedHold)
+                {
                     ID.events.OnFlipRight?.Invoke(true);
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                }
+
                 else
                 {
                     Time.timeScale = 1;
@@ -226,17 +253,22 @@ public class SpecialStateInputSystem : MonoBehaviour
             }
         };
 
-        if (useFlips) controls.Movement.JumpLeft.started += ctx =>
+        if (useFlips) controls.Movement.JumpLeft.performed += ctx =>
         {
             if (!ButtonsEnabled) return;
             if (!trackingInputs)
             {
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
                 ID.events.OnFlipLeft?.Invoke(true);
             }
             else if (CheckInputs("FlipLeft"))
             {
                 if (!startedHold)
+                {
                     ID.events.OnFlipLeft?.Invoke(true);
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                }
+
                 else
                 {
                     Time.timeScale = 1;
@@ -278,6 +310,7 @@ public class SpecialStateInputSystem : MonoBehaviour
                 if (canDash)
                 {
                     ID.events.OnDash?.Invoke(true);
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
                 }
                 else if (canDashSlash)
                 {
@@ -292,6 +325,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             {
                 if (canDash && !startedHold)
                 {
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
                     ID.events.OnDash?.Invoke(true);
                 }
                 else if (!canDashSlash && startedHold)
@@ -342,6 +376,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             {
                 if (canDrop)
                 {
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
                     ID.events.OnDrop?.Invoke();
                     StartCoroutine(DropCooldown());
                 }
@@ -350,6 +385,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             {
                 if (canDrop)
                 {
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
                     ID.events.OnDrop?.Invoke();
                     StartCoroutine(DropCooldown());
                 }
@@ -358,23 +394,22 @@ public class SpecialStateInputSystem : MonoBehaviour
             }
         };
 
-        if (useEgg) controls.Movement.DropEgg.performed += ctx =>
+
+
+        controls.Movement.EggJoystick.performed += ctx =>
         {
-            if (!ButtonsEnabled) return;
-            if (!trackingInputs)
-            {
-                ID.events.OnEggDrop?.Invoke();
-            }
-            else if (CheckInputs("Egg"))
-            {
-                var player = GetComponent<PlayerStateManager>();
-                player.EnterIdleStateWithVel(new Vector2(0, .5f));
-                ID.events.OnEggDrop?.Invoke();
+            float xMoveAmount = ctx.ReadValue<Vector2>().x;
+            if (xMoveAmount < -.25f)
+                ID.events.OnAimJoystick(1);
+            else if (xMoveAmount > .25f)
+                ID.events.OnAimJoystick(-1);
 
-                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
 
-            }
+            // ID.events.OnAimJoystick(ctx.ReadValue<Vector2>());
         };
+        // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
+        controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
+
 
 
         controls.Movement.JumpHold.performed += ctx =>
@@ -395,6 +430,73 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         };
 
+        // if (useEgg) controls.Movement.DropEgg.performed += ctx =>
+        // {
+        //     if (!ButtonsEnabled) return;
+        //     if (!trackingInputs)
+        //     {
+        //         ID.events.OnEggDrop?.Invoke();
+        //     }
+        //     else if (CheckInputs("Egg"))
+        //     {
+        //         var player = GetComponent<PlayerStateManager>();
+        //         player.EnterIdleStateWithVel(new Vector2(0, .5f));
+        //         ID.events.OnEggDrop?.Invoke();
+
+        //         if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+
+        //     }
+        // };
+
+
+        controls.Movement.DropEgg.performed += ctx =>
+       {
+           if (ButtonsEnabled && !eggButtonHidden)
+           {
+
+               if (!trackingInputs)
+               {
+                   if (!usingShotgun)
+                   {
+                       ID.events.OnEggDrop?.Invoke();
+                   }
+
+                   else if (usingShotgun)
+                       ID.events.OnAttack?.Invoke(true);
+
+               }
+               else if (!usingShotgun && CheckInputs("Egg"))
+               {
+                   var player = GetComponent<PlayerStateManager>();
+                   player.EnterIdleStateWithVel(new Vector2(0, .5f));
+                   ID.events.OnEggDrop?.Invoke();
+
+                   if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+               }
+               else if (usingShotgun && CheckInputs("Shotgun"))
+               {
+                   ID.events.OnAttack?.Invoke(true);
+                   if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+
+               }
+               // ID.globalEvents.OnEggButton?.Invoke(true);
+
+           }
+       };
+
+        controls.Movement.DropEgg.canceled += ctx =>
+       {
+           if (usingShotgun)
+               ID.events.OnAttack?.Invoke(false);
+       };
+
+        controls.Movement.SwitchAmmoRight.performed += ctx =>
+     {
+         if (!eggButtonHidden)
+             ID.globalEvents.OnSwitchAmmo?.Invoke(false);
+     };
+
+
 
 
 
@@ -413,6 +515,12 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
     }
+
+    private void HideEggButton(bool hidden)
+    {
+        eggButtonHidden = hidden;
+    }
+
 
     private void FillAllMana()
     {
@@ -444,7 +552,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         }
         if (useEgg)
         {
-            eggImage = GameObject.Find("EggButton").GetComponent<Image>();
+            eggImage = GameObject.Find("ScopeFill").GetComponent<Image>();
         }
         if (useDrop && GameObject.Find("DropButton") != null)
         {
@@ -549,6 +657,16 @@ public class SpecialStateInputSystem : MonoBehaviour
         mustHold = false;
         startedHold = false;
         trackingInputs = false;
+    }
+
+
+    private void SetUsingShotgun(int type)
+    {
+        if (type == 1)
+            usingShotgun = true;
+        else
+            usingShotgun = false;
+
     }
 
 
@@ -799,7 +917,7 @@ public class SpecialStateInputSystem : MonoBehaviour
     {
         coolingDownDash = true;
         canDash = false;
-      
+
 
         if (manaFull)
         {
@@ -810,7 +928,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         }
         else
         {
-           
+
             yield return new WaitForSeconds(dashTimeLeft);
 
             IconTween(2);
@@ -1277,6 +1395,9 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
         ID.globalEvents.CanDashSlash += ExitDash;
+
+        ID.globalEvents.OnHideEggButton += HideEggButton;
+        ID.events.OnSwitchAmmoType += SetUsingShotgun;
         if (manaUsed)
             ID.globalEvents.OnGetMana += GatherMana;
     }
@@ -1288,6 +1409,8 @@ public class SpecialStateInputSystem : MonoBehaviour
         ID.events.EnableButtons -= ActivateButtons;
         ID.globalEvents.OnSetInputs -= SetInputs;
         ID.globalEvents.FillPlayerMana -= FillAllMana;
+        ID.globalEvents.OnHideEggButton -= HideEggButton;
+        ID.events.OnSwitchAmmoType -= SetUsingShotgun;
 
 
         ID.events.OnDash -= HandleDashNew;

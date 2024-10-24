@@ -20,6 +20,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
 
 
+
     [SerializeField] private float addUpForceMinY;
     [SerializeField] private float addUpForceAmountBlinded;
     [SerializeField] private float addUpForceAmount;
@@ -253,7 +254,13 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
     private void OnEnable()
     {
+        // rb.simulated = false;
+        // rb.simulated = true;
+        transform.eulerAngles = Vector3.zero;
+        rb.velocity = Vector2.zero;
+
         player.globalEvents.OnPlayerVelocityChange += UpdateTargetPosition;
+        // Debug.LogError($"Pooled Enemy - ScaleFactor: {scaleFactor}, Mass: {rb.mass}, Velocity: {rb.velocity}");
         waitingOnDelay = true;
 
         transform.localScale = BoundariesManager.vectorThree1 * scaleFactor;
@@ -372,9 +379,10 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         }
 
 
-        if (blinded && blindDurationVar > blindDurationVar * .35f && transform.position.y < -3)
+        if (blinded && blindDurationVar > blindDurationVar * .5f && transform.position.y < -2.5)
         {
             rb.AddForce(Vector2.up * addUpForceAmountBlinded);
+            Debug.LogError("Adding blinded up force of: " + Vector2.up * addUpForceAmountBlinded + " with duration of: " + blindDurationVar * .5f);
             return;
 
         }
@@ -466,7 +474,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         //     }
         // }
 
-        if (futurePosition.y < -3.7f)
+        if (futurePosition.y < -3.4f)
             futurePosition = new Vector2(futurePosition.x, playerTarget.position.y + 2.5f);
 
         targetPosition = futurePosition;
@@ -526,17 +534,23 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
         if (blinded)
         {
-            moveFreeDuration = moveFreeDurationEgg + .2f;
-            // rb.velocity = Vector2.zero;
-            rb.velocity *= .4f;
-            rb.AddForce(Vector2.down * eggForceMagnitude * 1.25f, ForceMode2D.Impulse);
+            moveFreeDuration = moveFreeDurationEgg + .15f;
+            rb.velocity = Vector2.zero;
+            // rb.velocity *= .4f;
+            rb.AddForce(Vector2.down * eggForceMagnitude * 1.28f, ForceMode2D.Impulse);
         }
         else
         {
-            rb.velocity *= .3f;
+            // rb.velocity *= .2f;
+            rb.velocity = Vector2.zero;
+
             moveFreeDuration = moveFreeDurationEgg;
             rb.AddForce(Vector2.down * eggForceMagnitude, ForceMode2D.Impulse);
+
+            Debug.LogError("Force added is: " + (Vector2.down * eggForceMagnitude) + "New Velocity is: " + rb.velocity);
         }
+
+        Debug.LogError("Move free duration is: " + moveFreeDuration);
 
         inverseDirection = Vector2.zero;
         moveFree = true;

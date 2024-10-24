@@ -8,6 +8,9 @@ public class SpawnerPureSetupState : SpawnBaseState
     private bool canContinueToNextSetup;
     private bool hasFinishedFullSetup;
 
+    private bool failedRings;
+    private bool setupDone = false;
+
     private bool completedRings;
     private int ringTypeSpawned;
 
@@ -18,8 +21,17 @@ public class SpawnerPureSetupState : SpawnBaseState
     {
         hasFinishedFullSetup = false;
         canContinueToNextSetup = false;
+        setupDone = false;
+        failedRings = false;
         if (!ignoreTriggerReset)
+        {
             currentTrigger = 0;
+        }
+        else
+            ignoreTriggerReset = false;
+
+
+
         // spawner.currentRingType = spawner.currentRandomSpawnIntensityData.GetRingTypeIndex();
 
         if (spawner.pureSetups[spawner.CurrentPureSetup] != null)
@@ -60,7 +72,12 @@ public class SpawnerPureSetupState : SpawnBaseState
 
     public override void SetupHitTarget(SpawnStateManager spawner)
     {
-        if (currentTrigger >= spawner.pureSetups[spawner.CurrentPureSetup].collectableTriggerCount
+        setupDone = true;
+        if (failedRings && spawner.pureSetups[spawner.CurrentPureSetup].mustCompleteRingSequence)
+        {
+            spawner.SwitchStateWithLogic();
+        }
+        else if (currentTrigger >= spawner.pureSetups[spawner.CurrentPureSetup].collectableTriggerCount
 && currentTrigger >= spawner.pureSetups[spawner.CurrentPureSetup].enemyTriggerCount && !hasFinishedFullSetup)
         {
             hasFinishedFullSetup = true;
@@ -70,7 +87,7 @@ public class SpawnerPureSetupState : SpawnBaseState
                 spawner.ChangePureSetupIndex(spawner.CurrentPureSetup + 1);
                 spawner.SwitchStateWithLogic();
 
-                if (ignoreTriggerReset) currentTrigger = 0;
+
             }
 
         }
@@ -102,9 +119,7 @@ public class SpawnerPureSetupState : SpawnBaseState
                     {
                         spawner.ChangePureSetupIndex(spawner.CurrentPureSetup + 1);
                         spawner.SwitchStateWithLogic();
-
                     }
-
                     else
                         canContinueToNextSetup = true;
                 }
@@ -112,13 +127,15 @@ public class SpawnerPureSetupState : SpawnBaseState
             }
             else
             {
-                spawner.SwitchStateWithLogic();
+                // spawner.SwitchStateWithLogic();
+                failedRings = true;
+
+                if (setupDone)
+                {
+                    spawner.SwitchStateWithLogic();
+                }
 
             }
-
-
-
-
         }
 
     }

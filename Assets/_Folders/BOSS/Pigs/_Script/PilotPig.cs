@@ -88,15 +88,16 @@ public class PilotPig : MonoBehaviour
         {
             transform.eulerAngles = new Vector3(0, 180, 0);
         }
-        
+
         rb.velocity = new Vector2(-initialSpeed, 0);
 
-        
 
+        if (xTrigger == 0) xTrigger = transform.position.x;
 
 
         switch (flightMode)
         {
+
             case 0:
                 // Implement logic for GlideUp
                 anim.SetBool("GlidingUpBool", true);

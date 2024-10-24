@@ -752,7 +752,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 0.8
-  m_LinearDrag: 1
+  m_LinearDrag: 1.05
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -860,10 +860,10 @@ MonoBehaviour:
   blindedTime: 2.2
   sprite: {fileID: 6540167693371364994}
   addUpForceMinY: -2.9
-  addUpForceAmountBlinded: 4.8
-  addUpForceAmount: 3.5
+  addUpForceAmountBlinded: 5.2
+  addUpForceAmount: 3.8
   bounceForceMagnitude: 4
-  eggForceMagnitude: 6.5
+  eggForceMagnitude: 8.4
   moveFreeDurationBounce: 0.3
   moveFreeDurationEgg: 0.1
   moveFreeDurationInverse: 0.7

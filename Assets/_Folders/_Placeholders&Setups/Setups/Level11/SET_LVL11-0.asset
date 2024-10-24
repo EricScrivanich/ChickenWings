@@ -38,20 +38,20 @@ MonoBehaviour:
     - rid: 3115821659791294645
     - rid: 3115821659791294646
   - dataArray:
-    - rid: 3115821659791294644
+    - rid: 3115821742093762560
   - dataArray:
     - rid: 3115821659791294649
     - rid: 3115821659791294650
   - dataArray:
-    - rid: 3115821659791294659
+    - rid: 3115821742093762562
   - dataArray:
-    - rid: 3115821659791294662
-    - rid: 3115821659791294663
+    - rid: 3115821742093762563
+    - rid: 3115821742093762564
   - dataArray:
-    - rid: 3115821722793672711
+    - rid: 3115821742093762561
   - dataArray:
-    - rid: 3115821722793672712
-    - rid: 3115821722793672713
+    - rid: 3115821742093762594
+    - rid: 3115821742093762595
   collectableSetup: []
   isRandomSetup: 0
   testFromTrigger: 0
@@ -104,12 +104,12 @@ MonoBehaviour:
           bladeAmount: 3
           bladeScaleMultiplier: 1.15
           bladeSpeed: -120
-          heightMultiplier: 0
+          startRot: 0
         - position: {x: 25.35, y: 1.23}
           bladeAmount: 3
           bladeScaleMultiplier: 1
           bladeSpeed: 130
-          heightMultiplier: 0
+          startRot: 0
     - rid: 3115821659791294627
       type: {class: BomberPlaneSO, ns: , asm: Assembly-CSharp}
       data:
@@ -176,21 +176,6 @@ MonoBehaviour:
           yTarget: 3.7
           speed: -2.8
           delay: 0.3
-    - rid: 3115821659791294644
-      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 5.6
-        data:
-        - position: {x: 16.68, y: 1}
-          bladeAmount: 3
-          bladeScaleMultiplier: 1.11
-          bladeSpeed: 130
-          heightMultiplier: 0
-        - position: {x: 28.34, y: 1}
-          bladeAmount: 3
-          bladeScaleMultiplier: 1.11
-          bladeSpeed: 130
-          heightMultiplier: 0
     - rid: 3115821659791294645
       type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -236,23 +221,58 @@ MonoBehaviour:
           yForce: 8
           maxYSpeed: 4
           xTrigger: 12
-    - rid: 3115821659791294659
+    - rid: 3115821742093762560
+      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.6
+        data:
+        - position: {x: 16.68, y: 1}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1.11
+          bladeSpeed: 130
+          startRot: 0
+        - position: {x: 28.34, y: 1}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1.11
+          bladeSpeed: 130
+          startRot: 60
+    - rid: 3115821742093762561
+      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 7.5
+        data:
+        - position: {x: 17.523993, y: 1.7026656}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1.1
+          bladeSpeed: -120
+          startRot: 0
+        - position: {x: 26.6, y: 1.7026656}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1.1
+          bladeSpeed: -120
+          startRot: 40
+        - position: {x: 35.79, y: 1.7026656}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1.1
+          bladeSpeed: -120
+          startRot: 80
+    - rid: 3115821742093762562
       type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 6
         data:
         - position: {x: 21.16, y: 0.91}
           scale: {x: 0.87, y: 0.8, z: 1}
-          speed: 10.2
-        - position: {x: 21.38872, y: -0.21698636}
+          speed: 10
+        - position: {x: 21.88, y: -0.21698636}
           scale: {x: 0.87, y: 0.8, z: 1}
-          speed: 10.2
-        - position: {x: 21.63872, y: -2.8200002}
+          speed: 10
+        - position: {x: 22.27, y: -2.8200002}
           scale: {x: 0.87, y: 0.8, z: 1}
-          speed: 10.2
+          speed: 10
         - position: {x: 21.88872, y: -3.9700003}
           scale: {x: 0.87, y: 0.8, z: 1}
-          speed: 10.2
+          speed: 10
         - position: {x: -39.31, y: 0.62}
           scale: {x: 0.87, y: 0.8, z: 1}
           speed: -8
@@ -265,18 +285,18 @@ MonoBehaviour:
         - position: {x: -39.99, y: -1.99}
           scale: {x: 0.87, y: 0.8, z: 1}
           speed: -8
-    - rid: 3115821659791294662
+    - rid: 3115821742093762563
       type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 6
         data:
-        - position: {x: 31.81, y: 3.17}
+        - position: {x: 32.41, y: 1.53}
           scale: {x: 0.87, y: 0.87, z: 0.87}
           speed: 6.2
-        - position: {x: 35.219997, y: 1.6728096}
+        - position: {x: 35.819996, y: 0.032809496}
           scale: {x: 0.87, y: 0.87, z: 0.87}
           speed: 6.2
-    - rid: 3115821659791294663
+    - rid: 3115821742093762564
       type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 0
@@ -287,27 +307,7 @@ MonoBehaviour:
           yForce: 6.5
           distanceToFlap: 1.5
           startingFallSpot: 0
-    - rid: 3115821722793672711
-      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 7.5
-        data:
-        - position: {x: 17.523993, y: 1.7026656}
-          bladeAmount: 3
-          bladeScaleMultiplier: 1
-          bladeSpeed: -120
-          heightMultiplier: 0
-        - position: {x: 26.6, y: 1.7026656}
-          bladeAmount: 3
-          bladeScaleMultiplier: 1
-          bladeSpeed: -120
-          heightMultiplier: 0
-        - position: {x: 35.79, y: 1.7026656}
-          bladeAmount: 3
-          bladeScaleMultiplier: 1
-          bladeSpeed: -120
-          heightMultiplier: 0
-    - rid: 3115821722793672712
+    - rid: 3115821742093762594
       type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 6
@@ -318,7 +318,7 @@ MonoBehaviour:
         - position: {x: 35.29, y: 4.23}
           scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
           speed: 5.4
-    - rid: 3115821722793672713
+    - rid: 3115821742093762595
       type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 0
@@ -335,7 +335,7 @@ MonoBehaviour:
           yForce: 6.1
           distanceToFlap: 0.9
           startingFallSpot: 0
-        - position: {x: 24.81, y: 1.86}
+        - position: {x: 25.41, y: 2.34}
           scale: {x: 0.9, y: 0.9, z: 0.9}
           speed: 4
           yForce: 6.1

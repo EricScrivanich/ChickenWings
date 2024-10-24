@@ -188,6 +188,9 @@ public class PlayerStateManager : MonoBehaviour
     public bool isParachuting = false;
     [HideInInspector]
     public bool isTryingToParachute = false;
+    [HideInInspector]
+    // public bool ignoreParticleCollision = false;
+
     private bool justDashedSlashed;
     private bool canDash;
     private bool shotgunReleased = false;
@@ -195,7 +198,6 @@ public class PlayerStateManager : MonoBehaviour
     private bool startedAim = false;
     private bool movingJoystick = false;
     private bool ignoreChainedShotgunReset;
-
     private bool canShootShotgun = true;
     private bool inSlowMo = false;
     private float dropCooldownTime = 2f;
@@ -281,7 +283,7 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        AudioManager.instance.SlowAudioPitch(1);
         playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
         playerBoundaries.enabled = false;
         jumpAir = new Queue<GameObject>();
@@ -335,7 +337,7 @@ public class PlayerStateManager : MonoBehaviour
         attackObject.SetActive(false);
         // originalGravityScale = rb.gravityScale;
 
-        ID.events.EnableButtons(false);
+        ID.events.EnableButtons?.Invoke(false);
 
         currentState = StartingState;
 
@@ -743,7 +745,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
         if (stillDashing)
-            ID.events.EnableButtons(false);
+            ID.events.EnableButtons?.Invoke(false);
         DashState.SwitchSlash();
 
     }
@@ -879,6 +881,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void GetShotgunBlast()
     {
+        // ignoreParticleCollision = true;
         // Debug.LogError("Gettting blast");
         pool.Spawn("ShotgunBlast", blastPoint.position, shotgunObj.transform.rotation);
         AudioManager.instance.PlayShoutgunNoise(0);
@@ -1381,10 +1384,24 @@ public class PlayerStateManager : MonoBehaviour
 
     private void OnParticleCollision(GameObject other)
     {
+        // if (!isDamaged && !ignoreParticleCollision)
         if (!isDamaged)
         {
-            HandleDamaged();
-            SmokeTrailPool.GetPlayerParticleCollider?.Invoke(transform.position, rb.velocity);
+            if (ID.particleYPos != null && ID.particleYPos.Count > 0)
+            {
+                for (int i = 0; i < ID.particleYPos.Count; i++)
+                {
+                    // if (y == ID.particleYPos[i]) ID.particleYPos.Remove(i);
+                    if (Mathf.Abs(transform.position.y - ID.particleYPos[i]) < 1.08f)
+                    {
+                        HandleDamaged();
+                        SmokeTrailPool.GetPlayerParticleCollider?.Invoke(transform.position, rb.velocity);
+                        break;
+
+                    }
+
+                }
+            }
 
         }
 
@@ -1415,7 +1432,7 @@ public class PlayerStateManager : MonoBehaviour
         else
         {
 
-            ID.events.EnableButtons(false);
+            ID.events.EnableButtons?.Invoke(false);
             DropState.SwitchToBounce();
             // CameraShake.instance.ShakeCamera(.2f, .08f)
             SwitchState(BounceState);
@@ -1566,7 +1583,10 @@ public class PlayerStateManager : MonoBehaviour
     }
 
 
-
+    private void LevelFinished()
+    {
+        StopAllCoroutines();
+    }
 
 
     private void OnEnable()
@@ -1590,6 +1610,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnAttack += HandleNewSlash;
 
         ID.globalEvents.OnUseChainedAmmo += UsingChainedAmmo;
+        ID.globalEvents.OnFinishedLevel += LevelFinished;
 
 
         ID.globalEvents.OnAdjustConstantSpeed += ChangeConstantForce;
@@ -1605,6 +1626,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnAttack -= HandleNewSlash;
         ID.events.OnAimJoystick -= CalculateGlobalRotationTarget;
         ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;
+        ID.globalEvents.OnFinishedLevel -= LevelFinished;
+
 
 
 

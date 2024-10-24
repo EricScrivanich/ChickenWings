@@ -92,7 +92,7 @@ public class EggUnequippedParent : MonoBehaviour
         switchingAmmoSeq.Join(mainRect.DOLocalRotate(UnequippedParentPostionOnAmmoSwitch.eulerAngles, startAmmoSwitchTweenDuration));
         switchingAmmoSeq.Append(mainRect.DOLocalMove(mainRectStartPos.localPosition, endAmmoSwitchTweenDuration));
         switchingAmmoSeq.Join(mainRect.DOLocalRotate(Vector3.zero, endAmmoSwitchTweenDuration));
-        switchingAmmoSeq.Play().OnComplete(() => button.enabled = true);
+        switchingAmmoSeq.Play().SetUpdate(true).OnComplete(() => button.enabled = true);
     }
 
 
@@ -112,7 +112,7 @@ public class EggUnequippedParent : MonoBehaviour
 
 
 
-        eggs[type].DOLocalMove(eggEquippedAndHiddenPostion.localPosition, EquipDuration).SetEase(equipEase);
+        eggs[type].DOLocalMove(eggEquippedAndHiddenPostion.localPosition, EquipDuration).SetUpdate(true).SetEase(equipEase);
 
 
 
@@ -124,7 +124,7 @@ public class EggUnequippedParent : MonoBehaviour
         if (type < 0) return;
         Debug.Log("UNNNNEquippingAmmo");
 
-        eggs[type].DOLocalMove(eggUnequippedPosition1.localPosition, UnEquipDuration).SetEase(unEquipEase);
+        eggs[type].DOLocalMove(eggUnequippedPosition1.localPosition, UnEquipDuration).SetUpdate(true).SetEase(unEquipEase);
 
         Debug.Log("Moving egg: " + type + " to unequpped position: " + eggUnequippedPosition1.localPosition);
 
@@ -144,24 +144,24 @@ public class EggUnequippedParent : MonoBehaviour
             isShown = false;
             // EquipAmmo(currentEquippedAmmoType);
             // UnEquipAmmo(nonEquippedEgg);
-            mainRect.DOSizeDelta(new Vector2(startEndWidth.x, mainRect.sizeDelta.y), showButtonDuration).SetEase(showingButtonEase);
-            outlineRect.DOSizeDelta(new Vector2(startEndWidth.x, outlineRect.sizeDelta.y), showButtonDuration).SetEase(showingButtonEase);
+            mainRect.DOSizeDelta(new Vector2(startEndWidth.x, mainRect.sizeDelta.y), showButtonDuration).SetEase(showingButtonEase).SetUpdate(true);
+            outlineRect.DOSizeDelta(new Vector2(startEndWidth.x, outlineRect.sizeDelta.y), showButtonDuration).SetEase(showingButtonEase).SetUpdate(true);
 
-            mainRect.DOScale(startEndScale.x, showButtonDuration);
-            mainRect.DOLocalMoveX(mainRectStartPos.localPosition.x, showButtonDuration).SetEase(showingButtonEase);
+            mainRect.DOScale(startEndScale.x, showButtonDuration).SetUpdate(true);
+            mainRect.DOLocalMoveX(mainRectStartPos.localPosition.x, showButtonDuration).SetEase(showingButtonEase).SetUpdate(true);
 
         }
         else
         {
             isShown = true;
 
-            eggs[currentEquippedAmmoType].DOLocalMove(eggButtonHiddenPosition1.localPosition, hideButtonDuration);
-            eggs[nonEquippedEgg].DOLocalMove(eggButtonHiddenPosition2.localPosition, hideButtonDuration);
-            mainRect.DOSizeDelta(new Vector2(startEndWidth.y, mainRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase);
-            outlineRect.DOSizeDelta(new Vector2(startEndWidth.y, outlineRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase);
+            eggs[currentEquippedAmmoType].DOLocalMove(eggButtonHiddenPosition1.localPosition, hideButtonDuration).SetUpdate(true);
+            eggs[nonEquippedEgg].DOLocalMove(eggButtonHiddenPosition2.localPosition, hideButtonDuration).SetUpdate(true);
+            mainRect.DOSizeDelta(new Vector2(startEndWidth.y, mainRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase).SetUpdate(true);
+            outlineRect.DOSizeDelta(new Vector2(startEndWidth.y, outlineRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase).SetUpdate(true);
 
-            mainRect.DOScale(startEndScale.y, hideButtonDuration);
-            mainRect.DOLocalMoveX(mainRectHiddenButtonPosition.localPosition.x, hideButtonDuration).SetEase(hidingButtonEase);
+            mainRect.DOScale(startEndScale.y, hideButtonDuration).SetUpdate(true);
+            mainRect.DOLocalMoveX(mainRectHiddenButtonPosition.localPosition.x, hideButtonDuration).SetEase(hidingButtonEase).SetUpdate(true);
 
 
         }
@@ -185,13 +185,13 @@ public class EggUnequippedParent : MonoBehaviour
 
             if (currentEquippedAmmoType == 0)
                 nonEquippedEgg = 1;
-            eggs[currentEquippedAmmoType].DOLocalMove(eggButtonHiddenPosition1.localPosition, hideButtonDuration);
-            eggs[nonEquippedEgg].DOLocalMove(eggButtonHiddenPosition2.localPosition, hideButtonDuration);
-            mainRect.DOSizeDelta(new Vector2(startEndWidth.y, mainRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase);
-            outlineRect.DOSizeDelta(new Vector2(startEndWidth.y, outlineRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase);
+            eggs[currentEquippedAmmoType].DOLocalMove(eggButtonHiddenPosition1.localPosition, hideButtonDuration).SetUpdate(true);
+            eggs[nonEquippedEgg].DOLocalMove(eggButtonHiddenPosition2.localPosition, hideButtonDuration).SetUpdate(true);
+            mainRect.DOSizeDelta(new Vector2(startEndWidth.y, mainRect.sizeDelta.y), hideButtonDuration).SetUpdate(true).SetEase(hidingButtonEase);
+            outlineRect.DOSizeDelta(new Vector2(startEndWidth.y, outlineRect.sizeDelta.y), hideButtonDuration).SetUpdate(true).SetEase(hidingButtonEase);
 
             mainRect.DOScale(startEndScale.y, hideButtonDuration);
-            mainRect.DOLocalMoveX(mainRectHiddenButtonPosition.localPosition.x, hideButtonDuration).SetEase(hidingButtonEase);
+            mainRect.DOLocalMoveX(mainRectHiddenButtonPosition.localPosition.x, hideButtonDuration).SetUpdate(true).SetEase(hidingButtonEase);
 
 
 

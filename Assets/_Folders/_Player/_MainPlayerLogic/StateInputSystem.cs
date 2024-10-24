@@ -17,6 +17,13 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     private InputController controls;
 
+    private bool earlyDropReady;
+    private bool earlyDashReady;
+    private bool earlyDashTriggered;
+    private bool stillHoldingDash;
+    private bool earlyDropTried;
+    private bool earlyDashTried;
+
     private bool usingShotgun = false;
     private Sequence dropButtonSeq;
     private Coroutine dropButtonCor;
@@ -26,6 +33,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     private bool eggButtonHidden = false;
 
     [Header("Global Colors")]
+    [SerializeField] private ButtonColorsSO colorsSO;
     [SerializeField] private Color normalButtonColor;
     [SerializeField] private Color highlightButtonColor;
     [SerializeField] private Color disabledButtonColor;
@@ -177,6 +185,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
+
                 if (canDash)
                 {
                     ID.events.OnDash?.Invoke(true);
@@ -184,15 +193,28 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
                 }
-
-
-                else if (canDashSlash)
+                else if (earlyDashReady)
                 {
-                    manaFull = false;
+                    stillHoldingDash = true;
+                    Debug.LogError("Tried to use coyote time");
 
-                    HandleDashSlashImage(false);
-                    ID.events.OnDashSlash?.Invoke();
+                    earlyDashTried = true;
                 }
+                else if (!earlyDashReady)
+                {
+                    AudioManager.instance.PlayErrorSound();
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.Failure);
+                }
+
+
+
+                // else if (canDashSlash)
+                // {
+                //     manaFull = false;
+
+                //     HandleDashSlashImage(false);
+                //     ID.events.OnDashSlash?.Invoke();
+                // }
 
 
 
@@ -202,6 +224,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
+                stillHoldingDash = false;
                 if (!coolingDownDash && !canDash)
                 {
 
@@ -209,6 +232,13 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
                 }
+                else if (earlyDashTriggered)
+                {
+                    ID.events.OnDash?.Invoke(false);
+                    earlyDashTriggered = false;
+
+                }
+
 
             }
         };
@@ -226,13 +256,25 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
         controls.Movement.Drop.performed += ctx =>
         {
-            if (ButtonsEnabled && canDrop)
+            if (ButtonsEnabled)
             {
-                ID.events.OnDrop?.Invoke();
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
+                if (canDrop)
+                {
+                    ID.events.OnDrop?.Invoke();
+                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
 
 
-                StartCoroutine(DropCooldown());
+                    StartCoroutine(DropCooldown());
+
+                }
+                else if (earlyDropReady)
+                    earlyDropTried = true;
+
+                else if (!earlyDropReady)
+                    AudioManager.instance.PlayErrorSound();
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.Failure);
+
 
             }
         };
@@ -243,50 +285,20 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                 // ID.globalEvents.OnEggButton?.Invoke(true);
                 if (!usingShotgun)
                 {
-
-
                     ID.events.OnEggDrop?.Invoke();
-
-
-                    // ID.Ammo--;
-                    // if (ID.Ammo <= 0)
-                    // {
-                    //     ID.globalEvents.OnEmptyAmmo?.Invoke(0);
-
-                    // }
                 }
-                // else if (!usingShotgun && ID.Ammo <= 0)
-                // {
-                //     ID.globalEvents.OnEmptyAmmo?.Invoke(-1);
-                // }
-
+           
                 else if (usingShotgun)
                     ID.events.OnAttack?.Invoke(true);
-
-
             }
         };
 
         controls.Movement.DropEgg.canceled += ctx =>
        {
-           //    ID.globalEvents.OnEggButton?.Invoke(false);
-
-
            if (usingShotgun)
                ID.events.OnAttack?.Invoke(false);
-
-
-
        };
-        // controls.Movement.Fireball.performed += ctx =>
-        // {
-        //     if (ButtonsEnabled) ID.events.OnAttack?.Invoke(true);
-        // };
-        // controls.Movement.Fireball.canceled += ctx =>
-        // {
-        //     if (ButtonsEnabled) ID.events.OnAttack?.Invoke(false);
-        // };
-
+      
         controls.Movement.JumpHold.performed += ctx =>
         {
             if (ButtonsEnabled) ID.events.OnJumpHeld?.Invoke(true);
@@ -302,24 +314,34 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         controls.Movement.Parachute.performed += ctx => ID.events.OnParachute?.Invoke(true);
         controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
 
+        normalButtonColor = colorsSO.normalButtonColor;
+        highlightButtonColor = colorsSO.highlightButtonColor;
+        disabledButtonColor = colorsSO.disabledButtonColor;
+        DashImageManaHighlight = colorsSO.DashImageManaHighlight;
+        DashImageManaDisabled = colorsSO.DashImageManaDisabled;
+        DashImageManaDisabledFilling = colorsSO.DashImageManaDisabledFilling;
+        coolDownColorRed = colorsSO.coolDownColorRed;
+        coolDownColorBlue = colorsSO.coolDownColorBlue;
+        fillingManaColor = colorsSO.fillingManaColor;
+        canUseDashSlashImageColor1 = colorsSO.canUseDashSlashImageColor1;
+        canUseDashSlashImageColor2 = colorsSO.canUseDashSlashImageColor2;
+
 
 
     }
 
-    private void OnJoystickMove(Vector2 val)
-    {
-        Debug.Log(val);
-    }
+    
+    
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("Down");
+        // Debug.Log("Down");
 
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        Debug.Log("Up");
+        // Debug.Log("Up");
 
 
     }
@@ -410,7 +432,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         dropCooldownIN.DOFade(.7f, .15f);
         dropCooldownOUT.DOFade(1, .15f);
 
-        dropCooldownIN.DOFillAmount(0, 2.25f).From(1);
+        dropCooldownIN.DOFillAmount(0, 2.29f).From(1);
         yield return new WaitForSeconds(.2f);
         DropButton.DOColor(disabledButtonColor, .2f);
         dropIcon.DOScale(smallIconScale, .15f).SetEase(Ease.InSine);
@@ -420,7 +442,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
 
-        yield return new WaitForSeconds(1.75f);
+        yield return new WaitForSeconds(1.5f);
+        // earlyDropTried = false;
+        earlyDropReady = true;
+        yield return new WaitForSeconds(.27f);
         dropCooldownIN.DOFade(0, 0);
         dropCooldownOUT.DOFade(0, .1f);
 
@@ -429,10 +454,24 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         dropIcon.DOScale(normalIconScale, .13f);
 
 
-        yield return new WaitForSeconds(.1f);
+
+
+
 
         coolingDownDrop = false;
         canDrop = true;
+        earlyDropReady = false;
+        if (earlyDropTried)
+        {
+            Debug.LogError("Coyote time was used on dropppp");
+            ID.events.OnDrop?.Invoke();
+            HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+            earlyDropTried = false;
+
+
+            StartCoroutine(DropCooldown());
+
+        }
 
     }
 
@@ -653,9 +692,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     private IEnumerator DashCooldown()
     {
+
         coolingDownDash = true;
         canDash = false;
-        Debug.Log("COOOOLING");
+
 
         if (manaFull)
         {
@@ -666,7 +706,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         }
         else
         {
-            Debug.Log("Waiting for: " + dashTimeLeft + " - seconds");
+
             yield return new WaitForSeconds(dashTimeLeft);
 
             IconTween(2);
@@ -681,19 +721,46 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         dashCooldownGroup.DOFade(1, .15f);
 
         dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
-        yield return new WaitForSeconds(1.1f);
-        Debug.Log("Finsihed cooling bug");
+        yield return new WaitForSeconds(.85f);
+        // earlyDashTried = false;
+        earlyDashReady = true;
+        yield return new WaitForSeconds(.25f);
+
+
 
         dashCooldownGroup.DOFade(0, .15f);
 
         // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
+
         dashImage.DOColor(normalButtonColor, .15f);
-        IconTween(0);
+        earlyDashReady = false;
+        if (earlyDashTried && ButtonsEnabled)
+        {
+            coolingDownDash = false;
+            earlyDashTriggered = true;
+            Debug.LogError("Coyote time was used");
+            canDash = true;
+            ID.events.OnDash?.Invoke(true);
+            HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+            earlyDashTried = false;
+            if (!stillHoldingDash)
+            {
+                ID.events.OnDash?.Invoke(false);
+                earlyDashTriggered = false;
+            }
 
-        canDash = true;
+            // earlyDashTried = false;
+        }
+        else
+        {
+            IconTween(0);
 
-        coolingDownDash = false;
-        ExitDash(true);
+            canDash = true;
+
+            coolingDownDash = false;
+            ExitDash(true);
+        }
+
 
     }
 

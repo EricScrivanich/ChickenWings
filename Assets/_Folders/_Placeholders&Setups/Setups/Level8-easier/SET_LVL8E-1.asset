@@ -1,0 +1,414 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
+  m_Name: SET_LVL8E-1
+  m_EditorClassIdentifier: 
+  eggTriggerAndIndexAndType:
+  - {x: 2, y: 0, z: 3}
+  eggPosition:
+  - {x: 35, y: 0.6}
+  eggSpeed:
+  - 5
+  mustCompleteRingSequence: 0
+  enemyTriggerForEachRingIndex: 00000000
+  enemyTriggerForEachRingIndexWeights: 
+  enemySetup:
+  - dataArray:
+    - rid: 3115821831481196563
+    - rid: 3115821831481196564
+  - dataArray:
+    - rid: 3115821831481196566
+    - rid: 3115821831481196567
+  - dataArray:
+    - rid: 3115821831481196570
+  - dataArray:
+    - rid: 3115821831481196575
+    - rid: 3115821831481196576
+    - rid: 3115821831481196577
+  - dataArray: []
+  - dataArray:
+    - rid: 3115821831481196581
+  - dataArray:
+    - rid: 3115821831481196586
+    - rid: 3115821831481196587
+  - dataArray:
+    - rid: 3115821831481196623
+    - rid: 3115821831481196624
+  - dataArray:
+    - rid: 3115821831481196625
+  - dataArray:
+    - rid: 3115821831481196626
+  collectableSetup:
+  - dataArray:
+    - rid: 3115821831481196565
+  - dataArray:
+    - rid: 3115821831481196569
+  - dataArray:
+    - rid: 3115821831481196571
+  - dataArray:
+    - rid: 3115821831481196578
+  - dataArray:
+    - rid: 3115821831481196580
+  - dataArray: []
+  - dataArray:
+    - rid: 3115821831481196588
+  - dataArray: []
+  - dataArray:
+    - rid: 3115821831481196591
+  isRandomSetup: 0
+  testFromTrigger: 0
+  startTestTrigger: 5
+  ignoreXTriggetTime: 0
+  XTriggerForRecording: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 3115821831481196563
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 17.01, y: 4.24}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+    - rid: 3115821831481196564
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 21.9, y: -0.1}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4.8
+          yForce: 6.3
+          distanceToFlap: 1
+          startingFallSpot: 0
+    - rid: 3115821831481196565
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.4
+        isRings: 1
+        data:
+        - position: {x: 16.2, y: 0.93}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: 4.8
+        - position: {x: 16.45, y: -0.31000006}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: 4.8
+        - position: {x: 16.710001, y: -1.6800001}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: 4.8
+        - position: {x: 21.39, y: -3.18}
+          scale: {x: 1, y: 0.95, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.8
+        - position: {x: 23.07, y: -3.18}
+          scale: {x: 1, y: 0.95, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.8
+        - position: {x: 24.749998, y: -3.18}
+          scale: {x: 1, y: 0.95, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.8
+        - position: {x: 27.71, y: -1.47}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.35254326, w: 0.93579555}
+          speed: 4.8
+        - position: {x: 29.509998, y: -0.40262505}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: 0.00000015448275, y: -0.00000011487917, z: -0.2095863, w: -0.9777902}
+          speed: 4.8
+    - rid: 3115821831481196566
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 19.68, y: -1.51}
+          scale: {x: 0.9, y: 0.86, z: 1}
+          speed: 11.5
+        - position: {x: 21.18, y: -3.04}
+          scale: {x: 0.9, y: 0.86, z: 1}
+          speed: 10.2
+    - rid: 3115821831481196567
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 15.6, y: 1.1817169}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.1
+    - rid: 3115821831481196569
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.1
+        isRings: 1
+        data:
+        - position: {x: 20.09, y: 2.29}
+          scale: {x: 1.15, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.17155448, w: -0.98517466}
+          speed: 5
+        - position: {x: 22.96, y: 1.2199998}
+          scale: {x: 1.2, y: 1.15, z: 1}
+          rotation: {x: -0.00000017873481, y: -0.000000057402175, z: -0.31492755, w: 0.94911575}
+          speed: 5
+        - position: {x: 25.28, y: -0.96}
+          scale: {x: 1.25, y: 1.2, z: 1}
+          rotation: {x: -0, y: -0, z: -0.459576, w: 0.8881385}
+          speed: 5
+    - rid: 3115821831481196570
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 15.37, y: 2.12}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4.7
+          yForce: 6.2
+          distanceToFlap: 0.8
+          startingFallSpot: 0
+        - position: {x: 15.44508, y: -1.63}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4.7
+          yForce: 6.2
+          distanceToFlap: 0.8
+          startingFallSpot: -1
+    - rid: 3115821831481196571
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 6.5
+        isRings: 1
+        data:
+        - position: {x: 18.99, y: 0.65}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.7
+        - position: {x: 20.78, y: 0.65}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.7
+        - position: {x: 22.65, y: 0.65}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.7
+    - rid: 3115821831481196575
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 20.91, y: 4.42}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 4.8
+    - rid: 3115821831481196576
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 17.04, y: 1.4293742}
+          scale: {x: 1, y: 1, z: 1}
+          speed: 4.5
+          hasHammer: 1
+    - rid: 3115821831481196577
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 19.12, y: -1.63}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4.6
+          yForce: 6
+          distanceToFlap: 0.7
+          startingFallSpot: 0
+    - rid: 3115821831481196578
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.9
+        isRings: 1
+        data:
+        - position: {x: 18.95, y: 1.98}
+          scale: {x: 1, y: 0.9, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.3
+        - position: {x: 20.67, y: 1.98}
+          scale: {x: 1, y: 0.9, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.3
+        - position: {x: 22.43, y: 1.98}
+          scale: {x: 1, y: 0.9, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 4.3
+        - position: {x: 26.7, y: -0.8}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: 4.3
+        - position: {x: 27.02, y: -2.18}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: 4.3
+    - rid: 3115821831481196580
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.837037
+        isRings: 1
+        data:
+        - position: {x: 19.79, y: -0.5}
+          scale: {x: 1.15, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.5370003, w: 0.84358203}
+          speed: 5.4
+        - position: {x: 20.5, y: 0.72}
+          scale: {x: 1.15, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.5370003, w: 0.84358203}
+          speed: 5.4
+        - position: {x: 26.410002, y: 2.02}
+          scale: {x: 1.15, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.5370003, w: 0.84358203}
+          speed: 5.4
+        - position: {x: 27.12, y: 3.24}
+          scale: {x: 1.15, y: 1.1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.5370003, w: 0.84358203}
+          speed: 5.4
+    - rid: 3115821831481196581
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.4315503
+        data:
+        - position: {x: 15.937798, y: 1.7307316}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+        - position: {x: 18.419823, y: -2.0514019}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+        - position: {x: 23.305077, y: 1.454951}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+    - rid: 3115821831481196586
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: -19.02, y: 1.944636}
+          scale: {x: 1, y: 1, z: 1}
+          speed: -2.8
+          hasHammer: 1
+    - rid: 3115821831481196587
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: -16.09, y: -1.77}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: -3
+          yForce: 6.2
+          distanceToFlap: 0.9
+          startingFallSpot: 0
+    - rid: 3115821831481196588
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 7.9
+        isRings: 1
+        data:
+        - position: {x: -19.21, y: -0.14}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: -2.8
+        - position: {x: -19.249998, y: -1.27}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: -2.8
+        - position: {x: -19.4, y: -2.5200002}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+          speed: -2.8
+    - rid: 3115821831481196591
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.368
+        isRings: 1
+        data:
+        - position: {x: 20.67, y: 1.78}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.30022705, w: 0.9538678}
+          speed: 5
+        - position: {x: 23.14, y: 2.67}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.0038042332, w: -0.9999928}
+          speed: 5
+        - position: {x: 25.79, y: 1.77}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.25208098, w: 0.96770614}
+          speed: 5
+        - position: {x: 27.84, y: 0.02}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.4322306, w: -0.90176314}
+          speed: 5
+    - rid: 3115821831481196623
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.0409994
+        data:
+        - position: {x: 28.13, y: -3.47}
+          scale: {x: 0.95, y: 0.93, z: 1}
+          speed: 10
+        - position: {x: 28.499998, y: -2.05}
+          scale: {x: 0.95, y: 0.93, z: 1}
+          speed: 10
+        - position: {x: 28.869999, y: -0.5}
+          scale: {x: 0.95, y: 0.93, z: 1}
+          speed: 10
+        - position: {x: 40.6, y: 1.79}
+          scale: {x: 0.95, y: 0.93, z: 1}
+          speed: 10
+        - position: {x: 41.409996, y: 0.29999995}
+          scale: {x: 0.95, y: 0.93, z: 1}
+          speed: 10
+    - rid: 3115821831481196624
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.713846
+        data:
+        - position: {x: 15.440001, y: 4.15}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+        - position: {x: 23.210001, y: 4.54}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+        - position: {x: 31.64, y: 4.04}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+    - rid: 3115821831481196625
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: -17.99, y: 0.43}
+          scale: {x: 0.9, y: 0.86, z: 1}
+          speed: -7.5
+        - position: {x: -26.99, y: 4.15}
+          scale: {x: 0.9, y: 0.86, z: 1}
+          speed: -7.3
+        - position: {x: -23.19, y: -3.68}
+          scale: {x: 0.9, y: 0.86, z: 1}
+          speed: -7.5
+    - rid: 3115821831481196626
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 6.2
+        data:
+        - position: {x: 17.58, y: 1.6600232}
+          scale: {x: 1, y: 1, z: 1}
+          speed: 3.5
+          hasHammer: 1
+        - position: {x: 22.65, y: -2.56}
+          scale: {x: 1, y: 1, z: 1}
+          speed: 3.5
+          hasHammer: 1

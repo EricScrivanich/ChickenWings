@@ -1080,7 +1080,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 752509671156304345, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 752509671156304345, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1209,6 +1209,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1641434579}
+    - targetCorrespondingSourceObject: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1641434580}
   m_SourcePrefab: {fileID: 100100000, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
 --- !u!114 &318027379 stripped
 MonoBehaviour:
@@ -1389,6 +1392,7 @@ MonoBehaviour:
   useDash: 1
   useDrop: 1
   useEgg: 0
+  useShotgun: 0
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   ColorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
   manaUsed: 0
@@ -1700,7 +1704,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 5.3
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2124,6 +2128,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3970210468719604250, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5098683284568248982, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2494,6 +2502,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LevelIndex: 6
+  sceneSO: {fileID: 0}
   TriggerSectionActivateAfterEventType: {fileID: 0}
   activicationDelay: 2
   activateAfterDelay:
@@ -2509,6 +2518,13 @@ MonoBehaviour:
   areRingsRequired: 0
   ringsNeeded: 5
   currentRingsPassed: 0
+  LevelNamePrefab: {fileID: 0}
+  fadeInDuration: 1
+  fadeOutDuration: 1
+  displayDuration: 3
+  textMoveDuration: 1
+  textTargetPosition: {x: 0, y: 0}
+  moveInEase: 0
   areBucketsRequired: 1
   bucketsNeeded: 2
   areBarnsRequired: 0
@@ -2773,12 +2789,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_text
-      value: Now try and pass through the correct amount of GOLD buckets without
-        dying to complete this level. Good luck!
+      value: 'Now try and pass through 2 GOLD buckets. Good luck!
+
+        Press
+        any button to continue.'
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_margin.z
       value: -732.4356
+      objectReference: {fileID: 0}
+    - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
+      propertyPath: m_paragraphSpacing
+      value: 72.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3463,7 +3485,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Red buckets must be will damage the player if not completed.
+  m_text: Red buckets will damage the player if not completed.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ce4f86a906eb84129a844995d45ca85b, type: 2}
   m_sharedMaterial: {fileID: 4406120982727850755, guid: ce4f86a906eb84129a844995d45ca85b, type: 2}
@@ -4188,8 +4210,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Gold rings give points in endless modes, and the bucket will multiply your
-    points
+  m_text: Gold rings give points in endless modes.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ce4f86a906eb84129a844995d45ca85b, type: 2}
   m_sharedMaterial: {fileID: 4406120982727850755, guid: ce4f86a906eb84129a844995d45ca85b, type: 2}
@@ -4339,6 +4360,7 @@ MonoBehaviour:
   siloPoolSize: 0
   windMillPoolSize: 0
   gasPigPoolSize: 0
+  gasPigFlyingPoolSize: 0
   hotAirBalloonPoolSize: 0
   flappyPigPoolSize: 0
   bomberPlanePoolSize: 0
@@ -4351,6 +4373,7 @@ MonoBehaviour:
   siloPrefab: {fileID: 0}
   windMillPrefab: {fileID: 0}
   gasPigPrefab: {fileID: 0}
+  gasPigFlyingPrefab: {fileID: 0}
   hotAirBalloonPrefab: {fileID: 0}
   flappyPigPrefab: {fileID: 0}
   bomberPlanePrefab: {fileID: 0}
@@ -4380,6 +4403,29 @@ MonoBehaviour:
   nextIntentisityObjectiveValues: 00000000
   objectivesTracked: []
   initialDelayForHealthRingsToSpawn: 0
+--- !u!114 &1641434580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1641434565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23971b591fd19432991d178d8e4a447d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eggColliderYOffsetMultiplier: 0
+  player: {fileID: 0}
+  gasCloudPoolSize: 0
+  jetPackSmokeTrailPrefab: {fileID: 7791189156267300741, guid: 1440243de596647cdbf976a452bceba1, type: 3}
+  gasSmokeTrailPrefab: {fileID: 7376049519909175309, guid: 0c2e6e1988c234eb6870724f0481872f, type: 3}
+  gasParticleSystemPrefab: {fileID: 355320229328744754, guid: da0e2cceb51384f8bb26aebde34ac341, type: 3}
+  gasCloudPrefab: {fileID: 0}
+  playerParticleColliderPrefab: {fileID: 610983590539335886, guid: e1536bec681634d318ae1eb8d323a96c, type: 3}
+  eggParticleColliderCoverPrefab: {fileID: 0}
+  eggParticleColliderPrefab: {fileID: 8411991336060583700, guid: 431fd07ce78564e4b9d2ad5bc1fa994b, type: 3}
+  gasCloudHitParticlesPrefab: {fileID: 0}
 --- !u!1 &1642033379
 GameObject:
   m_ObjectHideFlags: 0
@@ -4910,11 +4956,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2325735760650419211, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.11
+      value: -5.33
       objectReference: {fileID: 0}
     - target: {fileID: 3370166446289568688, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.84
+      value: 4.88
       objectReference: {fileID: 0}
     - target: {fileID: 3679946209921622469, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4926,7 +4972,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8187902104649478956, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.09
+      value: 5.13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

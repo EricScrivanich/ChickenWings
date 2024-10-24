@@ -8301,6 +8301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LevelIndex: 0
+  sceneSO: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
   TriggerSectionActivateAfterEventType: {fileID: 0}
   activicationDelay: 0
   activateAfterDelay: []
@@ -8315,6 +8316,13 @@ MonoBehaviour:
   areRingsRequired: 0
   ringsNeeded: 0
   currentRingsPassed: 0
+  LevelNamePrefab: {fileID: 8210711121648878857, guid: ad4468f54522446c0be6db13d108b460, type: 3}
+  fadeInDuration: 1
+  fadeOutDuration: 1
+  displayDuration: 3
+  textMoveDuration: 1
+  textTargetPosition: {x: 0, y: 0}
+  moveInEase: 0
   areBucketsRequired: 0
   bucketsNeeded: 0
   areBarnsRequired: 0
@@ -13206,7 +13214,7 @@ PrefabInstance:
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: stats
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: 366d7951140784dbea2a6bb51d53160e, type: 2}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: blastPoint
       value: 

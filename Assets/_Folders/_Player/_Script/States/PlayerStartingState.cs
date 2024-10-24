@@ -45,7 +45,7 @@ public class PlayerStartingState : PlayerBaseState
             }
             if (!player.DisableButtonsAtStart)
             {
-                player.ID.events.EnableButtons(true);
+                player.ID.events.EnableButtons?.Invoke(true);
 
             }
 
@@ -86,7 +86,7 @@ public class PlayerStartingState : PlayerBaseState
                 }
                 if (!player.DisableButtonsAtStart)
                 {
-                    player.ID.events.EnableButtons(true);
+                    player.ID.events.EnableButtons?.Invoke(true);
                 }
 
 

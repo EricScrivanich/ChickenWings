@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class PlayerShotgunState : PlayerBaseState
 {
-
+    // private float ignoreParticleTimer = 0;
+    // private float ignoreParticleDuration = .3f;
+    // private bool ignoringTime = true;
     public override void EnterState(PlayerStateManager player)
     {
+        // ignoringTime = true;
+
+        // ignoreParticleTimer = 0;
         // player.anim.SetTrigger("IdleTrigger");
 
         // if (player.justFlipped)
@@ -41,6 +46,9 @@ public class PlayerShotgunState : PlayerBaseState
         player.maxFallSpeed = player.originalMaxFallSpeed;
         player.rb.angularVelocity = 0;
 
+        // if (ignoringTime) player.ignoreParticleCollision = false;
+
+
 
     }
 
@@ -65,6 +73,17 @@ public class PlayerShotgunState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+        // if (ignoringTime)
+        // {
+        //     ignoreParticleTimer += Time.deltaTime;
+
+        //     if (ignoreParticleTimer >= ignoreParticleDuration)
+        //     {
+        //         ignoringTime = false;
+        //         player.ignoreParticleCollision = false;
+        //     }
+        // }
+
 
     }
 

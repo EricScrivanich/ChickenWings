@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using HellTap.PoolKit;
+using DG.Tweening;
 
 public class PigMaterialHandler : MonoBehaviour, IDamageable
 {
@@ -161,6 +162,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         float fadeAmountStart = 0.0f;
         float fadeAmountEnd = .7f;
         bool hasExploded = false;
+
+        transform.DOScale(transform.localScale * 1.3f, .6f).SetEase(Ease.OutSine);
         while (elapsedTime < .15f)
         {
             elapsedTime += Time.deltaTime;
@@ -192,9 +195,9 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
             // Interpolate _HitEffectBlend and _FadeAmount
             float currentHitEffectBlend = Mathf.Lerp(hitEffectBlendEnd, hitEffectBlendStart, t);
             float alpha = Mathf.Lerp(1, .2f, t);
-            float scale = Mathf.Lerp(initialScale, endScale, t);
+            // float scale = Mathf.Lerp(initialScale, endScale, t);
             float currentFadeAmount = Mathf.Lerp(fadeAmountStart, fadeAmountEnd, t);
-            transform.localScale = new Vector3(scale, scale, scale);
+            // transform.localScale = new Vector3(scale, scale, scale);
             instanceMaterial.SetFloat("_HitEffectBlend", currentHitEffectBlend);
             instanceMaterial.SetFloat("_Alpha", alpha);
             instanceMaterial.SetFloat("_FadeAmount", currentFadeAmount);

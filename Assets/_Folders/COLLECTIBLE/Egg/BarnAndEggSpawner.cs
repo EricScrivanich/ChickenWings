@@ -58,6 +58,7 @@ public class BarnAndEggSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         eggCollectables = new EggCollectableMovement[eggCollectableCount];
         currentEggCollectableIndex = 0;
 
@@ -72,7 +73,7 @@ public class BarnAndEggSpawner : MonoBehaviour
         if (usingAmmo)
         {
 
-
+            barnSpawnPos = new Vector2(13.5f, BoundariesManager.GroundPosition - .1f);
             eggThreeChance = baseEggThreeChance;
 
             for (int i = 0; i < 2; i++)

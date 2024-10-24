@@ -22,6 +22,8 @@ namespace KingdomOfNight
         public static void LoadLevel10() { OpenScene("Assets/scenes/Levels/Level10.unity"); }
         [MenuItem("Scenes/Levels/Level11")]
         public static void LoadLevel11() { OpenScene("Assets/scenes/Levels/Level11.unity"); }
+        [MenuItem("Scenes/Levels/Level12")]
+        public static void LoadLevel12() { OpenScene("Assets/scenes/Levels/Level12.unity"); }
         [MenuItem("Scenes/Levels/Level2")]
         public static void LoadLevel2() { OpenScene("Assets/scenes/Levels/Level2.unity"); }
         [MenuItem("Scenes/Levels/Level3")]
@@ -34,6 +36,8 @@ namespace KingdomOfNight
         public static void LoadLevel6() { OpenScene("Assets/scenes/Levels/Level6.unity"); }
         [MenuItem("Scenes/Levels/Level7")]
         public static void LoadLevel7() { OpenScene("Assets/scenes/Levels/Level7.unity"); }
+        [MenuItem("Scenes/Levels/Level8 1")]
+        public static void LoadLevel81() { OpenScene("Assets/scenes/Levels/Level8 1.unity"); }
         [MenuItem("Scenes/Levels/Level8")]
         public static void LoadLevel8() { OpenScene("Assets/scenes/Levels/Level8.unity"); }
         [MenuItem("Scenes/Levels/Level9")]

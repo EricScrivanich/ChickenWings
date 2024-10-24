@@ -172,7 +172,7 @@ public class SetupPlacer : MonoBehaviour
                 script.bladeAmount = windMillDataItem.bladeAmount;
                 script.bladeScaleMultiplier = windMillDataItem.bladeScaleMultiplier;
                 script.bladeSpeed = windMillDataItem.bladeSpeed;
-                script.heightMultiplier = windMillDataItem.heightMultiplier;
+                script.startRot = windMillDataItem.startRot;
                 // Assuming uniform scaling
             }
         }

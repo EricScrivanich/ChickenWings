@@ -6,7 +6,7 @@ public class WindMillSO : EnemyData
     {
         for (int i = 0; i < data.Length; i++)
         {
-            manager.GetWindMill(data[i].position, data[i].bladeAmount, data[i].bladeScaleMultiplier, data[i].bladeSpeed, data[i].heightMultiplier);
+            manager.GetWindMill(data[i].position, data[i].bladeAmount, data[i].bladeScaleMultiplier, data[i].bladeSpeed, data[i].startRot);
         }
     }
 }

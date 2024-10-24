@@ -169,7 +169,7 @@ public class PlayerDashSlashState : PlayerBaseState
             buttonsDisabledTimer += Time.deltaTime;
             if (buttonsDisabledTimer > .3f)
             {
-                player.ID.events.EnableButtons(true);
+                player.ID.events.EnableButtons?.Invoke(true);
             }
 
         }

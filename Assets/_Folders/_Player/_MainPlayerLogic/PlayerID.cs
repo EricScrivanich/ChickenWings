@@ -1,13 +1,16 @@
 
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu]
 
 public class PlayerID : ScriptableObject
 {
 
-
+    public List<float> particleYPos { get; private set; }
     [SerializeField] private LevelManagerID lvlID;
+
+
     public bool constantPlayerForceBool;
 
 
@@ -146,6 +149,7 @@ public class PlayerID : ScriptableObject
 
         resetingValues = true;
         isAlive = true;
+        particleYPos = new List<float>();
 
 
         PlayerMaterial.SetFloat("_Alpha", 1);
@@ -169,6 +173,24 @@ public class PlayerID : ScriptableObject
         addedChainShotgunAmmo = 0;
 
 
+    }
+
+    public void NewGasParticles(float y, bool add)
+    {
+        if (add)
+        {
+            particleYPos.Add(y);
+        }
+        else
+        {
+            if (particleYPos != null && particleYPos.Count > 0)
+            {
+                for (int i = 0; i < particleYPos.Count; i++)
+                {
+                    if (y == particleYPos[i]) particleYPos.Remove(i);
+                }
+            }
+        }
     }
 
     public void AddScore(int amount)

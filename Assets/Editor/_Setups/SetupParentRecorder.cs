@@ -535,7 +535,7 @@ public class EnemySetupRecorderEditor : Editor
                     bladeAmount = targets[i].bladeAmount,
                     bladeScaleMultiplier = targets[i].bladeScaleMultiplier,
                     bladeSpeed = targets[i].bladeSpeed,
-                    heightMultiplier = targets[i].heightMultiplier
+                    startRot = targets[i].startRot
                 };
 
                 float distanceToTarget = Mathf.Abs(xTrigger - targets[i].transform.position.x);

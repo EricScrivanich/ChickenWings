@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class LevelManager : MonoBehaviour
 {
     public int LevelIndex;
+    [SerializeField] private SceneManagerSO sceneSO;
+    private TextMeshProUGUI textLevelName;
+    private TextMeshProUGUI textLevelNum;
 
 
 
@@ -41,6 +45,16 @@ public class LevelManager : MonoBehaviour
 
 
     private int objectivesComplete;
+
+    [Header("Level Title Display")]
+    [SerializeField] private GameObject LevelNamePrefab;
+
+    [SerializeField] private float fadeInDuration = 1f; // Duration of the fade-in
+    [SerializeField] private float fadeOutDuration = 1f; // Duration of the fade-out
+    [SerializeField] private float displayDuration = 3f; // How long to display the text before fading out
+    [SerializeField] private float textMoveDuration = 1f; // Duration for the text to move to the target position
+    [SerializeField] private Vector2 textTargetPosition;
+    [SerializeField] private Ease moveInEase;
 
 
     [Header("Buckets")]
@@ -88,6 +102,12 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
+        LvlID.inputEvent.OnGetLevelNumber += SetLevelNumber;
+        LvlID.outputEvent.ShowSection += HandleSection;
+        LvlID.outputEvent.SetObjectActiveWithDelay += SetObjectActiveWithDelay;
+        LvlID.inputEvent.ActivateObjFromEvent += TriggerObjectsFromEvent;
+        LvlID.inputEvent.SetCheckPoint += SetNewCheckPoint;
+
         currentSection = 0;
         objectivesComplete = 0;
         hasStartedPlayTimeDelayedPause = false;
@@ -96,10 +116,6 @@ public class LevelManager : MonoBehaviour
         finishedBarns = !areBarnsRequired;
         finishedBuckets = !areBucketsRequired;
 
-        LvlID.outputEvent.ShowSection += HandleSection;
-        LvlID.outputEvent.SetObjectActiveWithDelay += SetObjectActiveWithDelay;
-        LvlID.inputEvent.ActivateObjFromEvent += TriggerObjectsFromEvent;
-        LvlID.inputEvent.SetCheckPoint += SetNewCheckPoint;
 
 
 
@@ -142,7 +158,7 @@ public class LevelManager : MonoBehaviour
 
                 break;
             case EventTypeTracked.Mana:
-                player.globalEvents.SetCanDashSlash += ShowNextSectionFromEvent;
+                player.globalEvents.OnUpdateShotgunAmmo += ShowNextSectionFromEvent;
 
                 // Implement logic for GlideUp
 
@@ -155,6 +171,7 @@ public class LevelManager : MonoBehaviour
 
 
     }
+
 
     private void SetNewCheckPoint(int val)
     {
@@ -175,6 +192,41 @@ public class LevelManager : MonoBehaviour
         playerInputs = GameObject.Find("Player").GetComponent<StateInputSystem>();
         pauseButton = GameObject.Find("PauseButton").GetComponent<Button>();
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+
+        // var textObj = Instantiate(LevelNamePrefab, Vector2.zero, Quaternion.identity, canvas.transform);
+        // textLevelName = textObj.GetComponent<TextMeshProUGUI>();
+        // textLevelNum = textObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        // textLevelNum.text = "Level " + LevelIndex.ToString();
+        // textLevelName.text = sceneSO.ReturnLevelName(LevelIndex);
+
+
+
+
+
+        // Sequence textSequence = DOTween.Sequence();
+
+        // // Move the text from the top of the screen to the target position
+        // RectTransform textRectTransform = textLevelName.GetComponent<RectTransform>();
+        // textRectTransform.anchoredPosition = new Vector2(0, Screen.height);
+
+        // // Add tweens to the sequence
+        // textSequence
+        //     // Fade in both text objects
+        //     .Append(textLevelName.DOFade(1, fadeInDuration))
+        //     .Join(textLevelNum.DOFade(1, fadeInDuration))
+
+        //     // Move the text to the target position
+        //     .Join(textRectTransform.DOAnchorPos(textTargetPosition, textMoveDuration).SetEase(moveInEase))
+
+        //     // Keep the text on screen for displayDuration
+        //     .AppendInterval(displayDuration)
+
+        //     // Fade out both text objects
+        //     .Append(textLevelName.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine)
+        //     .Join(textLevelNum.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine);
+
+
+
         foreach (var obj in sections)
         {
             obj.SetActive(false);
@@ -201,11 +253,16 @@ public class LevelManager : MonoBehaviour
         {
             reachedCheckpoint = checkPoint;
             LvlID.outputEvent.SetCheckPoint?.Invoke(checkPoint);
+            if (GetComponent<Level7Special>() != null)
+            {
+                GetComponent<Level7Special>().DoStart = false;
+            }
+
             if (currentEventTracked == EventTypeTracked.Mana)
             {
                 Debug.Log("Filling Mana from check");
                 hasInvokedSpecialEvent = true;
-                player.globalEvents.FillPlayerMana?.Invoke();
+                // player.globalEvents.FillPlayerMana?.Invoke();
 
             }
 
@@ -256,6 +313,11 @@ public class LevelManager : MonoBehaviour
 
 
 
+    }
+
+    private void SetLevelNumber(int num)
+    {
+        LevelIndex = num;
     }
 
     private void TriggerObjectsFromEvent(TriggerNextSection bubbleScript, bool stopSpawning, GameObject obj)
@@ -316,6 +378,7 @@ public class LevelManager : MonoBehaviour
 
     public void HandleSection(int sectionNum, bool useSection)
     {
+        Debug.LogError("ACTIVCATIGN SEC");
         if (useSection)
         {
             sections[sectionNum].SetActive(true);
@@ -461,19 +524,20 @@ public class LevelManager : MonoBehaviour
 
         StartCoroutine(SmoothTimeScaleTransition(0, .5f, delay, true, currentSection));
     }
-    public void ShowNextSectionFromEvent(bool boolVar)
+    public void ShowNextSectionFromEvent(int amount)
     {
 
         switch (currentEventTracked)
         {
 
             case EventTypeTracked.Mana:
-                Debug.Log("Will track this: " + boolVar);
-                if (!boolVar || hasInvokedSpecialEvent) return;
+                // Debug.Log("Will track this: " + boolVar);
+                if (amount == 0 || hasInvokedSpecialEvent) return;
 
 
                 hasInvokedSpecialEvent = true;
-                TriggerSectionActivateAfterEventType.SetActive(true);
+                // TriggerSectionActivateAfterEventType.SetActive(true);
+                ShowSection(true, 1);
 
                 // Implement logic for GlideUp
 
@@ -625,6 +689,7 @@ public class LevelManager : MonoBehaviour
         LvlID.inputEvent.ActivateObjFromEvent -= TriggerObjectsFromEvent;
         LvlID.inputEvent.SetCheckPoint -= SetNewCheckPoint;
         LvlID.inputEvent.OnEggFinishLine -= CreateFinish;
+        LvlID.inputEvent.OnGetLevelNumber -= SetLevelNumber;
 
         if (areRingsRequired)
         {
@@ -653,7 +718,7 @@ public class LevelManager : MonoBehaviour
 
                 break;
             case EventTypeTracked.Mana:
-                player.globalEvents.SetCanDashSlash -= ShowNextSectionFromEvent;
+                player.globalEvents.OnUpdateShotgunAmmo -= ShowNextSectionFromEvent;
 
                 // Implement logic for GlideUp
 
@@ -684,6 +749,7 @@ public class LevelManager : MonoBehaviour
 
     private void CreateFinish()
     {
+        player.globalEvents.OnFinishedLevel?.Invoke();
         StartCoroutine(SmoothTimeScaleTransition(0, .3f, .3f, false, 0));
         GameObject finishedLevelUI = Instantiate(finishedLevelUIPrefab);
         PauseButtonActions.lockButtons = false;

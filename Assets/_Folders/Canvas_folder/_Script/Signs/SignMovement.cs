@@ -145,7 +145,7 @@ public class SignMovement : MonoBehaviour
 
     public void RetractToNextUILocal(bool isNext)
     {
-        if (LM == null || hasRetracted || !this.gameObject.activeInHierarchy)
+        if ((LM == null || hasRetracted || !this.gameObject.activeInHierarchy) && isNext)
         {
             return;
         }
@@ -167,6 +167,30 @@ public class SignMovement : MonoBehaviour
 
 
 
+        Vector3 overshootPosition = endPosition - new Vector3(0, overshootAmount, 0) - new Vector3(0, RetractBounceAmount, 0);
+        Tweener overshootTween = target.DOAnchorPos(overshootPosition, RetractBounceDuration)
+            .SetEase(Ease.InSine)
+            .SetUpdate(true);
+
+
+        Tweener riseTween = target.DOAnchorPos(startPosition, RetractDuration)
+           .SetEase(Ease.InSine)
+           .SetUpdate(true);
+
+
+        sequence = DOTween.Sequence();
+        sequence.Append(overshootTween)
+                .Append(riseTween)
+                .OnComplete(SetUnactive)
+                .SetUpdate(true);
+
+
+    }
+
+    public void SpecialRetract()
+    {
+        Debug.Log("Retracting with this: " + this.gameObject);
+        
         Vector3 overshootPosition = endPosition - new Vector3(0, overshootAmount, 0) - new Vector3(0, RetractBounceAmount, 0);
         Tweener overshootTween = target.DOAnchorPos(overshootPosition, RetractBounceDuration)
             .SetEase(Ease.InSine)

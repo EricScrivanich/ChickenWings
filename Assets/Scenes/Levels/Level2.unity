@@ -1122,6 +1122,7 @@ MonoBehaviour:
   useDash: 0
   useDrop: 0
   useEgg: 0
+  useShotgun: 0
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   ColorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
   manaUsed: 0
@@ -1435,6 +1436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LevelIndex: 2
+  sceneSO: {fileID: 0}
   TriggerSectionActivateAfterEventType: {fileID: 0}
   activicationDelay: 0
   activateAfterDelay: []
@@ -1449,6 +1451,13 @@ MonoBehaviour:
   areRingsRequired: 1
   ringsNeeded: 6
   currentRingsPassed: 0
+  LevelNamePrefab: {fileID: 0}
+  fadeInDuration: 1
+  fadeOutDuration: 1
+  displayDuration: 3
+  textMoveDuration: 1
+  textTargetPosition: {x: 0, y: 0}
+  moveInEase: 0
   areBucketsRequired: 0
   bucketsNeeded: 0
   areBarnsRequired: 0
@@ -3502,6 +3511,10 @@ PrefabInstance:
     - target: {fileID: 8556181105269460930, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623305132479715059, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8777603749694732327, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Camera

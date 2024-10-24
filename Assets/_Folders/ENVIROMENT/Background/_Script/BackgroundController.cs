@@ -33,10 +33,14 @@ public class BackgroundController : MonoBehaviour
     private void Awake()
     {
 
+        BoundariesManager.GroundPosition = layers[0].transform.position.y + .6f;
+
         // foreach (var obj in layers)
         // {
         //     obj.SetActive(true);
         // }
+
+
 
         for (int i = 0; i < layers.Count; i++)
         {

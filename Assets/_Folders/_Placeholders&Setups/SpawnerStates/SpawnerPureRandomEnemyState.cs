@@ -40,6 +40,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     // Start is called before the first frame update
     public override void EnterState(SpawnStateManager spawner)
     {
+        Debug.LogError("Entered Random State");
         minYAdj = 0;
 
         useWaveAmount = true;
@@ -48,20 +49,23 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
         if (amountOfWavesToSpawn < 0)
         {
+            Debug.LogError("Random waves is 0");
             useWaveAmount = false;
 
         }
         else if (amountOfWavesToSpawn == 0)
         {
+
+
             spawner.TimerForNextWave(.4f);
             return;
         }
-        else
 
         if (!spawner.stopRandomSpawning)
         {
             timeSinceLastWave = 0;
             int waveSize = currentIntensityData.GetRandomWaveSize();
+            Debug.LogError("Wave size is: " + waveSize);
             if (spawner.GetMissilePigIfReady(currentIntensityData.minMissilePigDelay, currentIntensityData.missileBasePigChance))
             {
 
@@ -89,7 +93,10 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
             spawner.SpawnWithDelayRoutine = spawner.StartCoroutine(SpawnWaveWithDelay(spawner));
 
+
         }
+
+
 
 
 

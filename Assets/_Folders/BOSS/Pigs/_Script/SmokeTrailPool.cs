@@ -6,6 +6,7 @@ using UnityEngine;
 public class SmokeTrailPool : MonoBehaviour
 {
     [SerializeField] private float eggColliderYOffsetMultiplier;
+    [SerializeField] private PlayerID player;
     [SerializeField] private int gasCloudPoolSize;
     private SmokeTrailLineNew[] jetPackSmokeTrails;
     private SmokeTrailLineNew[] gasSmokeTrails = new SmokeTrailLineNew[2];
@@ -173,6 +174,7 @@ public class SmokeTrailPool : MonoBehaviour
         gasSmokeTrails[id].Initialize(pos, speed);
 
         gasParticleSystems[id].transform.position = new Vector2(pos.x, pos.y);
+        player.NewGasParticles(pos.y, true);
         // Debug.LogError("Normal Postion is " + pos);
 
         // Debug.LogError("Gas Cloud Position is" + gasParticleSystems[id].transform.position);
@@ -218,6 +220,9 @@ public class SmokeTrailPool : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         gasParticleSystems[id].Stop();
+        yield return new WaitForSeconds(13);
+        player.NewGasParticles(gasParticleSystems[id].transform.position.y, false);
+
     }
     private void DisableGasTrail(int id)
     {

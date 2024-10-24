@@ -38,6 +38,9 @@ public struct OutputLvlEvent
     public Action<float> OnGetLevelTime;
 
 
+    
+
+
 
     public Action<RandomSpawnIntensity> OnSetNewIntensity;
     public Action<SpawnStateTransitionLogic, bool> OnSetNewTransitionLogic;

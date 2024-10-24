@@ -343,6 +343,11 @@ public class MainMenuScript : MonoBehaviour
         smSO.LoadLevel(levelIndex);
     }
 
+    public void LoadGamemodeFromSO(int levelIndex)
+    {
+        smSO.LoadGamemode(levelIndex);
+    }
+
 
     private void OnApplicationPause(bool isPaused)
     {
