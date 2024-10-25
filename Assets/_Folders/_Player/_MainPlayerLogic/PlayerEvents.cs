@@ -28,6 +28,7 @@ public struct PlayerEvents
     public Action HitGround;
 
     public Action<bool> EnableButtons;
+    public Action<bool> SpecialEnableButtons;
 
     public Action<int> OnStopJumpAir;
     public Action<int> OnSwitchAmmoType;

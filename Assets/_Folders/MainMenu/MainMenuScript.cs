@@ -361,7 +361,7 @@ public class MainMenuScript : MonoBehaviour
         {
 
             // When the game returns from background, keep it paused.
-            Time.timeScale = 1;
+            Time.timeScale = FrameRateManager.TargetTimeScale;
 
         }
     }

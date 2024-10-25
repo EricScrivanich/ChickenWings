@@ -17,6 +17,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     private InputController controls;
 
+    private bool specialEnableButtonsActive = false;
+
     private bool earlyDropReady;
     private bool earlyDashReady;
     private bool earlyDashTriggered;
@@ -133,6 +135,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
+                SpecialEnableButtonsCheck();
                 ID.events.OnJump?.Invoke();
                 HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
 
@@ -143,6 +146,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
+                SpecialEnableButtonsCheck();
                 ID.events.OnFlipRight?.Invoke(true);
                 HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
 
@@ -157,6 +161,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
+                SpecialEnableButtonsCheck();
                 ID.events.OnFlipLeft?.Invoke(true);
                 HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
 
@@ -185,7 +190,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
-
+                SpecialEnableButtonsCheck();
                 if (canDash)
                 {
                     ID.events.OnDash?.Invoke(true);
@@ -258,6 +263,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
+                SpecialEnableButtonsCheck();
 
                 if (canDrop)
                 {
@@ -282,12 +288,13 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled && !eggButtonHidden)
             {
+                SpecialEnableButtonsCheck();
                 // ID.globalEvents.OnEggButton?.Invoke(true);
                 if (!usingShotgun)
                 {
                     ID.events.OnEggDrop?.Invoke();
                 }
-           
+
                 else if (usingShotgun)
                     ID.events.OnAttack?.Invoke(true);
             }
@@ -298,7 +305,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
            if (usingShotgun)
                ID.events.OnAttack?.Invoke(false);
        };
-      
+
         controls.Movement.JumpHold.performed += ctx =>
         {
             if (ButtonsEnabled) ID.events.OnJumpHeld?.Invoke(true);
@@ -330,8 +337,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     }
 
-    
-    
+
+
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -344,6 +351,15 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         // Debug.Log("Up");
 
 
+    }
+
+    private void SpecialEnableButtonsCheck()
+    {
+        if (specialEnableButtonsActive)
+        {
+            ID.globalEvents.OnInputWithSpecialEnableButtons?.Invoke();
+            specialEnableButtonsActive = false;
+        }
     }
 
     void Start()
@@ -904,6 +920,15 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     }
 
+    public void SpecialActivateButtons(bool isActive)
+    {
+        ButtonsEnabled = isActive;
+
+        if (!isActive)
+            specialEnableButtonsActive = true;
+
+    }
+
     private void SetUsingShotgun(int type)
     {
         if (type == 1)
@@ -925,12 +950,15 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
         ID.globalEvents.CanDashSlash += ExitDash;
+        ID.events.SpecialEnableButtons += SpecialActivateButtons;
         if (manaUsed)
             ID.globalEvents.OnGetMana += GatherMana;
     }
 
     private void OnDisable()
     {
+        StopAllCoroutines();
+        DOTween.Kill(this);
         controls.Movement.Disable();
         ID.globalEvents.OnHideEggButton -= HideEggButton;
 
@@ -938,6 +966,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         ID.events.OnDash -= HandleDashNew;
         ID.globalEvents.CanDashSlash -= ExitDash;
         ID.events.OnSwitchAmmoType -= SetUsingShotgun;
+        ID.events.SpecialEnableButtons -= SpecialActivateButtons;
 
 
 

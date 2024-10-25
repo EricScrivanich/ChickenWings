@@ -323,6 +323,7 @@ public class AudioManager : MonoBehaviour
     }
     public void SlowAudioPitch(float newPitch)
     {
+        newPitch += 1 - FrameRateManager.TargetTimeScale;
         pigAudioSource.pitch = newPitch;
         audioSource.pitch = newPitch;
         newPitchSlow = newPitch;

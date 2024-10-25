@@ -7,17 +7,10 @@ public class FrameRateManager : MonoBehaviour
     private bool is60;
     private static int frameRate = 60;
     [SerializeField] private int targetFrameRate;
+    public static float TargetTimeScale = .92f;
     void Awake()
     {
-
-
-        
-
-
-        
-        
-        
-
+        Time.timeScale = TargetTimeScale;
         Application.targetFrameRate = targetFrameRate; // Set to your desired frame rate
     }
 
@@ -32,7 +25,7 @@ public class FrameRateManager : MonoBehaviour
     //     frameRate = 60;
 
     //     }
-        
+
     //     reset.SpecialReset();
 
     // }

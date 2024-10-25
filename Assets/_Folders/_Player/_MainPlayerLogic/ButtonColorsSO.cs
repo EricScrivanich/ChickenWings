@@ -8,6 +8,9 @@ public class ButtonColorsSO : ScriptableObject
 {
     [Header("Global Button Colors")]
     public Color normalButtonColor;
+    public Color damagedOutlineColor;
+    public Color frozenOutlineColor;
+    public Color frozenFillColor;
     public Color normalButtonColorFull => new Color(normalButtonColor.r, normalButtonColor.g, normalButtonColor.b, 1);
     public Color highlightButtonColor;
     public Color disabledButtonColor;

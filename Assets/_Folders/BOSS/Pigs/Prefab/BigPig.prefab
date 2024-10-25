@@ -258,6 +258,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66cb3f585d77b4318ba1a16757ef45b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startAtTop: 0
+  startAtBottom: 0
+  startingFallSpot: 0
   speed: 4
   yForce: 6.5
   distanceToFlap: 1.5
@@ -291,7 +294,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
@@ -306,7 +309,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: fe678516a75524493b87e632daedd5cf, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0

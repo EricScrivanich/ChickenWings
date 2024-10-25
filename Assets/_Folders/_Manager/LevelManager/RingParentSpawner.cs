@@ -244,10 +244,10 @@ public class RingParentSpawner : MonoBehaviour
         {
 
             yield return new WaitUntil(() => lvlID.PauseSpawning == false);
-            if (enemySpawner != null )
+            if (enemySpawner != null)
             {
                 enemySpawner.StopSpawningForTime(delayToSpawnRandomEnemies);
-                yield return new WaitForSeconds(enemySpawner.TimeForWaveToReachTarget(2));
+                yield return new WaitForSeconds(enemySpawner.TimeForWaveToReachTarget(4.5f));
             }
             Vector2 position;
             bool isValidPosition;
@@ -284,7 +284,7 @@ public class RingParentSpawner : MonoBehaviour
 
             ringPool.Spawn(ringParentTypes[index], position, Vector3.zero);
             float randomDelay = Random.Range(ringSpawnMinMaxDelay.x, ringSpawnMinMaxDelay.y);
-            
+
             yield return new WaitForSeconds(waitTime + randomDelay);
         }
     }

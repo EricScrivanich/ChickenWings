@@ -38,6 +38,8 @@ namespace KingdomOfNight
         public static void LoadLevel7() { OpenScene("Assets/scenes/Levels/Level7.unity"); }
         [MenuItem("Scenes/Levels/Level8 1")]
         public static void LoadLevel81() { OpenScene("Assets/scenes/Levels/Level8 1.unity"); }
+        [MenuItem("Scenes/Levels/Level8 2")]
+        public static void LoadLevel82() { OpenScene("Assets/scenes/Levels/Level8 2.unity"); }
         [MenuItem("Scenes/Levels/Level8")]
         public static void LoadLevel8() { OpenScene("Assets/scenes/Levels/Level8.unity"); }
         [MenuItem("Scenes/Levels/Level9")]

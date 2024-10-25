@@ -340,6 +340,7 @@ MonoBehaviour:
   sfxPitch: 1
   newPitchSlow: 1
   audioSource: {fileID: 3477819981823733023}
+  chickenSource: {fileID: 0}
   nonSlowSource: {fileID: 0}
   musicSource: {fileID: 4951571917034972469}
   ringPassSource: {fileID: 2039888195929267459}
@@ -366,8 +367,6 @@ MonoBehaviour:
   slowMotionExit: {fileID: 0}
   shotgunReload: {fileID: 0}
   shotgunBlast: {fileID: 0}
-  shotgunShell: {fileID: 0}
-  shotgunFutureBlast: {fileID: 0}
   shotgunShells: []
   eggDropPop: {fileID: 0}
   crack: {fileID: 8300000, guid: e5146415cf1ba493b9475b058f7f6924, type: 3}
@@ -395,6 +394,10 @@ MonoBehaviour:
   errorSound: {fileID: 0}
   levelFinishSound: {fileID: 0}
   starHitSound: {fileID: 0}
+  blobEnterSound: {fileID: 0}
+  blobExitSound: {fileID: 0}
+  blobEnterVolume: 0
+  blobExitVolume: 0
   longFartVolume: 0
   levelFinishVolume: 0
   bucketSuccessVolume: 0

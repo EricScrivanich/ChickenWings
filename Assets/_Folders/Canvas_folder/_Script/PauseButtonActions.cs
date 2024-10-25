@@ -228,14 +228,14 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
         switch (type)
         {
             case (0):
-                Time.timeScale = 1;
+                Time.timeScale = FrameRateManager.TargetTimeScale;
                 GameObject.Find("GameManager").GetComponent<ResetManager>().ResetGame();
 
                 break;
             case (1):
                 GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint = 0;
                 SceneManager.LoadScene("MainMenu");
-                Time.timeScale = 1;  // Ensure game time is running normally in the main menu.
+                Time.timeScale = FrameRateManager.TargetTimeScale;  // Ensure game time is running normally in the main menu.
                 break;
             case (2):
                 PauseMenuButton pmb = GameObject.Find("PauseButton").GetComponent<PauseMenuButton>();

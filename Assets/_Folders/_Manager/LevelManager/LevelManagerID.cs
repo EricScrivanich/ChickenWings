@@ -49,6 +49,7 @@ public class LevelManagerID : ScriptableObject
 
     public void GetBlobBurst(Vector2 pos, float zRot)
     {
+        Debug.LogError("Getting blob butst");
         if (blobBurst.activeInHierarchy) blobBurst.SetActive(false);
         blobBurst.transform.position = pos;
         blobBurst.transform.eulerAngles = new Vector3(0, 0, zRot);

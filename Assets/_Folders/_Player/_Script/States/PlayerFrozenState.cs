@@ -15,6 +15,7 @@ public class PlayerFrozenState : PlayerBaseState
         rotate = false;
         player.ID.globalEvents.Frozen.Invoke();
         AudioManager.instance.PlayFrozenSound();
+        player.ID.globalEvents.OnPlayerFrozen?.Invoke(true);
         player.anim.SetBool(player.FrozenBool, true);
         // player.disableButtons = true;
         player.rb.velocity = new Vector2(0, 0);
@@ -24,8 +25,8 @@ public class PlayerFrozenState : PlayerBaseState
 
     }
     public override void ExitState(PlayerStateManager player)
-
     {
+
         player.rb.freezeRotation = false;
         player.maxFallSpeed = player.originalMaxFallSpeed;
 
@@ -62,6 +63,8 @@ public class PlayerFrozenState : PlayerBaseState
         {
             // player.disableButtons = false;
             player.ID.events.EnableButtons?.Invoke(true);
+            player.ID.globalEvents.OnPlayerFrozen?.Invoke(false);
+
 
             player.anim.SetBool(player.FrozenBool, false);
             player.maxFallSpeed = player.originalMaxFallSpeed;

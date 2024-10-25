@@ -297,6 +297,6 @@ public class ChamberUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         rect.DOAnchorPosY(startImagePosition.y, snapDuration).SetEase(snapEase).SetUpdate(true);
         isSnappedUp = false; // Reset snapped state
         isDraggingUp = false; // Reset dragging up state
-        Time.timeScale = 1;
+        Time.timeScale = FrameRateManager.TargetTimeScale;
     }
 }

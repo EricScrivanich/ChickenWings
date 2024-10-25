@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class SetupParent : ScriptableObject
 {
+    [SerializeField] private Vector3[] eventCallBack_Trigger_ID_Delay;
 
     [Header("Egg stuff, 0 and 1 normal, 2 and 3 shotgun")]
     [SerializeField] private Vector3Int[] eggTriggerAndIndexAndType;
@@ -213,6 +214,21 @@ public class SetupParent : ScriptableObject
                     SpawnEgg(manager, item.y, item.z);
 
                 }
+            }
+        }
+
+        if (eventCallBack_Trigger_ID_Delay != null && eventCallBack_Trigger_ID_Delay.Length > 0)
+        {
+
+            foreach (var item in eventCallBack_Trigger_ID_Delay)
+            {
+                if (item.x == currentTrigger)
+                {
+                    Debug.LogError("EVent callback Called");
+                    manager.EventCallBack(Mathf.RoundToInt(item.y), item.z);
+
+                }
+
             }
         }
 

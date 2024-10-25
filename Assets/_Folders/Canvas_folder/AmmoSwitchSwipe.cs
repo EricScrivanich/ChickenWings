@@ -299,6 +299,6 @@ public class AmmoSwitchSwipe :MonoBehaviour, IPointerDownHandler, IPointerUpHand
         rect.DOAnchorPosY(startImagePosition.y, snapDuration).SetEase(snapEase).SetUpdate(true);
         isSnappedUp = false; // Reset snapped state
         isDraggingUp = false; // Reset dragging up state
-        Time.timeScale = 1;
+        Time.timeScale = FrameRateManager.TargetTimeScale;
     }
 }

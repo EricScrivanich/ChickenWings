@@ -1697,13 +1697,6 @@ MonoBehaviour:
   areRingsRequired: 1
   ringsNeeded: 5
   currentRingsPassed: 0
-  LevelNamePrefab: {fileID: 0}
-  fadeInDuration: 1
-  fadeOutDuration: 1
-  displayDuration: 3
-  textMoveDuration: 1
-  textTargetPosition: {x: 0, y: 0}
-  moveInEase: 0
   areBucketsRequired: 0
   bucketsNeeded: 0
   areBarnsRequired: 0
@@ -1714,6 +1707,7 @@ MonoBehaviour:
   - {fileID: 1351717974}
   sections:
   - {fileID: 74082483}
+  eventCallbackSections: []
   playSections: 
   playSectionDelayToUI: []
   currentEventTracked: 0
@@ -1730,7 +1724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemySpawner: {fileID: 1661944610}
-  delayToSpawnRandomEnemies: 5.75
+  delayToSpawnRandomEnemies: 4.5
   goldRingID: {fileID: 11400000, guid: dd58f32a2dde245e48fabe5bd1b5e711, type: 2}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   TriggerEventSectionNumber: 5
@@ -1744,8 +1738,8 @@ MonoBehaviour:
   timeAfterPigSpawn: 1.5
   timeAfterRingSpawn: 3.8
   currentRingParentType: 0
-  waitTime: 5
-  ringSpawnMinMaxDelay: {x: 2.9, y: 3.5}
+  waitTime: 4.5
+  ringSpawnMinMaxDelay: {x: 1, y: 2.5}
   ringParentTypes:
   - {fileID: 145206166614227992, guid: f865a2e3c42b7477380255fb40d5a342, type: 3}
   minMax:
@@ -2219,6 +2213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eggColliderYOffsetMultiplier: 0
+  player: {fileID: 0}
   gasCloudPoolSize: 0
   jetPackSmokeTrailPrefab: {fileID: 7791189156267300741, guid: 1440243de596647cdbf976a452bceba1, type: 3}
   gasSmokeTrailPrefab: {fileID: 7376049519909175309, guid: 0c2e6e1988c234eb6870724f0481872f, type: 3}

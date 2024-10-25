@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
   m_Name: Lvl7Video
   m_EditorClassIdentifier: 
+  eventCallBack_Trigger_ID_Delay: []
   eggTriggerAndIndexAndType: []
   eggPosition: []
   eggSpeed: []
@@ -31,10 +32,12 @@ MonoBehaviour:
   - dataArray: []
   - dataArray:
     - rid: 3115821831481196627
+  - dataArray:
+    - rid: 3115821901210189824
   collectableSetup: []
   isRandomSetup: 0
   testFromTrigger: 1
-  startTestTrigger: 5
+  startTestTrigger: 3
   ignoreXTriggetTime: 0
   XTriggerForRecording: 2
   references:
@@ -98,3 +101,16 @@ MonoBehaviour:
           speed: 0
           delay: 18
           initialDelay: 0
+    - rid: 3115821901210189824
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 40
+        data:
+        - position: {x: 15.80385, y: 1.4241318}
+          scale: {x: 1, y: 1, z: 1}
+          speed: 5.5
+          hasHammer: 1
+        - position: {x: 15.322151, y: -2.7506063}
+          scale: {x: 1, y: 1, z: 1}
+          speed: 3.5
+          hasHammer: 1

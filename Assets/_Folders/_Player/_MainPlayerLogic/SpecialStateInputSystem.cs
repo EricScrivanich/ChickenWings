@@ -193,7 +193,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
                   else
                   {
-                      Time.timeScale = 1;
+                      Time.timeScale = FrameRateManager.TargetTimeScale;
                       lvlID.outputEvent.SetPressButtonText?.Invoke(false, 3, "JUMP");
                       return;
                   }
@@ -226,7 +226,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
                 else
                 {
-                    Time.timeScale = 1;
+                    Time.timeScale = FrameRateManager.TargetTimeScale;
                     lvlID.outputEvent.SetPressButtonText?.Invoke(false, 3, "JUMP");
                     return;
                 }
@@ -271,7 +271,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
                 else
                 {
-                    Time.timeScale = 1;
+                    Time.timeScale = FrameRateManager.TargetTimeScale;
                     lvlID.outputEvent.SetPressButtonText?.Invoke(false, 3, "JUMP");
                     return;
                 }
@@ -330,7 +330,7 @@ public class SpecialStateInputSystem : MonoBehaviour
                 }
                 else if (!canDashSlash && startedHold)
                 {
-                    Time.timeScale = 1;
+                    Time.timeScale = FrameRateManager.TargetTimeScale;
                     lvlID.outputEvent.SetPressButtonText?.Invoke(false, 3, "JUMP");
                     return;
                 }
@@ -552,7 +552,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         }
         if (useEgg)
         {
-            eggImage = GameObject.Find("ScopeFill").GetComponent<Image>();
+            eggImage = GameObject.Find("RingFill").GetComponent<Image>();
         }
         if (useDrop && GameObject.Find("DropButton") != null)
         {
@@ -843,7 +843,6 @@ public class SpecialStateInputSystem : MonoBehaviour
     {
         // type 0 = dash;  type 1 = drop;
         StopAllCoroutines();
-
 
 
 
@@ -1402,6 +1401,8 @@ public class SpecialStateInputSystem : MonoBehaviour
             ID.globalEvents.OnGetMana += GatherMana;
     }
 
+
+
     private void OnDisable()
     {
         CancelFlashButtonTween();
@@ -1415,6 +1416,8 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         ID.events.OnDash -= HandleDashNew;
         ID.globalEvents.CanDashSlash -= ExitDash;
+        StopAllCoroutines();
+        DOTween.Kill(this);
 
 
 

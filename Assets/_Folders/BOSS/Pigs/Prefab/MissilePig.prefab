@@ -1636,7 +1636,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: b08eb3951bb8240e8826739568134cd7, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -1659,6 +1659,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turn_speed: 5
+  movementType: 0
+  missileType: 0
   flippedPig: 1
   flippedWeapon: 1
   weaponStrap: {fileID: 2825096613548665020}

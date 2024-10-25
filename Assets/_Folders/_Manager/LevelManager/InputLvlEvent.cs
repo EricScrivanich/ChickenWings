@@ -12,5 +12,7 @@ public struct InputLvlEvent
     public Action<SpawnStateTransitionLogic> switchTransitionLogic;
     public Action<int> OnGetLevelNumber;
 
+    public Action<int> SpawnedTriggerEventCallback;
+
     public Action OnEggFinishLine;
 }

@@ -20,7 +20,7 @@ public class SceneManagerSO : ScriptableObject
     {
         if (levelNumber == 0 || levelNumber >= Levels_Scene.Count) return;
 
-        if (Time.timeScale == 0) Time.timeScale = 1;
+        if (Time.timeScale == 0) Time.timeScale = FrameRateManager.TargetTimeScale;
 
         if (levelNumber == -1)
             SceneManager.LoadScene("BasicsPig");
@@ -32,7 +32,7 @@ public class SceneManagerSO : ScriptableObject
     public void LoadGamemode(int type)
     {
         if (type >= OtherGameModes_Scene.Count) return;
-        if (Time.timeScale == 0) Time.timeScale = 1;
+        if (Time.timeScale == 0) Time.timeScale = FrameRateManager.TargetTimeScale;
 
         SceneManager.LoadScene(OtherGameModes_Scene[type]);
 

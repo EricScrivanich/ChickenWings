@@ -45,6 +45,10 @@ public struct GlobalPlayerEvents
 
     public Action<bool, string[], float, float, bool, bool> OnSetInputs;
     public Action<bool> OnEnterBubble;
+    public Action OnInputWithSpecialEnableButtons;
+    public Action<bool> OnPlayerDamaged;
+
+    public Action<bool> OnPlayerFrozen;
 
 
 

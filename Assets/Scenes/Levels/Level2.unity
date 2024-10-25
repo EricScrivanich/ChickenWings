@@ -1451,13 +1451,6 @@ MonoBehaviour:
   areRingsRequired: 1
   ringsNeeded: 6
   currentRingsPassed: 0
-  LevelNamePrefab: {fileID: 0}
-  fadeInDuration: 1
-  fadeOutDuration: 1
-  displayDuration: 3
-  textMoveDuration: 1
-  textTargetPosition: {x: 0, y: 0}
-  moveInEase: 0
   areBucketsRequired: 0
   bucketsNeeded: 0
   areBarnsRequired: 0
@@ -1468,6 +1461,7 @@ MonoBehaviour:
   sections:
   - {fileID: 206558854}
   - {fileID: 1526735924}
+  eventCallbackSections: []
   playSections: 
   playSectionDelayToUI: []
   currentEventTracked: 0

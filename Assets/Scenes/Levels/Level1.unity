@@ -3589,13 +3589,6 @@ MonoBehaviour:
   areRingsRequired: 1
   ringsNeeded: 6
   currentRingsPassed: 0
-  LevelNamePrefab: {fileID: 0}
-  fadeInDuration: 1
-  fadeOutDuration: 1
-  displayDuration: 3
-  textMoveDuration: 1
-  textTargetPosition: {x: 0, y: 0}
-  moveInEase: 0
   areBucketsRequired: 0
   bucketsNeeded: 0
   areBarnsRequired: 0
@@ -3606,6 +3599,7 @@ MonoBehaviour:
   sections:
   - {fileID: 7130995602784680206}
   - {fileID: 1808002415}
+  eventCallbackSections: []
   playSections: 
   playSectionDelayToUI: []
   currentEventTracked: 0
@@ -8465,6 +8459,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[4].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6339656063899697306, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6349637087658981195, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -8546,6 +8544,10 @@ PrefabInstance:
       value: -92.5
       objectReference: {fileID: 0}
     - target: {fileID: 8962624035197747143, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9033303506776255059, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}

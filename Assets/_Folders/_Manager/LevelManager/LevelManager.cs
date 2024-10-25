@@ -46,15 +46,6 @@ public class LevelManager : MonoBehaviour
 
     private int objectivesComplete;
 
-    [Header("Level Title Display")]
-    [SerializeField] private GameObject LevelNamePrefab;
-
-    [SerializeField] private float fadeInDuration = 1f; // Duration of the fade-in
-    [SerializeField] private float fadeOutDuration = 1f; // Duration of the fade-out
-    [SerializeField] private float displayDuration = 3f; // How long to display the text before fading out
-    [SerializeField] private float textMoveDuration = 1f; // Duration for the text to move to the target position
-    [SerializeField] private Vector2 textTargetPosition;
-    [SerializeField] private Ease moveInEase;
 
 
     [Header("Buckets")]
@@ -83,6 +74,7 @@ public class LevelManager : MonoBehaviour
     [Header("Other")]
     [SerializeField] private List<GameObject> initalGameObjectsToDeactivate;
     [SerializeField] private List<GameObject> sections;
+    [SerializeField] private List<SignMovement> eventCallbackSections;
 
     [SerializeField] private List<int> playSections;
     [SerializeField] private List<float> playSectionDelayToUI;
@@ -107,6 +99,8 @@ public class LevelManager : MonoBehaviour
         LvlID.outputEvent.SetObjectActiveWithDelay += SetObjectActiveWithDelay;
         LvlID.inputEvent.ActivateObjFromEvent += TriggerObjectsFromEvent;
         LvlID.inputEvent.SetCheckPoint += SetNewCheckPoint;
+        LvlID.inputEvent.SpawnedTriggerEventCallback += HandleShowSpawnedTriggerEvent;
+        player.globalEvents.OnInputWithSpecialEnableButtons += OnSpecialInput;
 
         currentSection = 0;
         objectivesComplete = 0;
@@ -235,11 +229,15 @@ public class LevelManager : MonoBehaviour
 
 
 
+        if (pressButtonPrefab != null)
+        {
+            pressButton = Instantiate(pressButtonPrefab).GetComponent<FlashGroup>();
+            pressButton.transform.parent = canvas.transform;
+            pressButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -355);
+            pressButton.gameObject.SetActive(false);
 
-        pressButton = Instantiate(pressButtonPrefab).GetComponent<FlashGroup>();
-        pressButton.transform.parent = canvas.transform;
-        pressButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -355);
-        pressButton.gameObject.SetActive(false);
+        }
+
 
         int checkPoint = 0;
         if (GameObject.Find("GameManager") != null)
@@ -432,7 +430,7 @@ public class LevelManager : MonoBehaviour
 
     private void ShortPlayTime(float playDuration)
     {
-        Time.timeScale = 1;
+        Time.timeScale = FrameRateManager.TargetTimeScale;
         StartCoroutine(SmoothTimeScaleTransition(0, .5f, playDuration, true, currentSection));
 
     }
@@ -451,7 +449,7 @@ public class LevelManager : MonoBehaviour
         else
         {
 
-            StartCoroutine(SmoothTimeScaleTransition(1, .3f, .4f, show, section));
+            StartCoroutine(SmoothTimeScaleTransition(FrameRateManager.TargetTimeScale, .3f, .4f, show, section));
 
         }
 
@@ -611,6 +609,8 @@ public class LevelManager : MonoBehaviour
 
 
 
+
+
     void PassRing(int inARow)
     {
         if (finishedRings)
@@ -690,6 +690,8 @@ public class LevelManager : MonoBehaviour
         LvlID.inputEvent.SetCheckPoint -= SetNewCheckPoint;
         LvlID.inputEvent.OnEggFinishLine -= CreateFinish;
         LvlID.inputEvent.OnGetLevelNumber -= SetLevelNumber;
+        LvlID.inputEvent.SpawnedTriggerEventCallback -= HandleShowSpawnedTriggerEvent;
+        player.globalEvents.OnInputWithSpecialEnableButtons -= OnSpecialInput;
 
         if (areRingsRequired)
         {
@@ -728,6 +730,79 @@ public class LevelManager : MonoBehaviour
         LvlID.inputEvent.StartSpawnerInput -= TriggerSpawnerFromDelay;
 
     }
+
+    private void HandleShowSpawnedTriggerEvent(int id)
+    {
+        StartCoroutine(EventCallbackCoroutine(true, id));
+        player.events.SpecialEnableButtons?.Invoke(false);
+
+    }
+    public void HandleRetractSpawnedTriggerEvent(int id)
+    {
+
+        eventCallbackSections[id].SpecialRetract();
+
+        StartCoroutine(DelayToPressButtons());
+
+    }
+
+    private void OnSpecialInput()
+    {
+        StartCoroutine(EventCallbackCoroutine(false, 0));
+        pressButton.SetText(false, 0, "");
+
+    }
+
+    private IEnumerator DelayToPressButtons()
+    {
+        yield return new WaitForSecondsRealtime(.4f);
+        pressButton.SetText(true, 0, "");
+        yield return new WaitForSecondsRealtime(.4f);
+        player.events.SpecialEnableButtons?.Invoke(true);
+
+    }
+
+    private IEnumerator EventCallbackCoroutine(bool show, int section)
+    {
+        float start = Time.timeScale;
+        float elapsed = 0f;
+        float targetTimeScale = 0;
+        float duration = .2f;
+        if (show)
+        {
+            targetTimeScale = 0;
+            if (!player.isAlive)
+            {
+                yield break;
+            }
+            pauseButton.enabled = false;
+            eventCallbackSections[section].gameObject.SetActive(true);
+            Debug.LogError("EVent courintine started");
+
+
+        }
+        else
+        {
+            targetTimeScale = FrameRateManager.TargetTimeScale;
+
+
+            pauseButton.enabled = true;
+
+        }
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            Time.timeScale = Mathf.Lerp(start, targetTimeScale, elapsed / duration);
+            yield return null;
+        }
+
+
+
+        Time.timeScale = targetTimeScale;
+        hasStartedPlayTimeDelayedPause = false;
+    }
+
 
 
 

@@ -1536,13 +1536,6 @@ MonoBehaviour:
   areRingsRequired: 1
   ringsNeeded: 6
   currentRingsPassed: 0
-  LevelNamePrefab: {fileID: 0}
-  fadeInDuration: 1
-  fadeOutDuration: 1
-  displayDuration: 3
-  textMoveDuration: 1
-  textTargetPosition: {x: 0, y: 0}
-  moveInEase: 0
   areBucketsRequired: 0
   bucketsNeeded: 0
   areBarnsRequired: 0
@@ -1555,6 +1548,7 @@ MonoBehaviour:
   sections:
   - {fileID: 851127558}
   - {fileID: 2032950702}
+  eventCallbackSections: []
   playSections: 
   playSectionDelayToUI: []
   currentEventTracked: 0
@@ -1585,8 +1579,8 @@ MonoBehaviour:
   timeAfterPigSpawn: 1.5
   timeAfterRingSpawn: 3.8
   currentRingParentType: 0
-  waitTime: 4.5
-  ringSpawnMinMaxDelay: {x: 3.2, y: 3.5}
+  waitTime: 4
+  ringSpawnMinMaxDelay: {x: 2.5, y: 3}
   ringParentTypes:
   - {fileID: 7404809993316919412, guid: 2bba167d8e0244a84aec2cb6ea0bc90d, type: 3}
   - {fileID: 7253889041876223930, guid: 9c0b66cccf28a47aa9d9f56c3f843348, type: 3}

@@ -8,6 +8,8 @@ public class TenderizerPig : MonoBehaviour, ICollectible
     public bool hasHammer;
     private CircleCollider2D detection;
     private float amplitude = .3f;
+    private float baseFrequency = 1.4f;
+    private float baseSpeed = 3.5f;
     private float frequency = 1.4f;
     private float initialY;
     private Animator anim;
@@ -41,6 +43,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible
 
     private void OnEnable()
     {
+        frequency = baseFrequency + ((baseSpeed - Mathf.Abs(speed)) * .27f);
         initialY = transform.position.y;
         flipped = false;
         if (speed < 0)

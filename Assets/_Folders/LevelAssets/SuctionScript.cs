@@ -6,6 +6,8 @@ using DG.Tweening;
 public class SuctionScript : MonoBehaviour
 {
     [SerializeField] private AnimationDataSO animSO;
+    private bool hasEnteredTrigger = false;
+    
 
     [SerializeField] private float startCircleScale;
     [SerializeField] private float circleTweenDur;
@@ -50,8 +52,12 @@ public class SuctionScript : MonoBehaviour
 
     // }
 
+
+
     private void Start()
     {
+
+
         colliderObj = GetComponent<Collider2D>();
         parentScript = GetComponentInParent<TriggerNextSection>();
         circleHighlight.gameObject.SetActive(false);
@@ -106,7 +112,7 @@ public class SuctionScript : MonoBehaviour
 
     private IEnumerator SetGlow()
     {
-        float duration = 1.5f;
+        float duration = 1.4f;
         float t = 0;
         // yield return new WaitForSecondsRealtime(0.5f);
 
@@ -124,10 +130,10 @@ public class SuctionScript : MonoBehaviour
 
             yield return null;
         }
-        CircleHighlightTween(true);
-
         // Ensure the glow is set to 0 at the end
         mat.SetFloat("_Glow", 0);
+        if (!hasEnteredTrigger)
+            CircleHighlightTween(true);
     }
 
 
@@ -146,6 +152,9 @@ public class SuctionScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (hasEnteredTrigger) return;
+
+        hasEnteredTrigger = true;
 
         Vector2 direction = other.transform.position - transform.position;
         CircleHighlightTween(false);

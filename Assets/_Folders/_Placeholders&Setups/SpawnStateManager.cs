@@ -218,6 +218,22 @@ public class SpawnStateManager : MonoBehaviour
 
     }
 
+    public void EventCallBack(int ID, float delay)
+    {
+
+        StartCoroutine(EventCallbackCoroutine(ID, delay));
+
+    }
+
+    private IEnumerator EventCallbackCoroutine(int ID, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Debug.LogError("Event inboked");
+        LvlID.inputEvent.SpawnedTriggerEventCallback?.Invoke(ID);
+
+
+    }
+
     public float TotalTime()
     {
         float totalTime = 0;

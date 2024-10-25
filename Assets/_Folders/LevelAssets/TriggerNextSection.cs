@@ -26,6 +26,8 @@ public class TriggerNextSection : MonoBehaviour
 
     private bool hasTriggeredEnterEvent = false;
 
+    private bool hasBursted = false;
+
 
 
 
@@ -125,7 +127,7 @@ public class TriggerNextSection : MonoBehaviour
 
         if (triggerEventOnEnterSuction != null)
         {
-            Debug.LogError("WE HSOIUDL WORK");
+
             triggerEventOnEnterSuction.TriggerEvent();
 
         }
@@ -142,6 +144,7 @@ public class TriggerNextSection : MonoBehaviour
 
     private IEnumerator ShowPressButtons()
     {
+        Debug.LogError("Tring to show press button");
         yield return new WaitForSecondsRealtime(delayInputsDuration);
         if (checkAnyInput) lvlID.outputEvent.SetPressButtonText?.Invoke(true, 0, "");
         else if (mustHoldDuration == 0) lvlID.outputEvent.SetPressButtonText?.Invoke(true, 1, pressButtonText);
@@ -219,7 +222,7 @@ public class TriggerNextSection : MonoBehaviour
 
     public void EnterSection()
     {
-        Debug.Log("entered");
+
         col.enabled = false;
         HandleSectionActivication(true);
 
@@ -292,6 +295,8 @@ public class TriggerNextSection : MonoBehaviour
     }
     public void ExitSuction()
     {
+        if (hasBursted) return;
+        hasBursted = true;
         Vector2 direction = playerTransform.position - transform.position;
 
         // Calculate the angle in degrees, and add 90 degrees to rotate the sprite
@@ -302,6 +307,8 @@ public class TriggerNextSection : MonoBehaviour
         AudioManager.instance.PlayBlobNoise(false);
 
         this.gameObject.SetActive(false);
+        suctionObject.SetActive(false);
+        spriteRen.enabled = false;
     }
 
 
@@ -324,7 +331,7 @@ public class TriggerNextSection : MonoBehaviour
             lvlID.PauseSpawning = false;
         }
         lvlID.outputEvent.SetPressButtonText?.Invoke(false, 0, "");
-        Time.timeScale = 1;
+        Time.timeScale = FrameRateManager.TargetTimeScale;
         // this.gameObject.SetActive(false);
 
         if (setActiveAfterDelayObjects.Length > 0)
@@ -368,6 +375,8 @@ public class TriggerNextSection : MonoBehaviour
 
     private void OnEnable()
     {
+        Debug.LogError("Suction disabled");
+
         lvlID.outputEvent.SetCheckPoint += HandleOnCheckpoint;
         player.globalEvents.ExitSectionTrigger += ExitSection;
         lvlID.outputEvent.setButtonsReadyToPress += ReadyForExitAndPressButtons;
@@ -387,7 +396,7 @@ public class TriggerNextSection : MonoBehaviour
         player.globalEvents.ExitSectionTrigger -= ExitSection;
         lvlID.outputEvent.setButtonsReadyToPress -= ReadyForExitAndPressButtons;
 
-
+        Debug.LogError("Suction disabled");
         if (playerTweenSequence != null && playerTweenSequence.IsPlaying())
             playerTweenSequence.Kill();
 

@@ -379,7 +379,7 @@ public class TutorialManger : MonoBehaviour
         }
         else
         {
-            Time.timeScale = 1;
+            Time.timeScale = FrameRateManager.TargetTimeScale;
 
         }
     }

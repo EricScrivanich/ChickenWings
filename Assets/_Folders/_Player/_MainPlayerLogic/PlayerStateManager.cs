@@ -227,6 +227,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
+        Time.timeScale = FrameRateManager.TargetTimeScale;
         shotgunEquipped = false;
         CurrentJumpAirIndex = 0;
         ID.constantPlayerForce = initialConstantForce;
@@ -283,7 +284,7 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        AudioManager.instance.SlowAudioPitch(1);
+        AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
         playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
         playerBoundaries.enabled = false;
         jumpAir = new Queue<GameObject>();
@@ -1098,7 +1099,7 @@ public class PlayerStateManager : MonoBehaviour
         while (time < speedTimeDuration)
         {
             time += Time.deltaTime;
-            float newTime = Mathf.Lerp(reloadTimeTarget, 1, time / speedTimeDuration);
+            float newTime = Mathf.Lerp(reloadTimeTarget, FrameRateManager.TargetTimeScale, time / speedTimeDuration);
             maxFallSpeed = Mathf.Lerp(mfs, originalMaxFallSpeed, time / speedTimeDuration);
             AudioManager.instance.SlowAudioPitch(newTime);
             Time.timeScale = newTime;
@@ -1107,7 +1108,7 @@ public class PlayerStateManager : MonoBehaviour
             yield return null;
         }
         inSlowMo = false;
-        Time.timeScale = 1;
+        Time.timeScale = FrameRateManager.TargetTimeScale;
 
     }
 
@@ -1296,14 +1297,18 @@ public class PlayerStateManager : MonoBehaviour
                 if (ID.Lives <= 0)
                 {
                     Die();
+                    ID.globalEvents.OnPlayerDamaged?.Invoke(true);
+
                     return;
                 }
+
+                ID.globalEvents.OnPlayerDamaged?.Invoke(false);
 
             }
 
             else
             {
-
+                ID.globalEvents.OnPlayerDamaged?.Invoke(false);
                 ID.globalEvents.OnInfiniteLives?.Invoke();
             }
             DamageEffects();

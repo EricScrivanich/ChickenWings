@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
   m_Name: SET_LVL8E-1
   m_EditorClassIdentifier: 
+  eventCallBack_Trigger_ID_Delay: []
   eggTriggerAndIndexAndType:
   - {x: 2, y: 0, z: 3}
   eggPosition:
@@ -23,13 +24,13 @@ MonoBehaviour:
   enemyTriggerForEachRingIndexWeights: 
   enemySetup:
   - dataArray:
-    - rid: 3115821831481196563
-    - rid: 3115821831481196564
+    - rid: 3115821901210189848
+    - rid: 3115821901210189849
   - dataArray:
     - rid: 3115821831481196566
     - rid: 3115821831481196567
   - dataArray:
-    - rid: 3115821831481196570
+    - rid: 3115821901210189847
   - dataArray:
     - rid: 3115821831481196575
     - rid: 3115821831481196576
@@ -72,25 +73,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3115821831481196563
-      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - position: {x: 17.01, y: 4.24}
-          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
-          speed: 6.5
-    - rid: 3115821831481196564
-      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - position: {x: 21.9, y: -0.1}
-          scale: {x: 0.9, y: 0.9, z: 0.9}
-          speed: 4.8
-          yForce: 6.3
-          distanceToFlap: 1
-          startingFallSpot: 0
     - rid: 3115821831481196565
       type: {class: RingSO, ns: , asm: Assembly-CSharp}
       data:
@@ -166,23 +148,6 @@ MonoBehaviour:
           scale: {x: 1.25, y: 1.2, z: 1}
           rotation: {x: -0, y: -0, z: -0.459576, w: 0.8881385}
           speed: 5
-    - rid: 3115821831481196570
-      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - position: {x: 15.37, y: 2.12}
-          scale: {x: 0.9, y: 0.9, z: 0.9}
-          speed: 4.7
-          yForce: 6.2
-          distanceToFlap: 0.8
-          startingFallSpot: 0
-        - position: {x: 15.44508, y: -1.63}
-          scale: {x: 0.9, y: 0.9, z: 0.9}
-          speed: 4.7
-          yForce: 6.2
-          distanceToFlap: 0.8
-          startingFallSpot: -1
     - rid: 3115821831481196571
       type: {class: RingSO, ns: , asm: Assembly-CSharp}
       data:
@@ -412,3 +377,39 @@ MonoBehaviour:
           scale: {x: 1, y: 1, z: 1}
           speed: 3.5
           hasHammer: 1
+    - rid: 3115821901210189847
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 15.67, y: 2.51}
+          scale: {x: 0.86, y: 0.9, z: 0.9}
+          speed: 4.7
+          yForce: 6.2
+          distanceToFlap: 0.7
+          startingFallSpot: 0
+        - position: {x: 15.74508, y: -1.81}
+          scale: {x: 0.86, y: 0.9, z: 0.9}
+          speed: 4.7
+          yForce: 6.2
+          distanceToFlap: 0.7
+          startingFallSpot: -1
+    - rid: 3115821901210189848
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 17.01, y: 4.24}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+    - rid: 3115821901210189849
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 21.9, y: 0.37}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4.8
+          yForce: 6.3
+          distanceToFlap: 1
+          startingFallSpot: 0
