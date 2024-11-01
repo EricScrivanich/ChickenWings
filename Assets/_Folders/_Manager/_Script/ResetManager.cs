@@ -23,6 +23,8 @@ public class ResetManager : MonoBehaviour
     private InputAction resetAction;
     public int checkPoint;
 
+    public static Action GameOverEvent;
+
 
     void Awake()
     {
@@ -48,7 +50,7 @@ public class ResetManager : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "MainMenu")
             StartCoroutine(PreloadAssetsCoroutine());
 
-        
+
 
 
 
@@ -114,7 +116,7 @@ public class ResetManager : MonoBehaviour
             yield return new WaitForSeconds(0.1f); // Wait for a short duration
             Destroy(tempPS.gameObject);
         }
-       
+
 
         loadedAssets = true;
 
@@ -124,6 +126,7 @@ public class ResetManager : MonoBehaviour
     public void StartResetTime()
     {
         resetTriggered = true; // Set the reset trigger
+        ResetManager.GameOverEvent?.Invoke();
     }
 
     // void OnEnable()
@@ -148,7 +151,7 @@ public class ResetManager : MonoBehaviour
         {
 
             checkPoint = GameObject.Find("LevelManager").GetComponent<LevelManager>().reachedCheckpoint;
-            
+
             Debug.Log("Check Point is: " + checkPoint);
         }
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

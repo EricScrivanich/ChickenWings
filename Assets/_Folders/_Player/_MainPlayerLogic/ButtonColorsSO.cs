@@ -6,15 +6,22 @@ using UnityEngine;
 [CreateAssetMenu]
 public class ButtonColorsSO : ScriptableObject
 {
+    [HideInInspector]
+    public int currentO;
+    [HideInInspector]
+    public int currentN;
+    [HideInInspector]
+    public int currentD;
+    public CustomButtonOptions options;
     [Header("Global Button Colors")]
     public Color normalButtonColor;
     public Color damagedOutlineColor;
     public Color frozenOutlineColor;
     public Color frozenFillColor;
-    public Color normalButtonColorFull => new Color(normalButtonColor.r, normalButtonColor.g, normalButtonColor.b, 1);
+    public Color normalButtonColorFull;
     public Color highlightButtonColor;
     public Color disabledButtonColor;
-    public Color disabledButtonColorFull => new Color(disabledButtonColor.r, disabledButtonColor.g, disabledButtonColor.b, 1);
+    public Color disabledButtonColorFull;
     public Color DashImageManaHighlight;
     public Color DashImageManaHighlight2;
     public Color DashImageManaDisabled;
@@ -54,7 +61,24 @@ public class ButtonColorsSO : ScriptableObject
     public Color DisabledScopeFillColor;
 
 
+    public void LoadOptions(int n, int o, int d)
+    {
+        Debug.LogError("Loading Options");
+        normalButtonColor = options.fillColorOptions[n];
+        normalButtonColorFull = new Color(normalButtonColor.r, normalButtonColor.g, normalButtonColor.b, 1);
+        OutLineColor = options.outlineColorOptions[o];
+        disabledButtonColor = new Color(options.fillColorOptions[d].r, options.fillColorOptions[d].g, options.fillColorOptions[d].b, .8f);
+        disabledButtonColorFull = new Color(disabledButtonColor.r, disabledButtonColor.g, disabledButtonColor.b, 1);
 
+        Color c = options.fillColorOptions[n];
+
+        float addedWhiteHighlight = 0;
+        float average = (c.r + c.g + c.b) / 3;
+        addedWhiteHighlight = (1 - average) * .3f;
+        highlightButtonColor = new Color(c.r + addedWhiteHighlight, c.g + addedWhiteHighlight, c.b + addedWhiteHighlight, 1);
+
+
+    }
 
 
 

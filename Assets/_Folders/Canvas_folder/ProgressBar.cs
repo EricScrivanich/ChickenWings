@@ -10,6 +10,7 @@ public class ProgressBar : MonoBehaviour
     [SerializeField] private float duration;
     [SerializeField] private LevelManagerID levelManagerID;
     public ButtonColorsSO colorSO;
+    private Color fillColor = new Color(.6f, .6f, .6f, .55f);
 
     [SerializeField] private RectTransform chicken;
     [SerializeField] private Image progress;
@@ -18,6 +19,7 @@ public class ProgressBar : MonoBehaviour
 
     [SerializeField] private GameObject FinishLineEgg;
     [SerializeField] private Vector3 FinishLineEggSpawnPostion;
+    private Image outline;
 
     private Sequence finishSeq;
     private float actualTime;
@@ -32,9 +34,11 @@ public class ProgressBar : MonoBehaviour
     void Start()
     {
         fill = GetComponent<Image>();
+        outline = gameObject.transform.Find("Outline").GetComponent<Image>();
         progress.fillAmount = 0;
         startPosition = chicken.localPosition;
-        endPosition = new Vector3(chickenEndPos.localPosition.x, chickenEndPos.localPosition.y, 0);
+        endPosition = new Vector3(chickenEndPos.localPosition.x + 20, chickenEndPos.localPosition.y, 0);
+
         if (duration > 100)
             timeStamp = .12f;
         else if (duration > 80)
@@ -50,13 +54,21 @@ public class ProgressBar : MonoBehaviour
         // progress.DOFillAmount(1, duration).From(0);
         // chicken.DOLocalMoveX(chickenEndPos.localPosition.x, duration).OnComplete(FinishLevel);
         // StartCoroutine(LerpTimer());
-        progress.color = colorSO.DashImageManaHighlight;
+        progress.color = colorSO.normalButtonColorFull;
+        fill.color = fillColor;
+        outline.color = colorSO.OutLineColor;
 
     }
     private void Awake()
     {
         levelManagerID.outputEvent.OnGetLevelTime += SetDuration;
+        ResetManager.GameOverEvent += OnGameOver;
 
+    }
+
+    private void OnGameOver()
+    {
+        stopUpdate = true;
     }
 
     void SetDuration(float d)
@@ -69,7 +81,7 @@ public class ProgressBar : MonoBehaviour
         chicken.GetComponent<Image>().DOFade(0, .4f);
         Instantiate(FinishLineEgg, FinishLineEggSpawnPostion, Quaternion.identity);
 
-        fill.DOColor(colorSO.DashImageManaHighlight, .3f).OnComplete(finishedTween);
+        fill.DOColor(colorSO.normalButtonColorFull, .3f).OnComplete(finishedTween);
 
 
 
@@ -139,14 +151,16 @@ public class ProgressBar : MonoBehaviour
             finishSeq.Kill();
 
         finishSeq = DOTween.Sequence();
-        finishSeq.Append(fill.DOColor(colorSO.normalButtonColor, .5f).SetEase(Ease.InSine).From(colorSO.DashImageManaHighlight));
-        finishSeq.Append(fill.DOColor(colorSO.DashImageManaHighlight, .6f).SetEase(Ease.OutSine));
+        finishSeq.Append(fill.DOColor(fillColor, .5f).SetEase(Ease.InSine).From(colorSO.normalButtonColorFull));
+        finishSeq.Append(fill.DOColor(colorSO.normalButtonColorFull, .6f).SetEase(Ease.OutSine));
         finishSeq.Play().SetLoops(-1);
     }
 
     private void OnDisable()
     {
         levelManagerID.outputEvent.OnGetLevelTime -= SetDuration;
+        ResetManager.GameOverEvent -= OnGameOver;
+
         if (finishSeq != null && finishSeq.IsPlaying())
             finishSeq.Kill();
 

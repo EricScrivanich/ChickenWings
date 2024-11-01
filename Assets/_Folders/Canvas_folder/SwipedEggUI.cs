@@ -74,7 +74,8 @@ public class SwipedEggUI : MonoBehaviour
 
         parentScript = GetComponentInParent<EggAmmoDisplay>();
         rect = GetComponent<RectTransform>();
-        text.color = new Color(colorSO.normalButtonColor.r, colorSO.normalButtonColor.g, colorSO.normalButtonColor.b, 1);
+        // text.color = new Color(colorSO.normalButtonColor.r, colorSO.normalButtonColor.g, colorSO.normalButtonColor.b, 1);
+        text.color = Color.white;
         originalEggPos = eggIMG.rectTransform.localPosition.y;
 
 
@@ -123,7 +124,8 @@ public class SwipedEggUI : MonoBehaviour
 
             if (amount <= 0 && !OnZero)
             {
-                FlashAmmoTween(true);
+                // FlashAmmoTween(true);
+                FlashAmmoTween(false);  // commented out for no cahined ammo
 
                 OnZero = true;
             }

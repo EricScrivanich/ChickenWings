@@ -41,8 +41,8 @@ MonoBehaviour:
     - rid: 3115821659791294607
     - rid: 3115821659791294608
   - dataArray:
-    - rid: 3115821659791294613
-    - rid: 3115821659791294614
+    - rid: 3115822063122907136
+    - rid: 3115822063122907137
   - dataArray:
     - rid: 3115821901210189838
     - rid: 3115821901210189839
@@ -52,8 +52,6 @@ MonoBehaviour:
   - dataArray:
     - rid: 3115821659791294589
     - rid: 3115821659791294590
-  - dataArray:
-    - rid: 3115821901210189837
   collectableSetup: []
   isRandomSetup: 0
   testFromTrigger: 0
@@ -145,7 +143,7 @@ MonoBehaviour:
     - rid: 3115821659791294589
       type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
       data:
-        TimeToTrigger: 6
+        TimeToTrigger: 10
         data:
         - position: {x: 18.33, y: 2.2}
           scale: {x: 1.1, y: 1.1, z: 1.1}
@@ -193,32 +191,6 @@ MonoBehaviour:
           yForce: 6.2
           distanceToFlap: 1.15
           startingFallSpot: 0
-    - rid: 3115821659791294613
-      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - position: {x: 35.63, y: -1.6}
-          scale: {x: 0.87, y: 0.83, z: 1}
-          speed: 10.3
-        - position: {x: 40.159996, y: -2.52}
-          scale: {x: 0.87, y: 0.83, z: 1}
-          speed: 10.3
-        - position: {x: 31.27, y: -3.63}
-          scale: {x: 0.87, y: 0.83, z: 1}
-          speed: 10.3
-        - position: {x: 47.18, y: -1.51}
-          scale: {x: 0.87, y: 0.83, z: 1}
-          speed: 10.3
-    - rid: 3115821659791294614
-      type: {class: GasPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 6
-        data:
-        - position: {x: 17.68, y: -0.1}
-          speed: 0
-          delay: 21.5
-          initialDelay: 0
     - rid: 3115821901210189835
       type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -241,17 +213,6 @@ MonoBehaviour:
           yForce: 5.9
           distanceToFlap: 0.35
           startingFallSpot: -0.8
-    - rid: 3115821901210189837
-      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 7
-        data:
-        - position: {x: 20.61, y: -3.64}
-          scale: {x: 0.92, y: 0.9, z: 1}
-          speed: 9.5
-        - position: {x: 39.62, y: -0.82}
-          scale: {x: 0.92, y: 0.9, z: 1}
-          speed: 9.5
     - rid: 3115821901210189838
       type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -283,3 +244,26 @@ MonoBehaviour:
           yForce: 5.9
           distanceToFlap: 0.35
           startingFallSpot: 0
+    - rid: 3115822063122907136
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 35.63, y: -1.6}
+          scale: {x: 0.87, y: 0.83, z: 1}
+          speed: 10.3
+        - position: {x: 40.159996, y: -2.52}
+          scale: {x: 0.87, y: 0.83, z: 1}
+          speed: 10.3
+        - position: {x: 31.27, y: -3.63}
+          scale: {x: 0.87, y: 0.83, z: 1}
+          speed: 10.3
+    - rid: 3115822063122907137
+      type: {class: GasPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 6
+        data:
+        - position: {x: 17.68, y: 0.06}
+          speed: 0
+          delay: 20
+          initialDelay: 0

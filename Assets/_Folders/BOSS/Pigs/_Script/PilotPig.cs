@@ -23,6 +23,7 @@ public class PilotPig : MonoBehaviour
 
     private bool straighten;
 
+
     // [SerializeField] private float speed;
     public float initialSpeed;
     public float addForceY;
@@ -78,21 +79,20 @@ public class PilotPig : MonoBehaviour
 
         startMotion = false;
 
-
     }
 
     private void OnEnable()
     {
         startMotion = false;
-        if (initialSpeed < 0)
-        {
-            transform.eulerAngles = new Vector3(0, 180, 0);
-        }
+        // if (initialSpeed < 0)
+        // {
+        //     transform.eulerAngles = new Vector3(0, 180, 0);
+        // }
 
         rb.velocity = new Vector2(-initialSpeed, 0);
 
 
-        if (xTrigger == 0) xTrigger = transform.position.x;
+        if (xTrigger == 0) xTrigger = transform.position.x - ((Mathf.Abs(initialSpeed) / initialSpeed) * .5f);
 
 
         switch (flightMode)
@@ -160,7 +160,7 @@ public class PilotPig : MonoBehaviour
     void Update()
     {
 
-        if (transform.position.x < xTrigger && !startMotion)
+        if ((initialSpeed > 0 && transform.position.x < xTrigger && !startMotion) || (initialSpeed < 0 && transform.position.x > xTrigger && !startMotion))
         {
             startMotion = true;
             anim.SetTrigger(animType);

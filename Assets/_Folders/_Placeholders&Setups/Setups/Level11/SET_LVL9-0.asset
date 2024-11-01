@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
   m_Name: SET_LVL9-0
   m_EditorClassIdentifier: 
+  eventCallBack_Trigger_ID_Delay: []
   eggTriggerAndIndexAndType: []
   eggPosition: []
   eggSpeed: []
@@ -25,8 +26,8 @@ MonoBehaviour:
   - dataArray:
     - rid: 3115821659791294464
   - dataArray:
-    - rid: 3115821659791294467
-    - rid: 3115821659791294468
+    - rid: 3115821993025339393
+    - rid: 3115821993025339394
   - dataArray:
     - rid: 3115821659791294481
     - rid: 3115821659791294482
@@ -36,8 +37,8 @@ MonoBehaviour:
   - dataArray:
     - rid: 3115821659791294485
   - dataArray:
-    - rid: 3115821742093762673
-    - rid: 3115821742093762674
+    - rid: 3115821993025339395
+    - rid: 3115821993025339396
   - dataArray:
     - rid: 3115821659791294507
   - dataArray:
@@ -51,7 +52,7 @@ MonoBehaviour:
   collectableSetup: []
   isRandomSetup: 0
   testFromTrigger: 0
-  startTestTrigger: 7
+  startTestTrigger: 5
   ignoreXTriggetTime: 1
   XTriggerForRecording: 0
   references:
@@ -103,28 +104,6 @@ MonoBehaviour:
           scale: {x: 1.07, y: 1.07, z: 1.07}
           speed: -1.5
           hasHammer: 1
-    - rid: 3115821659791294467
-      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 4.239655
-        data:
-        - position: {x: 17.345522, y: 2.545188}
-          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
-          speed: 6
-        - position: {x: 23.18, y: 0.46}
-          scale: {x: 0.84, y: 0.84, z: 0.84}
-          speed: 6.3
-        - position: {x: 24.59, y: 4.01}
-          scale: {x: 0.84, y: 0.84, z: 0.84}
-          speed: 5.8
-    - rid: 3115821659791294468
-      type: {class: BomberPlaneSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - xDropPosition: -7
-          dropAreaScaleMultiplier: 0
-          speedTarget: 8
     - rid: 3115821659791294481
       type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -286,7 +265,29 @@ MonoBehaviour:
         - xDropPosition: -5.5
           dropAreaScaleMultiplier: 1.25
           speedTarget: -6.5
-    - rid: 3115821742093762673
+    - rid: 3115821993025339393
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.239655
+        data:
+        - position: {x: 17.345522, y: 2.545188}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6
+        - position: {x: 23.18, y: 0.46}
+          scale: {x: 0.84, y: 0.84, z: 0.84}
+          speed: 6.3
+        - position: {x: 24.59, y: 4.01}
+          scale: {x: 0.84, y: 0.84, z: 0.84}
+          speed: 5.8
+    - rid: 3115821993025339394
+      type: {class: BomberPlaneSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - xDropPosition: -7
+          dropAreaScaleMultiplier: 0
+          speedTarget: -7
+    - rid: 3115821993025339395
       type: {class: MissilePigSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 9
@@ -300,7 +301,7 @@ MonoBehaviour:
         - position: {x: 29.07, y: -3.86}
           missileType: 0
           movementType: 3
-    - rid: 3115821742093762674
+    - rid: 3115821993025339396
       type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 0
@@ -308,5 +309,5 @@ MonoBehaviour:
         - position: {x: 16.28, y: 2.11}
           bladeAmount: 3
           bladeScaleMultiplier: 1.1
-          bladeSpeed: -70
+          bladeSpeed: -90
           startRot: 0

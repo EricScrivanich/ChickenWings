@@ -589,10 +589,16 @@ public class SpawnStateManager : MonoBehaviour
         return returnedTime - timeSinceLastWave;
     }
 
+    private void OnGameOver()
+    {
+        StopAllCoroutines();
+    }
+
     private void OnEnable()
     {
         LvlID.outputEvent.OnSetNewIntensity += SetNewIntensity;
         LvlID.outputEvent.OnSetNewTransitionLogic += SetNewTransitionLogic;
+        ResetManager.GameOverEvent += OnGameOver;
         foreach (var ringId in ringPool.RingType)
         {
             ringId.ringEvent.OnCreateNewSequence += RingSequenceFinished;
@@ -604,6 +610,8 @@ public class SpawnStateManager : MonoBehaviour
     {
         LvlID.outputEvent.OnSetNewIntensity -= SetNewIntensity;
         LvlID.outputEvent.OnSetNewTransitionLogic -= SetNewTransitionLogic;
+        ResetManager.GameOverEvent -= OnGameOver;
+
 
         foreach (var ringId in ringPool.RingType)
         {
@@ -874,6 +882,7 @@ public class SpawnStateManager : MonoBehaviour
         if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
 
         script.transform.position = (Vector2)transform.position + pos;
+        if (speed < 0) scale = new Vector3(scale.x * -1, scale.y, scale.z);
         script.transform.localScale = scale;
         script.initialSpeed = speed;
         script.flightMode = flightMode;

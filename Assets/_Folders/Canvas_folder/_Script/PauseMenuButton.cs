@@ -11,6 +11,9 @@ public class PauseMenuButton : MonoBehaviour
     private PauseMenuManager pmm;
     private GameObject PauseMenu;
     private Canvas canvas;
+
+
+    private bool gameOver = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,7 +36,7 @@ public class PauseMenuButton : MonoBehaviour
     // Update is called once per frame
     public void InstantPause()
     {
-        if (Time.timeScale == 0) return;
+        if (Time.timeScale == 0 || gameOver) return;
         PauseMenu.SetActive(true);
         pmm.InstantPause();
 
@@ -44,6 +47,7 @@ public class PauseMenuButton : MonoBehaviour
 
     public void NormalPause()
     {
+        if (gameOver) return;
         if (!isPaused)
         {
             isPaused = true;
@@ -62,6 +66,21 @@ public class PauseMenuButton : MonoBehaviour
             StartCoroutine(SmoothTimeScaleTransition(1, .25f, .9f));
             pmm.RetractOnly();
         }
+    }
+
+    private void OnEnable()
+    {
+        ResetManager.GameOverEvent += OnGameOveer;
+    }
+    private void OnDisable()
+    {
+        ResetManager.GameOverEvent -= OnGameOveer;
+
+    }
+
+    private void OnGameOveer()
+    {
+        gameOver = true;
     }
 
 

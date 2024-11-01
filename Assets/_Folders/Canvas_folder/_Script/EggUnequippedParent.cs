@@ -73,6 +73,7 @@ public class EggUnequippedParent : MonoBehaviour
     }
     private void OnDisable()
     {
+        DOTween.Kill(this);
         EggAmmoDisplay.EquipAmmoEvent -= EquipAmmo;
         EggAmmoDisplay.UnequipAmmoEvent -= UnEquipAmmo;
         EggAmmoDisplay.HideEggButtonEvent -= HideEggButton;

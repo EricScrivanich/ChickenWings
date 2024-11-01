@@ -166,7 +166,7 @@ public class AudioManager : MonoBehaviour
         }
         DontDestroyOnLoad(this.gameObject);
 
-        BoundariesManager.isDay = false;
+        // BoundariesManager.isDay = false;
 
         // Don't destroy AudioManager on scene change.
 

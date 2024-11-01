@@ -8,6 +8,10 @@ public class FadeInUI : MonoBehaviour
 {
     [SerializeField] private CanvasGroup FadeGroup;
 
+    [SerializeField] private GameObject blockButtons;
+
+    [SerializeField] private bool setSelfUnactive;
+
     [SerializeField] private float setSelfUnactiveAfterDelay;
     [SerializeField] private float setSelfActiveAfterDelay;
     private bool hasSetActive = false;
@@ -75,6 +79,8 @@ public class FadeInUI : MonoBehaviour
         SetActiveOnce();
         FadeGroup.alpha = startAlpha;
 
+        if (setSelfUnactive) blockButtons.SetActive(true);
+
         foreach (var item in SetActiveObjects)
         {
             item.SetActive(false);
@@ -104,9 +110,10 @@ public class FadeInUI : MonoBehaviour
     }
     private void OnDisable()
     {
+        DOTween.Kill(this);
         if (setCanvasGroupUnactive) FadeGroup.gameObject.SetActive(false);
 
-        
+
     }
 
     private IEnumerator DelayToFunction(bool setActive, float delay)
@@ -132,7 +139,7 @@ public class FadeInUI : MonoBehaviour
         if (!hasFaded && this.gameObject.activeInHierarchy)
         {
             hasFaded = true;
-            FadeGroup.DOFade(startAlpha, fadeDuration / 2).SetEase(Ease.InOutSine).From(endAlpha).SetUpdate(true);
+            FadeGroup.DOFade(startAlpha, fadeDuration / 2).SetEase(Ease.InOutSine).From(endAlpha).SetUpdate(true).OnComplete(SetSelfUnactive);
 
             if (pressButton != null)
             {
@@ -141,6 +148,15 @@ public class FadeInUI : MonoBehaviour
 
         }
 
+    }
+
+    public void SetSelfUnactive()
+    {
+        if (setSelfUnactive)
+        {
+            gameObject.SetActive(false);
+            blockButtons.SetActive(false);
+        }
     }
 
 

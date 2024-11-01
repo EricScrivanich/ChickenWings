@@ -24,8 +24,8 @@ public class SignMovement : MonoBehaviour
 
     void Start()
     {
-
-        LM = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+        if (GameObject.Find("LevelManager") != null)
+            LM = GameObject.Find("LevelManager").GetComponent<LevelManager>();
 
     }
 
@@ -190,7 +190,7 @@ public class SignMovement : MonoBehaviour
     public void SpecialRetract()
     {
         Debug.Log("Retracting with this: " + this.gameObject);
-        
+
         Vector3 overshootPosition = endPosition - new Vector3(0, overshootAmount, 0) - new Vector3(0, RetractBounceAmount, 0);
         Tweener overshootTween = target.DOAnchorPos(overshootPosition, RetractBounceDuration)
             .SetEase(Ease.InSine)

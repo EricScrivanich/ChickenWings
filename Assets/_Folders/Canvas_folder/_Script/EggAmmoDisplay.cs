@@ -100,12 +100,7 @@ public class EggAmmoDisplay : MonoBehaviour
     [SerializeField] private RectTransform chamberRect;
 
     public Sprite[] eggSprites;
-    [SerializeField] private Color outOfAmmoTextColor;
-    [SerializeField] private Color outOfAmmoButtonColor;
-    [SerializeField] private Color outOfAmmoEggColor;
-    [SerializeField] private Color ammoTextColor;
-    [SerializeField] private Color eggColor;
-    [SerializeField] private bool usingEggs;
+
     private int currentAmmoType = 0;
     private bool over10;
     private bool over100;
@@ -140,8 +135,9 @@ public class EggAmmoDisplay : MonoBehaviour
         chaiedShotgunGroup.alpha = 0;
         buttonImage = GetComponent<Image>();
         shotgunText.color = colorSO.DashImageManaHighlight;
-        timerFill.color = colorSO.DashImageManaHighlight;
-        arrows.color = colorSO.DashImageManaHighlight;
+        timerFill.color = colorSO.disabledButtonColorFull;
+        arrows.color = colorSO.normalButtonColorFull;
+        scopeFill.color = colorSO.normalButtonColor;
         timerFill.DOFade(0, 0);
         arrows.DOFade(0, 0);
         joystickController = GetComponent<ModifiedOnScreenStick>();
@@ -229,15 +225,25 @@ public class EggAmmoDisplay : MonoBehaviour
 
     }
 
+    public int ReturnCurrentAmmoType()
+    {
+        return currentAmmoType;
+    }
+
 
     private void HideEggButton(bool hide)
     {
 
         if (hide)
         {
+            if (shotgunEggPressSequence != null && shotgunEggPressSequence.IsPlaying())
+                shotgunEggPressSequence.Kill();
+            if (normalEggPressSequence != null && normalEggPressSequence.IsPlaying())
+                normalEggPressSequence.Kill();
+
             player.events.OnSwitchAmmoType?.Invoke(0);
             Debug.LogError("Hiding Egg button");
-            scopeRect.DOLocalMoveY(scopeRect.localPosition.y - 420, .3f).SetUpdate(true);
+            scopeRect.DOLocalMoveY(originalYPos - 420, .3f).SetUpdate(true);
             swipeRects.DOLocalMoveY(swipeRects.localPosition.y - 420, .3f).SetUpdate(true).OnComplete(() => buttonImage.enabled = false);
 
             // if (currentAmmoType >= 0)
@@ -972,6 +978,8 @@ public class EggAmmoDisplay : MonoBehaviour
         EggAmmoDisplay.AmmoOnZero -= ChangeZeroAmmo;
         player.events.OnAimJoystick -= OnRotateWithShotgun;
 
+
+        DOTween.Kill(this);
 
 
 

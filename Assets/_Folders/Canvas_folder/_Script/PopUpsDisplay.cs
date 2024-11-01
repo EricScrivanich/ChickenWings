@@ -101,6 +101,7 @@ public class PopUpsDisplay : MonoBehaviour
             {
                 textLevelNum.text = "Level " + levelNum.ToString();
                 textLevelName.text = sceneSO.ReturnLevelName(levelNum);
+                showScore = false;
             }
             else
             {
@@ -246,4 +247,6 @@ public class PopUpsDisplay : MonoBehaviour
         Time.timeScale = 0;
 
     }
+
+  
 }

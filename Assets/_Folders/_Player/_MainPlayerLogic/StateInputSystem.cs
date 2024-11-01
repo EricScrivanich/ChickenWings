@@ -36,14 +36,14 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     [Header("Global Colors")]
     [SerializeField] private ButtonColorsSO colorsSO;
-    [SerializeField] private Color normalButtonColor;
-    [SerializeField] private Color highlightButtonColor;
-    [SerializeField] private Color disabledButtonColor;
-    [SerializeField] private Color DashImageManaHighlight;
-    [SerializeField] private Color DashImageManaDisabled;
-    [SerializeField] private Color DashImageManaDisabledFilling;
-    [SerializeField] private Color coolDownColorRed;
-    [SerializeField] private Color coolDownColorBlue;
+    // [SerializeField] private Color normalButtonColor;
+    // [SerializeField] private Color highlightButtonColor;
+    // [SerializeField] private Color disabledButtonColor;
+    // [SerializeField] private Color DashImageManaHighlight;
+    // [SerializeField] private Color DashImageManaDisabled;
+    // [SerializeField] private Color DashImageManaDisabledFilling;
+    // [SerializeField] private Color coolDownColorRed;
+    // [SerializeField] private Color coolDownColorBlue;
 
     [Header("Drop Stuff")]
     private Image DropButton;
@@ -61,7 +61,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     [Header("Dash Stuff")]
 
-    [SerializeField] private bool manaUsed;
+    private bool manaUsed = false;
 
     private Sequence flashSequence;
     private bool coolingDownDash;
@@ -321,17 +321,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         controls.Movement.Parachute.performed += ctx => ID.events.OnParachute?.Invoke(true);
         controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
 
-        normalButtonColor = colorsSO.normalButtonColor;
-        highlightButtonColor = colorsSO.highlightButtonColor;
-        disabledButtonColor = colorsSO.disabledButtonColor;
-        DashImageManaHighlight = colorsSO.DashImageManaHighlight;
-        DashImageManaDisabled = colorsSO.DashImageManaDisabled;
-        DashImageManaDisabledFilling = colorsSO.DashImageManaDisabledFilling;
-        coolDownColorRed = colorsSO.coolDownColorRed;
-        coolDownColorBlue = colorsSO.coolDownColorBlue;
-        fillingManaColor = colorsSO.fillingManaColor;
-        canUseDashSlashImageColor1 = colorsSO.canUseDashSlashImageColor1;
-        canUseDashSlashImageColor2 = colorsSO.canUseDashSlashImageColor2;
+
 
 
 
@@ -364,14 +354,26 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     void Start()
     {
+        // normalButtonColor = colorsSO.normalButtonColor;
+        // highlightButtonColor = colorsSO.highlightButtonColor;
+        // disabledButtonColor = colorsSO.disabledButtonColor;
+        // DashImageManaHighlight = colorsSO.DashImageManaHighlight;
+        // DashImageManaDisabled = colorsSO.DashImageManaDisabled;
+        // DashImageManaDisabledFilling = colorsSO.DashImageManaDisabledFilling;
+        // coolDownColorRed = colorsSO.coolDownColorRed;
+        // coolDownColorBlue = colorsSO.coolDownColorBlue;
+        // fillingManaColor = colorsSO.fillingManaColor;
+        // canUseDashSlashImageColor1 = colorsSO.canUseDashSlashImageColor1;
+        // canUseDashSlashImageColor2 = colorsSO.canUseDashSlashImageColor2;
         if (GameObject.Find("DropButton") != null)
         {
             DropButton = GameObject.Find("DropButton").GetComponent<Image>();
-            DropButton.color = normalButtonColor;
+            DropButton.color = colorsSO.normalButtonColor;
             dropCooldownIN = GameObject.Find("DropCooldownIN").GetComponent<Image>();
             dropIcon = GameObject.Find("DropICON").GetComponent<RectTransform>();
             dropCooldownOUT = GameObject.Find("DropCooldownOUT").GetComponent<Image>();
             originalDropY = dropIcon.anchoredPosition.y;
+            dropCooldownIN.color = colorsSO.disabledButtonColorFull;
             dropCooldownIN.DOFade(0, 0);
             dropCooldownOUT.DOFade(0, 0);
 
@@ -442,7 +444,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         coolingDownDrop = true;
         canDrop = false;
         // dashButtonIMG.DOColor(DisabledButtonColor, .25f);
-        DropButton.DOColor(highlightButtonColor, .15f);
+        DropButton.DOColor(colorsSO.highlightButtonColor, .15f);
         dropIcon.DOScale(largeIconScale, .3f).SetEase(Ease.OutSine);
         dropIcon.DOAnchorPosY(originalDropY - 30, .2f).SetEase(Ease.OutSine);
         dropCooldownIN.DOFade(.7f, .15f);
@@ -450,7 +452,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
         dropCooldownIN.DOFillAmount(0, 2.29f).From(1);
         yield return new WaitForSeconds(.2f);
-        DropButton.DOColor(disabledButtonColor, .2f);
+        DropButton.DOColor(colorsSO.disabledButtonColor, .2f);
         dropIcon.DOScale(smallIconScale, .15f).SetEase(Ease.InSine);
         dropIcon.DOAnchorPosY(originalDropY, .3f).SetEase(Ease.OutSine);
         yield return new WaitForSeconds(.15f);
@@ -466,7 +468,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         dropCooldownOUT.DOFade(0, .1f);
 
         // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
-        DropButton.DOColor(normalButtonColor, .13f);
+        DropButton.DOColor(colorsSO.normalButtonColor, .13f);
         dropIcon.DOScale(normalIconScale, .13f);
 
 
@@ -541,7 +543,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             if (canDash)
             {
                 canDash = false;
-                dashImage.color = highlightButtonColor;
+                dashImage.color = colorsSO.highlightButtonColor;
                 StartCoroutine(CalcualteDashTimeLeft());
                 IconTween(1);
 
@@ -585,13 +587,13 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             ID.globalEvents.SetCanDashSlash?.Invoke(true);
 
-            dashCooldownIN.color = coolDownColorBlue;
+            dashCooldownIN.color = colorsSO.coolDownColorBlue;
 
         }
         else
         {
             ID.globalEvents.SetCanDashSlash?.Invoke(false);
-            dashCooldownIN.color = coolDownColorRed;
+            dashCooldownIN.color = colorsSO.disabledButtonColorFull;
             Debug.Log("Set Color");
 
 
@@ -605,8 +607,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             canDashSlash = false;
             if (manaFull)
             {
-                dashCooldownIN.color = coolDownColorRed;
-                dashImageMana.DOColor(DashImageManaDisabled, .1f);
+                dashCooldownIN.color = colorsSO.disabledButtonColorFull;
+                dashImageMana.DOColor(colorsSO.DashImageManaDisabled, .1f);
 
             }
             IconTween(2);
@@ -617,7 +619,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             if (manaFull)
             {
                 canDashSlash = true;
-                dashCooldownIN.color = coolDownColorBlue;
+                dashCooldownIN.color = colorsSO.coolDownColorBlue;
                 FlashDashImage(.8f);
 
             }
@@ -654,7 +656,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         dashIcon.DOAnchorPosX(startingDashIconX, .2f).SetEase(Ease.OutSine).SetUpdate(true);
         dashIcon.DOScale(dashIconNormalScale, .2f).SetUpdate(true);
         // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
-        dashImage.DOColor(normalButtonColor, .15f);
+        dashImage.DOColor(colorsSO.normalButtonColor, .15f);
 
         canDash = true;
 
@@ -662,7 +664,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         if (manaFull)
         {
             canDashSlash = true;
-            dashCooldownIN.color = coolDownColorBlue;
+            dashCooldownIN.color = colorsSO.coolDownColorBlue;
             if (flashSequence != null && flashSequence.IsPlaying())
                 flashSequence.Kill();
 
@@ -686,7 +688,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         dropCooldownOUT.DOFade(0, .13f).SetUpdate(true);
 
         // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
-        DropButton.DOColor(normalButtonColor, .13f).SetUpdate(true);
+        DropButton.DOColor(colorsSO.normalButtonColor, .13f).SetUpdate(true);
         dropIcon.DOScale(normalIconScale, .13f).SetUpdate(true);
 
 
@@ -717,7 +719,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             canDashSlash = true;
             flashSequence.Kill();
-            dashImageMana.DOColor(DashImageManaHighlight, .1f);
+            dashImageMana.DOColor(colorsSO.DashImageManaHighlight, .1f);
 
         }
         else
@@ -732,7 +734,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         //     dashImageMana.color = DashImageManaDisabledFilling;
         // }
         // dashButtonIMG.DOColor(DisabledButtonColor, .25f);
-        dashImage.DOColor(disabledButtonColor, .25f);
+        dashImage.DOColor(colorsSO.disabledButtonColor, .25f);
 
         dashCooldownGroup.DOFade(1, .15f);
 
@@ -748,7 +750,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
         // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
 
-        dashImage.DOColor(normalButtonColor, .15f);
+        dashImage.DOColor(colorsSO.normalButtonColor, .15f);
         earlyDashReady = false;
         if (earlyDashTried && ButtonsEnabled)
         {

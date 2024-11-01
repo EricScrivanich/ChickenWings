@@ -6,8 +6,15 @@ using DG.Tweening;
 
 public class ButtonManager : MonoBehaviour
 {
+    [SerializeField] private CustomButtonOptions options;
     [ExposedScriptableObject]
     [SerializeField] private ButtonColorsSO colorSO;
+    [SerializeField] private ButtonColorsSO defaultColors;
+    [SerializeField] private GameObject colorMatchWarning;
+
+
+
+    private ButtonColorManager saveSystem;
 
 
     [SerializeField] private PlayerID player;
@@ -28,6 +35,7 @@ public class ButtonManager : MonoBehaviour
 
     void Awake()
     {
+
         if (moveRectsForRecording)
         {
             foreach (var r in moveRects)
@@ -43,6 +51,102 @@ public class ButtonManager : MonoBehaviour
                     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
             }
         }
+    }
+
+    public bool CheckColors(int type, int ind)
+    {
+        bool isAllowed = saveSystem.CheckIfColorsMatch(type, ind);
+        if (!isAllowed)
+        {
+            colorMatchWarning.SetActive(true);
+        }
+        return isAllowed;
+    }
+    public void SetNewColors(int iO, int iN, int iD, int type)
+    {
+
+
+        if (type == 0)
+        {
+            Color o = options.outlineColorOptions[iO];
+
+            foreach (Image img in outlines)
+            {
+                img.color = o;
+                // img.color = Color.white;
+                // img.material = yer;
+            }
+            pauseOutline.color = o;
+            saveSystem.ShowNewColors(iO, -1, -1);
+
+        }
+        else if (type == 1)
+        {
+            Color n = options.fillColorOptions[iN];
+
+            foreach (Image img in fills)
+            {
+                img.color = n;
+                // img.material = yer;
+            }
+            pauseFill.color = n;
+
+
+            float addedWhiteHighlight = 0;
+            float average = (n.r + n.g + n.b) / 3;
+            addedWhiteHighlight = (1 - average) * .3f;
+            Color h = new Color(n.r + addedWhiteHighlight, n.g + addedWhiteHighlight, n.b + addedWhiteHighlight, 1);
+            saveSystem.ShowNewColors(-1, iN, -1);
+
+
+        }
+        else if (type == 2)
+        {
+            saveSystem.ShowNewColors(-1, -1, iD);
+
+        }
+
+
+
+
+        // saveSystem.SaveButtonColors(iN, iO, iD);
+
+        // saveSystem.LoadButtonColors(colorSO);
+
+
+    }
+
+    public void RestoreDefaultColors()
+    {
+        Color o = defaultColors.OutLineColor;
+        Color n = defaultColors.normalButtonColor;
+        Color h = defaultColors.highlightButtonColor;
+
+        foreach (Image img in outlines)
+        {
+            img.color = o;
+            // img.color = Color.white;
+            // img.material = yer;
+        }
+        pauseOutline.color = o;
+
+
+
+
+        foreach (Image img in fills)
+        {
+            img.color = n;
+            // img.material = yer;
+        }
+        pauseFill.color = n;
+
+
+        saveSystem.ShowNewColors(0, 0, 3);
+
+        // saveSystem.LoadButtonColors(colorSO);
+
+
+
     }
 
     public void PlayerDamgedTween(bool isDead)
@@ -109,19 +213,20 @@ public class ButtonManager : MonoBehaviour
 
     private void OnEnable()
     {
-        player.globalEvents.OnPlayerDamaged += PlayerDamgedTween;
+        // player.globalEvents.OnPlayerDamaged += PlayerDamgedTween;
         player.globalEvents.OnPlayerFrozen += PlayerFrozenTween;
     }
     private void OnDisable()
     {
-        player.globalEvents.OnPlayerDamaged -= PlayerDamgedTween;
+        // player.globalEvents.OnPlayerDamaged -= PlayerDamgedTween;
         player.globalEvents.OnPlayerFrozen -= PlayerFrozenTween;
 
 
     }
     void Start()
     {
-
+        saveSystem = GetComponent<ButtonColorManager>();
+        // saveSystem.LoadButtonColors(colorSO);
         pauseFill.color = colorSO.normalButtonColor;
         pauseOutline.color = colorSO.OutLineColor;
         foreach (Image img in outlines)

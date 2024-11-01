@@ -285,8 +285,12 @@ public class PlayerStateManager : MonoBehaviour
     void Start()
     {
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
-        playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
-        playerBoundaries.enabled = false;
+        if (GetComponent<PlayerAddForceBoundaries>() != null)
+        {
+            playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
+            playerBoundaries.enabled = false;
+        }
+
         jumpAir = new Queue<GameObject>();
 
         for (int i = 0; i < jumpAirAmount; i++)
@@ -758,20 +762,12 @@ public class PlayerStateManager : MonoBehaviour
         if (holding && canShootShotgun)
         {
 
-            if (ID.ShotgunAmmo <= 0 && !useChainedAmmo)
+            // if (ID.ShotgunAmmo <= 0 && !useChainedAmmo)
+            if (ID.ShotgunAmmo <= 0)
             {
                 Debug.Log("ShotgunAmmo is 0 or less and not using chained ammo. Exiting.");
                 return;
             }
-
-
-
-
-
-
-
-
-
 
 
             if (inSlowMo)
@@ -812,32 +808,36 @@ public class PlayerStateManager : MonoBehaviour
                 Debug.Log($"ShotgunAmmo is greater than 0. Current ShotgunAmmo: {ID.ShotgunAmmo}");
                 ID.ShotgunAmmo--;
                 Debug.Log($"ShotgunAmmo decremented. New ShotgunAmmo: {ID.ShotgunAmmo}");
-            }
 
-            if (useChainedAmmo)
-            {
-                Debug.Log($"Using chained ammo. Current ChainedShotgunAmmo: {ID.ChainedShotgunAmmo}");
-
-                ID.ChainedShotgunAmmo--;
-
-
+                if (ID.ShotgunAmmo <= 0) ID.globalEvents.OnUseChainedAmmo?.Invoke(false); // remove for chained ammo to work
 
             }
 
-            else if (ID.ShotgunAmmo == 0 && !useChainedAmmo)
-            {
-                Debug.Log("ShotgunAmmo is 0 and not using chained ammo. Triggering event to start using chained ammo.");
+            // if (useChainedAmmo)
+            // {
+            //     Debug.Log($"Using chained ammo. Current ChainedShotgunAmmo: {ID.ChainedShotgunAmmo}");
 
-                ID.globalEvents.OnUseChainedAmmo?.Invoke(true);
-            }
+            //     ID.ChainedShotgunAmmo--;
 
-            if (useChainedAmmo && ID.ChainedShotgunAmmo <= 0)
-            {
-                Debug.Log("ChainedShotgunAmmo is less than 0. Triggering event to stop using chained ammo.");
-                ignoreChainedShotgunReset = true;
-                ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
 
-            }
+
+            // }
+
+            // else if (ID.ShotgunAmmo == 0 && !useChainedAmmo)
+            // {
+            //     Debug.Log("ShotgunAmmo is 0 and not using chained ammo. Triggering event to start using chained ammo.");
+
+            //     ID.globalEvents.OnUseChainedAmmo?.Invoke(true);
+
+            // }
+
+            // if (useChainedAmmo && ID.ChainedShotgunAmmo <= 0)
+            // {
+            //     Debug.Log("ChainedShotgunAmmo is less than 0. Triggering event to stop using chained ammo.");
+            //     ignoreChainedShotgunReset = true;
+            //     ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+
+            // }
             shotgunReleased = true;
             canShootShotgun = false;
             startedAim = false;
@@ -1025,7 +1025,7 @@ public class PlayerStateManager : MonoBehaviour
             yield return null;
         }
         StopCoroutine(ShotgunNormalRotationRoutine);
-        ShotgunAimingRotationRoutine = StartCoroutine(RotateWhileAiming());
+
         // yield return new WaitForSeconds(aimToShootDelay);
         yield return new WaitUntil(() => shotgunReleased);
         shotgunReleased = false;
@@ -1059,7 +1059,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private IEnumerator ReloadShotgunCourintine()
     {
-        StopCoroutine(ShotgunAimingRotationRoutine);
+        // StopCoroutine(ShotgunAimingRotationRoutine);
         movingJoystick = false;
 
         shotgunRotationTarget = 45;
@@ -1192,38 +1192,38 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    private IEnumerator RotateWhileAiming()
-    {
+    // private IEnumerator RotateWhileAiming()
+    // {
 
 
-        while (shotgunEquipped)
-        {
-            if (!movingJoystick) yield return null;
+    //     while (shotgunEquipped)
+    //     {
+    //         if (!movingJoystick) yield return null;
 
 
 
 
 
-            // Quaternion currentRotation = shotgunObj.transform.rotation;
-            // Quaternion targetRotation = Quaternion.Euler(0, 0, shotgunAimRotationTarget);
+    //         // Quaternion currentRotation = shotgunObj.transform.rotation;
+    //         // Quaternion targetRotation = Quaternion.Euler(0, 0, shotgunAimRotationTarget);
 
-            // // Calculate the angular difference between the current and target rotations
-            // float angleDifference = Quaternion.Angle(currentRotation, targetRotation);
-            // if (angleDifference < 1f)
-            // {
-            //     // shotgunObj.transform.localRotation = targetRotation; // Snap to the final rotation to avoid any minor differences
-            //     yield return null;
-            // }
+    //         // // Calculate the angular difference between the current and target rotations
+    //         // float angleDifference = Quaternion.Angle(currentRotation, targetRotation);
+    //         // if (angleDifference < 1f)
+    //         // {
+    //         //     // shotgunObj.transform.localRotation = targetRotation; // Snap to the final rotation to avoid any minor differences
+    //         //     yield return null;
+    //         // }
 
-            // Lerp the rotation towards the target
-            // shotgunObj.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, shotgunAimRotationSpeed * Time.deltaTime);
+    //         // Lerp the rotation towards the target
+    //         // shotgunObj.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, shotgunAimRotationSpeed * Time.deltaTime);
 
-            // If the angular difference is less than 1 degree, stop yielding (rotation complete)
+    //         // If the angular difference is less than 1 degree, stop yielding (rotation complete)
 
 
-            yield return null; // Wait for the next frame
-        }
-    }
+    //         yield return null; // Wait for the next frame
+    //     }
+    // }
 
 
 
@@ -1297,18 +1297,18 @@ public class PlayerStateManager : MonoBehaviour
                 if (ID.Lives <= 0)
                 {
                     Die();
-                    ID.globalEvents.OnPlayerDamaged?.Invoke(true);
+                    // ID.globalEvents.OnPlayerDamaged?.Invoke(true);
 
                     return;
                 }
 
-                ID.globalEvents.OnPlayerDamaged?.Invoke(false);
+                // ID.globalEvents.OnPlayerDamaged?.Invoke(false);
 
             }
 
             else
             {
-                ID.globalEvents.OnPlayerDamaged?.Invoke(false);
+                // ID.globalEvents.OnPlayerDamaged?.Invoke(false);
                 ID.globalEvents.OnInfiniteLives?.Invoke();
             }
             DamageEffects();
@@ -1614,7 +1614,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDashSlash += HandleDashSlash;
         ID.events.OnAttack += HandleNewSlash;
 
-        ID.globalEvents.OnUseChainedAmmo += UsingChainedAmmo;
+        // ID.globalEvents.OnUseChainedAmmo += UsingChainedAmmo;
         ID.globalEvents.OnFinishedLevel += LevelFinished;
 
 
@@ -1630,7 +1630,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnJump -= HandleJump;
         ID.events.OnAttack -= HandleNewSlash;
         ID.events.OnAimJoystick -= CalculateGlobalRotationTarget;
-        ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;
+        // ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;
         ID.globalEvents.OnFinishedLevel -= LevelFinished;
 
 

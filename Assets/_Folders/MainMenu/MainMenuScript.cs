@@ -9,9 +9,15 @@ public class MainMenuScript : MonoBehaviour
 {
     public SceneManagerSO smSO;
     private int currentMenu;
+
+    [SerializeField] private RectTransform[] canvasButtons;
+
+    [SerializeField] private List<RectTransform> MenuTypes;
+    private RectTransform currentRectDisplayed;
     [SerializeField] private RectTransform Main;
     [SerializeField] private RectTransform Bosses;
     [SerializeField] private RectTransform Levels;
+    [SerializeField] private RectTransform CustomUI;
     [SerializeField] private float fallDuration = 1f;
     [SerializeField] private float minGravity = 500f;
     [SerializeField] private float maxGravity = 2000f;
@@ -37,6 +43,8 @@ public class MainMenuScript : MonoBehaviour
 
     [SerializeField] private Color Sunset;
     [SerializeField] private Color DayTime;
+
+
 
 
     private bool isDay;
@@ -96,6 +104,10 @@ public class MainMenuScript : MonoBehaviour
 
         Main.anchoredPosition = new Vector2(0, 0);
         currentMenu = 0;
+        foreach (var r in canvasButtons)
+        {
+            r.anchoredPosition = new Vector2(2700, 0);
+        }
         Bosses.anchoredPosition = new Vector2(2700, 0);
         Levels.anchoredPosition = new Vector2(2700, 0);
         titleRect.anchoredPosition = new Vector2(titleRect.anchoredPosition.x, 740);
@@ -114,34 +126,45 @@ public class MainMenuScript : MonoBehaviour
 
         environmentMaterials = new List<Material>();
 
-        if (isDay)
-        {
-            skyMaterial.SetColor("_GradTopLeftCol", dayTop);
-            skyMaterial.SetColor("_GradBotLeftCol", dayBot);
-            enviromentMaterial.SetColor("_Color", DayTime);
-            foreach (var obj in environmentLayers)
-            {
-                Material mat = obj.GetComponent<SpriteRenderer>().material;
-                environmentMaterials.Add(mat);
-                mat.SetColor("_Color", DayTime);
-            }
-            sunGlassCache.localPosition = sunGlassesTargetPos.localPosition;
-        }
-        else
-        {
-            skyMaterial.SetColor("_GradTopLeftCol", eveningTop);
-            skyMaterial.SetColor("_GradBotLeftCol", eveningBot);
-            enviromentMaterial.SetColor("_Color", Sunset);
-            foreach (var obj in environmentLayers)
-            {
-                Material mat = obj.GetComponent<SpriteRenderer>().material;
-                environmentMaterials.Add(mat);
-                mat.SetColor("_Color", Sunset);
-            }
-            sunGlassCache.localPosition = sunGlassesStartPos.localPosition;
+        // if (isDay)
+        // {
+        //     skyMaterial.SetColor("_GradTopLeftCol", dayTop);
+        //     skyMaterial.SetColor("_GradBotLeftCol", dayBot);
+        //     enviromentMaterial.SetColor("_Color", DayTime);
+        //     foreach (var obj in environmentLayers)
+        //     {
+        //         Material mat = obj.GetComponent<SpriteRenderer>().material;
+        //         environmentMaterials.Add(mat);
+        //         mat.SetColor("_Color", DayTime);
+        //     }
+        //     sunGlassCache.localPosition = sunGlassesTargetPos.localPosition;
+        // }
+        // else
+        // {
+        //     skyMaterial.SetColor("_GradTopLeftCol", eveningTop);
+        //     skyMaterial.SetColor("_GradBotLeftCol", eveningBot);
+        //     enviromentMaterial.SetColor("_Color", Sunset);
+        //     foreach (var obj in environmentLayers)
+        //     {
+        //         Material mat = obj.GetComponent<SpriteRenderer>().material;
+        //         environmentMaterials.Add(mat);
+        //         mat.SetColor("_Color", Sunset);
+        //     }
+        //     sunGlassCache.localPosition = sunGlassesStartPos.localPosition;
 
 
+        // }
+
+        skyMaterial.SetColor("_GradTopLeftCol", dayTop);
+        skyMaterial.SetColor("_GradBotLeftCol", dayBot);
+        enviromentMaterial.SetColor("_Color", DayTime);
+        foreach (var obj in environmentLayers)
+        {
+            Material mat = obj.GetComponent<SpriteRenderer>().material;
+            environmentMaterials.Add(mat);
+            mat.SetColor("_Color", DayTime);
         }
+        sunGlassCache.localPosition = sunGlassesTargetPos.localPosition;
 
 
 
@@ -152,54 +175,71 @@ public class MainMenuScript : MonoBehaviour
 
     public void SwitchMenu(int switchTo)
     {
-        currentMenu = switchTo;
+        coverPanel.SetActive(true);
+        // Declare variables for RectTransforms and animation parameters
+        RectTransform menuToMoveOut = null;
+        RectTransform menuToMoveIn = null;
+
+
+
+        float initialShift = 50f;
+        float initialDuration = 0.6f;  // Default duration for the initial shift
+        float finalShiftDuration = 1.6f;  // Default duration for the final shift
+        float menuToMoveOutFinalPosX = -2700f;  // Final position for the menu moving out
+        float menuToMoveInFinalPosX = 0f;  // Final position for the menu moving in
+
         if (switchTo == 0)
         {
-            float initialRightShift = 50f;
-            float durationRightShift = 0.6f;  // Duration of the initial right shift
-            float finalLeftShiftDuration = 1.6f;  // Duration for moving to the final position
+            initialShift = -50f;
+            menuToMoveOut = MenuTypes[currentMenu];
+            menuToMoveIn = MenuTypes[0];
+            menuToMoveOutFinalPosX = 2700f;
 
-            // First move to the right
-            Main.DOAnchorPos(new Vector2(Main.anchoredPosition.x + initialRightShift, Main.anchoredPosition.y), durationRightShift).SetEase(Ease.InOutSine)
-                .OnComplete(() =>
-                {
-                    Levels.DOAnchorPos(new Vector2(0, Levels.anchoredPosition.y), finalLeftShiftDuration).SetEase(Ease.OutSine);
-                    // After completing the move to the right, move to the final position to the left
-                    Main.DOAnchorPos(new Vector2(-2700, Main.anchoredPosition.y), finalLeftShiftDuration);
-                });
         }
-        else if (switchTo == 1)
+        else
         {
-            float initialLeftShift = 50f;
-            float durationLeftShift = 0.6f;  // Duration of the initial Left shift
-            float finalRightShiftDuration = 1.6f;  // Duration for moving to the final position
-
-            // First move to the Left
-            Levels.DOAnchorPos(new Vector2(Levels.anchoredPosition.x - initialLeftShift, Levels.anchoredPosition.y), durationLeftShift).SetEase(Ease.InOutSine)
-                .OnComplete(() =>
-                {
-                    Main.DOAnchorPos(new Vector2(0, Main.anchoredPosition.y), finalRightShiftDuration).SetEase(Ease.OutSine);
-                    // After completing the move to the right, move to the final position to the left
-                    Levels.DOAnchorPos(new Vector2(2700, Levels.anchoredPosition.y), finalRightShiftDuration);
-                });
+            menuToMoveIn = MenuTypes[switchTo];
+            menuToMoveOut = MenuTypes[0];
         }
-        else if (switchTo == 2)
-        {
-            float initialLeftShift = 50f;
-            float durationLeftShift = 0.4f;  // Duration of the initial Left shift
-            float finalRightShiftDuration = 1.3f;  // Duration for moving to the final position
 
-            // First move to the Left
-            Bosses.DOAnchorPos(new Vector2(Bosses.anchoredPosition.x - initialLeftShift, Main.anchoredPosition.y), durationLeftShift)
-                .OnComplete(() =>
+        // Perform the tweening sequence with abstracted variables
+        menuToMoveOut.DOAnchorPos(new Vector2(menuToMoveOut.anchoredPosition.x + initialShift, menuToMoveOut.anchoredPosition.y), initialDuration)
+            .SetEase(Ease.InOutSine)
+            .OnComplete(() =>
+            {
+                // Move the new menu into position
+                menuToMoveIn.DOAnchorPos(new Vector2(menuToMoveInFinalPosX, menuToMoveIn.anchoredPosition.y), finalShiftDuration).SetEase(Ease.OutSine).OnComplete(() => coverPanel.SetActive(false));
+                if (switchTo == 2)
                 {
-                    Main.DOAnchorPos(new Vector2(0, Main.anchoredPosition.y), finalRightShiftDuration);
-                    // After completing the move to the right, move to the final position to the left
-                    Bosses.DOAnchorPos(new Vector2(2700, Bosses.anchoredPosition.y), finalRightShiftDuration);
-                });
-        }
+                    foreach (var r in canvasButtons)
+                    {
+                        r.DOAnchorPos(new Vector2(menuToMoveInFinalPosX, menuToMoveIn.anchoredPosition.y), finalShiftDuration).SetEase(Ease.OutSine);
+                    }
+                    // canvasButtons[0].DOAnchorPos(new Vector2(menuToMoveInFinalPosX, menuToMoveIn.anchoredPosition.y), finalShiftDuration).SetEase(Ease.OutSine);
+                    // canvasButtons[1].DOAnchorPos(new Vector2(menuToMoveInFinalPosX, menuToMoveIn.anchoredPosition.y), finalShiftDuration).SetEase(Ease.OutSine);
+                }
+
+                // Move the current menu to its final position off-screen
+                menuToMoveOut.DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration);
+
+                if (currentMenu == 2)
+                {
+                    foreach (var r in canvasButtons)
+                    {
+                        r.DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration);
+                    }
+                    // canvasButtons[0].DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration);
+                    // canvasButtons[1].DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration);
+
+                }
+                currentMenu = switchTo;
+
+
+
+            });
+
+
     }
-
     public void ChangeTime()
     {
         if (!isDay)
@@ -209,7 +249,7 @@ public class MainMenuScript : MonoBehaviour
             StartCoroutine(TransitionEnvironmentColor(Sunset, DayTime, 3));
             StartCoroutine(TransitionSkyColors(eveningTop, eveningBot, dayTop, dayBot, 3));
             isDay = true;
-            BoundariesManager.isDay = true;
+            // BoundariesManager.isDay = true;
 
         }
         else
@@ -219,7 +259,7 @@ public class MainMenuScript : MonoBehaviour
             StartCoroutine(TransitionEnvironmentColor(DayTime, Sunset, 3));
             StartCoroutine(TransitionSkyColors(dayTop, dayBot, eveningTop, eveningBot, 3));
             isDay = false;
-            BoundariesManager.isDay = false;
+            // BoundariesManager.isDay = false;
 
 
 
