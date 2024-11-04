@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dece4e4a5480415ca0338f126fa4d9e, type: 3}
+  m_Name: COLL_LVL5
+  m_EditorClassIdentifier: 
+  SpawnEggs: 1
+  BaseEggSpawnRate: 8
+  AddedRandomEgg: {x: -1, y: 4}
+  EggThreeChance: 0.24
+  TargetEggAmmo: 0
+  BelowEggTargetTimeChange: 0
+  AboveEggTargetTimeChange: 0
+  SpawnShotgun: 0
+  BaseShotgunSpawnRate: 0
+  AddedRandomShotgun: {x: 0, y: 0}
+  ShotgunThreeChance: 0
+  TargetShotgunAmmo: 0
+  BelowShotgunTargetTimeChange: 0
+  AboveShotgunTargetTimeChange: 0
+  SpawnBarn: 1
+  BaseBarnSpawnRate: 10
+  AddedRandomBarn: {x: -2, y: 5}
+  BigBarnChance: 0.4
+  MidBarnChance: 1

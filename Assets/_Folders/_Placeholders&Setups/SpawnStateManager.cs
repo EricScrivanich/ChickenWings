@@ -21,6 +21,9 @@ public class SpawnStateManager : MonoBehaviour
     public SpawnStateTransitionLogic transitionLogic;
     private SpawnStateTransitionLogic prevTransitonLogic;
 
+    private int prevTransitonLogicLastIndex;
+    private int prevTransitonLogicRingIndex;
+
 
     private bool transitionLogicOverriden = false;
     private int currentTransitionLogicIndex;
@@ -407,6 +410,7 @@ public class SpawnStateManager : MonoBehaviour
             {
 
                 currentRandomSpawnIntensityData.CheckForNextTranstion();
+                Debug.LogError("Checking for next Transtion");
 
             }
 
@@ -628,14 +632,35 @@ public class SpawnStateManager : MonoBehaviour
         if (revert)
         {
             transitionLogic = prevTransitonLogic;
-            currentTransitionLogicIndex = 0;
-            currentSetRingOrderIndex = 0;
+            currentTransitionLogicIndex = prevTransitonLogicLastIndex;
+            currentSetRingOrderIndex = prevTransitonLogicRingIndex;
+            Debug.LogError("I am reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
             return;
         }
         else if (!logic.loopStates)
         {
-            if (transitionLogic.loopStates)
+            if (transitionLogic.continueFromPrevOverriden)
+            {
+
                 prevTransitonLogic = transitionLogic;
+                prevTransitonLogicLastIndex = currentTransitionLogicIndex;
+                prevTransitonLogicRingIndex = currentSetRingOrderIndex;
+
+                Debug.LogError("Not reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
+
+
+            }
+
+            else if (transitionLogic.loopStates || transitionLogic.continueFromStartIfOverriden)
+            {
+                prevTransitonLogic = transitionLogic;
+                prevTransitonLogicLastIndex = 0;
+                prevTransitonLogicRingIndex = 0;
+
+
+            }
+
+
 
             transitionLogic = logic;
             currentTransitionLogicIndex = 0;

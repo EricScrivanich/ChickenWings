@@ -4,13 +4,24 @@ using UnityEngine;
 using HellTap.PoolKit;
 public class PlayerStateManager : MonoBehaviour
 {
+    [Header("Scriptable Objects")]
+    [ExposedScriptableObject]
+    public PlayerID ID;
 
-    [SerializeField] private GameObject shotgunObj;
+
+
+    [ExposedScriptableObject]
+    public PlayerMovementData MovementData;
+
     [SerializeField] private PlayerStartingStatsForLevels stats;
+    [SerializeField] private GameObject jumpAirPrefab;
+    [SerializeField] private bool mutePlayerAudio = false;
+    [SerializeField] private GameObject shotgunObj;
+
     [SerializeField] private Pool pool;
     [SerializeField] private int yForceMultiplier;
     [SerializeField] private int yForceSubtractMultiplier;
-    public bool useChainedAmmo = false;
+    public bool useChainedAmmo { get; private set; }
 
     private Coroutine aimCouroutine;
     private Coroutine reloadCouroutine;
@@ -55,14 +66,7 @@ public class PlayerStateManager : MonoBehaviour
     private bool USINGTHING = false;
     [SerializeField] private float SlowFactor;
 
-    [Header("Scriptable Objects")]
-    [ExposedScriptableObject]
-    public PlayerID ID;
-    [SerializeField] private GameObject jumpAirPrefab;
 
-
-    [ExposedScriptableObject]
-    public PlayerMovementData MovementData;
     public CameraID Cam;
     public ParticleSystem Dust;
     private Queue<GameObject> jumpAir;
@@ -192,6 +196,7 @@ public class PlayerStateManager : MonoBehaviour
     // public bool ignoreParticleCollision = false;
 
     private bool justDashedSlashed;
+    private bool justSwitchedUsingChainedShotgun;
     private bool canDash;
     private bool shotgunReleased = false;
     public bool shotgunEquipped { get; private set; }
@@ -207,9 +212,11 @@ public class PlayerStateManager : MonoBehaviour
     private readonly int maxRotUp = 15;
     private readonly int maxRotDown = -30;
 
+
+
     private float targetRotateSpeedShotgun;
-    [SerializeField] private float baseRotateSpeedShotgun;
-    [SerializeField] private float lerpTargetRotateSpeedSpeed;
+    // [SerializeField] private float baseRotateSpeedShotgun;
+    // [SerializeField] private float lerpTargetRotateSpeedSpeed;
 
 
 
@@ -227,8 +234,14 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
+
+
+
+
         Time.timeScale = FrameRateManager.TargetTimeScale;
+        justSwitchedUsingChainedShotgun = false;
         shotgunEquipped = false;
+        useChainedAmmo = false;
         CurrentJumpAirIndex = 0;
         ID.constantPlayerForce = initialConstantForce;
         ID.events.EnableButtons?.Invoke(true);
@@ -264,6 +277,7 @@ public class PlayerStateManager : MonoBehaviour
 
         justDashedSlashed = false;
         originalMaxFallSpeed = MovementData.MaxFallSpeed;
+        originalGravityScale = MovementData.GravityScale;
 
         FlipRightState.CachVariables(MovementData.FlipRightInitialForceVector, MovementData.FlipRightAddForce,
         MovementData.FlipRightDownForce, MovementData.flipRightAddForceTime, MovementData.flipRightDownForceTime);
@@ -271,7 +285,7 @@ public class PlayerStateManager : MonoBehaviour
         FlipLeftState.CachVariables(MovementData.FlipLeftInitialForceVector, MovementData.FlipLeftAddForce,
         MovementData.FlipLeftDownForce, MovementData.flipLeftAddForceTime, MovementData.flipLeftDownForceTime);
 
-        JumpState.CacheVaraibles(MovementData.JumpForce, MovementData.addJumpForce);
+        JumpState.CacheVaraibles(MovementData.JumpForce, MovementData.addJumpForce, MovementData.JumpDrag, MovementData.DragLerpSpeed);
 
 
         // NextSectionState.CacheVaraibles(MovementData.maxAmpRadRatio, MovementData.outerAmp, MovementData.innerAmp, MovementData.innerCutoff, MovementData.drag);
@@ -285,6 +299,7 @@ public class PlayerStateManager : MonoBehaviour
     void Start()
     {
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), mutePlayerAudio);
         if (GetComponent<PlayerAddForceBoundaries>() != null)
         {
             playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
@@ -322,7 +337,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-        originalGravityScale = rb.gravityScale;
+        rb.gravityScale = originalGravityScale;
 
 
 
@@ -419,7 +434,7 @@ public class PlayerStateManager : MonoBehaviour
                 currentState.RotateState(this);
 
             else
-                rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, targetRotateSpeedShotgun, lerpTargetRotateSpeedSpeed * Time.fixedDeltaTime);
+                rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, targetRotateSpeedShotgun, 9 * Time.fixedDeltaTime);
 
 
             // else
@@ -757,15 +772,14 @@ public class PlayerStateManager : MonoBehaviour
 
     private void HandleNewSlash(bool holding)
     {
-        Debug.LogError("Can Shoot is: " + canShootShotgun + " shotgun release is: " + shotgunReleased + " in slow mo is: " + inSlowMo);
+        // Debug.LogError("Can Shoot is: " + canShootShotgun + " shotgun release is: " + shotgunReleased + " in slow mo is: " + inSlowMo);
         // if (shotgunReleased) return;
         if (holding && canShootShotgun)
         {
 
-            // if (ID.ShotgunAmmo <= 0 && !useChainedAmmo)
-            if (ID.ShotgunAmmo <= 0)
+            if (ID.ShotgunAmmo <= 0 && !useChainedAmmo)
             {
-                Debug.Log("ShotgunAmmo is 0 or less and not using chained ammo. Exiting.");
+                // Debug.Log("ShotgunAmmo is 0 or less and not using chained ammo. Exiting.");
                 return;
             }
 
@@ -799,45 +813,46 @@ public class PlayerStateManager : MonoBehaviour
         }
         else if (!holding && startedAim)
         {
-            Debug.Log("Realeased");
+            // Debug.Log("Realeased");
             ID.events.EnableButtons?.Invoke(true);
 
 
             if (ID.ShotgunAmmo > 0)
             {
-                Debug.Log($"ShotgunAmmo is greater than 0. Current ShotgunAmmo: {ID.ShotgunAmmo}");
-                ID.ShotgunAmmo--;
-                Debug.Log($"ShotgunAmmo decremented. New ShotgunAmmo: {ID.ShotgunAmmo}");
+                // Debug.Log($"ShotgunAmmo is greater than 0. Current ShotgunAmmo: {ID.ShotgunAmmo}");
+                // Debug.Log($"ShotgunAmmo decremented. New ShotgunAmmo: {ID.ShotgunAmmo}");
 
-                if (ID.ShotgunAmmo <= 0) ID.globalEvents.OnUseChainedAmmo?.Invoke(false); // remove for chained ammo to work
+                ID.ShotgunAmmo--;
+
+                // if (ID.ShotgunAmmo <= 0) ID.globalEvents.OnUseChainedAmmo?.Invoke(false); // remove for chained ammo to work
 
             }
 
-            // if (useChainedAmmo)
-            // {
-            //     Debug.Log($"Using chained ammo. Current ChainedShotgunAmmo: {ID.ChainedShotgunAmmo}");
+            if (useChainedAmmo)
+            {
+                // Debug.Log($"Using chained ammo. Current ChainedShotgunAmmo: {ID.ChainedShotgunAmmo}");
 
-            //     ID.ChainedShotgunAmmo--;
+                ID.ChainedShotgunAmmo--;
 
 
 
-            // }
+            }
 
-            // else if (ID.ShotgunAmmo == 0 && !useChainedAmmo)
-            // {
-            //     Debug.Log("ShotgunAmmo is 0 and not using chained ammo. Triggering event to start using chained ammo.");
+            else if (ID.ShotgunAmmo == 0 && !useChainedAmmo)
+            {
+                // Debug.Log("ShotgunAmmo is 0 and not using chained ammo. Triggering event to start using chained ammo.");
 
-            //     ID.globalEvents.OnUseChainedAmmo?.Invoke(true);
+                ID.globalEvents.OnUseChainedAmmo?.Invoke(true);
 
-            // }
+            }
 
-            // if (useChainedAmmo && ID.ChainedShotgunAmmo <= 0)
-            // {
-            //     Debug.Log("ChainedShotgunAmmo is less than 0. Triggering event to stop using chained ammo.");
-            //     ignoreChainedShotgunReset = true;
-            //     ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+            if (useChainedAmmo && ID.ChainedShotgunAmmo <= 0)
+            {
+                // Debug.Log("ChainedShotgunAmmo is less than 0. Triggering event to stop using chained ammo.");
+                ignoreChainedShotgunReset = true;
+                ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
 
-            // }
+            }
             shotgunReleased = true;
             canShootShotgun = false;
             startedAim = false;
@@ -853,14 +868,18 @@ public class PlayerStateManager : MonoBehaviour
         if (use)
         {
             useChainedAmmo = true;
+            justSwitchedUsingChainedShotgun = false;
             ID.globalEvents.OnUpdateChainedShotgunAmmo?.Invoke(ID.ChainedShotgunAmmo);
-            Debug.Log("Using chained ammo, event called");
+
+            // Debug.Log("Using chained ammo, event called");
         }
 
 
         else
         {
             useChainedAmmo = false;
+            justSwitchedUsingChainedShotgun = false;
+
             ID.ChainedShotgunAmmo = -1;
             if (ignoreChainedShotgunReset)
             {
@@ -902,6 +921,12 @@ public class PlayerStateManager : MonoBehaviour
         Vector2 force = -shotgunObj.transform.right * velocityMagnitude;
 
 
+
+
+        if (useChainedAmmo && !justSwitchedUsingChainedShotgun)
+            justSwitchedUsingChainedShotgun = true;
+
+
         float yVelRatio = force.y / velocityMagnitude;
         float addedY = 0;
         float subtractY = 0;
@@ -912,14 +937,15 @@ public class PlayerStateManager : MonoBehaviour
         float yPos = transform.position.y;
 
 
-        if (yVelRatio > .5f && transform.position.y > 0)
+        if (yVelRatio > .5f && yPos > 0)
         {
             subtractY = yForceSubtractMultiplier * (yPos / 5);
 
         }
-        else if (yVelRatio < .5f && transform.position.y < 0)
+        else if (yVelRatio < .5f && yPos < 0)
         {
             subtractY = -yForceSubtractMultiplier * (yPos / -5);
+            if (justSwitchedUsingChainedShotgun) subtractY *= 1.2f;
 
         }
 
@@ -930,10 +956,12 @@ public class PlayerStateManager : MonoBehaviour
         // if (yVelRatio > 0) addedY = yVelRatio * yForceMultiplier;
         // else if (yVelRatio < 0) addedY = yVelRatio * yForceMultiplier * -1;
         addedY = Mathf.Abs(yVelRatio * yForceMultiplier);
-        Vector2 og = new Vector2(force.x, force.y + addedY);
+        // Vector2 og = new Vector2(force.x, force.y + addedY);
         Vector2 finalForce = new Vector2(force.x + (subtractY * xVal), force.y + addedY - subtractY);
 
-        Debug.LogError("Subtract y of: " + subtractY + "OriginalForce: " + og + " new force: " + finalForce);
+        if (justSwitchedUsingChainedShotgun) finalForce *= 1.12f;
+
+        // Debug.LogError("Subtract y of: " + subtractY + "OriginalForce: " + og + " new force: " + finalForce);
 
         AdjustForce(finalForce);
         SwitchState(ShotgunState);
@@ -1048,6 +1076,7 @@ public class PlayerStateManager : MonoBehaviour
             StopCoroutine(aimCouroutine);
             shotgunReleased = false;
             GetShotgunBlast();
+            ID.events.EnableButtons?.Invoke(true);
             // anim.SetTrigger("Shoot");
             anim.SetTrigger(ShootShotgunTrigger);
             // yield return new WaitForSecondsRealtime(.2f);
@@ -1073,7 +1102,7 @@ public class PlayerStateManager : MonoBehaviour
         // yield return new WaitForSeconds(canShootDelay);
         shotgunRotationTarget = -20;
         canShootShotgun = true;
-        Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
+        // Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
         yield return new WaitForSecondsRealtime(reloadDelay);
         while (time < reloadDuration)
         {
@@ -1248,7 +1277,7 @@ public class PlayerStateManager : MonoBehaviour
         // Convert joystick input to an angle
 
         if (val == 0) return;
-        targetRotateSpeedShotgun = baseRotateSpeedShotgun * val;
+        targetRotateSpeedShotgun = 400 * val;
 
         if (!ignoreRotation) ignoreRotation = true;
 
@@ -1592,11 +1621,29 @@ public class PlayerStateManager : MonoBehaviour
     {
         StopAllCoroutines();
     }
+    private void OnChangeMovementData(PlayerMovementData data)
+    {
+        originalGravityScale = data.GravityScale;
+        originalMaxFallSpeed = data.MaxFallSpeed;
+        rb.gravityScale = originalGravityScale;
+        maxFallSpeed = originalMaxFallSpeed;
+        playerBoundaries.SetMaxFallSpeed(originalMaxFallSpeed);
 
+        FlipRightState.CachVariables(data.FlipRightInitialForceVector, data.FlipRightAddForce,
+          data.FlipRightDownForce, data.flipRightAddForceTime, data.flipRightDownForceTime);
+
+        FlipLeftState.CachVariables(data.FlipLeftInitialForceVector, data.FlipLeftAddForce,
+        data.FlipLeftDownForce, data.flipLeftAddForceTime, data.flipLeftDownForceTime);
+
+        JumpState.CacheVaraibles(data.JumpForce, data.addJumpForce, data.JumpDrag, data.DragLerpSpeed);
+        Debug.Log("Caching variablesssss");
+
+    }
 
     private void OnEnable()
     {
         ID.events.OnJump += HandleJump;
+        ID.globalEvents.OnSetNewPlayerMovementData += OnChangeMovementData;
         ID.events.OnAimJoystick += CalculateGlobalRotationTarget;
         // ID.events.OnAttack += HandleClocker;
         ID.events.OnFlipRight += HandleRightFlip;
@@ -1614,7 +1661,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDashSlash += HandleDashSlash;
         ID.events.OnAttack += HandleNewSlash;
 
-        // ID.globalEvents.OnUseChainedAmmo += UsingChainedAmmo;
+        ID.globalEvents.OnUseChainedAmmo += UsingChainedAmmo;
         ID.globalEvents.OnFinishedLevel += LevelFinished;
 
 
@@ -1630,8 +1677,10 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnJump -= HandleJump;
         ID.events.OnAttack -= HandleNewSlash;
         ID.events.OnAimJoystick -= CalculateGlobalRotationTarget;
-        // ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;
+        ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;
         ID.globalEvents.OnFinishedLevel -= LevelFinished;
+        ID.globalEvents.OnSetNewPlayerMovementData -= OnChangeMovementData;
+
 
 
 

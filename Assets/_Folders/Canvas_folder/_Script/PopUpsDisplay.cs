@@ -8,6 +8,7 @@ public class PopUpsDisplay : MonoBehaviour
 {
 
     public PlayerID ID;
+
     [SerializeField] private SceneManagerSO sceneSO;
 
     [Header("Level Title Display")]
@@ -100,6 +101,7 @@ public class PopUpsDisplay : MonoBehaviour
             if (isLevel)
             {
                 textLevelNum.text = "Level " + levelNum.ToString();
+                LvlID.LevelTitle = textLevelNum.text;
                 textLevelName.text = sceneSO.ReturnLevelName(levelNum);
                 showScore = false;
             }
@@ -248,5 +250,5 @@ public class PopUpsDisplay : MonoBehaviour
 
     }
 
-  
+
 }

@@ -166,6 +166,7 @@ public class EggUnequippedParent : MonoBehaviour
 
 
         }
+        HapticFeedbackManager.instance.SoftImpactButton();
 
         EggAmmoDisplay.HideEggButtonEvent?.Invoke(isShown);
 

@@ -37,8 +37,8 @@ MonoBehaviour:
     - rid: 3115821742093762730
     - rid: 3115821742093762731
   - dataArray:
-    - rid: 3115821742093762732
-    - rid: 3115821742093762733
+    - rid: 4599887199738265603
+    - rid: 4599887199738265604
   - dataArray:
     - rid: 3115821742093762734
   - dataArray:
@@ -151,31 +151,6 @@ MonoBehaviour:
           scale: {x: 1.05, y: 1.05, z: 1.05}
           speed: 3.3
           hasHammer: 1
-    - rid: 3115821742093762732
-      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 6.6266665
-        data:
-        - position: {x: 41.76, y: -0.25}
-          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
-          speed: 6
-        - position: {x: 27.991993, y: -1.871841}
-          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
-          speed: 6.5
-        - position: {x: 14.363761, y: 0.7103503}
-          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
-          speed: 6.5
-    - rid: 3115821742093762733
-      type: {class: HotAirBalloonSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - position: {x: 14.56, y: 1.41}
-          type: 0
-          xTrigger: 0
-          yTarget: 3.4
-          speed: -1.5
-          delay: 0.3
     - rid: 3115821742093762734
       type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -270,3 +245,28 @@ MonoBehaviour:
         - position: {x: -24.8, y: 3.01}
           scale: {x: 0.87, y: 0.87, z: 0.87}
           speed: -4.3
+    - rid: 4599887199738265603
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 6.6266665
+        data:
+        - position: {x: 41.76, y: -0.25}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6
+        - position: {x: 27.991993, y: -1.871841}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+        - position: {x: 14.363761, y: 0.7103503}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+    - rid: 4599887199738265604
+      type: {class: HotAirBalloonSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 14.56, y: 1.41}
+          type: 0
+          xTrigger: 0
+          yTarget: 3.4
+          speed: -1.9
+          delay: 0.3

@@ -47,7 +47,7 @@ MonoBehaviour:
     - rid: 3115821901210189942
     - rid: 3115821901210189943
   - dataArray:
-    - rid: 3115821901210189920
+    - rid: 4599887199738265607
   collectableSetup: []
   isRandomSetup: 0
   testFromTrigger: 0
@@ -169,65 +169,6 @@ MonoBehaviour:
           yForce: 6.3
           distanceToFlap: 1
           startingFallSpot: 0
-    - rid: 3115821901210189920
-      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 10
-        data:
-        - position: {x: -17.35, y: 2.6}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: -3.6
-          flightMode: 3
-          minY: -2
-          maxY: 3
-          yForce: 8
-          maxYSpeed: 3.5
-          xTrigger: 0
-        - position: {x: -25.34, y: 2.6}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: -3.6
-          flightMode: 3
-          minY: -2
-          maxY: 3
-          yForce: 8
-          maxYSpeed: 3.5
-          xTrigger: 0
-        - position: {x: -33.11, y: 2.6}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: -3.6
-          flightMode: 3
-          minY: -2
-          maxY: 3
-          yForce: 8
-          maxYSpeed: 3.5
-          xTrigger: 0
-        - position: {x: 25.11, y: -2.19}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: 4
-          flightMode: 2
-          minY: -2
-          maxY: 3
-          yForce: 8
-          maxYSpeed: 3.5
-          xTrigger: 0
-        - position: {x: 33.100002, y: -2.19}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: 4
-          flightMode: 2
-          minY: -2
-          maxY: 3
-          yForce: 8
-          maxYSpeed: 3.5
-          xTrigger: 0
-        - position: {x: 17.34, y: -2.19}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: 4
-          flightMode: 2
-          minY: -2
-          maxY: 3
-          yForce: 8
-          maxYSpeed: 3.5
-          xTrigger: 0
     - rid: 3115821901210189940
       type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -305,3 +246,44 @@ MonoBehaviour:
           yForce: 6.2
           distanceToFlap: 1
           startingFallSpot: -0.5
+    - rid: 4599887199738265607
+      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 10
+        data:
+        - position: {x: -25.34, y: 2.6}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: -3.6
+          flightMode: 3
+          minY: -2
+          maxY: 3
+          yForce: 8
+          maxYSpeed: 3.5
+          xTrigger: 0
+        - position: {x: -33.11, y: 2.6}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: -3.6
+          flightMode: 3
+          minY: -2
+          maxY: 3
+          yForce: 8
+          maxYSpeed: 3.5
+          xTrigger: 0
+        - position: {x: 25.11, y: -2.19}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 4
+          flightMode: 2
+          minY: -2
+          maxY: 3
+          yForce: 8
+          maxYSpeed: 3.5
+          xTrigger: 0
+        - position: {x: 17.34, y: -2.19}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 4
+          flightMode: 2
+          minY: -2
+          maxY: 3
+          yForce: 8
+          maxYSpeed: 3.5
+          xTrigger: 0

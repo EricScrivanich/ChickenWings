@@ -9,7 +9,8 @@ public class PlayerMovementData : ScriptableObject
     [Header("Other")]
 
     [SerializeField] private float maxFallSpeed;
-    public float MaxFallSpeed 
+    public float GravityScale;
+    public float MaxFallSpeed
     {
         get
         {
@@ -24,6 +25,9 @@ public class PlayerMovementData : ScriptableObject
 
     [Header("Jumping")]
     public Vector2 JumpForce;
+    public float JumpDrag;
+    public float DragLerpSpeed;
+    public float DragLerpDuration;
     public Vector2 RemoveJumpForce;
     public float addJumpForce;
     [Header("Flip Right")]

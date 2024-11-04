@@ -1042,6 +1042,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSpecial: 0
+  isButton: 0
+  specialMoveAmount: {x: 0, y: 0}
   waitForEvent: 0
   duration: 2.5
   startPosition: {x: -230, y: 400}
@@ -2157,6 +2159,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSpecial: 0
+  isButton: 1
+  specialMoveAmount: {x: -550, y: 0}
   waitForEvent: 1
   duration: 1.2
   startPosition: {x: 1600, y: -173}
@@ -2461,6 +2465,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSpecial: 0
+  isButton: 0
+  specialMoveAmount: {x: 0, y: 0}
   waitForEvent: 0
   duration: 2.5
   startPosition: {x: -264, y: 400}
@@ -3524,10 +3530,6 @@ PrefabInstance:
     - target: {fileID: 5829352948405881826, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 5841510012793932065, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 1475
       objectReference: {fileID: 0}
     - target: {fileID: 6349637087658981195, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive

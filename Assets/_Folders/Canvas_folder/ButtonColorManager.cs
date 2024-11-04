@@ -157,6 +157,7 @@ public class ButtonColorManager : MonoBehaviour
             if (ind == tempD)
             {
                 ButtonColorManager.OnHideSaveDefaultButtons?.Invoke();
+                HapticFeedbackManager.instance.PlayerButtonFailure();
                 return false;
             }
             else return true;
@@ -166,6 +167,8 @@ public class ButtonColorManager : MonoBehaviour
             if (ind == tempN)
             {
                 ButtonColorManager.OnHideSaveDefaultButtons?.Invoke();
+                HapticFeedbackManager.instance.PlayerButtonFailure();
+
                 return false;
             }
             else return true;

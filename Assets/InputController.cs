@@ -136,24 +136,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""HoldJumpRight"",
-                    ""type"": ""Button"",
-                    ""id"": ""342af9b5-332f-49db-8399-4e22cff16772"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Hold(duration=0.2)"",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""HoldJumpLeft"",
-                    ""type"": ""Button"",
-                    ""id"": ""1f04c387-79af-48fc-a9a7-83c8527cca1b"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Hold(duration=0.2)"",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""EggJoystick"",
                     ""type"": ""Value"",
                     ""id"": ""35f59893-3e75-40e2-a4d0-0dee34bd09a0"",
@@ -417,50 +399,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""65402cf2-ba68-4ea2-a80e-b110f918e486"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""HoldJumpRight"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f7008ccd-30d7-44ae-b96a-f9d908d8ffc4"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Mobile"",
-                    ""action"": ""HoldJumpRight"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""a59648c9-b057-459d-88ef-736d8d34bbcc"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""HoldJumpLeft"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5f07c72c-6c06-4a63-b397-039e568ca96e"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Mobile"",
-                    ""action"": ""HoldJumpLeft"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""9f4be38a-3bd6-42be-b8dd-b1d9cd33a48c"",
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
@@ -573,8 +511,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_Movement_Parachute = m_Movement.FindAction("Parachute", throwIfNotFound: true);
         m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
         m_Movement_DashSlash = m_Movement.FindAction("DashSlash", throwIfNotFound: true);
-        m_Movement_HoldJumpRight = m_Movement.FindAction("HoldJumpRight", throwIfNotFound: true);
-        m_Movement_HoldJumpLeft = m_Movement.FindAction("HoldJumpLeft", throwIfNotFound: true);
         m_Movement_EggJoystick = m_Movement.FindAction("EggJoystick", throwIfNotFound: true);
         m_Movement_SwitchAmmoRight = m_Movement.FindAction("SwitchAmmoRight", throwIfNotFound: true);
         // Special
@@ -653,8 +589,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private readonly InputAction m_Movement_Parachute;
     private readonly InputAction m_Movement_Jump;
     private readonly InputAction m_Movement_DashSlash;
-    private readonly InputAction m_Movement_HoldJumpRight;
-    private readonly InputAction m_Movement_HoldJumpLeft;
     private readonly InputAction m_Movement_EggJoystick;
     private readonly InputAction m_Movement_SwitchAmmoRight;
     public struct MovementActions
@@ -673,8 +607,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         public InputAction @Parachute => m_Wrapper.m_Movement_Parachute;
         public InputAction @Jump => m_Wrapper.m_Movement_Jump;
         public InputAction @DashSlash => m_Wrapper.m_Movement_DashSlash;
-        public InputAction @HoldJumpRight => m_Wrapper.m_Movement_HoldJumpRight;
-        public InputAction @HoldJumpLeft => m_Wrapper.m_Movement_HoldJumpLeft;
         public InputAction @EggJoystick => m_Wrapper.m_Movement_EggJoystick;
         public InputAction @SwitchAmmoRight => m_Wrapper.m_Movement_SwitchAmmoRight;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
@@ -722,12 +654,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @DashSlash.started += instance.OnDashSlash;
             @DashSlash.performed += instance.OnDashSlash;
             @DashSlash.canceled += instance.OnDashSlash;
-            @HoldJumpRight.started += instance.OnHoldJumpRight;
-            @HoldJumpRight.performed += instance.OnHoldJumpRight;
-            @HoldJumpRight.canceled += instance.OnHoldJumpRight;
-            @HoldJumpLeft.started += instance.OnHoldJumpLeft;
-            @HoldJumpLeft.performed += instance.OnHoldJumpLeft;
-            @HoldJumpLeft.canceled += instance.OnHoldJumpLeft;
             @EggJoystick.started += instance.OnEggJoystick;
             @EggJoystick.performed += instance.OnEggJoystick;
             @EggJoystick.canceled += instance.OnEggJoystick;
@@ -774,12 +700,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @DashSlash.started -= instance.OnDashSlash;
             @DashSlash.performed -= instance.OnDashSlash;
             @DashSlash.canceled -= instance.OnDashSlash;
-            @HoldJumpRight.started -= instance.OnHoldJumpRight;
-            @HoldJumpRight.performed -= instance.OnHoldJumpRight;
-            @HoldJumpRight.canceled -= instance.OnHoldJumpRight;
-            @HoldJumpLeft.started -= instance.OnHoldJumpLeft;
-            @HoldJumpLeft.performed -= instance.OnHoldJumpLeft;
-            @HoldJumpLeft.canceled -= instance.OnHoldJumpLeft;
             @EggJoystick.started -= instance.OnEggJoystick;
             @EggJoystick.performed -= instance.OnEggJoystick;
             @EggJoystick.canceled -= instance.OnEggJoystick;
@@ -881,8 +801,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnParachute(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnDashSlash(InputAction.CallbackContext context);
-        void OnHoldJumpRight(InputAction.CallbackContext context);
-        void OnHoldJumpLeft(InputAction.CallbackContext context);
         void OnEggJoystick(InputAction.CallbackContext context);
         void OnSwitchAmmoRight(InputAction.CallbackContext context);
     }

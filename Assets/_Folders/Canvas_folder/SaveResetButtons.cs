@@ -90,6 +90,8 @@ public class SaveResetButtons : MonoBehaviour
         seq.Append(rect.DOScale(1.2f, .25f));
         seq.Join(fillImage.DOFade(.9f, .25f));
         seq.Append(rect.DOScale(1f, .25f));
+
+        HapticFeedbackManager.instance.PressUIButton();
         if (type != -1)
         {
             seq.Join(fillImage.DOColor(disabledFillColor, .1f));
@@ -122,7 +124,7 @@ public class SaveResetButtons : MonoBehaviour
         blockButtonsImage.DOFade(0f, .3f);
         yield return new WaitForSecondsRealtime(.3f);
         blockButtonsImage.gameObject.SetActive(false);
-        mainMenu.SwitchMenu(0);
+        mainMenu.SwitchMenu(-2);
 
 
     }
@@ -156,6 +158,8 @@ public class SaveResetButtons : MonoBehaviour
     public void CheckIfNeedsSave()
     {
         if (type != 0) return;
+
+        HapticFeedbackManager.instance.PressUIButton();
         if (!needsCheck)
         {
             mainMenu.SwitchMenu(0);

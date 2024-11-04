@@ -124,15 +124,15 @@ public class SwipedEggUI : MonoBehaviour
 
             if (amount <= 0 && !OnZero)
             {
-                // FlashAmmoTween(true);
-                FlashAmmoTween(false);  // commented out for no cahined ammo
+                FlashAmmoTween(true);
+                // FlashAmmoTween(false);  // commented out for no cahined ammo
 
                 OnZero = true;
             }
             else if (OnZero && amount > 0)
             {
                 OnZero = false;
-                player.globalEvents.OnUseChainedAmmo?.Invoke(false);
+                EggAmmoDisplay.CheckIfChained?.Invoke();
                 eggIMG.color = Color.white;
                 text.color = colorSO.MainTextColor;
 
@@ -156,12 +156,12 @@ public class SwipedEggUI : MonoBehaviour
 
         if (flash)
         {
-            text.color = colorSO.DashImageManaHighlight2;
 
 
-            flashAmmoSequence.Append(text.DOColor(colorSO.DashImageManaHighlight, .2f));
-            flashAmmoSequence.Append(text.DOColor(colorSO.DashImageManaHighlight2, .2f));
-            flashAmmoSequence.Play().SetLoops(-1);
+
+            flashAmmoSequence.Append(text.DOColor(colorSO.disabledButtonColorFull, .25f).From(Color.white));
+            flashAmmoSequence.Append(text.DOColor(Color.white, .25f));
+            flashAmmoSequence.Play().SetLoops(-1).SetUpdate(true);
 
 
         }

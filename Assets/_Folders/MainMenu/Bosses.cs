@@ -2,9 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class LevelGroups : MonoBehaviour
 {
+    [SerializeField] private Color normalRedColor;
+    [SerializeField] private Color normalWhiteColor;
+    [SerializeField] private Color disabledRedColor;
+    [SerializeField] private Color disabledWhiteColor;
+    [SerializeField] private Image[] leftAndRightButtonArrows;
+    [SerializeField] private Image[] leftAndRightButtonFills;
     [SerializeField] private GameObject intro;
     [SerializeField] private List<GameObject> Tank;
     [SerializeField] private List<GameObject> Pig;
@@ -21,19 +28,22 @@ public class LevelGroups : MonoBehaviour
     {
         if (currentLevelGroupIndex > 0)
         {
-
+            HapticFeedbackManager.instance.PressUIButton();
             int c = currentLevelGroupIndex;
             seq = DOTween.Sequence();
             seq.Append(levelGroups[currentLevelGroupIndex].DOLocalMoveX(2400, .45f).OnComplete(() => levelGroups[c].gameObject.SetActive(false)));
             levelGroups[currentLevelGroupIndex - 1].gameObject.SetActive(true);
             seq.Append(levelGroups[currentLevelGroupIndex - 1].DOLocalMoveX(0, .5f).SetEase(Ease.OutBack).From(-2400));
             currentLevelGroupIndex--;
+            CheckButtonsToShow();
             seq.Play();
         }
 
     }
     public void RightButtonClick()
     {
+        HapticFeedbackManager.instance.PressUIButton();
+
         if (currentLevelGroupIndex < levelGroups.Count - 1)
         {
             seq = DOTween.Sequence();
@@ -42,8 +52,44 @@ public class LevelGroups : MonoBehaviour
             levelGroups[currentLevelGroupIndex + 1].gameObject.SetActive(true);
             seq.Append(levelGroups[currentLevelGroupIndex + 1].DOLocalMoveX(0, .75f).SetEase(Ease.OutBack).From(2400));
             currentLevelGroupIndex++;
+            CheckButtonsToShow();
+
             seq.Play();
         }
+
+    }
+
+    private void SetColor(int i, bool disable)
+    {
+        if (disable)
+        {
+            leftAndRightButtonArrows[i].color = disabledWhiteColor;
+            leftAndRightButtonFills[i].color = disabledRedColor;
+        }
+        else
+        {
+            leftAndRightButtonArrows[i].color = normalWhiteColor;
+            leftAndRightButtonFills[i].color = normalRedColor;
+        }
+
+    }
+
+    public void CheckButtonsToShow()
+    {
+        if (currentLevelGroupIndex == 0)
+            SetColor(0, true);
+
+        else if (currentLevelGroupIndex >= levelGroups.Count - 1)
+            SetColor(1, true);
+
+
+        else
+        {
+            SetColor(0, false);
+            SetColor(1, false);
+        }
+
+
 
     }
 
@@ -52,6 +98,7 @@ public class LevelGroups : MonoBehaviour
     void Start()
     {
 
+        CheckButtonsToShow();
 
         for (int i = 0; i < levelGroups.Count; i++)
         {

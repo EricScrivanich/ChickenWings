@@ -2078,6 +2078,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSpecial: 0
+  isButton: 1
+  specialMoveAmount: {x: 550, y: 0}
   waitForEvent: 1
   duration: 1.2
   startPosition: {x: -1600, y: -143}
@@ -2729,10 +2731,6 @@ PrefabInstance:
     - target: {fileID: 4368737578592481974, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_ControlPath
       value: <Gamepad>/buttonEast
-      objectReference: {fileID: 0}
-    - target: {fileID: 4537927521024295274, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -1502
       objectReference: {fileID: 0}
     - target: {fileID: 4690382547116925660, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_IsActive

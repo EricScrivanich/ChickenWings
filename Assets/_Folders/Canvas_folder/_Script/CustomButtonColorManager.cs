@@ -162,18 +162,19 @@ public class CustomButtonColorManager : MonoBehaviour
     }
     public void SetDefault()
     {
+        AudioManager.instance.PlaySprayPaintSound();
         if (type == 0)
         {
-            buttons[0].Pressed();
+            buttons[0].SetManually();
         }
         else if (type == 1)
         {
-            buttons[0].Pressed();
+            buttons[0].SetManually();
 
         }
         else if (type == 2)
         {
-            buttons[3].Pressed();
+            buttons[3].SetManually();
 
         }
 
@@ -206,16 +207,16 @@ public class CustomButtonColorManager : MonoBehaviour
         {
             if (type == 0)
             {
-                buttons[savedOutlineInd].Pressed();
+                buttons[savedOutlineInd].SetManually();
             }
             else if (type == 1)
             {
-                buttons[savedFillInd].Pressed();
+                buttons[savedFillInd].SetManually();
 
             }
             else if (type == 2)
             {
-                buttons[savedDisableInd].Pressed();
+                buttons[savedDisableInd].SetManually();
 
             }
 

@@ -67,15 +67,20 @@ public class ButtonColorsSO : ScriptableObject
         normalButtonColor = options.fillColorOptions[n];
         normalButtonColorFull = new Color(normalButtonColor.r, normalButtonColor.g, normalButtonColor.b, 1);
         OutLineColor = options.outlineColorOptions[o];
-        disabledButtonColor = new Color(options.fillColorOptions[d].r, options.fillColorOptions[d].g, options.fillColorOptions[d].b, .8f);
+        disabledButtonColor = new Color(options.fillColorOptions[d].r, options.fillColorOptions[d].g, options.fillColorOptions[d].b, .7f);
         disabledButtonColorFull = new Color(disabledButtonColor.r, disabledButtonColor.g, disabledButtonColor.b, 1);
 
         Color c = options.fillColorOptions[n];
 
         float addedWhiteHighlight = 0;
         float average = (c.r + c.g + c.b) / 3;
-        addedWhiteHighlight = (1 - average) * .3f;
+
+        Debug.LogError("Color stuff: rbg: " + c.r + " - " + c.g + " - " + c.b + " - " + "average: " + average);
+
+        addedWhiteHighlight = (1 - average) * .35f;
+        Debug.LogError("Added white is: " + addedWhiteHighlight);
         highlightButtonColor = new Color(c.r + addedWhiteHighlight, c.g + addedWhiteHighlight, c.b + addedWhiteHighlight, 1);
+        Debug.LogError("Highlight: rbg: " + highlightButtonColor.r + " - " + highlightButtonColor.g + " - " + highlightButtonColor.b);
 
 
     }

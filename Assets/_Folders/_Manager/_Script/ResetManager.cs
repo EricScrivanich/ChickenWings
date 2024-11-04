@@ -8,6 +8,8 @@ using System.Collections;
 public class ResetManager : MonoBehaviour
 {
     public static ResetManager Instance;
+    [SerializeField] private ShaderVariantCollection shaderVariantCollection;
+
     public LevelManagerID lvlID;
     private bool loadedAssets;
 
@@ -16,9 +18,9 @@ public class ResetManager : MonoBehaviour
     private InputController controls;
     [SerializeField] private float waitTime; // Time after death before the player may reset
     private float resetTimer; // Timer to track the wait time
-    private bool canReset;
-    private bool resetTriggered; // Variable to prevent multiple resets
-    private PlayerManager playerMan;
+                              // private bool canReset;
+                              // private bool resetTriggered; // Variable to prevent multiple resets
+
     public static event Action onRestartGame;
     private InputAction resetAction;
     public int checkPoint;
@@ -40,47 +42,60 @@ public class ResetManager : MonoBehaviour
     }
     void Start()
     {
+        string sceneName = SceneManager.GetActiveScene().name;
 
-
-
-
-        playerMan = GetComponent<PlayerManager>();
-        canReset = false;
-        resetTriggered = false;
-        if (SceneManager.GetActiveScene().name == "MainMenu")
-            StartCoroutine(PreloadAssetsCoroutine());
-
-
-
-
-
-
-    }
-
-    void Update()
-    {
-        if (resetTriggered && !canReset)
+        if (sceneName == "MainMenu")
         {
-            resetTimer += Time.deltaTime; // Increment the timer
-            if (resetTimer >= waitTime)
+            if (shaderVariantCollection != null)
             {
-                canReset = true;
-                resetTriggered = false;
-                // controls.Special.Enable();
-                resetTimer = 0f;
+                Debug.Log("Prewarming Shaders...");
+                shaderVariantCollection.WarmUp();
+                Debug.Log("Shaders prewarmed.");
             }
+            else
+            {
+                Debug.LogWarning("Shader Variant Collection not assigned.");
+            }
+
+
+            // canReset = false;
+            // resetTriggered = false;
+            // if (SceneManager.GetActiveScene().name == "MainMenu")
+            StartCoroutine(PreloadAssetsCoroutine());
         }
 
-        // if (canReset)
-        // {
-        //     if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W) || Input.GetMouseButtonDown(0))
-        //     {
-        //         canReset = false;
-        //         resetTriggered = false; // Reset the trigger
-        //         ResetGame();
-        //     }
-        // }
+
+
+
+
+
+
     }
+
+    // void Update()
+    // {
+    //     if (resetTriggered && !canReset)
+    //     {
+    //         resetTimer += Time.deltaTime; // Increment the timer
+    //         if (resetTimer >= waitTime)
+    //         {
+    //             canReset = true;
+    //             resetTriggered = false;
+    //             // controls.Special.Enable();
+    //             resetTimer = 0f;
+    //         }
+    //     }
+
+    //     // if (canReset)
+    //     // {
+    //     //     if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W) || Input.GetMouseButtonDown(0))
+    //     //     {
+    //     //         canReset = false;
+    //     //         resetTriggered = false; // Reset the trigger
+    //     //         ResetGame();
+    //     //     }
+    //     // }
+    // }
 
     private IEnumerator PreloadAssetsCoroutine()
     {
@@ -125,7 +140,7 @@ public class ResetManager : MonoBehaviour
 
     public void StartResetTime()
     {
-        resetTriggered = true; // Set the reset trigger
+        // resetTriggered = true; // Set the reset trigger
         ResetManager.GameOverEvent?.Invoke();
     }
 
@@ -143,7 +158,7 @@ public class ResetManager : MonoBehaviour
     {
 
 
-        canReset = false;
+        // canReset = false;
         onRestartGame?.Invoke();
         controls.Special.Disable();
 

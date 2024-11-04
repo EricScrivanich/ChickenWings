@@ -8302,13 +8302,6 @@ MonoBehaviour:
   areRingsRequired: 0
   ringsNeeded: 0
   currentRingsPassed: 0
-  LevelNamePrefab: {fileID: 0}
-  fadeInDuration: 1
-  fadeOutDuration: 1
-  displayDuration: 3
-  textMoveDuration: 1
-  textTargetPosition: {x: 0, y: 0}
-  moveInEase: 0
   areBucketsRequired: 0
   bucketsNeeded: 0
   areBarnsRequired: 0
@@ -8317,6 +8310,7 @@ MonoBehaviour:
   pigsNeeded: 0
   initalGameObjectsToDeactivate: []
   sections: []
+  eventCallbackSections: []
   playSections: 
   playSectionDelayToUI: []
   currentEventTracked: 0
@@ -9885,8 +9879,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eafc29c3997449a88ad3f03fdf591fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  options: {fileID: 0}
   colorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
+  defaultColors: {fileID: 0}
+  colorMatchWarning: {fileID: 0}
+  player: {fileID: 0}
   yer: {fileID: 0}
+  pauseOutline: {fileID: 0}
+  pauseFill: {fileID: 0}
   outlines:
   - {fileID: 767234397}
   fills:
@@ -10936,20 +10936,8 @@ PrefabInstance:
       value: -7.233
       objectReference: {fileID: 0}
     - target: {fileID: 3068027453580304829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
-      propertyPath: m_fontColor.b
-      value: 0.16470589
-      objectReference: {fileID: 0}
-    - target: {fileID: 3068027453580304829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
-      propertyPath: m_fontColor.g
-      value: 0.16862746
-      objectReference: {fileID: 0}
-    - target: {fileID: 3068027453580304829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
-      propertyPath: m_fontColor.r
-      value: 0.99607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3068027453580304829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 4280953854
+      value: 4281740517
       objectReference: {fileID: 0}
     - target: {fileID: 4485717134599454075, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_Sprite
@@ -13610,6 +13598,10 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2580216180241248365, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: showScore
       value: 1
@@ -13673,6 +13665,10 @@ PrefabInstance:
     - target: {fileID: 5174957847518183628, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_SizeDelta.y
       value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 5367891311766385916, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5571557343412231257, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_SizeDelta.x
@@ -13777,6 +13773,10 @@ PrefabInstance:
     - target: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -7.233
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410213977261356379, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6486068709625014960, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_AnchoredPosition.y

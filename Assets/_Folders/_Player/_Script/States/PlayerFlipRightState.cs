@@ -8,6 +8,7 @@ public class PlayerFlipRightState : PlayerBaseState
 {
     private Sequence sequence;
     private RectTransform flipImage;
+
     private Vector3 flipImageTargetRotation = new Vector3(0, 180, 45);
     Vector3[] rotations = new Vector3[]
        {
@@ -52,13 +53,13 @@ public class PlayerFlipRightState : PlayerBaseState
         sequence = DOTween.Sequence();
 
         sequence.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime)).SetEase(Ease.InSine);
-        // sequence.Join(flipImage.DOScale(flipImageTargetScale * 1.1f, .6f)).SetEase(Ease.InSine);
+        sequence.Join(flipImage.DOScale(1.2f, .35f));
         sequence.Play();
         hasFadedJumpAir = false;
         jumpAirIndex = player.CurrentJumpAirIndex;
         hitSlowTarget = false;
         addForceDownTimer = 0;
-       
+
         time = 0;
         rotationTimer = 0;
         player.SetFlipDirection(true);
@@ -76,7 +77,7 @@ public class PlayerFlipRightState : PlayerBaseState
         if (player.shotgunEquipped)
         {
             rotationSpeed = 230;
-           
+
             rotationSlowDownTime = 1f;
             addForceDownMultiplier = 1.2f;
 
@@ -94,7 +95,7 @@ public class PlayerFlipRightState : PlayerBaseState
         AudioManager.instance.PlayCluck();
     }
 
-   
+
     public void ReEnterState()
     {
         rotationSpeedVar = 300;
@@ -178,6 +179,8 @@ public class PlayerFlipRightState : PlayerBaseState
 
         sequence = DOTween.Sequence();
 
+        flipImage.DOScale(1, .2f);
+
         foreach (var rotation in rotations)
         {
             sequence.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
@@ -189,6 +192,7 @@ public class PlayerFlipRightState : PlayerBaseState
 
     public void CachVariables(Vector2 jf, Vector2 afv, Vector2 afdv, float at, float adt)
     {
+
 
         JumpForce = jf;
         AddForceVector = afv;

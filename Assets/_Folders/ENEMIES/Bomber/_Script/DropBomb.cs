@@ -35,6 +35,8 @@ public class DropBomb : MonoBehaviour
 
     private Vector3 rotateMidTarget = new Vector3(0, 0, 7);
 
+    private BoxCollider2D col;
+
 
 
     private bool hasEnteredTriggerArea = false;
@@ -96,6 +98,7 @@ public class DropBomb : MonoBehaviour
 
     private void Awake()
     {
+        col = GetComponent<BoxCollider2D>();
         nomralScale = transform.localScale;
         dropZone = Instantiate(dropZonePrefab).GetComponent<DropZone>();
         dropZone.gameObject.SetActive(false);
@@ -317,6 +320,7 @@ public class DropBomb : MonoBehaviour
         enteredZone = false;
         bomberGoing = false;
         hasEnteredTriggerArea = false;
+        col.enabled = false;
         if (speedTarget < 0)
         {
             sideSwitchInteger = -1;
@@ -355,6 +359,8 @@ public class DropBomb : MonoBehaviour
         AudioManager.instance.PlayFlyOver();
         yield return new WaitForSeconds(delayToBomberGoing);
         EnterOrExitTween(true);
+        col.enabled = true;
+
         ChangeDropAreaSprite();
         bomberGoing = true;
 

@@ -20,6 +20,8 @@ public class LevelManagerID : ScriptableObject
     public bool PauseSpawning;
     public int ringsNeeded;
 
+    public string LevelTitle;
+
 
     public int LevelIntensity { get; private set; }
     public int barnsNeeded;

@@ -120,7 +120,7 @@ public class BarnMovement : MonoBehaviour
     {
         transform.Translate(Vector2.left * BoundariesManager.GroundSpeed * Time.deltaTime);
 
-        if (transform.position.x < -13)
+        if (transform.position.x < BoundariesManager.leftBoundary)
         {
             gameObject.SetActive(false);
         }

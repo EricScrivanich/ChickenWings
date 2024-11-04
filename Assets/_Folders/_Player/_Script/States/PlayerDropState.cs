@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerDropState : PlayerBaseState
 {
-   
+
     private readonly Vector2 dropForce = new Vector2(0, -13);
     private bool switchedToBounce;
     public override void EnterState(PlayerStateManager player)
@@ -19,7 +19,7 @@ public class PlayerDropState : PlayerBaseState
         AudioManager.instance.PlayDownJumpSound();
         player.maxFallSpeed = -50;
         // player.anim.SetTrigger("DropTrigger");
-       
+
         // player.rb.velocity = new Vector2 (0,dropPower);
         player.AdjustForce(dropForce);
         player.rb.freezeRotation = true;
@@ -37,11 +37,12 @@ public class PlayerDropState : PlayerBaseState
             player.isDropping = false;
 
         }
-        
+
         // player.anim.SetTrigger(player.FinishDashTrigger);
 
         player.rb.freezeRotation = false;
         player.maxFallSpeed = player.originalMaxFallSpeed;
+        Debug.LogError("Orignal Max fall is: " + player.originalMaxFallSpeed);
         player.anim.SetTrigger(player.FinishDropTrigger);
 
     }
@@ -49,7 +50,7 @@ public class PlayerDropState : PlayerBaseState
     public void SwitchToBounce()
     {
         switchedToBounce = true;
-        
+
     }
 
     public override void FixedUpdateState(PlayerStateManager player)

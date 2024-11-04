@@ -8,6 +8,9 @@ public class TouchGesture : MonoBehaviour
 {
     // public PlayerID player;
     [SerializeField] private bool isTap;
+    private CanvasGroup group;
+
+    [SerializeField] private float initialDelay;
     [Header("Hand Animation Settings")]
     [SerializeField] private RectTransform hand;
     [SerializeField] private Vector3 handStartRotation;
@@ -34,7 +37,11 @@ public class TouchGesture : MonoBehaviour
 
         if (isTap)
         {
-            AnimateTapGesture();
+            if (initialDelay > 0)
+                DelayToShow();
+
+            else
+                AnimateTapGesture();
         }
         else
         {
@@ -48,6 +55,18 @@ public class TouchGesture : MonoBehaviour
         {
             gestureSequence.Kill();
         }
+    }
+
+    private void DelayToShow()
+    {
+        group = GetComponent<CanvasGroup>();
+        group.alpha = 0;
+        gestureSequence = DOTween.Sequence();
+        gestureSequence.AppendInterval(initialDelay);
+        gestureSequence.Append(group.DOFade(1, .3f).SetEase(Ease.InSine));
+        gestureSequence.Play().SetUpdate(true).OnComplete(AnimateTapGesture);
+
+
     }
 
     private void InitializeValues()

@@ -1009,11 +1009,23 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 713175351, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: usingEgg
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: SpawnData
+      value: 
+      objectReference: {fileID: 11400000, guid: c2391d0a81461490ba37e624e7febd2a, type: 2}
+    - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: usingAmmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: usingBarn
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
@@ -1052,6 +1064,10 @@ PrefabInstance:
       propertyPath: shotgunThreeImage
       value: 
       objectReference: {fileID: 16208088, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
+    - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: spawnNormalRandom
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3392471311240913473, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: spawnShotgunRandom
       value: 0
@@ -1631,6 +1647,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 551426447}
+  blockButtons: {fileID: 0}
+  setSelfUnactive: 0
   setSelfUnactiveAfterDelay: 0
   setSelfActiveAfterDelay: 0
   setCanvasGroupUnactive: 0
@@ -3303,7 +3321,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSpecial: 0
-  waitForEvent: 1
+  isButton: 1
+  specialMoveAmount: {x: 0, y: 550}
+  waitForEvent: 0
   duration: 1.6
   startPosition: {x: -686, y: -784}
   amountToMoveFromEvent: {x: 0, y: 0}
@@ -4630,6 +4650,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3157191240915991766, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3222486909674329710, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: player
       value: 
@@ -4735,6 +4759,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4699012269221071130, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: ignoreSwitch
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4699012269221071130, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: ignoreShotgun
       value: 1
       objectReference: {fileID: 0}
@@ -4785,10 +4813,6 @@ PrefabInstance:
     - target: {fileID: 5164578469033416390, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -92.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5520871534854852220, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -784
       objectReference: {fileID: 0}
     - target: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Pivot.x

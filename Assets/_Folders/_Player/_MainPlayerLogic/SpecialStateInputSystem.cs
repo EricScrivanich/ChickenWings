@@ -5,7 +5,7 @@ using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections.Generic;
-using Lofelt.NiceVibrations;
+
 
 public class SpecialStateInputSystem : MonoBehaviour
 {
@@ -182,14 +182,14 @@ public class SpecialStateInputSystem : MonoBehaviour
               if (!trackingInputs)
               {
                   ID.events.OnJump?.Invoke();
-                  HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                  HapticFeedbackManager.instance.PlayerButtonPress();
               }
               else if (CheckInputs("Jump"))
               {
                   if (!startedHold)
                   {
                       ID.events.OnJump?.Invoke();
-                      HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                      HapticFeedbackManager.instance.PlayerButtonPress();
 
                   }
 
@@ -213,17 +213,19 @@ public class SpecialStateInputSystem : MonoBehaviour
         if (useFlips) controls.Movement.JumpRight.performed += ctx =>
         {
             if (!ButtonsEnabled) return;
+            flipRightImage.color = ColorSO.highlightButtonColor;
+
             if (!trackingInputs)
             {
                 ID.events.OnFlipRight?.Invoke(true);
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                HapticFeedbackManager.instance.PlayerButtonPress();
             }
             else if (CheckInputs("FlipRight"))
             {
                 if (!startedHold)
                 {
                     ID.events.OnFlipRight?.Invoke(true);
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                    HapticFeedbackManager.instance.PlayerButtonPress();
                 }
 
                 else
@@ -245,6 +247,8 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (useFlips) controls.Movement.JumpRight.canceled += ctx =>
         {
+            flipRightImage.color = ColorSO.normalButtonColor;
+
             if (!mustHold)
                 ID.events.OnFlipRight?.Invoke(false);
 
@@ -258,9 +262,12 @@ public class SpecialStateInputSystem : MonoBehaviour
         if (useFlips) controls.Movement.JumpLeft.performed += ctx =>
         {
             if (!ButtonsEnabled) return;
+
+            flipLeftImage.color = ColorSO.highlightButtonColor;
+
             if (!trackingInputs)
             {
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                HapticFeedbackManager.instance.PlayerButtonPress();
                 ID.events.OnFlipLeft?.Invoke(true);
             }
             else if (CheckInputs("FlipLeft"))
@@ -268,7 +275,7 @@ public class SpecialStateInputSystem : MonoBehaviour
                 if (!startedHold)
                 {
                     ID.events.OnFlipLeft?.Invoke(true);
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                    HapticFeedbackManager.instance.PlayerButtonPress();
                 }
 
                 else
@@ -290,6 +297,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (useFlips) controls.Movement.JumpLeft.canceled += ctx =>
         {
+            flipLeftImage.color = ColorSO.normalButtonColor;
 
             if (!mustHold)
                 ID.events.OnFlipLeft?.Invoke(false);
@@ -312,7 +320,7 @@ public class SpecialStateInputSystem : MonoBehaviour
                 if (canDash)
                 {
                     ID.events.OnDash?.Invoke(true);
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                    HapticFeedbackManager.instance.PlayerButtonPress();
                 }
                 else if (canDashSlash)
                 {
@@ -322,12 +330,16 @@ public class SpecialStateInputSystem : MonoBehaviour
                     HandleDashSlashImage(false);
                     ID.events.OnDashSlash?.Invoke();
                 }
+                else
+                {
+                    HapticFeedbackManager.instance.PlayerButtonFailure();
+                }
             }
             else if (CheckInputs("Dash"))
             {
                 if (canDash && !startedHold)
                 {
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                    HapticFeedbackManager.instance.PlayerButtonPress();
                     ID.events.OnDash?.Invoke(true);
                 }
                 else if (!canDashSlash && startedHold)
@@ -378,16 +390,20 @@ public class SpecialStateInputSystem : MonoBehaviour
             {
                 if (canDrop)
                 {
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                    HapticFeedbackManager.instance.PlayerButtonPress();
                     ID.events.OnDrop?.Invoke();
                     StartCoroutine(DropCooldown());
+                }
+                else
+                {
+                    HapticFeedbackManager.instance.PlayerButtonFailure();
                 }
             }
             else if (CheckInputs("Drop"))
             {
                 if (canDrop)
                 {
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                    HapticFeedbackManager.instance.PlayerButtonPress();
                     ID.events.OnDrop?.Invoke();
                     StartCoroutine(DropCooldown());
                 }

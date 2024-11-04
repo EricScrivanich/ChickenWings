@@ -1,23 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class PauseMenuButton : MonoBehaviour
 {
     [SerializeField] private GameObject PauseMenuPrefab;
 
+
     private RectTransform rectTransform;
+
     private bool isPaused = false;
     private PauseMenuManager pmm;
     private GameObject PauseMenu;
     private Canvas canvas;
+    private Image fillImage;
+    [SerializeField] private ButtonColorsSO colorSO;
+
 
 
     private bool gameOver = false;
     // Start is called before the first frame update
     void Start()
     {
+
+
+    }
+    void Awake()
+    {
         PauseMenu = Instantiate(PauseMenuPrefab);
+
+        fillImage = GetComponent<Image>();
 
 
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
@@ -37,6 +51,8 @@ public class PauseMenuButton : MonoBehaviour
     public void InstantPause()
     {
         if (Time.timeScale == 0 || gameOver) return;
+
+
         PauseMenu.SetActive(true);
         pmm.InstantPause();
 
@@ -47,24 +63,36 @@ public class PauseMenuButton : MonoBehaviour
 
     public void NormalPause()
     {
-        if (gameOver) return;
-        if (!isPaused)
+        // if (Time.timeScale < FrameRateManager.TargetTimeScale || gameOver) return;
+        if (!isPaused && Time.timeScale == FrameRateManager.TargetTimeScale && !gameOver)
         {
             isPaused = true;
+            HapticFeedbackManager.instance.PressUIButton();
+            Time.timeScale = 0;
+
+            Color normalColor = fillImage.color;
+
+            var seq = DOTween.Sequence();
+
+            seq.Append(fillImage.rectTransform.DOScale(1.2f, .25f));
+            seq.Join(fillImage.DOColor(colorSO.highlightButtonColor, .25f));
+
+            seq.Append(fillImage.rectTransform.DOScale(1, .22f));
+            seq.Join(fillImage.DOColor(normalColor, .22f));
+            seq.Play().SetUpdate(true);
+
+
             PauseMenu.SetActive(true);
-            StartCoroutine(SmoothTimeScaleTransition(0, .15f, 0));
+            // StartCoroutine(SmoothTimeScaleTransition(0, .15f, 0));
+
             pmm.DropSignTween();
-            Debug.Log("yuh");
-
-
-
         }
         else
         {
-            Debug.Log("Huh");
+
             isPaused = false;
-            StartCoroutine(SmoothTimeScaleTransition(1, .25f, .9f));
             pmm.RetractOnly();
+            StartCoroutine(SmoothTimeScaleTransition(FrameRateManager.TargetTimeScale, .25f, .95f));
         }
     }
 

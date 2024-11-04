@@ -5,7 +5,7 @@ using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.EventSystems;
-using Lofelt.NiceVibrations;
+
 
 
 
@@ -18,6 +18,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     private InputController controls;
 
     private bool specialEnableButtonsActive = false;
+
+    private Image flipLeftImage;
+    private Image flipRightImage;
+
 
     private bool earlyDropReady;
     private bool earlyDashReady;
@@ -137,7 +141,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             {
                 SpecialEnableButtonsCheck();
                 ID.events.OnJump?.Invoke();
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                HapticFeedbackManager.instance.PlayerButtonPress();
+
 
             }
         };
@@ -147,14 +152,16 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             if (ButtonsEnabled)
             {
                 SpecialEnableButtonsCheck();
+                flipRightImage.color = colorsSO.highlightButtonColor;
                 ID.events.OnFlipRight?.Invoke(true);
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                HapticFeedbackManager.instance.PlayerButtonPress();
 
             }
         };
         controls.Movement.JumpRight.canceled += ctx =>
         {
             if (ButtonsEnabled) ID.events.OnFlipRight?.Invoke(false);
+            flipRightImage.color = colorsSO.normalButtonColor;
         };
 
         controls.Movement.JumpLeft.performed += ctx =>
@@ -162,14 +169,17 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             if (ButtonsEnabled)
             {
                 SpecialEnableButtonsCheck();
+                flipLeftImage.color = colorsSO.highlightButtonColor;
+
                 ID.events.OnFlipLeft?.Invoke(true);
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                HapticFeedbackManager.instance.PlayerButtonPress();
 
             }
         };
         controls.Movement.JumpLeft.canceled += ctx =>
         {
             if (ButtonsEnabled) ID.events.OnFlipLeft?.Invoke(false);
+            flipLeftImage.color = colorsSO.normalButtonColor;
         };
 
         controls.Movement.EggJoystick.performed += ctx =>
@@ -194,7 +204,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                 if (canDash)
                 {
                     ID.events.OnDash?.Invoke(true);
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                    HapticFeedbackManager.instance.PlayerButtonPress();
 
 
                 }
@@ -207,8 +217,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                 }
                 else if (!earlyDashReady)
                 {
-                    AudioManager.instance.PlayErrorSound();
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.Failure);
+                   
+                    HapticFeedbackManager.instance.PlayerButtonFailure();
                 }
 
 
@@ -268,7 +278,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                 if (canDrop)
                 {
                     ID.events.OnDrop?.Invoke();
-                    HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+                    HapticFeedbackManager.instance.PlayerButtonPress();
 
 
                     StartCoroutine(DropCooldown());
@@ -278,8 +288,11 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                     earlyDropTried = true;
 
                 else if (!earlyDropReady)
-                    AudioManager.instance.PlayErrorSound();
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.Failure);
+                {
+                   
+                    HapticFeedbackManager.instance.PlayerButtonFailure();
+                }
+
 
 
             }
@@ -329,7 +342,6 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
 
-
     public void OnPointerDown(PointerEventData eventData)
     {
         // Debug.Log("Down");
@@ -365,6 +377,13 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         // fillingManaColor = colorsSO.fillingManaColor;
         // canUseDashSlashImageColor1 = colorsSO.canUseDashSlashImageColor1;
         // canUseDashSlashImageColor2 = colorsSO.canUseDashSlashImageColor2;
+
+        if (GameObject.Find("FlipRightIMG") != null)
+            flipRightImage = GameObject.Find("FlipRightIMG").GetComponent<Image>();
+
+        if (GameObject.Find("FlipLeftIMG") != null)
+            flipLeftImage = GameObject.Find("FlipLeftIMG").GetComponent<Image>();
+
         if (GameObject.Find("DropButton") != null)
         {
             DropButton = GameObject.Find("DropButton").GetComponent<Image>();
@@ -460,10 +479,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.54f);
         // earlyDropTried = false;
         earlyDropReady = true;
-        yield return new WaitForSeconds(.27f);
+        yield return new WaitForSeconds(.23f);
         dropCooldownIN.DOFade(0, 0);
         dropCooldownOUT.DOFade(0, .1f);
 
@@ -483,7 +502,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             Debug.LogError("Coyote time was used on dropppp");
             ID.events.OnDrop?.Invoke();
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+            HapticFeedbackManager.instance.PlayerButtonPress();
             earlyDropTried = false;
 
 
@@ -739,10 +758,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         dashCooldownGroup.DOFade(1, .15f);
 
         dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
-        yield return new WaitForSeconds(.85f);
+        yield return new WaitForSeconds(.9f);
         // earlyDashTried = false;
         earlyDashReady = true;
-        yield return new WaitForSeconds(.25f);
+        yield return new WaitForSeconds(.2f);
 
 
 
@@ -759,7 +778,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             Debug.LogError("Coyote time was used");
             canDash = true;
             ID.events.OnDash?.Invoke(true);
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+            HapticFeedbackManager.instance.PlayerButtonPress();
             earlyDashTried = false;
             if (!stillHoldingDash)
             {

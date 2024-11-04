@@ -90,6 +90,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 3508579183913693478}
+  blockButtons: {fileID: 0}
+  setSelfUnactive: 0
+  setSelfUnactiveAfterDelay: 0
+  setSelfActiveAfterDelay: 0
   setCanvasGroupUnactive: 0
   SetActiveOnceObjects: []
   SetActiveObjects: []
@@ -918,6 +922,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameOverButton: 0
   colorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
   sceneLoader: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
   text: {fileID: 3407577945513601899}
@@ -1265,6 +1270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameOverButton: 0
   colorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
   sceneLoader: {fileID: 0}
   text: {fileID: 8027172570545242646}
@@ -1684,6 +1690,7 @@ GameObject:
   m_Component:
   - component: {fileID: 124456283624867545}
   - component: {fileID: 2066936560571010484}
+  - component: {fileID: 391340282813571163}
   m_Layer: 5
   m_Name: LevelComplete
   m_TagString: Untagged
@@ -1736,6 +1743,20 @@ MonoBehaviour:
   RetractBounceAmount: 70
   overshootDuration: 1
   overshootAmount: 40
+--- !u!114 &391340282813571163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5334835317810689662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 622b4d53796f14dbab08d15ac344349f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  levelTitle: {fileID: 2548088046720270878}
 --- !u!1 &5774552279718196010
 GameObject:
   m_ObjectHideFlags: 0
@@ -2368,6 +2389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5c940c2a7b34fe39b58a343a8f158e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameOverButton: 0
   colorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
   sceneLoader: {fileID: 0}
   text: {fileID: 6674068857814532856}
@@ -2587,7 +2609,7 @@ GameObject:
   - component: {fileID: 3832438553444497592}
   - component: {fileID: 2548088046720270878}
   m_Layer: 5
-  m_Name: Title
+  m_Name: levelNum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

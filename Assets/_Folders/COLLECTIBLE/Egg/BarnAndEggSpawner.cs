@@ -6,8 +6,25 @@ public class BarnAndEggSpawner : MonoBehaviour
 {
     public PlayerID player;
 
-    [SerializeField] private bool usingAmmo;
+    public CollectableSpawnData SpawnData;
+
+    [SerializeField] private LevelManagerID lvlID;
+
+    private Coroutine EggRoutine;
+    private Coroutine ShotgunRoutine;
+    private Coroutine BarnRoutine;
+
+    private Vector2 nextEggData;
+    private Vector2 nextShotgunData;
+    private Vector2 nextBarnData;
+
+    [SerializeField] private bool usingEgg;
     [SerializeField] private bool usingShotgun;
+    [SerializeField] private bool usingBarn;
+
+    private bool spawningEgg;
+    private bool spawningShotgun;
+    private bool spawningBarn;
     [SerializeField] private bool spawnNormalRandom = true;
     [SerializeField] private bool spawnShotgunRandom = true;
 
@@ -35,6 +52,7 @@ public class BarnAndEggSpawner : MonoBehaviour
     private float barnTimeOffset;
 
 
+
     [SerializeField] private float barnBigChance;
     [SerializeField] private float barnMidChance;
 
@@ -56,71 +74,111 @@ public class BarnAndEggSpawner : MonoBehaviour
     private ParticleSystem[] manaParticles = new ParticleSystem[2];
 
     // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
+        spawningBarn = false;
+        spawningEgg = false;
+        spawningShotgun = false;
 
-        eggCollectables = new EggCollectableMovement[eggCollectableCount];
-        currentEggCollectableIndex = 0;
-
-        for (int i = 0; i < eggCollectableCount; i++)
+        if (usingEgg || usingShotgun)
         {
-            var obj = Instantiate(eggCollectablePrefab);
-            var script = obj.GetComponent<EggCollectableMovement>();
-            script.spawner = this;
-            eggCollectables[i] = script;
-            script.gameObject.SetActive(false);
+            eggCollectables = new EggCollectableMovement[eggCollectableCount];
+            currentEggCollectableIndex = 0;
+            for (int i = 0; i < eggCollectableCount; i++)
+            {
+                var obj = Instantiate(eggCollectablePrefab);
+                var script = obj.GetComponent<EggCollectableMovement>();
+                script.spawner = this;
+                eggCollectables[i] = script;
+                script.gameObject.SetActive(false);
+            }
+            if (usingEgg)
+            {
+
+                for (int i = 0; i < 2; i++)
+                {
+                    var ps = Instantiate(ammoParticlePrefab);
+                    ammoParticles[i] = ps;
+
+                }
+
+            }
+
+
+            if (usingShotgun)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    var ps = Instantiate(manaParticlePrefab);
+                    manaParticles[i] = ps;
+
+                }
+            }
         }
-        if (usingAmmo)
+        if (usingBarn)
         {
-
-            barnSpawnPos = new Vector2(13.5f, BoundariesManager.GroundPosition - .1f);
-            eggThreeChance = baseEggThreeChance;
-
             for (int i = 0; i < 2; i++)
             {
                 var barnObj = Instantiate(barnPrefab);
                 barnScript[i] = barnObj.GetComponent<BarnMovement>();
                 barnObj.SetActive(false);
             }
-            for (int i = 0; i < 2; i++)
-            {
-                var ps = Instantiate(ammoParticlePrefab);
-                ammoParticles[i] = ps;
-
-            }
-
-            if (spawnNormalRandom)
-            {
-                StartCoroutine(SpawnEggs());
-                StartCoroutine(SpawnBarn());
-            }
-
-
-        }
-        if (usingShotgun)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                var ps = Instantiate(manaParticlePrefab);
-                manaParticles[i] = ps;
-
-            }
-
-            if (spawnShotgunRandom)
-                StartCoroutine(SpawnMana());
 
         }
 
 
+    }
+    void Start()
+    {
+        if (usingBarn)
+            barnSpawnPos = new Vector2(13.5f, BoundariesManager.GroundPosition - .1f);
+
+        if (SpawnData != null)
+            SetNewData(SpawnData);
 
 
 
 
+        // if (SpawnData != null)
+        //     return;
+        // if (usingEgg)
+        // {
 
 
+        //     eggThreeChance = baseEggThreeChance;
 
 
+        //     for (int i = 0; i < 2; i++)
+        //     {
+        //         var ps = Instantiate(ammoParticlePrefab);
+        //         ammoParticles[i] = ps;
 
+        //     }
+
+        //     if (spawnNormalRandom)
+        //     {
+        //         EggRoutine = StartCoroutine(SpawnEggs());
+        //         BarnRoutine = StartCoroutine(SpawnBarn());
+        //     }
+
+
+        // }
+
+
+        // if (usingShotgun)
+        // {
+        //     for (int i = 0; i < 2; i++)
+        //     {
+        //         var ps = Instantiate(manaParticlePrefab);
+        //         manaParticles[i] = ps;
+
+        //     }
+
+        //     if (spawnShotgunRandom)
+        //         ShotgunRoutine = StartCoroutine(SpawnShotgun());
+
+        // }
     }
 
     public void GetParticles(bool isNormal, Vector2 pos)
@@ -180,14 +238,14 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     }
 
-    public void GetBarn()
+    public void GetBarn(int side)
     {
         if (currentBarnIndex >= 2) currentBarnIndex = 0;
         float chance = Random.Range(0f, 1f);
-        int side = 0;
-        if (chance < barnBigChance) side = 0;
-        else if (chance < barnMidChance) side = Random.Range(1, 3);
-        else side = 3;
+        // int side = 0;
+        // if (chance < barnBigChance) side = 0;
+        // else if (chance < barnMidChance) side = Random.Range(1, 3);
+        // else side = 3;
 
         var script = barnScript[currentBarnIndex];
 
@@ -197,50 +255,67 @@ public class BarnAndEggSpawner : MonoBehaviour
         currentBarnIndex++;
 
     }
-    private IEnumerator SpawnEggs()
+    private IEnumerator SpawnEggs(float initialDelay)
     {
-        yield return new WaitForSeconds(Random.Range(2f, 6f));
+        Debug.LogError("Starting Egg ROutine");
+        yield return new WaitForSeconds(initialDelay);
 
         while (true)
         {
 
-            Vector2 pos = new Vector2(13, Random.Range(-2.2f, 4.2f));
-            bool three = Random.Range(0f, 1f) < eggThreeChance;
+            Vector2 pos = new Vector2(13.5f, Random.Range(-2.2f, 4.2f));
+            // bool three = Random.Range(0f, 1f) < eggThreeChance;
 
-            GetEggCollectable(pos, false, three, 0);
-            yield return new WaitForSeconds(Random.Range(eggTimeRange.x, eggTimeRange.y) + eggOffsetTime);
+            Vector2 data = SpawnData.ReturnEggTime(player.Ammo);
+            GetEggCollectable(pos, false, CheckIfEggIsThree(data.y), 0);
+            yield return new WaitForSeconds(data.x);
+            Debug.LogError("Egg Time is: " + data.x);
+
         }
 
 
     }
 
-    private IEnumerator SpawnMana()
+
+
+    private IEnumerator SpawnShotgun(float initialDelay)
     {
-        yield return new WaitForSeconds(Random.Range(9.5f, 11f));
+        yield return new WaitForSeconds(initialDelay);
 
         while (true)
         {
 
-            Vector2 pos = new Vector2(13, Random.Range(-2.2f, 4.2f));
-            bool three = Random.Range(0f, 1f) < baseShotgunThreeChance;
+            Vector2 pos = new Vector2(13.5f, Random.Range(-2.2f, 4.2f));
+            // bool three = Random.Range(0f, 1f) < baseShotgunThreeChance;
 
+            Vector2 data = SpawnData.ReturnShotgunTime(player.ShotgunAmmo);
+            GetEggCollectable(pos, true, CheckIfEggIsThree(data.y), 0);
 
-            GetEggCollectable(pos, true, three, 0);
-            yield return new WaitForSeconds(Random.Range(manaTimeRange.x, manaTimeRange.y));
+            yield return new WaitForSeconds(data.x);
         }
 
     }
-    private IEnumerator SpawnBarn()
+
+
+    private IEnumerator SpawnBarn(float initialDelay)
     {
         // yield return new WaitForSeconds(Random.Range(4f, 7f));
-        yield return new WaitForSeconds(2.8f);
+        yield return new WaitForSeconds(initialDelay);
 
         while (true)
         {
-
-            GetBarn();
-            yield return new WaitForSeconds(Random.Range(barnTimeRange.x, barnTimeRange.y) + barnTimeOffset);
+            Vector2 data = SpawnData.ReturnBarnTime();
+            int n = Mathf.RoundToInt(data.y);
+            GetBarn(n);
+            yield return new WaitForSeconds(data.x);
         }
+
+    }
+    private bool CheckIfEggIsThree(float val)
+    {
+        if (val == 0)
+            return false;
+        else return true;
 
     }
     private void AdjustTimeAndChance(int amount)
@@ -294,13 +369,61 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     }
 
+    public void SetNewData(CollectableSpawnData data)
+    {
+        SpawnData = data;
+      
+
+
+        if (spawningEgg && !data.SpawnEggs)
+            StopCoroutine(EggRoutine);
+        else if (!spawningEgg && data.SpawnEggs)
+        {
+            EggRoutine = StartCoroutine(SpawnEggs(data.ReturnInitialDelay(0)));
+           
+        }
+
+        if (spawningShotgun && !data.SpawnShotgun)
+            StopCoroutine(ShotgunRoutine);
+        else if (!spawningShotgun && data.SpawnShotgun)
+            ShotgunRoutine = StartCoroutine(SpawnShotgun(data.ReturnInitialDelay(1)));
+
+
+
+        if (spawningBarn && !data.SpawnBarn)
+            StopCoroutine(BarnRoutine);
+        else if (!spawningBarn && data.SpawnBarn)
+        {
+            BarnRoutine = StartCoroutine(SpawnBarn(data.ReturnInitialDelay(2)));
+            
+
+        }
+
+
+       
+
+
+       
+        spawningEgg = data.SpawnEggs;
+        spawningShotgun = data.SpawnShotgun;
+        spawningBarn = data.SpawnBarn;
+
+    }
+
     private void OnEnable()
     {
-        player.globalEvents.OnUpdateAmmo += AdjustTimeAndChance;
+        // player.globalEvents.OnUpdateAmmo += AdjustTimeAndChance;
+
+        if (lvlID != null)
+            lvlID.outputEvent.SetNewCollectableSpawnData += SetNewData;
+
     }
 
     private void OnDisable()
     {
-        player.globalEvents.OnUpdateAmmo -= AdjustTimeAndChance;
+        // player.globalEvents.OnUpdateAmmo -= AdjustTimeAndChance;
+
+        if (lvlID != null)
+            lvlID.outputEvent.SetNewCollectableSpawnData -= SetNewData;
     }
 }

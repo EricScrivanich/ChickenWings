@@ -8,6 +8,9 @@ public class SpawnStateTransitionLogic : ScriptableObject
 {
     public bool loopStates;
 
+    public bool continueFromStartIfOverriden;
+    public bool continueFromPrevOverriden;
+
     [Header("0 = PureSetup;  1 = RandomRing,  2 = RandomEnemySetup,  3 = PureRandom")]
     [SerializeField] private int[] orderedSequence;
     public int[] OrderedSequnece
@@ -23,8 +26,30 @@ public class SpawnStateTransitionLogic : ScriptableObject
         private set => randomSequenceWithWeights = value;
     }
 
+    public Vector2Int[] RingAmountsByType;
+
 
     public int[] ringSpawnSetTypeOrder;
+
+    public int GetRingSizeByType(int type)
+    {
+        if (RingAmountsByType == null || RingAmountsByType.Length <= type)
+        {
+            Debug.LogError("No Ring amount by types availiable, type is: " + type);
+            return -1;
+        }
+        int val = Random.Range(RingAmountsByType[type].x, RingAmountsByType[type].y + 1);
+
+        Debug.LogError("Ring type is avaialibe, value is: " + val);
+
+        if (val == 0) return -1;
+        return val;
+
+
+
+
+
+    }
 
     public int GetRandomSequenceIndex()
     {
@@ -58,13 +83,13 @@ public class SpawnStateTransitionLogic : ScriptableObject
 
     public void NextTransitionState()
     {
-        
+
     }
 
-   
-
-  
 
 
-  
+
+
+
+
 }

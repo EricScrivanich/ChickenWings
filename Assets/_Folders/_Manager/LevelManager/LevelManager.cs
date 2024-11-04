@@ -33,7 +33,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject finishedLevelUIPrefab;
 
     private Canvas canvas;
-    private Button pauseButton;
+    // private Button pauseButton;
     private int currentSection;
     [SerializeField] private bool showSectionAtStart;
     [SerializeField] private float showSectionAfterDelay;
@@ -184,7 +184,7 @@ public class LevelManager : MonoBehaviour
     {
         inputTracker = GetComponent<InputTracker>();
         playerInputs = GameObject.Find("Player").GetComponent<StateInputSystem>();
-        pauseButton = GameObject.Find("PauseButton").GetComponent<Button>();
+        // pauseButton = GameObject.Find("PauseButton").GetComponent<Button>();
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
 
         // var textObj = Instantiate(LevelNamePrefab, Vector2.zero, Quaternion.identity, canvas.transform);
@@ -438,12 +438,12 @@ public class LevelManager : MonoBehaviour
 
 
 
-    private void ShowSection(bool show, int section)
+    private void ShowSection(bool show, int section, float duration = .5f, float delay = .4f)
     {
         if (show)
         {
             // sections[section].SetActive(true);
-            StartCoroutine(SmoothTimeScaleTransition(0, .5f, .4f, show, section));
+            StartCoroutine(SmoothTimeScaleTransition(0, duration, delay, show, section));
 
         }
         else
@@ -535,7 +535,8 @@ public class LevelManager : MonoBehaviour
 
                 hasInvokedSpecialEvent = true;
                 // TriggerSectionActivateAfterEventType.SetActive(true);
-                ShowSection(true, 1);
+                ShowSection(true, 1, .2f, .2f);
+                player.events.EnableButtons(false);
 
                 // Implement logic for GlideUp
 
@@ -566,7 +567,7 @@ public class LevelManager : MonoBehaviour
             {
                 yield break;
             }
-            pauseButton.enabled = false;
+            // pauseButton.enabled = false;
             sections[section].SetActive(true);
             for (int n = 0; n < playSections.Count; n++)
             {
@@ -590,7 +591,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            pauseButton.enabled = true;
+            // pauseButton.enabled = true;
 
         }
 
@@ -775,7 +776,7 @@ public class LevelManager : MonoBehaviour
             {
                 yield break;
             }
-            pauseButton.enabled = false;
+            // pauseButton.enabled = false;
             eventCallbackSections[section].gameObject.SetActive(true);
             Debug.LogError("EVent courintine started");
 
@@ -786,7 +787,7 @@ public class LevelManager : MonoBehaviour
             targetTimeScale = FrameRateManager.TargetTimeScale;
 
 
-            pauseButton.enabled = true;
+            // pauseButton.enabled = true;
 
         }
 

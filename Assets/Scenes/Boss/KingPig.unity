@@ -5223,7 +5223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: baseRotateSpeedShotgun
-      value: 300
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: shotgunAimRotationSpeed
@@ -5235,7 +5235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: lerpTargetRotateSpeedSpeed
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5897,12 +5897,44 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7477632478645445299, guid: cd5536616a0fc4a07a74a4f9b9fd5c3f, type: 3}
     - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: startingStateDelay
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: hotAirBalloonPrefab
       value: 
       objectReference: {fileID: 6054738408697377156, guid: 18423f410594643e3bfc8d1dff875531, type: 3}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: spawnIntensitiesNormal.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: spawnIntensitiesNormal.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 3e9f03551753c4c559e103d3b5f8f47b, type: 2}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: spawnIntensitiesNormal.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 02324500008d54b1a813916cdc4e1654, type: 2}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: spawnIntensitiesNormal.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 113c037ceaf4d4735ae8daa8857392be, type: 2}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: nextIntentisityObjectiveValues.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: nextIntentisityObjectiveValues.Array.data[1]
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: nextIntentisityObjectiveValues.Array.data[2]
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 3559798322871699999, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 3559798322871699999, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5949,8 +5981,36 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5619941984373922225, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: lvlID
+      value: 
+      objectReference: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+    - target: {fileID: 5619941984373922225, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: usingEgg
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5619941984373922225, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: usingBarn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5619941984373922225, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: usingShotgun
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5619941984373922225, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: eggCollectableCount
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8825740233988290671, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8825740233988290671, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: timeForNextIntensity
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8825740233988290671, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: objectivesAddedPerTimeCycle
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

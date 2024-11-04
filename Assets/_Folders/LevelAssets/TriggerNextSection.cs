@@ -274,6 +274,7 @@ public class TriggerNextSection : MonoBehaviour
             {
                 triggerEventOnEnter.TriggerEvent();
                 hasTriggeredEnterEvent = true;
+
             }
 
         }

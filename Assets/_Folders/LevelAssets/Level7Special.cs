@@ -9,7 +9,7 @@ public class Level7Special : MonoBehaviour
     [SerializeField] private GameObject sectionTrigger;
     [SerializeField] private Transform playerTran;
     [SerializeField] private PlayerID player;
-    [SerializeField] private SpawnIntensityManager spawnMan;
+
 
     [SerializeField] private float startSlidePos;
     [SerializeField] private float swipeAmount;
@@ -84,10 +84,10 @@ public class Level7Special : MonoBehaviour
         if (enable)
         {
             touchGesture.gameObject.SetActive(true);
-            touchSeq = DOTween.Sequence();
-            touchSeq.AppendInterval(.5f);
-            touchSeq.Append(touchGesture.DOFade(1, .3f).From(0));
-            touchSeq.Play().SetUpdate(true);
+            // touchSeq = DOTween.Sequence();
+            // touchSeq.AppendInterval(.5f);
+            // touchSeq.Append(touchGesture.DOFade(1, .3f).From(0));
+            // touchSeq.Play().SetUpdate(true);
         }
 
     }

@@ -42,6 +42,7 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private void Awake()
     {
+
         if (gameOverButton)
         {
             unPressColor = colorSO.goUnPressedColor;
@@ -52,7 +53,6 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
             unPressColor = colorSO.pmUnPressedColor;
             pressColor = colorSO.pmPressedColor;
         }
-
         lockButtons = false;
         button = GetComponent<Button>();
         rect = GetComponent<RectTransform>();
@@ -62,6 +62,17 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
         // if (text != null) text.color = colorSO.unPressedColor;
         // buttonColor.color = colorSO.unPressedColor;
     }
+
+    private void OnEnable()
+    {
+        imageRect.localScale = normalScale;
+        buttonColor.color = unPressColor;
+        rect.localScale = normalScale;
+        if (text != null)
+            text.color = unPressColor;
+        lockButtons = false;
+
+    }
     private void Start()
     {
         originalPosition = imageRect.anchoredPosition;
@@ -70,12 +81,10 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
         movedPosition2 = new Vector2(originalPosition.x + moveAmountOnPress2.x, originalPosition.y + moveAmountOnPress2.y);
 
 
-        if (text != null)
-            text.color = unPressColor;
 
 
-        buttonColor.color = unPressColor;
-        rect.localScale = normalScale;
+
+
 
 
     }
@@ -134,7 +143,7 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     // Event triggered when the button is pressed down
     public void OnPointerDown(PointerEventData eventData)
     {
-
+        HapticFeedbackManager.instance.PressUIButton();
 
         PressTween(true);
         // Change the button's appearance when pressed

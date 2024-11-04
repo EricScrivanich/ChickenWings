@@ -7,6 +7,9 @@ public class SpawnIntensityManager : MonoBehaviour
     [SerializeField] private LevelManagerID lvlID;
     [SerializeField] private PlayerID player;
 
+    private bool waitingOnHealth = false;
+
+
     [SerializeField] private RandomSpawnIntensity[] spawnIntensitiesNormal;
     [SerializeField] private RandomSpawnIntensity[] spawnIntensitiesHealth;
     [SerializeField] private int[] delaysToSpawnNextHealthAfterSpawn;
@@ -93,7 +96,7 @@ public class SpawnIntensityManager : MonoBehaviour
 
         if (!shouldUpdate || nextIntensityIndex >= nextIntentisityObjectiveValues.Length || ignoreNextIntensityTrigger)
         {
-            Debug.Log("Ignoring intesntity index is: " + ignoreNextIntensityTrigger);
+            // Debug.Log("Ignoring intesntity index is: " + ignoreNextIntensityTrigger);
             return;
         }
 
@@ -123,11 +126,17 @@ public class SpawnIntensityManager : MonoBehaviour
             currentIntensityIndex = newIntensityIndex;
             nextIntensityIndex = currentIntensityIndex + 1;
 
-            Debug.Log("inoking event: " + currentIntensityIndex);
 
-            lvlID.SetNewIntensity(currentIntensityIndex);
-            var intensity = spawnIntensitiesNormal[currentIntensityIndex];
-            lvlID.outputEvent.OnSetNewIntensity?.Invoke(intensity);
+            if (currentIntensityIndex < spawnIntensitiesNormal.Length)
+            {
+                lvlID.SetNewIntensity(currentIntensityIndex);
+                var intensity = spawnIntensitiesNormal[currentIntensityIndex];
+                ignoreNextIntensityTrigger = intensity.IgnoreItensityTriggers;
+                lvlID.outputEvent.OnSetNewIntensity?.Invoke(intensity);
+            }
+
+
+
 
 
 
@@ -154,9 +163,10 @@ public class SpawnIntensityManager : MonoBehaviour
         Debug.Log("Set NEW Intesntiy from FinsihOverride");
         ignoreNextIntensityTrigger = false;
 
-        if (!canSpawnHealthRings)
+        if (!canSpawnHealthRings && !waitingOnHealth)
         {
             int n;
+            waitingOnHealth = true;
 
             if (currentHealthIntensityIndex > delaysToSpawnNextHealthAfterSpawn.Length - 1)
                 n = delaysToSpawnNextHealthAfterSpawn.Length - 1;
@@ -176,6 +186,7 @@ public class SpawnIntensityManager : MonoBehaviour
         currentLives = lives;
         if (lives == 1 && spawnIntensitiesHealth.Length > 0 && canSpawnHealthRings)
         {
+            waitingOnHealth = false;
             Debug.Log("Set NEW Intesntiy from Health override");
             canSpawnHealthRings = false;
 
@@ -199,10 +210,13 @@ public class SpawnIntensityManager : MonoBehaviour
 
     private IEnumerator WaitForNextHealthChance(float delay)
     {
+
         yield return new WaitForSeconds(delay);
         canSpawnHealthRings = true;
 
         UpdateHealthIntensity(currentLives);
+
+
 
     }
 

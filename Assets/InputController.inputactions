@@ -114,24 +114,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "HoldJumpRight",
-                    "type": "Button",
-                    "id": "342af9b5-332f-49db-8399-4e22cff16772",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Hold(duration=0.2)",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "HoldJumpLeft",
-                    "type": "Button",
-                    "id": "1f04c387-79af-48fc-a9a7-83c8527cca1b",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Hold(duration=0.2)",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "EggJoystick",
                     "type": "Value",
                     "id": "35f59893-3e75-40e2-a4d0-0dee34bd09a0",
@@ -390,50 +372,6 @@
                     "processors": "",
                     "groups": "Mobile",
                     "action": "DashSlash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "65402cf2-ba68-4ea2-a80e-b110f918e486",
-                    "path": "<Keyboard>/rightArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "HoldJumpRight",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f7008ccd-30d7-44ae-b96a-f9d908d8ffc4",
-                    "path": "<Gamepad>/rightShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Mobile",
-                    "action": "HoldJumpRight",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a59648c9-b057-459d-88ef-736d8d34bbcc",
-                    "path": "<Keyboard>/leftArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "HoldJumpLeft",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5f07c72c-6c06-4a63-b397-039e568ca96e",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Mobile",
-                    "action": "HoldJumpLeft",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

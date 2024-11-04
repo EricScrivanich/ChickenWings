@@ -24,16 +24,28 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
         canContinue = false;
         // currentTriggerAmount = 1;
         currentTriggerAmount = 0;
-        currentTriggerAmount++;
+        // currentTriggerAmount++;
 
 
         // spawner.NextRingType();
 
+        int valueFromTransitionLogic = spawner.transitionLogic.GetRingSizeByType(spawner.currentRingType);
+        if (valueFromTransitionLogic == -1)
+            amount = spawner.currentRandomSpawnIntensityData.GetRandomRingSetupAmountIndex();
+        else
+            amount = valueFromTransitionLogic;
 
-        amount = spawner.currentRandomSpawnIntensityData.GetRandomRingSetupAmountIndex();
+        if (amount == 0)
+        {
+            spawner.SwitchStateWithLogic();
+            return;
+
+        }
 
 
-        spawner.randomRingSetups[spawner.currentRandomSpawnIntensityData.GetRingDifficultyIndex()].SpawnRandomSetWithRings(spawner, currentTriggerAmount >= amount);
+        // spawner.randomRingSetups[spawner.currentRandomSpawnIntensityData.GetRingDifficultyIndex()].SpawnRandomSetWithRings(spawner, currentTriggerAmount >= amount);
+        spawner.randomRingSetups[spawner.currentRandomSpawnIntensityData.GetRingDifficultyIndex()].SpawnRandomSetWithRings(spawner, currentTriggerAmount == amount - 1);
+        currentTriggerAmount++;
 
 
     }
@@ -77,7 +89,8 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
         }
 
 
-        if (currentTriggerAmount > amount)
+        // if (currentTriggerAmount > amount)
+        if (currentTriggerAmount >= amount)
         {
             canContinue = true;
 
@@ -92,7 +105,8 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
         }
         else
         {
-            spawner.randomRingSetups[spawner.currentRandomSpawnIntensityData.GetRingDifficultyIndex()].SpawnRandomSetWithRings(spawner, currentTriggerAmount >= amount);
+            // spawner.randomRingSetups[spawner.currentRandomSpawnIntensityData.GetRingDifficultyIndex()].SpawnRandomSetWithRings(spawner, currentTriggerAmount >= amount);
+            spawner.randomRingSetups[spawner.currentRandomSpawnIntensityData.GetRingDifficultyIndex()].SpawnRandomSetWithRings(spawner, currentTriggerAmount == amount - 1);
             currentTriggerAmount++;
         }
 

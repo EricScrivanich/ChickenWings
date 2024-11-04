@@ -180,6 +180,13 @@ public class MainMenuScript : MonoBehaviour
         RectTransform menuToMoveOut = null;
         RectTransform menuToMoveIn = null;
 
+        if (switchTo == -2)
+            switchTo = 0;
+
+        else
+            HapticFeedbackManager.instance.PressUIButton();
+
+
 
 
         float initialShift = 50f;
@@ -380,11 +387,17 @@ public class MainMenuScript : MonoBehaviour
 
     public void LoadSceneFromSO(int levelIndex)
     {
+        AudioManager.instance.PlayButtonClickSound();
+        HapticFeedbackManager.instance.LightImpactButton();
+
         smSO.LoadLevel(levelIndex);
     }
 
     public void LoadGamemodeFromSO(int levelIndex)
     {
+        AudioManager.instance.PlayButtonClickSound();
+        HapticFeedbackManager.instance.LightImpactButton();
+
         smSO.LoadGamemode(levelIndex);
     }
 

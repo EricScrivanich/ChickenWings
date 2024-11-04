@@ -8,6 +8,7 @@ using DG.Tweening;
 public class PlayerFlipLeftState : PlayerBaseState
 {
     private Sequence sequence;
+
     private RectTransform flipImage;
     private Vector3 flipImageTargetRotation = new Vector3(0, 0, 45);
     Vector3[] rotations = new Vector3[]
@@ -48,6 +49,8 @@ public class PlayerFlipLeftState : PlayerBaseState
         sequence = DOTween.Sequence();
 
         sequence.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime)).SetEase(Ease.InSine);
+        sequence.Join(flipImage.DOScale(1.2f, .35f));
+
         // sequence.Join(flipImage.DOScale(flipImageTargetScale * 1.1f, .6f)).SetEase(Ease.InSine);
         sequence.Play();
 
@@ -174,7 +177,7 @@ public class PlayerFlipLeftState : PlayerBaseState
         }
 
         sequence = DOTween.Sequence();
-
+        flipImage.DOScale(1, .2f);
         foreach (var rotation in rotations)
         {
             sequence.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
@@ -189,8 +192,10 @@ public class PlayerFlipLeftState : PlayerBaseState
         JumpForce = jf;
         AddForceVector = afv;
         AddForceDownVector = afdv;
-        addForceTime = .8f;
-        addForceDownTime = .3f;
+        // addForceTime = .8f;
+        // addForceDownTime = .3f;
+        addForceTime = at;
+        addForceDownTime = adt;
         if (GameObject.Find("FlipLeftIMG") != null)
             flipImage = GameObject.Find("FlipLeftIMG").GetComponent<RectTransform>();
 

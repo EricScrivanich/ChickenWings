@@ -11,7 +11,7 @@ using System;
 
 public class EggAmmoDisplay : MonoBehaviour
 {
-    [SerializeField] private bool ignoreShotgun;
+    [SerializeField] private bool ignoreSwitch;
     [SerializeField] private bool startHidden;
     private Image buttonImage;
     public static Action<int, int> SwitchAmmoEvent;
@@ -19,6 +19,7 @@ public class EggAmmoDisplay : MonoBehaviour
     public static Action<int> UnequipAmmoEvent;
     public static Action<bool> HideEggButtonEvent;
     public static Action<bool, int> AmmoOnZero;
+    public static Action CheckIfChained;
 
     [SerializeField] private Image arrows;
     [SerializeField] private float arrowRotateSpeed;
@@ -39,7 +40,7 @@ public class EggAmmoDisplay : MonoBehaviour
     [SerializeField] private float slowMaxDuration;
 
     [SerializeField] private TextMeshProUGUI shotgunText;
-    [SerializeField] private CanvasGroup chaiedShotgunGroup;
+    [SerializeField] private CanvasGroup chainedShotgunGroup;
     private Vector2 startChainedGroupPosition;
     private Vector2 endChainedGroupPosition;
 
@@ -65,6 +66,8 @@ public class EggAmmoDisplay : MonoBehaviour
     private Sequence MoveChainedGroupSeq;
 
     private Coroutine rotateShotgunRoutine;
+
+    private bool switchFromShotgunAfterTween = false;
 
     [SerializeField] private float scaleAmountOnPress;
     [SerializeField] private float buttonPressTweenDuration;
@@ -130,11 +133,15 @@ public class EggAmmoDisplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        startChainedGroupPosition = chaiedShotgunGroup.transform.localPosition;
+        chainedFill.color = colorSO.disabledButtonColorFull;
+        shotgunText.color = colorSO.disabledButtonColorFull;
+        startChainedGroupPosition = chainedShotgunGroup.transform.localPosition;
         endChainedGroupPosition = startChainedGroupPosition + moveAmount;
-        chaiedShotgunGroup.alpha = 0;
+        chainedShotgunGroup.gameObject.GetComponent<Image>().color = colorSO.normalButtonColor;
+        chainedShotgunGroup.alpha = 0;
         buttonImage = GetComponent<Image>();
-        shotgunText.color = colorSO.DashImageManaHighlight;
+
+
         timerFill.color = colorSO.disabledButtonColorFull;
         arrows.color = colorSO.normalButtonColorFull;
         scopeFill.color = colorSO.normalButtonColor;
@@ -350,13 +357,13 @@ public class EggAmmoDisplay : MonoBehaviour
                 // normalOnZeroAmmo = true;
                 // ignoreTweenFinish = true;
 
-                if (shotgunOnZeroAmmo && (!startHidden || ignoreShotgun))
+                if (shotgunOnZeroAmmo && !ignoreSwitch)
                 {
                     EggAmmoDisplay.HideEggButtonEvent?.Invoke(true);
 
 
                 }
-                else if (currentAmmoType == type && (!startHidden || ignoreShotgun))
+                else if (currentAmmoType == type && !ignoreSwitch)
                 {
                     // eggs[0].UnEquip(false, 0);
                     // eggs[1].Equip(false, 1);
@@ -365,19 +372,27 @@ public class EggAmmoDisplay : MonoBehaviour
                     RotateChamber(false);
 
                 }
+                else if (ignoreSwitch)
+                {
+                    ZeroAmmoPress(false);
+                }
+
+
             }
             else if (type == 1)
             {
                 // shotgunOnZeroAmmo = true;
                 // ignoreTweenFinish = true;
+                Debug.LogError("Shotgun on zero");
+                joystickController.enabled = false;
 
-
-                if (normalOnZeroAmmo && (!startHidden || ignoreShotgun))
+                if (normalOnZeroAmmo && !ignoreSwitch)
                 {
                     EggAmmoDisplay.HideEggButtonEvent?.Invoke(true);
                 }
-                else if (currentAmmoType == type && (!startHidden || ignoreShotgun))
+                else if (currentAmmoType == type && !ignoreSwitch)
                 {
+                    Debug.LogError("Should switch on shotgun zero");
                     // eggs[1].UnEquip(false, 0);
                     // eggs[0].Equip(false, 1);
                     // EggAmmoDisplay.EquipAmmoEvent?.Invoke(0);
@@ -386,6 +401,11 @@ public class EggAmmoDisplay : MonoBehaviour
 
 
 
+                }
+
+                else if (ignoreSwitch)
+                {
+                    ZeroAmmoPress(false);
                 }
             }
         }
@@ -412,6 +432,7 @@ public class EggAmmoDisplay : MonoBehaviour
                     shotgunOnZeroAmmo = false;
 
                     RotateChamber(false);
+                    joystickController.enabled = true;
                 }
             }
             else if (type == 0)
@@ -433,7 +454,13 @@ public class EggAmmoDisplay : MonoBehaviour
                 if (normalOnZeroAmmo && currentAmmoType != type)
                 {
                     RotateChamber(false);
+                    joystickController.enabled = true;
 
+
+                }
+                else if (currentAmmoType == type)
+                {
+                    joystickController.enabled = true;
                 }
 
             }
@@ -534,12 +561,14 @@ public class EggAmmoDisplay : MonoBehaviour
             shotgunEggPressSequence.Join(scopeFill.DOColor(colorSO.highlightButtonColor, buttonPressTweenDuration));
 
             if (usingChain)
-                shotgunEggPressSequence.Join(chaiedShotgunGroup.transform.DOLocalMove(endChainedGroupPosition, buttonPressTweenDuration + .1f).SetEase(Ease.OutSine));
+                shotgunEggPressSequence.Join(chainedShotgunGroup.transform.DOLocalMove(endChainedGroupPosition, buttonPressTweenDuration + .1f).SetEase(Ease.OutSine));
         }
         else
 
         {
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.MediumImpact);
+
+
+            HapticPatterns.PlayPreset(HapticPatterns.PresetType.HeavyImpact);
 
 
             shotgunEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1, buttonPressTweenDuration));
@@ -548,7 +577,7 @@ public class EggAmmoDisplay : MonoBehaviour
             shotgunEggPressSequence.Join(scopeRect.DOLocalMoveY(originalYPos, buttonPressTweenDuration));
             shotgunEggPressSequence.Join(scopeFill.DOColor(colorSO.normalButtonColor, buttonPressTweenDuration));
             if (usingChain)
-                shotgunEggPressSequence.Join(chaiedShotgunGroup.transform.DOLocalMove(startChainedGroupPosition, buttonPressTweenDuration + .1f).SetEase(Ease.OutSine));
+                shotgunEggPressSequence.Join(chainedShotgunGroup.transform.DOLocalMove(startChainedGroupPosition, buttonPressTweenDuration + .1f).SetEase(Ease.OutSine));
 
 
         }
@@ -574,7 +603,7 @@ public class EggAmmoDisplay : MonoBehaviour
 
         else
         {
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
 
 
             normalEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1 * scaleAmountOnPress, buttonPressTweenDuration));
@@ -701,6 +730,7 @@ public class EggAmmoDisplay : MonoBehaviour
 
     }
 
+
     private void OnFadeArrows(bool fadeIn)
     {
         if (shotgunRotateFade != null && shotgunRotateFade.IsPlaying())
@@ -731,12 +761,21 @@ public class EggAmmoDisplay : MonoBehaviour
 
     public void RotateChamber(bool clockwise)
     {
-        if (holdingShotgunButton || ignoreShotgun) return;
+
+        if (holdingShotgunButton)
+        {
+            Debug.LogError("Holding shotgun button");
+            return;
+        }
         onZero = true;
+
+
 
         int lastEgg = currentAmmoType;
 
         currentAmmoType = GetNextEgg(clockwise);
+
+
 
         // SwitchAmmoEvent?.Invoke(lastEgg, currentAmmoType);
         // UnequipAmmoEvent?.Invoke(lastEgg);
@@ -784,7 +823,12 @@ public class EggAmmoDisplay : MonoBehaviour
         if (currentAmmo <= 0)
         {
             ZeroAmmoPress(false);
+            joystickController.enabled = false;
         }
+        else if (currentAmmoType == 1 && currentAmmo > 0)
+            joystickController.enabled = true;
+
+
 
 
 
@@ -867,8 +911,7 @@ public class EggAmmoDisplay : MonoBehaviour
 
         if (pressed)
         {
-            AudioManager.instance.PlayErrorSound();
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.Failure);
+            HapticFeedbackManager.instance.PlayerButtonFailure();
 
         }
 
@@ -898,13 +941,14 @@ public class EggAmmoDisplay : MonoBehaviour
 
     private void ShowChainedAmmo(bool show)
     {
+
         usingChain = show;
 
         if (show)
         {
-            chainedFill.color = colorSO.DashImageManaHighlight;
-            chaiedShotgunGroup.DOFade(1, .3f).From(0);
-            chaiedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1, .3f).From(BoundariesManager.vectorThree1 * 1.3f);
+            // chainedFill.color = colorSO.DashImageManaHighlight;
+            chainedShotgunGroup.DOFade(1, .3f).From(0);
+            chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1, .3f).From(BoundariesManager.vectorThree1 * 1.3f);
         }
         else
         {
@@ -913,8 +957,8 @@ public class EggAmmoDisplay : MonoBehaviour
             eggs[1].FlashAmmoTween(false);
             UpdateChainedAmmoMaxWait(false);
 
-            chaiedShotgunGroup.DOFade(0, .3f);
-            chaiedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1 * 1.3f, .3f);
+            chainedShotgunGroup.DOFade(0, .3f);
+            chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1 * 1.3f, .3f);
             if (arrowsAreShown)
                 OnRotateWithShotgun(-2);
 
@@ -942,6 +986,13 @@ public class EggAmmoDisplay : MonoBehaviour
 
     }
 
+    private void OnCollectShotgunAmmoWhileChained()
+    {
+        if (usingChain)
+            player.globalEvents.OnUseChainedAmmo?.Invoke(false);
+    }
+
+
 
 
     private void OnEnable()
@@ -949,6 +1000,7 @@ public class EggAmmoDisplay : MonoBehaviour
         player.events.OnEggDrop += NormalEggPressTween;
         player.globalEvents.OnUpdateChainedShotgunAmmo += UpdateChainedAmmoText;
         player.events.OnAttack += ShotgunEggPressTween;
+        EggAmmoDisplay.CheckIfChained += OnCollectShotgunAmmoWhileChained;
 
         player.globalEvents.OnSwitchAmmo += RotateChamber;
 
@@ -968,6 +1020,8 @@ public class EggAmmoDisplay : MonoBehaviour
     {
         player.events.OnEggDrop -= NormalEggPressTween;
         player.events.OnAttack -= ShotgunEggPressTween;
+        EggAmmoDisplay.CheckIfChained -= OnCollectShotgunAmmoWhileChained;
+
         player.globalEvents.OnUpdateChainedShotgunAmmo -= UpdateChainedAmmoText;
         player.globalEvents.OnUseChainedAmmo -= ShowChainedAmmo;
         player.globalEvents.OnSwitchAmmo -= RotateChamber;

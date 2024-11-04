@@ -18,6 +18,7 @@ public struct GlobalPlayerEvents
     public Action<int> OnUpdateShotgunAmmo;
 
     public Action<bool> OnSwitchAmmo;
+    public Action<PlayerMovementData> OnSetNewPlayerMovementData;
 
     public Action<bool> OnEggButton;
 

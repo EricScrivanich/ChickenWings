@@ -96,7 +96,7 @@ public class PigMovementBasic : MonoBehaviour
         // Invoke("SetAnimSpeed", Random.Range(0f, .5f));
 
 
-        body.localScale = new Vector3(.75f - Mathf.Abs(transform.localScale.x) + 1, 1, 1);
+        body.localScale = new Vector3(((.8f - Mathf.Abs(transform.localScale.x)) * .8f) + 1, 1, 1);
 
         frontLegs.position = frontLegsPosition.position;
         backLegs.position = backLegsPosition.position;

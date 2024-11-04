@@ -89,7 +89,7 @@ public class ButtonManager : MonoBehaviour
                 img.color = n;
                 // img.material = yer;
             }
-            pauseFill.color = n;
+            pauseFill.color = new Color(n.r, n.g, n.b, .9f);
 
 
             float addedWhiteHighlight = 0;
@@ -227,7 +227,7 @@ public class ButtonManager : MonoBehaviour
     {
         saveSystem = GetComponent<ButtonColorManager>();
         // saveSystem.LoadButtonColors(colorSO);
-        pauseFill.color = colorSO.normalButtonColor;
+        pauseFill.color = new Color(colorSO.normalButtonColor.r, colorSO.normalButtonColor.g, colorSO.normalButtonColor.b, .9f);
         pauseOutline.color = colorSO.OutLineColor;
         foreach (Image img in outlines)
         {

@@ -7,6 +7,8 @@ public struct OutputLvlEvent
 
     public Action StartCustomBoundingBoxWithDelay;
 
+    public Action<CollectableSpawnData> SetNewCollectableSpawnData;
+
     public Action<int> SetCheckPoint;
 
     public Action<bool> setButtonsReadyToPress;

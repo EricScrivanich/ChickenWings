@@ -71,8 +71,8 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         mainSprite.sprite = mainImage;
         if (ThreeImage != null)
         {
-            threeImage.gameObject.SetActive(true);
             threeImage.sprite = ThreeImage;
+            threeImage.enabled = true;
             ammoAmount = 3;
             isThreeAmmo = true;
 
@@ -83,7 +83,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         {
             ammoAmount = 1;
 
-            threeImage.gameObject.SetActive(false);
+            threeImage.enabled = false;
             isThreeAmmo = false;
         }
 
@@ -238,6 +238,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
             yield return null;
 
         }
+
         gameObject.SetActive(false);
 
 

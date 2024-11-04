@@ -112,6 +112,10 @@ public class PlayerAddForceBoundaries : MonoBehaviour
         }
 
     }
+    public void SetMaxFallSpeed(float speed)
+    {
+        originalMaxFallSpeed = speed;
+    }
 
     // Update is called once per frame
     void Update()

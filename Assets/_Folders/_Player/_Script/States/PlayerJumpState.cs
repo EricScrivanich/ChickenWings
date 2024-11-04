@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class PlayerJumpState : PlayerBaseState
 {
-  
+
     private bool hasFadedJumpAir;
+    private float drag;
+    private float dragCon;
+    private float dragLerpSpeed;
 
     private int jumpAirIndex;
     // private float slightUpwardsForce = 12f;
@@ -24,7 +27,8 @@ public class PlayerJumpState : PlayerBaseState
         hasFadedJumpAir = false;
 
         jumpAirIndex = player.CurrentJumpAirIndex;
-
+        player.rb.drag = drag;
+        drag = dragCon;
         // player.rb.velocity = new Vector2(0, player.jumpForce);
         player.AdjustForce(jumpForce);
         // player.rb.AddForce(new Vector2(0, player.jumpForce),ForceMode2D.Impulse);
@@ -37,6 +41,7 @@ public class PlayerJumpState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
 
     {
+        player.rb.drag = 0;
         if (!hasFadedJumpAir)
         {
 
@@ -45,16 +50,26 @@ public class PlayerJumpState : PlayerBaseState
 
     }
 
-    public void CacheVaraibles(Vector2 initialForce,float addForce)
+    public void CacheVaraibles(Vector2 initialForce, float addForce, float d, float dSpeed)
     {
         jumpForce = initialForce;
-        
+
         addJumpForce = addForce;
+        dragCon = d;
+        dragLerpSpeed = dSpeed;
+
 
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
+        if (drag > 0)
+        {
+            drag = Mathf.Lerp(drag, 0, dragLerpSpeed * Time.fixedDeltaTime);
+            player.rb.drag = drag;
+            Debug.Log(drag);
+        }
+
         if (player.ID.isHolding)
         {
 
@@ -68,7 +83,7 @@ public class PlayerJumpState : PlayerBaseState
 
 
         }
-       
+
         // else if (player.rb.velocity.y < -.5f && player.rb.velocity.y > -2)
         // {
         //     // Apply a small upwards force

@@ -86,11 +86,15 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip starHitSound;
     [SerializeField] private AudioClip blobEnterSound;
     [SerializeField] private AudioClip blobExitSound;
+    [SerializeField] private AudioClip buttonClickSound;
+    [SerializeField] private AudioClip sprayPaintSound;
 
 
 
 
     [Header("Volumes")]
+    [SerializeField] private float buttonClickVolume;
+    [SerializeField] private float sprayPaintVolume;
     [SerializeField] private float blobEnterVolume;
     [SerializeField] private float blobExitVolume;
     [SerializeField] private float longFartVolume;
@@ -241,6 +245,24 @@ public class AudioManager : MonoBehaviour
 
     }
 
+    public void LoadVolume(float musicVol, float sfxVolume, bool mutePlayerInputVolume = false)
+    {
+
+        musicSource.volume = musicVol;
+        audioSource.volume = sfxVolume;
+        nonSlowSource.volume = sfxVolume;
+        ringPassSource.volume = sfxVolume;
+        pigAudioSource.volume = sfxVolume;
+        windMillAudioSource.volume = sfxVolume;
+
+        if (!mutePlayerInputVolume)
+            chickenSource.volume = sfxVolume;
+        else
+            chickenSource.volume = 0;
+
+
+    }
+
     public void PlayBlobNoise(bool enter)
     {
         if (enter) audioSource.PlayOneShot(blobEnterSound, blobEnterVolume);
@@ -263,6 +285,16 @@ public class AudioManager : MonoBehaviour
         // audioSource.PlayOneShot(longFarts[rand], .4f);
         audioSource.PlayOneShot(longFart, longFartVolume);
 
+    }
+
+    public void PlaySprayPaintSound()
+    {
+        audioSource.PlayOneShot(sprayPaintSound, sprayPaintVolume);
+    }
+
+    public void PlayButtonClickSound()
+    {
+        audioSource.PlayOneShot(buttonClickSound, buttonClickVolume);
     }
 
     public void ChangeWindMillPitch(float change)
@@ -526,7 +558,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayStartSound()
     {
-        audioSource.PlayOneShot(start, startVolume);
+        chickenSource.PlayOneShot(start, startVolume);
     }
 
     public void PlayScoreSound()
