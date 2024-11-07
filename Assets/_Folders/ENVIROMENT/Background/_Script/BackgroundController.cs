@@ -14,6 +14,7 @@ public class BackgroundController : MonoBehaviour
         public float startPosition2;
     }
 
+    [SerializeField] private Transform topViewTransform;
 
 
     public List<GameObject> layers;
@@ -34,6 +35,7 @@ public class BackgroundController : MonoBehaviour
     {
 
         BoundariesManager.GroundPosition = layers[0].transform.position.y + .6f;
+        BoundariesManager.TopViewBoundary = topViewTransform.position.y;
 
         // foreach (var obj in layers)
         // {

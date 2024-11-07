@@ -17,6 +17,7 @@ public class SpawnStateManager : MonoBehaviour
     public Coroutine SpawnWithDelayRoutine;
     public Coroutine WaitForWaveFinishRoutine;
     public Coroutine MissilePigTimer;
+    private Coroutine NextTriggerAfterDelayRoutine;
     public bool canSpawnMissilePig = false;
     public SpawnStateTransitionLogic transitionLogic;
     private SpawnStateTransitionLogic prevTransitonLogic;
@@ -58,6 +59,8 @@ public class SpawnStateManager : MonoBehaviour
     private int currentRandomRingSetup;
 
     private int currentRandomSpawnIndex;
+
+    public float lastRandomEnemySpawnTime;
 
     [HideInInspector]
     public RandomSpawnIntensity currentRandomSpawnIntensityData { get; private set; }
@@ -334,6 +337,13 @@ public class SpawnStateManager : MonoBehaviour
 
     }
 
+    public void NextLogicTriggerAfterDelay(float d)
+    {
+        NextTriggerAfterDelayRoutine = StartCoroutine(SwitchToNextLogicStateAfterDelay(d));
+    }
+
+
+
     // public IEnumerator SpawnWithDelay(float delayAmount, )
     // {
     //     TimeForWaveToReachTarget(currentIntensityData.XTargetToStartSpawn) + Random.Range(spawnIntervalRangeAfterTarget.x, spawnIntervalRangeAfterTarget.y);
@@ -362,9 +372,17 @@ public class SpawnStateManager : MonoBehaviour
 
         switch (type)
         {
+            case (-1):
+                {
+                    currentState = null;
+                    transitionLogic.SpawnSpecialEnemy(this);
+
+                    break;
+                }
             case (0):
                 {
                     currentState = pureSetupState;
+                    lastRandomEnemySpawnTime = 0;
 
                     pureSetupState.SetRingType(NextRingType());
                     break;
@@ -380,11 +398,15 @@ public class SpawnStateManager : MonoBehaviour
                 }
             case (2):
                 {
+                    lastRandomEnemySpawnTime = 0;
+
                     currentState = enemyRandomSetupState;
                     break;
                 }
             case (3):
                 {
+                    lastRandomEnemySpawnTime = 0;
+
                     currentState = pureRandomEnemyState;
                     break;
                 }
@@ -469,6 +491,13 @@ public class SpawnStateManager : MonoBehaviour
         yield return new WaitForSeconds(3);
         SwitchToSpecficState(type);
     }
+
+    private IEnumerator SwitchToNextLogicStateAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SwitchStateWithLogic();
+    }
+
 
 
 
@@ -572,15 +601,34 @@ public class SpawnStateManager : MonoBehaviour
 
 
 
-    public float TimeForWaveToReachTarget(float xCordTarget)
+    public float TimeForWaveToReachTarget(float xCordTarget, bool useAdjustedSpeed)
     {
         float returnedTime = 0;
+        float minSpeed = 6f;
+
+
 
         if (recentlySpanwnedPositions.Count == 0)
             return 2f;
+
+
         foreach (var vect in recentlySpanwnedPositions)
         {
+
             float adjustedSpeed = Mathf.Abs(vect.x);
+
+            if (useAdjustedSpeed && adjustedSpeed < minSpeed)
+            {
+                float add = (minSpeed - adjustedSpeed);
+                if (add < 1)
+                    add *= 1.1f;
+                else add *= .92f;
+
+
+                adjustedSpeed += add;
+
+            }
+
 
             // Calculate time = distance / speed
             float distance = Mathf.Abs(vect.y - xCordTarget);
@@ -589,6 +637,9 @@ public class SpawnStateManager : MonoBehaviour
             if (calculatedTime > returnedTime) returnedTime = calculatedTime;
 
         }
+
+        if (useAdjustedSpeed)
+            lastRandomEnemySpawnTime = returnedTime - timeSinceLastWave;
 
         return returnedTime - timeSinceLastWave;
     }
@@ -634,7 +685,7 @@ public class SpawnStateManager : MonoBehaviour
             transitionLogic = prevTransitonLogic;
             currentTransitionLogicIndex = prevTransitonLogicLastIndex;
             currentSetRingOrderIndex = prevTransitonLogicRingIndex;
-            Debug.LogError("I am reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
+            // Debug.LogError("I am reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
             return;
         }
         else if (!logic.loopStates)
@@ -646,7 +697,7 @@ public class SpawnStateManager : MonoBehaviour
                 prevTransitonLogicLastIndex = currentTransitionLogicIndex;
                 prevTransitonLogicRingIndex = currentSetRingOrderIndex;
 
-                Debug.LogError("Not reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
+                // Debug.LogError("Not reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
 
 
             }
@@ -666,14 +717,23 @@ public class SpawnStateManager : MonoBehaviour
             currentTransitionLogicIndex = 0;
             currentSetRingOrderIndex = 0;
         }
+        else if (logic.loopStates)
+        {
+
+            transitionLogic = logic;
+            currentTransitionLogicIndex = 0;
+            currentSetRingOrderIndex = 0;
+
+        }
 
 
     }
-    private void SetNewIntensity(RandomSpawnIntensity newIntensitySet)
+    private void SetNewIntensity(RandomSpawnIntensity newIntensitySet, bool returningToPrev)
     {
 
         currentRandomSpawnIntensityData = newIntensitySet;
-        newIntensitySet.EnterIntensity();
+        if (!returningToPrev)
+            newIntensitySet.EnterIntensity();
         if (newIntensitySet.missileBasePigChance > 0 && MissilePigTimer == null && canSpawnMissilePig == false)
             MissilePigTimer = StartCoroutine(MissilePigTimerCoroutine(newIntensitySet.minMissilePigDelay));
         Debug.Log("Set Intensity: " + currentRandomSpawnIntensityData);
@@ -1015,15 +1075,15 @@ public class SpawnStateManager : MonoBehaviour
             if (speed < BoundariesManager.GroundSpeed) flip = true;
 
             GasPig gasPig = gasPigs[gasPigIndex];
-            gasPig.transform.position = position;
+            gasPig.transform.position = new Vector2(position.x, BoundariesManager.GroundPosition + .4f);
 
 
 
             Debug.LogError("Scale flip is: " + flip);
 
             gasPig.Initialize(speed, delay, flip, startDelay);
-            if (flip) gasPig.gameObject.transform.localScale = scaleFlip;
-            else gasPig.transform.localScale = BoundariesManager.vectorThree1;
+            if (flip) gasPig.gameObject.transform.localScale = scaleFlip * .9f;
+            else gasPig.transform.localScale = BoundariesManager.vectorThree1 * .9f;
 
             gasPigIndex++;
             if (gasPigIndex >= gasPigs.Length) gasPigIndex = 0;

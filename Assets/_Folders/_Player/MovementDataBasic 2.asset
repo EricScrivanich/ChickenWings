@@ -12,20 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d1a22450bf8e4553bb071265dc2430f, type: 3}
   m_Name: MovementDataBasic 2
   m_EditorClassIdentifier: 
-  maxFallSpeed: -7.5
+  maxFallSpeed: -10.5
   GravityScale: 2.5
-  JumpForce: {x: 0, y: 13}
+  JumpForce: {x: 0, y: 12.7}
   JumpDrag: 0.1
   DragLerpSpeed: 0
   DragLerpDuration: 0
   RemoveJumpForce: {x: 0, y: 0}
   addJumpForce: 15
-  FlipRightInitialForceVector: {x: 3.1, y: 12}
+  FlipRightInitialForceVector: {x: 3.1, y: 11.5}
   FlipRightAddForce: {x: 5, y: 5.6}
   FlipRightDownForce: {x: 3.9, y: -5.8}
   flipRightAddForceTime: 0.8
   flipRightDownForceTime: 0.5
-  FlipLeftInitialForceVector: {x: -6.32, y: 9.7}
+  FlipLeftInitialForceVector: {x: -6.32, y: 9.1}
   FlipLeftAddForce: {x: -3.42, y: 4.9}
   FlipLeftDownForce: {x: -2.2, y: -2}
   flipLeftAddForceTime: 0.5

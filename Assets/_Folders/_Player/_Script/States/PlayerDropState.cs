@@ -42,7 +42,6 @@ public class PlayerDropState : PlayerBaseState
 
         player.rb.freezeRotation = false;
         player.maxFallSpeed = player.originalMaxFallSpeed;
-        Debug.LogError("Orignal Max fall is: " + player.originalMaxFallSpeed);
         player.anim.SetTrigger(player.FinishDropTrigger);
 
     }

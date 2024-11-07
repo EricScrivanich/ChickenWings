@@ -29,7 +29,7 @@ public class GasPig : MonoBehaviour
     private float testTimer = 0;
 
     [SerializeField] private bool flying;
-
+    private bool initialized;
 
     // Start is called before the first frame update
 
@@ -38,9 +38,21 @@ public class GasPig : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
+    private void Start()
+    {
+        if (!initialized)
+        {
+            bool f = speed < BoundariesManager.GroundSpeed;
+            Initialize(speed, delay, f, initialDelay);
+            if (f) transform.localScale = new Vector3(-1, 1, 1);
+
+        }
+    }
+
 
     public void Initialize(float s, float d, bool f, float startDelay)
     {
+        initialized = true;
         speed = s;
         delay = d;
         flipped = f;

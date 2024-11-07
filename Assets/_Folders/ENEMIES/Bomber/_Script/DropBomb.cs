@@ -46,7 +46,7 @@ public class DropBomb : MonoBehaviour
     [SerializeField] private SpriteRenderer dropArea;
     private Transform spawnTransform;
 
-
+    private float planeStartX;
     [SerializeField] private Sprite[] propSprites;
     [SerializeField] private Sprite[] dropAreaSprites;
 
@@ -119,7 +119,7 @@ public class DropBomb : MonoBehaviour
         if (!hasInitialized)
         {
             if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
-            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger);
+            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
 
             StartCoroutine(BomberStart());
             hasInitialized = true;
@@ -318,6 +318,7 @@ public class DropBomb : MonoBehaviour
     private void OnEnable()
     {
         enteredZone = false;
+
         bomberGoing = false;
         hasEnteredTriggerArea = false;
         col.enabled = false;
@@ -331,6 +332,8 @@ public class DropBomb : MonoBehaviour
             sideSwitchInteger = 1;
             transform.localScale = nomralScale;
         }
+
+        planeStartX = xDropPosition + ((xDistanceFromZone - 1) * sideSwitchInteger);
         speedEnd = speedTarget;
         speedStart = speedTarget * startSpeedMultiplier;
         speed = speedStart;
@@ -339,7 +342,7 @@ public class DropBomb : MonoBehaviour
         {
             if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
 
-            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger);
+            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
 
             StartCoroutine(BomberStart());
         }

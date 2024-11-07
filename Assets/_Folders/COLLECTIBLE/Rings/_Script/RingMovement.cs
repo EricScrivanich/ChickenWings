@@ -306,7 +306,7 @@ public class RingMovement : MonoBehaviour, ICollectible
 
         float speedPercentage = Mathf.InverseLerp(lerpOffsetSpeedBasedOnRange.x, lerpOffsetSpeedBasedOnRange.y, MathF.Abs(originalSpeed));
         lerpStartOffset = Mathf.Lerp(lerpOffsetRangeBasedOnSpeed.x, lerpOffsetRangeBasedOnSpeed.y, speedPercentage);
-        Debug.LogError("Lerp Offset is: " + lerpStartOffset);
+
         if (speed > 0)
         {
             lerpEndBoundary = BoundariesManager.leftViewBoundary;

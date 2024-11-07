@@ -605,7 +605,7 @@ public class EggAmmoDisplay : MonoBehaviour
         {
 
 
-
+            HapticFeedbackManager.instance.PlayerButtonPress();
             normalEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1 * scaleAmountOnPress, buttonPressTweenDuration));
             normalEggPressSequence.Join(currentEgg.DOScale(BoundariesManager.vectorThree1 * (scaleAmountOnPress + .05f), buttonPressTweenDuration).SetEase(Ease.OutSine));
             normalEggPressSequence.Join(currentEgg.DOLocalMoveY(originalEggY + addedYOnPress + 5, buttonPressTweenDuration));
@@ -866,8 +866,9 @@ public class EggAmmoDisplay : MonoBehaviour
 
     }
 
-    public void SetAmmo(int amount)
+    public void SetAmmo(int amount, int type)
     {
+        if (type != currentAmmoType) return;
         currentAmmo = amount;
 
         if ((onZero || usingChain) && currentAmmo > 0)

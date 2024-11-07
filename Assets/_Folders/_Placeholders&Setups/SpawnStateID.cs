@@ -8,8 +8,11 @@ public class SpawnStateTransitionLogic : ScriptableObject
 {
     public bool loopStates;
 
+    [SerializeField] private SpecialRandomEnemyLogic[] specialEnemySpawns;
+
     public bool continueFromStartIfOverriden;
     public bool continueFromPrevOverriden;
+    [Header("-1 = Random;  -2 = Balloon,  -3 = Flappy,  3 = PureRandom")]
 
     [Header("0 = PureSetup;  1 = RandomRing,  2 = RandomEnemySetup,  3 = PureRandom")]
     [SerializeField] private int[] orderedSequence;
@@ -30,6 +33,11 @@ public class SpawnStateTransitionLogic : ScriptableObject
 
 
     public int[] ringSpawnSetTypeOrder;
+
+    public void SpawnSpecialEnemy(SpawnStateManager spawner)
+    {
+        specialEnemySpawns[0].ReturnSpecialEnemyData(spawner);
+    }
 
     public int GetRingSizeByType(int type)
     {
@@ -64,6 +72,8 @@ public class SpawnStateTransitionLogic : ScriptableObject
         {
             totalWeight += weight;
         }
+
+        
 
         float randomValue = Random.Range(0f, totalWeight);
         float cumulativeWeight = 0f;

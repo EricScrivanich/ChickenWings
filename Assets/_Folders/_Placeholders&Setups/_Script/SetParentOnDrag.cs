@@ -3,6 +3,8 @@ using UnityEditor;
 
 #if UNITY_EDITOR
 [ExecuteInEditMode]
+
+[SelectionBase]
 public class SetParentOnDrag : MonoBehaviour
 {
     private Transform parentTransform; // The parent to which this object should be attached

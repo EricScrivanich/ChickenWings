@@ -58,6 +58,7 @@ public class LevelButton : MonoBehaviour
     {
         if (isUnlocked)
         {
+            HapticFeedbackManager.instance.PressUIButton();
             sceneLoader.LoadLevel(levelNum);
         }
 

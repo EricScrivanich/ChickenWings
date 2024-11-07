@@ -43,9 +43,26 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
         Debug.LogError("Entered Random State");
         minYAdj = 0;
 
-        useWaveAmount = true;
+
         currentAmountOfWavesSpawned = 0;
+
+
+        spawnCache = spawner;
+        currentIntensityData = spawner.currentRandomSpawnIntensityData;
+        normalPigBoundingBox = currentIntensityData.NormalPig_BB ?? spawner.normalPigBoundingBoxBase;
+        jetPackPigBoundingBox = currentIntensityData.JetpackPig_BB ?? spawner.jetPackPigBoundingBoxBase;
+        bigPigBoundingBox = currentIntensityData.BigPig_BB ?? spawner.bigPigBoundingBoxBase;
+        tenderizerPigBoundingBox = currentIntensityData.TenderizerPig_BB ?? spawner.tenderizerPigBoundingBoxBase;
+
         amountOfWavesToSpawn = currentIntensityData.GetRandomAmountOfWaves();
+
+        if (amountOfWavesToSpawn < 0) useWaveAmount = false;
+
+        else useWaveAmount = true;
+
+        // Calculate and cache the center and half range for Big Pig's ySpawnRange
+        bigPigYRangeCenter = (bigPigBoundingBox.ySpawnRange.x + bigPigBoundingBox.ySpawnRange.y) / 2f;
+        bigPigYRangeHalf = Mathf.Abs(bigPigBoundingBox.ySpawnRange.y - bigPigBoundingBox.ySpawnRange.x) / 2f;
 
         if (amountOfWavesToSpawn < 0)
         {
@@ -106,16 +123,13 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
     public override void ExitState(SpawnStateManager spawner)
     {
-
+        useWaveAmount = false;
     }
 
     public override void SetSpeedAndPos(SpawnStateManager spawner)
     {
 
     }
-
-
-
 
     public void Initialize()
     {
@@ -125,6 +139,8 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     public override void SetNewIntensity(SpawnStateManager spawner, RandomSpawnIntensity spawnIntensity)
     {
         // Debug.LogError("Set new intensity in script");
+
+        if (useWaveAmount) return;
         spawnCache = spawner;
         currentIntensityData = spawnIntensity;
         normalPigBoundingBox = currentIntensityData.NormalPig_BB ?? spawner.normalPigBoundingBoxBase;
@@ -245,7 +261,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
         // manager.WaitForWaveFinishRoutine = manager.StartCoroutine(manager.SetupDuration(manager.TimeForWaveToReachTarget(currentIntensityData.XTargetToStartSpawn) + Random.Range(currentIntensityData.SpawnRandomRangeAfterTarget.x, currentIntensityData.SpawnRandomRangeAfterTarget.y)));
 
-        manager.TimerForNextWave(manager.TimeForWaveToReachTarget(currentIntensityData.XTargetToStartSpawn) + Random.Range(currentIntensityData.SpawnRandomRangeAfterTarget.x, currentIntensityData.SpawnRandomRangeAfterTarget.y));
+        manager.TimerForNextWave(manager.TimeForWaveToReachTarget(currentIntensityData.XTargetToStartSpawn, true) + Random.Range(currentIntensityData.SpawnRandomRangeAfterTarget.x, currentIntensityData.SpawnRandomRangeAfterTarget.y));
 
 
 
@@ -412,6 +428,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
         if (useWaveAmount && currentAmountOfWavesSpawned >= amountOfWavesToSpawn)
         {
+            Debug.LogError("swithcing to next state from random");
             spawner.SwitchStateWithLogic();
             return;
 

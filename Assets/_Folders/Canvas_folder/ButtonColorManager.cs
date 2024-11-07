@@ -237,10 +237,10 @@ public class ButtonColorManager : MonoBehaviour
 
     public void LoadButtonColors(ButtonColorsSO colorSO)
     {
-        Debug.LogError("Trying to load colors");
+        // Debug.LogError("Trying to load colors");
         if (File.Exists(savePath))
         {
-            Debug.LogError("found data");
+            // Debug.LogError("found data");
 
             string json = File.ReadAllText(savePath);
             ButtonColorData colorData = JsonUtility.FromJson<ButtonColorData>(json);

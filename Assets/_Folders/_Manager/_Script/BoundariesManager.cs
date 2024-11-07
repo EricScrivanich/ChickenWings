@@ -14,6 +14,7 @@ public class BoundariesManager : MonoBehaviour
     public static float leftViewBoundary = -11.9f;
     public static float rightPlayerBoundary = 11.8f;
     public static float TopPlayerBoundary = 6.8f;
+    public static float TopViewBoundary = 6.8f;
     public static float leftPlayerBoundary = -11.8f;
 
     public static float GroundSpeed = 4.7f;

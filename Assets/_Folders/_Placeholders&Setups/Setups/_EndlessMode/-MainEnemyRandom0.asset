@@ -28,29 +28,31 @@ MonoBehaviour:
     - rid: 3018405104128884755
     - rid: 3018405082130808840
   - dataArray:
-    - rid: 3018405104128884754
+    - rid: 4599887292016885760
   - dataArray:
-    - rid: 3018405104128884748
-    - rid: 3018405104128884752
+    - rid: 4599887292016885763
+    - rid: 4599887292016885764
   - dataArray:
-    - rid: 3018405104128884790
-    - rid: 3018405104128884791
-    - rid: 3018405104128884792
+    - rid: 4599887292016885765
+    - rid: 4599887292016885766
+    - rid: 4599887292016885767
   - dataArray:
-    - rid: 3018405104128884759
-    - rid: 3018405104128884762
-    - rid: 3018405104128884761
+    - rid: 4599887292016885771
+    - rid: 4599887292016885772
+    - rid: 4599887292016885773
   - dataArray:
-    - rid: 3018405104128884763
-    - rid: 3018405104128884764
+    - rid: 4599887292016885774
+    - rid: 4599887292016885775
   - dataArray:
     - rid: 3018405104128884810
     - rid: 3018405104128884811
+  - dataArray:
+    - rid: 4599887292016885777
   collectableSetup: []
   isRandomSetup: 0
   testFromTrigger: 0
   startTestTrigger: 0
-  ignoreXTriggetTime: 0
+  ignoreXTriggetTime: 1
   XTriggerForRecording: 1.1
   references:
     version: 2
@@ -74,48 +76,6 @@ MonoBehaviour:
           yForce: 6.5
           distanceToFlap: 1.5
           startingFallSpot: 0
-    - rid: 3018405104128884748
-      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 1.499
-        data:
-        - position: {x: 17.24, y: 2.82}
-          scale: {x: 0.87, y: 0.82, z: 1}
-          speed: 10
-        - position: {x: 21.99, y: 0.79}
-          scale: {x: 0.87, y: 0.82, z: 1}
-          speed: 10
-        - position: {x: 14.09, y: -2.15}
-          scale: {x: 0.87, y: 0.82, z: 1}
-          speed: 10
-    - rid: 3018405104128884752
-      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 2.9
-        data:
-        - position: {x: 13.95, y: -1.24}
-          scale: {x: 1, y: 1, z: 1}
-          speed: 4.5
-          yForce: 6.2
-          distanceToFlap: 1.2
-          startingFallSpot: 0
-    - rid: 3018405104128884754
-      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 5.205
-        data:
-        - position: {x: 15.71, y: -1.44}
-          scale: {x: 1.1, y: 1.1, z: 1.1}
-          speed: 4
-          yForce: 6.1
-          distanceToFlap: 0.9
-          startingFallSpot: 0
-        - position: {x: 20.82, y: 2.01}
-          scale: {x: 0.95, y: 0.95, z: 0.95}
-          speed: 4
-          yForce: 6.5
-          distanceToFlap: 1.5
-          startingFallSpot: 0
     - rid: 3018405104128884755
       type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -125,115 +85,6 @@ MonoBehaviour:
           scale: {x: 1.1, y: 1.1, z: 1.1}
           speed: 3.7
           hasHammer: 1
-    - rid: 3018405104128884759
-      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 2.5591304
-        data:
-        - position: {x: 26.2, y: -1.3550028}
-          scale: {x: 0.87, y: 0.75, z: 1}
-          speed: 11.5
-        - position: {x: 29.93, y: -2.71}
-          scale: {x: 0.87, y: 0.75, z: 1}
-          speed: 11.5
-    - rid: 3018405104128884761
-      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 3.0862067
-        data:
-        - position: {x: 13.35, y: 3.05}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: 6
-          flightMode: 1
-          minY: 0
-          maxY: 0
-          yForce: 3.5
-          maxYSpeed: 4
-          xTrigger: 5
-        - position: {x: 18.4, y: 3.05}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: 5.8
-          flightMode: 1
-          minY: 0
-          maxY: 0
-          yForce: 2.5
-          maxYSpeed: 3.5
-          xTrigger: 3.5
-    - rid: 3018405104128884762
-      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 4.1
-        data:
-        - position: {x: 17.54462, y: 3.62}
-          scale: {x: 0.9, y: 0.9, z: 0.9}
-          speed: 4
-          yForce: 6.7
-          distanceToFlap: 1.1
-          startingFallSpot: 0
-    - rid: 3018405104128884763
-      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 2
-        data:
-        - position: {x: 18.52, y: 4.21}
-          scale: {x: 0.87, y: 0.75, z: 1}
-          speed: 10
-        - position: {x: 17.11, y: 3.07}
-          scale: {x: 0.87, y: 0.75, z: 1}
-          speed: 10.5
-        - position: {x: 21.22, y: -3.04}
-          scale: {x: 0.87, y: 0.75, z: 1}
-          speed: 10.5
-        - position: {x: 19.66, y: -1.74}
-          scale: {x: 0.87, y: 0.75, z: 1}
-          speed: 11
-    - rid: 3018405104128884764
-      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 2.1
-        data:
-        - position: {x: 14.245735, y: 1.1326829}
-          scale: {x: 0.85, y: 0.85, z: 0.85}
-          speed: 6.5
-    - rid: 3018405104128884790
-      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 2.5
-        data:
-        - position: {x: 29.93, y: -2.71}
-          scale: {x: 0.87, y: 0.75, z: 1}
-          speed: 11.5
-    - rid: 3018405104128884791
-      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 3.5
-        data:
-        - position: {x: 23.264782, y: 3.3}
-          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
-          speed: 6.5
-    - rid: 3018405104128884792
-      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 3
-        data:
-        - position: {x: 13.35, y: 3.05}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: 6
-          flightMode: 1
-          minY: 0
-          maxY: 0
-          yForce: 3.5
-          maxYSpeed: 4
-          xTrigger: 5
-        - position: {x: 18.4, y: 3.05}
-          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
-          speed: 5.8
-          flightMode: 1
-          minY: 0
-          maxY: 0
-          yForce: 2.5
-          maxYSpeed: 3.5
-          xTrigger: 3.5
     - rid: 3018405104128884810
       type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -296,3 +147,146 @@ MonoBehaviour:
           yForce: 10
           maxYSpeed: 4.2
           xTrigger: 0
+    - rid: 4599887292016885760
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.1
+        data:
+        - position: {x: 15.71, y: -1.44}
+          scale: {x: 1.02, y: 1.02, z: 1.02}
+          speed: 4
+          yForce: 6.1
+          distanceToFlap: 0.9
+          startingFallSpot: 0
+        - position: {x: 21.42, y: 2.19}
+          scale: {x: 0.98, y: 0.98, z: 0.98}
+          speed: 4
+          yForce: 6.3
+          distanceToFlap: 1.3
+          startingFallSpot: -1
+    - rid: 4599887292016885763
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 1.499
+        data:
+        - position: {x: 17.24, y: 2.82}
+          scale: {x: 0.87, y: 0.82, z: 1}
+          speed: 10
+        - position: {x: 21.99, y: 0.79}
+          scale: {x: 0.87, y: 0.82, z: 1}
+          speed: 10
+    - rid: 4599887292016885764
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.9
+        data:
+        - position: {x: 13.95, y: -1.24}
+          scale: {x: 1, y: 1, z: 1}
+          speed: 4.5
+          yForce: 6.2
+          distanceToFlap: 1.2
+          startingFallSpot: 0
+    - rid: 4599887292016885765
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.5
+        data:
+        - position: {x: 27.94, y: -2.71}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 11.5
+    - rid: 4599887292016885766
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.3
+        data:
+        - position: {x: 23.264782, y: 3.3}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+    - rid: 4599887292016885767
+      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3
+        data:
+        - position: {x: 16.95, y: 3.05}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 5.5
+          flightMode: 3
+          minY: -2
+          maxY: 2.5
+          yForce: 5
+          maxYSpeed: 3.5
+          xTrigger: 12
+    - rid: 4599887292016885771
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.5591304
+        data:
+        - position: {x: 28.84, y: -1.29}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10.2
+        - position: {x: 31.55, y: -2.71}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10.2
+    - rid: 4599887292016885772
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.1
+        data:
+        - position: {x: 17.54462, y: 3.62}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4
+          yForce: 6.7
+          distanceToFlap: 1.1
+          startingFallSpot: 0
+    - rid: 4599887292016885773
+      type: {class: PilotPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.0862067
+        data:
+        - position: {x: 16.66, y: -2.31}
+          scale: {x: 0.82, y: 0.82000005, z: 0.82000005}
+          speed: 5.6
+          flightMode: 2
+          minY: -2
+          maxY: 2.3
+          yForce: 6
+          maxYSpeed: 4
+          xTrigger: 12
+    - rid: 4599887292016885774
+      type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2
+        data:
+        - position: {x: 20.27, y: 4.21}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10
+        - position: {x: 18.86, y: 3.07}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10.5
+        - position: {x: 22.97, y: -3.04}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 10.5
+        - position: {x: 21.41, y: -1.74}
+          scale: {x: 0.87, y: 0.75, z: 1}
+          speed: 11
+    - rid: 4599887292016885775
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.1
+        data:
+        - position: {x: 14.67, y: 1.1326829}
+          scale: {x: 0.85, y: 0.85, z: 0.85}
+          speed: 6.1
+    - rid: 4599887292016885777
+      type: {class: GasPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 6.2
+        data:
+        - position: {x: 16.02, y: -4.18}
+          speed: 3.2
+          delay: 1.4
+          initialDelay: 0
+        - position: {x: 22.85, y: -4.18}
+          speed: 3.2
+          delay: 1.4
+          initialDelay: 0.7

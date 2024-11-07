@@ -10,15 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d2f9ac5896b254ec4bec631e9a6fa083, type: 3}
-  m_Name: -MainTRAN2
+  m_Name: TESTTTRAN
   m_EditorClassIdentifier: 
-  loopStates: 0
+  loopStates: 1
+  specialEnemySpawns:
+  - {fileID: 11400000, guid: aae8e2ece0f43496794685fefe85559f, type: 2}
   continueFromStartIfOverriden: 0
-  continueFromPrevOverriden: 1
-  orderedSequence: 01000000020000000300000001000000
+  continueFromPrevOverriden: 0
+  orderedSequence: 0100000003000000ffffffff03000000
   randomSequenceWithWeights: []
   RingAmountsByType:
-  - {x: 0, y: 0}
+  - {x: 3, y: 3}
   - {x: 0, y: 0}
   - {x: 3, y: 3}
-  ringSpawnSetTypeOrder: 0000000000000000
+  ringSpawnSetTypeOrder: 0200000002000000

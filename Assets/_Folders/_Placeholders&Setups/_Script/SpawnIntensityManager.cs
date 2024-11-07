@@ -9,6 +9,8 @@ public class SpawnIntensityManager : MonoBehaviour
 
     private bool waitingOnHealth = false;
 
+    private bool returningToPrevInt = false;
+
 
     [SerializeField] private RandomSpawnIntensity[] spawnIntensitiesNormal;
     [SerializeField] private RandomSpawnIntensity[] spawnIntensitiesHealth;
@@ -37,6 +39,7 @@ public class SpawnIntensityManager : MonoBehaviour
     private bool canSpawnHealthRings = false;
 
     private bool ignoreNextIntensityTrigger;
+    private int returnToFinishNonLoopedTranstionIndex = -1;
     private int currentLives;
     // Start is called before the first frame update
 
@@ -57,11 +60,20 @@ public class SpawnIntensityManager : MonoBehaviour
     private int CheckCurrentIntensity()
     {
         int n = 0;
-        for (int i = 0; i < nextIntentisityObjectiveValues.Length; i++)
+        if (returnToFinishNonLoopedTranstionIndex > -1)
+        {
+            returningToPrevInt = true;
+            return returnToFinishNonLoopedTranstionIndex;
+        }
+        for (int i = currentIntensityIndex; i < nextIntentisityObjectiveValues.Length; i++)
         {
             if (currentObjectivesObtained >= nextIntentisityObjectiveValues[i] && i > n)
             {
                 n = i;
+            }
+            else
+            {
+                break; // Stop checking if the condition is not met
             }
         }
 
@@ -132,7 +144,7 @@ public class SpawnIntensityManager : MonoBehaviour
                 lvlID.SetNewIntensity(currentIntensityIndex);
                 var intensity = spawnIntensitiesNormal[currentIntensityIndex];
                 ignoreNextIntensityTrigger = intensity.IgnoreItensityTriggers;
-                lvlID.outputEvent.OnSetNewIntensity?.Invoke(intensity);
+                lvlID.outputEvent.OnSetNewIntensity?.Invoke(intensity, false);
             }
 
 
@@ -147,16 +159,16 @@ public class SpawnIntensityManager : MonoBehaviour
 
     }
 
-    public void GoToNextIntensity(int newIntensity)
-    {
-        Debug.Log("Set NEW Intesntiy from Go To Next");
+    // public void GoToNextIntensity(int newIntensity)
+    // {
+    //     Debug.Log("Set NEW Intesntiy from Go To Next");
 
-        currentIntensityIndex = newIntensity;
-        currentObjectivesObtained = nextIntentisityObjectiveValues[newIntensity];
-        lvlID.SetNewIntensity(currentIntensityIndex);
-        lvlID.outputEvent.OnSetNewIntensity?.Invoke(spawnIntensitiesNormal[currentIntensityIndex]);
+    //     currentIntensityIndex = newIntensity;
+    //     currentObjectivesObtained = nextIntentisityObjectiveValues[newIntensity];
+    //     lvlID.SetNewIntensity(currentIntensityIndex);
+    //     lvlID.outputEvent.OnSetNewIntensity?.Invoke(spawnIntensitiesNormal[currentIntensityIndex]);
 
-    }
+    // }
 
     void FinishOverride()
     {
@@ -177,8 +189,17 @@ public class SpawnIntensityManager : MonoBehaviour
             StartCoroutine(WaitForNextHealthChance(delaysToSpawnNextHealthAfterSpawn[n]));
         }
 
+        int nextInt = CheckCurrentIntensity();
 
-        lvlID.outputEvent.OnSetNewIntensity?.Invoke(spawnIntensitiesNormal[CheckCurrentIntensity()]);
+        lvlID.outputEvent.OnSetNewIntensity?.Invoke(spawnIntensitiesNormal[nextInt], returningToPrevInt);
+
+        ignoreNextIntensityTrigger = spawnIntensitiesNormal[nextInt].IgnoreItensityTriggers;
+
+        if (returningToPrevInt)
+        {
+            returnToFinishNonLoopedTranstionIndex = -1;
+            returningToPrevInt = false;
+        }
     }
 
     void UpdateHealthIntensity(int lives)
@@ -190,9 +211,14 @@ public class SpawnIntensityManager : MonoBehaviour
             Debug.Log("Set NEW Intesntiy from Health override");
             canSpawnHealthRings = false;
 
+            if (ignoreNextIntensityTrigger)
+            {
+                Debug.LogError("Setting return intnesity");
+                returnToFinishNonLoopedTranstionIndex = currentIntensityIndex;
+            }
             ignoreNextIntensityTrigger = true;
 
-            lvlID.outputEvent.OnSetNewIntensity?.Invoke(spawnIntensitiesHealth[currentHealthIntensityIndex]);
+            lvlID.outputEvent.OnSetNewIntensity?.Invoke(spawnIntensitiesHealth[currentHealthIntensityIndex], false);
 
 
             currentHealthIntensityIndex++;

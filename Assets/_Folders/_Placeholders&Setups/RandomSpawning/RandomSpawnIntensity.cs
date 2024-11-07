@@ -141,6 +141,8 @@ public class RandomSpawnIntensity : ScriptableObject
         private set => tenderizerPig_W = value;
     }
 
+    private bool hasEntered;
+
     [Header("Enemy Bounding Boxes")]
     [ExposedScriptableObject]
     public EnemyBoundingBox NormalPig_BB;
@@ -153,7 +155,7 @@ public class RandomSpawnIntensity : ScriptableObject
     public void CheckForNextTranstion()
     {
         Debug.Log("Checking for next transition in Random Spawn Instensity");
-        if (transtionLogicEnd == null && lvlID != null)
+        if (transtionLogicEnd == null || lvlID != null)
         {
             lvlID.inputEvent.finishedOverrideStateLogic?.Invoke();
             lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(null, true);
@@ -171,7 +173,7 @@ public class RandomSpawnIntensity : ScriptableObject
 
     public void EnterIntensity()
     {
-        if (transtionLogicStart != null)
+        if (transtionLogicStart != null && !hasEntered)
         {
             Debug.LogError("Setting new Intnesity: " + transtionLogicStart);
             lvlID.outputEvent.OnSetNewTransitionLogic(transtionLogicStart, false);
@@ -179,6 +181,11 @@ public class RandomSpawnIntensity : ScriptableObject
 
         if (collectableSpawnData != null && lvlID != null)
             lvlID.outputEvent.SetNewCollectableSpawnData?.Invoke(collectableSpawnData);
+    }
+
+    public void ResetIntensities()
+    {
+        hasEntered = false;
     }
     public int GetRandomAmountOfWaves()
     {

@@ -7,7 +7,7 @@ public class FrameRateManager : MonoBehaviour
     private bool is60;
     private static int frameRate = 60;
     [SerializeField] private int targetFrameRate;
-    public static float TargetTimeScale = .86f;
+    public static float TargetTimeScale = .88f;
     void Awake()
     {
         Time.timeScale = TargetTimeScale;

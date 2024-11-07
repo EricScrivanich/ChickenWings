@@ -15,16 +15,18 @@ public class ShadowScript : MonoBehaviour
 
     private float minOpacity = .2f; // Minimum opacity of the shadow
     private float maxOpacity = 0.5f; // Maximum opacity of the shadow
+    private float bottomPos;
     private void Start()
     {
         shadowRenderer = GetComponent<SpriteRenderer>();
+        bottomPos = BoundariesManager.GroundPosition - .1f;
 
     }
-    void Update()
+    void LateUpdate()
     {
-      
+
         // Ensure the shadow follows the player's X position
-        transform.position = new Vector2(transform.position.x, -4.55f);
+        transform.position = new Vector2(transform.position.x, bottomPos);
 
         // Map the player's Y position to the shadow's scale
         float scaleRatio = Mathf.InverseLerp(minY, maxY, parentTransform.position.y);

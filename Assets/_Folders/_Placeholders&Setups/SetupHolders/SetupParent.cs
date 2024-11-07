@@ -9,6 +9,8 @@ public class SetupParent : ScriptableObject
 {
     [SerializeField] private Vector3[] eventCallBack_Trigger_ID_Delay;
 
+
+
     [Header("Egg stuff, 0 and 1 normal, 2 and 3 shotgun")]
     [SerializeField] private Vector3Int[] eggTriggerAndIndexAndType;
     [SerializeField] private Vector2[] eggPosition;
@@ -18,6 +20,7 @@ public class SetupParent : ScriptableObject
     [Header("Ring Stuff")]
     public bool mustCompleteRingSequence;
     private Queue<int> lastPickedTriggers = new Queue<int>();
+    private Queue<int> recentSpawnedRandomRingTriggers;
 
     public int[] enemyTriggerForEachRingIndex;
     public int[] enemyTriggerForEachRingIndexWeights;
@@ -58,13 +61,65 @@ public class SetupParent : ScriptableObject
     {
         List<float> tempList = new List<float>();
 
-        int randomRingTrigger = GetRandomRingIndexByWeight();
+        int randomRingTrigger = -1;
+        bool ringFound = false;
+
+        if (recentSpawnedRandomRingTriggers == null)
+            recentSpawnedRandomRingTriggers = new Queue<int>();
+
+        // Try to get a unique random ring index up to 3 times
+        for (int i = 0; i < 3; i++)
+        {
+            randomRingTrigger = GetRandomRingIndexByWeight();
+
+            if (GetRingNotFromQueue(randomRingTrigger))
+            {
+                ringFound = true;
+                break;
+            }
+        }
+
+        // If no unique ring index was found after 3 attempts, use the least recent trigger from the queue
+        if (!ringFound)
+        {
+            // Check if the queue does not cover all possible ring triggers
+            if (recentSpawnedRandomRingTriggers.Count < collectableSetup.Count)
+            {
+                // Find a random ring trigger not currently in the queue
+                for (int i = 0; i < collectableSetup.Count; i++)
+                {
+                    if (GetRingNotFromQueue(i))
+                    {
+                        randomRingTrigger = i;
+                        ringFound = true;
+                        break;
+                    }
+                }
+            }
+
+            // If still no unique index found, fall back to the least recent trigger
+            else
+            {
+                randomRingTrigger = recentSpawnedRandomRingTriggers.Peek();
+            }
+        }
+
+
+        AddToQueue(randomRingTrigger);
+
 
         int randomRingSetupInTrigger = Random.Range(0, collectableSetup[randomRingTrigger].dataArray.Length);
+
+
+        // Debug.LogError("Null stuff in case, trying to spawn trigger: " + randomRingTrigger + " Set of: " + randomRingSetupInTrigger);
         var pickedRingSet = collectableSetup[randomRingTrigger].dataArray[randomRingSetupInTrigger];
         int randomEnemyTrigger;
 
-        if (randomRingTrigger == 0)
+        if (enemyTriggerForEachRingIndex == null || enemyTriggerForEachRingIndex.Length < 1)
+        {
+            randomEnemyTrigger = randomRingTrigger;
+        }
+        else if (randomRingTrigger == 0)
         {
             randomEnemyTrigger = Random.Range(0, enemyTriggerForEachRingIndex[0]);
 
@@ -117,10 +172,26 @@ public class SetupParent : ScriptableObject
 
     }
 
+    private bool GetRingNotFromQueue(int tryVal)
+    {
+        if (recentSpawnedRandomRingTriggers.Contains(tryVal)) return false;
+
+        else return true;
+    }
+
+    private void AddToQueue(int val)
+    {
+        recentSpawnedRandomRingTriggers.Enqueue(val);
+
+        if (recentSpawnedRandomRingTriggers.Count > 4)
+            recentSpawnedRandomRingTriggers.Dequeue();
+    }
+
     private int GetRandomRingIndexByWeight()
     {
         if (enemyTriggerForEachRingIndexWeights == null || enemyTriggerForEachRingIndexWeights.Length == 0)
         {
+            // Debug.LogError("REturning lenght");
             return Random.Range(0, collectableSetup.Count); // Fallback to random if weights are not set
         }
 
@@ -224,7 +295,7 @@ public class SetupParent : ScriptableObject
             {
                 if (item.x == currentTrigger)
                 {
-                    Debug.LogError("EVent callback Called");
+                    // Debug.LogError("EVent callback Called");
                     manager.EventCallBack(Mathf.RoundToInt(item.y), item.z);
 
                 }
@@ -347,7 +418,7 @@ public class SetupParent : ScriptableObject
             count++;
         }
 
-        Debug.Log("Trigger Time for next Enemy setup is: " + maxTimeToTrigger + " seconds with a count of: " + count);
+        // Debug.Log("Trigger Time for next Enemy setup is: " + maxTimeToTrigger + " seconds with a count of: " + count);
         return maxTimeToTrigger;
     }
 

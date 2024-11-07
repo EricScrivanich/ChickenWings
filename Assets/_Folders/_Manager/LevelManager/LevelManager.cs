@@ -332,7 +332,12 @@ public class LevelManager : MonoBehaviour
                 Debug.Log("Waiting for ObjectiveCount event");
                 // Placeholder for your logic
                 yield return new WaitUntil(() => objectivesComplete >= script.objectivesNeeded);
-                if (stopSpawn) LvlID.PauseSpawning = true;
+                if (stopSpawn)
+                {
+                    LvlID.PauseSpawning = true;
+                    Debug.LogError("Setting pauise spawn true " + Random.Range(0, 20f));
+                }
+
                 obj.SetActive(true);
                 break;
 

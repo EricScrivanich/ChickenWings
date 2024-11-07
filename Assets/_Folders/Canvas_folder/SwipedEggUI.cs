@@ -99,7 +99,7 @@ public class SwipedEggUI : MonoBehaviour
     {
         Debug.Log("Ammo update");
         text.text = amount.ToString();
-        parentScript.SetAmmo(amount);
+        parentScript.SetAmmo(amount, currentType);
 
         currentAmmo = amount;
         if (currentType == 0 && eggIMG != null)

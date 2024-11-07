@@ -19,6 +19,8 @@ public class TriggerNextSection : MonoBehaviour
     public GameEvent triggerEventOnEnterSuction;
     [SerializeField] private bool WaitForAlowedExit;
 
+    private bool hasExited;
+
 
 
     public bool isCheckPoint { get; private set; }
@@ -108,6 +110,7 @@ public class TriggerNextSection : MonoBehaviour
     {
 
         col = GetComponent<Collider2D>();
+        hasExited = false;
         ignoreTrigger = false;
         col.enabled = !isSuction;
         isCheckPoint = false;
@@ -315,27 +318,31 @@ public class TriggerNextSection : MonoBehaviour
 
     private void ExitSection()
     {
-        if (isSuction)
+
+
+
+        if (isSuction && !hasExited)
         {
 
             Invoke("ExitSuction", .1f);
 
         }
-        if (isCheckPoint)
+        if (isCheckPoint && !hasExited)
             lvlID.outputEvent.ShowSection?.Invoke(setCheckPoint - 1, false);
-        else
+        else if (!hasExited)
             HandleSectionActivication(false);
         // TweenPlayer(false);
 
         if (startSpawningAfterComplete)
         {
             lvlID.PauseSpawning = false;
+            Debug.LogError("Stop spawning is now false");
         }
         lvlID.outputEvent.SetPressButtonText?.Invoke(false, 0, "");
         Time.timeScale = FrameRateManager.TargetTimeScale;
         // this.gameObject.SetActive(false);
 
-        if (setActiveAfterDelayObjects.Length > 0)
+        if (setActiveAfterDelayObjects.Length > 0 && !hasExited)
         {
             for (int i = 0; i < setActiveAfterDelayObjects.Length; i++)
             {
@@ -343,16 +350,18 @@ public class TriggerNextSection : MonoBehaviour
             }
         }
 
-        if (setActiveAfterEventObject.Length > 0)
+        if (setActiveAfterEventObject.Length > 0 && !hasExited)
         {
             lvlID.inputEvent.ActivateObjFromEvent?.Invoke(this, stopSpawningFromEvent, setActiveAfterEventObject[0]);
 
         }
 
-        if (triggerSpawnerFromDelayBool)
+        if (triggerSpawnerFromDelayBool && !hasExited)
         {
             lvlID.inputEvent.StartSpawnerInput?.Invoke(triggerSpawnerType, triggerSpawnerDelay);
         }
+
+        hasExited = true;
 
     }
 

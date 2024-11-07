@@ -217,7 +217,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                 }
                 else if (!earlyDashReady)
                 {
-                   
+
                     HapticFeedbackManager.instance.PlayerButtonFailure();
                 }
 
@@ -289,7 +289,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
                 else if (!earlyDropReady)
                 {
-                   
+
                     HapticFeedbackManager.instance.PlayerButtonFailure();
                 }
 
@@ -479,10 +479,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
 
-        yield return new WaitForSeconds(1.54f);
+        yield return new WaitForSeconds(1.6f);
         // earlyDropTried = false;
         earlyDropReady = true;
-        yield return new WaitForSeconds(.23f);
+        yield return new WaitForSeconds(.15f);
         dropCooldownIN.DOFade(0, 0);
         dropCooldownOUT.DOFade(0, .1f);
 
@@ -758,10 +758,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         dashCooldownGroup.DOFade(1, .15f);
 
         dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
-        yield return new WaitForSeconds(.9f);
+        yield return new WaitForSeconds(.95f);
         // earlyDashTried = false;
         earlyDashReady = true;
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(.15f);
 
 
 

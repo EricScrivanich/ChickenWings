@@ -26,8 +26,8 @@ MonoBehaviour:
   - dataArray:
     - rid: 3115821659791294464
   - dataArray:
-    - rid: 3115821993025339393
-    - rid: 3115821993025339394
+    - rid: 4599887292016885778
+    - rid: 4599887292016885779
   - dataArray:
     - rid: 3115821659791294481
     - rid: 3115821659791294482
@@ -265,28 +265,6 @@ MonoBehaviour:
         - xDropPosition: -5.5
           dropAreaScaleMultiplier: 1.25
           speedTarget: -6.5
-    - rid: 3115821993025339393
-      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 4.239655
-        data:
-        - position: {x: 17.345522, y: 2.545188}
-          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
-          speed: 6
-        - position: {x: 23.18, y: 0.46}
-          scale: {x: 0.84, y: 0.84, z: 0.84}
-          speed: 6.3
-        - position: {x: 24.59, y: 4.01}
-          scale: {x: 0.84, y: 0.84, z: 0.84}
-          speed: 5.8
-    - rid: 3115821993025339394
-      type: {class: BomberPlaneSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 0
-        data:
-        - xDropPosition: -7
-          dropAreaScaleMultiplier: 0
-          speedTarget: -7
     - rid: 3115821993025339395
       type: {class: MissilePigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -311,3 +289,25 @@ MonoBehaviour:
           bladeScaleMultiplier: 1.1
           bladeSpeed: -90
           startRot: 0
+    - rid: 4599887292016885778
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.239655
+        data:
+        - position: {x: 17.345522, y: 2.545188}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6
+        - position: {x: 23.18, y: 0.46}
+          scale: {x: 0.84, y: 0.84, z: 0.84}
+          speed: 6.3
+        - position: {x: 24.59, y: 4.01}
+          scale: {x: 0.84, y: 0.84, z: 0.84}
+          speed: 5.8
+    - rid: 4599887292016885779
+      type: {class: BomberPlaneSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - xDropPosition: -7
+          dropAreaScaleMultiplier: 0
+          speedTarget: 7.8

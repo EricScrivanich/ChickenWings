@@ -49,8 +49,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  usingAmmo: 1
+  SpawnData: {fileID: 0}
+  lvlID: {fileID: 0}
+  usingEgg: 0
   usingShotgun: 0
+  usingBarn: 0
   spawnNormalRandom: 1
   spawnShotgunRandom: 1
   eggImage: {fileID: 713175351, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
@@ -186,8 +189,8 @@ MonoBehaviour:
   jetPackSmokeTrailPrefab: {fileID: 7791189156267300741, guid: 1440243de596647cdbf976a452bceba1, type: 3}
   gasSmokeTrailPrefab: {fileID: 7376049519909175309, guid: 0c2e6e1988c234eb6870724f0481872f, type: 3}
   gasParticleSystemPrefab: {fileID: 355320229328744754, guid: da0e2cceb51384f8bb26aebde34ac341, type: 3}
-  gasCloudPrefab: {fileID: 0}
+  gasCloudPrefab: {fileID: 7501168065405726369, guid: 68a59a5ecd9804041b0d81d6becae83d, type: 3}
   playerParticleColliderPrefab: {fileID: 610983590539335886, guid: e1536bec681634d318ae1eb8d323a96c, type: 3}
   eggParticleColliderCoverPrefab: {fileID: 3148713029437857749, guid: 67f9171f2ae064c559b81016d5c0175a, type: 3}
   eggParticleColliderPrefab: {fileID: 8411991336060583700, guid: 431fd07ce78564e4b9d2ad5bc1fa994b, type: 3}
-  gasCloudHitParticlesPrefab: {fileID: 0}
+  gasCloudHitParticlesPrefab: {fileID: 4238105998688326948, guid: 46cf02b4a5ffb48c49a74b30057887fe, type: 3}

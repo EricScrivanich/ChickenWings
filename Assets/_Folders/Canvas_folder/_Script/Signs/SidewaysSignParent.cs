@@ -32,7 +32,9 @@ public class SidewaysSignParent : MonoBehaviour
 
     public void SwitchSign(bool isNext)
     {
-        Debug.Log("Side Index: " + currentIndex);
+        // Debug.Log("Side Index: " + currentIndex);
+        HapticFeedbackManager.instance.PressUIButton();
+
         if (isNext)
         {
             signList[currentIndex].AnimateSign(true, false);

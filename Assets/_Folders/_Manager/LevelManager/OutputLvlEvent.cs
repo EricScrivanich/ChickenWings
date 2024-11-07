@@ -44,6 +44,6 @@ public struct OutputLvlEvent
 
 
 
-    public Action<RandomSpawnIntensity> OnSetNewIntensity;
+    public Action<RandomSpawnIntensity,bool> OnSetNewIntensity;
     public Action<SpawnStateTransitionLogic, bool> OnSetNewTransitionLogic;
 }

@@ -202,18 +202,32 @@ public class RingParentSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         bool recalc = false;
+        int i = 0;
         while (player.isAlive)
         {
-            if (lvlID.PauseSpawning) recalc = true;
+            Debug.LogError("Looped " + i);
+            if (lvlID.PauseSpawning)
+            {
+                recalc = true;
+                Debug.LogError("Setting Recalc true " + i);
+
+            }
             yield return new WaitUntil(() => lvlID.PauseSpawning == false);
             if (recalc)
             {
+                Debug.LogError("REcalc");
                 yield return new WaitForSeconds(waitTime);
+                Debug.LogError("Recal time finsished " + i);
                 recalc = false;
+
             }
+            Debug.LogError("Spawing " + i);
+
             Vector2 position = new Vector2(BoundariesManager.rightBoundary, Random.Range(minMax[RingIndex].x, minMax[RingIndex].y));
             ringPool.Spawn(ringParentTypes[RingIndex], position, Vector3.zero);
             yield return new WaitForSeconds(waitTime);
+            Debug.LogError("Finshsed spawmn next loop " + i);
+            i++;
         }
 
 
@@ -247,7 +261,7 @@ public class RingParentSpawner : MonoBehaviour
             if (enemySpawner != null)
             {
                 enemySpawner.StopSpawningForTime(delayToSpawnRandomEnemies);
-                yield return new WaitForSeconds(enemySpawner.TimeForWaveToReachTarget(4.5f));
+                yield return new WaitForSeconds(enemySpawner.TimeForWaveToReachTarget(4.5f,false));
             }
             Vector2 position;
             bool isValidPosition;

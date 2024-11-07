@@ -12,7 +12,7 @@ public class PlayerStateManager : MonoBehaviour
 
     [ExposedScriptableObject]
     public PlayerMovementData MovementData;
-
+    [ExposedScriptableObject]
     [SerializeField] private PlayerStartingStatsForLevels stats;
     [SerializeField] private GameObject jumpAirPrefab;
     [SerializeField] private bool mutePlayerAudio = false;
@@ -923,8 +923,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-        if (useChainedAmmo && !justSwitchedUsingChainedShotgun)
-            justSwitchedUsingChainedShotgun = true;
+
 
 
         float yVelRatio = force.y / velocityMagnitude;
@@ -945,7 +944,7 @@ public class PlayerStateManager : MonoBehaviour
         else if (yVelRatio < .5f && yPos < 0)
         {
             subtractY = -yForceSubtractMultiplier * (yPos / -5);
-            if (justSwitchedUsingChainedShotgun) subtractY *= 1.2f;
+            if (justSwitchedUsingChainedShotgun) subtractY *= 1.05f;
 
         }
 
@@ -959,12 +958,15 @@ public class PlayerStateManager : MonoBehaviour
         // Vector2 og = new Vector2(force.x, force.y + addedY);
         Vector2 finalForce = new Vector2(force.x + (subtractY * xVal), force.y + addedY - subtractY);
 
-        if (justSwitchedUsingChainedShotgun) finalForce *= 1.12f;
+        if (justSwitchedUsingChainedShotgun) finalForce *= 1.14f;
 
         // Debug.LogError("Subtract y of: " + subtractY + "OriginalForce: " + og + " new force: " + finalForce);
 
         AdjustForce(finalForce);
         SwitchState(ShotgunState);
+
+        if (useChainedAmmo && !justSwitchedUsingChainedShotgun)
+            justSwitchedUsingChainedShotgun = true;
 
     }
 
