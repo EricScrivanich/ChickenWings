@@ -26,6 +26,8 @@ public struct GlobalPlayerEvents
 
     public Action<Vector2, float> OnPlayerVelocityChange;
 
+    public Action<int> OnAmmoEvent;
+
     public Action FillPlayerMana;
 
     public Action OnGetMana;

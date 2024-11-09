@@ -8,6 +8,8 @@ public class SpecialRandomEnemyLogic : ScriptableObject
 {
     [SerializeField] private int ID;
 
+    private PlayerID player;
+
 
 
 
@@ -23,12 +25,21 @@ public class SpecialRandomEnemyLogic : ScriptableObject
 
     public void ReturnSpecialEnemyData(SpawnStateManager spawner)
     {
+        if (ID == -1)
+        {
+            spawner.NextLogicTriggerAfterDelay(.2f, ID);
+            return;
+        }
 
         float[] val = new float[rangesFloat.Length];
 
-        if (flipSpawnChance >= Random.Range(0, 1f))
+        float ran = Random.Range(0, 1f);
+
+        if (flipSpawnChance >= ran)
             flippedSideInt = -1;
-        else flippedSideInt = -1;
+        else flippedSideInt = 1;
+
+        Debug.LogError("Random chance is: " + ran);
 
 
         for (int i = 0; i < rangesFloat.Length; i++)
@@ -36,19 +47,23 @@ public class SpecialRandomEnemyLogic : ScriptableObject
             val[i] = Random.Range(rangesFloat[i].x, rangesFloat[i].y);
         }
 
-        switch (ID)
-        {
-            case (0):
 
-                spawner.StartCoroutine(SpawnAfterDelay(spawner, val));
+        spawner.StartCoroutine(SpawnAfterDelay(spawner, val));
 
+        // switch (ID)
+        // {
+        //     case (0):
 
+        //         spawner.StartCoroutine(SpawnAfterDelay(spawner, val));
+        //         break;
 
+        //     case (0):
 
-                break;
-        }
+        //         spawner.StartCoroutine(SpawnAfterDelay(spawner, val));
+        //         break;
+        // }
 
-        spawner.NextLogicTriggerAfterDelay(Random.Range(spawnCooldownTimeRange.x, spawnCooldownTimeRange.y));
+        spawner.NextLogicTriggerAfterDelay(Random.Range(spawnCooldownTimeRange.x, spawnCooldownTimeRange.y), ID);
 
     }
 
@@ -65,6 +80,22 @@ public class SpecialRandomEnemyLogic : ScriptableObject
                     x *= -1;
 
                 spawner.GetFlappyPig(new Vector2(flippedSideInt * Random.Range(SpawnXRange.x, SpawnXRange.y), Random.Range(SpawnYRange.x, SpawnYRange.y)), val[0]);
+                break;
+
+            case (1):
+                spawner.GetWindMill(new Vector2(Random.Range(SpawnXRange.x, SpawnXRange.y), Random.Range(SpawnYRange.x, SpawnYRange.y)), 3, val[0], flippedSideInt * val[1], 0);
+                break;
+
+            case (2):
+                int s = 8;
+                if (flippedSideInt < 0) s = -7;
+                spawner.GetBomberPlane(val[0], val[1], s);
+                break;
+
+            case (3):
+
+                spawner.GetHotAirBalloon(new Vector2(flippedSideInt * Random.Range(SpawnXRange.x, SpawnXRange.y), Random.Range(SpawnYRange.x, SpawnYRange.y)), 0, val[3], val[1], val[0] * flippedSideInt, val[2]);
+
                 break;
         }
     }

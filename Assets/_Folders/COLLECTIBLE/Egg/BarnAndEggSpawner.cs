@@ -10,6 +10,9 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     [SerializeField] private LevelManagerID lvlID;
 
+    private bool checkEggs = false;
+    private bool checkShotgun = false;
+
     private Coroutine EggRoutine;
     private Coroutine ShotgunRoutine;
     private Coroutine BarnRoutine;
@@ -262,14 +265,31 @@ public class BarnAndEggSpawner : MonoBehaviour
 
         while (true)
         {
+            checkEggs = false;
 
             Vector2 pos = new Vector2(13.5f, Random.Range(-2.2f, 4.2f));
             // bool three = Random.Range(0f, 1f) < eggThreeChance;
 
             Vector2 data = SpawnData.ReturnEggTime(player.Ammo);
-            GetEggCollectable(pos, false, CheckIfEggIsThree(data.y), 0);
-            yield return new WaitForSeconds(data.x);
-            Debug.LogError("Egg Time is: " + data.x);
+
+
+
+            if (data == Vector2.zero)
+            {
+                Debug.LogError("On Max Egg Ammo, wiating for: " + SpawnData.RecheckEggIfMaxTime);
+                yield return new WaitForSeconds(SpawnData.RecheckEggIfMaxTime);
+            }
+
+            else
+            {
+                Debug.LogError("SPawing an egg, waitng for " + data.x);
+                yield return new WaitForSeconds(data.x);
+                GetEggCollectable(pos, false, CheckIfEggIsThree(data.y), 0);
+                yield return new WaitUntil(() => checkEggs == true);
+
+
+            }
+
 
         }
 
@@ -289,9 +309,21 @@ public class BarnAndEggSpawner : MonoBehaviour
             // bool three = Random.Range(0f, 1f) < baseShotgunThreeChance;
 
             Vector2 data = SpawnData.ReturnShotgunTime(player.ShotgunAmmo);
-            GetEggCollectable(pos, true, CheckIfEggIsThree(data.y), 0);
+            checkShotgun = false;
 
-            yield return new WaitForSeconds(data.x);
+            if (data == Vector2.zero)
+            {
+
+                yield return new WaitForSeconds(SpawnData.RecheckShotgunIfMaxTime);
+            }
+
+            else
+            {
+                yield return new WaitForSeconds(data.x);
+                GetEggCollectable(pos, true, CheckIfEggIsThree(data.y), 0);
+                yield return new WaitUntil(() => checkShotgun == true);
+            }
+
         }
 
     }
@@ -372,7 +404,7 @@ public class BarnAndEggSpawner : MonoBehaviour
     public void SetNewData(CollectableSpawnData data)
     {
         SpawnData = data;
-      
+
 
 
         if (spawningEgg && !data.SpawnEggs)
@@ -380,7 +412,7 @@ public class BarnAndEggSpawner : MonoBehaviour
         else if (!spawningEgg && data.SpawnEggs)
         {
             EggRoutine = StartCoroutine(SpawnEggs(data.ReturnInitialDelay(0)));
-           
+
         }
 
         if (spawningShotgun && !data.SpawnShotgun)
@@ -395,19 +427,25 @@ public class BarnAndEggSpawner : MonoBehaviour
         else if (!spawningBarn && data.SpawnBarn)
         {
             BarnRoutine = StartCoroutine(SpawnBarn(data.ReturnInitialDelay(2)));
-            
+
 
         }
 
 
-       
 
 
-       
+
+
         spawningEgg = data.SpawnEggs;
         spawningShotgun = data.SpawnShotgun;
         spawningBarn = data.SpawnBarn;
 
+    }
+
+    private void OnSetCheckAmmo(int type)
+    {
+        if (type == 0) checkEggs = true;
+        else if (type == 1) checkShotgun = true;
     }
 
     private void OnEnable()
@@ -417,6 +455,8 @@ public class BarnAndEggSpawner : MonoBehaviour
         if (lvlID != null)
             lvlID.outputEvent.SetNewCollectableSpawnData += SetNewData;
 
+        player.globalEvents.OnAmmoEvent += OnSetCheckAmmo;
+
     }
 
     private void OnDisable()
@@ -425,5 +465,7 @@ public class BarnAndEggSpawner : MonoBehaviour
 
         if (lvlID != null)
             lvlID.outputEvent.SetNewCollectableSpawnData -= SetNewData;
+        player.globalEvents.OnAmmoEvent -= OnSetCheckAmmo;
+
     }
 }

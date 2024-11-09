@@ -9,6 +9,8 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
     private bool bursted;
     private bool isCollected;
 
+    private bool hasCrossedScreen = false;
+
     [SerializeField] private SpriteRenderer blur;
 
     private Color whiteColorStart = new Color(1, 1, 1, 1);
@@ -63,6 +65,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
     }
     public void EnableAmmo(Sprite mainImage, Sprite ThreeImage, bool mana, float speedVar)
     {
+        hasCrossedScreen = false;
         if (this.gameObject.activeInHierarchy)
         {
             gameObject.SetActive(false);
@@ -184,6 +187,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
     void Update()
     {
 
+
         transform.Translate(Vector3.left * speed * Time.deltaTime);
         float x = transform.position.x;
         float y = Mathf.Sin(x * eggSinFrequency) * eggSinAmplitude + yPos; // Calculate y position using sine function
@@ -203,6 +207,33 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
 
 
     }
+
+    private void OnDisable()
+    {
+
+        int t = 0;
+        if (isMana) t = 1;
+
+        ID.globalEvents.OnAmmoEvent?.Invoke(t);
+
+    }
+
+    // public void Tick()
+    // {
+    //     float x = transform.position.x;
+    //     if (!hasCrossedScreen && x > BoundariesManager.leftBoundary && x < BoundariesManager.rightBoundary)
+    //     {
+    //         hasCrossedScreen = true;
+    //     }
+    //     else if (hasCrossedScreen && (x < BoundariesManager.leftBoundary || x > BoundariesManager.rightBoundary))
+    //     {
+    //         gameObject.SetActive(false);
+
+
+    //     }
+
+
+    // }
 
 
     private IEnumerator Burst()
@@ -288,6 +319,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
         }
         StartCoroutine(Burst());
         bursted = true;
+        // ID.globalEvents.OnAmmoEvent?.Invoke(1);
 
 
 

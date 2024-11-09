@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
   m_Name: -MainEnemyRandom1
   m_EditorClassIdentifier: 
-  XTriggerForRecording: 1
+  eventCallBack_Trigger_ID_Delay: []
+  eggTriggerAndIndexAndType: []
+  eggPosition: []
+  eggSpeed: []
   mustCompleteRingSequence: 0
   enemyTriggerForEachRingIndex: 
+  enemyTriggerForEachRingIndexWeights: 
   enemySetup:
   - dataArray:
     - rid: 3018405104128884786
@@ -50,7 +54,11 @@ MonoBehaviour:
     - rid: 3018405104128884808
     - rid: 3018405104128884809
   collectableSetup: []
-  isRandomSetup: 1
+  isRandomSetup: 0
+  testFromTrigger: 0
+  startTestTrigger: 0
+  ignoreXTriggetTime: 0
+  XTriggerForRecording: 1
   references:
     version: 2
     RefIds:

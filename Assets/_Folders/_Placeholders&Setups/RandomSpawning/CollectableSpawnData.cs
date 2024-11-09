@@ -11,6 +11,8 @@ public class CollectableSpawnData : ScriptableObject
     public Vector2 AddedRandomEgg;
     public float EggThreeChance;
     public int TargetEggAmmo;
+    public int MaxEggAmmo;
+    public float RecheckEggIfMaxTime;
     public float BelowEggTargetTimeChange;
     public float AboveEggTargetTimeChange;
     public float InitialEggDelay = 4;
@@ -24,6 +26,10 @@ public class CollectableSpawnData : ScriptableObject
     public Vector2 AddedRandomShotgun;
     public float ShotgunThreeChance;
     public int TargetShotgunAmmo;
+
+    public int MaxShotgunAmmo;
+    public float RecheckShotgunIfMaxTime;
+
     public float BelowShotgunTargetTimeChange;
     public float AboveShotgunTargetTimeChange;
     public float InitialShotgunDelay = 5;
@@ -74,10 +80,11 @@ public class CollectableSpawnData : ScriptableObject
 
     public Vector2 ReturnEggTime(int eggAmount)
     {
+        if (eggAmount >= MaxEggAmmo) return Vector2.zero;
         int diff = eggAmount - TargetEggAmmo;
         float addedTime = 0;
 
-
+        
         if (diff > 0) addedTime = diff * AboveEggTargetTimeChange;
         else if (diff < 0) addedTime = diff * BelowEggTargetTimeChange;
 
@@ -95,6 +102,7 @@ public class CollectableSpawnData : ScriptableObject
 
     public Vector2 ReturnShotgunTime(int shotgunAmount)
     {
+        if (shotgunAmount >= MaxShotgunAmmo) return Vector2.zero;
         int diff = shotgunAmount - TargetShotgunAmmo;
         float addedTime = 0;
 

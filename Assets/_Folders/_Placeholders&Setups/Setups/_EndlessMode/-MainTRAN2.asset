@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: -MainTRAN2
   m_EditorClassIdentifier: 
   loopStates: 0
+  maxSpecialSpawnsPerCycle: 0
+  spawnEachSpecialOnceMax: 0
+  useMax: 0
+  useWeights: 0
+  specialEnemySpawnWeights: []
+  specialEnemySpawns: []
   continueFromStartIfOverriden: 0
   continueFromPrevOverriden: 1
   orderedSequence: 01000000020000000300000001000000
@@ -21,4 +27,4 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 0, y: 0}
   - {x: 3, y: 3}
-  ringSpawnSetTypeOrder: 0000000000000000
+  ringSpawnSetTypeOrder: 0200000000000000

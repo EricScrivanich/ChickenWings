@@ -53,6 +53,8 @@ public class SpawnStateManager : MonoBehaviour
         }
     }
 
+    
+
     public SetupParent[] randomEnemySetups;
     private int currentRandomEnemySetup;
     public SetupParent[] randomRingSetups;
@@ -128,6 +130,8 @@ public class SpawnStateManager : MonoBehaviour
     private int pilotPigIndex = 0;
     private int missilePigIndex = 0;
     private int gasPigFlyingIndex;
+
+    private bool waitingOnFlappyPig;
 
 
     private JetPackPigMovement[] jetPackPig;
@@ -337,9 +341,9 @@ public class SpawnStateManager : MonoBehaviour
 
     }
 
-    public void NextLogicTriggerAfterDelay(float d)
+    public void NextLogicTriggerAfterDelay(float d, int t)
     {
-        NextTriggerAfterDelayRoutine = StartCoroutine(SwitchToNextLogicStateAfterDelay(d));
+        NextTriggerAfterDelayRoutine = StartCoroutine(SwitchToNextLogicStateAfterDelay(d, t));
     }
 
 
@@ -375,7 +379,7 @@ public class SpawnStateManager : MonoBehaviour
             case (-1):
                 {
                     currentState = null;
-                    transitionLogic.SpawnSpecialEnemy(this);
+                    transitionLogic.SpawnSpecialEnemy(this, currentTransitionLogicIndex);
 
                     break;
                 }
@@ -411,8 +415,12 @@ public class SpawnStateManager : MonoBehaviour
                     break;
                 }
         }
+
+        Debug.LogError("Current logic index is: " + currentTransitionLogicIndex);
         Debug.LogError("Entered New State: " + currentState);
-        currentState.EnterState(this);
+
+        if (currentState != null)
+            currentState.EnterState(this);
 
         currentTransitionLogicIndex++;
 
@@ -426,6 +434,7 @@ public class SpawnStateManager : MonoBehaviour
             {
 
                 currentTransitionLogicIndex = 0;
+                transitionLogic.ResetTransitionLogic();
 
             }
             else
@@ -492,9 +501,24 @@ public class SpawnStateManager : MonoBehaviour
         SwitchToSpecficState(type);
     }
 
-    private IEnumerator SwitchToNextLogicStateAfterDelay(float delay)
+    private IEnumerator SwitchToNextLogicStateAfterDelay(float delay, int type)
     {
+        switch (type)
+        {
+            case (0):
+                waitingOnFlappyPig = true;
+                break;
+        }
         yield return new WaitForSeconds(delay);
+
+        switch (type)
+        {
+            case (0):
+                waitingOnFlappyPig = false;
+                break;
+        }
+
+
         SwitchStateWithLogic();
     }
 
@@ -1127,6 +1151,16 @@ public class SpawnStateManager : MonoBehaviour
     {
         if (flappyPigIndex >= flappyPigs.Length) flappyPigIndex = 0;
         FlappyPigMovement flappyPig = flappyPigs[flappyPigIndex];
+        if (flappyPig.gameObject.activeInHierarchy)
+        {
+            var obj = Instantiate(flappyPigPrefab, position, Quaternion.identity).GetComponent<FlappyPigMovement>();
+            obj.gameObject.SetActive(false);
+            obj.scaleFactor = scaleFactor;
+            obj.gameObject.SetActive(true);
+            return;
+        }
+
+
         flappyPig.transform.position = position;
         flappyPig.scaleFactor = scaleFactor;
         flappyPig.gameObject.SetActive(true);

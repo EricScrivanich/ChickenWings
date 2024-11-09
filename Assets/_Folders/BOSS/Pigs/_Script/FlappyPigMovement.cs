@@ -6,49 +6,41 @@ using DG.Tweening;
 public class FlappyPigMovement : MonoBehaviour, IEggable
 {
     public float scaleFactor;
-    [SerializeField] private AnimationDataSO animData;
-    [SerializeField] private SpriteRenderer yolkSR;
-    [SerializeField] private Vector3 yolkStartScale;
-    [SerializeField] private Vector3 yolkEndScale;
-    [SerializeField] private float yolkStartY;
-    [SerializeField] private float yolkEndY;
-    [SerializeField] private float yolkDripDuration;
-    [SerializeField] private float yolkScaleMultiplier;
-    [SerializeField] private float blindedTime;
-    [SerializeField] private Transform sprite;
-
-
-
-
-
-    [SerializeField] private float addUpForceMinY;
-    [SerializeField] private float addUpForceAmountBlinded;
-    [SerializeField] private float addUpForceAmount;
+    private bool hasFullyEntered;
     private Sequence flapSeq;
     private Sequence yolkSeq;
 
     private Coroutine EggYolkRoutine;
 
-    [SerializeField] private float bounceForceMagnitude;
-    [SerializeField] private float eggForceMagnitude;
+    [SerializeField] private Transform pupils;
+    [SerializeField] private Transform pupilStartPositions;
 
-    [SerializeField] private float moveFreeDurationBounce;
-    [SerializeField] private float moveFreeDurationEgg;
-    [SerializeField] private float moveFreeDurationInverse;
-
-
-    public float inverseMagnitude;
-
+    [SerializeField] private PlayerID player;
+    private PigMaterialHandler pigMatHandler;
+    [SerializeField] private Transform sprite;
+    [SerializeField] private AnimationDataSO animData;
+    [SerializeField] private SpriteRenderer yolkSR;
     private Rigidbody2D rb;
     private Animator anim;
     public float forceAdded;
-
-
-
-    public float minYVelocity;
-
-
+    private Transform playerTarget;
+    private float eyeRadius = .03f;
     [SerializeField] private CircleCollider2D col;
+
+    private bool blinded = false;
+
+
+
+
+
+
+
+
+
+
+    // 3.5, 5.5 is base
+    [Header("Variables")]
+
 
     private bool moveFree;
     private float moveFreeDuration;
@@ -56,28 +48,6 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
     private float OnDirectionTime;
 
     private bool eggYolkUsed;
-
-
-    private Transform playerTarget;
-
-    [SerializeField] private Transform pupils;
-    [SerializeField] private Transform pupilStartPositions;
-
-    [SerializeField] private PlayerID player;
-    // private LineRenderer lineRenderer;
-
-    [Header("Rotation")]
-    [SerializeField] private float maxRotation = 30f;
-
-
-    private float eyeRadius = .03f;
-
-    private bool blinded = false;
-
-
-    private float currentMoveSpeed;
-
-    [Header("Base Values")]
     public float switchFromTargetToPlayerRange;
 
     public float lerpSpeed;
@@ -89,38 +59,15 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
     [SerializeField] private float tweenDownDuration;
     public float maxVel;
 
+    public float cachedMaxVel;
 
-
-    [Header("Ranges")]
-    [SerializeField] private Vector2 minMaxScale;
-    public Vector2 minMaxTimeScale;
-    public Vector2 minMaxSwitchDirectionRange;
-    public Vector2 minMaxTweenYAmount;
-    public Vector2 minMaxOnDirectionTimeMax;
-    public Vector2 minMaxLookAheadTime;
-    public Vector2 minMaxLerpTowardsPlayerSpeed;
-
-    public Vector2 minMaxMagntiude;
-    public Vector2 minMaxMass;
-
-    // 3.5, 5.5 is base
-
-
-    private PigMaterialHandler pigMatHandler;
-
-
-    [SerializeField] private float blindTime;
-
-
-
-    [Header("Movement Settings")]
 
 
 
     private float blindDurationVar;
     private float timeScale;
-    private float maxMoveSpeed; // Max speed of leftward movement
-    private float minMoveSpeed; // Min speed when close to the player
+
+
 
     private float sineTime; // Time to complete one sine wave cycle (used to define frequency)
 
@@ -138,7 +85,43 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
     private float delayTime;
     private float delayDuration;
+    [Header("Static Variables")]
+    [Header("Static Variables")]
 
+    private static readonly Vector3 yolkStartScale = new Vector3(1.3f, 2.8f, 1f);
+    private static readonly Vector3 yolkEndScale = new Vector3(2.2f, 2f, 1f);
+    private static readonly float yolkStartY = 1.5f;
+    private static readonly float yolkEndY = 0.9f;
+    private static readonly float yolkDripDuration = 0.5f;
+    private static readonly float yolkScaleMultiplier = 1.5f;
+    private static readonly float blindedTime = 2.2f;
+
+    private static readonly float addUpForceMinY = -2.9f;
+    private static readonly float addUpForceAmountBlinded = 5.2f;
+    private static readonly float addUpForceAmount = 3.8f;
+
+    private static readonly float bounceForceMagnitude = 4f;
+    private static readonly float eggForceMagnitude = 8.4f;
+
+    private static readonly float moveFreeDurationBounce = 0.3f;
+    private static readonly float moveFreeDurationEgg = 0.1f;
+    private static readonly float moveFreeDurationInverse = 0.7f;
+
+    private static readonly float inverseMagnitude = -6f;
+
+    private static readonly float minYVelocity = -1.5f;
+    private static readonly float maxRotation = 20f;
+
+    private static readonly Vector2 minMaxScale = new Vector2(0.7f, 1.1f);
+    private static readonly Vector2 minMaxTimeScale = new Vector2(1.1f, 0.9f);
+    private static readonly Vector2 minMaxSwitchDirectionRange = new Vector2(1.7f, 2.5f);
+    private static readonly Vector2 minMaxTweenYAmount = new Vector2(0.5f, 1.2f);
+    private static readonly Vector2 minMaxOnDirectionTimeMax = new Vector2(3.2f, 3.9f);
+    private static readonly Vector2 minMaxLookAheadTime = new Vector2(0.7f, 1f);
+    private static readonly Vector2 minMaxLerpTowardsPlayerSpeed = new Vector2(1.3f, 2.8f);
+
+    private static readonly Vector2 minMaxMagntiude = new Vector2(10f, 6.5f);
+    private static readonly Vector2 minMaxMass = new Vector2(0.59f, 1.05f);
 
     void Start()
     {
@@ -146,7 +129,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         playerTarget = GameObject.Find("Player").GetComponent<Transform>();
         pigMatHandler = GetComponent<PigMaterialHandler>();
 
-        yolkSR.enabled = false;
+
 
         // pupilStartPos = new Transform[2];
 
@@ -238,7 +221,8 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         switchFromTargetToPlayerRange = Mathf.Lerp(minMaxSwitchDirectionRange.x, minMaxSwitchDirectionRange.y, percentage);
 
         predictionTime = Mathf.Lerp(minMaxLookAheadTime.x, minMaxLookAheadTime.y, percentage);
-        maxVel = Mathf.Lerp(minMaxMagntiude.x, minMaxMagntiude.y, percentage);
+        cachedMaxVel = Mathf.Lerp(minMaxMagntiude.x, minMaxMagntiude.y, percentage);
+        maxVel = cachedMaxVel * .75f;
 
         timeScale = Mathf.Lerp(minMaxTimeScale.x, minMaxTimeScale.y, percentage);
         tweenUpDuration = .3f / timeScale;
@@ -256,14 +240,21 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
     {
         // rb.simulated = false;
         // rb.simulated = true;
+        Ticker.OnTickAction015 += MoveEyesWithTicker;
+        blinded = false;
+        yolkSR.enabled = false;
         transform.eulerAngles = Vector3.zero;
         rb.velocity = Vector2.zero;
+        hasFullyEntered = false;
 
         player.globalEvents.OnPlayerVelocityChange += UpdateTargetPosition;
         // Debug.LogError($"Pooled Enemy - ScaleFactor: {scaleFactor}, Mass: {rb.mass}, Velocity: {rb.velocity}");
         waitingOnDelay = true;
+        col.offset = Vector2.zero;
+        sprite.localPosition = Vector2.zero;
 
         transform.localScale = BoundariesManager.vectorThree1 * scaleFactor;
+        cackleTime = 0;
         anim.speed = 0;
 
         if (scaleFactor <= 0) scaleFactor = (minMaxScale.x + minMaxScale.y) * .5f;
@@ -274,7 +265,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
         SetVariablesBasedOnScale(scalePercentage);
 
-        currentMoveSpeed = maxMoveSpeed;
+
         delayDuration = Random.Range(0f, sineTime);
         sprite.localScale = BoundariesManager.vectorThree1;
         rb.simulated = true;
@@ -288,6 +279,8 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         if (yolkSeq != null && yolkSeq.IsPlaying())
             yolkSeq.Kill();
         player.globalEvents.OnPlayerVelocityChange -= UpdateTargetPosition;
+        Ticker.OnTickAction015 -= MoveEyesWithTicker;
+
     }
 
     private void TweenPig()
@@ -311,8 +304,8 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
             {
                 waitingOnDelay = false;
 
-                // anim.speed = 1 * timeScale;
-                anim.speed = 1;
+                anim.speed = 1 * timeScale;
+                // anim.speed = 1;
                 TweenPig();
                 // Time.timeScale = .4f;
 
@@ -332,6 +325,13 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
             AudioManager.instance.PlayFlappyPigCackleSound();
             cackleTime = 0;
         }
+
+
+
+    }
+
+    private void MoveEyesWithTicker()
+    {
         if (blinded) return;
         float xRange = transform.position.x - playerTarget.position.x;
 
@@ -349,7 +349,6 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
         // Move the pupil within the eye's radius
         pupils.localPosition = direction * eyeRadius;
-
 
     }
 
@@ -451,6 +450,12 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
     {
         if (!isTargetReached) return;
 
+        if (!hasFullyEntered)
+        {
+            maxVel = cachedMaxVel;
+            hasFullyEntered = true;
+        }
+
         OnDirectionTime = 0;
 
         // Calculate the future position of the player based on current velocity and gravity
@@ -492,7 +497,8 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Floor"))
+
+        if (other.gameObject.CompareTag("Floor") && blinded)
         {
             if (EggYolkRoutine != null)
                 StopCoroutine(EggYolkRoutine);
@@ -512,16 +518,28 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         // Check for the first contact point
         if (other.contacts.Length > 0)
         {
+            Debug.LogError("DGSDGDSGSDGSDG");
             ContactPoint2D contact = other.contacts[0];
 
             // The normal vector points directly away from the surface of collision
             Vector2 forceDirection = contact.normal;
 
-            // Apply a force in the opposite direction of the collision
-            rb.AddForce(forceDirection * bounceForceMagnitude, ForceMode2D.Impulse);
-            moveFreeDuration = moveFreeDurationBounce;
+            if (other.gameObject.CompareTag("Fireball"))
+            {
+                rb.AddForce(forceDirection * bounceForceMagnitude * 5, ForceMode2D.Impulse);
+                moveFreeDuration = moveFreeDurationBounce * 5;
+            }
+            else
+            {
+                rb.AddForce(forceDirection * bounceForceMagnitude, ForceMode2D.Impulse);
+                moveFreeDuration = moveFreeDurationBounce;
+
+            }
             inverseDirection = Vector2.zero;
             moveFree = true;
+
+            // Apply a force in the opposite direction of the collision
+
 
 
         }

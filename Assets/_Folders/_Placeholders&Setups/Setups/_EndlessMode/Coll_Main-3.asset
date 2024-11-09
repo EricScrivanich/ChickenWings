@@ -10,32 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0dece4e4a5480415ca0338f126fa4d9e, type: 3}
-  m_Name: Coll_Main-1
+  m_Name: Coll_Main-3
   m_EditorClassIdentifier: 
-  SpawnEggs: 1
+  SpawnEggs: 0
   BaseEggSpawnRate: 16
   AddedRandomEgg: {x: 1, y: 4.5}
   EggThreeChance: 0.15
   TargetEggAmmo: 2
-  MaxEggAmmo: 4
-  RecheckEggIfMaxTime: 7
+  MaxEggAmmo: 0
+  RecheckEggIfMaxTime: 0
   BelowEggTargetTimeChange: 0.3
   AboveEggTargetTimeChange: 1.8
   InitialEggDelay: 8
   InitialEggRandom: {x: 1, y: 3}
   SpawnShotgun: 1
-  BaseShotgunSpawnRate: 14
+  BaseShotgunSpawnRate: 13.5
   AddedRandomShotgun: {x: -1, y: 2}
   ShotgunThreeChance: 0.25
-  TargetShotgunAmmo: 3
-  MaxShotgunAmmo: 4
-  RecheckShotgunIfMaxTime: 6
-  BelowShotgunTargetTimeChange: 0.6
-  AboveShotgunTargetTimeChange: 2
+  TargetShotgunAmmo: 4
+  MaxShotgunAmmo: 7
+  RecheckShotgunIfMaxTime: 5
+  BelowShotgunTargetTimeChange: 0.7
+  AboveShotgunTargetTimeChange: 1.7
   InitialShotgunDelay: 4
   InitialShotgunRandom: {x: 1, y: 3}
-  SpawnBarn: 1
-  BaseBarnSpawnRate: 15
+  SpawnBarn: 0
+  BaseBarnSpawnRate: 20
   AddedRandomBarn: {x: 0, y: 3}
   BigBarnChance: 0.2
   MidBarnChance: 0.5

@@ -278,7 +278,7 @@ Transform:
   m_GameObject: {fileID: 6398559370266416837}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.04, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -798,9 +798,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.000000059604645, y: 0.07880008}
+  m_Offset: {x: 0, y: 0.14}
   serializedVersion: 2
-  m_Radius: 0.90250075
+  m_Radius: 0.85
 --- !u!58 &1989631072575375921
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -816,7 +816,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 67117056
+    m_Bits: 67121152
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -833,7 +833,7 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.00000011920929, y: 0.07953608}
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.8260246
 --- !u!114 &3758173028719529025
@@ -849,32 +849,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scaleFactor: 0.85
-  animData: {fileID: 11400000, guid: 0b84c9cbc3ca84d7f980979e3ae0bab8, type: 2}
-  yolkSR: {fileID: 4721929939323841915}
-  yolkStartScale: {x: 1.3, y: 2.8, z: 1}
-  yolkEndScale: {x: 2.2, y: 2, z: 1}
-  yolkStartY: 1.5
-  yolkEndY: 0.9
-  yolkDripDuration: 0.5
-  yolkScaleMultiplier: 1.5
-  blindedTime: 2.2
-  sprite: {fileID: 6540167693371364994}
-  addUpForceMinY: -2.9
-  addUpForceAmountBlinded: 5.2
-  addUpForceAmount: 3.8
-  bounceForceMagnitude: 4
-  eggForceMagnitude: 8.4
-  moveFreeDurationBounce: 0.3
-  moveFreeDurationEgg: 0.1
-  moveFreeDurationInverse: 0.7
-  inverseMagnitude: -6
-  forceAdded: 10
-  minYVelocity: -1.5
-  col: {fileID: 1989631072575375921}
   pupils: {fileID: 4468109467302689605}
   pupilStartPositions: {fileID: 8061468616221099117}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  maxRotation: 20
+  sprite: {fileID: 6540167693371364994}
+  animData: {fileID: 11400000, guid: 0b84c9cbc3ca84d7f980979e3ae0bab8, type: 2}
+  yolkSR: {fileID: 4721929939323841915}
+  forceAdded: 10
+  col: {fileID: 1989631072575375921}
   switchFromTargetToPlayerRange: 1.5
   lerpSpeed: 2
   OnDirectionTimeMax: 3.5
@@ -883,16 +865,7 @@ MonoBehaviour:
   tweenUpDuration: 0.3
   tweenDownDuration: 0.4
   maxVel: 12
-  minMaxScale: {x: 0.7, y: 1.1}
-  minMaxTimeScale: {x: 1.1, y: 0.9}
-  minMaxSwitchDirectionRange: {x: 1.7, y: 2.5}
-  minMaxTweenYAmount: {x: 0.5, y: 1.2}
-  minMaxOnDirectionTimeMax: {x: 3.2, y: 3.9}
-  minMaxLookAheadTime: {x: 0.7, y: 1}
-  minMaxLerpTowardsPlayerSpeed: {x: 1.3, y: 2.8}
-  minMaxMagntiude: {x: 10, y: 6.5}
-  minMaxMass: {x: 0.59, y: 1.05}
-  blindTime: 0
+  cachedMaxVel: 0
 --- !u!114 &5610749597598762230
 MonoBehaviour:
   m_ObjectHideFlags: 0

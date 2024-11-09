@@ -176,6 +176,7 @@ public class RandomSpawnIntensity : ScriptableObject
         if (transtionLogicStart != null && !hasEntered)
         {
             Debug.LogError("Setting new Intnesity: " + transtionLogicStart);
+            transtionLogicStart.ResetTransitionLogic();
             lvlID.outputEvent.OnSetNewTransitionLogic(transtionLogicStart, false);
         }
 

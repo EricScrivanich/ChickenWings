@@ -8,7 +8,7 @@ public class PlayerStateManager : MonoBehaviour
     [ExposedScriptableObject]
     public PlayerID ID;
 
-
+    public GameObject feather;
 
     [ExposedScriptableObject]
     public PlayerMovementData MovementData;
@@ -132,6 +132,7 @@ public class PlayerStateManager : MonoBehaviour
     public readonly int EquipShotgunTrigger = Animator.StringToHash("Equip");
     public readonly int UnEquipShotgunTrigger = Animator.StringToHash("UnEquip");
     public readonly int ShootShotgunTrigger = Animator.StringToHash("Shoot");
+    public readonly int AimShotgunBool = Animator.StringToHash("AimBool");
 
 
     #endregion
@@ -362,6 +363,8 @@ public class PlayerStateManager : MonoBehaviour
         currentState = StartingState;
 
         currentState.EnterState(this);
+
+        feather.transform.position = transform.position;
 
 
     }
@@ -799,7 +802,8 @@ public class PlayerStateManager : MonoBehaviour
             startedAim = true;
             ID.events.EnableButtons?.Invoke(false);
 
-            anim.SetTrigger("Aim");
+            // anim.SetTrigger("Aim");
+            anim.SetBool(AimShotgunBool, true);
             aimCouroutine = StartCoroutine(AimShotgunCourintine());
             // shotgunSlow = StartCoroutine(SlowTime(slowTimeDuration, slowTimeTarget));
 
@@ -1062,7 +1066,8 @@ public class PlayerStateManager : MonoBehaviour
         GetShotgunBlast();
 
         // anim.SetTrigger("Shoot");
-        anim.SetTrigger(ShootShotgunTrigger);
+        // anim.SetTrigger(ShootShotgunTrigger);
+        anim.SetBool(AimShotgunBool, false);
         // yield return new WaitForSecondsRealtime(.2f);
 
         reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
@@ -1080,7 +1085,8 @@ public class PlayerStateManager : MonoBehaviour
             GetShotgunBlast();
             ID.events.EnableButtons?.Invoke(true);
             // anim.SetTrigger("Shoot");
-            anim.SetTrigger(ShootShotgunTrigger);
+            // anim.SetTrigger(ShootShotgunTrigger);
+            anim.SetBool(AimShotgunBool, false);
             // yield return new WaitForSecondsRealtime(.2f);
 
             reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
@@ -1173,7 +1179,9 @@ public class PlayerStateManager : MonoBehaviour
                 StopCoroutine(ShotgunAimingRotationRoutine);
 
             // anim.SetTrigger("UnEquip");
+
             anim.SetTrigger(UnEquipShotgunTrigger);
+            anim.SetBool(AimShotgunBool, false);
 
             shotgunObj.SetActive(false);
             shotgunEquipped = false;

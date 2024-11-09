@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: Coll_Main-0
   m_EditorClassIdentifier: 
   SpawnEggs: 1
-  BaseEggSpawnRate: 13
+  BaseEggSpawnRate: 11
   AddedRandomEgg: {x: -2, y: 4}
   EggThreeChance: 0.3
-  TargetEggAmmo: 3
-  BelowEggTargetTimeChange: 0.4
-  AboveEggTargetTimeChange: 1.9
+  TargetEggAmmo: 4
+  MaxEggAmmo: 8
+  RecheckEggIfMaxTime: 5
+  BelowEggTargetTimeChange: 0.5
+  AboveEggTargetTimeChange: 1.3
   InitialEggDelay: 8
   InitialEggRandom: {x: 1, y: 3}
   SpawnShotgun: 0
@@ -26,6 +28,8 @@ MonoBehaviour:
   AddedRandomShotgun: {x: 0, y: 0}
   ShotgunThreeChance: 0
   TargetShotgunAmmo: 0
+  MaxShotgunAmmo: 0
+  RecheckShotgunIfMaxTime: 0
   BelowShotgunTargetTimeChange: 0
   AboveShotgunTargetTimeChange: 0
   InitialShotgunDelay: 5
