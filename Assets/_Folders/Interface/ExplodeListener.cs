@@ -20,7 +20,7 @@ public class ExplodeListener : MonoBehaviour, IExplodable, IDamageable
 
 
     }
-    public void Damage(int damageAmount)
+    public void Damage(int damageAmount ,int none, int none2)
     {
         pool.Spawn("NormalExplosion", transform.position, Vector3.zero, normalExplosionScale, null);
         if (isBomberBomb) gameObject.SetActive(false);

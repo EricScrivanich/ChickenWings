@@ -98,6 +98,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6816047504654987124, guid: c3cdede725f7e4e54929864f2666e2ab, type: 3}
+      propertyPath: sceneSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
     m_RemovedComponents:
     - {fileID: 3676765210862537307, guid: c3cdede725f7e4e54929864f2666e2ab, type: 3}
     m_RemovedGameObjects: []
@@ -214,6 +218,10 @@ PrefabInstance:
       value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: badgeSlapSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 2079616a4bb8b4a5f86d9fa4276139d5, type: 3}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: blobEnterSound
       value: 
       objectReference: {fileID: 8300000, guid: e1b5e9ec2d9c54d95adc29b501d9ed96, type: 3}
@@ -246,6 +254,10 @@ PrefabInstance:
       value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: badgeSlapVolume
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: blobEnterVolume
       value: 0.65
       objectReference: {fileID: 0}
@@ -257,6 +269,10 @@ PrefabInstance:
       propertyPath: sprayPaintSound
       value: 
       objectReference: {fileID: 8300000, guid: 68871a5d02c59438783911ee653213aa, type: 3}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: starWhooshSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8d13b12c3270d4f4b811468ca936aaf8, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: bombLaunchVolume
       value: 0.4
@@ -284,6 +300,10 @@ PrefabInstance:
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: sprayPaintVolume
       value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: starWhooshVolume
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: bombDroppedVolume

@@ -2640,6 +2640,10 @@ PrefabInstance:
       propertyPath: moveAmount.y
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 5431285691671632212, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.05
+      objectReference: {fileID: 0}
     - target: {fileID: 5438973996366415462, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Name
       value: EggSwipe2
@@ -2723,6 +2727,14 @@ PrefabInstance:
     - target: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -7.233
+      objectReference: {fileID: 0}
+    - target: {fileID: 6929882431540990572, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_RaycastPadding.w
+      value: -60
+      objectReference: {fileID: 0}
+    - target: {fileID: 6929882431540990572, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_RaycastPadding.z
+      value: -39.6
       objectReference: {fileID: 0}
     - target: {fileID: 8364315067125074635, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3144,12 +3156,24 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: randomEnemySetups.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: randomRingSetups.Array.data[2]
       value: 
       objectReference: {fileID: 11400000, guid: 9c01630bc9eee4cfd996bac5e0f81d88, type: 2}
+    - target: {fileID: 181520417636617702, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: randomEnemySetups.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7dbab818b2d4c40378dc76ef9911af2b, type: 2}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: maxNumberOfHealthSpawns
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: spawnIntensitiesNormal.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: spawnIntensitiesNormal.Array.data[0]
@@ -3172,8 +3196,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 0c7eded8745274cb0a7bf20524bbe81f, type: 2}
     - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: spawnIntensitiesNormal.Array.data[5]
+      value: 
+      objectReference: {fileID: 11400000, guid: 898317409ff78436aac083cec3030b68, type: 2}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: nextIntentisityObjectiveValues.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: nextIntentisityObjectiveValues.Array.data[1]
@@ -3189,7 +3217,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: nextIntentisityObjectiveValues.Array.data[4]
-      value: 200
+      value: 170
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: nextIntentisityObjectiveValues.Array.data[5]
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237960647493614051, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: nextIntentisityObjectiveValues.Array.data[6]
+      value: 1001
       objectReference: {fileID: 0}
     - target: {fileID: 1289930387296832898, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: gasCloudPoolSize
@@ -3268,12 +3304,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8825740233988290671, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
+      propertyPath: timeForAddObjective
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8825740233988290671, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: timeForNextIntensity
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8825740233988290671, guid: c06fb911a55d340f29701bc7fd308a93, type: 3}
       propertyPath: objectivesAddedPerTimeCycle
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

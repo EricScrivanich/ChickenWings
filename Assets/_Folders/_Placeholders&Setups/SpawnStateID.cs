@@ -8,6 +8,9 @@ using System.Linq;
 public class SpawnStateTransitionLogic : ScriptableObject
 {
     public bool loopStates;
+
+    [SerializeField] private float[] delayStateTimes;
+    private int currentDelayStateIndex;
     [SerializeField] private int maxSpecialSpawnsPerCycle;
     private bool hasPopulatedSpecialSpawns;
 
@@ -43,10 +46,6 @@ public class SpawnStateTransitionLogic : ScriptableObject
     public Vector2Int[] RingAmountsByType;
 
     private int[] specialSpawnLocations;
-
-    private int ResetTracker;
-
-
     public int[] ringSpawnSetTypeOrder;
 
     private int[] pickedSpecialEnemyIndexes;
@@ -58,14 +57,26 @@ public class SpawnStateTransitionLogic : ScriptableObject
     {
         specialSpawnLocations = null;
         hasPopulatedSpecialSpawns = false;
+        currentDelayStateIndex = 0;
         if (useWeights && specialEnemySpawnWeights != null)
         {
             specialEnemySpawnWeightsVar = (float[])specialEnemySpawnWeights.Clone();
         }
+    }
 
+    public float ReturnDelayTime()
+    {
+        if (delayStateTimes == null || delayStateTimes.Length == 0)
+            return 5;
 
-        Debug.LogError("reset transtion logic " + ResetTracker);
-        ResetTracker++;
+        float val = delayStateTimes[currentDelayStateIndex];
+        currentDelayStateIndex++;
+
+        if (currentDelayStateIndex >= delayStateTimes.Length)
+            currentDelayStateIndex = 0;
+
+        return val;
+
     }
     public void SpawnSpecialEnemy(SpawnStateManager spawner, int index)
     {
@@ -336,11 +347,6 @@ public class SpawnStateTransitionLogic : ScriptableObject
         }
     }
 
-    private void SpawnSpecialEnemyLogic(int i)
-    {
-
-    }
-
     private int PopulateSeleclctedSpecialSpawnsBasedOnWeight()
     {
 
@@ -396,74 +402,34 @@ public class SpawnStateTransitionLogic : ScriptableObject
 
     }
 
-    private int GetSpecialSpawnIndexBasedOnWeights()
-    {
-        if (specialEnemySpawnWeights == null || specialEnemySpawnWeights.Length == 0)
-        {
-            Debug.LogWarning("Special spawn weights are not set!");
-            return -1;
-        }
+    // public int GetRandomSequenceIndex()
+    // {
+    //     if (RandomSequenceWithWeights == null || RandomSequenceWithWeights.Length == 0)
+    //     {
+    //         Debug.LogWarning("Sequence weights are not set!");
+    //         return 0; // Default to 0 if not set
+    //     }
 
-        float totalWeight = specialEnemySpawnWeights.Sum();
-        float randomValue = Random.Range(0f, totalWeight);
-        float cumulativeWeight = 0f;
+    //     float totalWeight = 0f;
+    //     foreach (var weight in RandomSequenceWithWeights)
+    //     {
+    //         totalWeight += weight;
+    //     }
 
-        for (int i = 0; i < specialEnemySpawnWeightsVar.Length; i++)
-        {
-            cumulativeWeight += specialEnemySpawnWeights[i];
-            if (randomValue < cumulativeWeight)
-            {
-                if (spawnEachSpecialOnceMax)
-                {
-                    specialEnemySpawnWeightsVar[i] = 0;
-                }
+    //     float randomValue = Random.Range(0f, totalWeight);
+    //     float cumulativeWeight = 0f;
 
-                return i;
-            }
-        }
+    //     for (int i = 0; i < RandomSequenceWithWeights.Length; i++)
+    //     {
+    //         cumulativeWeight += RandomSequenceWithWeights[i];
+    //         if (randomValue < cumulativeWeight)
+    //         {
+    //             Debug.Log("Sequence Index is: " + i);
+    //             return i; // Return the index
+    //         }
+    //     }
 
-        return specialEnemySpawnWeights.Length - 1; // Fallback in case of rounding issues
-    }
-
-    public int GetRandomSequenceIndex()
-    {
-        if (RandomSequenceWithWeights == null || RandomSequenceWithWeights.Length == 0)
-        {
-            Debug.LogWarning("Sequence weights are not set!");
-            return 0; // Default to 0 if not set
-        }
-
-        float totalWeight = 0f;
-        foreach (var weight in RandomSequenceWithWeights)
-        {
-            totalWeight += weight;
-        }
-
-        float randomValue = Random.Range(0f, totalWeight);
-        float cumulativeWeight = 0f;
-
-        for (int i = 0; i < RandomSequenceWithWeights.Length; i++)
-        {
-            cumulativeWeight += RandomSequenceWithWeights[i];
-            if (randomValue < cumulativeWeight)
-            {
-                Debug.Log("Sequence Index is: " + i);
-                return i; // Return the index
-            }
-        }
-
-        return RandomSequenceWithWeights.Length - 1; // Return the max index if something goes wrong
-    }
-
-    public void NextTransitionState()
-    {
-
-    }
-
-
-
-
-
-
+    //     return RandomSequenceWithWeights.Length - 1; // Return the max index if something goes wrong
+    // }
 
 }

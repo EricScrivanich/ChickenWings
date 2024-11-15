@@ -7,27 +7,35 @@ public class PlayerDashState : PlayerBaseState
 
 
     private bool switchSlash;
-    private readonly Vector2 dashForce = new Vector2(11, 0);
+
     private int rotationSpeed = 100;
     private float rotZ;
     private bool passedTime;
     private float dashingTime;
-    private float dragDuration = .4f;
     private float ableToDashSlashDuration = .6f;
-    private float dragAmount = 2.5f;
+    // private readonly Vector2 dashForce = new Vector2(11f, 0);
+    // private float dragAmount = 2.5f;
+    // private float dragDuration = .4f;
+    // private float dashDurationMin = .35f;
+    // private float dashDurationMax = .69f;
+
+    private readonly Vector2 dashForce = new Vector2(11.6f, 0);
+    private float dragAmount = 2.2f;
+    private float initialDragAmount = .35f;
+    private float dashDurationMin = .32f;
+    private float dashDurationMax = .53f;
+    private float dragDuration = .35f;
+
     private float dragTime;
-    private float dashDurationMin = .35f;
-    private float dashDurationMax = .69f;
+
+
 
     private bool hasFinishedDash;
 
 
     public override void EnterState(PlayerStateManager player)
     {
-        if (player.rb.angularVelocity != 0)
-        {
-            player.rb.angularVelocity = 0;
-        }
+        player.rb.angularVelocity = 0;
         player.isDashing = true;
         // player.rb.freezeRotation = true;
 
@@ -35,15 +43,16 @@ public class PlayerDashState : PlayerBaseState
         player.stillDashing = true;
         switchSlash = false;
         dragTime = 0;
-        if (player.canDashSlash)
-        {
-            player.ID.globalEvents.CanDashSlash?.Invoke(true);
-        }
+        // if (player.canDashSlash)
+        // {
+        //     player.ID.globalEvents.CanDashSlash?.Invoke(true);
+        // }
         player.rb.drag = .35f;
 
         rotZ = 0;
         passedTime = false;
         player.ChangeCollider(1);
+        player.AdjustForce(dashForce);
         // player.rb.velocity = Vector2.zero;
         // player.disableButtons = true;
         player.rb.gravityScale = 0;
@@ -52,7 +61,7 @@ public class PlayerDashState : PlayerBaseState
         AudioManager.instance.PlayDashSound();
         dashingTime = 0;
         // player.rb.velocity = new Vector2(dashPower, 0);
-        player.AdjustForce(dashForce);
+     
 
 
     }

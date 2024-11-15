@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
+  m_Name: EasyRings
+  m_EditorClassIdentifier: 
+  eventCallBack_Trigger_ID_Delay: []
+  eggTriggerAndIndexAndType: []
+  eggPosition: []
+  eggSpeed: []
+  mustCompleteRingSequence: 0
+  enemyTriggerForEachRingIndex: 
+  enemyTriggerForEachRingIndexWeights: 
+  enemySetup: []
+  collectableSetup:
+  - dataArray:
+    - rid: 4599887381705785345
+    - rid: 4599887381705785348
+    - rid: 4599887381705785349
+  - dataArray:
+    - rid: 4599887381705785350
+    - rid: 4599887381705785354
+    - rid: 4599887381705785355
+    - rid: 4599887381705785356
+  - dataArray:
+    - rid: 4599887381705785357
+    - rid: 4599887381705785361
+    - rid: 4599887381705785363
+  isRandomSetup: 0
+  testFromTrigger: 0
+  startTestTrigger: 0
+  ignoreXTriggetTime: 0
+  XTriggerForRecording: 1.5
+  references:
+    version: 2
+    RefIds:
+    - rid: 4599887381705785345
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.6360002
+        isRings: 1
+        data:
+        - position: {x: 14.6, y: 2.35}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 16.18, y: 2.35}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 17.97, y: 2.35}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 19.68, y: 2.35}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+    - rid: 4599887381705785348
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.6299999
+        isRings: 1
+        data:
+        - position: {x: 14.520819, y: 1.7120823}
+          scale: {x: 1, y: 1.05, z: 1}
+          rotation: {x: -0, y: -0, z: 0.30444032, w: 0.95253146}
+          speed: 5
+        - position: {x: 17.06, y: 2.51}
+          scale: {x: 1, y: 1.05, z: 1}
+          rotation: {x: -0, y: -0, z: -0.008286952, w: -0.99996567}
+          speed: 5
+        - position: {x: 19.65, y: 1.38}
+          scale: {x: 1, y: 1.05, z: 1}
+          rotation: {x: -0, y: -0, z: -0.29404002, w: 0.95579314}
+          speed: 5
+    - rid: 4599887381705785349
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.902
+        isRings: 1
+        data:
+        - position: {x: 15.37, y: 1.79}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.5223419, w: 0.8527362}
+          speed: 5
+        - position: {x: 16.01, y: 2.75}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.5223419, w: 0.8527362}
+          speed: 5
+    - rid: 4599887381705785350
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.27
+        isRings: 1
+        data:
+        - position: {x: 14.326254, y: 0.14228672}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 16.09, y: 0.14228672}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 17.85, y: 0.14228672}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+    - rid: 4599887381705785354
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.038
+        isRings: 1
+        data:
+        - position: {x: 14.51, y: 1.31}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.18599062, w: -0.9825515}
+          speed: 5
+        - position: {x: 16.69, y: 0.24}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.38090494, w: 0.92461425}
+          speed: 5
+    - rid: 4599887381705785355
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.896
+        isRings: 1
+        data:
+        - position: {x: 15.22, y: 0.65}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0.000000013893098, y: -0.000000105528535, z: 0.70710605, w: -0.7071075}
+          speed: 5
+        - position: {x: 15.62, y: -0.55}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0.000000013893098, y: -0.000000105528535, z: 0.70710605, w: -0.7071075}
+          speed: 5
+        - position: {x: 15.98, y: -1.79}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0.000000013893098, y: -0.000000105528535, z: 0.70710605, w: -0.7071075}
+          speed: 5
+    - rid: 4599887381705785356
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.5
+        isRings: 1
+        data:
+        - position: {x: 14.94, y: -0.35}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.33043426, w: 0.943829}
+          speed: 5
+        - position: {x: 19.14, y: 2.13}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.33043426, w: 0.943829}
+          speed: 5
+    - rid: 4599887381705785357
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 2.73
+        isRings: 1
+        data:
+        - position: {x: 14.79, y: -1.85}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.7141679, w: -0.6999745}
+          speed: 5
+        - position: {x: 15.15, y: -2.98}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.7141679, w: -0.6999745}
+          speed: 5
+    - rid: 4599887381705785361
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.04357
+        isRings: 1
+        data:
+        - position: {x: 14.83, y: -1.93}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: 0.3435898, w: 0.9391199}
+          speed: 5
+        - position: {x: 16.71785, y: -1.0101689}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0.11645885, w: -0.9931956}
+          speed: 5
+    - rid: 4599887381705785363
+      type: {class: RingSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3.19
+        isRings: 1
+        data:
+        - position: {x: 13.908893, y: -2.61}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 15.68, y: -2.61}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5
+        - position: {x: 17.45, y: -2.61}
+          scale: {x: 1, y: 1, z: 1}
+          rotation: {x: -0, y: -0, z: -0, w: 1}
+          speed: 5

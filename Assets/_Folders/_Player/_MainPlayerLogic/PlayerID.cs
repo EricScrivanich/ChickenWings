@@ -2,13 +2,19 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-[CreateAssetMenu]
+[CreateAssetMenu(menuName = "Player/ID")]
 
-public class PlayerID : ScriptableObject
+public class PlayerID : ScriptableObject 
 {
 
     public List<float> particleYPos { get; private set; }
     [SerializeField] private LevelManagerID lvlID;
+
+
+    public List<int> PlayerInputs { get; private set; }
+    public List<Vector3Int> KilledPigs { get; private set; }
+
+
 
 
     public bool constantPlayerForceBool;
@@ -150,6 +156,8 @@ public class PlayerID : ScriptableObject
         resetingValues = true;
         isAlive = true;
         particleYPos = new List<float>();
+        PlayerInputs = new List<int>();
+        KilledPigs = new List<Vector3Int>();
 
 
         PlayerMaterial.SetFloat("_Alpha", 1);
@@ -173,6 +181,17 @@ public class PlayerID : ScriptableObject
         addedChainShotgunAmmo = 0;
 
 
+    }
+
+    public void AddPlayerInput(int inp)
+    {
+
+        PlayerInputs.Add(inp);
+    }
+
+    public void AddKillPig(int type, int bulletType,int bulletID)
+    {
+        KilledPigs.Add(new Vector3Int(type,bulletType,bulletID));
     }
 
     public void NewGasParticles(float y, bool add)

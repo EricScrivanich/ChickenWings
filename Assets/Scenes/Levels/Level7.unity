@@ -3093,6 +3093,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FadeGroup: {fileID: 1451452158}
+  blockButtons: {fileID: 0}
+  setSelfUnactive: 0
   setSelfUnactiveAfterDelay: 0
   setSelfActiveAfterDelay: 0
   setCanvasGroupUnactive: 1
@@ -4344,6 +4346,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c5932b857f0fa4b848394102ff9bf0ab, type: 2}
   randomRingSetups:
   - {fileID: 11400000, guid: 8101605b65b1b4f88a3b618d517e3e83, type: 2}
+  lastRandomEnemySpawnTime: 0
   spawnIntervalRangeAfterTarget: {x: 0, y: 0}
   normalPigBoundingBoxBase: {fileID: 11400000, guid: 759415d4b2c764238a04bc3724ca2422, type: 2}
   jetPackPigBoundingBoxBase: {fileID: 11400000, guid: 6b6372b78ffca44bc880be6ad5c45c52, type: 2}
@@ -4401,6 +4404,7 @@ MonoBehaviour:
   nextIntentisityObjectiveValues: 00000000
   objectivesTracked: []
   initialDelayForHealthRingsToSpawn: 0
+  maxNumberOfHealthSpawns: -1
 --- !u!114 &1641434580
 MonoBehaviour:
   m_ObjectHideFlags: 0

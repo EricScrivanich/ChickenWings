@@ -6,7 +6,9 @@ using DG.Tweening;
 public class DropZone : MonoBehaviour
 {
     private Sequence flashSeq;
+    private Sequence arrowsSeq;
     private SpriteRenderer sr;
+    [SerializeField] private SpriteRenderer arrows;
     private int flipDirectionInt;
     [SerializeField] private Transform warningTransform;
     [SerializeField] private SpriteRenderer[] warningSprites;
@@ -15,6 +17,9 @@ public class DropZone : MonoBehaviour
 
     [SerializeField] private Color color1;
     [SerializeField] private Color color2;
+    [SerializeField] private Color arrowColor1;
+    [SerializeField] private Color arrowColor2;
+    private Color arrowColorStart = new Color(1, .9f, .9f, 0);
 
     [SerializeField] private GameObject dropZone;
 
@@ -35,6 +40,10 @@ public class DropZone : MonoBehaviour
         sr.color = color2;
         transform.position = new Vector2(x, 0);
         flipDirectionInt = flipInt;
+        arrows.color = arrowColorStart;
+
+        if (flipInt >= 0) arrows.flipX = false;
+        else arrows.flipX = true;
 
 
 
@@ -68,16 +77,34 @@ public class DropZone : MonoBehaviour
 
 
 
-
+        // DoArrowSeq();
         sr.DOFade(color2.a, .75f).From(0).OnComplete(FlashSeqence).SetEase(Ease.InSine);
+        arrows.DOColor(arrowColor1, .73f).SetEase(Ease.OutSine);
     }
 
     public void FadeOut()
     {
         if (flashSeq != null && flashSeq.IsPlaying())
             flashSeq.Kill();
+        if (arrowsSeq != null && arrowsSeq.IsPlaying())
+            arrowsSeq.Kill();
 
         sr.DOFade(0, .7f).SetEase(Ease.OutSine).OnComplete(() => gameObject.SetActive(false));
+
+        arrows.DOFade(0, .6f);
+
+    }
+
+    private void DoArrowSeq()
+    {
+
+        arrowsSeq = DOTween.Sequence();
+
+        arrowsSeq.Append(arrows.DOColor(arrowColor1, .7f).SetEase(Ease.OutSine));
+        arrowsSeq.AppendInterval(.3f);
+
+
+        arrowsSeq.Play();
 
     }
 
@@ -107,7 +134,9 @@ public class DropZone : MonoBehaviour
         flashSeq = DOTween.Sequence();
 
         flashSeq.Append(sr.DOColor(color1, .8f).From(color2).SetEase(Ease.InOutSine));
+        flashSeq.Join(arrows.DOColor(arrowColor2, .8f).From(arrowColor1));
         flashSeq.Append(sr.DOColor(color2, .8f).SetEase(Ease.InOutSine));
+        flashSeq.Join(arrows.DOColor(arrowColor1, .8f));
 
         flashSeq.Play().SetLoops(-1);
 

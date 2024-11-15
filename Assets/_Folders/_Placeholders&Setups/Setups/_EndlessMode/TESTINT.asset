@@ -29,19 +29,28 @@ MonoBehaviour:
   - 1
   randomRingTypeWeights: []
   randomEnemySetupDifficultyWeights:
+  - 0
+  - 0
   - 1
   randomEnemySetupAmountToSpawnWeights:
   - 0
-  - 1
-  - 0
-  xTargetToStartSpawn: 5
+  - 0.3
+  - 0.5
+  - 0.2
+  flipRandomEnemySpawnXChance: 0.5
+  xTargetToStartSpawn: 8
   spawnRandomRangeAfterTarget: {x: 0, y: 0}
   amountOfWaveWeights:
   - 0
+  - 0
+  - 0.5
   - 0.5
   waveSizeWeights:
   - 0
-  - 1
+  - 0
+  - 0
+  - 0.3
+  - 0.4
   xSpawnRange: {x: 15, y: 22}
   xSpawnRangeMissilePig: {x: 13, y: 17}
   shootingRangeAdjustment: 0
@@ -49,12 +58,12 @@ MonoBehaviour:
   missileBasePigChance: 0.5
   missilePigFlipPChance: 0
   missilePigFlipWChance: 0
-  allowedOverlap: {x: 0, y: 0.3}
-  activeBoundingBoxTimeAdjustment: 0
-  normalPig_W: 0.5
+  allowedOverlap: {x: -6.12, y: -0.18}
+  activeBoundingBoxTimeAdjustment: 1
+  normalPig_W: 0.3
   jetpackPig_W: 0.4
-  bigPig_W: 0.37
-  tenderizerPig_W: 0.28
+  bigPig_W: 0.35
+  tenderizerPig_W: 0.4
   NormalPig_BB: {fileID: 0}
   JetpackPig_BB: {fileID: 0}
   BigPig_BB: {fileID: 0}

@@ -57,6 +57,8 @@ public class RandomSpawnIntensity : ScriptableObject
     }
 
     [Header("Pure Random Logic")]
+
+    public float flipRandomEnemySpawnXChance;
     [Header("Triggering Next Spawn")]
     [SerializeField] private float xTargetToStartSpawn;
     public float XTargetToStartSpawn

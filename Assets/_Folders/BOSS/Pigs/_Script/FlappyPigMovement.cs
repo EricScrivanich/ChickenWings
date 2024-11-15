@@ -511,14 +511,14 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
             flapSeq.Join(sprite.DOLocalMoveY(-.4f, .25f).SetEase(Ease.OutSine));
             flapSeq.Play();
 
-            pigMatHandler.Damage(1);
+            pigMatHandler.Damage(1,0,-1);
             return;
 
         }
         // Check for the first contact point
         if (other.contacts.Length > 0)
         {
-            Debug.LogError("DGSDGDSGSDGSDG");
+
             ContactPoint2D contact = other.contacts[0];
 
             // The normal vector points directly away from the surface of collision

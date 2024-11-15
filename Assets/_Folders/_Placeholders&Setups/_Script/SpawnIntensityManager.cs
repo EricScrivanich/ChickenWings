@@ -35,6 +35,7 @@ public class SpawnIntensityManager : MonoBehaviour
     [SerializeField] string[] objectivesTracked;
 
     [SerializeField] private float initialDelayForHealthRingsToSpawn;
+    [SerializeField] private int maxNumberOfHealthSpawns;
 
     private bool canSpawnHealthRings = false;
 
@@ -204,7 +205,11 @@ public class SpawnIntensityManager : MonoBehaviour
 
     void UpdateHealthIntensity(int lives)
     {
+
+        if (maxNumberOfHealthSpawns != -1 && currentHealthIntensityIndex >= maxNumberOfHealthSpawns) return;
         currentLives = lives;
+
+
         if (lives == 1 && spawnIntensitiesHealth.Length > 0 && canSpawnHealthRings)
         {
             waitingOnHealth = false;

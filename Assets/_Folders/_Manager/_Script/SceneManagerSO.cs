@@ -4,16 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-[CreateAssetMenu]
+[CreateAssetMenu(menuName = "Levels/SceneHolder")]
 public class SceneManagerSO : ScriptableObject
 {
     [SerializeField] private List<string> Levels_Scene;
     [SerializeField] private List<string> Levels_Name;
+    [SerializeField] private List<LevelChallenges> Level_Challenges;
     [SerializeField] private List<string> OtherGameModes_Scene;
     [SerializeField] private List<string> OtherGameModes_Name;
     [SerializeField] private List<Image> Levels_UI;
     [SerializeField] private List<string> Gamemodes_Scene;
     [SerializeField] private List<Scene> Gamemodes_UI;
+    private int levelNumber;
 
 
     public void LoadLevel(int levelNumber)
@@ -27,6 +29,37 @@ public class SceneManagerSO : ScriptableObject
         else
             SceneManager.LoadScene(Levels_Scene[levelNumber]);
 
+    }
+
+    public int ReturnChallengeCountByLevel(int level)
+    {
+        if (Level_Challenges[level] != null)
+            return Level_Challenges[level].GetAmountOfChallenges();
+        else
+            return 0;
+    }
+
+    public int ReturnNumberOfLevels()
+    {
+        return Levels_Name.Count;
+    }
+
+    public LevelChallenges ReturnLevelChallenges()
+    {
+        if (Level_Challenges[levelNumber] == null || levelNumber >= Level_Challenges.Count)
+            return null;
+        return Level_Challenges[levelNumber];
+    }
+
+    public void SetLevelNumber(int num)
+    {
+        levelNumber = num;
+
+    }
+
+    public int ReturnLevelNumber()
+    {
+        return levelNumber;
     }
 
     public void LoadGamemode(int type)

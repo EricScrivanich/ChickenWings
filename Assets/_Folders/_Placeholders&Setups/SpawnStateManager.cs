@@ -53,7 +53,7 @@ public class SpawnStateManager : MonoBehaviour
         }
     }
 
-    
+
 
     public SetupParent[] randomEnemySetups;
     private int currentRandomEnemySetup;
@@ -183,6 +183,25 @@ public class SpawnStateManager : MonoBehaviour
 
         LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
 
+        if (randomEnemySetups != null && randomEnemySetups.Length > 0)
+        {
+            foreach (var set in randomEnemySetups)
+            {
+                set.ResetRandomSetups();
+            }
+
+        }
+
+        if (randomRingSetups != null && randomRingSetups.Length > 0)
+        {
+            foreach (var set in randomRingSetups)
+            {
+                set.ResetRandomSetups();
+            }
+
+        }
+
+
 
         SpawnPools();
 
@@ -212,6 +231,10 @@ public class SpawnStateManager : MonoBehaviour
         {
             StartCoroutine(SwitchToStartingStateAfterDelay(startingStateDelay));
 
+        }
+        else if (startingState == -2)
+        {
+            NextLogicTriggerAfterDelay(startingStateDelay, -1);
         }
 
         // SwitchState();
@@ -376,6 +399,13 @@ public class SpawnStateManager : MonoBehaviour
 
         switch (type)
         {
+            case (-2):
+                {
+                    currentState = null;
+                    NextLogicTriggerAfterDelay(transitionLogic.ReturnDelayTime(), -2);
+
+                    break;
+                }
             case (-1):
                 {
                     currentState = null;
@@ -1151,6 +1181,7 @@ public class SpawnStateManager : MonoBehaviour
     {
         if (flappyPigIndex >= flappyPigs.Length) flappyPigIndex = 0;
         FlappyPigMovement flappyPig = flappyPigs[flappyPigIndex];
+        GameTimer.OnAddFlappyPig?.Invoke(true);
         if (flappyPig.gameObject.activeInHierarchy)
         {
             var obj = Instantiate(flappyPigPrefab, position, Quaternion.identity).GetComponent<FlappyPigMovement>();

@@ -14,6 +14,8 @@ public class ScoreDisplay : MonoBehaviour
     private int scoreDisplayed;
     private Coroutine fadeOutCoroutine = null;
 
+    [SerializeField] private bool flappyFrenzy;
+
 
     // Start is called before the first frame update
     void Start()
@@ -125,42 +127,89 @@ public class ScoreDisplay : MonoBehaviour
     private void KillPigScore(int type)
     {
 
-        switch (type)
+        if (!flappyFrenzy)
         {
-            case (0):
-                player.AddScore(5);
-                break;
+            switch (type)
+            {
+                case (0):
+                    player.AddScore(5);
+                    break;
 
-            case (1):
-                player.AddScore(10);
-                break;
-            case (2):
-                player.AddScore(10);
-                break;
-            case (3):
-                player.AddScore(20);
-                break;
-            case (4):
-                player.AddScore(15);
-                break;
+                case (1):
+                    player.AddScore(10);
+                    break;
+                case (2):
+                    player.AddScore(10);
+                    break;
+                case (3):
+                    player.AddScore(20);
+                    break;
+                case (4):
+                    player.AddScore(15);
+                    break;
 
-            case (5):
-                player.AddScore(15);
-                break;
-            case (6):
-                player.AddScore(25);
-                break;
-            case (7):
-                player.AddScore(15);
-                break;
-            case (8):
-                player.AddScore(10);
-                break;
-            case (9):
-                player.AddScore(10);
-                break;
+                case (5):
+                    player.AddScore(15);
+                    break;
+                case (6):
+                    player.AddScore(25);
+                    break;
+                case (7):
+                    player.AddScore(15);
+                    break;
+                case (8):
+                    player.AddScore(10);
+                    break;
+                case (9):
+                    player.AddScore(10);
+                    break;
+
+            }
+        }
+
+        else if (flappyFrenzy)
+        {
+            switch (type)
+            {
+                // case (0):
+                //     player.AddScore(5);
+                //     break;
+
+                // case (1):
+                //     player.AddScore(10);
+                //     break;
+                // case (2):
+                //     player.AddScore(10);
+                //     break;
+                // case (3):
+                //     player.AddScore(20);
+                //     break;
+                // case (4):
+                //     player.AddScore(15);
+                //     break;
+
+                // case (5):
+                //     player.AddScore(15);
+                //     break;
+                // case (6):
+                //     player.AddScore(25);
+                //     break;
+                case (7):
+                    player.AddScore(5);
+
+                    GameTimer.OnAddFlappyPig?.Invoke(false);
+                    break;
+                    // case (8):
+                    //     player.AddScore(10);
+                    //     break;
+                    // case (9):
+                    //     player.AddScore(10);
+                    //     break;
+
+            }
 
         }
+
 
 
     }

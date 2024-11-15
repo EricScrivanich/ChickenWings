@@ -39,9 +39,119 @@ public class PlayerFlipLeftState : PlayerBaseState
     private bool hitSlowTarget;
     private bool prolongRotation;
 
+    private bool resetRot;
+
+
     private int jumpAirIndex;
 
+    private bool finishedLerpRot;
+
+    private float angDrag = .45f;
+    private float angForce = 390;
+
+    private Sequence angVelSequence;
+
+    private float angVel;
+    private bool tweeningAng;
+    private bool hasFinishedEndOfTweenLogic;
+
+
     public override void EnterState(PlayerStateManager player)
+    {
+        player.AdjustForce(JumpForce);
+        // player.transform.eulerAngles = Vector3.zero;
+        finishedLerpRot = false;
+        tweeningAng = true;
+        hasFadedJumpAir = false;
+        jumpAirIndex = player.CurrentJumpAirIndex;
+        hitSlowTarget = false;
+        addForceDownTimer = 0;
+        rotationSlowDownTime = .6f;
+        time = 0;
+        rotationTimer = 0;
+        float added = 0;
+
+        if (player.shotgunEquipped)
+            angDrag = .5f;
+        else angDrag = .45f;
+        // if (player.justFlippedLeft)
+        if (player.rb.angularVelocity > 10)
+        {
+            hasFinishedEndOfTweenLogic = true;
+            added = player.rb.angularVelocity * .1f;
+
+            if (added > 35)
+            {
+
+                added = 35;
+
+            }
+
+            player.rb.angularDrag = angDrag;
+            player.rb.angularVelocity = angForce + added;
+        }
+
+        else
+        {
+            hasFinishedEndOfTweenLogic = false;
+            float dur = .2f;
+
+            if (player.shotgunEquipped) dur = .35f;
+            TweenAngVel(dur, 5);
+        }
+        player.SetFlipDirection(false);
+        // player.rb.angularVelocity = angForce;
+        // player.rb.angularDrag = angDrag;
+
+        // player.anim.SetTrigger("FlipTrigger");
+        // if (player.transform.rotation.eulerAngles.z > 195f)
+        // {
+        //     prolongRotation = true;
+        // }
+        // if (player.transform.rotation.eulerAngles.z > 30f)
+        // {
+        //     prolongRotation = true;
+        //     resetRot = true;
+        // }
+        // else
+        // {
+        //     resetRot = false;
+
+        //     prolongRotation = false;
+        // }
+        // currentRotation = player.transform.rotation.eulerAngles.z;
+
+        // if (player.shotgunEquipped)
+        // {
+        //     rotationSpeed = 300;
+        //     rotationSlowDownTime = .8f;
+        //     // addForceDownMultiplier = 1.25f;
+
+        // }
+        // else
+        // {
+        //     rotationSpeed = 340;
+        //     rotationSlowDownTime = .6f;
+        //     // addForceDownMultiplier = 1f;
+
+        // }
+        // rotationSpeedVar = rotationSpeed;
+
+        AudioManager.instance.PlayCluck();
+        Tween();
+    }
+    private void TweenAngVel(float dur, float start)
+    {
+
+        angVelSequence = DOTween.Sequence();
+
+        // angVelSequence.Append(DOTween.To(() => 0, x => angVel = x, angForce, dur)
+        //    .SetEase(Ease.InSine));
+        angVelSequence.Append(DOTween.To(() => start, x => angVel = x, angForce, dur));
+        angVelSequence.Play().OnComplete(() => tweeningAng = false);
+
+    }
+    private void Tween()
     {
         if (sequence != null && sequence.IsPlaying())
             sequence.Kill();
@@ -54,42 +164,6 @@ public class PlayerFlipLeftState : PlayerBaseState
         // sequence.Join(flipImage.DOScale(flipImageTargetScale * 1.1f, .6f)).SetEase(Ease.InSine);
         sequence.Play();
 
-        hasFadedJumpAir = false;
-        jumpAirIndex = player.CurrentJumpAirIndex;
-        hitSlowTarget = false;
-        addForceDownTimer = 0;
-        rotationSlowDownTime = .6f;
-        time = 0;
-        rotationTimer = 0;
-        player.SetFlipDirection(true);
-        // player.anim.SetTrigger("FlipTrigger");
-        if (player.transform.rotation.eulerAngles.z > 195f)
-        {
-            prolongRotation = true;
-        }
-        else
-        {
-            prolongRotation = false;
-        }
-        currentRotation = player.transform.rotation.eulerAngles.z;
-
-        if (player.shotgunEquipped)
-        {
-            rotationSpeed = 300;
-            rotationSlowDownTime = .8f;
-            // addForceDownMultiplier = 1.25f;
-
-        }
-        else
-        {
-            rotationSpeed = 340;
-            rotationSlowDownTime = .6f;
-            // addForceDownMultiplier = 1f;
-
-        }
-        rotationSpeedVar = rotationSpeed;
-        player.AdjustForce(JumpForce);
-        AudioManager.instance.PlayCluck();
     }
 
     public override void ExitState(PlayerStateManager player)
@@ -107,6 +181,18 @@ public class PlayerFlipLeftState : PlayerBaseState
     }
     public override void FixedUpdateState(PlayerStateManager player)
     {
+        if (!hasFinishedEndOfTweenLogic)
+        {
+            player.rb.angularVelocity = angVel;
+
+            if (!tweeningAng)
+            {
+                player.rb.angularVelocity = angForce;
+                player.rb.angularDrag = angDrag;
+                hasFinishedEndOfTweenLogic = true;
+            }
+        }
+
         time += Time.fixedDeltaTime;
         if (time > .2f)
         {
@@ -114,6 +200,7 @@ public class PlayerFlipLeftState : PlayerBaseState
             {
                 player.rb.AddForce(AddForceVector);
                 rotationSlowDownTime += .45f * Time.fixedDeltaTime;
+                player.rb.AddTorque(.1f);
 
                 if (time > addForceTime)
                 {
@@ -129,17 +216,36 @@ public class PlayerFlipLeftState : PlayerBaseState
             }
         }
     }
+    // public override void RotateState(PlayerStateManager player)
+    // {
+    //     currentRotation += rotationSpeedVar * Time.fixedDeltaTime;
+    //     float targetRotation = Mathf.LerpAngle(player.rb.rotation, currentRotation, Time.fixedDeltaTime * rotationSpeedVar);
+    //     player.rb.MoveRotation(targetRotation);
+    //     if (hitSlowTarget && !player.holdingLeftFlip)
+    //     {
+    //         rotationTimer += Time.fixedDeltaTime;
+    //         rotationSpeedVar = Mathf.Lerp(rotationSpeed, 0, rotationTimer / rotationSlowDownTime);
+    //     }
+    // }
+
     public override void RotateState(PlayerStateManager player)
     {
-        currentRotation += rotationSpeedVar * Time.fixedDeltaTime;
-        float targetRotation = Mathf.LerpAngle(player.rb.rotation, currentRotation, Time.fixedDeltaTime * rotationSpeedVar);
-        player.rb.MoveRotation(targetRotation);
-        if (hitSlowTarget && !player.holdingLeftFlip)
-        {
-            rotationTimer += Time.fixedDeltaTime;
-            rotationSpeedVar = Mathf.Lerp(rotationSpeed, 0, rotationTimer / rotationSlowDownTime);
-        }
+
+        // if (resetRot)
+        // {
+        //     player.BaseRotationLogic();
+        //     if (Mathf.Abs(player.transform.eulerAngles.z) > 10)
+        //     {
+        //         resetRot = false;
+        //         player.rb.angularVelocity = angForce;
+        //         player.rb.angularDrag = angDrag;
+
+        //     }
+        // }
+
     }
+
+
     public override void UpdateState(PlayerStateManager player)
     {
         if (Mathf.Abs(player.transform.rotation.eulerAngles.z - 270f) < 5 && !prolongRotation)

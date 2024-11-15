@@ -29,14 +29,16 @@ public class PlayerShotgunState : PlayerBaseState
         //     }
         // }
         player.maxFallSpeed = -6;
+        player.rb.angularDrag = .35f;
+        player.rb.gravityScale *= .95f;
 
         if (player.transform.rotation.eulerAngles.z > 270 || player.transform.rotation.eulerAngles.z < 90)
         {
-            player.rb.angularVelocity = 500;
+            player.rb.angularVelocity = 460;
         }
         else
         {
-            player.rb.angularVelocity = -500;
+            player.rb.angularVelocity = -460;
         }
 
 
@@ -44,7 +46,8 @@ public class PlayerShotgunState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
     {
         player.maxFallSpeed = player.originalMaxFallSpeed;
-        player.rb.angularVelocity = 0;
+        player.rb.gravityScale = player.originalGravityScale;
+        // player.rb.angularVelocity = 0;
 
         // if (ignoringTime) player.ignoreParticleCollision = false;
 

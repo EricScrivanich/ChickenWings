@@ -70,9 +70,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1283433495
-  m_SortingLayer: 7
-  m_SortingOrder: 0
+  m_SortingLayerID: -884308203
+  m_SortingLayer: 4
+  m_SortingOrder: 6
   m_Sprite: {fileID: -550479685, guid: 7ce5e8e9452c74fa5b0f7f757123d630, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 5458430725548953104}
   - component: {fileID: 3289168005950065858}
   - component: {fileID: 2584884300328111158}
+  - component: {fileID: 3044621094162422232}
   m_Layer: 11
   m_Name: BomberPlane
   m_TagString: Plane
@@ -114,7 +115,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.102467544, w: 0.9947364}
   m_LocalPosition: {x: 16.9, y: 3.7, z: 0}
-  m_LocalScale: {x: 0.85, y: 0.85, z: 0.85}
+  m_LocalScale: {x: 0.83, y: 0.83, z: 0.83}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 168652554148965338}
@@ -159,9 +160,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1283433495
-  m_SortingLayer: 7
-  m_SortingOrder: -1
+  m_SortingLayerID: -884308203
+  m_SortingLayer: 4
+  m_SortingOrder: 5
   m_Sprite: {fileID: -1394393849, guid: 7ce5e8e9452c74fa5b0f7f757123d630, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -285,6 +286,18 @@ MonoBehaviour:
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   body: {fileID: 0}
+--- !u!210 &3044621094162422232
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7477632478645445299}
+  m_Enabled: 1
+  m_SortingLayerID: -884308203
+  m_SortingLayer: 4
+  m_SortingOrder: 8
+  m_SortAtRoot: 0
 --- !u!1 &7849600669723258555
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,9 +368,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1283433495
-  m_SortingLayer: 7
-  m_SortingOrder: 0
+  m_SortingLayerID: -884308203
+  m_SortingLayer: 4
+  m_SortingOrder: 4
   m_Sprite: {fileID: 1116098484, guid: 7ce5e8e9452c74fa5b0f7f757123d630, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

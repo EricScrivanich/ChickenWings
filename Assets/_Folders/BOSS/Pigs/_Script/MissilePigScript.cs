@@ -92,7 +92,7 @@ public class MissilePigScript : MonoBehaviour
         if (player != null && canShoot && transform.position.x < 10 && transform.position.x > -9.5f)
         {
             float distance = player.transform.position.x - transform.position.x;
-            bool inRange = (distance > rangesMinMaxVar.x && distance < rangesMinMaxVar.y);
+            bool inRange = (distance > rangesMinMaxVar.x && distance < rangesMinMaxVar.y && Mathf.Abs(transform.position.y) < 12f);
 
             if (inRange)
             {

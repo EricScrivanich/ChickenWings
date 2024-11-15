@@ -8,6 +8,7 @@ public class PlayerFlipRightState : PlayerBaseState
 {
     private Sequence sequence;
     private RectTransform flipImage;
+    private Sequence angVelSequence;
 
     private Vector3 flipImageTargetRotation = new Vector3(0, 180, 45);
     Vector3[] rotations = new Vector3[]
@@ -36,6 +37,8 @@ public class PlayerFlipRightState : PlayerBaseState
     private float rotationSlowDownTimeShotgun = 1f;
     private float rotationSlowDownTime;
 
+    private float testVal;
+
     private float time;
     private float rotationTimer;
     private bool hitSlowTarget;
@@ -45,7 +48,108 @@ public class PlayerFlipRightState : PlayerBaseState
     private float slowTimeMultiplier = 1;
     private float addForceDownMultiplier = 1;
 
+
+
+    private float angDrag = .3f;
+    private float angForce = -340;
+
+    private float angVel;
+    private bool tweeningAng;
+    private bool hasFinishedEndOfTweenLogic;
+
     public override void EnterState(PlayerStateManager player)
+    {
+        player.AdjustForce(JumpForce);
+        tweeningAng = true;
+
+        hasFadedJumpAir = false;
+        jumpAirIndex = player.CurrentJumpAirIndex;
+
+        hitSlowTarget = false;
+        addForceDownTimer = 0;
+
+        time = 0;
+        rotationTimer = 0;
+        float added = 0;
+
+        if (player.shotgunEquipped)
+        {
+            angForce = -325;
+            angDrag = .4f;
+        }
+        else
+        {
+            angForce = -350;
+            angDrag = .3f;
+        }
+        // if (player.justFlippedRight)
+        if (player.rb.angularVelocity < -10)
+        {
+            hasFinishedEndOfTweenLogic = true;
+            if (player.shotgunEquipped)
+                added = player.rb.angularVelocity * .12f;
+            else
+                added = player.rb.angularVelocity * .08f;
+
+            if (added < -30)
+            {
+                Debug.LogError("Added of: " + added + " is too high");
+                added = -30;
+            }
+            player.rb.angularDrag = angDrag;
+            player.rb.angularVelocity = angForce + added;
+        }
+
+        else
+        {
+            hasFinishedEndOfTweenLogic = false;
+            float dur = .2f;
+
+            if (player.shotgunEquipped) dur = .5f;
+            TweenAngVel(dur, -10);
+        }
+
+
+
+
+
+
+
+        // player.anim.SetTrigger("FlipTrigger");
+        // if (player.transform.rotation.eulerAngles.z < 175f)
+        // {
+        //     prolongRotation = true;
+        // }
+        // else
+        // {
+        //     prolongRotation = false;
+        // }
+        // currentRotation = player.transform.rotation.eulerAngles.z;
+        player.SetFlipDirection(true);
+
+        // if (player.shotgunEquipped)
+        // {
+        //     rotationSpeed = 230;
+
+        //     rotationSlowDownTime = 1f;
+        //     addForceDownMultiplier = 1.2f;
+
+        // }
+        // else
+        // {
+        //     rotationSpeed = 320;
+        //     rotationSlowDownTime = .7f;
+        //     addForceDownMultiplier = 1f;
+
+        // }
+
+        // rotationSpeedVar = rotationSpeed;
+
+        AudioManager.instance.PlayCluck();
+        Tween();
+    }
+
+    private void Tween()
     {
         if (sequence != null && sequence.IsPlaying())
             sequence.Kill();
@@ -55,46 +159,24 @@ public class PlayerFlipRightState : PlayerBaseState
         sequence.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime)).SetEase(Ease.InSine);
         sequence.Join(flipImage.DOScale(1.2f, .35f));
         sequence.Play();
-        hasFadedJumpAir = false;
-        jumpAirIndex = player.CurrentJumpAirIndex;
-        hitSlowTarget = false;
-        addForceDownTimer = 0;
 
-        time = 0;
-        rotationTimer = 0;
-        player.SetFlipDirection(true);
-        // player.anim.SetTrigger("FlipTrigger");
-        if (player.transform.rotation.eulerAngles.z < 175f)
-        {
-            prolongRotation = true;
-        }
-        else
-        {
-            prolongRotation = false;
-        }
-        currentRotation = player.transform.rotation.eulerAngles.z;
-
-        if (player.shotgunEquipped)
-        {
-            rotationSpeed = 230;
-
-            rotationSlowDownTime = 1f;
-            addForceDownMultiplier = 1.2f;
-
-        }
-        else
-        {
-            rotationSpeed = 320;
-            rotationSlowDownTime = .7f;
-            addForceDownMultiplier = 1f;
-
-        }
-
-        rotationSpeedVar = rotationSpeed;
-        player.AdjustForce(JumpForce);
-        AudioManager.instance.PlayCluck();
     }
 
+    private void TweenAngVel(float dur, float start)
+    {
+        angVelSequence = DOTween.Sequence();
+
+        // angVelSequence.Append(DOTween.To(() => 0, x => angVel = x, angForce, dur)
+        //    .SetEase(Ease.InSine));
+        angVelSequence.Append(DOTween.To(() => start, x => angVel = x, angForce, dur));
+        angVelSequence.Play().OnComplete(() => tweeningAng = false);
+
+    }
+
+    private void SetVariables()
+    {
+
+    }
 
     public void ReEnterState()
     {
@@ -103,7 +185,8 @@ public class PlayerFlipRightState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
     {
 
-
+        if (angVelSequence != null && angVelSequence.IsPlaying())
+            angVelSequence.Kill();
         if (!hasFadedJumpAir)
         {
 
@@ -113,12 +196,26 @@ public class PlayerFlipRightState : PlayerBaseState
     }
     public override void FixedUpdateState(PlayerStateManager player)
     {
+        if (!hasFinishedEndOfTweenLogic)
+        {
+            player.rb.angularVelocity = angVel;
+
+            if (!tweeningAng)
+            {
+                player.rb.angularVelocity = angForce;
+                player.rb.angularDrag = angDrag;
+                hasFinishedEndOfTweenLogic = true;
+            }
+        }
+
         time += Time.fixedDeltaTime;
+
         if (time > .2f)
         {
             if (player.holdingRightFlip)
             {
                 player.rb.AddForce(AddForceVector);
+                player.rb.AddTorque(-.07f);
                 rotationSlowDownTime += .55f * Time.fixedDeltaTime;
 
                 if (time > addForceTime)
@@ -136,14 +233,14 @@ public class PlayerFlipRightState : PlayerBaseState
     }
     public override void RotateState(PlayerStateManager player)
     {
-        currentRotation -= rotationSpeedVar * Time.fixedDeltaTime;
-        float targetRotation = Mathf.LerpAngle(player.rb.rotation, currentRotation, Time.fixedDeltaTime * rotationSpeedVar);
-        player.rb.MoveRotation(targetRotation);
-        if (hitSlowTarget && !player.holdingRightFlip)
-        {
-            rotationTimer += Time.fixedDeltaTime;
-            rotationSpeedVar = Mathf.Lerp(rotationSpeed, 0, rotationTimer / rotationSlowDownTime);
-        }
+        // currentRotation -= rotationSpeedVar * Time.fixedDeltaTime;
+        // float targetRotation = Mathf.LerpAngle(player.rb.rotation, currentRotation, Time.fixedDeltaTime * rotationSpeedVar);
+        // player.rb.MoveRotation(targetRotation);
+        // if (hitSlowTarget && !player.holdingRightFlip)
+        // {
+        //     rotationTimer += Time.fixedDeltaTime;
+        //     rotationSpeedVar = Mathf.Lerp(rotationSpeed, 0, rotationTimer / rotationSlowDownTime);
+        // }
     }
     public override void UpdateState(PlayerStateManager player)
     {

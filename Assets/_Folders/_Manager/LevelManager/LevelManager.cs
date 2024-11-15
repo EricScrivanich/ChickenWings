@@ -831,6 +831,7 @@ public class LevelManager : MonoBehaviour
     private void CreateFinish()
     {
         player.globalEvents.OnFinishedLevel?.Invoke();
+        LvlID.SetLevelComplete();
         StartCoroutine(SmoothTimeScaleTransition(0, .3f, .3f, false, 0));
         GameObject finishedLevelUI = Instantiate(finishedLevelUIPrefab);
         PauseButtonActions.lockButtons = false;

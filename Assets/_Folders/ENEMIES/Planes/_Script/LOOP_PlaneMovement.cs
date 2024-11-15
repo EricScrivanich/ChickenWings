@@ -4,7 +4,7 @@ using AllIn1SpriteShader;
 using UnityEngine;
 using HellTap.PoolKit;
 
-public class LOOP_PlaneMovement : MonoBehaviour, IDamageable
+public class LOOP_PlaneMovement : MonoBehaviour// ,IDamageable
 {
     public PlaneData Data;
     public PlaneManagerID ID;

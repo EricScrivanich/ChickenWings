@@ -30,11 +30,15 @@ MonoBehaviour:
   - 1
   randomRingTypeWeights: []
   randomEnemySetupDifficultyWeights:
-  - 0.4
-  - 0.6
-  randomEnemySetupAmountToSpawnWeights:
+  - 0
   - 0
   - 1
+  randomEnemySetupAmountToSpawnWeights:
+  - 0
+  - 0
+  - 0.7
+  - 0.3
+  flipRandomEnemySpawnXChance: 0
   xTargetToStartSpawn: 5
   spawnRandomRangeAfterTarget: {x: 0, y: 0}
   amountOfWaveWeights:

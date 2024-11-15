@@ -16,18 +16,28 @@ MonoBehaviour:
   BaseEggSpawnRate: 8
   AddedRandomEgg: {x: -1, y: 4}
   EggThreeChance: 0.24
-  TargetEggAmmo: 0
-  BelowEggTargetTimeChange: 0
-  AboveEggTargetTimeChange: 0
+  TargetEggAmmo: 3
+  MaxEggAmmo: 6
+  RecheckEggIfMaxTime: 5
+  BelowEggTargetTimeChange: 0.8
+  AboveEggTargetTimeChange: 0.8
+  InitialEggDelay: 4
+  InitialEggRandom: {x: 0, y: 0}
   SpawnShotgun: 0
   BaseShotgunSpawnRate: 0
   AddedRandomShotgun: {x: 0, y: 0}
   ShotgunThreeChance: 0
   TargetShotgunAmmo: 0
+  MaxShotgunAmmo: 0
+  RecheckShotgunIfMaxTime: 0
   BelowShotgunTargetTimeChange: 0
   AboveShotgunTargetTimeChange: 0
+  InitialShotgunDelay: 5
+  InitialShotgunRandom: {x: 0, y: 0}
   SpawnBarn: 1
   BaseBarnSpawnRate: 10
   AddedRandomBarn: {x: -2, y: 5}
   BigBarnChance: 0.4
   MidBarnChance: 1
+  InitialBarnDelay: 7
+  InitialBarnRandom: {x: 0, y: 0}

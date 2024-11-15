@@ -139,7 +139,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
-                SpecialEnableButtonsCheck();
+                SpecialEnableButtonsCheck(0);
                 ID.events.OnJump?.Invoke();
                 HapticFeedbackManager.instance.PlayerButtonPress();
 
@@ -151,7 +151,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
-                SpecialEnableButtonsCheck();
+                SpecialEnableButtonsCheck(1);
                 flipRightImage.color = colorsSO.highlightButtonColor;
                 ID.events.OnFlipRight?.Invoke(true);
                 HapticFeedbackManager.instance.PlayerButtonPress();
@@ -168,7 +168,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
-                SpecialEnableButtonsCheck();
+                SpecialEnableButtonsCheck(2);
                 flipLeftImage.color = colorsSO.highlightButtonColor;
 
                 ID.events.OnFlipLeft?.Invoke(true);
@@ -200,9 +200,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
-                SpecialEnableButtonsCheck();
+
                 if (canDash)
                 {
+                    SpecialEnableButtonsCheck(3);
                     ID.events.OnDash?.Invoke(true);
                     HapticFeedbackManager.instance.PlayerButtonPress();
 
@@ -210,6 +211,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                 }
                 else if (earlyDashReady)
                 {
+                    SpecialEnableButtonsCheck(3);
                     stillHoldingDash = true;
                     Debug.LogError("Tried to use coyote time");
 
@@ -273,10 +275,11 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled)
             {
-                SpecialEnableButtonsCheck();
+
 
                 if (canDrop)
                 {
+                    SpecialEnableButtonsCheck(4);
                     ID.events.OnDrop?.Invoke();
                     HapticFeedbackManager.instance.PlayerButtonPress();
 
@@ -285,7 +288,11 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
                 }
                 else if (earlyDropReady)
+                {
+                    SpecialEnableButtonsCheck(4);
                     earlyDropTried = true;
+                }
+
 
                 else if (!earlyDropReady)
                 {
@@ -301,15 +308,20 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             if (ButtonsEnabled && !eggButtonHidden)
             {
-                SpecialEnableButtonsCheck();
+
                 // ID.globalEvents.OnEggButton?.Invoke(true);
                 if (!usingShotgun)
                 {
+                    SpecialEnableButtonsCheck(5);
                     ID.events.OnEggDrop?.Invoke();
                 }
 
                 else if (usingShotgun)
+                {
+                    SpecialEnableButtonsCheck(6);
                     ID.events.OnAttack?.Invoke(true);
+                }
+
             }
         };
 
@@ -355,8 +367,9 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     }
 
-    private void SpecialEnableButtonsCheck()
+    private void SpecialEnableButtonsCheck(int type)
     {
+        ID.AddPlayerInput(type);
         if (specialEnableButtonsActive)
         {
             ID.globalEvents.OnInputWithSpecialEnableButtons?.Invoke();
@@ -479,10 +492,10 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
 
-        yield return new WaitForSeconds(1.6f);
+        yield return new WaitForSeconds(1.54f);
         // earlyDropTried = false;
         earlyDropReady = true;
-        yield return new WaitForSeconds(.15f);
+        yield return new WaitForSeconds(.13f);
         dropCooldownIN.DOFade(0, 0);
         dropCooldownOUT.DOFade(0, .1f);
 
@@ -653,7 +666,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     private IEnumerator CalcualteDashTimeLeft()
     {
-        dashTimeLeft = .35f;
+        // dashTimeLeft = .35f;
+        dashTimeLeft = .32f;
         while (dashTimeLeft >= 0 && !coolingDownDash)
         {
             dashTimeLeft -= Time.deltaTime;

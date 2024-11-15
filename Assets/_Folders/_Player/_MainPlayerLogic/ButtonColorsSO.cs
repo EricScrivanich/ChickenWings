@@ -33,6 +33,17 @@ public class ButtonColorsSO : ScriptableObject
     public Color flashButtonColor1;
     public Color flashButtonColor2;
 
+    [Header("Star Colors")]
+    public Color StarNoneColor;
+    public Color StarGottenColor;
+    public Color StarNormalColor;
+    public Color StarCardDisabledFillColor;
+    public Color StarCardDisabledOutlineColor;
+    public Color StarCardGoldFillColor1;
+    public Color StarCardGoldOutlineColor1;
+    public Color StarCardGoldFillColor2;
+    public Color StarCardGoldOutlineColor2;
+
 
 
     [Header("Mana Colors")]

@@ -237,13 +237,6 @@ MonoBehaviour:
   startRot: 0
   minMaxWindSoundDelay: {x: 0.85, y: 1.1}
   minMaxWindSpeed: {x: 80, y: 150}
-  clockwiseChance: 0.6
-  speedRangeClockwise: {x: -130, y: -80}
-  speedRangeCounterClockwise: {x: 110, y: 160}
-  spinSpeed: 100
-  heightRange: {x: 6, y: 6.9}
-  addedBladeY: -0.5
-  resetTime: 10
 --- !u!50 &2070727705258442199
 Rigidbody2D:
   serializedVersion: 4
@@ -370,9 +363,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: 1283433495
+  m_SortingLayer: 7
+  m_SortingOrder: -1
   m_Sprite: {fileID: -1625117570, guid: 367b244469ffa45f4a3f66e9fc2066cf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

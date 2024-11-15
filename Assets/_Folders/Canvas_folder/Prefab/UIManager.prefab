@@ -94,15 +94,14 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9114015588899894226
-Transform:
+--- !u!224 &9114015588899894226
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4456766109796165030}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -110,6 +109,11 @@ Transform:
   - {fileID: 4831659309462398064}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &380991197594460456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,13 +127,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: {fileID: 0}
+  levelChallengesPrefab: {fileID: 1647752902143890234, guid: 044a0db537ae644288790d21b7b4cb60, type: 3}
+  levelChallengesPos: {fileID: 0}
+  sceneSO: {fileID: 0}
+  LevelNamePrefab: {fileID: 0}
+  fadeInDuration: 0.9
+  fadeOutDuration: 0.2
+  displayDuration: 3
+  textMoveDuration: 1
+  textTargetPosition: {x: 0, y: 0}
+  moveInEase: 0
+  showScore: 0
   GameOverPrefab: {fileID: 5270753868605770190, guid: 530bf2e97e9b949bb807213fdc62fc4d, type: 3}
   LvlID: {fileID: 0}
   Frozen: {fileID: 0}
   lerpTime: 1
   frozenMaterial: {fileID: 0}
-  fadeInDuration: 0.9
-  fadeOutDuration: 0.2
   frozenTime: 0.2
 --- !u!1001 &3070530295514379880
 PrefabInstance:

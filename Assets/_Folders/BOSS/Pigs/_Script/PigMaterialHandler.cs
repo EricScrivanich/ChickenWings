@@ -128,13 +128,15 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     }
 
-    public void Damage(int damageAmount)
+    public void Damage(int damageAmount,int type,int id)
     {
         if (!isHit)
         {
             isHit = true;
             AudioManager.instance.PlayPigDeathSound(pigTypeAudio);
-            player.globalEvents.OnKillPig?.Invoke(pigType);
+            player.AddKillPig(pigType, type, id);
+
+
 
             instanceMaterial = new Material(pigMaterial);
             foreach (var col in colls)
@@ -204,6 +206,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
             yield return null;
         }
+        player.globalEvents.OnKillPig?.Invoke(pigType);
 
 
         // Ensure the final values are set
@@ -211,6 +214,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         instanceMaterial.SetFloat("_HitEffectBlend", 0);
         instanceMaterial.SetFloat("_FadeAmount", fadeAmountEnd);
         Destroy(instanceMaterial);
+
         gameObject.SetActive(false);
     }
 }

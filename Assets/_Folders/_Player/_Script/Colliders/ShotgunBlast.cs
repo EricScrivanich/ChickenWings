@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class ShotgunBlast : MonoBehaviour
 {
-    
+
     [SerializeField] private float forceAmount;
     [SerializeField] private int xForceMultiplier;
     private Rigidbody2D rb;
@@ -27,6 +27,8 @@ public class ShotgunBlast : MonoBehaviour
     private int currentSpriteDelayIndex;
     private int currentScaleDelayIndex;
     private bool finished = false;
+    private bool isChained;
+    private int id;
     private SpriteRenderer sr;
 
     private void Awake()
@@ -37,6 +39,12 @@ public class ShotgunBlast : MonoBehaviour
     }
     // Start is called before the first frame update
 
+    public void Initialize(bool chained, int iD)
+    {
+        isChained = chained;
+        id = iD;
+
+    }
 
     private void OnEnable()
     {
@@ -75,7 +83,7 @@ public class ShotgunBlast : MonoBehaviour
     // }
     private void OnDisable()
     {
-
+        rb.velocity = Vector2.zero;
         finished = false;
         currentScaleDelayIndex = 0;
     }
@@ -129,22 +137,25 @@ public class ShotgunBlast : MonoBehaviour
 
             }
 
-            // Append the scaling tween to the sequence
-
-
-
-
-
-
-
-            // Optionally, add a callback at each step for debugging or additional functionality
-
         }
 
-        sequence.Play();
+        sequence.Play().OnComplete(() => gameObject.SetActive(false));
 
         // Once the sequence is complete, mark the animation as finished
         // sequence.OnComplete(() => gameObject.SetActive(false));
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+
+        IDamageable damageableEntity = collider.gameObject.GetComponent<IDamageable>();
+        if (damageableEntity != null)
+        {
+            int type = 1;
+            if (isChained) type = 2;
+            damageableEntity.Damage(1, type, id);
+
+        }
     }
 
     private void DisableCollider()

@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: SET_LVL9-0
   m_EditorClassIdentifier: 
   eventCallBack_Trigger_ID_Delay: []
-  eggTriggerAndIndexAndType: []
-  eggPosition: []
-  eggSpeed: []
+  eggTriggerAndIndexAndType:
+  - {x: 7, y: 0, z: 2}
+  eggPosition:
+  - {x: 22, y: 2}
+  eggSpeed:
+  - 5.1
   mustCompleteRingSequence: 0
   enemyTriggerForEachRingIndex: 
   enemyTriggerForEachRingIndexWeights: 
@@ -51,8 +54,8 @@ MonoBehaviour:
     - rid: 3115821659791294508
   collectableSetup: []
   isRandomSetup: 0
-  testFromTrigger: 0
-  startTestTrigger: 8
+  testFromTrigger: 1
+  startTestTrigger: 7
   ignoreXTriggetTime: 1
   XTriggerForRecording: 0
   references:

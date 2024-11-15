@@ -9,6 +9,10 @@ public class PopUpsDisplay : MonoBehaviour
 
     public PlayerID ID;
 
+    [SerializeField] private GameObject levelChallengesPrefab;
+
+    [SerializeField] private RectTransform levelChallengesPos;
+
     [SerializeField] private SceneManagerSO sceneSO;
 
     [Header("Level Title Display")]
@@ -20,7 +24,7 @@ public class PopUpsDisplay : MonoBehaviour
     [SerializeField] private float textMoveDuration = 1f; // Duration for the text to move to the target position
     [SerializeField] private Vector2 textTargetPosition;
     [SerializeField] private Ease moveInEase;
-
+    private bool isLevel;
 
 
     [SerializeField] private bool showScore;
@@ -45,29 +49,30 @@ public class PopUpsDisplay : MonoBehaviour
     private ScoreManager scoreMan;
     [SerializeField] private Material frozenMaterial;
 
+    
 
+    private string levelName;
+    private int levelNum;
     private float fadeInDurationFroz = .9f;
     private float fadeOutDurationFroz = .2f;
     [SerializeField] private float frozenTime = .2f;
 
     // New variable for fade amount of frozenOverlayMaterial
-
-
-    void Start()
+    private void Awake()
     {
-
-        // gameOver.gameObject.SetActive(false);
-        Frozen.SetActive(false);
-        bool isLevel = true;
+        isLevel = true;
 
         string s = SceneManager.GetActiveScene().name;
-        int levelNum = 0;
+        levelNum = 0;
 
         for (int i = 0; i < sceneSO.LevelsCount(); i++)
         {
             if (sceneSO.ReturnSceneNameLevel(i) == s)
             {
                 levelNum = i;
+                sceneSO.SetLevelNumber(levelNum);
+
+                break;
             }
 
         }
@@ -81,6 +86,7 @@ public class PopUpsDisplay : MonoBehaviour
                 {
 
                     levelNum = i;
+                    sceneSO.SetLevelNumber(-1);
                     isLevel = false;
                     break;
 
@@ -89,6 +95,22 @@ public class PopUpsDisplay : MonoBehaviour
             }
 
         }
+    }
+
+    void Start()
+    {
+
+        // gameOver.gameObject.SetActive(false);
+        Frozen.SetActive(false);
+
+        if (sceneSO.ReturnLevelChallenges() != null)
+        {
+            Debug.LogError("YERERERE");
+            Instantiate(levelChallengesPrefab, levelChallengesPos.position, Quaternion.identity, gameObject.GetComponentInParent<Transform>());
+        }
+        else
+            Debug.LogError("Nothing here");
+
 
         if (levelNum > 0 || !isLevel)
         {
@@ -100,6 +122,7 @@ public class PopUpsDisplay : MonoBehaviour
 
             if (isLevel)
             {
+
                 textLevelNum.text = "Level " + levelNum.ToString();
                 LvlID.LevelTitle = textLevelNum.text;
                 textLevelName.text = sceneSO.ReturnLevelName(levelNum);
@@ -107,6 +130,7 @@ public class PopUpsDisplay : MonoBehaviour
             }
             else
             {
+
                 textLevelNum.text = "";
                 textTargetPosition *= 1.1f;
                 displayDuration *= .6f;
@@ -141,13 +165,12 @@ public class PopUpsDisplay : MonoBehaviour
 
         }
 
+
+
     }
 
 
-    void Update()
-    {
-        // Existing update logic
-    }
+
 
     void OnEnable()
     {
@@ -163,6 +186,7 @@ public class PopUpsDisplay : MonoBehaviour
     void OnDisable()
     {
         ID.globalEvents.Frozen -= FrozenEvent;
+        DOTween.Kill(this);
         if (LvlID != null)
         {
             LvlID.outputEvent.FinishedLevel -= FinishLevel;
@@ -185,7 +209,7 @@ public class PopUpsDisplay : MonoBehaviour
         gameOver.localScale = gameOverScale;
         gameOver.anchoredPosition = new Vector2(0, Screen.height + 100);
 
-        gameOver.DOAnchorPos(new Vector2(0, 110), 1.4f).SetEase(Ease.OutSine);
+        gameOver.DOAnchorPos(new Vector2(0, 110), 1.4f).SetEase(Ease.OutSine).SetUpdate(true);
 
         // gameoverImage.gameObject.SetActive(true);
         // targetPosition = new Vector2(0, 1);

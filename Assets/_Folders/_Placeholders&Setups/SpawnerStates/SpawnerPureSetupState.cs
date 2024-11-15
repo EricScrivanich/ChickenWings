@@ -34,7 +34,8 @@ public class SpawnerPureSetupState : SpawnBaseState
 
         // spawner.currentRingType = spawner.currentRandomSpawnIntensityData.GetRingTypeIndex();
 
-        if (spawner.pureSetups[spawner.CurrentPureSetup] != null)
+        // if (spawner.pureSetups[spawner.CurrentPureSetup] != null)
+        if (spawner.pureSetups.Length > spawner.CurrentPureSetup)
             spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger);
 
         else

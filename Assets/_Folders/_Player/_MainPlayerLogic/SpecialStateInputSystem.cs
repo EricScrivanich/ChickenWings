@@ -712,7 +712,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
 
-        yield return new WaitForSeconds(1.75f);
+        yield return new WaitForSeconds(1.67f);
         dropCooldownIN.DOFade(0, 0);
         dropCooldownOUT.DOFade(0, .1f);
 
@@ -850,7 +850,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     private IEnumerator CalcualteDashTimeLeft()
     {
-        dashTimeLeft = .35f;
+        dashTimeLeft = .32f;
         while (dashTimeLeft >= 0 && !coolingDownDash)
         {
             dashTimeLeft -= Time.deltaTime;

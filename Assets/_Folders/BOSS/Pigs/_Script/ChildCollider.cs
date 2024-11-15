@@ -5,9 +5,9 @@ using UnityEngine;
 public class ChildCollider : MonoBehaviour, IDamageable
 {
     private PigMaterialHandler parentScript;
-    public void Damage(int damageAmount)
+    public void Damage(int damageAmount, int bullet,int id)
     {
-        parentScript.Damage(damageAmount);
+        parentScript.Damage(damageAmount,bullet,id);
     }
 
     // Start is called before the first frame update

@@ -190,9 +190,9 @@ public class EggAmmoDisplay : MonoBehaviour
         }
         else if (player.Ammo > player.ShotgunAmmo)
         {
-            eggs[0].Equip(false, 0);
             currentAmmoType = 0;
 
+            eggs[0].Equip(false, 0);
             EggAmmoDisplay.EquipAmmoEvent?.Invoke(0);
             EggAmmoDisplay.UnequipAmmoEvent?.Invoke(1);
 
@@ -201,8 +201,9 @@ public class EggAmmoDisplay : MonoBehaviour
         }
         else
         {
-            eggs[1].Equip(false, 1);
             currentAmmoType = 1;
+            eggs[1].Equip(false, 1);
+
 
             EggAmmoDisplay.EquipAmmoEvent?.Invoke(1);
             EggAmmoDisplay.UnequipAmmoEvent?.Invoke(0);
@@ -292,7 +293,11 @@ public class EggAmmoDisplay : MonoBehaviour
                     EggAmmoDisplay.EquipAmmoEvent(0);
                     EggAmmoDisplay.UnequipAmmoEvent(1);
 
-                    if (player.Ammo == 0) ZeroAmmoPress(false);
+                    if (player.Ammo == 0)
+                    {
+                        ZeroAmmoPress(false);
+                        Debug.LogError("ZeroPress");
+                    }
 
                 }
                 else if (currentAmmoType == 1)
@@ -302,7 +307,11 @@ public class EggAmmoDisplay : MonoBehaviour
 
                     EggAmmoDisplay.EquipAmmoEvent(1);
                     EggAmmoDisplay.UnequipAmmoEvent(0);
-                    if (player.ShotgunAmmo == 0) ZeroAmmoPress(false);
+                    if (player.ShotgunAmmo == 0)
+                    {
+                        Debug.LogError("ZeroPress");
+                        ZeroAmmoPress(false);
+                    }
                 }
 
             }
@@ -375,6 +384,7 @@ public class EggAmmoDisplay : MonoBehaviour
                 else if (ignoreSwitch)
                 {
                     ZeroAmmoPress(false);
+                    Debug.LogError("ZeroPress");
                 }
 
 
@@ -406,6 +416,7 @@ public class EggAmmoDisplay : MonoBehaviour
                 else if (ignoreSwitch)
                 {
                     ZeroAmmoPress(false);
+                    Debug.LogError("ZeroPress");
                 }
             }
         }
@@ -538,7 +549,13 @@ public class EggAmmoDisplay : MonoBehaviour
         if (currentAmmo == 0 && !usingChain)
         {
             if (holding)
+            {
                 ZeroAmmoPress(true);
+
+                Debug.LogError("ZeroPress: " + currentAmmo);
+
+            }
+
             return;
         }
         if (shotgunEggPressSequence != null && shotgunEggPressSequence.IsPlaying())
@@ -599,7 +616,11 @@ public class EggAmmoDisplay : MonoBehaviour
 
 
         if (onZero)
+        {
+            Debug.LogError("ZeroPress");
             ZeroAmmoPress(true);
+        }
+
 
         else
         {
@@ -822,6 +843,7 @@ public class EggAmmoDisplay : MonoBehaviour
         }
         if (currentAmmo <= 0)
         {
+            Debug.LogError("ZeroPress");
             ZeroAmmoPress(false);
             joystickController.enabled = false;
         }

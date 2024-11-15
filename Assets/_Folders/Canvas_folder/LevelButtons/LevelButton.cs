@@ -7,6 +7,11 @@ using DG.Tweening;
 
 public class LevelButton : MonoBehaviour
 {
+    [SerializeField] private ButtonColorsSO colorSO;
+    [SerializeField] private SceneManagerSO sceneSO;
+
+    [SerializeField] private Image[] stars;
+    [SerializeField] private GameObject badge;
     [SerializeField] private SceneManagerSO sceneLoader;
     public int levelNum;
     [SerializeField] private bool isUnlocked;
@@ -22,7 +27,37 @@ public class LevelButton : MonoBehaviour
 
     void Start()
     {
+        Text[0].text = sceneSO.ReturnLevelName(levelNum);
+        Text[1].text = ("Level " + levelNum.ToString());
+
+        // if (levelNum == 1 || SaveManager.instance.GetSavedLevelData(levelNum - 1)[0])
+        //     isUnlocked = true;
+        // else isUnlocked = false;
+        isUnlocked = true;
+
         Lock.gameObject.SetActive(!isUnlocked);
+        foreach (var item in stars)
+        {
+            item.enabled = false;
+        }
+
+        bool[] data = SaveManager.instance.GetSavedLevelData(levelNum);
+        if (data != null || data.Length > 0)
+        {
+            badge.SetActive(data[1]);
+            for (int i = 0; i < data.Length - 2; i++)
+            {
+                stars[i].enabled = true;
+
+                if (data[i + 2]) stars[i].color = colorSO.StarNormalColor;
+                else stars[i].color = colorSO.StarNoneColor;
+            }
+        }
+
+
+
+
+
 
         if (isUnlocked)
         {

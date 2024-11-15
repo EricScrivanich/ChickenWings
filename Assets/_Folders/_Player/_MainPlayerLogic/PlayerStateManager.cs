@@ -13,7 +13,7 @@ public class PlayerStateManager : MonoBehaviour
     [ExposedScriptableObject]
     public PlayerMovementData MovementData;
     [ExposedScriptableObject]
-    [SerializeField] private PlayerStartingStatsForLevels stats;
+    [SerializeField] private PlayerStartingStatsForLevels ammoManager;
     [SerializeField] private GameObject jumpAirPrefab;
     [SerializeField] private bool mutePlayerAudio = false;
     [SerializeField] private GameObject shotgunObj;
@@ -203,7 +203,7 @@ public class PlayerStateManager : MonoBehaviour
     public bool shotgunEquipped { get; private set; }
     private bool startedAim = false;
     private bool movingJoystick = false;
-    private bool ignoreChainedShotgunReset;
+    private bool shootChainThenReset;
     private bool canShootShotgun = true;
     private bool inSlowMo = false;
     private float dropCooldownTime = 2f;
@@ -240,6 +240,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
         Time.timeScale = FrameRateManager.TargetTimeScale;
+
         justSwitchedUsingChainedShotgun = false;
         shotgunEquipped = false;
         useChainedAmmo = false;
@@ -260,7 +261,7 @@ public class PlayerStateManager : MonoBehaviour
 
         stillDashing = false;
 
-        ID.ResetValues(stats);
+        ID.ResetValues(ammoManager);
         // holdingFlip = false;
         ID.UsingClocker = false;
         rotateSlash = false;
@@ -301,6 +302,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
         AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), mutePlayerAudio);
+        ammoManager.Initialize();
         if (GetComponent<PlayerAddForceBoundaries>() != null)
         {
             playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
@@ -364,7 +366,7 @@ public class PlayerStateManager : MonoBehaviour
 
         currentState.EnterState(this);
 
-        feather.transform.position = transform.position;
+        // feather.transform.position = transform.position;
 
 
     }
@@ -506,6 +508,7 @@ public class PlayerStateManager : MonoBehaviour
             // ResetHoldJump();
             anim.SetBool(FrozenBool, true);
             isFrozen = true;
+            StopShotgun(true);
 
             SwitchState(FrozenState);
             ID.events.EnableButtons?.Invoke(false);
@@ -579,6 +582,8 @@ public class PlayerStateManager : MonoBehaviour
         else
         {
             justFlipped = false;
+            justFlippedLeft = false;
+            justFlippedRight = false;
 
 
         }
@@ -638,6 +643,7 @@ public class PlayerStateManager : MonoBehaviour
             }
 
         }
+        Debug.LogError("HOlding jumo is" + isHolding);
         ID.isHolding = isHolding;
 
     }
@@ -773,7 +779,30 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    private void HandleNewSlash(bool holding)
+    private void HandlEggDrop()
+    {
+        // if (ID.Ammo > 0)
+        // {
+        //     ammoManager.Ge
+        //     GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
+        //     AudioManager.instance.PlayEggDrop();
+
+        //     if (rb.velocity.x < 0)
+        //     {
+        //         egg.GetComponent<Rigidbody2D>().velocity = new Vector2(rb.velocity.x * .55f, -1);
+        //     }
+        //     else
+        //     {
+        //         egg.GetComponent<Rigidbody2D>().velocity = new Vector2(rb.velocity.x * .45f, -1);
+        //     }
+
+        //     ID.Ammo -= 1;
+
+
+        // }
+    }
+
+    private void HandleShotgun(bool holding)
     {
         // Debug.LogError("Can Shoot is: " + canShootShotgun + " shotgun release is: " + shotgunReleased + " in slow mo is: " + inSlowMo);
         // if (shotgunReleased) return;
@@ -853,8 +882,9 @@ public class PlayerStateManager : MonoBehaviour
             if (useChainedAmmo && ID.ChainedShotgunAmmo <= 0)
             {
                 // Debug.Log("ChainedShotgunAmmo is less than 0. Triggering event to stop using chained ammo.");
-                ignoreChainedShotgunReset = true;
-                ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+                shootChainThenReset = true;
+                useChainedAmmo = false;
+                // ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
 
             }
             shotgunReleased = true;
@@ -881,22 +911,54 @@ public class PlayerStateManager : MonoBehaviour
 
         else
         {
+            shootChainThenReset = false;
             useChainedAmmo = false;
             justSwitchedUsingChainedShotgun = false;
 
             ID.ChainedShotgunAmmo = -1;
-            if (ignoreChainedShotgunReset)
-            {
-                ignoreChainedShotgunReset = false;
-                return;
-            }
-            if (!inSlowMo && aimCouroutine != null)
-            {
-                StopCoroutine(aimCouroutine);
-                reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
-            }
+            // if (ignoreChainedShotgunReset)
+            // {
+            //     ignoreChainedShotgunReset = false;
+            //     return;
+            // }
+            // if (!inSlowMo && aimCouroutine != null)
+            // {
+            //     StopCoroutine(aimCouroutine);
+            //     reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
+            // }
+
+            StopShotgun(true);
 
         }
+    }
+
+    public void StopShotgun(bool paused)
+    {
+        if (paused)
+        {
+            Debug.LogError("STOPPING SHOTGUN");
+
+
+
+            if (aimCouroutine != null) StopCoroutine(aimCouroutine);
+            if (reloadCouroutine != null) StopCoroutine(reloadCouroutine);
+            if (MaxSlowTimeCouroutine != null) StopCoroutine(MaxSlowTimeCouroutine);
+            if (ShotgunNormalRotationRoutine != null) StopCoroutine(ShotgunNormalRotationRoutine);
+
+            Time.timeScale = FrameRateManager.TargetTimeScale;
+            AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
+
+            anim.SetBool(AimShotgunBool, false);
+            anim.SetTrigger(EquipShotgunTrigger);
+            if (!isFrozen) ID.events.EnableButtons(true);
+            shotgunReleased = false;
+
+            startedAim = false;
+            canShootShotgun = true;
+            inSlowMo = false;
+
+        }
+
     }
 
 
@@ -907,7 +969,11 @@ public class PlayerStateManager : MonoBehaviour
     {
         // ignoreParticleCollision = true;
         // Debug.LogError("Gettting blast");
-        pool.Spawn("ShotgunBlast", blastPoint.position, shotgunObj.transform.rotation);
+        // pool.Spawn("ShotgunBlast", blastPoint.position, shotgunObj.transform.rotation);
+        ammoManager.GetShotgunBlast(blastPoint.position, shotgunObj.transform.rotation, justSwitchedUsingChainedShotgun);
+        // sdfsadfs
+        // asdfsf
+        // asdfdsaf
         AudioManager.instance.PlayShoutgunNoise(0);
         // float rotationInDegrees = transform.eulerAngles.z;
 
@@ -1107,6 +1173,7 @@ public class PlayerStateManager : MonoBehaviour
 
         float time = 0;
         pool.Spawn("ShotgunShell", shellSpawnPoint.position, shellSpawnPoint.rotation);
+
         // yield return new WaitForSeconds(canShootDelay);
         shotgunRotationTarget = -20;
         canShootShotgun = true;
@@ -1124,6 +1191,7 @@ public class PlayerStateManager : MonoBehaviour
         }
         AudioManager.instance.PlaySlowMotionSound(false);
         AudioManager.instance.PlayShoutgunNoise(1);
+
 
 
 
@@ -1146,6 +1214,8 @@ public class PlayerStateManager : MonoBehaviour
         }
         inSlowMo = false;
         Time.timeScale = FrameRateManager.TargetTimeScale;
+        AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
+        if (shootChainThenReset) ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
 
     }
 
@@ -1669,7 +1739,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.HitGround += HandleGroundCollision;
         // ID.globalEvents.SetCanDashSlash += HandleDashSlash;
         ID.events.OnDashSlash += HandleDashSlash;
-        ID.events.OnAttack += HandleNewSlash;
+        ID.events.OnAttack += HandleShotgun;
 
         ID.globalEvents.OnUseChainedAmmo += UsingChainedAmmo;
         ID.globalEvents.OnFinishedLevel += LevelFinished;
@@ -1680,12 +1750,13 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.HitBoss += HitBoss;
         ID.globalEvents.OnEnterNextSectionTrigger += HandleNextSectionTrigger;
         ID.events.OnSwitchAmmoType += SwitchAmmo;
+        PauseMenuButton.OnPauseGame += StopShotgun;
         // ID.events.OnAttack += HandleSlash;
     }
     private void OnDisable()
     {
         ID.events.OnJump -= HandleJump;
-        ID.events.OnAttack -= HandleNewSlash;
+        ID.events.OnAttack -= HandleShotgun;
         ID.events.OnAimJoystick -= CalculateGlobalRotationTarget;
         ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;
         ID.globalEvents.OnFinishedLevel -= LevelFinished;
@@ -1719,6 +1790,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnOffScreen -= OffScreen;
         ID.events.HitBoss -= HitBoss;
         ID.events.OnSwitchAmmoType -= SwitchAmmo;
+        PauseMenuButton.OnPauseGame -= StopShotgun;
+
 
 
 

@@ -35,7 +35,7 @@ MonoBehaviour:
     - rid: 3115821901210189831
     - rid: 3115821901210189832
   - dataArray:
-    - rid: 3115821901210189828
+    - rid: 4599887426716958749
   - dataArray:
     - rid: 3115821659791294544
     - rid: 3115821659791294545
@@ -45,7 +45,7 @@ MonoBehaviour:
   - dataArray:
     - rid: 3115821659791294523
   - dataArray:
-    - rid: 3115822063122907139
+    - rid: 4599887426716958748
   - dataArray:
     - rid: 3115822063122907138
   - dataArray:
@@ -170,19 +170,6 @@ MonoBehaviour:
         - position: {x: 18.88, y: -0.98}
           scale: {x: 0.95000005, y: 0.95000005, z: 0.95000005}
           speed: 5.7
-    - rid: 3115821901210189828
-      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 4.5
-        data:
-        - position: {x: -15.21, y: 2.4}
-          scale: {x: 1.07, y: 1.07, z: 1.07}
-          speed: -1.4
-          hasHammer: 1
-        - position: {x: -17.7, y: -2.56}
-          scale: {x: 1, y: 1, z: 1}
-          speed: -2.4
-          hasHammer: 1
     - rid: 3115821901210189829
       type: {class: GasPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -251,7 +238,7 @@ MonoBehaviour:
           scale: {x: 1.15, y: 1.1, z: 1}
           rotation: {x: -0.0000000062014065, y: -0.00000004710405, z: 0.39501843, w: -0.9186732}
           speed: 5.2
-    - rid: 3115822063122907139
+    - rid: 4599887426716958748
       type: {class: RingSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 4.1
@@ -265,7 +252,16 @@ MonoBehaviour:
           scale: {x: 1, y: 1, z: 1}
           rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
           speed: -4.8
-        - position: {x: -16.76, y: -3.88}
+    - rid: 4599887426716958749
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 4.3
+        data:
+        - position: {x: -17.46, y: 2.4}
+          scale: {x: 1.07, y: 1.07, z: 1.07}
+          speed: -2
+          hasHammer: 1
+        - position: {x: -15, y: -2.56}
           scale: {x: 1, y: 1, z: 1}
-          rotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
-          speed: -4.8
+          speed: -2.2
+          hasHammer: 1

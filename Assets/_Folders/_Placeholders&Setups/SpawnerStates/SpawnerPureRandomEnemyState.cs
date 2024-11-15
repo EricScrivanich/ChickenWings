@@ -10,6 +10,10 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     private EnemyBoundingBox bigPigBoundingBox;
     private EnemyBoundingBox tenderizerPigBoundingBox;
 
+    private Vector2 flipXSpawnVector = new Vector2(-1, 1);
+
+    private float flipChance;
+
     private float minYAdj;
 
     private int amountOfWavesToSpawn;
@@ -48,6 +52,7 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
 
         spawnCache = spawner;
+
         currentIntensityData = spawner.currentRandomSpawnIntensityData;
         normalPigBoundingBox = currentIntensityData.NormalPig_BB ?? spawner.normalPigBoundingBoxBase;
         jetPackPigBoundingBox = currentIntensityData.JetpackPig_BB ?? spawner.jetPackPigBoundingBoxBase;
@@ -55,6 +60,8 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
         tenderizerPigBoundingBox = currentIntensityData.TenderizerPig_BB ?? spawner.tenderizerPigBoundingBoxBase;
 
         amountOfWavesToSpawn = currentIntensityData.GetRandomAmountOfWaves();
+        Debug.LogError("Amount of waves is: " + amountOfWavesToSpawn);
+        flipChance = currentIntensityData.flipRandomEnemySpawnXChance;
 
         if (amountOfWavesToSpawn < 0) useWaveAmount = false;
 
@@ -140,9 +147,14 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
     {
         // Debug.LogError("Set new intensity in script");
 
-        if (useWaveAmount) return;
+        if (useWaveAmount)
+        {
+            Debug.LogError("Using Wave Amount");
+            return;
+        }
         spawnCache = spawner;
         currentIntensityData = spawnIntensity;
+        flipChance = currentIntensityData.flipRandomEnemySpawnXChance;
         normalPigBoundingBox = currentIntensityData.NormalPig_BB ?? spawner.normalPigBoundingBoxBase;
         jetPackPigBoundingBox = currentIntensityData.JetpackPig_BB ?? spawner.jetPackPigBoundingBoxBase;
         bigPigBoundingBox = currentIntensityData.BigPig_BB ?? spawner.bigPigBoundingBoxBase;
@@ -403,6 +415,18 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
     private void SpawnSelectedPig(int pigType, Vector2 spawnPos, Vector3 scale, float speed, float yForce = 0f, float distanceToFlap = 0f)
     {
+
+        if (flipChance > 0)
+        {
+            if (Random.Range(0f, 1f) <= flipChance)
+            {
+                spawnPos *= flipXSpawnVector;
+                speed -= 1.5f;
+                speed *= -1;
+            }
+
+        }
+
         switch (pigType)
         {
             case 0:

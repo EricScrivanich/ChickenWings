@@ -11,6 +11,7 @@ public class PlayerDropState : PlayerBaseState
     {
 
         player.ChangeCollider(2);
+        player.rb.angularVelocity = 0;
         player.anim.SetBool(player.BounceBool, false);
         switchedToBounce = false;
 

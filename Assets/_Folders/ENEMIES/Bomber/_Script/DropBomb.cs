@@ -20,6 +20,7 @@ public class DropBomb : MonoBehaviour
 
     [SerializeField] private GameObject dropZonePrefab;
     private DropZone dropZone;
+    private bool hasFadedDropZone = false;
     [SerializeField] private float delayToFlyOverSound;
     [SerializeField] private float delayToBomberGoing;
     [SerializeField] private float startSpeedMultiplier;
@@ -310,6 +311,14 @@ public class DropBomb : MonoBehaviour
 
     private void OnDisable()
     {
+        if (droppingTweenSeq != null && droppingTweenSeq.IsPlaying())
+            droppingTweenSeq.Kill();
+
+        if (!hasFadedDropZone)
+        {
+            hasFadedDropZone = true;
+            dropZone.FadeOut();
+        }
         DOTween.Kill(this);
         StopAllCoroutines();
     }
@@ -318,6 +327,7 @@ public class DropBomb : MonoBehaviour
     private void OnEnable()
     {
         enteredZone = false;
+        hasFadedDropZone = false;
 
         bomberGoing = false;
         hasEnteredTriggerArea = false;
@@ -392,6 +402,7 @@ public class DropBomb : MonoBehaviour
         yield return new WaitForSeconds(.2f);
         // TweenWhileDropping(false);
         Vector3 endRot = new Vector3(0, 0, -StartRot * sideSwitchInteger);
+        hasFadedDropZone = true;
         dropZone.FadeOut();
 
         transform.DOLocalMoveY(StartY, exitDuration).SetEase(Ease.InBack);

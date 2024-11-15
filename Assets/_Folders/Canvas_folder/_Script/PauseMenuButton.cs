@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ public class PauseMenuButton : MonoBehaviour
     private Canvas canvas;
     private Image fillImage;
     [SerializeField] private ButtonColorsSO colorSO;
+    public static Action<bool> OnPauseGame;
 
 
 
@@ -52,6 +54,8 @@ public class PauseMenuButton : MonoBehaviour
     {
         if (Time.timeScale == 0 || gameOver) return;
 
+        PauseMenuButton.OnPauseGame?.Invoke(true);
+
 
         PauseMenu.SetActive(true);
         pmm.InstantPause();
@@ -64,9 +68,11 @@ public class PauseMenuButton : MonoBehaviour
     public void NormalPause()
     {
         // if (Time.timeScale < FrameRateManager.TargetTimeScale || gameOver) return;
-        if (!isPaused && Time.timeScale == FrameRateManager.TargetTimeScale && !gameOver)
+        if (!isPaused && Time.timeScale != 0 && !gameOver)
         {
             isPaused = true;
+            PauseMenuButton.OnPauseGame?.Invoke(true);
+
             HapticFeedbackManager.instance.PressUIButton();
             Time.timeScale = 0;
 

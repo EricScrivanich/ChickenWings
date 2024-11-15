@@ -1021,6 +1021,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4797102283079309879, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
+      propertyPath: spawnIntensitiesNormal.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 2982bc2b538604c149becbde7d3c0d9e, type: 2}
+    - target: {fileID: 4797102283079309879, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: spawnIntensitiesNormal.Array.data[1]
       value: 
       objectReference: {fileID: 11400000, guid: 1daa76183f052418ab99ec52bec62478, type: 2}
@@ -3447,7 +3451,6 @@ MonoBehaviour:
   sectionTrigger: {fileID: 740964627}
   playerTran: {fileID: 1336227261}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  spawnMan: {fileID: 239074802}
   startSlidePos: 0
   swipeAmount: 254
   swipeDuration: 0.8

@@ -68,7 +68,7 @@ public class PauseMenuManager : MonoBehaviour
         if (fadeIn)
         {
             DarkPanel.gameObject.SetActive(true);
-            DarkPanel.DOFade(.4f, .5f).SetEase(Ease.InOutSine).From(0).SetUpdate(true);
+            DarkPanel.DOFade(.65f, .5f).SetEase(Ease.InOutSine).From(0).SetUpdate(true);
 
         }
         else

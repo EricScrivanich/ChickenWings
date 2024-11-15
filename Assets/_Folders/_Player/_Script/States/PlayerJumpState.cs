@@ -6,9 +6,9 @@ public class PlayerJumpState : PlayerBaseState
 {
 
     private bool hasFadedJumpAir;
-    private float drag;
-    private float dragCon;
-    private float dragLerpSpeed;
+    // private float drag;
+    // private float dragCon;
+    // private float dragLerpSpeed;
 
     private int jumpAirIndex;
     // private float slightUpwardsForce = 12f;
@@ -23,14 +23,16 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void EnterState(PlayerStateManager player)
     {
+        player.AdjustForce(jumpForce);
+        player.rb.angularVelocity = 0;
         // player.anim.SetTrigger("JumpTrigger"); 
         hasFadedJumpAir = false;
 
         jumpAirIndex = player.CurrentJumpAirIndex;
-        player.rb.drag = drag;
-        drag = dragCon;
+        // player.rb.drag = drag;
+        // drag = dragCon;
         // player.rb.velocity = new Vector2(0, player.jumpForce);
-        player.AdjustForce(jumpForce);
+
         // player.rb.AddForce(new Vector2(0, player.jumpForce),ForceMode2D.Impulse);
         AudioManager.instance.PlayCluck();
 
@@ -55,24 +57,24 @@ public class PlayerJumpState : PlayerBaseState
         jumpForce = initialForce;
 
         addJumpForce = addForce;
-        dragCon = d;
-        dragLerpSpeed = dSpeed;
+        // dragCon = d;
+        // dragLerpSpeed = dSpeed;
 
 
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-        if (drag > 0)
-        {
-            drag = Mathf.Lerp(drag, 0, dragLerpSpeed * Time.fixedDeltaTime);
-            player.rb.drag = drag;
-            Debug.Log(drag);
-        }
+        // if (drag > 0)
+        // {
+        //     drag = Mathf.Lerp(drag, 0, dragLerpSpeed * Time.fixedDeltaTime);
+        //     player.rb.drag = drag;
+        //     Debug.Log(drag);
+        // }
 
         if (player.ID.isHolding)
         {
-
+            Debug.LogError("YUHHHH");
             player.rb.AddForce(new Vector2(0, addJumpForce - Mathf.Abs(player.rb.velocity.y)));
             startHoldJumpAnimation = true;
 

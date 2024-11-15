@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f9ac5896b254ec4bec631e9a6fa083, type: 3}
+  m_Name: TRAN1-Main
+  m_EditorClassIdentifier: 
+  loopStates: 1
+  maxSpecialSpawnsPerCycle: 1
+  spawnEachSpecialOnceMax: 0
+  useMax: 1
+  useWeights: 1
+  specialEnemySpawnWeights:
+  - 0.6
+  - 0.4
+  specialEnemySpawns:
+  - {fileID: 11400000, guid: 960b8fab0f55d4d5899bb1c403b8df3d, type: 2}
+  - {fileID: 11400000, guid: eec869e04a4924c42b84d9b92281bd6b, type: 2}
+  continueFromStartIfOverriden: 0
+  continueFromPrevOverriden: 0
+  orderedSequence: ffffffff03000000ffffffff0300000002000000
+  randomSequenceWithWeights: []
+  RingAmountsByType: []
+  ringSpawnSetTypeOrder: 0200000000000000

@@ -88,11 +88,15 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip blobExitSound;
     [SerializeField] private AudioClip buttonClickSound;
     [SerializeField] private AudioClip sprayPaintSound;
+    [SerializeField] private AudioClip starWhooshSound;
+    [SerializeField] private AudioClip badgeSlapSound;
 
 
 
 
     [Header("Volumes")]
+    [SerializeField] private float starWhooshVolume;
+    [SerializeField] private float badgeSlapVolume;
     [SerializeField] private float buttonClickVolume;
     [SerializeField] private float sprayPaintVolume;
     [SerializeField] private float blobEnterVolume;
@@ -276,6 +280,8 @@ public class AudioManager : MonoBehaviour
 
         else if (type == 1)
             nonSlowSource.PlayOneShot(starHitSound, starHitVolume);
+        else if (type == 2) nonSlowSource.PlayOneShot(starWhooshSound, starWhooshVolume);
+        else if (type == 3) nonSlowSource.PlayOneShot(badgeSlapSound, badgeSlapVolume);
     }
 
     public void PlayLongFarts()

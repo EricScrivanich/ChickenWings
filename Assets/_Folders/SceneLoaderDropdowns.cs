@@ -28,6 +28,8 @@ namespace KingdomOfNight
         public static void LoadLevel13() { OpenScene("Assets/scenes/Levels/Level13.unity"); }
         [MenuItem("Scenes/Levels/Level14")]
         public static void LoadLevel14() { OpenScene("Assets/scenes/Levels/Level14.unity"); }
+        [MenuItem("Scenes/Levels/Level15")]
+        public static void LoadLevel15() { OpenScene("Assets/scenes/Levels/Level15.unity"); }
         [MenuItem("Scenes/Levels/Level2")]
         public static void LoadLevel2() { OpenScene("Assets/scenes/Levels/Level2.unity"); }
         [MenuItem("Scenes/Levels/Level3")]
@@ -50,6 +52,8 @@ namespace KingdomOfNight
         public static void LoadBasicsPig() { OpenScene("Assets/scenes/Main/BasicsPig.unity"); }
         [MenuItem("Scenes/Main/BasicsSlowed")]
         public static void LoadBasicsSlowed() { OpenScene("Assets/scenes/Main/BasicsSlowed.unity"); }
+        [MenuItem("Scenes/Main/FlappyFrenzy")]
+        public static void LoadFlappyFrenzy() { OpenScene("Assets/scenes/Main/FlappyFrenzy.unity"); }
         [MenuItem("Scenes/Main/MainMenu")]
         public static void LoadMainMenu() { OpenScene("Assets/scenes/Main/MainMenu.unity"); }
         [MenuItem("Scenes/Main/TutorialVideos")]

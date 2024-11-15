@@ -38,6 +38,8 @@ public class PlayerNextSectionState : PlayerBaseState
     {
         time = 0;
         moveTime = 0;
+        player.rb.angularVelocity = 0;
+
         currentRotation = player.transform.rotation.eulerAngles.z;
         reachedTargetPosition = false;
         player.rb.gravityScale = 0;

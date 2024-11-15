@@ -19,10 +19,25 @@ public class LevelGroups : MonoBehaviour
     [SerializeField] private List<GameObject> Heli;
     private List<GameObject> activeList;
 
+    [SerializeField] private List<LevelButton> levelButtons;
+
     private Sequence seq;
 
     [SerializeField] private List<RectTransform> levelGroups;
     private int currentLevelGroupIndex = 0;
+
+    public void SetLevelNumbers()
+    {
+        for (int i = 1; i < levelButtons.Count; i++)
+        {
+
+            levelButtons[i].levelNum = i + 1;
+        }
+    }
+    private void Awake()
+    {
+        SetLevelNumbers();
+    }
 
     public void LeftButtonClick()
     {

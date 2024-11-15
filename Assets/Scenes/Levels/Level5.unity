@@ -1416,7 +1416,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 5.3
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1587,6 +1587,10 @@ PrefabInstance:
       propertyPath: m_Constraints
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: stats
+      value: 
+      objectReference: {fileID: 11400000, guid: 61fa82dbf3f874151937b6f0807821b4, type: 2}
     m_RemovedComponents:
     - {fileID: 107412689077373414, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
     m_RemovedGameObjects: []
@@ -1758,6 +1762,7 @@ MonoBehaviour:
   objectivesTracked:
   - Barn
   initialDelayForHealthRingsToSpawn: 0
+  maxNumberOfHealthSpawns: 0
 --- !u!114 &642601662 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
@@ -3043,7 +3048,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8583672829969369339, guid: 7131881ab36ec45f4be6bf514b5e7b10, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.6
+      value: -4.93
       objectReference: {fileID: 0}
     - target: {fileID: 8583672829969369339, guid: 7131881ab36ec45f4be6bf514b5e7b10, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4413,11 +4418,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2325735760650419211, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.11
+      value: -5.32
       objectReference: {fileID: 0}
     - target: {fileID: 3370166446289568688, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.84
+      value: 4.89
       objectReference: {fileID: 0}
     - target: {fileID: 3679946209921622469, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4429,7 +4434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8187902104649478956, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.09
+      value: 5.14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

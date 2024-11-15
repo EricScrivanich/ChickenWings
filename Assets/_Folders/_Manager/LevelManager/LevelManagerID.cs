@@ -8,6 +8,8 @@ public class LevelManagerID : ScriptableObject
     public InputLvlEvent inputEvent;
     public OutputLvlEvent outputEvent;
 
+    public bool LevelCompleted { get; private set; }
+
     [SerializeField] private GameObject blobBurstPrefab;
     private GameObject blobBurst;
 
@@ -23,6 +25,8 @@ public class LevelManagerID : ScriptableObject
     public string LevelTitle;
 
 
+
+
     public int LevelIntensity { get; private set; }
     public int barnsNeeded;
     public int currentRingsPassed;
@@ -30,6 +34,31 @@ public class LevelManagerID : ScriptableObject
     public int RingsPassed { get; private set; }
 
     public int bucketsNeeded;
+
+    [SerializeField] private PlayerID player;
+
+
+
+    public int ReturnPlayerLives()
+    {
+        return player.Lives;
+    }
+
+    public List<int> ReturnPlayerInputs()
+    {
+        return player.PlayerInputs;
+    }
+    public List<Vector3Int> ReturnKilledPigs()
+    {
+        return player.KilledPigs;
+    }
+
+    public Vector2Int ReturnAmmoAmounts()
+    {
+        Vector2Int a = new Vector2Int(player.Ammo, player.ShotgunAmmo);
+        return a;
+    }
+
 
 
 
@@ -64,6 +93,7 @@ public class LevelManagerID : ScriptableObject
     public void ResetLevel(bool ringsReq, int ringAmountNeeded, int barnsNeed, int bucketNeed)
     {
         hasCreatedBlobBurst = false;
+        LevelCompleted = false;
         areRingsRequired = ringsReq;
         PauseSpawning = false;
         ringsNeeded = ringAmountNeeded;
@@ -73,6 +103,13 @@ public class LevelManagerID : ScriptableObject
         bucketsNeeded = bucketNeed;
 
 
+
+    }
+
+    public void SetLevelComplete()
+    {
+        Debug.LogError("Setting Level Complete");
+        LevelCompleted = true;
     }
 
     public void SetNewIntensity(int newVal)

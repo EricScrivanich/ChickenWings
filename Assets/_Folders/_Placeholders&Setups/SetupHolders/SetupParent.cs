@@ -19,8 +19,10 @@ public class SetupParent : ScriptableObject
 
     [Header("Ring Stuff")]
     public bool mustCompleteRingSequence;
-    private Queue<int> lastPickedTriggers = new Queue<int>();
+    private Queue<int> lastPickedTriggers;
     private Queue<int> recentSpawnedRandomRingTriggers;
+
+
 
     public int[] enemyTriggerForEachRingIndex;
     public int[] enemyTriggerForEachRingIndexWeights;
@@ -56,6 +58,13 @@ public class SetupParent : ScriptableObject
     //         collectableManager.StartCoroutine(collectableManager.NextTriggerCourintine(CheckTime(null, collectableSetup[currentTrigger].dataArray)));
 
     // }
+
+    public void ResetRandomSetups()
+    {
+        lastPickedTriggers = new Queue<int>();
+        recentSpawnedRandomRingTriggers = new Queue<int>();
+
+    }
 
     public void SpawnRandomSetWithRings(SpawnStateManager manager, bool finalRing)
     {
@@ -137,7 +146,7 @@ public class SetupParent : ScriptableObject
         pickedRingSet.InitializeCollectable(manager, finalRing);
         tempList.Add(pickedRingSet.TimeToTrigger);
 
-        if (randomEnemyTrigger >= 0)
+        if (randomEnemyTrigger >= 0 && enemySetup != null && enemySetup.Count > 0)
         {
 
             if (eggTriggerAndIndexAndType != null && eggTriggerAndIndexAndType.Length > 0)
@@ -224,6 +233,9 @@ public class SetupParent : ScriptableObject
         int attempts = 0;
         int random = -1;
 
+        if (lastPickedTriggers == null)
+            lastPickedTriggers = new Queue<int>();
+
         while (attempts < 5)
         {
             random = Random.Range(0, enemySetup.Count);
@@ -231,21 +243,41 @@ public class SetupParent : ScriptableObject
             {
                 break;
             }
-            attempts++;
+            else
+            {
+                attempts++;
+                if (attempts == 5) break;
+
+            }
+
         }
 
         if (attempts == 5)
         {
-            random = lastPickedTriggers.Dequeue(); // Get the least recent trigger
+            if (enemySetup.Count > lastPickedTriggers.Count)
+            {
+                for (int i = 0; i < enemySetup.Count; i++)
+                {
+                    if (!lastPickedTriggers.Contains(i))
+                    {
+                        random = i;
+
+                    }
+                }
+            }
+            else
+                random = lastPickedTriggers.Dequeue(); // Get the least recent trigger
         }
 
         lastPickedTriggers.Enqueue(random);
-        if (lastPickedTriggers.Count > 3)
+        if (lastPickedTriggers.Count > 5)
         {
             lastPickedTriggers.Dequeue(); // Ensure only the last 3 triggers are kept
         }
 
         var pickedSet = enemySetup[random].dataArray;
+
+        Debug.LogError("Spawning Random Enemy Set: " + random + " on - " + this);
 
         if (eggTriggerAndIndexAndType != null && eggTriggerAndIndexAndType.Length > 0)
         {

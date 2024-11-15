@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58def7dd2d7aa4e7f90f39993f49d3dd, type: 3}
+  m_Name: Challenge-11
+  m_EditorClassIdentifier: 
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  challenges: 010000000200000003000000
+  challengeTexts:
+  - Complete Level
+  - Lose Zero Lives
+  - 'Kill Two Balloons and One Bomber Plane '
+  challengeDifficulties:
+  - MEDIUM
+  - HARD
+  - HARD
+  LifeTarget: 3
+  EggAmmoTarget: 0
+  ShotgunAmmoTarget: 0
+  TrackedPigs: 0900000006000000
+  TrackedPigAmounts: 0200000001000000
+  CertainNonAllowedInputs: 

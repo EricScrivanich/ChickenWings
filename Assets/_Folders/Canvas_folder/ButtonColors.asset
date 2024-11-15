@@ -16,13 +16,14 @@ MonoBehaviour:
   currentN: 0
   currentD: 0
   options: {fileID: 11400000, guid: 76c4fde89849546749a28bb1bb7281b1, type: 2}
-  normalButtonColor: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 0.6313726}
+  normalButtonColor: {r: 1, g: 1, b: 1, a: 0.6313726}
   damagedOutlineColor: {r: 0.5754717, g: 0.109201506, b: 0.05700427, a: 1}
   frozenOutlineColor: {r: 0.55602527, g: 0.9007609, b: 0.990566, a: 1}
   frozenFillColor: {r: 0.4000089, g: 0.74853146, b: 0.8396226, a: 1}
-  highlightButtonColor: {r: 0.7028302, g: 0.7028302, b: 0.7028302, a: 1}
-  disabledButtonColor: {r: 0.9433962, g: 0.82575643, b: 0.19134924, a: 0.6313726}
-  disabledButtonColorFull: {r: 0.9433962, g: 0.82575643, b: 0.19134924, a: 1}
+  normalButtonColorFull: {r: 1, g: 1, b: 1, a: 1}
+  highlightButtonColor: {r: 1, g: 1, b: 1, a: 1}
+  disabledButtonColor: {r: 0.8980392, g: 0.17254902, b: 0.21176471, a: 0.7}
+  disabledButtonColorFull: {r: 0.8980392, g: 0.17254902, b: 0.21176471, a: 1}
   DashImageManaHighlight: {r: 0.8901961, g: 0.45882353, b: 1, a: 1}
   DashImageManaHighlight2: {r: 0.95067835, g: 0.5729352, b: 0.9716981, a: 1}
   DashImageManaDisabled: {r: 0.98039216, g: 0.3647059, b: 0.5764706, a: 0}
@@ -31,6 +32,15 @@ MonoBehaviour:
   coolDownColorBlue: {r: 0.8901961, g: 0.45882353, b: 1, a: 0.7647059}
   flashButtonColor1: {r: 0.1529402, g: 0.9528302, b: 0, a: 1}
   flashButtonColor2: {r: 0.73064095, g: 1, b: 0.3160377, a: 1}
+  StarNoneColor: {r: 0.122641504, g: 0.122063, b: 0.122063, a: 1}
+  StarGottenColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 0.8235294}
+  StarNormalColor: {r: 1, g: 1, b: 1, a: 1}
+  StarCardDisabledFillColor: {r: 0.8392157, g: 0.2509804, b: 0.2509804, a: 0.7294118}
+  StarCardDisabledOutlineColor: {r: 0.74509805, g: 0.047058824, b: 0.047058824, a: 1}
+  StarCardGoldFillColor1: {r: 1, g: 0.930528, b: 0.6556604, a: 0.9137255}
+  StarCardGoldOutlineColor1: {r: 1, g: 0.8834467, b: 0.41037738, a: 1}
+  StarCardGoldFillColor2: {r: 0.9150943, g: 0.8719294, b: 0.2978373, a: 0.7529412}
+  StarCardGoldOutlineColor2: {r: 0.9811321, g: 0.8247064, b: 0.19900322, a: 1}
   fillingManaColor: {r: 0.5803922, g: 0.039215688, b: 0.7647059, a: 0.6}
   canUseDashSlashImageColor1: {r: 0.9137255, g: 0.4, b: 0.8980392, a: 0.6}
   canUseDashSlashImageColor2: {r: 0.5803922, g: 0.039215688, b: 0.7647059, a: 0.6}
