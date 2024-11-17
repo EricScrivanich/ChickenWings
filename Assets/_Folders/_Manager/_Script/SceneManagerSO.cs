@@ -46,7 +46,7 @@ public class SceneManagerSO : ScriptableObject
 
     public LevelChallenges ReturnLevelChallenges()
     {
-        if (Level_Challenges[levelNumber] == null || levelNumber >= Level_Challenges.Count)
+        if (levelNumber == -1 || Level_Challenges[levelNumber] == null || levelNumber >= Level_Challenges.Count)
             return null;
         return Level_Challenges[levelNumber];
     }

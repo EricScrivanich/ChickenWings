@@ -87,6 +87,7 @@ MonoBehaviour:
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   startingState: 3
   startingStateDelay: 2
+  startDelay: 2.7
   startedMissileTimer: 0
   canSpawnMissilePig: 0
   transitionLogic: {fileID: 11400000, guid: 89377f25acbce4b1caeb82dbcf4ce310, type: 2}
@@ -97,6 +98,7 @@ MonoBehaviour:
   randomRingSetups:
   - {fileID: 11400000, guid: 78bf1db52259e4c34bd25360cf2889f0, type: 2}
   - {fileID: 11400000, guid: a1aa690ecbfed454fbabeaa2948f9002, type: 2}
+  lastRandomEnemySpawnTime: 0
   spawnIntervalRangeAfterTarget: {x: 0, y: 0}
   normalPigBoundingBoxBase: {fileID: 11400000, guid: 759415d4b2c764238a04bc3724ca2422, type: 2}
   jetPackPigBoundingBoxBase: {fileID: 11400000, guid: 6b6372b78ffca44bc880be6ad5c45c52, type: 2}
@@ -156,6 +158,7 @@ MonoBehaviour:
   - score
   - time
   initialDelayForHealthRingsToSpawn: 0
+  maxNumberOfHealthSpawns: 0
 --- !u!114 &8825740233988290671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,9 +171,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a11048850bce4dc2b7da1636e802ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
-  timeForNextIntensity: 10
+  timeForAddObjective: 0
   objectivesAddedPerTimeCycle: 5
+  timeChangePerFlappyPig: 0
+  minimumTime: 0
+  flappyFrenzy: 0
 --- !u!114 &1289930387296832898
 MonoBehaviour:
   m_ObjectHideFlags: 0

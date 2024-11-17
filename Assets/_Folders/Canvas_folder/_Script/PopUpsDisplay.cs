@@ -25,6 +25,7 @@ public class PopUpsDisplay : MonoBehaviour
     [SerializeField] private Vector2 textTargetPosition;
     [SerializeField] private Ease moveInEase;
     private bool isLevel;
+    private Sequence newHighScoreSeq;
 
 
     [SerializeField] private bool showScore;
@@ -49,7 +50,7 @@ public class PopUpsDisplay : MonoBehaviour
     private ScoreManager scoreMan;
     [SerializeField] private Material frozenMaterial;
 
-    
+
 
     private string levelName;
     private int levelNum;
@@ -186,6 +187,8 @@ public class PopUpsDisplay : MonoBehaviour
     void OnDisable()
     {
         ID.globalEvents.Frozen -= FrozenEvent;
+        if (newHighScoreSeq != null && newHighScoreSeq.IsPlaying())
+            newHighScoreSeq.Kill();
         DOTween.Kill(this);
         if (LvlID != null)
         {
@@ -202,7 +205,25 @@ public class PopUpsDisplay : MonoBehaviour
 
         if (showScore)
         {
-            scoreText.text = ("Final Score: " + ID.Score.ToString());
+            int high = PlayerPrefs.GetInt("EndlessHighScore", 0);
+            if (high > ID.Score)
+                scoreText.text = ("Final Score: " + ID.Score.ToString());
+            else
+            {
+                scoreText.text = ("New High Score: " + ID.Score.ToString());
+                Color prevCol = scoreText.color;
+
+                newHighScoreSeq = DOTween.Sequence();
+
+                newHighScoreSeq.Append(scoreText.DOColor(Color.white, .7f).From(prevCol));
+                newHighScoreSeq.Append(scoreText.DOColor(prevCol, .8f));
+                newHighScoreSeq.AppendInterval(.3f);
+
+                newHighScoreSeq.Play().SetLoops(-1);
+
+            }
+
+
         }
         else
             scoreText.gameObject.SetActive(false);

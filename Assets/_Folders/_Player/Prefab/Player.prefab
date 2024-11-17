@@ -499,12 +499,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db215764949cf44d8bd66b9c5b42a2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  feather: {fileID: 0}
+  MovementData: {fileID: 11400000, guid: 5e84c2700182043b993652e8b000e496, type: 2}
+  ammoManager: {fileID: 11400000, guid: 366d7951140784dbea2a6bb51d53160e, type: 2}
+  jumpAirPrefab: {fileID: 6268765921969228752, guid: a45e714496a644ff7927e2fd3c7429a8, type: 3}
+  mutePlayerAudio: 0
   shotgunObj: {fileID: 9073708736607978799}
-  stats: {fileID: 0}
   pool: {fileID: 0}
   yForceMultiplier: 4
   yForceSubtractMultiplier: 2
-  useChainedAmmo: 0
   shotgunRotationSpeed: 5
   shotgunAimRotationSpeed: 2
   blastPoint: {fileID: 8805552720765947111}
@@ -524,9 +528,6 @@ MonoBehaviour:
   rotateWithLastState: 0
   arrowPlayerPosition: {fileID: 556582436784589314, guid: fa20cd46945f74d07837495e6aa8ab83, type: 3}
   SlowFactor: 1
-  ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  jumpAirPrefab: {fileID: 6268765921969228752, guid: a45e714496a644ff7927e2fd3c7429a8, type: 3}
-  MovementData: {fileID: 11400000, guid: 5e84c2700182043b993652e8b000e496, type: 2}
   Cam: {fileID: 11400000, guid: 459b289478fca45e7bcf249442f62f34, type: 2}
   Dust: {fileID: 4295892072133194518}
   initialConstantForce: 0
@@ -557,9 +558,6 @@ MonoBehaviour:
   jumpHeld: 0
   isParachuting: 0
   isTryingToParachute: 0
-  ignoreParticleCollision: 0
-  baseRotateSpeedShotgun: 200
-  lerpTargetRotateSpeedSpeed: 50
 --- !u!114 &107412689077373414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -573,15 +571,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colorsSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
-  normalButtonColor: {r: 1, g: 1, b: 1, a: 0.6313726}
-  highlightButtonColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-  disabledButtonColor: {r: 0.9811321, g: 0.36561054, b: 0.36561054, a: 0.7607843}
-  DashImageManaHighlight: {r: 0.8901961, g: 0.45882353, b: 1, a: 1}
-  DashImageManaDisabled: {r: 0.98039216, g: 0.3647059, b: 0.5764706, a: 0}
-  DashImageManaDisabledFilling: {r: 0.7176471, g: 0.039215688, b: 0.7647059, a: 0.41960785}
-  coolDownColorRed: {r: 0.972549, g: 0.105882354, b: 0.105882354, a: 0.7647059}
-  coolDownColorBlue: {r: 0.8901961, g: 0.45882353, b: 1, a: 0.7647059}
-  manaUsed: 0
   moveDashIconX: 30
   dashIconLargeScale: {x: 1.5, y: 0.8, z: 1}
   dashIconLargeScale2: {x: 1.1, y: 1.2, z: 1.2}
@@ -784,7 +773,7 @@ SpriteRenderer:
   m_SortingLayerID: -781766449
   m_SortingLayer: 5
   m_SortingOrder: 4
-  m_Sprite: {fileID: -2716938697065195034, guid: cdef33c2cda664c49837764531887a4d, type: 3}
+  m_Sprite: {fileID: -3637253782674987843, guid: 168fb7226f76e46bf97cbc3f08335fac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

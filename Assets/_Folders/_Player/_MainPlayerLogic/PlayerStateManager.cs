@@ -302,7 +302,10 @@ public class PlayerStateManager : MonoBehaviour
     {
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
         AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), mutePlayerAudio);
-        ammoManager.Initialize();
+        HapticFeedbackManager.instance.LoadSavedData();
+
+        if (ammoManager != null)
+            ammoManager.Initialize();
         if (GetComponent<PlayerAddForceBoundaries>() != null)
         {
             playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
@@ -779,31 +782,36 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    private void HandlEggDrop()
+    private void HandleEggDrop()
     {
-        // if (ID.Ammo > 0)
-        // {
-        //     ammoManager.Ge
-        //     GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
-        //     AudioManager.instance.PlayEggDrop();
+        if (ammoManager == null) return;
 
-        //     if (rb.velocity.x < 0)
-        //     {
-        //         egg.GetComponent<Rigidbody2D>().velocity = new Vector2(rb.velocity.x * .55f, -1);
-        //     }
-        //     else
-        //     {
-        //         egg.GetComponent<Rigidbody2D>().velocity = new Vector2(rb.velocity.x * .45f, -1);
-        //     }
+        if (ID.Ammo > 0)
+        {
 
-        //     ID.Ammo -= 1;
+            // GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
+            AudioManager.instance.PlayEggDrop();
+            float force = 0;
+
+            if (rb.velocity.x < 0)
+            {
+                force = rb.velocity.x * .55f;
+            }
+            else
+            {
+                force = rb.velocity.x * .45f;
+            }
+            ammoManager.GetEgg(transform.position, force);
+
+            ID.Ammo -= 1;
 
 
-        // }
+        }
     }
 
     private void HandleShotgun(bool holding)
     {
+        if (ammoManager == null) return;
         // Debug.LogError("Can Shoot is: " + canShootShotgun + " shotgun release is: " + shotgunReleased + " in slow mo is: " + inSlowMo);
         // if (shotgunReleased) return;
         if (holding && canShootShotgun)
@@ -970,7 +978,11 @@ public class PlayerStateManager : MonoBehaviour
         // ignoreParticleCollision = true;
         // Debug.LogError("Gettting blast");
         // pool.Spawn("ShotgunBlast", blastPoint.position, shotgunObj.transform.rotation);
-        ammoManager.GetShotgunBlast(blastPoint.position, shotgunObj.transform.rotation, justSwitchedUsingChainedShotgun);
+        bool c = false;
+
+        if (useChainedAmmo || justSwitchedUsingChainedShotgun) c = true;
+
+        ammoManager.GetShotgunBlast(blastPoint.position, shotgunObj.transform.rotation, c);
         // sdfsadfs
         // asdfsf
         // asdfdsaf
@@ -1731,6 +1743,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnDash += HandleDash;
         ID.events.OnDrop += HandleDrop;
         ID.events.OnJumpHeld += HandleHoldJump;
+        ID.events.OnEggDrop += HandleEggDrop;
         // ID.events.OnParachute += HandleParachute;
         // ID.events.OnJumpReleased += HandleReleaseJump;
         ID.events.OnCompletedRingSequence += BucketCompletion;
@@ -1763,7 +1776,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnSetNewPlayerMovementData -= OnChangeMovementData;
 
 
-
+        ID.events.OnEggDrop -= HandleEggDrop;
 
 
         // ID.events.OnAttack -= HandleClocker;

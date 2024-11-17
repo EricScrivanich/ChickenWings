@@ -41,12 +41,19 @@ public class Egg_Regular : MonoBehaviour
         pool = PoolKit.GetPool("EggPool");
     }
 
-    private void OnEnable()
+    // private void OnEnable()
+    // {
+
+    //     // if (colliderIsExpanded)
+    //     //     coll2D.size = normalColSize;
+    // }
+
+    public void Initialize(float force)
     {
         hasHit = false;
         hitParticle = false;
-        // if (colliderIsExpanded)
-        //     coll2D.size = normalColSize;
+        rb.velocity = new Vector2(force, -1);
+
     }
 
 
@@ -91,8 +98,8 @@ public class Egg_Regular : MonoBehaviour
             hasHit = true;
             ID.AddScore(5);
             AudioManager.instance.PlayScoreSound();
-            pool.Despawn(gameObject);
-            return;
+            // pool.Despawn(gameObject);
+            // return;
 
         }
 
@@ -105,7 +112,7 @@ public class Egg_Regular : MonoBehaviour
             // StartCoroutine(YolkMovement());
             AudioManager.instance.PlayCrackSound();
             pool.Spawn("YolkParent", transform.position, Vector3.zero);
-            pool.Despawn(gameObject);
+            // pool.Despawn(gameObject);
 
             // isCracked = true;
 
@@ -120,12 +127,13 @@ public class Egg_Regular : MonoBehaviour
             {
                 AudioManager.instance.PlayCrackSound();
 
-                pool.Despawn(gameObject);
+                // pool.Despawn(gameObject);
                 // pool.Spawn("EggParticle", transform.position, Vector3.zero);
 
                 eggableEntity.OnEgged();
             }
         }
+        gameObject.SetActive(false);
 
 
     }
@@ -173,13 +181,13 @@ public class Egg_Regular : MonoBehaviour
 
     // }
 
-    // private void OnDisable()
-    // {
+    private void OnDisable()
+    {
 
 
-    //     isCracked = false;
+        rb.velocity = Vector2.zero;
 
-    // }
+    }
 
 
 }

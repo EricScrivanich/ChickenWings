@@ -71,6 +71,40 @@ public class SaveManager : MonoBehaviour
         File.WriteAllText(saveFilePath, json);
     }
 
+    public int ReturnCompletedChallenges(int type)
+    {
+        int amount = 0;
+        for (int i = 1; i < sceneSO.ReturnNumberOfLevels(); i ++)
+        {
+            var data = GetLevelData(i);
+
+            if (data.ChallengeCompletion.Length > 0)
+            {
+                if (type == 0)
+                {
+                    foreach (var b in data.ChallengeCompletion)
+                    {
+                        if (b) amount++;
+                    }
+                }
+                else if (type == 1)
+                {
+                    if (data.MasteredLevel) amount++;
+                }
+            }
+
+        }
+
+        return amount;
+
+    }
+
+    public bool HasCompletedLevel(int levelNumber)
+    {
+        if (levelNumber <= 0) return true;
+        else return GetLevelData(levelNumber).CompletedLevel;
+    }
+
 
 
     // Load gameData from a JSON file, or initialize new data if file does not exist
@@ -96,13 +130,13 @@ public class SaveManager : MonoBehaviour
 
     public bool[] GetSavedLevelData(int levelId)
     {
-        Debug.LogError("GRABBING DATA");
+        
         // Find the LevelSavedData for the specified levelId
         LevelSavedData levelData = GetLevelData(levelId);
-        Debug.LogError("GRABBed DATA");
+      
 
         // If level data does not exist, check if sceneSO has data for this level and initialize it if so
-        if (levelData == null || levelData.ChallengeCompletion.Length < 1)
+        if (levelData == null || (levelData.ChallengeCompletion.Length < 1 && sceneSO.ReturnChallengeCountByLevel(levelId) > 0))
         {
             int challengeCount = sceneSO.ReturnChallengeCountByLevel(levelId);
 

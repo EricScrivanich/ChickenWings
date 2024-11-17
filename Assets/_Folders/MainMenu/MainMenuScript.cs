@@ -75,10 +75,10 @@ public class MainMenuScript : MonoBehaviour
     private void IntitialMenuTween(RectTransform target, float pos, bool doX)
     {
         if (doX)
-            target.DOAnchorPosX(pos, 1.5f).SetEase(Ease.OutSine);
+            target.DOAnchorPosX(pos, 1.5f).SetEase(Ease.OutBack);
 
         else
-            target.DOAnchorPosY(pos, 1.5f).SetEase(Ease.OutSine);
+            target.DOAnchorPosY(pos, 1.9f).SetEase(Ease.OutSine);
 
 
 
@@ -89,11 +89,13 @@ public class MainMenuScript : MonoBehaviour
         coverPanel.SetActive(true);
         yield return new WaitForSeconds(.1f);
         IntitialMenuTween(titleRect, 0, false);
-        foreach (var rect in buttonRects)
+        for (int i = 0; i < buttonRects.Length; i++)
         {
-            IntitialMenuTween(rect, -373, true);
-            yield return new WaitForSeconds(.33f);
+            // Set the second parameter based on whether the index is even or odd
+            int parameterValue = (i % 2 == 0) ? -335 : -385;
 
+            IntitialMenuTween(buttonRects[i], parameterValue, true);
+            yield return new WaitForSeconds(.33f);
         }
         coverPanel.SetActive(false);
     }
@@ -387,16 +389,15 @@ public class MainMenuScript : MonoBehaviour
 
     public void LoadSceneFromSO(int levelIndex)
     {
-        AudioManager.instance.PlayButtonClickSound();
-        HapticFeedbackManager.instance.LightImpactButton();
+
+        HapticFeedbackManager.instance.PressUIButton();
 
         smSO.LoadLevel(levelIndex);
     }
 
     public void LoadGamemodeFromSO(int levelIndex)
     {
-        AudioManager.instance.PlayButtonClickSound();
-        HapticFeedbackManager.instance.LightImpactButton();
+        HapticFeedbackManager.instance.PressUIButton();
 
         smSO.LoadGamemode(levelIndex);
     }

@@ -9,22 +9,19 @@ public class Skin : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (BoundariesManager.isDay)
-        {
-            eyes.sprite = parts.glasses;
-        }
-        else
-        {
-            eyes.sprite = parts.eyes;
+        // if (BoundariesManager.isDay)
+        // {
+        //     eyes.sprite = parts.glasses;
+        // }
+        // else
+        // {
+        //     eyes.sprite = parts.eyes;
 
-        }
+        // }
 
 
     }
 
     // Update is called once per frame
-    void Update()
-    {
 
-    }
 }

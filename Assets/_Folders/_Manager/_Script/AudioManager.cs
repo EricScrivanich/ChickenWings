@@ -355,9 +355,10 @@ public class AudioManager : MonoBehaviour
         audioSource.PlayOneShot(flyOver, flyOverVolume);
     }
 
-    public void PlayErrorSound()
+    public void PlayErrorSound(bool loud = false)
     {
-        nonSlowSource.PlayOneShot(errorSound, errorVolume);
+        if (loud) nonSlowSource.PlayOneShot(errorSound, .95f);
+        else nonSlowSource.PlayOneShot(errorSound, errorVolume);
     }
     public void SlowAudioPitch(float newPitch)
     {

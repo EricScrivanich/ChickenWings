@@ -21,7 +21,7 @@ MonoBehaviour:
   enemyTriggerForEachRingIndexWeights: 
   enemySetup:
   - dataArray:
-    - rid: 4599887426716958750
+    - rid: 4599887516905504768
   collectableSetup: []
   isRandomSetup: 0
   testFromTrigger: 0
@@ -31,10 +31,14 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 4599887426716958750
-      type: {class: FlappyPigSO, ns: , asm: Assembly-CSharp}
+    - rid: 4599887516905504768
+      type: {class: NormalPigSO, ns: , asm: Assembly-CSharp}
       data:
-        TimeToTrigger: 2
+        TimeToTrigger: 5
         data:
-        - position: {x: 13.547246, y: 1.3163401}
-          scaleFactor: 0.8
+        - position: {x: 14.709352, y: 1.1443082}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5
+        - position: {x: 15.007658, y: -1.2421477}
+          scale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
+          speed: 6.5

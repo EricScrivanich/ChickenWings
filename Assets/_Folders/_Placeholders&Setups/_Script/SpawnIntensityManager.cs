@@ -100,6 +100,7 @@ public class SpawnIntensityManager : MonoBehaviour
             {
                 if (s == type)
                 {
+                    Debug.LogError("Tracked Pig Kill");
                     currentObjectivesObtained += addedValue;
                     shouldUpdate = true;
                     break;

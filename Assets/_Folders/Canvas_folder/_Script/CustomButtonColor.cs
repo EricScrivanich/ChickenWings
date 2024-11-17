@@ -37,8 +37,7 @@ public class CustomButtonColor : MonoBehaviour
         if (manager.CheckColors(type, index))
         {
             manager.SetNewColors(index, index, index, type);
-            AudioManager.instance.PlaySprayPaintSound();
-            HapticFeedbackManager.instance.SoftImpactButton();
+            HapticFeedbackManager.instance.PressUIButton();
             CustomButtonColorManager.OnSelectNewColor?.Invoke(type, index);
         }
 

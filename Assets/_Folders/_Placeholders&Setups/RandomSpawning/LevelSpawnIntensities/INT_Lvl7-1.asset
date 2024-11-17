@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: INT_Lvl7-1
   m_EditorClassIdentifier: 
   lvlID: {fileID: 0}
+  IgnoreItensityTriggers: 0
   overrideStateTransiton: 0
+  collectableSpawnData: {fileID: 0}
   transtionLogicStart: {fileID: 0}
   transtionLogicEnd: {fileID: 0}
   ringTypeWeights:
@@ -30,22 +32,23 @@ MonoBehaviour:
   randomEnemySetupAmountToSpawnWeights:
   - 0
   - 1
+  flipRandomEnemySpawnXChance: 0
   xTargetToStartSpawn: 1.5
   spawnRandomRangeAfterTarget: {x: 0.5, y: 1}
   amountOfWaveWeights:
   - 0
   - 0
-  - 0.3
-  - 0.35
-  - 0.45
-  - 0.1
+  - 0
+  - 0
+  - 0.6
+  - 0.4
   waveSizeWeights:
   - 0
   - 0
+  - 0
   - 0.2
-  - 0.3
-  - 0.4
-  - 0.1
+  - 0.45
+  - 0.35
   xSpawnRange: {x: 13, y: 20}
   xSpawnRangeMissilePig: {x: 12, y: 15}
   shootingRangeAdjustment: 0

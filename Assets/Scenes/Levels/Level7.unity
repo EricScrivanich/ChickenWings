@@ -900,8 +900,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_text
-      value: Different colored rings and buckets do different things on completion
-        or failure.
+      value: Different colored rings and buckets do different things when you complete
+        or fail them.
       objectReference: {fileID: 0}
     - target: {fileID: 8716598172230487213, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_fontSize
@@ -1872,6 +1872,10 @@ PrefabInstance:
       propertyPath: stats
       value: 
       objectReference: {fileID: 11400000, guid: 366d7951140784dbea2a6bb51d53160e, type: 2}
+    - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: ammoManager
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 107412689077373414, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
     m_RemovedGameObjects: []
@@ -2599,7 +2603,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
@@ -2607,7 +2611,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
@@ -2616,7 +2620,7 @@ PrefabInstance:
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
-      objectReference: {fileID: 1430156990}
+      objectReference: {fileID: 1891796128}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
       value: 2
@@ -2631,7 +2635,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
-      value: FadeOut
+      value: SetActive
       objectReference: {fileID: 0}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -2639,7 +2643,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
-      value: FadeInUI, Assembly-CSharp
+      value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_BoolArgument
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1777338408308834057, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -3485,7 +3493,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Red buckets will damage the player if not completed.
+  m_text: Red rings will damage the player if not completed.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ce4f86a906eb84129a844995d45ca85b, type: 2}
   m_sharedMaterial: {fileID: 4406120982727850755, guid: ce4f86a906eb84129a844995d45ca85b, type: 2}
@@ -4335,6 +4343,7 @@ MonoBehaviour:
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   startingState: -1
   startingStateDelay: 3
+  startDelay: 2.7
   startedMissileTimer: 0
   canSpawnMissilePig: 0
   transitionLogic: {fileID: 11400000, guid: 27de6182dcd7e41f4945d68de9cc1ecf, type: 2}

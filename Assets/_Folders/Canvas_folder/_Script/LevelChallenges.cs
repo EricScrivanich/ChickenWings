@@ -43,6 +43,106 @@ public class LevelChallenges : ScriptableObject
     {
         return challenges.Length;
     }
+
+    public int ReturnAmountOfNeededProgressTexts(int index)
+    {
+        var c = challenges[index];
+
+        switch (c)
+        {
+            case ChallengeTypes.CheckPigs:
+
+                if (TrackedPigs == null || TrackedPigs.Length == 0) return 0;
+
+                return TrackedPigs.Length;
+
+                break;
+
+
+            case ChallengeTypes.CheckPigsByAmmoTypeWithPigType:
+                if (TrackedPigsByBulletTypeWithPigType.Length == 0 || TrackedPigAmountsByBullet.Length == 0) return 0;
+
+                return TrackedPigAmountsByBullet.Length;
+
+
+
+        }
+        return 0;
+
+    }
+
+    public Vector2 ReturnCurrentProgressByChallengeIndex(int index, int challengeIndex)
+    {
+        var c = challenges[index];
+
+        Vector2 vect = Vector2.zero;
+
+        int xProgess = 0;
+        int yTotal = 0;
+
+
+        switch (c)
+        {
+            case ChallengeTypes.CheckPigs:
+
+                if (TrackedPigs == null || TrackedPigs.Length == 0) return vect;
+
+                var list = lvlID.ReturnKilledPigs();
+
+                yTotal = TrackedPigAmounts[challengeIndex];
+
+                Debug.LogError("Y AMOUNT OF PIGS IS: " + yTotal);
+
+
+
+                if (TrackedPigs[challengeIndex] == -1)
+                {
+
+
+                    xProgess = list.Count;
+
+
+
+                }
+
+                // if (CheckNumberOfCertainIntInList(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
+                else
+                {
+                    xProgess = CountPigsOfType(list, TrackedPigs[challengeIndex]);
+
+
+                }
+
+
+                vect = new Vector2(xProgess, yTotal);
+                Debug.LogError("VECT IS: " + vect);
+                break;
+
+
+            case ChallengeTypes.CheckPigsByAmmoTypeWithPigType:
+
+                yTotal = TrackedPigAmountsByBullet[challengeIndex];
+
+                if (TrackedPigsByBulletTypeWithPigType.Length == 0 || TrackedPigAmountsByBullet.Length == 0) return vect;
+
+
+
+                xProgess = CountPigsByBulletType(lvlID.ReturnKilledPigs(), TrackedPigsByBulletTypeWithPigType[challengeIndex].x, TrackedPigsByBulletTypeWithPigType[challengeIndex].y);
+
+                vect = new Vector2(xProgess, yTotal);
+
+
+
+
+
+                break;
+
+
+        }
+        return vect;
+
+    }
+
     public int CheckChallengeType(int challengeIndex)
     {
         var c = challenges[challengeIndex];
@@ -72,19 +172,33 @@ public class LevelChallenges : ScriptableObject
 
                 var list = lvlID.ReturnKilledPigs();
 
-                if (TrackedPigs[0] == -1)
+                bool fullyCompleted = true;
+                for (int i = 0; i < TrackedPigs.Length; i++)
                 {
-                    int totalPigsKilled = list.Count;
+                    if (TrackedPigs[i] == -1)
+                    {
+                        int totalPigsKilled = list.Count;
 
-                    if (totalPigsKilled >= TrackedPigAmounts[0]) return 2;
-                    else return 1;
+                        if (totalPigsKilled < TrackedPigAmounts[i])
+                        {
+                            fullyCompleted = false;
+                            break;
+                        }
+
+                    }
+
+                    // if (CheckNumberOfCertainIntInList(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
+                    else if (CountPigsOfType(list, TrackedPigs[i]) < TrackedPigAmounts[i])
+                    {
+                        fullyCompleted = false;
+                        break;
+
+                    }
                 }
 
-                // if (CheckNumberOfCertainIntInList(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
-                if (CountPigsOfType(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
-                    return 2;
-
+                if (fullyCompleted) return 2;
                 else return 1;
+
 
                 break;
 
@@ -115,12 +229,12 @@ public class LevelChallenges : ScriptableObject
             case ChallengeTypes.CheckPigsByAmmoTypeWithPigType:
                 if (TrackedPigsByBulletTypeWithPigType.Length == 0 || TrackedPigAmountsByBullet.Length == 0) return 0;
 
-                if (CountPigsByBulletType(
-                        lvlID.ReturnKilledPigs(),
-                        TrackedPigsByBulletTypeWithPigType[0].y,
-                        TrackedPigsByBulletTypeWithPigType[0].x)
-                    >= TrackedPigAmountsByBullet[0])
+                if (CountPigsByBulletType(lvlID.ReturnKilledPigs(), TrackedPigsByBulletTypeWithPigType[0].x,
+                    TrackedPigsByBulletTypeWithPigType[0].y) >= TrackedPigAmountsByBullet[0])
+                {
                     return 2;
+                }
+
 
                 return 1;
 
@@ -175,21 +289,34 @@ public class LevelChallenges : ScriptableObject
 
                 var list = lvlID.ReturnKilledPigs();
 
-                if (TrackedPigs[0] == -1)
+                bool fullyCompleted = true;
+                for (int i = 0; i < TrackedPigs.Length; i++)
                 {
-                    int totalPigsKilled = list.Count;
+                    if (TrackedPigs[i] == -1)
+                    {
+                        int totalPigsKilled = list.Count;
 
-                    if (totalPigsKilled >= TrackedPigAmounts[0]) return true;
-                    else return false;
+                        if (totalPigsKilled < TrackedPigAmounts[i])
+                        {
+                            fullyCompleted = false;
+                            break;
+                        }
+
+                    }
+
+                    // if (CheckNumberOfCertainIntInList(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
+                    else if (CountPigsOfType(list, TrackedPigs[i]) < TrackedPigAmounts[i])
+                    {
+                        fullyCompleted = false;
+                        break;
+
+                    }
                 }
 
-                // if (CheckNumberOfCertainIntInList(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
-                if (CountPigsOfType(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
-                    return true;
+                return fullyCompleted;
 
-                else return false;
 
-                break;
+
 
             case ChallengeTypes.CheckAmmo:
 

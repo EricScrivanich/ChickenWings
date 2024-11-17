@@ -80,7 +80,15 @@ public class ChallengesUIManager : MonoBehaviour
         currentLevelChallenge = sceneSO.ReturnLevelChallenges();
         if (currentLevelChallenge == null)
         {
-            NoChallenges.SetActive(true);
+            // NoChallenges.SetActive(true);
+
+            if (shownType == 1)
+            {
+                bool[] data = new bool[2];
+                data[0] = true;
+                data[1] = false;
+                SaveManager.instance.UpdateLevelData(sceneSO.ReturnLevelNumber(), data);
+            }
             challengesAvailable = false;
             gameObject.SetActive(false);
             return;
@@ -110,7 +118,7 @@ public class ChallengesUIManager : MonoBehaviour
         // }
 
 
-        if (shownType == 2) padding *= .5f;
+        if (shownType == 2) padding *= .4f;
 
 
         float currentYPosition = 0f; // Starting Y position for the first challenge
@@ -243,10 +251,10 @@ public class ChallengesUIManager : MonoBehaviour
                 levelStartSeq = DOTween.Sequence();
 
                 levelStartSeq.AppendInterval(.3f);
-                levelStartSeq.Append(group.DOFade(1, .6f));
-                levelStartSeq.AppendInterval(2);
+                levelStartSeq.Append(group.DOFade(1, .5f));
+                levelStartSeq.AppendInterval(2.4f);
 
-                levelStartSeq.Append(group.DOFade(0, .5f));
+                levelStartSeq.Append(group.DOFade(0, .4f));
                 levelStartSeq.Append(lives.DOLocalMoveY(ogPos.y, .9f).SetEase(Ease.OutBack));
 
 

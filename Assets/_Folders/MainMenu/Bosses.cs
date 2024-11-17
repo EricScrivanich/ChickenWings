@@ -3,15 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using TMPro;
 
 public class LevelGroups : MonoBehaviour
 {
+    [SerializeField] private float moveArrowAmount;
+    [SerializeField] private float moveArrowInDuration;
+    [SerializeField] private float moveArrowOutDuration;
+    private Sequence MoveArrrowSeq;
     [SerializeField] private Color normalRedColor;
+    [SerializeField] private SceneManagerSO sceneSO;
     [SerializeField] private Color normalWhiteColor;
     [SerializeField] private Color disabledRedColor;
     [SerializeField] private Color disabledWhiteColor;
-    [SerializeField] private Image[] leftAndRightButtonArrows;
-    [SerializeField] private Image[] leftAndRightButtonFills;
+    [SerializeField] private CanvasGroup leftArrow;
+    [SerializeField] private CanvasGroup rightArrow;
+
     [SerializeField] private GameObject intro;
     [SerializeField] private List<GameObject> Tank;
     [SerializeField] private List<GameObject> Pig;
@@ -19,9 +26,14 @@ public class LevelGroups : MonoBehaviour
     [SerializeField] private List<GameObject> Heli;
     private List<GameObject> activeList;
 
+    [SerializeField] private TextMeshProUGUI starCount;
+    [SerializeField] private TextMeshProUGUI badgeCount;
+
+
     [SerializeField] private List<LevelButton> levelButtons;
 
     private Sequence seq;
+    private bool isMoving = false;
 
     [SerializeField] private List<RectTransform> levelGroups;
     private int currentLevelGroupIndex = 0;
@@ -39,77 +51,6 @@ public class LevelGroups : MonoBehaviour
         SetLevelNumbers();
     }
 
-    public void LeftButtonClick()
-    {
-        if (currentLevelGroupIndex > 0)
-        {
-            HapticFeedbackManager.instance.PressUIButton();
-            int c = currentLevelGroupIndex;
-            seq = DOTween.Sequence();
-            seq.Append(levelGroups[currentLevelGroupIndex].DOLocalMoveX(2400, .45f).OnComplete(() => levelGroups[c].gameObject.SetActive(false)));
-            levelGroups[currentLevelGroupIndex - 1].gameObject.SetActive(true);
-            seq.Append(levelGroups[currentLevelGroupIndex - 1].DOLocalMoveX(0, .5f).SetEase(Ease.OutBack).From(-2400));
-            currentLevelGroupIndex--;
-            CheckButtonsToShow();
-            seq.Play();
-        }
-
-    }
-    public void RightButtonClick()
-    {
-        HapticFeedbackManager.instance.PressUIButton();
-
-        if (currentLevelGroupIndex < levelGroups.Count - 1)
-        {
-            seq = DOTween.Sequence();
-            int c = currentLevelGroupIndex;
-            seq.Append(levelGroups[currentLevelGroupIndex].DOLocalMoveX(-2400, .55f).SetEase(Ease.InBack).OnComplete(() => levelGroups[c].gameObject.SetActive(false)));
-            levelGroups[currentLevelGroupIndex + 1].gameObject.SetActive(true);
-            seq.Append(levelGroups[currentLevelGroupIndex + 1].DOLocalMoveX(0, .75f).SetEase(Ease.OutBack).From(2400));
-            currentLevelGroupIndex++;
-            CheckButtonsToShow();
-
-            seq.Play();
-        }
-
-    }
-
-    private void SetColor(int i, bool disable)
-    {
-        if (disable)
-        {
-            leftAndRightButtonArrows[i].color = disabledWhiteColor;
-            leftAndRightButtonFills[i].color = disabledRedColor;
-        }
-        else
-        {
-            leftAndRightButtonArrows[i].color = normalWhiteColor;
-            leftAndRightButtonFills[i].color = normalRedColor;
-        }
-
-    }
-
-    public void CheckButtonsToShow()
-    {
-        if (currentLevelGroupIndex == 0)
-            SetColor(0, true);
-
-        else if (currentLevelGroupIndex >= levelGroups.Count - 1)
-            SetColor(1, true);
-
-
-        else
-        {
-            SetColor(0, false);
-            SetColor(1, false);
-        }
-
-
-
-    }
-
-
-    // Start is called before the first frame update
     void Start()
     {
 
@@ -130,7 +71,118 @@ public class LevelGroups : MonoBehaviour
 
         }
 
+        int totalStars = 0;
+        int totalBadges = 0;
+        for (int i = 1; i < sceneSO.ReturnNumberOfLevels(); i++)
+        {
+            if (sceneSO.ReturnChallengeCountByLevel(i) > 0)
+            {
+                totalStars += sceneSO.ReturnChallengeCountByLevel(i);
+                totalBadges++;
+
+
+            }
+        }
+        starCount.text = SaveManager.instance.ReturnCompletedChallenges(0).ToString() + "/" + totalStars.ToString();
+        badgeCount.text = SaveManager.instance.ReturnCompletedChallenges(1).ToString() + "/" + totalBadges.ToString();
+
     }
+
+    public void LeftButtonClick()
+    {
+        if (currentLevelGroupIndex > 0 && !isMoving)
+        {
+
+
+            isMoving = true;
+            HapticFeedbackManager.instance.PressUIButton();
+            levelGroups[currentLevelGroupIndex - 1].gameObject.SetActive(true);
+            int c = currentLevelGroupIndex;
+            MoveArrrowSeq = DOTween.Sequence();
+            MoveArrrowSeq.Append(leftArrow.transform.DOLocalMoveX(-moveArrowAmount, moveArrowInDuration));
+            MoveArrrowSeq.Append(leftArrow.transform.DOLocalMoveX(moveArrowAmount, moveArrowOutDuration));
+            MoveArrrowSeq.Play();
+
+            seq = DOTween.Sequence();
+
+
+            seq.Append(levelGroups[currentLevelGroupIndex].DOLocalMoveX(2400, .5f).OnComplete(() => levelGroups[c].gameObject.SetActive(false)));
+
+
+            seq.Append(levelGroups[currentLevelGroupIndex - 1].DOLocalMoveX(0, .5f).SetEase(Ease.OutBack).From(-2400));
+
+            currentLevelGroupIndex--;
+            CheckButtonsToShow();
+            seq.Play().OnComplete(() => isMoving = false);
+        }
+
+    }
+    public void RightButtonClick()
+    {
+        HapticFeedbackManager.instance.PressUIButton();
+
+        if (currentLevelGroupIndex < levelGroups.Count - 1 && !isMoving)
+        {
+            isMoving = true;
+            MoveArrrowSeq = DOTween.Sequence();
+            MoveArrrowSeq.Append(rightArrow.transform.DOLocalMoveX(moveArrowAmount, moveArrowInDuration));
+            MoveArrrowSeq.Append(rightArrow.transform.DOLocalMoveX(-moveArrowAmount, moveArrowOutDuration));
+            MoveArrrowSeq.Play();
+            seq = DOTween.Sequence();
+            int c = currentLevelGroupIndex;
+            seq.Append(levelGroups[currentLevelGroupIndex].DOLocalMoveX(-2400, .5f).SetEase(Ease.InBack).OnComplete(() => levelGroups[c].gameObject.SetActive(false)));
+
+            levelGroups[currentLevelGroupIndex + 1].gameObject.SetActive(true);
+            seq.Append(levelGroups[currentLevelGroupIndex + 1].DOLocalMoveX(0, .5f).SetEase(Ease.OutBack).From(2400));
+
+            currentLevelGroupIndex++;
+            CheckButtonsToShow();
+
+            seq.Play().OnComplete(() => isMoving = false);
+        }
+
+    }
+
+    // private void SetColor(i, bool disable)
+    // {
+    //     if (disable)
+    //     {
+
+    //     }
+    //     else
+    //     {
+    //         leftAndRightButtonArrows[i].color = normalWhiteColor;
+    //         leftAndRightButtonFills[i].color = normalRedColor;
+    //     }
+
+    // }
+
+    public void CheckButtonsToShow()
+    {
+        if (currentLevelGroupIndex == 0)
+
+            leftArrow.DOFade(0, .3f);
+
+        else if (currentLevelGroupIndex >= levelGroups.Count - 1)
+            rightArrow.DOFade(0, .3f);
+
+
+        else
+        {
+            if (leftArrow.alpha == 0)
+                leftArrow.DOFade(1, .35f);
+            if (rightArrow.alpha == 0)
+                rightArrow.DOFade(1, .35f);
+
+        }
+
+
+
+    }
+
+
+    // Start is called before the first frame update
+
 
     public void Return()
     {

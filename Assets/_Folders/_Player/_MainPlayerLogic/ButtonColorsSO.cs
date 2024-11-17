@@ -63,6 +63,10 @@ public class ButtonColorsSO : ScriptableObject
 
     public Color OutLineColor;
 
+    [Header("UI COLORs")]
+    public Color NormalSignButtonColor;
+    public Color disabledSignButtonColor;
+    public Color disabledSignTextColor;
 
     [Header("Text Colors")]
     public Color MainTextColor;

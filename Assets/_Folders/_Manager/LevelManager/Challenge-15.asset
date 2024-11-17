@@ -16,7 +16,7 @@ MonoBehaviour:
   challenges: 010000000600000007000000
   challengeTexts:
   - Complete Level
-  - Kill 2 pigs with a single bullet
+  - Kill 2 pigs with chained ammo
   - kill 2 normal pigs with single bullet
   challengeDifficulties:
   - HARD
@@ -27,8 +27,9 @@ MonoBehaviour:
   ShotgunAmmoTarget: 0
   TrackedPigs: 06000000
   TrackedPigAmounts: 01000000
-  TrackedPigsByBulletTypeWithPigType: []
-  TrackedPigAmountsByBullet: 
-  TrackedPigIDWithPigType: 
-  TrackedPigAmountsByID: 
+  TrackedPigsByBulletTypeWithPigType:
+  - {x: 2, y: -1}
+  TrackedPigAmountsByBullet: 02000000
+  TrackedPigIDWithPigType: 00000000
+  TrackedPigAmountsByID: 02000000
   CertainNonAllowedInputs: 0000000003000000

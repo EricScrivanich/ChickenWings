@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
-using Lofelt.NiceVibrations;
+
 using System;
 
 
@@ -13,6 +13,7 @@ public class EggAmmoDisplay : MonoBehaviour
 {
     [SerializeField] private bool ignoreSwitch;
     [SerializeField] private bool startHidden;
+
     private Image buttonImage;
     public static Action<int, int> SwitchAmmoEvent;
     public static Action<int> EquipAmmoEvent;
@@ -85,8 +86,6 @@ public class EggAmmoDisplay : MonoBehaviour
     private int currentEggType;
     [SerializeField] private int amountOfEggs;
 
-    [SerializeField] private SwipedEggUI swipe1;
-    [SerializeField] private SwipedEggUI swipe2;
     [SerializeField] private SwipedEggUI[] eggs;
 
     public bool allAmmoZero { get; private set; }
@@ -114,6 +113,10 @@ public class EggAmmoDisplay : MonoBehaviour
     public bool eggButtonHidden;
     private int shotgunRotateVal = -2;
 
+    private bool ignoreAll;
+
+    private bool scopeIsRed = false;
+
 
 
 
@@ -133,6 +136,7 @@ public class EggAmmoDisplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ignoreAll = false;
         chainedFill.color = colorSO.disabledButtonColorFull;
         shotgunText.color = colorSO.disabledButtonColorFull;
         startChainedGroupPosition = chainedShotgunGroup.transform.localPosition;
@@ -241,6 +245,8 @@ public class EggAmmoDisplay : MonoBehaviour
 
     private void HideEggButton(bool hide)
     {
+        // if (ignoreAll) return;
+        // ignoreAll = true;
 
         if (hide)
         {
@@ -265,20 +271,22 @@ public class EggAmmoDisplay : MonoBehaviour
 
             if (currentAmmoType == 0 && player.Ammo == 0 && player.ShotgunAmmo > 0)
             {
+                currentAmmoType = 1;
                 eggs[0].UnEquip(false, 0);
                 eggs[1].Equip(false, 1);
                 EggAmmoDisplay.EquipAmmoEvent(1);
                 EggAmmoDisplay.UnequipAmmoEvent(0);
-                currentAmmoType = 1;
+
 
             }
             else if (currentAmmoType == 1 && player.Ammo > 0 && player.ShotgunAmmo == 0)
             {
+                currentAmmoType = 0;
                 eggs[1].UnEquip(false, 1);
                 eggs[0].Equip(false, 0);
                 EggAmmoDisplay.EquipAmmoEvent(0);
                 EggAmmoDisplay.UnequipAmmoEvent(1);
-                currentAmmoType = 0;
+
 
 
 
@@ -295,7 +303,7 @@ public class EggAmmoDisplay : MonoBehaviour
 
                     if (player.Ammo == 0)
                     {
-                        ZeroAmmoPress(false);
+                        ZeroAmmoPress(false, false);
                         Debug.LogError("ZeroPress");
                     }
 
@@ -310,7 +318,7 @@ public class EggAmmoDisplay : MonoBehaviour
                     if (player.ShotgunAmmo == 0)
                     {
                         Debug.LogError("ZeroPress");
-                        ZeroAmmoPress(false);
+                        ZeroAmmoPress(false, false);
                     }
                 }
 
@@ -383,7 +391,7 @@ public class EggAmmoDisplay : MonoBehaviour
                 }
                 else if (ignoreSwitch)
                 {
-                    ZeroAmmoPress(false);
+                    ZeroAmmoPress(false, true);
                     Debug.LogError("ZeroPress");
                 }
 
@@ -415,7 +423,7 @@ public class EggAmmoDisplay : MonoBehaviour
 
                 else if (ignoreSwitch)
                 {
-                    ZeroAmmoPress(false);
+                    ZeroAmmoPress(false, true);
                     Debug.LogError("ZeroPress");
                 }
             }
@@ -550,7 +558,7 @@ public class EggAmmoDisplay : MonoBehaviour
         {
             if (holding)
             {
-                ZeroAmmoPress(true);
+                ZeroAmmoPress(true, false);
 
                 Debug.LogError("ZeroPress: " + currentAmmo);
 
@@ -569,7 +577,7 @@ public class EggAmmoDisplay : MonoBehaviour
         if (holding)
         {
 
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.RigidImpact);
+            HapticFeedbackManager.instance.PressShotgunButton();
 
             shotgunEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1 * scaleAmountOnPress, buttonPressTweenDuration));
             shotgunEggPressSequence.Join(currentEgg.DOScale(BoundariesManager.vectorThree1 * (scaleAmountOnPress + .05f), buttonPressTweenDuration).SetEase(Ease.OutSine));
@@ -585,7 +593,8 @@ public class EggAmmoDisplay : MonoBehaviour
         {
 
 
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.HeavyImpact);
+            HapticFeedbackManager.instance.ReleaseShotgunButton();
+
 
 
             shotgunEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1, buttonPressTweenDuration));
@@ -607,6 +616,13 @@ public class EggAmmoDisplay : MonoBehaviour
 
     public void NormalEggPressTween()
     {
+        if (onZero)
+        {
+            Debug.LogError("ZeroPress");
+            ZeroAmmoPress(true, false);
+            return;
+        }
+
         if (normalEggPressSequence != null && normalEggPressSequence.IsPlaying())
             normalEggPressSequence.Kill();
         normalEggPressSequence = DOTween.Sequence();
@@ -615,27 +631,17 @@ public class EggAmmoDisplay : MonoBehaviour
             shotgunEggPressSequence.Kill();
 
 
-        if (onZero)
-        {
-            Debug.LogError("ZeroPress");
-            ZeroAmmoPress(true);
-        }
 
+        HapticFeedbackManager.instance.PlayerButtonPress();
+        normalEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1 * scaleAmountOnPress, buttonPressTweenDuration));
+        normalEggPressSequence.Join(currentEgg.DOScale(BoundariesManager.vectorThree1 * (scaleAmountOnPress + .05f), buttonPressTweenDuration).SetEase(Ease.OutSine));
+        normalEggPressSequence.Join(currentEgg.DOLocalMoveY(originalEggY + addedYOnPress + 5, buttonPressTweenDuration));
+        normalEggPressSequence.Join(scopeRect.DOLocalMoveY(originalYPos + addedYOnPress, buttonPressTweenDuration));
+        normalEggPressSequence.Join(scopeFill.DOColor(colorSO.highlightButtonColor, buttonPressTweenDuration).OnComplete(PressTweenFinish));
+        // normalEggPressSequence.Join(ringFill.DOColor(colorSO.highlightButtonColor, buttonPressTweenDuration).OnComplete(PressTweenFinish));
 
-        else
-        {
+        normalEggPressSequence.Play();
 
-
-            HapticFeedbackManager.instance.PlayerButtonPress();
-            normalEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1 * scaleAmountOnPress, buttonPressTweenDuration));
-            normalEggPressSequence.Join(currentEgg.DOScale(BoundariesManager.vectorThree1 * (scaleAmountOnPress + .05f), buttonPressTweenDuration).SetEase(Ease.OutSine));
-            normalEggPressSequence.Join(currentEgg.DOLocalMoveY(originalEggY + addedYOnPress + 5, buttonPressTweenDuration));
-            normalEggPressSequence.Join(scopeRect.DOLocalMoveY(originalYPos + addedYOnPress, buttonPressTweenDuration));
-            normalEggPressSequence.Join(scopeFill.DOColor(colorSO.highlightButtonColor, buttonPressTweenDuration).OnComplete(PressTweenFinish));
-            // normalEggPressSequence.Join(ringFill.DOColor(colorSO.highlightButtonColor, buttonPressTweenDuration).OnComplete(PressTweenFinish));
-
-            normalEggPressSequence.Play();
-        }
 
 
 
@@ -807,7 +813,7 @@ public class EggAmmoDisplay : MonoBehaviour
         EggAmmoDisplay.EquipAmmoEvent?.Invoke(currentAmmoType);
         EggAmmoDisplay.UnequipAmmoEvent?.Invoke(lastEgg);
 
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Warning);
+        HapticFeedbackManager.instance.SwitchAmmo();
         AudioManager.instance.PlayChamberClick();
 
         bool justPressed = false;
@@ -824,9 +830,13 @@ public class EggAmmoDisplay : MonoBehaviour
             shotgunEggPressSequence.Kill();
         }
 
+        Debug.LogError("JUST PRESSED IS: " + justPressed);
+
         if (justPressed)
         {
             shotgunEggPressSequence = DOTween.Sequence();
+
+
 
             shotgunEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1, buttonPressTweenDuration));
             shotgunEggPressSequence.Join(currentEgg.DOScale(BoundariesManager.vectorThree1, buttonPressTweenDuration));
@@ -844,7 +854,7 @@ public class EggAmmoDisplay : MonoBehaviour
         if (currentAmmo <= 0)
         {
             Debug.LogError("ZeroPress");
-            ZeroAmmoPress(false);
+            ZeroAmmoPress(false, false);
             joystickController.enabled = false;
         }
         else if (currentAmmoType == 1 && currentAmmo > 0)
@@ -890,7 +900,9 @@ public class EggAmmoDisplay : MonoBehaviour
 
     public void SetAmmo(int amount, int type)
     {
-        if (type != currentAmmoType) return;
+        if (type != currentAmmoType)
+            return;
+
         currentAmmo = amount;
 
         if ((onZero || usingChain) && currentAmmo > 0)
@@ -905,6 +917,9 @@ public class EggAmmoDisplay : MonoBehaviour
             normalEggPressSequence.Play();
 
         }
+
+
+
 
 
     }
@@ -928,24 +943,35 @@ public class EggAmmoDisplay : MonoBehaviour
 
     }
 
-    private void ZeroAmmoPress(bool pressed)
+    private void ZeroAmmoPress(bool pressed, bool checkScale)
     {
 
-
+        scopeIsRed = true;
         if (pressed)
         {
             HapticFeedbackManager.instance.PlayerButtonFailure();
 
         }
 
-
+        if (shotgunEggPressSequence != null && shotgunEggPressSequence.IsPlaying())
+            shotgunEggPressSequence.Kill();
         if (normalEggPressSequence != null && normalEggPressSequence.IsPlaying())
             normalEggPressSequence.Kill();
+
 
         normalEggPressSequence = DOTween.Sequence();
 
 
         normalEggPressSequence.Append(scopeFill.DOColor(colorSO.disabledButtonColor, .15f));
+        if (checkScale)
+        {
+            normalEggPressSequence.Join(scopeRect.DOScale(BoundariesManager.vectorThree1, .15f));
+            normalEggPressSequence.Join(currentEgg.DOScale(BoundariesManager.vectorThree1, .15f));
+            normalEggPressSequence.Join(currentEgg.DOLocalMoveY(originalEggY, .15f).SetEase(Ease.InSine));
+            normalEggPressSequence.Join(scopeRect.DOLocalMoveY(originalYPos, .15f));
+
+        }
+
         normalEggPressSequence.Join(ringFill.DOColor(colorSO.disabledButtonColorFull, .15f));
         normalEggPressSequence.Append(scopeFill.DOColor(colorSO.DisabledScopeFillColor, .15f));
         normalEggPressSequence.Join(ringFill.DOColor(colorSO.disabledButtonColor, .15f));
@@ -980,8 +1006,9 @@ public class EggAmmoDisplay : MonoBehaviour
             eggs[1].FlashAmmoTween(false);
             UpdateChainedAmmoMaxWait(false);
 
-            chainedShotgunGroup.DOFade(0, .3f);
-            chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1 * 1.3f, .3f);
+            chainedShotgunGroup.DOFade(0, .15f);
+
+            chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1 * 1.3f, .2f);
             if (arrowsAreShown)
                 OnRotateWithShotgun(-2);
 

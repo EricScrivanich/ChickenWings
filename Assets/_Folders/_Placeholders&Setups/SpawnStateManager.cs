@@ -12,6 +12,8 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private int startingState = -1;
     [SerializeField] private int startingStateDelay = 3;
 
+    [SerializeField] private float startDelay = 2.5f;
+
     public bool startedMissileTimer = false;
 
     public Coroutine SpawnWithDelayRoutine;
@@ -227,15 +229,17 @@ public class SpawnStateManager : MonoBehaviour
 
 #endif
 
-        if (startingState > -1)
+        if (startDelay > 0)
         {
-            StartCoroutine(SwitchToStartingStateAfterDelay(startingStateDelay));
+            StartCoroutine(SwitchToStartingStateAfterDelay(startDelay));
 
         }
         else if (startingState == -2)
         {
             NextLogicTriggerAfterDelay(startingStateDelay, -1);
         }
+
+
 
         // SwitchState();
 
@@ -483,8 +487,14 @@ public class SpawnStateManager : MonoBehaviour
 
     public void SwitchToSpecficState(int stateIndex)
     {
+        Debug.LogError("Starting State is: " + stateIndex);
+
         switch (stateIndex)
         {
+            case (-1):
+
+                return;
+
             case (0):
                 {
                     currentState = pureSetupState;
@@ -527,7 +537,7 @@ public class SpawnStateManager : MonoBehaviour
 
     private IEnumerator SwitchToSpecificStateAfterDelay(int type)
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(startDelay);
         SwitchToSpecficState(type);
     }
 

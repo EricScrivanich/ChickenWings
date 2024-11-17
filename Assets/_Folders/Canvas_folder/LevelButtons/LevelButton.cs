@@ -15,10 +15,7 @@ public class LevelButton : MonoBehaviour
     [SerializeField] private SceneManagerSO sceneLoader;
     public int levelNum;
     [SerializeField] private bool isUnlocked;
-    [SerializeField] private Color buttonColorUnlocked;
-    [SerializeField] private Color buttonColorLocked;
-    [SerializeField] private Color textColorUnlocked;
-    [SerializeField] private Color textColorLocked;
+   
     [SerializeField] private TextMeshProUGUI[] Text;
     [SerializeField] private Image ButtonImage;
     [SerializeField] private RectTransform Lock;
@@ -33,43 +30,46 @@ public class LevelButton : MonoBehaviour
         // if (levelNum == 1 || SaveManager.instance.GetSavedLevelData(levelNum - 1)[0])
         //     isUnlocked = true;
         // else isUnlocked = false;
-        isUnlocked = true;
+
+
+        isUnlocked = SaveManager.instance.HasCompletedLevel(levelNum - 1);
 
         Lock.gameObject.SetActive(!isUnlocked);
+
         foreach (var item in stars)
         {
             item.enabled = false;
         }
 
-        bool[] data = SaveManager.instance.GetSavedLevelData(levelNum);
-        if (data != null || data.Length > 0)
-        {
-            badge.SetActive(data[1]);
-            for (int i = 0; i < data.Length - 2; i++)
-            {
-                stars[i].enabled = true;
-
-                if (data[i + 2]) stars[i].color = colorSO.StarNormalColor;
-                else stars[i].color = colorSO.StarNoneColor;
-            }
-        }
-
-
-
-
-
-
         if (isUnlocked)
         {
-            foreach (var text in Text) text.color = textColorUnlocked;
-            ButtonImage.color = buttonColorUnlocked;
+            foreach (var text in Text) text.color = Color.white;
+            ButtonImage.color = colorSO.NormalSignButtonColor;
             UnlockedAnimation();
+
+            bool[] data = SaveManager.instance.GetSavedLevelData(levelNum);
+            if (data != null && data.Length > 2)
+            {
+                bool b = data[1];
+                badge.SetActive(b);
+                if (!b)
+                {
+                    for (int i = 0; i < data.Length - 2; i++)
+                    {
+                        stars[i].enabled = true;
+
+                        if (data[i + 2]) stars[i].color = colorSO.StarNormalColor;
+                        else stars[i].color = colorSO.StarNoneColor;
+                    }
+                }
+
+            }
         }
 
         else
         {
-            foreach (var text in Text) text.color = textColorLocked;
-            ButtonImage.color = buttonColorLocked;
+            foreach (var text in Text) text.color = colorSO.disabledSignTextColor;
+            ButtonImage.color = colorSO.disabledSignButtonColor;
         }
     }
 
@@ -99,7 +99,8 @@ public class LevelButton : MonoBehaviour
 
         else
         {
-            GameObject.Find("MenuButtons").GetComponent<LevelLockedManager>().CheckLockedLevel(levelNum);
+            // GameObject.Find("MenuButtons").GetComponent<LevelLockedManager>().CheckLockedLevel(levelNum);
+            LevelLockedManager.OnShowLevelLocked?.Invoke(levelNum - 1, true);
 
             if (lockMoveTween != null && lockMoveTween.IsPlaying())
                 lockMoveTween.Kill();

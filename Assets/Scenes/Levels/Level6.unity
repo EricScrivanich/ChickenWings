@@ -878,7 +878,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: startingState
-      value: 3
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 2097905072585742827, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: transitionLogic
@@ -1042,7 +1042,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4797102283079309879, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: nextIntentisityObjectiveValues.Array.data[2]
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6077076932047564787, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
       propertyPath: m_Name
@@ -1082,17 +1082,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1641434575}
   m_SourcePrefab: {fileID: 100100000, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
---- !u!114 &239074802 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4797102283079309879, guid: 5bd2b2ecf52ac4ecca526477d93b3230, type: 3}
-  m_PrefabInstance: {fileID: 239074801}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1641434565}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4c46495ddaa847c5a04a3ee6f6c0ea5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &263059430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2159,6 +2148,10 @@ PrefabInstance:
       objectReference: {fileID: 1985355339}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: stats
+      value: 
+      objectReference: {fileID: 11400000, guid: 2fb0bc408dfa04f8db24a386882982e3, type: 2}
+    - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: ammoManager
       value: 
       objectReference: {fileID: 11400000, guid: 2fb0bc408dfa04f8db24a386882982e3, type: 2}
     m_RemovedComponents:
@@ -3346,7 +3339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LevelIndex: 6
-  sceneSO: {fileID: 0}
+  sceneSO: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
   TriggerSectionActivateAfterEventType: {fileID: 1745554629}
   activicationDelay: 2
   activateAfterDelay: []
@@ -3424,15 +3417,15 @@ MonoBehaviour:
   onEventTriggered:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 239074802}
-        m_TargetAssemblyTypeName: SpawnIntensityManager, Assembly-CSharp
-        m_MethodName: GoToNextIntensity
-        m_Mode: 3
+      - m_Target: {fileID: 1641434573}
+        m_TargetAssemblyTypeName: SpawnStateManager, Assembly-CSharp
+        m_MethodName: StartLogicSpawnAfterDelay
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
-          m_FloatArgument: 0
+          m_FloatArgument: 2.5
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2

@@ -1709,20 +1709,20 @@ PrefabInstance:
       value: -7.233
       objectReference: {fileID: 0}
     - target: {fileID: 3068027453580304829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
-      propertyPath: m_fontColor.b
-      value: 0.16470589
-      objectReference: {fileID: 0}
-    - target: {fileID: 3068027453580304829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
-      propertyPath: m_fontColor.g
-      value: 0.16862746
-      objectReference: {fileID: 0}
-    - target: {fileID: 3068027453580304829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
-      propertyPath: m_fontColor.r
-      value: 0.99607843
+      propertyPath: m_fontSizeBase
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 3068027453580304829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 4280953854
+      value: 4281740517
+      objectReference: {fileID: 0}
+    - target: {fileID: 3148072820384223986, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4282993103
+      objectReference: {fileID: 0}
+    - target: {fileID: 3546763119338439981, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      propertyPath: m_Padding.m_Left
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4485717134599454075, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_Sprite
@@ -1735,6 +1735,10 @@ PrefabInstance:
     - target: {fileID: 4726285776288104323, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_RenderMode
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5317979588019344817, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -194
       objectReference: {fileID: 0}
     - target: {fileID: 5522608121319574995, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2439,6 +2443,10 @@ PrefabInstance:
       objectReference: {fileID: 1679144260}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: stats
+      value: 
+      objectReference: {fileID: 11400000, guid: b7a101b3138db46d9ac189dadccba963, type: 2}
+    - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: ammoManager
       value: 
       objectReference: {fileID: 11400000, guid: b7a101b3138db46d9ac189dadccba963, type: 2}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}

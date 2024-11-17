@@ -10,9 +10,14 @@ public class UIHeightAdjuster : MonoBehaviour
     [SerializeField] private TextMeshProUGUI difficultyText;  // Reference to the text component
     [SerializeField] private RectTransform image1;
     [SerializeField] private Image outlineImage;
-    [SerializeField] private Image fillImage;
-    [SerializeField] private Color failedOutlineColor;
-    [SerializeField] private Color failedFillColor;
+    private Image fillImage;
+
+    private int progressTextsShown = 0;
+
+    [SerializeField] private TextMeshProUGUI[] progressTexts;
+
+    [SerializeField] private float additionalPaddingForProgressTexts;
+
     [SerializeField] private float baseHeight = 100f;     // Base height for one line of text
     [SerializeField] private float extraLineHeight = 20f; // Additional height for each extra line
     [SerializeField] private float padding = 10f;
@@ -70,15 +75,43 @@ public class UIHeightAdjuster : MonoBehaviour
 
     }
 
+
+
     public void SetChallenge(LevelChallenges challengeSO, int i, string challenge, string difficulty, bool hasCompleted)
     {
         if (image1 == null) image1 = GetComponent<RectTransform>();
+        if (fillImage == null) fillImage = GetComponent<Image>();
         currentChallengeSO = challengeSO;
         index = i;
         targetText.text = challenge;
         difficultyText.text = difficulty;
-        if (hasCompleted) disabledStarColor = colorSO.StarGottenColor;
-        else disabledStarColor = colorSO.StarNoneColor;
+
+        progressTextsShown = currentChallengeSO.ReturnAmountOfNeededProgressTexts(i);
+
+        if (progressTextsShown > 0)
+        {
+            padding += additionalPaddingForProgressTexts;
+            for (int n = 0; n < progressTextsShown; n++)
+            {
+                progressTexts[n].gameObject.SetActive(true);
+                Vector2 prog = currentChallengeSO.ReturnCurrentProgressByChallengeIndex(i, n);
+                progressTexts[n].text = prog.x.ToString() + "/" + prog.y.ToString();
+            }
+        }
+
+
+
+        if (hasCompleted)
+        {
+            disabledStarColor = colorSO.StarGottenColor;
+            // outlineImage.color = colorSO.StarCardGoldOutlineColor2;
+        }
+        else
+        {
+            disabledStarColor = colorSO.StarNoneColor;
+            // outlineImage.color = colorSO.StarCardDisabledOutlineColor;
+        }
+
         AdjustHeight();
         // CheckIfChallengeComplete();
 
@@ -184,7 +217,7 @@ public class UIHeightAdjuster : MonoBehaviour
 
             starHitSeq = DOTween.Sequence();
             starHitSeq.AppendInterval(.45f);
-            starHitSeq.AppendCallback(() => AudioManager.instance.PlayErrorSound());
+            starHitSeq.AppendCallback(() => AudioManager.instance.PlayErrorSound(true));
             starHitSeq.Append(fillImage.DOColor(colorSO.StarCardDisabledFillColor, .4f));
 
             starHitSeq.Join(outlineImage.DOColor(colorSO.StarCardDisabledOutlineColor, .4f));

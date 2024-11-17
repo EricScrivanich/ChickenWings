@@ -13,18 +13,23 @@ MonoBehaviour:
   m_Name: Challenge-13
   m_EditorClassIdentifier: 
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
-  challenges: 010000000200000004000000
+  challenges: 010000000200000006000000
   challengeTexts:
   - Complete Level
   - Lose Zero Lives
-  - Don't Use Jump or Dash
+  - Kill Four Pigs with Chained Ammo (Initial shot included)
   challengeDifficulties:
-  - MEDIUM
   - HARD
+  - VERY HARD
   - VERY HARD
   LifeTarget: 3
   EggAmmoTarget: 0
   ShotgunAmmoTarget: 0
   TrackedPigs: 06000000
   TrackedPigAmounts: 01000000
+  TrackedPigsByBulletTypeWithPigType:
+  - {x: 2, y: -1}
+  TrackedPigAmountsByBullet: 04000000
+  TrackedPigIDWithPigType: 
+  TrackedPigAmountsByID: 
   CertainNonAllowedInputs: 0000000003000000

@@ -53,11 +53,11 @@ public class PlayerStartingStatsForLevels : ScriptableObject
         if (currentShotgunIndex >= shotgunPoolSize) currentShotgunIndex = 0;
         if (shotgunPool[currentShotgunIndex].gameObject.activeInHierarchy)
         {
-            var s = Instantiate(shotgunPrefab).GetComponent<ShotgunBlast>();
-            s.transform.position = pos;
-            s.transform.rotation = rotation;
+            var s = Instantiate(shotgunPrefab, pos, rotation).GetComponent<ShotgunBlast>();
+            // s.transform.position = pos;
+            // s.transform.rotation = rotation;
             s.Initialize(chained, shotgunID);
-            s.gameObject.SetActive(true);
+
 
         }
         else
@@ -75,8 +75,27 @@ public class PlayerStartingStatsForLevels : ScriptableObject
 
     }
 
-    public void GetEgg()
+    public void GetEgg(Vector2 pos, float force)
     {
+        if (currentEggIndex >= eggPoolSize) currentEggIndex = 0;
+
+        if (eggPool[currentEggIndex].gameObject.activeInHierarchy)
+        {
+            var s = Instantiate(eggPrefab, pos, Quaternion.identity).GetComponent<Egg_Regular>();
+            s.Initialize(force);
+
+        }
+        else
+        {
+            var s = eggPool[currentEggIndex];
+            s.transform.position = pos;
+            s.gameObject.SetActive(true);
+            s.Initialize(force);
+
+            currentEggIndex++;
+        }
+
+
 
     }
 

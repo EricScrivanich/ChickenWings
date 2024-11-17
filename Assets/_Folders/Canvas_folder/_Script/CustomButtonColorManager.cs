@@ -162,7 +162,7 @@ public class CustomButtonColorManager : MonoBehaviour
     }
     public void SetDefault()
     {
-        AudioManager.instance.PlaySprayPaintSound();
+        // AudioManager.instance.PlaySprayPaintSound();
         if (type == 0)
         {
             buttons[0].SetManually();

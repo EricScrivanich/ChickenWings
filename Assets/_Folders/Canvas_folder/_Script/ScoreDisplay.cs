@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using DG.Tweening;
 public class ScoreDisplay : MonoBehaviour
 {
     public PlayerID player;
     public LevelManagerID lvlID;
+    private TextMeshProUGUI highScoreText;
+    private Sequence newBestSeq;
+
+    [SerializeField] private ButtonColorsSO colorSO;
     [SerializeField] private TextMeshProUGUI scoreText;
     private TextMeshProUGUI finalScore;
     [SerializeField] private TextMeshProUGUI temporaryScoreText;
     private int temporaryScore = 0;
     private int scoreDisplayed;
     private Coroutine fadeOutCoroutine = null;
+    private int highScore;
+
+    private bool beatenHighScore = false;
 
     [SerializeField] private bool flappyFrenzy;
 
@@ -20,6 +28,10 @@ public class ScoreDisplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        beatenHighScore = false;
+        highScoreText = GetComponent<TextMeshProUGUI>();
+        highScore = PlayerPrefs.GetInt("EndlessHighScore", 0);
+        highScoreText.text = ("Best: " + highScore.ToString());
         scoreDisplayed = player.Score;
         scoreText.text = "Score: " + scoreDisplayed.ToString();
 
@@ -44,6 +56,17 @@ public class ScoreDisplay : MonoBehaviour
     void UpdateScore(int scoreAdded)
     {
         lvlID.inputEvent.OnUpdateObjective?.Invoke("score", scoreAdded);
+        if (player.Score > highScore && !beatenHighScore)
+        {
+            beatenHighScore = true;
+            highScoreText.text = "NEW BEST";
+            highScoreText.color = scoreText.color;
+            newBestSeq = DOTween.Sequence();
+            newBestSeq.Append(highScoreText.DOColor(colorSO.goUnPressedColor, .7f).From(colorSO.goPressedColor));
+            newBestSeq.Append(highScoreText.DOColor(colorSO.goPressedColor, .8f));
+            newBestSeq.AppendInterval(.4f);
+            newBestSeq.Play().SetLoops(-1);
+        }
         if (scoreAdded == 1)
         {
 
@@ -64,6 +87,9 @@ public class ScoreDisplay : MonoBehaviour
         if (fadeOutCoroutine != null) StopCoroutine(fadeOutCoroutine);
         fadeOutCoroutine = StartCoroutine(FadeOutTempScore());
     }
+
+
+
 
     private IEnumerator FadeOutTempScore()
     {
@@ -223,6 +249,16 @@ public class ScoreDisplay : MonoBehaviour
     {
         player.globalEvents.OnAddScore -= UpdateScore;
         player.globalEvents.OnKillPig -= KillPigScore;
+        if (player.Score > highScore)
+        {
+            PlayerPrefs.SetInt("EndlessHighScore", player.Score);
+            PlayerPrefs.Save();
+        }
+
+
+        if (newBestSeq != null && newBestSeq.IsPlaying())
+            newBestSeq.Kill();
+
 
     }
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Player/ID")]
 
-public class PlayerID : ScriptableObject 
+public class PlayerID : ScriptableObject
 {
 
     public List<float> particleYPos { get; private set; }
@@ -165,8 +165,8 @@ public class PlayerID : ScriptableObject
 
         if (stats == null)
         {
-            Ammo = startingAmmo;
-            shotgunAmmo = startingShotgunAmmo;
+            Ammo = 0;
+            shotgunAmmo = 0;
         }
         else
         {
@@ -189,9 +189,9 @@ public class PlayerID : ScriptableObject
         PlayerInputs.Add(inp);
     }
 
-    public void AddKillPig(int type, int bulletType,int bulletID)
+    public void AddKillPig(int type, int bulletType, int bulletID)
     {
-        KilledPigs.Add(new Vector3Int(type,bulletType,bulletID));
+        KilledPigs.Add(new Vector3Int(type, bulletType, bulletID));
     }
 
     public void NewGasParticles(float y, bool add)
@@ -214,8 +214,9 @@ public class PlayerID : ScriptableObject
 
     public void AddScore(int amount)
     {
-        globalEvents.OnAddScore?.Invoke(amount);
         Score += amount;
+        globalEvents.OnAddScore?.Invoke(amount);
+
 
     }
 

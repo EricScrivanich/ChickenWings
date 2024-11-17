@@ -5578,7 +5578,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eafc29c3997449a88ad3f03fdf591fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  options: {fileID: 0}
   colorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
+  defaultColors: {fileID: 0}
+  colorMatchWarning: {fileID: 0}
   player: {fileID: 0}
   yer: {fileID: 2100000, guid: 438b39f861340496a9f454d140cdb03e, type: 2}
   pauseOutline: {fileID: 0}
@@ -9491,6 +9494,10 @@ PrefabInstance:
       objectReference: {fileID: 1679144260}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       propertyPath: stats
+      value: 
+      objectReference: {fileID: 11400000, guid: 366d7951140784dbea2a6bb51d53160e, type: 2}
+    - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
+      propertyPath: ammoManager
       value: 
       objectReference: {fileID: 11400000, guid: 366d7951140784dbea2a6bb51d53160e, type: 2}
     - target: {fileID: 8884035435929023763, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}

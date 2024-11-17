@@ -46,12 +46,13 @@ public class SaveResetButtons : MonoBehaviour
             CheckToSaveDropDown.SetActive(false);
             blockButtonsImage.gameObject.SetActive(false);
         }
-        if (type == -1)
+        else if (type == -1)
         {
             fillImage.color = normalFillColor;
             text.color = normalTextOutlineColor;
             outlineImage.color = normalTextOutlineColor;
         }
+
 
 
 

@@ -11,69 +11,69 @@ public class PlayerEggScript : MonoBehaviour
     private bool canShootBool;
     private Animator anim;
     [SerializeField] private int eggPoolAmount = 10;
-    private Pool pool;
+    private Pool pool; 
     private int ammo;
 
     // Start is called before the first frame update
     void Start()
     {
-        pool = PoolKit.GetPool("EggPool");
-        //
-        rotationIsFrozen = false;
-        canShootBool = true;
-        anim = GetComponent<Animator>();
+    //     pool = PoolKit.GetPool("EggPool");
+    //     //
+    //     rotationIsFrozen = false;
+    //     canShootBool = true;
+    //     anim = GetComponent<Animator>();
 
 
-        ammo = ID.Ammo;
-        rb = GetComponent<Rigidbody2D>();
+    //     ammo = ID.Ammo;
+    //     rb = GetComponent<Rigidbody2D>();
+    // }
+
+    // private void EggDrop()
+    // {
+    //     if (ID.UsingClocker)
+    //     {
+    //         if (canShootBool)
+    //         {
+    //             anim.SetTrigger("ShootGunTrigger");
+
+
+    //             canShootBool = false;
+
+    //         }
+
+
+    //     }
+    //     else if (ID.Ammo > 0)
+    //     {
+    //         GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
+    //         AudioManager.instance.PlayEggDrop();
+
+    //         if (rb.velocity.x < 0)
+    //         {
+    //             egg.GetComponent<Rigidbody2D>().velocity = new Vector2(rb.velocity.x * .55f, -1);
+    //         }
+    //         else
+    //         {
+    //             egg.GetComponent<Rigidbody2D>().velocity = new Vector2(rb.velocity.x * .45f, -1);
+    //         }
+
+    //         ID.Ammo -= 1;
+
+
+    //     }
     }
+    // void OnEnable()
+    // {
+    //     ID.events.OnEggDrop += EggDrop;
+    //     // ID.globalEvents.OnAddAmmo += AddAmmo;
+    //     // ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
+    // }
 
-    private void EggDrop()
-    {
-        if (ID.UsingClocker)
-        {
-            if (canShootBool)
-            {
-                anim.SetTrigger("ShootGunTrigger");
-
-
-                canShootBool = false;
-
-            }
-
-
-        }
-        else if (ID.Ammo > 0)
-        {
-            GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
-            AudioManager.instance.PlayEggDrop();
-
-            if (rb.velocity.x < 0)
-            {
-                egg.GetComponent<Rigidbody2D>().velocity = new Vector2(rb.velocity.x * .55f, -1);
-            }
-            else
-            {
-                egg.GetComponent<Rigidbody2D>().velocity = new Vector2(rb.velocity.x * .45f, -1);
-            }
-
-            ID.Ammo -= 1;
-
-
-        }
-    }
-    void OnEnable()
-    {
-        ID.events.OnEggDrop += EggDrop;
-        // ID.globalEvents.OnAddAmmo += AddAmmo;
-        // ID.globalEvents.OnUpdateAmmo?.Invoke(ammo);
-    }
-
-    void OnDisable()
-    {
-        ID.events.OnEggDrop -= EggDrop;
-        // ID.globalEvents.OnAddAmmo -= AddAmmo;
-    }
+    // void OnDisable()
+    // {
+    //     ID.events.OnEggDrop -= EggDrop;
+    //     // ID.globalEvents.OnAddAmmo -= AddAmmo;
+    // }
 }
 
 
