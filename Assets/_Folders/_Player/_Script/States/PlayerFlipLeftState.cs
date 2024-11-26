@@ -87,7 +87,7 @@ public class PlayerFlipLeftState : PlayerBaseState
 
             }
 
-            player.rb.angularDrag = angDrag;
+            player.rb.angularDamping = angDrag;
             player.rb.angularVelocity = angForce + added;
         }
 
@@ -188,7 +188,7 @@ public class PlayerFlipLeftState : PlayerBaseState
             if (!tweeningAng)
             {
                 player.rb.angularVelocity = angForce;
-                player.rb.angularDrag = angDrag;
+                player.rb.angularDamping = angDrag;
                 hasFinishedEndOfTweenLogic = true;
             }
         }

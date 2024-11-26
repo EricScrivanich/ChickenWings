@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b8c6eee88e2e4ab0ad5f52543fdad70, type: 3}
   m_Name: INT_Lvl6-0
   m_EditorClassIdentifier: 
-  lvlID: {fileID: 0}
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  IgnoreItensityTriggers: 0
+  mustComplete: 0
   overrideStateTransiton: 0
-  transtionLogicStart: {fileID: 0}
+  collectableSpawnData: {fileID: 0}
+  transtionLogicStart: {fileID: 11400000, guid: 27de6182dcd7e41f4945d68de9cc1ecf, type: 2}
   transtionLogicEnd: {fileID: 0}
   ringTypeWeights:
   - 0
@@ -37,6 +40,7 @@ MonoBehaviour:
   - 0.3
   - 0.6
   - 0.1
+  flipRandomEnemySpawnXChance: 0
   xTargetToStartSpawn: 1.5
   spawnRandomRangeAfterTarget: {x: 0, y: 1}
   amountOfWaveWeights: []
@@ -58,3 +62,4 @@ MonoBehaviour:
   JetpackPig_BB: {fileID: 0}
   BigPig_BB: {fileID: 0}
   TenderizerPig_BB: {fileID: 0}
+  ignoreOverride: 0

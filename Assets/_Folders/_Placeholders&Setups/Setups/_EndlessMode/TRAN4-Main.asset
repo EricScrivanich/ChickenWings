@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: TRAN4-Main
   m_EditorClassIdentifier: 
   loopStates: 0
+  SpecialGoldRings: 0
   delayStateTimes: []
   maxSpecialSpawnsPerCycle: 3
   spawnEachSpecialOnceMax: 0
@@ -24,7 +25,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: aae8e2ece0f43496794685fefe85559f, type: 2}
   - {fileID: 11400000, guid: 51abc424008da407796fc9e09c737f0d, type: 2}
   continueFromStartIfOverriden: 0
-  continueFromPrevOverriden: 1
+  continueFromPrevOverriden: 0
   orderedSequence: ffffffff0300000002000000010000000200000001000000ffffffffffffffff
   randomSequenceWithWeights: []
   RingAmountsByType:

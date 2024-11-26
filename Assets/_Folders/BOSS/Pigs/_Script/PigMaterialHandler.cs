@@ -78,7 +78,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     private void OnEnable()
     {
-        Ticker.OnTickAction015 += Tick;
+        if (pigType != 7)
+            Ticker.OnTickAction015 += Tick;
         initialScale = transform.localScale.x;
 
         hasCrossedScreen = false;
@@ -124,11 +125,12 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     private void OnDisable()
     {
-        Ticker.OnTickAction015 -= Tick;
+        if (pigType != 7)
+            Ticker.OnTickAction015 -= Tick;
 
     }
 
-    public void Damage(int damageAmount,int type,int id)
+    public void Damage(int damageAmount, int type, int id)
     {
         if (!isHit)
         {
@@ -165,7 +167,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         float fadeAmountEnd = .7f;
         bool hasExploded = false;
 
-        transform.DOScale(transform.localScale * 1.3f, .6f).SetEase(Ease.OutSine);
+        transform.DOScale(transform.localScale * 1.25f, .65f);
         while (elapsedTime < .15f)
         {
             elapsedTime += Time.deltaTime;
@@ -208,14 +210,14 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         }
         player.globalEvents.OnKillPig?.Invoke(pigType);
 
-
+        gameObject.SetActive(false);
         // Ensure the final values are set
-        transform.localScale = new Vector3(endScale, endScale, endScale);
-        instanceMaterial.SetFloat("_HitEffectBlend", 0);
-        instanceMaterial.SetFloat("_FadeAmount", fadeAmountEnd);
+        // transform.localScale = new Vector3(endScale, endScale, endScale);
+
+
         Destroy(instanceMaterial);
 
-        gameObject.SetActive(false);
+
     }
 }
 

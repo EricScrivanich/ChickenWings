@@ -19,7 +19,7 @@ namespace AllIn1SpriteShader
         {
             input.x = Input.GetAxis("Horizontal");
             input.y = Input.GetAxis("Vertical");
-            rb.velocity = input * speed * Time.fixedDeltaTime;
+            rb.linearVelocity = input * speed * Time.fixedDeltaTime;
         }
     }
 }

@@ -35,7 +35,7 @@ public class ParticleBehaviour : MonoBehaviour
         else
         {
             // Set the ground movement speed
-            rb.velocity = new Vector2(groundSpeed, rb.velocity.y);
+            rb.linearVelocity = new Vector2(groundSpeed, rb.linearVelocity.y);
         }
 
         // Check if the particle has gone off-screen

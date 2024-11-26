@@ -12,6 +12,7 @@ public class CanvasScreenPositions : MonoBehaviour
     // Start is called before the first frame update
     public Vector2 ReturnGoldPosition()
     {
+        if (goldBucketBallTarget == null) return Vector2.zero;
         return goldBucketBallTarget.position;
     }
     public Vector2 ReturnPinkPosition()

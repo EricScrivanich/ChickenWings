@@ -1075,13 +1075,13 @@ namespace HellTap.PoolKit {
 
 			// Reset Rigibody velocities
 			if( rb != null && resetRigidbodyVelocitiesOnSpawn ){
-				rb.velocity = Vector3.zero;
+				rb.linearVelocity = Vector3.zero;
 				rb.angularVelocity = Vector3.zero;
 			}
 
 			// Reset Rigibody2D velocities
 			if( rb2D != null && resetRigidbodyVelocitiesOnSpawn ){
-				rb2D.velocity = Vector2.zero;
+				rb2D.linearVelocity = Vector2.zero;
 				rb2D.angularVelocity = 0f;
 			}
 

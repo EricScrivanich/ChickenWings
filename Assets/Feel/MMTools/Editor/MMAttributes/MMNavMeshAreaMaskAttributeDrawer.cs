@@ -9,7 +9,7 @@ namespace MoreMountains.Tools
 	{
 		public override void OnGUI(Rect position, SerializedProperty serializedProperty, GUIContent label)
 		{
-			string[] navMeshAreaNames  = GameObjectUtility.GetNavMeshAreaNames();
+			string[] navMeshAreaNames  = UnityEngine.AI.NavMesh.GetAreaNames();
 			float positionWidth = position.width;
 			int maskValue = serializedProperty.intValue;
 			

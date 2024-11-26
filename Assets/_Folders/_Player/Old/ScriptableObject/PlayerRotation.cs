@@ -71,13 +71,13 @@ public class PlayerRotation : PlayerSystem
         else
         {
             // If the object is moving upwards, rotate it upwards
-            if (rb.velocity.y > 0 && rotZ < maxRotUp)
+            if (rb.linearVelocity.y > 0 && rotZ < maxRotUp)
             {
                 // Calculate the new rotation
                 rotZ += jumpRotSpeed * Time.deltaTime;
             }
             // If the object is moving downwards, rotate it downwards
-            else if (rb.velocity.y < 0 && rotZ > maxRotDown)
+            else if (rb.linearVelocity.y < 0 && rotZ > maxRotDown)
             {
                 // Calculate the new rotation
                 rotZ -= jumpRotSpeed * Time.deltaTime;

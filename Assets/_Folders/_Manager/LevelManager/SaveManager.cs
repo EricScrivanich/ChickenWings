@@ -5,9 +5,10 @@ public class SaveManager : MonoBehaviour
 {
     public static SaveManager instance;
     public SceneManagerSO sceneSO; // Scriptable object for scene data
-
+    [SerializeField] private List<int> SetStarsForEachLevel;
     private GameData gameData;
     private string saveFilePath;
+    [SerializeField] private ShaderVariantCollection shaderVariantCollection;
 
     private void Awake()
     {
@@ -23,6 +24,22 @@ public class SaveManager : MonoBehaviour
 
         // Load existing data or initialize a new GameData
         LoadData();
+        PreWarmShaders();
+    }
+
+    public void PreWarmShaders()
+    {
+        if (shaderVariantCollection != null)
+        {
+            Debug.Log("Prewarming Shaders...");
+            shaderVariantCollection.WarmUp();
+
+            Debug.Log("Shaders prewarmed.");
+        }
+        else
+        {
+            Debug.LogError("Shader Variant Collection not assigned.");
+        }
     }
 
     // Method to update level data based on a bool array (e.g., from SaveLevelCompletion)
@@ -58,6 +75,55 @@ public class SaveManager : MonoBehaviour
         SaveData();
     }
 
+    public void SetLevelStarsForTest()
+    {
+        if (SetStarsForEachLevel == null) return;
+        Debug.Log("FROM Set");
+
+        InitializeGameData();
+
+
+        for (int i = 1; i < SetStarsForEachLevel.Count; i++)
+        {
+            LevelSavedData levelData = GetLevelData(i);
+            int amount = SetStarsForEachLevel[i];
+            levelData.CompletedLevel = true;
+
+
+
+            if (levelData.ChallengeCompletion != null)
+            {
+                Debug.Log("CHALLNEGE LENGTH IS: " + levelData.ChallengeCompletion.Length);
+                for (int n = 0; n < amount && n < levelData.ChallengeCompletion.Length; n++)
+                {
+                    levelData.ChallengeCompletion[n] = true;
+                }
+                SaveData();
+            }
+
+
+            if (amount >= levelData.ChallengeCompletion.Length)
+            {
+                levelData.MasteredLevel = true;
+
+            }
+        }
+        SaveData();
+    }
+
+    public string CheckAdditonalChallenges(int levelCheck)
+    {
+        Vector3Int data = sceneSO.NeedsAddtionalUnlock(levelCheck);
+        if (data == Vector3Int.zero) return null;
+        else if (data.y == 2) return "You Have Beaten All Levels, Congratulations.";
+        else
+        {
+            if (ReturnCompletedChallenges(data.y) >= data.z) return null;
+
+            else return sceneSO.RetrunAdditionalChallengeText(data.x);
+        }
+    }
+
     // Helper method to get LevelSavedData for a specific level by ID
     private LevelSavedData GetLevelData(int levelId)
     {
@@ -74,7 +140,7 @@ public class SaveManager : MonoBehaviour
     public int ReturnCompletedChallenges(int type)
     {
         int amount = 0;
-        for (int i = 1; i < sceneSO.ReturnNumberOfLevels(); i ++)
+        for (int i = 1; i < sceneSO.ReturnNumberOfLevels(); i++)
         {
             var data = GetLevelData(i);
 
@@ -92,6 +158,7 @@ public class SaveManager : MonoBehaviour
                     if (data.MasteredLevel) amount++;
                 }
             }
+
 
         }
 
@@ -117,6 +184,7 @@ public class SaveManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("FROM LOAD");
             InitializeGameData();
             SaveData();
         }
@@ -124,20 +192,23 @@ public class SaveManager : MonoBehaviour
 
     public void ResetGameDataInMemory()
     {
+        Debug.Log("FROM Reset");
+
         InitializeGameData(); // Reinitialize the data in memory
         SaveData();           // Save the new, empty data immediately
     }
 
     public bool[] GetSavedLevelData(int levelId)
     {
-        
+
         // Find the LevelSavedData for the specified levelId
         LevelSavedData levelData = GetLevelData(levelId);
-      
+
 
         // If level data does not exist, check if sceneSO has data for this level and initialize it if so
         if (levelData == null || (levelData.ChallengeCompletion.Length < 1 && sceneSO.ReturnChallengeCountByLevel(levelId) > 0))
         {
+            Debug.Log("GETTING GROM SVAE");
             int challengeCount = sceneSO.ReturnChallengeCountByLevel(levelId);
 
             if (challengeCount > 0) // If sceneSO indicates there are challenges for this level
@@ -191,9 +262,12 @@ public class SaveManager : MonoBehaviour
     {
         gameData = new GameData();
 
+
         // Populate gameData.Levels with LevelSavedData for each level using sceneSO
         for (int i = 1; i <= sceneSO.ReturnNumberOfLevels(); i++)
         {
+            Debug.Log("FROM SAVE 2");
+
             int challengeCount = sceneSO.ReturnChallengeCountByLevel(i);
             gameData.Levels.Add(new LevelSavedData(i, challengeCount));
         }

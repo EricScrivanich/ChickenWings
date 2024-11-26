@@ -2,37 +2,33 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using ShaderType = AllIn1SpriteShader.AllIn1Shader.ShaderTypes;
 
 namespace AllIn1SpriteShader
 {
     public class AllIn1ShaderWindow : EditorWindow
     {
-        private const string versionString = "3.6";
-        [MenuItem("Window/AllIn1ShaderWindow")]
+        private const string versionString = "4.2";
+        [MenuItem("Tools/AllIn1/SpriteShaderWindow")]
         public static void ShowAllIn1ShaderWindowWindow()
         {
             GetWindow<AllIn1ShaderWindow>("All In 1 Shader Window");
         }
         
-        public static readonly string materialsSavesPath = "Assets/AllIn1SpriteShader/Materials";
-        public static readonly string renderImagesSavesPath = "Assets/AllIn1SpriteShader/Textures";
-        public static readonly string normalMapSavesPath = "Assets/AllIn1SpriteShader/Textures/NormalMaps";
-        public static readonly string gradientSavesPath = "Assets/AllIn1SpriteShader/Textures/GradientTextures";
+        public static readonly string CUSTOM_EDITOR_HEADER = "AllIn1SpriteShaderEditorImage";
+        private static string basePath = "Assets/Plugins/AllIn1SpriteShader";
+        public static readonly string materialsSavesRelativePath = "/Materials";
+        public static readonly string renderImagesSavesRelativePath = "/Textures";
+        public static readonly string normalMapSavesRelativePath = "/Textures/NormalMaps";
+        public static readonly string gradientSavesRelativePath = "/Textures/GradientTextures";
 
         public Vector2 scrollPosition = Vector2.zero;
-
+        private Texture2D imageInspector;
         private DefaultAsset materialTargetFolder = null;
         private GUIStyle style, bigLabel = new GUIStyle(), titleStyle = new GUIStyle();
         private const int bigFontSize = 16;
-
-        enum ShaderTypes
-        {
-            Default,
-            ScaledTime,
-            MaskedUI,
-            Urp2dRenderer
-        }
-        ShaderTypes shaderTypes = ShaderTypes.Default;
+        
+        AllIn1Shader.ShaderTypes shaderTypes = AllIn1Shader.ShaderTypes.Default;
         bool showUrpWarning = false;
         double warningTime = 0f;
 
@@ -89,7 +85,7 @@ namespace AllIn1SpriteShader
                 GUILayout.Label("Material Save Path", bigLabel);
                 GUILayout.Space(20);
                 GUILayout.Label("Select the folder where new Materials will be saved when the Save Material To Folder button of the asset component is pressed", EditorStyles.boldLabel);
-                HandleSaveFolderEditorPref("All1ShaderMaterials", materialsSavesPath, "Material");
+                HandleSaveFolderEditorPref("All1ShaderMaterials", basePath + materialsSavesRelativePath, "Material");
 
                 DrawLine(Color.grey, 1, 3);
                 GUILayout.Label("Render Material to Image Save Path", bigLabel);
@@ -105,15 +101,23 @@ namespace AllIn1SpriteShader
                 }
                 EditorGUILayout.EndVertical();
                 GUILayout.Label("Select the folder where new Images will be saved when the Render Material To Image button of the asset component is pressed", EditorStyles.boldLabel);
-                HandleSaveFolderEditorPref("All1ShaderRenderImages", renderImagesSavesPath, "Images");
+                HandleSaveFolderEditorPref("All1ShaderRenderImages", basePath + renderImagesSavesRelativePath, "Images");
 
                 DrawLine(Color.grey, 1, 3);
                 NormalMapCreator();
             
                 DrawLine(Color.grey, 1, 3);
                 GradientCreator();
-
+                
+                DrawLine(Color.grey, 1, 3);
                 GUILayout.Space(10);
+                SceneNotificationsToggle();
+
+				DrawLine(Color.grey, 1, 3);
+				GUILayout.Space(10);
+				RefreshLitShader();
+
+				GUILayout.Space(10);
                 DrawLine(Color.grey, 1, 3);
                 GUILayout.Label("Current asset version is " + versionString, EditorStyles.boldLabel);
             }
@@ -128,34 +132,33 @@ namespace AllIn1SpriteShader
 
             imageType = (ImageType) EditorPrefs.GetInt("allIn1ImageConfig");
             if(imageType == ImageType.HideEverywhere) return;
-            Texture2D imageInspector = null;
             switch(imageType)
             {
                 case ImageType.ShowImage:
-                {
-                    imageInspector =
-                        (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/AllIn1SpriteShader/Textures/CustomEditorImage.png",
-                            typeof(Texture2D));
-                    break;
-                }
                 case ImageType.HideInComponent:
-                    imageInspector =
-                        (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/AllIn1SpriteShader/Textures/CustomEditorImage.png",
-                            typeof(Texture2D));
+                    if(imageInspector == null) imageInspector = GetInspectorImage();
                     break;
             }
 
             if(imageInspector)
             {
-                //Label title image to the right
-                Rect rect = EditorGUILayout.GetControlRect(false, 5, titleStyle);
-                GUILayout.Label(imageInspector, titleStyle, GUILayout.Height(50));
-            
-                //Centered title image
-                //Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(50));
-                //GUI.DrawTexture(rect, imageInspector, ScaleMode.ScaleToFit, true);
+                Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(50));
+                GUI.DrawTexture(rect, imageInspector, ScaleMode.ScaleToFit, true);
             }
             DrawLine(Color.grey, 1, 3);
+        }
+
+        public static Texture2D GetInspectorImage() => GetImage(CUSTOM_EDITOR_HEADER);
+
+        private static Texture2D GetImage(string textureName)
+        {
+            string[] guids = AssetDatabase.FindAssets($"{textureName} t:texture");
+            if(guids.Length > 0)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            }
+            return null;
         }
 
         private void ShowAssetImageOptionsToggle()
@@ -177,16 +180,16 @@ namespace AllIn1SpriteShader
             GUILayout.Label("This is the shader variant that will be assigned by default to Sprites and UI Images when the asset component is added", EditorStyles.boldLabel);
 
             bool isUrp = false;
-            Shader temp = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
+            Shader temp = FindShader("AllIn1Urp2dRenderer");
             if (temp != null) isUrp = true;
 
-            shaderTypes = (ShaderTypes)PlayerPrefs.GetInt("allIn1DefaultShader");
+            shaderTypes = (AllIn1Shader.ShaderTypes)PlayerPrefs.GetInt("allIn1DefaultShader");
             int previousShaderType = (int)shaderTypes;
-            shaderTypes = (ShaderTypes)EditorGUILayout.EnumPopup(shaderTypes, GUILayout.MaxWidth(200));
+            shaderTypes = (AllIn1Shader.ShaderTypes)EditorGUILayout.EnumPopup(shaderTypes, GUILayout.MaxWidth(200));
 
             if (previousShaderType != (int)shaderTypes)
             {
-                if (!isUrp && shaderTypes == ShaderTypes.Urp2dRenderer)
+                if (!isUrp && shaderTypes == AllIn1Shader.ShaderTypes.Urp2dRenderer)
                 {
                     showUrpWarning = true;
                     warningTime = EditorApplication.timeSinceStartup + 5;
@@ -200,11 +203,11 @@ namespace AllIn1SpriteShader
 
             if (warningTime < EditorApplication.timeSinceStartup) showUrpWarning = false;
             if (isUrp) showUrpWarning = false;
-            if (!isUrp && !showUrpWarning && shaderTypes == ShaderTypes.Urp2dRenderer)
+            if (!isUrp && !showUrpWarning && shaderTypes == AllIn1Shader.ShaderTypes.Urp2dRenderer)
             {
                 showUrpWarning = true;
                 warningTime = EditorApplication.timeSinceStartup + 5;
-                shaderTypes = ShaderTypes.Default;
+                shaderTypes = AllIn1Shader.ShaderTypes.Default;
                 PlayerPrefs.SetInt("allIn1DefaultShader", (int)shaderTypes);
             }
 
@@ -220,7 +223,7 @@ namespace AllIn1SpriteShader
 
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Normal Maps will be saved when the Create Normal Map button of the asset component is pressed (URP only)", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1ShaderNormals", normalMapSavesPath, "Normal Maps");
+            HandleSaveFolderEditorPref("All1ShaderNormals", basePath + normalMapSavesRelativePath, "Normal Maps");
 
             GUILayout.Space(20);
             GUILayout.Label("Assign a sprite you want to create a normal map from. Choose the normal map settings and press the 'Create And Save Normal Map' button", EditorStyles.boldLabel);
@@ -278,6 +281,9 @@ namespace AllIn1SpriteShader
                     string texName = path.Replace(prefSavedPath, "");
                     
                     path = EditorUtility.SaveFilePanel("Save texture as PNG", prefSavedPath, texName, "png");
+                    //If you are reading this you might have encountered an error in Unity 2022 Mac builds, if that's the case comment the line above and uncomment the line below
+                    //path = prefSavedPath + texName + ".png";
+                    
                     if (path.Length != 0)
                     {
                         byte[] pngData = normalToSave.EncodeToPNG();
@@ -317,19 +323,32 @@ namespace AllIn1SpriteShader
                 if (materialTargetFolder == null)
                 {
                     materialTargetFolder = (DefaultAsset)AssetDatabase.LoadAssetAtPath("Assets/", typeof(DefaultAsset));
-                    if (materialTargetFolder == null) Debug.LogError("The desired save folder doesn't exist. Go to Window -> AllIn1ShaderWindow and set a valid folder");
+                    if(materialTargetFolder == null)
+                    {
+                        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                        EditorGUILayout.HelpBox("Folder is invalid, please select a valid one", MessageType.Error, true);
+                        EditorGUILayout.EndHorizontal();
+                    }
                     else PlayerPrefs.SetString("Assets/", defaultPath);
                 }
             }
-            materialTargetFolder = (DefaultAsset)EditorGUILayout.ObjectField("New " + logsFeatureName + " Folder", materialTargetFolder, typeof(DefaultAsset), false);
+            materialTargetFolder = (DefaultAsset)EditorGUILayout.ObjectField("New " + logsFeatureName + " Folder", 
+                materialTargetFolder, typeof(DefaultAsset), false, GUILayout.MaxWidth(500));
 
             if (materialTargetFolder != null && IsAssetAFolder(materialTargetFolder))
             {
                 string path = AssetDatabase.GetAssetPath(materialTargetFolder);
                 PlayerPrefs.SetString(keyName, path);
-                EditorGUILayout.HelpBox("Valid folder! " + logsFeatureName + " save path: " + path, MessageType.Info, true);
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                EditorGUILayout.HelpBox("Valid folder! " + logsFeatureName + " save path: " + path, MessageType.Info);
+                EditorGUILayout.EndHorizontal();
             }
-            else EditorGUILayout.HelpBox("Select the new " + logsFeatureName + " Folder", MessageType.Warning, true);
+            else
+            {
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                EditorGUILayout.HelpBox("Select the new " + logsFeatureName + " Folder", MessageType.Warning, true);
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
         private void GradientCreator()
@@ -338,7 +357,7 @@ namespace AllIn1SpriteShader
             GUILayout.Space(20);
             GUILayout.Label("This feature can be used to create textures for the Color Ramp Effect", EditorStyles.boldLabel);
 
-            EditorGUILayout.GradientField("Gradient", gradient, GUILayout.Height(25));
+            EditorGUILayout.GradientField("Gradient", gradient, GUILayout.Height(25), GUILayout.MaxWidth(500));
 
             EditorGUILayout.BeginHorizontal();
             {
@@ -354,7 +373,7 @@ namespace AllIn1SpriteShader
 
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Gradient Textures will be saved", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1ShaderGradients", gradientSavesPath, "Gradient");
+            HandleSaveFolderEditorPref("All1ShaderGradients", basePath + gradientSavesRelativePath, "Gradient");
 
             string prefSavedPath = PlayerPrefs.GetString("All1ShaderGradients") + "/";
             if (Directory.Exists(prefSavedPath))
@@ -366,7 +385,7 @@ namespace AllIn1SpriteShader
                 }
                 EditorGUILayout.EndHorizontal();
 
-                if (GUILayout.Button("Save Gradient Texture"))
+                if (GUILayout.Button("Save Gradient Texture", GUILayout.MaxWidth(500)))
                 {
                     string path = prefSavedPath + "ColorGradient.png";
                     if(System.IO.File.Exists(path)) path = GetNewValidPath(path);
@@ -438,32 +457,28 @@ namespace AllIn1SpriteShader
             EditorGUI.DrawRect(r, color);
         }
 
-        private Texture2D CreateNormalMap(Texture2D t, float normalMult = 5f, int normalSmooth = 0)
+        public static Texture2D CreateNormalMap(Texture2D t, float normalMult = 5f, int normalSmooth = 0)
         {
-            Color[] pixels = new Color[t.width * t.height];
-            Texture2D texNormal = new Texture2D(t.width, t.height, TextureFormat.RGB24, false, false);
+            int width = t.width;
+            int height = t.height;
+            Color[] sourcePixels = t.GetPixels();
+            Color[] resultPixels = new Color[width * height];
             Vector3 vScale = new Vector3(0.3333f, 0.3333f, 0.3333f);
 
-            for (int y = 0; y < t.height; y++)
+            for(int y = 0; y < height; y++)
             {
-                for (int x = 0; x < t.width; x++)
+                for(int x = 0; x < width; x++)
                 {
-                    Color tc = t.GetPixel(x - 1, y - 1);
-                    Vector3 cSampleNegXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x, y - 1);
-                    Vector3 cSampleZerXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y - 1);
-                    Vector3 cSamplePosXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x - 1, y);
-                    Vector3 cSampleNegXZerY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y);
-                    Vector3 cSamplePosXZerY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x - 1, y + 1);
-                    Vector3 cSampleNegXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x, y + 1);
-                    Vector3 cSampleZerXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y + 1);
-                    Vector3 cSamplePosXPosY = new Vector3(tc.r, tc.g, tc.g);
+                    int index = x + y * width;
+                    Vector3 cSampleNegXNegY = GetPixelClamped(sourcePixels, x - 1, y - 1, width, height);
+                    Vector3 cSampleZerXNegY = GetPixelClamped(sourcePixels, x, y - 1, width, height);
+                    Vector3 cSamplePosXNegY = GetPixelClamped(sourcePixels, x + 1, y - 1, width, height);
+                    Vector3 cSampleNegXZerY = GetPixelClamped(sourcePixels, x - 1, y, width, height);
+                    Vector3 cSamplePosXZerY = GetPixelClamped(sourcePixels, x + 1, y, width, height);
+                    Vector3 cSampleNegXPosY = GetPixelClamped(sourcePixels, x - 1, y + 1, width, height);
+                    Vector3 cSampleZerXPosY = GetPixelClamped(sourcePixels, x, y + 1, width, height);
+                    Vector3 cSamplePosXPosY = GetPixelClamped(sourcePixels, x + 1, y + 1, width, height);
+
                     float fSampleNegXNegY = Vector3.Dot(cSampleNegXNegY, vScale);
                     float fSampleZerXNegY = Vector3.Dot(cSampleZerXNegY, vScale);
                     float fSamplePosXNegY = Vector3.Dot(cSamplePosXNegY, vScale);
@@ -472,73 +487,67 @@ namespace AllIn1SpriteShader
                     float fSampleNegXPosY = Vector3.Dot(cSampleNegXPosY, vScale);
                     float fSampleZerXPosY = Vector3.Dot(cSampleZerXPosY, vScale);
                     float fSamplePosXPosY = Vector3.Dot(cSamplePosXPosY, vScale);
+
                     float edgeX = (fSampleNegXNegY - fSamplePosXNegY) * 0.25f + (fSampleNegXZerY - fSamplePosXZerY) * 0.5f + (fSampleNegXPosY - fSamplePosXPosY) * 0.25f;
                     float edgeY = (fSampleNegXNegY - fSampleNegXPosY) * 0.25f + (fSampleZerXNegY - fSampleZerXPosY) * 0.5f + (fSamplePosXNegY - fSamplePosXPosY) * 0.25f;
+
                     Vector2 vEdge = new Vector2(edgeX, edgeY) * normalMult;
                     Vector3 norm = new Vector3(vEdge.x, vEdge.y, 1.0f).normalized;
-                    Color c = new Color(norm.x * 0.5f + 0.5f, norm.y * 0.5f + 0.5f, norm.z * 0.5f + 0.5f, 1);
-                    pixels[x + y * t.width] = c;
+                    resultPixels[index] = new Color(norm.x * 0.5f + 0.5f, norm.y * 0.5f + 0.5f, norm.z * 0.5f + 0.5f, 1);
                 }
             }
 
-            if (normalSmooth > 0f)
+            if(normalSmooth > 0)
             {
-                float step = 0.00390625f * normalSmooth;
-                for (int y = 0; y < t.height; y++)
-                {
-                    for (int x = 0; x < t.width; x++)
-                    {
-                        float pixelsToAverage = 0.0f;
-                        Color c = pixels[(x + 0) + ((y + 0) * t.width)];
-                        pixelsToAverage++;
-                        if (x - normalSmooth > 0)
-                        {
-                            if (y - normalSmooth > 0)
-                            {
-                                c += pixels[(x - normalSmooth) + ((y - normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                            c += pixels[(x - normalSmooth) + ((y + 0) * t.width)];
-                            pixelsToAverage++;
-                            if (y + normalSmooth < t.height)
-                            {
-                                c += pixels[(x - normalSmooth) + ((y + normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                        }
-                        if (y - normalSmooth > 0)
-                        {
-                            c += pixels[(x + 0) + ((y - normalSmooth) * t.width)];
-                            pixelsToAverage++;
-                        }
-                        if (y + normalSmooth < t.height)
-                        {
-                            c += pixels[(x + 0) + ((y + normalSmooth) * t.width)];
-                            pixelsToAverage++;
-                        }
-                        if (x + normalSmooth < t.width)
-                        {
-                            if (y - normalSmooth > 0)
-                            {
-                                c += pixels[(x + normalSmooth) + ((y - normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                            c += pixels[(x + normalSmooth) + ((y + 0) * t.width)];
-                            pixelsToAverage++;
-                            if (y + normalSmooth < t.height)
-                            {
-                                c += pixels[(x + normalSmooth) + ((y + normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                        }
-                        pixels[x + y * t.width] = c / pixelsToAverage;
-                    }
-                }
+                resultPixels = SmoothNormals(resultPixels, width, height, normalSmooth);
             }
 
-            texNormal.SetPixels(pixels);
+            Texture2D texNormal = new Texture2D(width, height, TextureFormat.RGB24, false, false);
+            texNormal.SetPixels(resultPixels);
             texNormal.Apply();
             return texNormal;
+        }
+
+        private static Vector3 GetPixelClamped(Color[] pixels, int x, int y, int width, int height)
+        {
+            x = Mathf.Clamp(x, 0, width - 1);
+            y = Mathf.Clamp(y, 0, height - 1);
+            Color c = pixels[x + y * width];
+            return new Vector3(c.r, c.g, c.b);
+        }
+
+        private static Color[] SmoothNormals(Color[] pixels, int width, int height, int normalSmooth)
+        {
+            Color[] smoothedPixels = new Color[pixels.Length];
+            float step = 0.00390625f * normalSmooth;
+
+            for(int y = 0; y < height; y++)
+            {
+                for(int x = 0; x < width; x++)
+                {
+                    float pixelsToAverage = 0.0f;
+                    Color c = pixels[x + y * width];
+                    pixelsToAverage++;
+
+                    for(int offsetY = -normalSmooth; offsetY <= normalSmooth; offsetY++)
+                    {
+                        for(int offsetX = -normalSmooth; offsetX <= normalSmooth; offsetX++)
+                        {
+                            if(offsetX == 0 && offsetY == 0) continue;
+
+                            int sampleX = Mathf.Clamp(x + offsetX, 0, width - 1);
+                            int sampleY = Mathf.Clamp(y + offsetY, 0, height - 1);
+
+                            c += pixels[sampleX + sampleY * width];
+                            pixelsToAverage++;
+                        }
+                    }
+
+                    smoothedPixels[x + y * width] = c / pixelsToAverage;
+                }
+            }
+
+            return smoothedPixels;
         }
         
         [MenuItem("Assets/Create/AllIn1Shader Materials/CreateDefaultMaterial")]
@@ -565,7 +574,7 @@ namespace AllIn1SpriteShader
 
             if(!string.IsNullOrEmpty(selectedPath) && Directory.Exists(selectedPath))
             {
-                Material material = new Material(Resources.Load(shaderName, typeof(Shader)) as Shader);
+                Material material = new Material(FindShader(shaderName));
                 string fullPath = selectedPath + "/Mat-" + shaderName + ".mat";
                 if(File.Exists(fullPath)) fullPath = GetNewValidPath(fullPath, ".mat");
                 AssetDatabase.CreateAsset(material, fullPath);
@@ -575,6 +584,108 @@ namespace AllIn1SpriteShader
             {
                 Debug.LogWarning("Please select a valid folder in the Project Window.");
             }
+        }
+        
+        private void OnEnable() => GetBasePath();
+
+        private static void GetBasePath()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:folder AllIn1SpriteShader");
+            if(guids.Length > 0)
+            {
+                basePath = AssetDatabase.GUIDToAssetPath(guids[0]);
+            }
+            else
+            {
+                Debug.LogError("AllIn1SpriteShader folder not found in the project.");
+                basePath = "Assets/Plugins/AllIn1SpriteShader";
+            }
+        }
+        
+        public static string GetMaterialSavePath()
+        {
+            if(!PlayerPrefs.HasKey("All1ShaderMaterials"))
+            {
+                GetBasePath();
+                return basePath + materialsSavesRelativePath;
+            }
+            return PlayerPrefs.GetString("All1ShaderMaterials");
+        }
+        
+        public static string GetRenderImageSavePath()
+        {
+            if(!PlayerPrefs.HasKey("All1ShaderRenderImages"))
+            {
+                GetBasePath();
+                return basePath + renderImagesSavesRelativePath;
+            }
+            return PlayerPrefs.GetString("All1ShaderRenderImages");
+        }
+        
+        public static string GetNormalMapSavePath()
+        {
+            if(!PlayerPrefs.HasKey("All1ShaderNormals"))
+            {
+                GetBasePath();
+                return basePath + normalMapSavesRelativePath;
+            }
+            return PlayerPrefs.GetString("All1ShaderNormals");
+        }
+
+        private void SceneNotificationsToggle()
+        {
+            float previousLabelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 200f;
+            bool areNotificationsEnabled = EditorPrefs.GetInt("DisplaySceneViewNotifications", 1) == 1;
+            areNotificationsEnabled = EditorGUILayout.Toggle("Display Scene View Notifications", areNotificationsEnabled);
+            EditorPrefs.SetInt("DisplaySceneViewNotifications", areNotificationsEnabled ? 1 : 0);
+            EditorGUIUtility.labelWidth = previousLabelWidth;
+        }
+
+		private static void RefreshLitShader()
+		{
+            GUILayout.Label("Force the Lit Shader to be reconfigured");
+            GUILayout.Label("If you are getting some error or have changed the render pipeline press the button below");
+			if (GUILayout.Button("Refresh Lit Shader", GUILayout.MaxWidth(500f)))
+			{
+				AllIn1ShaderImporter.ForceReimport();
+			}
+		}
+
+		public static void SceneViewNotificationAndLog(string message)
+        {
+            Debug.Log(message);
+            ShowSceneViewNotification(message);
+        }
+
+        public static void ShowSceneViewNotification(string message)
+        {
+            bool showNotification = EditorPrefs.GetInt("DisplaySceneViewNotifications", 1) == 1;
+            if(!showNotification) return;
+            
+            GUIContent content = new GUIContent(message);
+            #if UNITY_2019_1_OR_NEWER
+            SceneView.lastActiveSceneView.ShowNotification(content, 1.5f);
+            #else
+            SceneView.lastActiveSceneView.ShowNotification(content);
+            #endif
+        }
+        
+        public static Shader FindShader(string shaderName)
+        {
+            string[] guids = AssetDatabase.FindAssets($"{shaderName} t:shader");
+            foreach(string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                Shader shader = AssetDatabase.LoadAssetAtPath<Shader>(path);
+                if(shader != null)
+                {
+                    string fullShaderName = shader.name;
+                    string actualShaderName = fullShaderName.Substring(fullShaderName.LastIndexOf('/') + 1);
+                    if(actualShaderName.Equals(shaderName)) return shader;
+                }
+            }
+            return null;
         }
     }
 }

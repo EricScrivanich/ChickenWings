@@ -19,7 +19,7 @@ public class PlayerFrozenState : PlayerBaseState
         player.ID.globalEvents.OnPlayerFrozen?.Invoke(true);
         player.anim.SetBool(player.FrozenBool, true);
         // player.disableButtons = true;
-        player.rb.velocity = new Vector2(0, 0);
+        player.rb.linearVelocity = new Vector2(0, 0);
         player.maxFallSpeed = 0;
         player.rb.freezeRotation = true;
 

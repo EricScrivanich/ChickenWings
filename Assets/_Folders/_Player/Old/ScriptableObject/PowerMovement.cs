@@ -41,11 +41,11 @@ public class PowerMovement : PlayerSystem
     {
         if (player.isDashing)
         {
-            rb.velocity = dashVector;
+            rb.linearVelocity = dashVector;
         }
         if (player.isDropping)
         {
-            rb.velocity = dropVector;
+            rb.linearVelocity = dropVector;
         }
     }
     private void StartDash(bool nothing)
@@ -80,7 +80,7 @@ public class PowerMovement : PlayerSystem
     private IEnumerator ApplyBounceAfterDelay()
 {
     yield return new WaitForSeconds(.1f);
-    rb.velocity = new Vector2(.5f, bounceHeight);
+    rb.linearVelocity = new Vector2(.5f, bounceHeight);
     player.DisableButtons = false;
 }
 
@@ -98,7 +98,7 @@ public class PowerMovement : PlayerSystem
         canDash = false;
         rb.gravityScale = originalGravityScale;
         player.DisableButtons = false;
-        rb.velocity = new Vector2 (2f, 0);
+        rb.linearVelocity = new Vector2 (2f, 0);
         player.isDashing = false;
         yield return new WaitForSeconds(dashCoolDown);
         canDash = true;

@@ -34,11 +34,11 @@ public class MissileScript : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             float currentForce = Mathf.Lerp(initialForce, force, elapsedTime / accelerationTime);
-            rb.velocity = transform.up * currentForce;
+            rb.linearVelocity = transform.up * currentForce;
             yield return null;
         }
 
         // Set the final velocity to the desired force speed
-        rb.velocity = transform.up * force;
+        rb.linearVelocity = transform.up * force;
     }
 }

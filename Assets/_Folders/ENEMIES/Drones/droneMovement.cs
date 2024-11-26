@@ -34,7 +34,7 @@ public class droneMovement : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D other)
     {
-        Debug.Log(rb.velocity.x);
+        Debug.Log(rb.linearVelocity.x);
 
     }
 }

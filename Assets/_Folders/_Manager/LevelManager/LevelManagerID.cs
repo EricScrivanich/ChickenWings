@@ -37,6 +37,10 @@ public class LevelManagerID : ScriptableObject
 
     [SerializeField] private PlayerID player;
 
+    private List<int> completedRings;
+
+    private int[] CompletedRingData;
+
 
 
     public int ReturnPlayerLives()
@@ -57,6 +61,19 @@ public class LevelManagerID : ScriptableObject
     {
         Vector2Int a = new Vector2Int(player.Ammo, player.ShotgunAmmo);
         return a;
+    }
+
+    public void AddCompletedRings(int type)
+    {
+        if (CompletedRingData == null || CompletedRingData.Length < 1) CompletedRingData = new int[4];
+        CompletedRingData[type]++;
+
+        Debug.LogError("FINISHED RING: " + type + " amount" + CompletedRingData[type]);
+
+    }
+    public int[] ReturnRingData()
+    {
+        return CompletedRingData;
     }
 
 
@@ -93,6 +110,9 @@ public class LevelManagerID : ScriptableObject
     public void ResetLevel(bool ringsReq, int ringAmountNeeded, int barnsNeed, int bucketNeed)
     {
         hasCreatedBlobBurst = false;
+        CompletedRingData = new int[4];
+
+
         LevelCompleted = false;
         areRingsRequired = ringsReq;
         PauseSpawning = false;

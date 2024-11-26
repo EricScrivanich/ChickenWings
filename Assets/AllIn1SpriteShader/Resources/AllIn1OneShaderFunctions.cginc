@@ -1,3 +1,7 @@
+//Prevent Unity warnings that are not relevant for this shader-------------------
+#pragma warning (disable : 3571)  // pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+#pragma warning (disable : 4008)  // floating point division by zero
+#pragma warning (disable : 3206)  // implicit truncation of vector type
 //BLURS-------------------------------------------------------------------------
 half4 Blur(half2 uv, sampler2D source, half Intensity)
 {

@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dece4e4a5480415ca0338f126fa4d9e, type: 3}
+  m_Name: Coll_Main-4
+  m_EditorClassIdentifier: 
+  SpawnEggs: 1
+  BaseEggSpawnRate: 17
+  AddedRandomEgg: {x: 1, y: 3.5}
+  EggThreeChance: 0.25
+  TargetEggAmmo: 4
+  MaxEggAmmo: 10
+  RecheckEggIfMaxTime: 0
+  BelowEggTargetTimeChange: 0.9
+  AboveEggTargetTimeChange: 0.9
+  InitialEggDelay: 8
+  InitialEggRandom: {x: 1, y: 3}
+  SpawnShotgun: 1
+  BaseShotgunSpawnRate: 16
+  AddedRandomShotgun: {x: -1, y: 2}
+  ShotgunThreeChance: 0.1
+  TargetShotgunAmmo: 4
+  MaxShotgunAmmo: 8
+  RecheckShotgunIfMaxTime: 4
+  BelowShotgunTargetTimeChange: 0.8
+  AboveShotgunTargetTimeChange: 1.2
+  InitialShotgunDelay: 4
+  InitialShotgunRandom: {x: 1, y: 3}
+  SpawnBarn: 1
+  BaseBarnSpawnRate: 22
+  AddedRandomBarn: {x: 0, y: 3}
+  BigBarnChance: 0.2
+  MidBarnChance: 0.5
+  InitialBarnDelay: 2.5
+  InitialBarnRandom: {x: 1, y: 3}

@@ -575,9 +575,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66cb3f585d77b4318ba1a16757ef45b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startAtTop: 0
+  startAtBottom: 0
+  startingFallSpot: 0
   speed: 4
-  yForce: 6.5
-  distanceToFlap: 1.5
+  yForce: 6.3
+  distanceToFlap: 1
   wingPosition: {fileID: 2531458924675133350}
   legPosition: {fileID: 2143214655990362474}
   tailPosition: {fileID: 9199745125742026189}
@@ -645,7 +648,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54bbe5eb74e0e4d9dbddff75cebbbe31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  pigType: 0
   isScalable: 0
+  pigTypeAudio: 0
   explosionScale: {x: 1.1, y: 1.1, z: 1.1}
   colls:
   - {fileID: 7551245473317652815}
@@ -665,14 +671,6 @@ MonoBehaviour:
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   body: {fileID: 0}
-  BackLegs: {fileID: 0}
-  FrontLegs: {fileID: 0}
-  Wings: {fileID: 0}
-  Tail: {fileID: 0}
-  BackLegsPosition: {fileID: 0}
-  FrontLegsPosition: {fileID: 0}
-  WingsPosition: {fileID: 0}
-  TailPosition: {fileID: 0}
 --- !u!210 &7932340107650240256
 SortingGroup:
   m_ObjectHideFlags: 0

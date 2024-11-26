@@ -90,7 +90,7 @@ namespace MoreMountains.Feedbacks
 		{
 			if(ResetVelocityOnPlay)
 			{
-				rb.velocity = Vector2.zero;
+				rb.linearVelocity = Vector2.zero;
 			}
 			
 			switch (Mode)

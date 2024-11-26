@@ -68,7 +68,7 @@ public class BigPigMovement : MonoBehaviour
             transform.position = new Vector3(transform.position.x, initialY - (distanceToFlap * -startingFallSpot), transform.position.z);
         }
 
-        rb.velocity = new Vector2(-speed, 0);
+        rb.linearVelocity = new Vector2(-speed, 0);
         addForce = new Vector2(-speed, yForce);
     }
 
@@ -91,7 +91,7 @@ public class BigPigMovement : MonoBehaviour
 
         if (transform.position.y < (initialY - distanceToFlap))
         {
-            rb.velocity = addForce;
+            rb.linearVelocity = addForce;
 
             if (!addedForce)
             {

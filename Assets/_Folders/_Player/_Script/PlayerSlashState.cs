@@ -21,7 +21,7 @@ public class PlayerSlashState : PlayerBaseState
         player.attackObject.SetActive(true);
 
 
-        player.rb.velocity = new Vector2(0,0);
+        player.rb.linearVelocity = new Vector2(0,0);
         //  player.rb.gravityScale = 0;
         player.maxFallSpeed = .6f;
 

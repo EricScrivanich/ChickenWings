@@ -47,7 +47,7 @@ MonoBehaviour:
   - dataArray:
     - rid: 3115821659791294498
   - dataArray:
-    - rid: 3115821659791294496
+    - rid: 4599887633839554759
   - dataArray:
     - rid: 3115821659791294502
   - dataArray:
@@ -201,18 +201,10 @@ MonoBehaviour:
           yTarget: 3.8
           speed: -2.8
           delay: 0.3
-    - rid: 3115821659791294496
-      type: {class: BomberPlaneSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 7
-        data:
-        - xDropPosition: 3.8
-          dropAreaScaleMultiplier: 1.2
-          speedTarget: 8
     - rid: 3115821659791294498
       type: {class: MissilePigSO, ns: , asm: Assembly-CSharp}
       data:
-        TimeToTrigger: 5
+        TimeToTrigger: 4.7
         data:
         - position: {x: 13.544299, y: -3.6363516}
           missileType: 0
@@ -234,7 +226,7 @@ MonoBehaviour:
     - rid: 3115821659791294507
       type: {class: HotAirBalloonSO, ns: , asm: Assembly-CSharp}
       data:
-        TimeToTrigger: 6
+        TimeToTrigger: 5.3
         data:
         - position: {x: -13.88, y: 2.88}
           type: 0
@@ -314,3 +306,11 @@ MonoBehaviour:
         - xDropPosition: -7
           dropAreaScaleMultiplier: 0
           speedTarget: 7.8
+    - rid: 4599887633839554759
+      type: {class: BomberPlaneSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 7
+        data:
+        - xDropPosition: 4.2
+          dropAreaScaleMultiplier: 1.1
+          speedTarget: 8

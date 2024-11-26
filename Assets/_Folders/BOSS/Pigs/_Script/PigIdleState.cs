@@ -37,7 +37,7 @@ public class PigIdleState : PigBaseState
 
             if (time >= pig.ID.waitTime)
             {
-                pig.rb.velocity = new Vector2(0, pig.ID.jumpForce);
+                pig.rb.linearVelocity = new Vector2(0, pig.ID.jumpForce);
                 justJumped = true;
                 time = 0;
 

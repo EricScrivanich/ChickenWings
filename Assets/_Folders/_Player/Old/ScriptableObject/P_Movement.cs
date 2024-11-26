@@ -36,11 +36,11 @@ public class P_Movement : PlayerSystem
     // Start is called before the first frame update
     void Start()
     {
-        rb.velocity = new Vector2(0, 5f);  
+        rb.linearVelocity = new Vector2(0, 5f);  
     }
     private void Update() 
     {
-        if (rb.velocity.y <= 0)
+        if (rb.linearVelocity.y <= 0)
         {
             
 
@@ -53,7 +53,7 @@ public class P_Movement : PlayerSystem
         {
             return;
         }
-        rb.velocity = new Vector2(0, jumpForce);
+        rb.linearVelocity = new Vector2(0, jumpForce);
         AudioManager.instance.PlayCluck();
         anim.SetTrigger("JumpTrigger");
         // transform.rotation = Quaternion.Euler(0, 0, 20);
@@ -72,7 +72,7 @@ public class P_Movement : PlayerSystem
             return;
         }
        
-        rb.velocity = new Vector2(flipForceX, flipForceY);
+        rb.linearVelocity = new Vector2(flipForceX, flipForceY);
         player.FlipRotVar = -flipRotSpeed;
      
         player.isFlipping = true;
@@ -90,7 +90,7 @@ public class P_Movement : PlayerSystem
         }
        
 
-        rb.velocity = new Vector2(-flipForceX - .2f, flipForceY - .4f);
+        rb.linearVelocity = new Vector2(-flipForceX - .2f, flipForceY - .4f);
         player.FlipRotVar = flipRotSpeed;
         
         player.isFlipping = true;

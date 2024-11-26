@@ -121,7 +121,7 @@ public class HomingMissile : MonoBehaviour
         {
             hasFallen = true;
 
-            rb.velocity = new Vector2(rb.velocity.x, 0);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
             col.enabled = true;
             rb.gravityScale = 0;
         }
@@ -155,7 +155,7 @@ public class HomingMissile : MonoBehaviour
                 onDuration = 0.2f;
                 offDuration = 0.2f;
                 slowDownTimer = straightLineDuration;
-                finalDirection = rb.velocity.normalized; // Keep the current direction
+                finalDirection = rb.linearVelocity.normalized; // Keep the current direction
             }
 
             if (isSlowingDown)
@@ -166,7 +166,7 @@ public class HomingMissile : MonoBehaviour
                 if (slowDownTimer <= 0)
                 {
                     NormalExplosion();
-                    rb.velocity = Vector2.zero; // Stop the missile when the timer ends
+                    rb.linearVelocity = Vector2.zero; // Stop the missile when the timer ends
                 }
 
                 Vector2 direction = (Vector2)player.position - rb.position;
@@ -179,7 +179,7 @@ public class HomingMissile : MonoBehaviour
 
                 // Apply rotation and velocity to the rigidbody
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
-                rb.velocity = transform.up * speed;
+                rb.linearVelocity = transform.up * speed;
             }
             else if (!reachedOffset)
             {
@@ -202,7 +202,7 @@ public class HomingMissile : MonoBehaviour
 
 
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
-                rb.velocity = transform.up * maxVelocity;
+                rb.linearVelocity = transform.up * maxVelocity;
             }
 
             else
@@ -213,7 +213,7 @@ public class HomingMissile : MonoBehaviour
                 direction.Normalize();
                 float rotateAmount = Vector3.Cross(direction, transform.up).z;
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
-                rb.velocity = transform.up * maxVelocity;
+                rb.linearVelocity = transform.up * maxVelocity;
 
             }
         }

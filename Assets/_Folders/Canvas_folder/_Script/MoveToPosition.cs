@@ -24,15 +24,17 @@ public class MoveToPosition : MonoBehaviour
     void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-    }
-    void Start()
-    {
+
         if (isButton)
         {
             startPosition = rectTransform.anchoredPosition;
 
             rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x - specialMoveAmount.x, rectTransform.anchoredPosition.y - specialMoveAmount.y);
         }
+    }
+    void Start()
+    {
+
 
     }
 

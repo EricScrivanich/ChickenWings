@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 0
@@ -314,15 +310,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -591,6 +589,7 @@ Material:
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShineColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &184033188 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 203004451874507810, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
@@ -1498,11 +1497,11 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7884249210943073328, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
-      propertyPath: NextPrevButtons.Array.data[0]
+      propertyPath: 'NextPrevButtons.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7884249210943073328, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
-      propertyPath: NextPrevButtons.Array.data[1]
+      propertyPath: 'NextPrevButtons.Array.data[1]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8042003448894185996, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
@@ -1785,12 +1784,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!114 &519420037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1985,15 +1984,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -2185,7 +2186,7 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: inputsChecked.Array.data[0]
+      propertyPath: 'inputsChecked.Array.data[0]'
       value: none
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
@@ -2295,6 +2296,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!114 &883984543 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9035112145156192591, guid: 95dd0d9aca1c7497d821769e6284aee5, type: 3}
@@ -2511,6 +2513,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LevelIndex: 6
   sceneSO: {fileID: 0}
+  barnObj: {fileID: 0}
+  eggButtonMoveScript: {fileID: 0}
   TriggerSectionActivateAfterEventType: {fileID: 0}
   activicationDelay: 2
   activateAfterDelay:
@@ -2877,19 +2881,19 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 823502541631368457, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
-      propertyPath: flipSounds.Array.data[0]
+      propertyPath: 'flipSounds.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: 1a7c701c5d03d43e2a58a9960fe4a961, type: 3}
     - target: {fileID: 823502541631368457, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
-      propertyPath: flipSounds.Array.data[1]
+      propertyPath: 'flipSounds.Array.data[1]'
       value: 
       objectReference: {fileID: 8300000, guid: 23430dca332074f32b83902c7ffe9f3d, type: 3}
     - target: {fileID: 823502541631368457, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
-      propertyPath: flipSounds.Array.data[2]
+      propertyPath: 'flipSounds.Array.data[2]'
       value: 
       objectReference: {fileID: 8300000, guid: 2eb581ec3f1c9457c9c29c54be3dc89b, type: 3}
     - target: {fileID: 823502541631368457, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
-      propertyPath: flipSounds.Array.data[3]
+      propertyPath: 'flipSounds.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: 54b775f0ac5df4a8b9a587f66a87884c, type: 3}
     - target: {fileID: 1053351938702816589, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
@@ -3536,15 +3540,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -4261,15 +4267,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -4409,7 +4417,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 25cf6b47ac13343d9bb2691e5cd7edf2, type: 2}
   spawnIntensitiesHealth:
   - {fileID: 11400000, guid: 6ff05494c99cc44c1a0c50f1af143e39, type: 2}
-  delaysToSpawnNextHealthAfterSpawn: 14000000
+  delaysToSpawnNextHealthAfterSpawn: 19000000370000005a000000
   nextIntentisityObjectiveValues: 00000000
   objectivesTracked: []
   initialDelayForHealthRingsToSpawn: 0
@@ -4974,7 +4982,7 @@ PrefabInstance:
       value: 4.88
       objectReference: {fileID: 0}
     - target: {fileID: 3679946209921622469, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 606d194a096704cabadac8cd57bab724, type: 2}
     - target: {fileID: 6164839614742467945, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}

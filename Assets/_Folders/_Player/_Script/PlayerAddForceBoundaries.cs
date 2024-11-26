@@ -99,7 +99,7 @@ public class PlayerAddForceBoundaries : MonoBehaviour
         }
         else if (playerTransform.position.y > addForceDownBoundary)
         {
-            if (rb.velocity.y > -4.4f && rb.velocity.y < 7.5f)
+            if (rb.linearVelocity.y > -4.4f && rb.linearVelocity.y < 7.5f)
                 rb.AddForce(addDownForce);
 
             if (!isTop && playerTransform.position.y > topBoundary)

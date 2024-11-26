@@ -13,7 +13,7 @@ public class ResetRigidbodies : MonoBehaviour {
 	
 	// OnEnable (activates on spawn)
 	void OnEnable () {
-		rb.velocity = Vector3.zero;
+		rb.linearVelocity = Vector3.zero;
 		rb.angularVelocity = Vector3.zero;
 	}
 }

@@ -28,4 +28,28 @@ public class SaveDataEditorTools
             SaveManager.instance.ResetGameDataInMemory();
         }
     }
+
+    [MenuItem("Tools/Set Test Save Data")]
+    public static void SetTestSaveData()
+    {
+        // Define the path to the save file
+        string saveFilePath = Path.Combine(Application.persistentDataPath, "gameData.json");
+
+        // Check if the file exists and delete it
+        if (File.Exists(saveFilePath))
+        {
+            File.Delete(saveFilePath);
+            Debug.Log("Save data reset successfully.");
+        }
+        else
+        {
+            Debug.LogWarning("No save data found to reset.");
+        }
+
+        // If you want to reset in-memory data too (only if you are in play mode), you can do this:
+        if (Application.isPlaying && SaveManager.instance != null)
+        {
+            SaveManager.instance.SetLevelStarsForTest();
+        }
+    }
 }

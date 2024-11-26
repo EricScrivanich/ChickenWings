@@ -31,7 +31,7 @@ public class Egg_BulletMovement : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rb.velocity = (transform.up * force);
+        rb.linearVelocity = (transform.up * force);
 
     }
 

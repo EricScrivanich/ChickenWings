@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ResetManager : MonoBehaviour
 {
@@ -46,16 +47,16 @@ public class ResetManager : MonoBehaviour
 
         if (sceneName == "MainMenu")
         {
-            if (shaderVariantCollection != null)
-            {
-                Debug.Log("Prewarming Shaders...");
-                shaderVariantCollection.WarmUp();
-                Debug.Log("Shaders prewarmed.");
-            }
-            else
-            {
-                Debug.LogWarning("Shader Variant Collection not assigned.");
-            }
+            // if (shaderVariantCollection != null)
+            // {
+            //     Debug.Log("Prewarming Shaders...");
+            //     shaderVariantCollection.WarmUp();
+            //     Debug.Log("Shaders prewarmed.");
+            // }
+            // else
+            // {
+            //     Debug.LogError("Shader Variant Collection not assigned.");
+            // }
 
 
             // canReset = false;
@@ -64,12 +65,53 @@ public class ResetManager : MonoBehaviour
             StartCoroutine(PreloadAssetsCoroutine());
         }
 
+        // CollectShaderVariants();
 
 
 
 
 
 
+
+    }
+
+    private void CollectShaderVariants()
+    {
+        if (preLoadAssets == null || preLoadAssets.materials == null)
+        {
+            Debug.LogError("PreloadAssetsContainer or materials list is not assigned.");
+            return;
+        }
+
+        if (preLoadAssets.shaderVarients == null)
+        {
+            preLoadAssets.shaderVarients = new List<string>(); // Initialize the list if it's null
+        }
+
+        HashSet<string> loggedVariants = new HashSet<string>(); // To prevent duplicates
+
+        foreach (Material material in preLoadAssets.materials)
+        {
+            if (material == null || material.shader == null) continue;
+
+            string shaderName = material.shader.name; // Get the shader name
+            string[] keywords = material.shaderKeywords; // Get the active shader keywords
+            string variantString = $"{shaderName}:{string.Join(",", keywords)}"; // Combine shader and keywords
+
+            // Add to the hash set to ensure uniqueness
+            if (!loggedVariants.Contains(variantString))
+            {
+                loggedVariants.Add(variantString);
+                Debug.Log($"Collected Shader Variant: {variantString}");
+            }
+        }
+
+        // Add collected variants to the ScriptableObject
+        preLoadAssets.shaderVarients.Clear(); // Clear any old data
+        preLoadAssets.shaderVarients.AddRange(loggedVariants);
+
+        // Optional: Log the total collected variants
+        Debug.Log($"Total Shader Variants Collected: {preLoadAssets.shaderVarients.Count}");
     }
 
     // void Update()

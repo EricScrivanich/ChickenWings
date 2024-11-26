@@ -43,7 +43,7 @@ public class PlayerJumpState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
 
     {
-        player.rb.drag = 0;
+        player.rb.linearDamping = 0;
         if (!hasFadedJumpAir)
         {
 
@@ -75,10 +75,10 @@ public class PlayerJumpState : PlayerBaseState
         if (player.ID.isHolding)
         {
             Debug.LogError("YUHHHH");
-            player.rb.AddForce(new Vector2(0, addJumpForce - Mathf.Abs(player.rb.velocity.y)));
+            player.rb.AddForce(new Vector2(0, addJumpForce - Mathf.Abs(player.rb.linearVelocity.y)));
             startHoldJumpAnimation = true;
 
-            if (player.rb.velocity.y < -5)
+            if (player.rb.linearVelocity.y < -5)
             {
                 player.ID.isHolding = false;
             }

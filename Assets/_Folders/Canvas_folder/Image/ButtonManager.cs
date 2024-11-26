@@ -27,31 +27,39 @@ public class ButtonManager : MonoBehaviour
 
     [SerializeField] private float moveAmountForRecording;
 
+    private float moveAmountSetVariable = 250;
+
     [SerializeField] private RectTransform[] moveRects;
 
     [SerializeField] private bool moveRectsForRecording;
     // Start is called before the first frame update
 
-
+#if UNITY_EDITOR
     void Awake()
     {
+        moveRectsForRecording = true;
 
         if (moveRectsForRecording)
         {
             foreach (var r in moveRects)
             {
-                r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
+                // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
+                r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountSetVariable, r.anchoredPosition.y);
             }
 
             if (GameObject.Find("CanvasScreen") != null)
             {
                 RectTransform lives = GameObject.Find("Lives3").GetComponent<RectTransform>();
 
+                // if (lives != null)
+                //     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
                 if (lives != null)
-                    lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
+                    lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountSetVariable, lives.anchoredPosition.y);
             }
         }
     }
+
+#endif
 
     public bool CheckColors(int type, int ind)
     {

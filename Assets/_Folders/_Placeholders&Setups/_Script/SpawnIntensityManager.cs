@@ -39,13 +39,28 @@ public class SpawnIntensityManager : MonoBehaviour
 
     private bool canSpawnHealthRings = false;
 
+    private int currentHealthDelayIndex;
+
+    private bool ignoreNextIntensityTriggerFromHealth;
     private bool ignoreNextIntensityTrigger;
     private int returnToFinishNonLoopedTranstionIndex = -1;
     private int currentLives;
     // Start is called before the first frame update
-
+    private void Awake()
+    {
+        foreach (var item in spawnIntensitiesNormal)
+        {
+            item.ResetIntensities();
+        }
+        foreach (var item in spawnIntensitiesHealth)
+        {
+            item.ResetIntensities();
+        }
+    }
     private void Start()
     {
+        currentHealthDelayIndex = 0;
+
         UpdateObjective("all", 0);
 
         if (initialDelayForHealthRingsToSpawn > 0)
@@ -83,7 +98,7 @@ public class SpawnIntensityManager : MonoBehaviour
 
     void UpdateObjective(string type, int addedValue)
     {
-        Debug.Log("Trying");
+        bool revertingOverride = false;
 
         bool shouldUpdate = false;
 
@@ -94,13 +109,19 @@ public class SpawnIntensityManager : MonoBehaviour
             shouldUpdate = true;
 
         }
+        else if (type == "revert")
+        {
+            shouldUpdate = true;
+            revertingOverride = true;
+            Debug.Log("WE ARE REVERTING BUH");
+        }
         else
         {
             foreach (string s in objectivesTracked)
             {
                 if (s == type)
                 {
-                    Debug.LogError("Tracked Pig Kill");
+                    // Debug.LogError("Tracked Pig Kill");
                     currentObjectivesObtained += addedValue;
                     shouldUpdate = true;
                     break;
@@ -108,15 +129,80 @@ public class SpawnIntensityManager : MonoBehaviour
             }
         }
 
-        if (!shouldUpdate || nextIntensityIndex >= nextIntentisityObjectiveValues.Length || ignoreNextIntensityTrigger)
+        if (!shouldUpdate || (nextIntensityIndex >= nextIntentisityObjectiveValues.Length && !revertingOverride) || (ignoreNextIntensityTrigger && !revertingOverride))
         {
-            // Debug.Log("Ignoring intesntity index is: " + ignoreNextIntensityTrigger);
+            Debug.Log("Ignoring intesntity index is: " + ignoreNextIntensityTrigger);
             return;
         }
 
 
-        if (currentObjectivesObtained >= nextIntentisityObjectiveValues[nextIntensityIndex])
+        if (revertingOverride)
         {
+
+
+
+
+
+            int newIntensityIndex = 0;
+
+            for (int i = 0; i < nextIntentisityObjectiveValues.Length; i++)
+            {
+                if (currentObjectivesObtained >= nextIntentisityObjectiveValues[i])
+                {
+                    if (!spawnIntensitiesNormal[i].hasCompleted)
+                    {
+                        newIntensityIndex = i; // Update to the most recent true statement
+                        if (spawnIntensitiesNormal[i].mustComplete && !spawnIntensitiesNormal[i].hasCompleted)
+                        {
+                            Debug.LogError("WE GOTTA FINSIH another first bud");
+                            break;
+                        }
+
+
+
+
+                        Debug.Log("SetNewIntensity From Update Objective: " + i);
+                    }
+
+
+                }
+                else
+                {
+                    Debug.Log("But why tho bruh");
+                    break; // Stop checking if the condition is not met
+                }
+            }
+
+
+
+            // Update the currentIntensityIndex to the most recent valid intensity
+            currentIntensityIndex = newIntensityIndex;
+            nextIntensityIndex = currentIntensityIndex + 1;
+
+
+            if (currentIntensityIndex < spawnIntensitiesNormal.Length)
+            {
+                lvlID.SetNewIntensity(currentIntensityIndex);
+                var intensity = spawnIntensitiesNormal[currentIntensityIndex];
+                ignoreNextIntensityTrigger = intensity.IgnoreItensityTriggers;
+                lvlID.outputEvent.OnSetNewIntensity?.Invoke(intensity, false);
+            }
+            else
+            {
+                Debug.LogWarning("THIS should not happen");
+            }
+
+        }
+
+
+
+
+
+
+        else if (currentObjectivesObtained >= nextIntentisityObjectiveValues[nextIntensityIndex])
+        {
+            Debug.LogWarning("HERE WE Go, time to check");
+
 
             int newIntensityIndex = nextIntensityIndex;
 
@@ -124,9 +210,18 @@ public class SpawnIntensityManager : MonoBehaviour
             // Start checking from currentIntensityIndex + 1
             for (int i = currentIntensityIndex; i < nextIntentisityObjectiveValues.Length; i++)
             {
-                if (currentObjectivesObtained >= nextIntentisityObjectiveValues[i])
+                if (currentObjectivesObtained >= nextIntentisityObjectiveValues[i] && !spawnIntensitiesNormal[i].hasCompleted)
                 {
+
                     newIntensityIndex = i; // Update to the most recent true statement
+                    if (spawnIntensitiesNormal[i].mustComplete && !spawnIntensitiesNormal[i].hasCompleted)
+                    {
+                        Debug.LogError("WE GOTTA FINSIH another first bud");
+                        break;
+                    }
+
+
+
 
                     Debug.Log("SetNewIntensity From Update Objective");
                 }
@@ -135,6 +230,8 @@ public class SpawnIntensityManager : MonoBehaviour
                     break; // Stop checking if the condition is not met
                 }
             }
+
+
 
             // Update the currentIntensityIndex to the most recent valid intensity
             currentIntensityIndex = newIntensityIndex;
@@ -155,6 +252,31 @@ public class SpawnIntensityManager : MonoBehaviour
 
 
         }
+
+        // else if (spawnIntensitiesNormal[currentIntensityIndex].hasCompleted)
+        // {
+        //     for (int i = currentIntensityIndex - 1; i >= 0; i--)
+        //     {
+        //         if (!spawnIntensitiesNormal[i].hasCompleted)
+        //         {
+        //             currentIntensityIndex = i;
+        //             break;
+
+        //         }
+        //     }
+
+        //     nextIntensityIndex = currentIntensityIndex + 1;
+
+
+        //     if (currentIntensityIndex < spawnIntensitiesNormal.Length)
+        //     {
+        //         lvlID.SetNewIntensity(currentIntensityIndex);
+        //         var intensity = spawnIntensitiesNormal[currentIntensityIndex];
+        //         ignoreNextIntensityTrigger = intensity.IgnoreItensityTriggers;
+        //         lvlID.outputEvent.OnSetNewIntensity?.Invoke(intensity, false);
+        //     }
+
+        // }
 
 
 
@@ -182,26 +304,29 @@ public class SpawnIntensityManager : MonoBehaviour
             int n;
             waitingOnHealth = true;
 
-            if (currentHealthIntensityIndex > delaysToSpawnNextHealthAfterSpawn.Length - 1)
+
+            if (currentHealthDelayIndex > delaysToSpawnNextHealthAfterSpawn.Length - 1)
                 n = delaysToSpawnNextHealthAfterSpawn.Length - 1;
             else
             {
-                n = currentHealthIntensityIndex;
+                n = currentHealthDelayIndex;
             }
             StartCoroutine(WaitForNextHealthChance(delaysToSpawnNextHealthAfterSpawn[n]));
+            currentHealthDelayIndex++;
         }
 
-        int nextInt = CheckCurrentIntensity();
+        // int nextInt = CheckCurrentIntensity();
 
-        lvlID.outputEvent.OnSetNewIntensity?.Invoke(spawnIntensitiesNormal[nextInt], returningToPrevInt);
+        // lvlID.outputEvent.OnSetNewIntensity?.Invoke(spawnIntensitiesNormal[nextInt], returningToPrevInt);
+        UpdateObjective("revert", 0);
 
-        ignoreNextIntensityTrigger = spawnIntensitiesNormal[nextInt].IgnoreItensityTriggers;
+        // ignoreNextIntensityTrigger = spawnIntensitiesNormal[nextInt].IgnoreItensityTriggers;
 
-        if (returningToPrevInt)
-        {
-            returnToFinishNonLoopedTranstionIndex = -1;
-            returningToPrevInt = false;
-        }
+        // if (returningToPrevInt)
+        // {
+        //     returnToFinishNonLoopedTranstionIndex = -1;
+        //     returningToPrevInt = false;
+        // }
     }
 
     void UpdateHealthIntensity(int lives)
@@ -229,7 +354,7 @@ public class SpawnIntensityManager : MonoBehaviour
 
             currentHealthIntensityIndex++;
 
-            if (currentHealthIntensityIndex >= spawnIntensitiesHealth.Length)
+            if (currentHealthIntensityIndex >= spawnIntensitiesHealth.Length && maxNumberOfHealthSpawns == -1)
             {
                 currentHealthIntensityIndex--;
             }
@@ -242,8 +367,9 @@ public class SpawnIntensityManager : MonoBehaviour
 
     private IEnumerator WaitForNextHealthChance(float delay)
     {
-
+        Debug.LogWarning("WAiting for next helath chance, delay of: " + delay);
         yield return new WaitForSeconds(delay);
+
         canSpawnHealthRings = true;
 
         UpdateHealthIntensity(currentLives);

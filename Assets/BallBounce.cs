@@ -18,10 +18,10 @@ public class BallBounce : MonoBehaviour
             float minVelocity = Mathf.Sqrt(2 * Physics2D.gravity.magnitude * minimumHeight);
 
             // Check if the current upward velocity is less than the minimum required velocity
-            if (rb.velocity.y < minVelocity)
+            if (rb.linearVelocity.y < minVelocity)
             {
                 // Adjust the velocity to ensure the ball reaches the minimum height
-                rb.velocity = new Vector2(rb.velocity.x, minVelocity);
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, minVelocity);
             }
 
         }

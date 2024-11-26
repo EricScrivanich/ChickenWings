@@ -28,7 +28,7 @@ public class ShotgunShell : MonoBehaviour
     private void OnEnable()
     {
         spriteIndex = Random.Range(0, 4);
-        rb.velocity = (transform.up * globalForce) + relativeForce;
+        rb.linearVelocity = (transform.up * globalForce) + relativeForce;
         rb.angularVelocity = angularVel;
         delay = Random.Range(AnimData.RandomDelaySpriteSwitch.x, AnimData.RandomDelaySpriteSwitch.y);
         sr.sprite = AnimData.sprites[spriteIndex];
@@ -53,12 +53,12 @@ public class ShotgunShell : MonoBehaviour
         //     rb.velocity = new Vector2(groundSpeed, 0);
         //     rb.angularVelocity = 0;
         // }
-        if (Mathf.Abs(rb.velocity.y) < bounceThreshold && bounceCount >= maxBounces && !isGrounded)
+        if (Mathf.Abs(rb.linearVelocity.y) < bounceThreshold && bounceCount >= maxBounces && !isGrounded)
         {
             // Shell has stopped bouncing, set it to grounded
             isGrounded = true;
             AudioManager.instance.PlayShotgunShell(3);
-            rb.velocity = new Vector2(groundSpeed, rb.velocity.y);
+            rb.linearVelocity = new Vector2(groundSpeed, rb.linearVelocity.y);
             rb.angularVelocity = 0;
         }
     }

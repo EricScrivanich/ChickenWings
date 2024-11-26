@@ -30,7 +30,7 @@ public class bulletMovement : MonoBehaviour
         Vector2 velocity = direction * speed;
 
         // Apply the velocity to the Rigidbody2D
-        rb.velocity = velocity;
+        rb.linearVelocity = velocity;
 
     }
 }

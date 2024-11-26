@@ -15,6 +15,12 @@ public class SceneManagerSO : ScriptableObject
     [SerializeField] private List<Image> Levels_UI;
     [SerializeField] private List<string> Gamemodes_Scene;
     [SerializeField] private List<Scene> Gamemodes_UI;
+
+    [SerializeField] private List<int> levelsByAdditionalNeededChallengesToUnlock;
+    [SerializeField] private List<string> additionalNeededUnlockText;
+
+    [Header("0 - Stars, 1 - Badges, 2 - No More Levels")]
+    [SerializeField] private List<Vector2Int> additonalChallengeTypeAndAmount;
     private int levelNumber;
 
 
@@ -29,20 +35,54 @@ public class SceneManagerSO : ScriptableObject
         else
             SceneManager.LoadScene(Levels_Scene[levelNumber]);
 
+        SaveManager.instance.PreWarmShaders();
+
+
     }
 
     public int ReturnChallengeCountByLevel(int level)
     {
+        Debug.Log("TRYNA REUTRN: " + level);
         if (Level_Challenges[level] != null)
+        {
+            Debug.Log("Challenge Count Return: " + level);
             return Level_Challenges[level].GetAmountOfChallenges();
+        }
+
         else
             return 0;
     }
 
     public int ReturnNumberOfLevels()
     {
-        return Levels_Name.Count;
+        return Levels_Name.Count - 1;
     }
+
+    public Vector3Int NeedsAddtionalUnlock(int l)
+    {
+        if (l == -1) l = levelNumber + 1;
+
+
+
+
+        for (int i = 0; i < levelsByAdditionalNeededChallengesToUnlock.Count; i++)
+        {
+            if (l == levelsByAdditionalNeededChallengesToUnlock[i])
+            {
+                return new Vector3Int(i, additonalChallengeTypeAndAmount[i].x, additonalChallengeTypeAndAmount[i].y);
+
+            }
+        }
+        return Vector3Int.zero;
+    }
+
+    public string RetrunAdditionalChallengeText(int index)
+    {
+        if (additionalNeededUnlockText == null || index >= additionalNeededUnlockText.Count) return null;
+        return additionalNeededUnlockText[index];
+    }
+
+
 
     public LevelChallenges ReturnLevelChallenges()
     {
@@ -68,6 +108,7 @@ public class SceneManagerSO : ScriptableObject
         if (Time.timeScale == 0) Time.timeScale = FrameRateManager.TargetTimeScale;
 
         SceneManager.LoadScene(OtherGameModes_Scene[type]);
+        SaveManager.instance.PreWarmShaders();
 
 
 

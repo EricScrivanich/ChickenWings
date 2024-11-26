@@ -47,6 +47,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.761
   m_Pitch: 1
@@ -143,6 +144,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 840b25932446e4ba1af95e85b175dd4b, type: 3}
+  m_Resource: {fileID: 8300000, guid: 840b25932446e4ba1af95e85b175dd4b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 0.94
@@ -239,6 +241,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -396,6 +399,14 @@ MonoBehaviour:
   starHitSound: {fileID: 0}
   blobEnterSound: {fileID: 0}
   blobExitSound: {fileID: 0}
+  buttonClickSound: {fileID: 0}
+  sprayPaintSound: {fileID: 0}
+  starWhooshSound: {fileID: 0}
+  badgeSlapSound: {fileID: 0}
+  starWhooshVolume: 0
+  badgeSlapVolume: 0
+  buttonClickVolume: 0
+  sprayPaintVolume: 0
   blobEnterVolume: 0
   blobExitVolume: 0
   longFartVolume: 0

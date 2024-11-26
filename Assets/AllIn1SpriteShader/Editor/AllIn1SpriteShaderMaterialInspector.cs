@@ -65,7 +65,7 @@ public class AllIn1SpriteShaderMaterialInspector : ShaderGUI
             DrawLine(Color.grey, 1, 3);
             GenericEffect("Unity Fog", "FOG_ON", -1, -1, false, boldToggleLetters: false);
             DrawLine(Color.grey, 1, 3);
-            Billboard("Bilboard active", "BILBOARD_ON");
+            Billboard("Billboard active", "BILBOARD_ON");
             DrawLine(Color.grey, 1, 3);
             SpriteAtlas("Sprite inside an atlas?", "ATLAS_ON");
             DrawLine(Color.grey, 1, 3);

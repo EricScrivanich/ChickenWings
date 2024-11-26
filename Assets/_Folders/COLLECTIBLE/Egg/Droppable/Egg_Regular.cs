@@ -52,7 +52,7 @@ public class Egg_Regular : MonoBehaviour
     {
         hasHit = false;
         hitParticle = false;
-        rb.velocity = new Vector2(force, -1);
+        rb.linearVelocity = new Vector2(force, -1);
 
     }
 
@@ -159,7 +159,7 @@ public class Egg_Regular : MonoBehaviour
 
         if (!hitParticle)
         {
-            SmokeTrailPool.GetEggParticleCollider?.Invoke(transform.position, rb.velocity);
+            SmokeTrailPool.GetEggParticleCollider?.Invoke(transform.position, rb.linearVelocity);
             hitParticle = true;
             Invoke("ResetParticleColllider", .25f);
             // coll2D.size = expandedColSize;
@@ -185,7 +185,7 @@ public class Egg_Regular : MonoBehaviour
     {
 
 
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
 
     }
 

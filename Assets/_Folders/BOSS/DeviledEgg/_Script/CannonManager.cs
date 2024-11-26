@@ -72,7 +72,7 @@ public class CannonManager : MonoBehaviour
 
                 if (rb != null)
                 {
-                    rb.velocity = fireDirection * speed;
+                    rb.linearVelocity = fireDirection * speed;
                 }
                 else
                 {

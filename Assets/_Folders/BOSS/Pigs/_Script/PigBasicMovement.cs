@@ -70,7 +70,7 @@ public class PigBasicMovement : MonoBehaviour
 
         }
         anim.SetTrigger("Flap");
-        rb.velocity = new Vector2(xVel, pig.jumpForce);
+        rb.linearVelocity = new Vector2(xVel, pig.jumpForce);
 
     }
 }

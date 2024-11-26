@@ -75,6 +75,8 @@ public class LevelGroups : MonoBehaviour
         int totalBadges = 0;
         for (int i = 1; i < sceneSO.ReturnNumberOfLevels(); i++)
         {
+            Debug.Log("FROM BOSSES");
+
             if (sceneSO.ReturnChallengeCountByLevel(i) > 0)
             {
                 totalStars += sceneSO.ReturnChallengeCountByLevel(i);

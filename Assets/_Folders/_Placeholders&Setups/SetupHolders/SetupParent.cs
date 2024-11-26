@@ -302,7 +302,7 @@ public class SetupParent : ScriptableObject
     }
 
 
-    public void SpawnTrigger(SpawnStateManager manager, int currentTrigger)
+    public void SpawnTrigger(SpawnStateManager manager, int currentTrigger, bool spawnRings)
     {
 
         List<float> tempList = new List<float>();
@@ -339,15 +339,16 @@ public class SetupParent : ScriptableObject
         if (collectableSetup.Count > currentTrigger)
         {
 
+
             foreach (var coll in collectableSetup[currentTrigger].dataArray)
             {
-                if (currentTrigger == collectableSetup.Count - 1)
+                if (currentTrigger == collectableSetup.Count - 1 && spawnRings)
                 {
 
 
                     coll.InitializeCollectable(manager, true);
                 }
-                else
+                else if (spawnRings)
                 {
 
 

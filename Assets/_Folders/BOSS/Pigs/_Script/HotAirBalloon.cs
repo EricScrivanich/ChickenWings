@@ -28,10 +28,10 @@ public class HotAirBalloon : MonoBehaviour
     private float time = 0;
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private AnimationDataSO animData;
-    [SerializeField] private AnimationDataSO pigAnimData;
+    // [SerializeField] private AnimationDataSO pigAnimData;
     [SerializeField] private ExplosivesPool pool;
-    [SerializeField] private float dropDelay;
-    [SerializeField] private float initialDropDelay;
+    // [SerializeField] private float dropDelay;
+    // [SerializeField] private float initialDropDelay;
 
 
     [SerializeField] private Transform dropPosition;
@@ -119,7 +119,7 @@ public class HotAirBalloon : MonoBehaviour
         startedAnim = false;
         currentSpriteIndex = Random.Range(0, animData.sprites.Length - 1);
         sr.sprite = animData.sprites[currentSpriteIndex];
-        rb.velocity = new Vector2(speed, 0);
+        rb.linearVelocity = new Vector2(speed, 0);
 
 
 
@@ -143,10 +143,10 @@ public class HotAirBalloon : MonoBehaviour
         }
 
         // Lerp the current Y velocity towards the target Y velocity
-        float newYVelocity = Mathf.Lerp(rb.velocity.y, targetYVelocity, velocityLerpSpeed * Time.fixedDeltaTime);
+        float newYVelocity = Mathf.Lerp(rb.linearVelocity.y, targetYVelocity, velocityLerpSpeed * Time.fixedDeltaTime);
 
         // Set the Rigidbody2D's velocity with the updated Y velocity
-        rb.velocity = new Vector2(rb.velocity.x, newYVelocity);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, newYVelocity);
 
 
 

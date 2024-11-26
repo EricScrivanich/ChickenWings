@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   IgnoreItensityTriggers: 0
+  mustComplete: 0
   overrideStateTransiton: 0
   collectableSpawnData: {fileID: 11400000, guid: cc54e3df3cfb6446599390cc6bc22417, type: 2}
   transtionLogicStart: {fileID: 11400000, guid: 89a6495320a5242b78bbc8ddcc6549b1, type: 2}
@@ -35,6 +36,7 @@ MonoBehaviour:
   randomEnemySetupAmountToSpawnWeights:
   - 0
   - 1
+  flipRandomEnemySpawnXChance: 0
   xTargetToStartSpawn: 5
   spawnRandomRangeAfterTarget: {x: 0, y: 0}
   amountOfWaveWeights:
@@ -65,3 +67,4 @@ MonoBehaviour:
   JetpackPig_BB: {fileID: 0}
   BigPig_BB: {fileID: 0}
   TenderizerPig_BB: {fileID: 0}
+  ignoreOverride: 0

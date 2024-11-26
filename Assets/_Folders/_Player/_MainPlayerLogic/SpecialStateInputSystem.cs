@@ -581,6 +581,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             dropIcon = GameObject.Find("DropICON").GetComponent<RectTransform>();
             dropCooldownOUT = GameObject.Find("DropCooldownOUT").GetComponent<Image>();
             originalDropY = dropIcon.anchoredPosition.y;
+            dropCooldownIN.color = ColorSO.disabledButtonColorFull;
             dropCooldownIN.DOFade(0, 0);
             dropCooldownOUT.DOFade(0, 0);
             canDrop = true;
@@ -604,7 +605,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             dashCooldownGroup = GameObject.Find("DashCooldownGroup").GetComponent<CanvasGroup>();
 
             startingDashIconX = dashIcon.anchoredPosition.x;
-
+            dashCooldownIN.color = ColorSO.disabledButtonColorFull;
 
             dashCooldownGroup.alpha = 0;
 
@@ -810,7 +811,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         else
         {
             ID.globalEvents.SetCanDashSlash?.Invoke(false);
-            dashCooldownIN.color = ColorSO.coolDownColorRed;
+            dashCooldownIN.color = ColorSO.disabledButtonColorFull;
 
 
         }
@@ -823,7 +824,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             canDashSlash = false;
             if (manaFull)
             {
-                dashCooldownIN.color = ColorSO.coolDownColorRed;
+                dashCooldownIN.color = ColorSO.disabledButtonColorFull;
                 dashImageMana.DOColor(ColorSO.DashImageManaDisabled, .1f);
 
             }
@@ -1003,8 +1004,8 @@ public class SpecialStateInputSystem : MonoBehaviour
     public void UpdateCooldownColor()
     {
         FinishCooldowns();
-        Color c = new Color(ColorSO.disabledButtonColorFull.r, ColorSO.disabledButtonColorFull.g, ColorSO.disabledButtonColorFull.b, 0);
-        dropCooldownIN.color = c;
+
+
 
         dashCooldownIN.color = ColorSO.disabledButtonColorFull;
     }

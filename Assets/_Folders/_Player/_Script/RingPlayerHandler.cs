@@ -27,6 +27,7 @@ public class RingPlayerHandler : MonoBehaviour
 
             positionScript = GameObject.Find("CanvasScreen").GetComponent<CanvasScreenPositions>();
 
+
         }
         else
         {
@@ -67,8 +68,11 @@ public class RingPlayerHandler : MonoBehaviour
 
             case 2:
 
+                Vector2 pos = positionScript.ReturnGoldPosition();
 
-                RingGold.GetBall(transform.position, null, positionScript.ReturnGoldPosition());
+                if (pos == Vector2.zero) return;
+
+                RingGold.GetBall(transform.position, null, pos);
 
                 break;
 

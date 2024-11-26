@@ -459,12 +459,12 @@ public class PlayerStateManager : MonoBehaviour
     public void BaseRotationLogic()
     {
         // Check if the Rigidbody is moving upwards and hasn't reached the max rotation limit
-        if (rb.velocity.y > 0 && rotZ < maxRotUp)
+        if (rb.linearVelocity.y > 0 && rotZ < maxRotUp)
         {
             rotZ += jumpRotSpeed * Time.deltaTime;
         }
         // Check if the Rigidbody is moving downwards and hasn't reached the max rotation limit
-        else if (rb.velocity.y <= 0 && rotZ > maxRotDown)
+        else if (rb.linearVelocity.y <= 0 && rotZ > maxRotDown)
         {
             rotZ -= jumpRotSpeed * Time.deltaTime;
         }
@@ -479,7 +479,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         float difference = newSpeed - ID.constantPlayerForce;
         ID.constantPlayerForce = newSpeed;
-        rb.velocity = new Vector2(rb.velocity.x + difference, rb.velocity.y);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x + difference, rb.linearVelocity.y);
     }
 
     public void AdjustForce(Vector2 force)
@@ -488,7 +488,7 @@ public class PlayerStateManager : MonoBehaviour
         // currentForce = xForce + ID.constantPlayerForce;
         if (!usingConstantForce)
         {
-            rb.velocity = force;
+            rb.linearVelocity = force;
             ID.globalEvents.OnPlayerVelocityChange?.Invoke(force, rb.gravityScale);
 
 
@@ -496,7 +496,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
         else
-            rb.velocity = new Vector2(force.x + ID.constantPlayerForce, force.y);
+            rb.linearVelocity = new Vector2(force.x + ID.constantPlayerForce, force.y);
 
 
     }
@@ -522,7 +522,7 @@ public class PlayerStateManager : MonoBehaviour
     {
 
         // If it does, limit it to the max fall speed
-        rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, maxFallSpeed, 15f));
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, maxFallSpeed, 15f));
 
 
 
@@ -793,13 +793,13 @@ public class PlayerStateManager : MonoBehaviour
             AudioManager.instance.PlayEggDrop();
             float force = 0;
 
-            if (rb.velocity.x < 0)
+            if (rb.linearVelocity.x < 0)
             {
-                force = rb.velocity.x * .55f;
+                force = rb.linearVelocity.x * .55f;
             }
             else
             {
-                force = rb.velocity.x * .45f;
+                force = rb.linearVelocity.x * .45f;
             }
             ammoManager.GetEgg(transform.position, force);
 
@@ -1521,7 +1521,7 @@ public class PlayerStateManager : MonoBehaviour
                     if (Mathf.Abs(transform.position.y - ID.particleYPos[i]) < 1.08f)
                     {
                         HandleDamaged();
-                        SmokeTrailPool.GetPlayerParticleCollider?.Invoke(transform.position, rb.velocity);
+                        SmokeTrailPool.GetPlayerParticleCollider?.Invoke(transform.position, rb.linearVelocity);
                         break;
 
                     }

@@ -185,10 +185,11 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         controls.Movement.EggJoystick.performed += ctx =>
         {
             float xMoveAmount = ctx.ReadValue<Vector2>().x;
-            if (xMoveAmount < -.25f)
+            if (xMoveAmount < -.7f)
                 ID.events.OnAimJoystick(1);
-            else if (xMoveAmount > .25f)
+            else if (xMoveAmount > .7f)
                 ID.events.OnAimJoystick(-1);
+
 
 
             // ID.events.OnAimJoystick(ctx.ReadValue<Vector2>());
@@ -196,7 +197,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
         controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
 
-        controls.Movement.Dash.performed += ctx =>
+        controls.Movement.Dash.performed += ctx => 
         {
             if (ButtonsEnabled)
             {

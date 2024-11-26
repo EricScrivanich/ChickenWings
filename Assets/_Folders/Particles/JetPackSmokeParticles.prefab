@@ -4778,10 +4778,13 @@ ParticleSystemRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4846,9 +4849,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e9b8b4304fe8457c907448bddd3eb6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  point0Speed: 0
-  particles: {fileID: 0}
-  sideLength: 0
-  addedRightLength: 0
-  middLength: 24
-  gasCloudDelay: 0

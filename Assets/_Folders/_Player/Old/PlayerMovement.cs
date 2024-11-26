@@ -69,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
         frozenChicken.SetActive(false);
         rb = GetComponent<Rigidbody2D>();
         originalGravityScale = rb.gravityScale;
-        rb.velocity = new Vector2(0, 4f);
+        rb.linearVelocity = new Vector2(0, 4f);
         AudioManager.instance.PlayStartSound();
     }
 public void StartJumpHold()
@@ -92,10 +92,10 @@ public void StopJumpHold()
     
    
     // Check if the player's downward velocity exceeds the max
-    if (rb.velocity.y < maxFallSpeed)
+    if (rb.linearVelocity.y < maxFallSpeed)
     {
         // If it does, limit it to the max fall speed
-        rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, maxFallSpeed);
     }
      if (jumpHeld)
     {
@@ -122,7 +122,7 @@ public void StopJumpHold()
         {
             return;
         }
-        rb.velocity = new Vector2(0, jumpStrength);
+        rb.linearVelocity = new Vector2(0, jumpStrength);
         AudioManager.instance.PlayCluck();
     }
 
@@ -132,9 +132,9 @@ public void StopJumpHold()
         {
             return;
         }
-        if (rb.velocity.y >= lowerSdJmpBoundry && rb.velocity.y <= upperSdJmpBoundry)
+        if (rb.linearVelocity.y >= lowerSdJmpBoundry && rb.linearVelocity.y <= upperSdJmpBoundry)
         {
-            rb.velocity = new Vector2(sideJumpStrengthX, sideJumpStrengthY);
+            rb.linearVelocity = new Vector2(sideJumpStrengthX, sideJumpStrengthY);
             AudioManager.instance.PlayCluck();
             sideRotationVar = -sideRotationSpeed;
             sideJumpBool = true;
@@ -147,9 +147,9 @@ public void StopJumpHold()
         {
             return;
         }
-        if (rb.velocity.y >= lowerSdJmpBoundry && rb.velocity.y <= upperSdJmpBoundry)
+        if (rb.linearVelocity.y >= lowerSdJmpBoundry && rb.linearVelocity.y <= upperSdJmpBoundry)
         {
-            rb.velocity = new Vector2(-sideJumpStrengthX - .2f, sideJumpStrengthY - .4f);
+            rb.linearVelocity = new Vector2(-sideJumpStrengthX - .2f, sideJumpStrengthY - .4f);
             AudioManager.instance.PlayCluck();
             sideRotationVar = sideRotationSpeed;
             sideJumpBool = true;
@@ -171,7 +171,7 @@ public void StopJumpHold()
             frozenRotZ += frozenRotationSpeed * Time.deltaTime;
             transform.rotation = Quaternion.Euler(0,0, frozenRotZ);
             rb.gravityScale = 0;
-            rb.velocity = new Vector2 (0, -6f);
+            rb.linearVelocity = new Vector2 (0, -6f);
         }
 
         if (transform.position.y < unfreezeBoundry && isFrozen)
@@ -203,13 +203,13 @@ public void StopJumpHold()
         else
         {
             // If the object is moving upwards, rotate it upwards
-            if (rb.velocity.y > 0 && rotZ < maxRotationUp)
+            if (rb.linearVelocity.y > 0 && rotZ < maxRotationUp)
             {
                 // Calculate the new rotation
                 rotZ += jumpRotationSpeed * Time.deltaTime;
             }
             // If the object is moving downwards, rotate it downwards
-            else if (rb.velocity.y < 0 && rotZ > maxRotationDown)
+            else if (rb.linearVelocity.y < 0 && rotZ > maxRotationDown)
             {
                 // Calculate the new rotation
                 rotZ -= jumpRotationSpeed * Time.deltaTime;

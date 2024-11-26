@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 0
@@ -476,6 +472,7 @@ Material:
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShineColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &184033188 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 203004451874507810, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
@@ -888,12 +885,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!114 &519420037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1256,11 +1253,11 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: inputsChecked.Array.data[0]
+      propertyPath: 'inputsChecked.Array.data[0]'
       value: FlipRight
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: inputsChecked.Array.data[1]
+      propertyPath: 'inputsChecked.Array.data[1]'
       value: FlipRight
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
@@ -1280,7 +1277,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: setActiveAfterDelayObjects.Array.data[0]
+      propertyPath: 'setActiveAfterDelayObjects.Array.data[0]'
       value: 
       objectReference: {fileID: 466296783}
     - target: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
@@ -1292,7 +1289,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6678260298342323278, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 46c5a332a07c047ae85ff9e2bca54f95, type: 2}
     m_RemovedComponents: []
@@ -1378,6 +1375,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!4 &830857071 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 41649696473135676, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
@@ -1590,19 +1588,19 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 823502541631368457, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
-      propertyPath: flipSounds.Array.data[0]
+      propertyPath: 'flipSounds.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: 1a7c701c5d03d43e2a58a9960fe4a961, type: 3}
     - target: {fileID: 823502541631368457, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
-      propertyPath: flipSounds.Array.data[1]
+      propertyPath: 'flipSounds.Array.data[1]'
       value: 
       objectReference: {fileID: 8300000, guid: 23430dca332074f32b83902c7ffe9f3d, type: 3}
     - target: {fileID: 823502541631368457, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
-      propertyPath: flipSounds.Array.data[2]
+      propertyPath: 'flipSounds.Array.data[2]'
       value: 
       objectReference: {fileID: 8300000, guid: 2eb581ec3f1c9457c9c29c54be3dc89b, type: 3}
     - target: {fileID: 823502541631368457, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
-      propertyPath: flipSounds.Array.data[3]
+      propertyPath: 'flipSounds.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: 54b775f0ac5df4a8b9a587f66a87884c, type: 3}
     - target: {fileID: 1053351938702816589, guid: c06ff0b7395fe46ecaf72e47a4b666a4, type: 3}
@@ -2091,11 +2089,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 830857071}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: inputsChecked.Array.data[0]
+      propertyPath: 'inputsChecked.Array.data[0]'
       value: FlipLeft
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: inputsChecked.Array.data[1]
+      propertyPath: 'inputsChecked.Array.data[1]'
       value: FlipRight
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
@@ -2111,11 +2109,11 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: setActiveAfterEventObject.Array.data[0]
+      propertyPath: 'setActiveAfterEventObject.Array.data[0]'
       value: 
       objectReference: {fileID: 1535391960}
     - target: {fileID: 5197695798422403747, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
-      propertyPath: setActiveAfterDelayObjects.Array.data[0]
+      propertyPath: 'setActiveAfterDelayObjects.Array.data[0]'
       value: 
       objectReference: {fileID: 466296783}
     - target: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
@@ -2272,7 +2270,7 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9061125294953984513, guid: ff7194501f43f42ba85ea96a02524fdd, type: 3}
-      propertyPath: SetActiveObjects.Array.data[1]
+      propertyPath: 'SetActiveObjects.Array.data[1]'
       value: 
       objectReference: {fileID: 1586593839}
     m_RemovedComponents: []
@@ -2618,7 +2616,7 @@ PrefabInstance:
       value: 4.84
       objectReference: {fileID: 0}
     - target: {fileID: 3679946209921622469, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 606d194a096704cabadac8cd57bab724, type: 2}
     - target: {fileID: 6164839614742467945, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
@@ -2716,11 +2714,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3735133561469650998, guid: 993c990c5e93340c9b02db3d69aedf39, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1122
+      value: 1153
       objectReference: {fileID: 0}
     - target: {fileID: 3735133561469650998, guid: 993c990c5e93340c9b02db3d69aedf39, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 371
+      value: 408
       objectReference: {fileID: 0}
     - target: {fileID: 3735133561469650998, guid: 993c990c5e93340c9b02db3d69aedf39, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

@@ -70,6 +70,7 @@ public class PopUpsDisplay : MonoBehaviour
         {
             if (sceneSO.ReturnSceneNameLevel(i) == s)
             {
+                Debug.Log("YEE LOOP: " + 1);
                 levelNum = i;
                 sceneSO.SetLevelNumber(levelNum);
 

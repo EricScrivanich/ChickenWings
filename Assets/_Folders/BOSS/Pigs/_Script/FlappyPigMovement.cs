@@ -81,6 +81,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
 
 
+
     private float cackleTime;
 
     private float delayTime;
@@ -122,6 +123,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
     private static readonly Vector2 minMaxMagntiude = new Vector2(10f, 6.5f);
     private static readonly Vector2 minMaxMass = new Vector2(0.59f, 1.05f);
+
 
     void Start()
     {
@@ -240,14 +242,15 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
     {
         // rb.simulated = false;
         // rb.simulated = true;
-        Ticker.OnTickAction015 += MoveEyesWithTicker;
+
         blinded = false;
         yolkSR.enabled = false;
         transform.eulerAngles = Vector3.zero;
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         hasFullyEntered = false;
 
         player.globalEvents.OnPlayerVelocityChange += UpdateTargetPosition;
+        Ticker.OnTickAction015 += MoveEyesWithTicker;
         // Debug.LogError($"Pooled Enemy - ScaleFactor: {scaleFactor}, Mass: {rb.mass}, Velocity: {rb.velocity}");
         waitingOnDelay = true;
         col.offset = Vector2.zero;
@@ -274,12 +277,13 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
     private void OnDisable()
     {
+        Ticker.OnTickAction015 -= MoveEyesWithTicker;
         if (flapSeq != null && flapSeq.IsPlaying())
             flapSeq.Kill();
         if (yolkSeq != null && yolkSeq.IsPlaying())
             yolkSeq.Kill();
         player.globalEvents.OnPlayerVelocityChange -= UpdateTargetPosition;
-        Ticker.OnTickAction015 -= MoveEyesWithTicker;
+
 
     }
 
@@ -315,6 +319,13 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
             return;
         }
+
+        // tickTimer += Time.deltaTime;
+        // if (tickTimer >= tickTime)
+        // {
+        //     MoveEyesWithTicker();
+        //     tickTimer = 0;
+        // }
 
 
 
@@ -393,12 +404,12 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
         OnDirectionTime += Time.fixedDeltaTime;
 
-        if (OnDirectionTime >= OnDirectionTimeMax && rb.velocity.y < minYVelocity)
+        if (OnDirectionTime >= OnDirectionTimeMax && rb.linearVelocity.y < minYVelocity)
         {
             moveFreeDuration = moveFreeDurationInverse;
 
             // targetPosition = targetPosition * inverseMagnitude;
-            inverseDirection = rb.velocity.normalized * inverseMagnitude;
+            inverseDirection = rb.linearVelocity.normalized * inverseMagnitude;
             // rb.AddForce(rb.velocity.normalized * inverseMagnitude, ForceMode2D.Impulse);
             isTargetReached = true;
             // rb.AddForce(targetPosition, ForceMode2D.Impulse);
@@ -429,9 +440,9 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
         Vector2 direction = (target - rb.position).normalized;
         rb.AddForce(direction * forceAdded);
-        if (rb.velocity.magnitude > maxVel)
+        if (rb.linearVelocity.magnitude > maxVel)
         {
-            rb.velocity = rb.velocity.normalized * maxVel;
+            rb.linearVelocity = rb.linearVelocity.normalized * maxVel;
         }
 
         // UpdateLineRenderer(target);
@@ -511,7 +522,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
             flapSeq.Join(sprite.DOLocalMoveY(-.4f, .25f).SetEase(Ease.OutSine));
             flapSeq.Play();
 
-            pigMatHandler.Damage(1,0,-1);
+            pigMatHandler.Damage(1, 0, -1);
             return;
 
         }
@@ -553,19 +564,19 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         if (blinded)
         {
             moveFreeDuration = moveFreeDurationEgg + .15f;
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             // rb.velocity *= .4f;
             rb.AddForce(Vector2.down * eggForceMagnitude * 1.28f, ForceMode2D.Impulse);
         }
         else
         {
             // rb.velocity *= .2f;
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
 
             moveFreeDuration = moveFreeDurationEgg;
             rb.AddForce(Vector2.down * eggForceMagnitude, ForceMode2D.Impulse);
 
-            Debug.LogError("Force added is: " + (Vector2.down * eggForceMagnitude) + "New Velocity is: " + rb.velocity);
+            Debug.LogError("Force added is: " + (Vector2.down * eggForceMagnitude) + "New Velocity is: " + rb.linearVelocity);
         }
 
         Debug.LogError("Move free duration is: " + moveFreeDuration);

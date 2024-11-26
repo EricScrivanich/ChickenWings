@@ -19,6 +19,8 @@ public class MissilePigScript : MonoBehaviour
     [SerializeField] private Transform weaponStrap;
     private Vector3 aimAdjustmentVar;
 
+    private static Vector3 startScale = new Vector3(.9f, .9f, .9f);
+
     private Vector3 initalLaunchAimPosition;
     private Vector3 initalLaunchAimRotation;
     private Vector3 initalMissilePosition;
@@ -406,6 +408,7 @@ public class MissilePigScript : MonoBehaviour
         missileImage.enabled = true;
         canShoot = true;
         transform.rotation = Quaternion.Euler(0, 0, 0);
+        transform.localScale = startScale;
         missileImage.transform.localPosition = initalMissilePosition;
         launchAim.localPosition = initalLaunchAimPosition;
         launchAim.localRotation = Quaternion.Euler(0, 0, 90);

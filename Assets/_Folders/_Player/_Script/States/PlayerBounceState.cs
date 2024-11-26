@@ -19,7 +19,7 @@ public class PlayerBounceState : PlayerBaseState
         player.anim.SetBool(player.BounceBool, true);
 
         position = player.transform.position;
-        player.rb.velocity = Vector2.zero;
+        player.rb.linearVelocity = Vector2.zero;
         hasEnabledColliders = false;
         hasBounced = false;
         player.ChangeCollider(-1);
@@ -37,7 +37,7 @@ public class PlayerBounceState : PlayerBaseState
     {
         if (!hasBounced && !player.ID.constantPlayerForceBool)
         {
-            player.rb.velocity = Vector2.left * (BoundariesManager.GroundSpeed - .2f);
+            player.rb.linearVelocity = Vector2.left * (BoundariesManager.GroundSpeed - .2f);
         }
         if (!player.isDropping && !hasEnabledColliders)
         {

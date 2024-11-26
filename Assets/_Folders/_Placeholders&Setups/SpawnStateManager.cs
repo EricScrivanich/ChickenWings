@@ -175,12 +175,18 @@ public class SpawnStateManager : MonoBehaviour
             GetComponent<SmokeTrailPool>().SetGasPigFlyingPoolSize(gasPigFlyingPoolSize);
 
         }
+        if (transitionLogic != null)
+        {
+            transitionLogic.Reset();
+            prevTransitonLogic = transitionLogic;
+        }
+
     }
     void Start()
     {
-        prevTransitonLogic = transitionLogic;
+
         stopRandomSpawning = false;
-        currentTransitionLogicIndex = 0;
+        // currentTransitionLogicIndex = 0;
         eggSpawner = GetComponent<BarnAndEggSpawner>();
 
         LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
@@ -224,6 +230,7 @@ public class SpawnStateManager : MonoBehaviour
         {
             GameObject.Find("SetupRecorderParent").SetActive(false);
             startingStateDelay = 0;
+            startDelay = .1f;
 
         }
 
@@ -283,7 +290,7 @@ public class SpawnStateManager : MonoBehaviour
             }
         }
 
-        totalTime += startingStateDelay;
+        totalTime += startDelay;
 
         Debug.Log("Total level time is: " + totalTime);
         return totalTime;
@@ -314,27 +321,30 @@ public class SpawnStateManager : MonoBehaviour
     // }
     public int NextRingType()
     {
-        if (transitionLogic.ringSpawnSetTypeOrder == null) return 0;
-        if (currentSetRingOrderIndex > transitionLogic.ringSpawnSetTypeOrder.Length - 1)
-            currentSetRingOrderIndex = 0;
-        if (transitionLogic.ringSpawnSetTypeOrder != null && transitionLogic.ringSpawnSetTypeOrder.Length > 0)
-        {
-            currentRingType = transitionLogic.ringSpawnSetTypeOrder[currentSetRingOrderIndex];
-            Debug.Log("Getting next ring type from order: " + transitionLogic.ringSpawnSetTypeOrder[currentSetRingOrderIndex]);
+        // if (transitionLogic.ringSpawnSetTypeOrder == null) return 0;
+        // if (currentSetRingOrderIndex > transitionLogic.ringSpawnSetTypeOrder.Length - 1)
+        //     currentSetRingOrderIndex = 0;
+        // if (transitionLogic.ringSpawnSetTypeOrder != null && transitionLogic.ringSpawnSetTypeOrder.Length > 0)
+        // {
+        //     currentRingType = transitionLogic.ringSpawnSetTypeOrder[currentSetRingOrderIndex];
+        //     Debug.Log("Getting next ring type from order: " + transitionLogic.ringSpawnSetTypeOrder[currentSetRingOrderIndex]);
 
 
-            currentSetRingOrderIndex++;
-            return currentRingType;
+        //     currentSetRingOrderIndex++;
+        //     return currentRingType;
 
 
 
-        }
-        else
-        {
-            currentRingType = currentRandomSpawnIntensityData.GetRandomRingTypeIndex();
-            return currentRingType;
+        // }
+        // else
+        // {
+        //     currentRingType = currentRandomSpawnIntensityData.GetRandomRingTypeIndex();
+        //     return currentRingType;
 
-        }
+        // }
+        currentRingType = transitionLogic.ReturnRingType();
+
+        return currentRingType;
 
     }
 
@@ -388,9 +398,11 @@ public class SpawnStateManager : MonoBehaviour
         //     type = transitionLogic.GetRandomSequenceIndex();
         // }
         // else
-        Debug.LogError("Current Tanstion logic: " + transitionLogic + " : index- " + currentTransitionLogicIndex);
 
-        type = transitionLogic.OrderedSequnece[currentTransitionLogicIndex];
+        // type = transitionLogic.OrderedSequnece[currentTransitionLogicIndex];
+        type = transitionLogic.ReturnStateType();
+        Debug.LogError("Current Tanstion logic: " + transitionLogic + " : type- " + type + " Index: " + (transitionLogic.RetrunCurrentIndex() - 1));
+
 
 
         if (SpawnWithDelayRoutine != null) StopCoroutine(SpawnWithDelayRoutine);
@@ -413,7 +425,7 @@ public class SpawnStateManager : MonoBehaviour
             case (-1):
                 {
                     currentState = null;
-                    transitionLogic.SpawnSpecialEnemy(this, currentTransitionLogicIndex);
+                    transitionLogic.SpawnSpecialEnemy(this);
 
                     break;
                 }
@@ -423,6 +435,7 @@ public class SpawnStateManager : MonoBehaviour
                     lastRandomEnemySpawnTime = 0;
 
                     pureSetupState.SetRingType(NextRingType());
+
                     break;
                 }
             case (1):
@@ -430,6 +443,7 @@ public class SpawnStateManager : MonoBehaviour
                     currentState = ringAndEnemyRandomSetupState;
 
                     ringAndEnemyRandomSetupState.SetRingType(NextRingType());
+
 
 
                     break;
@@ -450,37 +464,38 @@ public class SpawnStateManager : MonoBehaviour
                 }
         }
 
-        Debug.LogError("Current logic index is: " + currentTransitionLogicIndex);
+        // Debug.LogError("Current logic index is: " + currentTransitionLogicIndex);
         Debug.LogError("Entered New State: " + currentState);
 
         if (currentState != null)
             currentState.EnterState(this);
 
-        currentTransitionLogicIndex++;
+        // currentTransitionLogicIndex++;
+
+        if (transitionLogic.CheckForNewIntensity())
+            currentRandomSpawnIntensityData.CheckForNextTranstion();
+
+        // if (currentTransitionLogicIndex >= transitionLogic.OrderedSequnece.Length)
+        // {
 
 
+        //     if (transitionLogic.loopStates)
+        //     {
 
-        if (currentTransitionLogicIndex >= transitionLogic.OrderedSequnece.Length)
-        {
+        //         currentTransitionLogicIndex = 0;
+        //         transitionLogic.ResetTransitionLogic();
 
+        //     }
+        //     else
+        //     {
 
-            if (transitionLogic.loopStates)
-            {
+        //         currentRandomSpawnIntensityData.CheckForNextTranstion();
+        //         Debug.LogError("Checking for next Transtion");
 
-                currentTransitionLogicIndex = 0;
-                transitionLogic.ResetTransitionLogic();
-
-            }
-            else
-            {
-
-                currentRandomSpawnIntensityData.CheckForNextTranstion();
-                Debug.LogError("Checking for next Transtion");
-
-            }
+        //     }
 
 
-        }
+        // }
 
 
     }
@@ -500,12 +515,14 @@ public class SpawnStateManager : MonoBehaviour
                     currentState = pureSetupState;
                     pureSetupState.SetRingType(NextRingType());
 
+
                     break;
                 }
             case (1):
                 {
                     currentState = ringAndEnemyRandomSetupState;
                     ringAndEnemyRandomSetupState.SetRingType(NextRingType());
+
                     break;
                 }
             case (2):
@@ -557,6 +574,8 @@ public class SpawnStateManager : MonoBehaviour
                 waitingOnFlappyPig = false;
                 break;
         }
+        if (eggSpawner != null)
+            eggSpawner.JustSpawnedEnemies();
 
 
         SwitchStateWithLogic();
@@ -622,6 +641,8 @@ public class SpawnStateManager : MonoBehaviour
         // Debug.LogError("waiting for " + delay + " seconds for next spawn");
         yield return new WaitForSeconds(delay);
         currentState.SetupHitTarget(this);
+        if (eggSpawner != null)
+            eggSpawner.JustSpawnedEnemies();
         if (stopRandomSpawning) stopRandomSpawning = false;
         WaitForWaveFinishRoutine = null;
 
@@ -744,51 +765,72 @@ public class SpawnStateManager : MonoBehaviour
     #region EventListeners
     private void SetNewTransitionLogic(SpawnStateTransitionLogic logic, bool revert)
     {
-        if (revert)
+        if (logic == null && prevTransitonLogic == null) return;
+
+        if (logic == null) transitionLogic = prevTransitonLogic;
+
+        else
         {
-            transitionLogic = prevTransitonLogic;
-            currentTransitionLogicIndex = prevTransitonLogicLastIndex;
-            currentSetRingOrderIndex = prevTransitonLogicRingIndex;
-            // Debug.LogError("I am reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
-            return;
-        }
-        else if (!logic.loopStates)
-        {
-            if (transitionLogic.continueFromPrevOverriden)
-            {
-
-                prevTransitonLogic = transitionLogic;
-                prevTransitonLogicLastIndex = currentTransitionLogicIndex;
-                prevTransitonLogicRingIndex = currentSetRingOrderIndex;
-
-                // Debug.LogError("Not reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
-
-
-            }
-
-            else if (transitionLogic.loopStates || transitionLogic.continueFromStartIfOverriden)
-            {
-                prevTransitonLogic = transitionLogic;
-                prevTransitonLogicLastIndex = 0;
-                prevTransitonLogicRingIndex = 0;
-
-
-            }
-
-
-
             transitionLogic = logic;
-            currentTransitionLogicIndex = 0;
-            currentSetRingOrderIndex = 0;
-        }
-        else if (logic.loopStates)
-        {
+            logic.EnterTransitionLogic();
 
-            transitionLogic = logic;
-            currentTransitionLogicIndex = 0;
-            currentSetRingOrderIndex = 0;
+            if (logic.loopStates)
+                prevTransitonLogic = logic;
 
         }
+
+        Debug.LogError("NEW TRNATION LOGIC: " + transitionLogic);
+
+
+
+
+        // if (revert)
+        // {
+        //     transitionLogic = prevTransitonLogic;
+        //     currentTransitionLogicIndex = prevTransitonLogicLastIndex;
+        //     currentSetRingOrderIndex = prevTransitonLogicRingIndex;
+        //     Debug.LogError("I am reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
+        //     return;
+        // }
+        // else if (!logic.loopStates)
+        // {
+        //     if (transitionLogic.continueFromPrevOverriden)
+        //     {
+
+        //         prevTransitonLogic = transitionLogic;
+        //         prevTransitonLogicLastIndex = currentTransitionLogicIndex;
+        //         prevTransitonLogicRingIndex = currentSetRingOrderIndex;
+
+        //         Debug.LogError("Not reverting - Set prev index to: " + prevTransitonLogicLastIndex + " Set prev ring index: " + prevTransitonLogicRingIndex);
+
+
+        //     }
+
+        //     else if (transitionLogic.loopStates || transitionLogic.continueFromStartIfOverriden)
+        //     {
+        //         prevTransitonLogic = transitionLogic;
+        //         prevTransitonLogicLastIndex = 0;
+        //         prevTransitonLogicRingIndex = 0;
+
+
+        //     }
+
+
+
+        //     transitionLogic = logic;
+        //     currentTransitionLogicIndex = 0;
+        //     currentSetRingOrderIndex = 0;
+        // }
+        // else if (logic.loopStates)
+        // {
+
+        //     transitionLogic = logic;
+        //     currentTransitionLogicIndex = 0;
+        //     currentSetRingOrderIndex = 0;
+
+        // }
+
+        // Debug.LogError("WE HERE. sent logic: " + logic + " PREV LOGIC: " + prevTransitonLogic + " current logic index: " + currentTransitionLogicIndex);
 
 
     }
@@ -796,8 +838,8 @@ public class SpawnStateManager : MonoBehaviour
     {
 
         currentRandomSpawnIntensityData = newIntensitySet;
-        if (!returningToPrev)
-            newIntensitySet.EnterIntensity();
+        // if (!returningToPrev)
+        newIntensitySet.EnterIntensity();
         if (newIntensitySet.missileBasePigChance > 0 && MissilePigTimer == null && canSpawnMissilePig == false)
             MissilePigTimer = StartCoroutine(MissilePigTimerCoroutine(newIntensitySet.minMissilePigDelay));
         Debug.Log("Set Intensity: " + currentRandomSpawnIntensityData);
@@ -820,12 +862,14 @@ public class SpawnStateManager : MonoBehaviour
         if (!correctSequence)
         {
 
+
             StartCoroutine(RingSequenceFinishedCourintine(0, index));
 
 
         }
         else
         {
+            LvlID.AddCompletedRings(index);
             StartCoroutine(RingSequenceFinishedCourintine(1.5f, index));
 
 
@@ -1120,6 +1164,8 @@ public class SpawnStateManager : MonoBehaviour
     {
         if (windMillIndex >= windMills.Length) windMillIndex = 0;
         Windmill windMill = windMills[windMillIndex];
+        if (eggSpawner != null)
+            eggSpawner.AddWindmillSpawn(position.x);
         windMill.transform.position = position;
         windMill.bladeAmount = bladeAmount;
         windMill.bladeScaleMultiplier = bladeScaleMultiplier;
@@ -1178,6 +1224,7 @@ public class SpawnStateManager : MonoBehaviour
         if (hotAirBalloonIndex >= hotAirBalloons.Length) hotAirBalloonIndex = 0;
         HotAirBalloon hotAirBalloon = hotAirBalloons[hotAirBalloonIndex];
         hotAirBalloon.transform.position = position;
+        hotAirBalloon.transform.localScale = BoundariesManager.vectorThree1;
         hotAirBalloon.type = type;
         hotAirBalloon.xTrigger = xTrigger;
         hotAirBalloon.yTarget = yTarget;
@@ -1191,7 +1238,7 @@ public class SpawnStateManager : MonoBehaviour
     {
         if (flappyPigIndex >= flappyPigs.Length) flappyPigIndex = 0;
         FlappyPigMovement flappyPig = flappyPigs[flappyPigIndex];
-        GameTimer.OnAddFlappyPig?.Invoke(true);
+        // GameTimer.OnAddFlappyPig?.Invoke(true);
         if (flappyPig.gameObject.activeInHierarchy)
         {
             var obj = Instantiate(flappyPigPrefab, position, Quaternion.identity).GetComponent<FlappyPigMovement>();
@@ -1213,6 +1260,7 @@ public class SpawnStateManager : MonoBehaviour
 
         DropBomb bomberPlane = bomberPlanes[bomberPlaneIndex];
         bomberPlane.xDropPosition = xDropPosition;
+        bomberPlane.transform.localScale = BoundariesManager.vectorThree1 * .85f;
         bomberPlane.dropAreaScaleMultiplier = dropAreaScaleMultiplier;
         bomberPlane.speedTarget = speedTarget;
         bomberPlane.gameObject.SetActive(true);

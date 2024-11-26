@@ -56,7 +56,7 @@ public class GameModeButton : MonoBehaviour
         else
         {
             // GameObject.Find("MenuButtons").GetComponent<LevelLockedManager>().CheckLockedLevel(levelNum);
-            LevelLockedManager.OnShowLevelLocked?.Invoke(neededUnlockIndex, false);
+            LevelLockedManager.OnShowLevelLocked?.Invoke(neededUnlockIndex, false,false);
 
             if (Lock != null)
             {

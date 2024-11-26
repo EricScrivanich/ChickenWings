@@ -16,7 +16,7 @@ public class BucketCollisionState : PlayerBaseState
         player.rb.angularVelocity = 0;
 
 
-        player.rb.velocity = new Vector2(0, 0);
+        player.rb.linearVelocity = new Vector2(0, 0);
         player.maxFallSpeed = player.originalMaxFallSpeed;
         player.rb.simulated = false;
         player.ID.events.EnableButtons?.Invoke(false);

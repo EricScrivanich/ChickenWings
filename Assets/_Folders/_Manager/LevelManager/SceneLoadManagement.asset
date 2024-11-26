@@ -21,6 +21,7 @@ MonoBehaviour:
   - Level5
   - Level6
   - Level7
+  - Level7-5
   - Level8
   - Level9
   - Level10
@@ -39,6 +40,7 @@ MonoBehaviour:
   - Shell Slugger
   - Bucket Combo
   - Finish Line Time
+  - Chicken Ring
   - Pilot Party
   - Lets Get Real
   - Bomb Boyage
@@ -55,6 +57,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 11400000, guid: 3c00bdce3123d4332ae7a70386f6d0c3, type: 2}
   - {fileID: 11400000, guid: 96f5594f6d55644e6a184c9111aded99, type: 2}
   - {fileID: 11400000, guid: bb738b2b0db2341ff8821e9f3b335593, type: 2}
   - {fileID: 11400000, guid: f4bcb7d451dc84fd7ae919da47ea5c4f, type: 2}
@@ -72,3 +75,15 @@ MonoBehaviour:
   Levels_UI: []
   Gamemodes_Scene: []
   Gamemodes_UI: []
+  levelsByAdditionalNeededChallengesToUnlock: 0d0000000e0000001000000011000000
+  additionalNeededUnlockText:
+  - You need at least ONE Certified Master Badge to unlock Level 13. Earn a Badge
+    by beating all challenges for a level on the same attempt.
+  - You need at least 11 Stars to Unlock Level 14
+  - You need at least THREE Certified Master Badges to unlock Level 16. Earn a Badge
+    by beating all challenges for a level on the same attempt.
+  additonalChallengeTypeAndAmount:
+  - {x: 1, y: 1}
+  - {x: 0, y: 11}
+  - {x: 1, y: 3}
+  - {x: 2, y: 2}

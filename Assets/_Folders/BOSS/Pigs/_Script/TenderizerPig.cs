@@ -43,6 +43,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible
 
     private void OnEnable()
     {
+        Ticker.OnTickAction015 += MoveEyesWithTicker;
         frequency = baseFrequency + ((baseSpeed - Mathf.Abs(speed)) * .27f);
         initialY = transform.position.y;
         flipped = false;
@@ -57,6 +58,11 @@ public class TenderizerPig : MonoBehaviour, ICollectible
         Hammer.SetActive(hasHammer);
 
     }
+
+    private void OnDisable()
+    {
+        Ticker.OnTickAction015 -= MoveEyesWithTicker;
+    }
     void Update()
     {
         transform.Translate(Vector2.left * speed * Time.deltaTime);
@@ -64,6 +70,11 @@ public class TenderizerPig : MonoBehaviour, ICollectible
 
         float y = Mathf.Sin(transform.position.x * frequency) * amplitude + initialY;
         transform.position = new Vector2(transform.position.x, y);
+
+    }
+
+    private void MoveEyesWithTicker()
+    {
         if (player != null && hasHammer)
         {
             Vector2 direction = player.position - eye.position; // Calculate the direction to the player
@@ -78,6 +89,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible
             // Move the pupil within the eye's radius
             pupil.localPosition = direction * eyeRadius;
         }
+
     }
 
     private IEnumerator AfterSwing()

@@ -12,6 +12,10 @@ public class LevelManager : MonoBehaviour
     private TextMeshProUGUI textLevelName;
     private TextMeshProUGUI textLevelNum;
 
+    [SerializeField] private GameObject barnObj;
+    [SerializeField] private MoveToPosition eggButtonMoveScript;
+
+
 
 
     [SerializeField] private GameObject TriggerSectionActivateAfterEventType;
@@ -254,6 +258,17 @@ public class LevelManager : MonoBehaviour
             if (GetComponent<Level7Special>() != null)
             {
                 GetComponent<Level7Special>().DoStart = false;
+            }
+
+
+            if (barnObj != null)
+            {
+                barnObj.transform.position = new Vector2(3.793f, barnObj.transform.position.y);
+            }
+
+            if (eggButtonMoveScript != null)
+            {
+                eggButtonMoveScript.OtherMoveFromEvent();
             }
 
             if (currentEventTracked == EventTypeTracked.Mana)

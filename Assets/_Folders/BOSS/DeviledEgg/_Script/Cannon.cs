@@ -32,7 +32,7 @@ public class Cannon : MonoBehaviour
             cannonBall.transform.position = spawnPoint.position;
             cannonBall.SetActive(true);
             Vector2 fireDirection = transform.up; // Use the cannon's upward direction
-            ballRB.velocity = fireDirection * speed;
+            ballRB.linearVelocity = fireDirection * speed;
 
 
         }

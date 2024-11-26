@@ -64,6 +64,6 @@ public class BalloonBomb : MonoBehaviour
     {
         gameObject.SetActive(true);
         Debug.Log("Bomb initillized");
-        rb.velocity = force;
+        rb.linearVelocity = force;
     }
 }

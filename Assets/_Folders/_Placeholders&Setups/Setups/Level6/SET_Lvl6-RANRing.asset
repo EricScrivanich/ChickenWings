@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
   m_Name: SET_Lvl6-RANRing
   m_EditorClassIdentifier: 
+  eventCallBack_Trigger_ID_Delay: []
   eggTriggerAndIndexAndType: []
   eggPosition: []
   eggSpeed: []
@@ -422,7 +423,7 @@ MonoBehaviour:
     - rid: 7051806169589350612
       type: {class: RingSO, ns: , asm: Assembly-CSharp}
       data:
-        TimeToTrigger: 3.2
+        TimeToTrigger: 3.4
         isRings: 1
         data:
         - position: {x: 13.47, y: 1.44}

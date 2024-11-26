@@ -50,7 +50,7 @@ public class BallLaucnher : MonoBehaviour
 
         float s = transform.localScale.x;
         rb.mass = ((s - center) * massToScaleRatio) + baseMass;
-        rb.velocity = new Vector2(Random.Range(forceAmountXRange.x, forceAmountXRange.y), Random.Range(forceAmountYRange.x, forceAmountYRange.y));
+        rb.linearVelocity = new Vector2(Random.Range(forceAmountXRange.x, forceAmountXRange.y), Random.Range(forceAmountYRange.x, forceAmountYRange.y));
 
     }
 }

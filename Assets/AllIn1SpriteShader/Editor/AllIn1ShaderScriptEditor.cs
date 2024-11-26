@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using ShaderType = AllIn1SpriteShader.AllIn1Shader.ShaderTypes;
 
 namespace AllIn1SpriteShader
 {
@@ -11,6 +12,7 @@ namespace AllIn1SpriteShader
         private bool showUrpWarning = false;
         private double warningTime = 0f;
         private SerializedProperty m_NormalStrength, m_NormalSmoothing;
+        private Texture2D imageInspector;
     
         private enum ImageType
         {
@@ -28,7 +30,7 @@ namespace AllIn1SpriteShader
 
         public override void OnInspectorGUI()
         {
-            ChooseAndDiplayAssetImage();
+            ChooseAndDisplayAssetImage();
 
             AllIn1Shader myScript = (AllIn1Shader)target;
 
@@ -36,72 +38,80 @@ namespace AllIn1SpriteShader
 
             if (GUILayout.Button("Deactivate All Effects"))
             {
-                for (int i = 0; i < targets.Length; i++)
-                {
-                    (targets[i] as AllIn1Shader).ClearAllKeywords();
-                }
+                for (int i = 0; i < targets.Length; i++) ((AllIn1Shader)targets[i]).ClearAllKeywords();
+                AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Deactivated All Effects");
             }
-
 
             if (GUILayout.Button("New Clean Material"))
             {
+                bool successOperation = true;
                 for (int i = 0; i < targets.Length; i++)
                 {
-                    (targets[i] as AllIn1Shader).TryCreateNew();
+                    successOperation &= ((AllIn1Shader)targets[i]).TryCreateNew();
                 }
+                if(successOperation) AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Clean Material");
             }
 
 
             if (GUILayout.Button("Create New Material With Same Properties (SEE DOC)"))
             {
+                bool successOperation = true;
                 for (int i = 0; i < targets.Length; i++)
                 {
-                    (targets[i] as AllIn1Shader).MakeCopy();
+                    successOperation &= ((AllIn1Shader)targets[i]).MakeCopy();
                 }
+                if(successOperation) AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Copy Created");
             }
 
             if (GUILayout.Button("Save Material To Folder (SEE DOC)"))
             {
-                for (int i = 0; i < targets.Length; i++)
+                bool successOperation = true;
+                for(int i = 0; i < targets.Length; i++)
                 {
-                    (targets[i] as AllIn1Shader).SaveMaterial();
+                    successOperation &= ((AllIn1Shader) targets[i]).SaveMaterial();
                 }
+                if(successOperation) AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Material Saved");
             }
 
             if (GUILayout.Button("Apply Material To All Children"))
             {
-                for (int i = 0; i < targets.Length; i++)
+                bool successOperation = true;
+                for(int i = 0; i < targets.Length; i++)
                 {
-                    (targets[i] as AllIn1Shader).ApplyMaterialToHierarchy();
+                    successOperation &= ((AllIn1Shader) targets[i]).ApplyMaterialToHierarchy();
                 }
+                if(successOperation) AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Material Applied To Children");
+                else EditorUtility.DisplayDialog("No children found", "All In 1 Shader component couldn't find any children to this GameObject (" + targets[0].name + ")", "Ok");
             }
 
-            if (myScript.shaderTypes != AllIn1Shader.ShaderTypes.Urp2dRenderer)
+            if (myScript.currentShaderType != AllIn1Shader.ShaderTypes.Urp2dRenderer)
             {
                 if (GUILayout.Button("Render Material To Image"))
                 {
-                    for (int i = 0; i < targets.Length; i++)
+                    bool successOperation = true;
+                    for(int i = 0; i < targets.Length; i++)
                     {
-                        (targets[i] as AllIn1Shader).RenderToImage();
+                        successOperation &= ((AllIn1Shader) targets[i]).RenderToImage();
                     }
+                    if(successOperation) AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Material Rendered To Image");
                 }
             }
 
             bool isUrp = false;
-            Shader temp = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
+            Shader temp = AllIn1ShaderWindow.FindShader("AllIn1Urp2dRenderer");
             if (temp != null) isUrp = true;
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.Label("Change Shader Variant:", GUILayout.MaxWidth(140));
-                int previousShaderType = (int)myScript.shaderTypes;
-                myScript.shaderTypes = (AllIn1Shader.ShaderTypes)EditorGUILayout.EnumPopup(myScript.shaderTypes);
-                if (previousShaderType != (int)myScript.shaderTypes)
+                int previousShaderType = (int)myScript.currentShaderType;
+                myScript.currentShaderType = (AllIn1Shader.ShaderTypes)EditorGUILayout.EnumPopup(myScript.currentShaderType);
+                if (previousShaderType != (int)myScript.currentShaderType)
                 {
-                    for (int i = 0; i < targets.Length; i++) (targets[i] as AllIn1Shader).CheckIfValidTarget();
+                    for (int i = 0; i < targets.Length; i++) ((AllIn1Shader)targets[i]).CheckIfValidTarget();
                     if (myScript == null) return;
-                    if (isUrp || myScript.shaderTypes != AllIn1Shader.ShaderTypes.Urp2dRenderer)
+                    if (isUrp || myScript.currentShaderType != AllIn1Shader.ShaderTypes.Urp2dRenderer)
                     {
-                        Debug.Log(myScript.gameObject.name + " shader variant has been changed to: " + myScript.shaderTypes);
+                        AllIn1ShaderWindow.SceneViewNotificationAndLog(myScript.gameObject.name + " shader variant has been changed to: " + myScript.currentShaderType);
                         myScript.SetSceneDirty();
 
                         Renderer sr = myScript.GetComponent<Renderer>();
@@ -110,13 +120,29 @@ namespace AllIn1SpriteShader
                             if (sr.sharedMaterial != null)
                             {
                                 int renderingQueue = sr.sharedMaterial.renderQueue;
-                                if (myScript.shaderTypes == AllIn1Shader.ShaderTypes.Default) sr.sharedMaterial.shader = Resources.Load("AllIn1SpriteShader", typeof(Shader)) as Shader;
-                                else if (myScript.shaderTypes == AllIn1Shader.ShaderTypes.ScaledTime) sr.sharedMaterial.shader = Resources.Load("AllIn1SpriteShaderScaledTime", typeof(Shader)) as Shader;
-                                else if (myScript.shaderTypes == AllIn1Shader.ShaderTypes.MaskedUI) sr.sharedMaterial.shader = Resources.Load("AllIn1SpriteShaderUiMask", typeof(Shader)) as Shader;
-                                else if (myScript.shaderTypes == AllIn1Shader.ShaderTypes.Urp2dRenderer) sr.sharedMaterial.shader = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
-                                else SetCurrentShaderType(myScript);
+                                if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Default) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShader");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.ScaledTime) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderScaledTime");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.MaskedUI) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderUiMask");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Urp2dRenderer) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1Urp2dRenderer");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Lit) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderLit");
+								else SetCurrentShaderType(myScript);
                                 sr.sharedMaterial.renderQueue = renderingQueue;
-                            }
+
+								if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Lit)
+								{
+									sr.sharedMaterial.SetFloat("_ZWrite", 1.0f);
+									sr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+									sr.receiveShadows = true;
+                                    sr.sharedMaterial.renderQueue = 2000;
+                                }
+								else
+								{
+									sr.sharedMaterial.SetFloat("_ZWrite", 0f);
+									sr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                                    sr.receiveShadows = false;
+                                    sr.sharedMaterial.renderQueue = 3000;
+								}
+							}
                         }
                         else
                         {
@@ -124,18 +150,19 @@ namespace AllIn1SpriteShader
                             if (img != null && img.material != null)
                             {
                                 int renderingQueue = img.material.renderQueue;
-                                if (myScript.shaderTypes == AllIn1Shader.ShaderTypes.Default) img.material.shader = Resources.Load("AllIn1SpriteShader", typeof(Shader)) as Shader;
-                                else if (myScript.shaderTypes == AllIn1Shader.ShaderTypes.ScaledTime) img.material.shader = Resources.Load("AllIn1SpriteShaderScaledTime", typeof(Shader)) as Shader;
-                                else if (myScript.shaderTypes == AllIn1Shader.ShaderTypes.MaskedUI) img.material.shader = Resources.Load("AllIn1SpriteShaderUiMask", typeof(Shader)) as Shader;
-                                else if (myScript.shaderTypes == AllIn1Shader.ShaderTypes.Urp2dRenderer) img.material.shader = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
-                                else SetCurrentShaderType(myScript);
+                                if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Default) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShader");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.ScaledTime) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderScaledTime");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.MaskedUI) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderUiMask");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Urp2dRenderer) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1Urp2dRenderer");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Lit) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderLit");
+								else SetCurrentShaderType(myScript);
                                 img.material.renderQueue = renderingQueue;
                             }
                         }
                     }
-                    else if(!isUrp && myScript.shaderTypes == AllIn1Shader.ShaderTypes.Urp2dRenderer)
+                    else if(!isUrp && myScript.currentShaderType == AllIn1Shader.ShaderTypes.Urp2dRenderer)
                     {
-                        myScript.shaderTypes = (AllIn1Shader.ShaderTypes) previousShaderType;
+                        myScript.currentShaderType = (AllIn1Shader.ShaderTypes) previousShaderType;
                         showUrpWarning = true;
                         warningTime = EditorApplication.timeSinceStartup + 5;
                     }
@@ -150,7 +177,7 @@ namespace AllIn1SpriteShader
                 MessageType.Error,
                 true);
 
-            if (isUrp && myScript.shaderTypes == AllIn1Shader.ShaderTypes.Urp2dRenderer)
+            if ((isUrp && myScript.currentShaderType == AllIn1Shader.ShaderTypes.Urp2dRenderer) || myScript.currentShaderType == AllIn1Shader.ShaderTypes.Lit)
             {
                 EditorGUILayout.Space();
                 DrawLine(Color.grey, 1, 3);
@@ -158,10 +185,9 @@ namespace AllIn1SpriteShader
 
                 if (GUILayout.Button("Create And Add Normal Map"))
                 {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        (targets[i] as AllIn1Shader).CreateAndAssignNormalMap();
-                    }
+                    for (int i = 0; i < targets.Length; i++) ((AllIn1Shader)targets[i]).CreateAndAssignNormalMap();
+                    AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Creating Normal Map");
+                    
                 }
                 serializedObject.Update();
                 EditorGUILayout.PropertyField(m_NormalStrength, new GUIContent("Normal Strength"), GUILayout.Height(20));
@@ -180,18 +206,35 @@ namespace AllIn1SpriteShader
 
             if (GUILayout.Button("Sprite Atlas Auto Setup"))
             {
-                for (int i = 0; i < targets.Length; i++)
+                bool successOperation = true;
+                for(int i = 0; i < targets.Length; i++)
                 {
-                    (targets[i] as AllIn1Shader).ToggleSetAtlasUvs(true);
+                    successOperation &= ((AllIn1Shader) targets[i]).ToggleSetAtlasUvs(true);
                 }
+                if(successOperation) AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Sprite Atlas Auto Setup");
             }
             if (GUILayout.Button("Remove Sprite Atlas Configuration"))
             {
-                for (int i = 0; i < targets.Length; i++)
+                bool successOperation = true;
+                for(int i = 0; i < targets.Length; i++)
                 {
-                    (targets[i] as AllIn1Shader).ToggleSetAtlasUvs(false);
+                    successOperation &= ((AllIn1Shader) targets[i]).ToggleSetAtlasUvs(false);
+                }
+                if(successOperation) AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Remove Sprite Atlas Configuration");
+            }
+            
+#if LETAI_TRUESHADOW
+            if (myScript.GetComponent<LeTai.TrueShadow.TrueShadow>() && !myScript.GetComponent<TrueShadowCompatibility>())
+            {
+                EditorGUILayout.Space();
+                DrawLine(Color.grey, 1, 3);
+                if (GUILayout.Button("Add True Shadow Compatibility"))
+                {
+                    myScript.gameObject.AddComponent<TrueShadowCompatibility>();
+                    myScript.SetSceneDirty();
                 }
             }
+#endif
 
             EditorGUILayout.Space();
             DrawLine(Color.grey, 1, 3);
@@ -201,24 +244,26 @@ namespace AllIn1SpriteShader
                 for(int i = targets.Length - 1; i >= 0; i--)
                 {
                     DestroyImmediate(targets[i] as AllIn1Shader);
-                    (targets[i] as AllIn1Shader).SetSceneDirty();
+                    ((AllIn1Shader)targets[i]).SetSceneDirty();
                 }
+                AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Component Removed");
             }
 
             if (GUILayout.Button("REMOVE COMPONENT AND MATERIAL"))
             {
                 for (int i = 0; i < targets.Length; i++)
                 {
-                    (targets[i] as AllIn1Shader).CleanMaterial();
+                    ((AllIn1Shader)targets[i]).CleanMaterial();
                 }
                 for (int i = targets.Length - 1; i >= 0; i--)
                 {
                     DestroyImmediate(targets[i] as AllIn1Shader);
                 }
+                AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Component And Material Removed");
             }
         }
 
-        private void ChooseAndDiplayAssetImage()
+        private void ChooseAndDisplayAssetImage()
         {
             if(!EditorPrefs.HasKey("allIn1ImageConfig"))
             {
@@ -226,20 +271,11 @@ namespace AllIn1SpriteShader
             }
 
             imageType = (ImageType) EditorPrefs.GetInt("allIn1ImageConfig");
-            Texture2D imageInspector = null;
             switch(imageType)
             {
                 case ImageType.ShowImage:
-                {
-                    imageInspector =
-                        (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/AllIn1SpriteShader/Textures/CustomEditorImage.png",
-                            typeof(Texture2D));
-                    break;
-                }
                 case ImageType.HideInComponent:
-                    imageInspector =
-                        (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/AllIn1SpriteShader/Textures/CustomEditorImage.png",
-                            typeof(Texture2D));
+                    if(imageInspector == null) imageInspector = AllIn1ShaderWindow.GetInspectorImage();
                     break;
             }
 
@@ -267,11 +303,12 @@ namespace AllIn1SpriteShader
             }
             shaderName = shaderName.Replace("AllIn1SpriteShader/", "");
 
-            if (shaderName.Equals("AllIn1SpriteShader")) myScript.shaderTypes = AllIn1Shader.ShaderTypes.Default;
-            else if (shaderName.Equals("AllIn1SpriteShaderScaledTime")) myScript.shaderTypes = AllIn1Shader.ShaderTypes.ScaledTime;
-            else if (shaderName.Equals("AllIn1SpriteShaderUiMask")) myScript.shaderTypes = AllIn1Shader.ShaderTypes.MaskedUI;
-            else if (shaderName.Equals("AllIn1Urp2dRenderer")) myScript.shaderTypes = AllIn1Shader.ShaderTypes.Urp2dRenderer;
-        }
+            if (shaderName.Equals("AllIn1SpriteShader")) myScript.currentShaderType = AllIn1Shader.ShaderTypes.Default;
+            else if (shaderName.Equals("AllIn1SpriteShaderScaledTime")) myScript.currentShaderType = AllIn1Shader.ShaderTypes.ScaledTime;
+            else if (shaderName.Equals("AllIn1SpriteShaderUiMask")) myScript.currentShaderType = AllIn1Shader.ShaderTypes.MaskedUI;
+            else if (shaderName.Equals("AllIn1Urp2dRenderer")) myScript.currentShaderType = AllIn1Shader.ShaderTypes.Urp2dRenderer;
+			else if(shaderName.Equals("AllIn1SpriteShaderLit")) myScript.currentShaderType = AllIn1Shader.ShaderTypes.Lit;
+		}
 
         private void DrawLine(Color color, int thickness = 2, int padding = 10)
         {

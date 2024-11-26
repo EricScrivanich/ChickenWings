@@ -13,23 +13,24 @@ MonoBehaviour:
   m_Name: Challenge-15
   m_EditorClassIdentifier: 
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
-  challenges: 010000000600000007000000
+  challenges: 020000000700000008000000
   challengeTexts:
-  - Complete Level
-  - Kill 2 pigs with chained ammo
-  - kill 2 normal pigs with single bullet
+  - Lose Zero Lives
+  - 'Kill 3 Flappy Pigs with a Single Bullet '
+  - Complete the Gold Bucket Combo
   challengeDifficulties:
-  - HARD
-  - VERY HARD
+  - INSANE
+  - INSANE
   - VERY HARD
   LifeTarget: 3
   EggAmmoTarget: 0
   ShotgunAmmoTarget: 0
-  TrackedPigs: 06000000
-  TrackedPigAmounts: 01000000
-  TrackedPigsByBulletTypeWithPigType:
-  - {x: 2, y: -1}
-  TrackedPigAmountsByBullet: 02000000
-  TrackedPigIDWithPigType: 00000000
-  TrackedPigAmountsByID: 02000000
+  TrackedPigs: 
+  TrackedPigAmounts: 
+  TrackedPigsByBulletTypeWithPigType: []
+  TrackedPigAmountsByBullet: 
+  TrackedPigIDWithPigType: 07000000
+  TrackedPigAmountsByID: 03000000
   CertainNonAllowedInputs: 0000000003000000
+  ringsTypeAndAmount:
+  - {x: 2, y: 1}

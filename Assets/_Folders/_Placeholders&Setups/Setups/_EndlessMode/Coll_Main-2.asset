@@ -17,6 +17,8 @@ MonoBehaviour:
   AddedRandomEgg: {x: 1, y: 4.5}
   EggThreeChance: 0.15
   TargetEggAmmo: 2
+  MaxEggAmmo: 0
+  RecheckEggIfMaxTime: 0
   BelowEggTargetTimeChange: 0.3
   AboveEggTargetTimeChange: 1.8
   InitialEggDelay: 8
@@ -26,6 +28,8 @@ MonoBehaviour:
   AddedRandomShotgun: {x: -1, y: 2}
   ShotgunThreeChance: 0.25
   TargetShotgunAmmo: 3
+  MaxShotgunAmmo: 0
+  RecheckShotgunIfMaxTime: 0
   BelowShotgunTargetTimeChange: 0.6
   AboveShotgunTargetTimeChange: 1.7
   InitialShotgunDelay: 4
@@ -35,5 +39,5 @@ MonoBehaviour:
   AddedRandomBarn: {x: 0, y: 3}
   BigBarnChance: 0.2
   MidBarnChance: 0.5
-  InitialBarnDelay: 2.5
+  InitialBarnDelay: 4
   InitialBarnRandom: {x: 1, y: 3}

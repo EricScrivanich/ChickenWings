@@ -9,6 +9,10 @@ public class RandomSpawnIntensity : ScriptableObject
 
     public bool IgnoreItensityTriggers;
 
+    public bool mustComplete;
+
+    public bool hasCompleted { get; private set; }
+
     [SerializeField] private int overrideStateTransiton;
     [SerializeField] private CollectableSpawnData collectableSpawnData;
 
@@ -154,13 +158,18 @@ public class RandomSpawnIntensity : ScriptableObject
     public EnemyBoundingBox BigPig_BB;
     [ExposedScriptableObject]
     public EnemyBoundingBox TenderizerPig_BB;
+
+    public bool ignoreOverride = false;
     public void CheckForNextTranstion()
     {
+        hasCompleted = true;
         Debug.Log("Checking for next transition in Random Spawn Instensity");
         if (transtionLogicEnd == null || lvlID != null)
         {
+
             lvlID.inputEvent.finishedOverrideStateLogic?.Invoke();
-            lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(null, true);
+
+
 
 
         }
@@ -168,19 +177,27 @@ public class RandomSpawnIntensity : ScriptableObject
         {
             lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(transtionLogicEnd, false);
 
-
         }
 
     }
 
     public void EnterIntensity()
     {
-        if (transtionLogicStart != null && !hasEntered)
+
+        // if (transtionLogicStart != null && !hasEntered)
+        if (transtionLogicStart != null)
         {
+
             Debug.LogError("Setting new Intnesity: " + transtionLogicStart);
             transtionLogicStart.ResetTransitionLogic();
-            lvlID.outputEvent.OnSetNewTransitionLogic(transtionLogicStart, false);
+            lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(transtionLogicStart, false);
         }
+        else
+        {
+            // lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(null, true);
+
+        }
+
 
         if (collectableSpawnData != null && lvlID != null)
             lvlID.outputEvent.SetNewCollectableSpawnData?.Invoke(collectableSpawnData);
@@ -189,6 +206,12 @@ public class RandomSpawnIntensity : ScriptableObject
     public void ResetIntensities()
     {
         hasEntered = false;
+        hasCompleted = false;
+        ignoreOverride = false;
+        if (transtionLogicStart != null)
+            transtionLogicStart.Reset();
+        if (transtionLogicEnd != null)
+            transtionLogicEnd.Reset();
     }
     public int GetRandomAmountOfWaves()
     {

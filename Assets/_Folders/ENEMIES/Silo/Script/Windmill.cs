@@ -30,7 +30,7 @@ public class Windmill : MonoBehaviour
         AdjustHeightToGround();
         fanRb.rotation = startRot;
         windMillSoundTimer = 0;
-        rb.velocity = Vector2.left * BoundariesManager.GroundSpeed;
+        rb.linearVelocity = Vector2.left * BoundariesManager.GroundSpeed;
         fanRb.transform.localScale = BoundariesManager.vectorThree1 * bladeScaleMultiplier;
         Move();
     }

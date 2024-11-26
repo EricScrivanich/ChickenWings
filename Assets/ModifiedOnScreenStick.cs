@@ -14,12 +14,12 @@ public class ModifiedOnScreenStick : OnScreenControl, IPointerDownHandler, IPoin
     private const string kDynamicOriginClickable = "DynamicOriginClickable";
 
 
-    
+
 
     [FormerlySerializedAs("movementRange")]
     [SerializeField]
     [Min(0)]
-    private float m_MovementRange = 50;
+    private float m_MovementRange = 300;
 
     [SerializeField]
     [Tooltip("Defines the circular region where the onscreen control may have its origin placed.")]
@@ -49,7 +49,7 @@ public class ModifiedOnScreenStick : OnScreenControl, IPointerDownHandler, IPoin
     private Vector2 m_StartPos;
     private Vector2 m_PointerDownPos;
 
-    private readonly float m_DragThreshold = 40f;
+    private readonly float m_DragThreshold = 60f;
 
     private Vector2 m_LastPosition;
     private bool m_IsDragging = false;

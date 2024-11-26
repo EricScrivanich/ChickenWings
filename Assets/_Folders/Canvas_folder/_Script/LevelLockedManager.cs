@@ -13,47 +13,65 @@ public class LevelLockedManager : MonoBehaviour
     [SerializeField] private List<LevelButton> LevelButtons;
     [SerializeField] private CanvasGroup Group;
 
-    public static Action<int, bool> OnShowLevelLocked;
+    public static Action<int, bool, bool> OnShowLevelLocked;
+
+    [SerializeField] private LevelLockedDisplay lockDisplay;
     // Start is called before the first frame update
     void Start()
     {
-        Group.alpha = 0;
-        Group.gameObject.SetActive(false);
+
+
     }
 
-    public void CheckLockedLevel(int levelNum, bool isLevel)
+    public void CheckLockedLevel(int levelNum, bool isLevel, bool specialLock)
     {
-        if (levelNum == -1)
+        string finalText = "";
+
+        if (!specialLock)
         {
-            Text.text = ("This Gamemode is not yet Available");
+            if (levelNum == -1)
+            {
+                // Text.text = ("This Gamemode is not yet Available");
+                finalText = ("This Gamemode is not yet Available");
+            }
+            else
+            {
+                string type = "";
+                if (isLevel) type = "Level";
+                else type = "Gamemode";
+                string s = sceneSO.ReturnLevelName(levelNum);
+                // Text.text = ("You Must Beat Level " + levelNum.ToString() + " (" + s + ") to Unlock this " + type);
+                finalText = ("You Must Beat Level " + levelNum.ToString() + " (" + s + ") to Unlock this " + type);
+            }
+
+            lockDisplay.Show(finalText, false, false);
         }
         else
         {
-            string type = "";
-            if (isLevel) type = "Level";
-            else type = "Gamemode";
-            string s = sceneSO.ReturnLevelName(levelNum);
-            Text.text = ("You Must Beat Level " + levelNum.ToString() + " (" + s + ") to Unlock this " + type);
+            finalText = SaveManager.instance.CheckAdditonalChallenges(levelNum);
+            lockDisplay.Show(finalText, true, false);
         }
 
 
 
 
 
-        Group.alpha = 0;
-        Group.gameObject.SetActive(true);
-        TextBox.anchoredPosition = Vector2.zero;
-
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(Group.DOFade(1, .4f).SetEase(Ease.OutSine));
-        sequence.Join(TextBox.DOAnchorPosY(15, 1.4f).SetEase(Ease.InOutSine));
-
-        sequence.Append(TextBox.DOAnchorPosY(0, .75f).SetEase(Ease.InSine));
-        sequence.Append(TextBox.DOAnchorPosY(-30, .45f));
-        sequence.Join(Group.DOFade(0, .7f).SetEase(Ease.InOutSine));
 
 
-        sequence.Play().SetUpdate(true).OnComplete(() => Group.gameObject.SetActive(false));
+        // Group.alpha = 0;
+        // Group.gameObject.SetActive(true);
+        // TextBox.anchoredPosition = Vector2.zero;
+
+        // Sequence sequence = DOTween.Sequence();
+        // sequence.Append(Group.DOFade(1, .4f).SetEase(Ease.OutSine));
+        // sequence.Join(TextBox.DOAnchorPosY(15, 1.4f).SetEase(Ease.InOutSine));
+
+        // sequence.Append(TextBox.DOAnchorPosY(0, .75f).SetEase(Ease.InSine));
+        // sequence.Append(TextBox.DOAnchorPosY(-30, .45f));
+        // sequence.Join(Group.DOFade(0, .7f).SetEase(Ease.InOutSine));
+
+
+        // sequence.Play().SetUpdate(true).OnComplete(() => Group.gameObject.SetActive(false));
 
     }
 

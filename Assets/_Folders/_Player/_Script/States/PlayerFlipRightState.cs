@@ -92,11 +92,9 @@ public class PlayerFlipRightState : PlayerBaseState
                 added = player.rb.angularVelocity * .08f;
 
             if (added < -30)
-            {
-                Debug.LogError("Added of: " + added + " is too high");
                 added = -30;
-            }
-            player.rb.angularDrag = angDrag;
+
+            player.rb.angularDamping = angDrag;
             player.rb.angularVelocity = angForce + added;
         }
 
@@ -203,7 +201,7 @@ public class PlayerFlipRightState : PlayerBaseState
             if (!tweeningAng)
             {
                 player.rb.angularVelocity = angForce;
-                player.rb.angularDrag = angDrag;
+                player.rb.angularDamping = angDrag;
                 hasFinishedEndOfTweenLogic = true;
             }
         }

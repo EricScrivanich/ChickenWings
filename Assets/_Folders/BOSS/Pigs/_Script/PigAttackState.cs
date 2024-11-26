@@ -48,7 +48,7 @@ public class PigAttackState : PigBaseState
         if (pig.transform.position.y < pig.playerTransform.position.y || pig.transform.position.y < pig.ID.jumpPoint)
         {
             pig.anim.SetTrigger("FlapTrigger");
-            pig.rb.velocity = new Vector2(pig.rb.velocity.x, pig.ID.jumpForce);
+            pig.rb.linearVelocity = new Vector2(pig.rb.linearVelocity.x, pig.ID.jumpForce);
         }
     }
 }

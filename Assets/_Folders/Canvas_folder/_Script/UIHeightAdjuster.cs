@@ -35,22 +35,11 @@ public class UIHeightAdjuster : MonoBehaviour
     private LevelChallenges currentChallengeSO;
     private int index;
 
-    private void Start()
-    {
-        // Adjust the height immediately at start
-        // AdjustHeight();
-
-        // Add listener if dynamically changing text content
-
-    }
 
 
 
-    private void OnDestroy()
-    {
-        // Remove the listener to avoid memory leaks
 
-    }
+
 
 
 
@@ -144,6 +133,16 @@ public class UIHeightAdjuster : MonoBehaviour
 
     private void SetCardOnPause(int type)
     {
+        if (progressTextsShown > 0)
+        {
+            padding += additionalPaddingForProgressTexts;
+            for (int n = 0; n < progressTextsShown; n++)
+            {
+                progressTexts[n].gameObject.SetActive(true);
+                Vector2 prog = currentChallengeSO.ReturnCurrentProgressByChallengeIndex(index, n);
+                progressTexts[n].text = prog.x.ToString() + "/" + prog.y.ToString();
+            }
+        }
         if (type == 0)
         {
             fillImage.color = colorSO.StarCardDisabledFillColor;
@@ -161,7 +160,7 @@ public class UIHeightAdjuster : MonoBehaviour
         }
         else if (type == 2)
         {
-            Debug.Log("WE DID IT BUGGGG");
+
             StarImage.color = colorSO.StarNormalColor;
         }
     }

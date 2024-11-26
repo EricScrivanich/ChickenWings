@@ -37,7 +37,7 @@ public class PlayerParachuteState : PlayerBaseState
         player.anim.SetTrigger("NewSlash");
         player.ChangeCollider(-1);
         player.rb.gravityScale = .2f;
-        player.rb.drag = 1.9f;
+        player.rb.linearDamping = 1.9f;
         // player.transform.RotateAround(player.parchutePoint.transform.position, new Vector3(0, 0, 1), 100f);
         // if (player.rb.velocity.x > 7.2f)
         // {
@@ -71,7 +71,7 @@ public class PlayerParachuteState : PlayerBaseState
         player.ChangeCollider(0);
 
         player.rb.gravityScale = player.originalGravityScale;
-        player.rb.drag = 0;
+        player.rb.linearDamping = 0;
         player.rotateWithLastState = false;
 
         // player.isParachuting = false;
@@ -167,7 +167,7 @@ public class PlayerParachuteState : PlayerBaseState
         {
             time += Time.deltaTime;
 
-            player.rb.drag = Mathf.Lerp(1.9f, 4.5f, duration / time);
+            player.rb.linearDamping = Mathf.Lerp(1.9f, 4.5f, duration / time);
         }
         else
         {

@@ -66,7 +66,7 @@ public class ShotgunBlast : MonoBehaviour
         Vector2 finalForce = new Vector2(force.x - addedX, force.y);
 
 
-        rb.velocity = finalForce;
+        rb.linearVelocity = finalForce;
 
         ScaleAndOpacity();
 
@@ -83,7 +83,7 @@ public class ShotgunBlast : MonoBehaviour
     // }
     private void OnDisable()
     {
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         finished = false;
         currentScaleDelayIndex = 0;
     }

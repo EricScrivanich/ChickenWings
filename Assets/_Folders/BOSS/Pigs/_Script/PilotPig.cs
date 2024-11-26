@@ -55,7 +55,7 @@ public class PilotPig : MonoBehaviour
     private void FixedUpdate()
     {
 
-        rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, maxYSpeedDown, maxYSpeedUp));
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, maxYSpeedDown, maxYSpeedUp));
 
         if (startMotion)
         {
@@ -89,7 +89,7 @@ public class PilotPig : MonoBehaviour
         //     transform.eulerAngles = new Vector3(0, 180, 0);
         // }
 
-        rb.velocity = new Vector2(-initialSpeed, 0);
+        rb.linearVelocity = new Vector2(-initialSpeed, 0);
 
 
         if (xTrigger == 0) xTrigger = transform.position.x - ((Mathf.Abs(initialSpeed) / initialSpeed) * .5f);

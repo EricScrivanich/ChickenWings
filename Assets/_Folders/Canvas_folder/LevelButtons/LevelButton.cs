@@ -10,12 +10,14 @@ public class LevelButton : MonoBehaviour
     [SerializeField] private ButtonColorsSO colorSO;
     [SerializeField] private SceneManagerSO sceneSO;
 
+    private bool hasSpecialLock;
+
     [SerializeField] private Image[] stars;
     [SerializeField] private GameObject badge;
     [SerializeField] private SceneManagerSO sceneLoader;
     public int levelNum;
     [SerializeField] private bool isUnlocked;
-   
+
     [SerializeField] private TextMeshProUGUI[] Text;
     [SerializeField] private Image ButtonImage;
     [SerializeField] private RectTransform Lock;
@@ -33,6 +35,16 @@ public class LevelButton : MonoBehaviour
 
 
         isUnlocked = SaveManager.instance.HasCompletedLevel(levelNum - 1);
+
+        if (isUnlocked && SaveManager.instance.CheckAdditonalChallenges(levelNum) != null)
+        {
+            hasSpecialLock = true;
+            isUnlocked = false;
+        }
+        else
+        {
+            hasSpecialLock = false;
+        }
 
         Lock.gameObject.SetActive(!isUnlocked);
 
@@ -95,33 +107,40 @@ public class LevelButton : MonoBehaviour
         {
             HapticFeedbackManager.instance.PressUIButton();
             sceneLoader.LoadLevel(levelNum);
+            return;
+        }
+
+        else if (!hasSpecialLock)
+        {
+            // GameObject.Find("MenuButtons").GetComponent<LevelLockedManager>().CheckLockedLevel(levelNum);
+            LevelLockedManager.OnShowLevelLocked?.Invoke(levelNum - 1, true, false);
+
+
+            // lockMoveTween.OnComplete(() => but.interactable = true);
+
+
+
         }
 
         else
         {
-            // GameObject.Find("MenuButtons").GetComponent<LevelLockedManager>().CheckLockedLevel(levelNum);
-            LevelLockedManager.OnShowLevelLocked?.Invoke(levelNum - 1, true);
-
-            if (lockMoveTween != null && lockMoveTween.IsPlaying())
-                lockMoveTween.Kill();
-            lockMoveTween = DOTween.Sequence();
-
-            lockMoveTween.Append(Lock.DOAnchorPosY(10, .2f).SetEase(Ease.OutSine));
-            lockMoveTween.Join(Lock.DORotate(new Vector3(0, 0, 15), .3f).SetEase(Ease.InOutSine));
-            lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, -15), .2f).SetEase(Ease.InOutSine));
-            lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, 10), .2f).SetEase(Ease.InOutSine));
-            lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, -10), .2f).SetEase(Ease.InOutSine));
-            lockMoveTween.Append(Lock.DORotate(Vector3.zero, .3f).SetEase(Ease.OutSine));
-            lockMoveTween.Join(Lock.DOAnchorPosY(0, .3f).SetEase(Ease.OutSine));
-            // lockMoveTween.OnComplete(() => but.interactable = true);
-
-
-            lockMoveTween.Play();
+            LevelLockedManager.OnShowLevelLocked?.Invoke(levelNum, true, true);
         }
 
+        if (lockMoveTween != null && lockMoveTween.IsPlaying())
+            lockMoveTween.Kill();
+        lockMoveTween = DOTween.Sequence();
 
-
+        lockMoveTween.Append(Lock.DOAnchorPosY(10, .2f).SetEase(Ease.OutSine));
+        lockMoveTween.Join(Lock.DORotate(new Vector3(0, 0, 15), .3f).SetEase(Ease.InOutSine));
+        lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, -15), .2f).SetEase(Ease.InOutSine));
+        lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, 10), .2f).SetEase(Ease.InOutSine));
+        lockMoveTween.Append(Lock.DORotate(new Vector3(0, 0, -10), .2f).SetEase(Ease.InOutSine));
+        lockMoveTween.Append(Lock.DORotate(Vector3.zero, .3f).SetEase(Ease.OutSine));
+        lockMoveTween.Join(Lock.DOAnchorPosY(0, .3f).SetEase(Ease.OutSine));
+        lockMoveTween.Play();
     }
+
 
     public string LevelName()
     {

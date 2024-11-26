@@ -29,7 +29,7 @@ public class PlayerShotgunState : PlayerBaseState
         //     }
         // }
         player.maxFallSpeed = -6;
-        player.rb.angularDrag = .35f;
+        player.rb.angularDamping = .35f;
         player.rb.gravityScale *= .95f;
 
         if (player.transform.rotation.eulerAngles.z > 270 || player.transform.rotation.eulerAngles.z < 90)

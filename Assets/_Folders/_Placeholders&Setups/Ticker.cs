@@ -9,11 +9,13 @@ public class Ticker : MonoBehaviour
 
     public delegate void TickAction015();
 
-    private float tickerTime015;
+    private float tickerTime015 = 0;
     public static event TickAction015 OnTickAction015;
     // Start is called before the first frame update
 
     // Update is called once per frame
+
+
     void Update()
     {
         tickerTime015 += Time.deltaTime;

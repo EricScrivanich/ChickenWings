@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b8c6eee88e2e4ab0ad5f52543fdad70, type: 3}
+  m_Name: INT_Main-6
+  m_EditorClassIdentifier: 
+  lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
+  IgnoreItensityTriggers: 0
+  overrideStateTransiton: 0
+  collectableSpawnData: {fileID: 11400000, guid: b3b5a5baca880414db5aab676e6d5027, type: 2}
+  transtionLogicStart: {fileID: 11400000, guid: 6fa2ca78644e54c00903c5a4e16aaed2, type: 2}
+  transtionLogicEnd: {fileID: 0}
+  ringTypeWeights: []
+  randomRingSetupDifficultyWeights:
+  - 0.2
+  - 0
+  - 0.8
+  randomRingOrder: []
+  randomRingSetupAmountToSpawnWeights:
+  - 0
+  - 0
+  - 0
+  - 0.4
+  - 0.6
+  randomRingTypeWeights: []
+  randomEnemySetupDifficultyWeights:
+  - 0
+  - 0
+  - 1
+  randomEnemySetupAmountToSpawnWeights:
+  - 0
+  - 0.3
+  - 0.5
+  - 0.2
+  flipRandomEnemySpawnXChance: 0.7
+  xTargetToStartSpawn: 6
+  spawnRandomRangeAfterTarget: {x: 0, y: 0}
+  amountOfWaveWeights:
+  - 0
+  - 0
+  - 0
+  - 0.5
+  - 0.5
+  waveSizeWeights:
+  - 0
+  - 0
+  - 0
+  - 0.2
+  - 0.3
+  - 0.5
+  xSpawnRange: {x: 15, y: 22}
+  xSpawnRangeMissilePig: {x: 10, y: 14}
+  shootingRangeAdjustment: 0
+  minMissilePigDelay: 13
+  missileBasePigChance: 0.5
+  missilePigFlipPChance: 0.4
+  missilePigFlipWChance: 0.4
+  allowedOverlap: {x: -4, y: -0.18}
+  activeBoundingBoxTimeAdjustment: 0.3
+  normalPig_W: 0.3
+  jetpackPig_W: 0.4
+  bigPig_W: 0.35
+  tenderizerPig_W: 0.4
+  NormalPig_BB: {fileID: 0}
+  JetpackPig_BB: {fileID: 0}
+  BigPig_BB: {fileID: 0}
+  TenderizerPig_BB: {fileID: 0}

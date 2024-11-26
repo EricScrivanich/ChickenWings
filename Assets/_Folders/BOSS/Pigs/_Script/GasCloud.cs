@@ -66,12 +66,12 @@ public class GasCloud : MonoBehaviour
 
         if (flipped)
         {
-            rb.velocity = Vector2.left * (rand - endSpeedVar) * 1.8f;
+            rb.linearVelocity = Vector2.left * (rand - endSpeedVar) * 1.8f;
             forceAddedVar = -forceAdded;
         }
         else
         {
-            rb.velocity = Vector2.right * (.05f);
+            rb.linearVelocity = Vector2.right * (.05f);
             forceAddedVar = forceAdded + .35f + Random.Range(.1f, .2f);
         }
 
@@ -98,10 +98,10 @@ public class GasCloud : MonoBehaviour
         if (transform.position.y > 7) gameObject.SetActive(false);
 
         if (!flipped)
-            rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, endSpeed, 5), Mathf.Clamp(rb.velocity.y, -3, maxYSpeed));
+            rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, endSpeed, 5), Mathf.Clamp(rb.linearVelocity.y, -3, maxYSpeed));
 
         else
-            rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -10, endSpeed), Mathf.Clamp(rb.velocity.y, -3, maxYSpeed));
+            rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -10, endSpeed), Mathf.Clamp(rb.linearVelocity.y, -3, maxYSpeed));
 
 
     }

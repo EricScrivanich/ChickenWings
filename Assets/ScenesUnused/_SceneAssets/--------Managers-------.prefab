@@ -102,6 +102,10 @@ PrefabInstance:
       propertyPath: sceneSO
       value: 
       objectReference: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
+    - target: {fileID: 6816047504654987124, guid: c3cdede725f7e4e54929864f2666e2ab, type: 3}
+      propertyPath: shaderVariantCollection
+      value: 
+      objectReference: {fileID: 20000000, guid: d7a8795408f15426c90eb84350be926c, type: 2}
     m_RemovedComponents:
     - {fileID: 3676765210862537307, guid: c3cdede725f7e4e54929864f2666e2ab, type: 3}
     m_RemovedGameObjects: []
@@ -350,19 +354,19 @@ PrefabInstance:
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: farts.Array.data[0]
+      propertyPath: 'farts.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: 9df17c9624d334312bcbee4ca9991185, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: farts.Array.data[1]
+      propertyPath: 'farts.Array.data[1]'
       value: 
       objectReference: {fileID: 8300000, guid: 70c59e7a6eb7f42abb8aaac4bb5cb392, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: farts.Array.data[2]
+      propertyPath: 'farts.Array.data[2]'
       value: 
       objectReference: {fileID: 8300000, guid: 8f8531f63b3944f118cbede0ab7b8968, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: farts.Array.data[3]
+      propertyPath: 'farts.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: 39e42ce60ae074301962b21fe036b2ba, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
@@ -394,31 +398,31 @@ PrefabInstance:
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: pigDeath.Array.data[0]
+      propertyPath: 'pigDeath.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: 79fc4ca6a16564d148083af366170b24, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: pigDeath.Array.data[1]
+      propertyPath: 'pigDeath.Array.data[1]'
       value: 
       objectReference: {fileID: 8300000, guid: 628e4ef82a40647ccad776aef9c8f8b1, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: pigDeath.Array.data[2]
+      propertyPath: 'pigDeath.Array.data[2]'
       value: 
       objectReference: {fileID: 8300000, guid: ad51dd9f8738b4714b0456ba8a4c6ede, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: pigDeath.Array.data[3]
+      propertyPath: 'pigDeath.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: e4a43cc204ef74f93b5873944ebdd2bc, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: longFarts.Array.data[0]
+      propertyPath: 'longFarts.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: 630a2745d848140ad9b6465473cf3885, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: longFarts.Array.data[1]
+      propertyPath: 'longFarts.Array.data[1]'
       value: 
       objectReference: {fileID: 8300000, guid: a988c99f7d84b4cf5aeb0fd8238f8a60, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: longFarts.Array.data[2]
+      propertyPath: 'longFarts.Array.data[2]'
       value: 
       objectReference: {fileID: 8300000, guid: 62fb0f82565d54629b748bb43aa0330e, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
@@ -434,19 +438,19 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: chamberClicks.Array.data[0]
+      propertyPath: 'chamberClicks.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: 613c9180517b24dc79f5a3729e0ace0a, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: chamberClicks.Array.data[1]
+      propertyPath: 'chamberClicks.Array.data[1]'
       value: 
       objectReference: {fileID: 8300000, guid: 71718f8245eb8475b99038d3ca69fb8a, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: chamberClicks.Array.data[2]
+      propertyPath: 'chamberClicks.Array.data[2]'
       value: 
       objectReference: {fileID: 8300000, guid: 4f11b2c3b5197499ebf1b29c99210f2f, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: chamberClicks.Array.data[3]
+      propertyPath: 'chamberClicks.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: e86ff2f017d06453394bc30ef4a8ee76, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
@@ -454,51 +458,51 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: shotgunShells.Array.data[0]
+      propertyPath: 'shotgunShells.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: f1b145e91b8b443d0860261f9b110aaa, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: shotgunShells.Array.data[1]
+      propertyPath: 'shotgunShells.Array.data[1]'
       value: 
       objectReference: {fileID: 8300000, guid: 8f21d4a3b359c448d8e277462a2ea1e0, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: shotgunShells.Array.data[2]
+      propertyPath: 'shotgunShells.Array.data[2]'
       value: 
       objectReference: {fileID: 8300000, guid: 6a2aae334b2084f41b6f8d5d50407149, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: shotgunShells.Array.data[3]
+      propertyPath: 'shotgunShells.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: 8f3b1c7addbc74a4a802953445f44c2c, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: pigDeathVolumes.Array.data[0]
+      propertyPath: 'pigDeathVolumes.Array.data[0]'
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: pigDeathVolumes.Array.data[1]
+      propertyPath: 'pigDeathVolumes.Array.data[1]'
       value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: pigDeathVolumes.Array.data[2]
+      propertyPath: 'pigDeathVolumes.Array.data[2]'
       value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: pigDeathVolumes.Array.data[3]
+      propertyPath: 'pigDeathVolumes.Array.data[3]'
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: flappyPigCackles.Array.data[0]
+      propertyPath: 'flappyPigCackles.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: 0789634b5afb049a78bf6ca7a18cf5d4, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: flappyPigCackles.Array.data[1]
+      propertyPath: 'flappyPigCackles.Array.data[1]'
       value: 
       objectReference: {fileID: 8300000, guid: 0db0715b5d8f04383b51dd8ca85c105e, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: flappyPigCackles.Array.data[2]
+      propertyPath: 'flappyPigCackles.Array.data[2]'
       value: 
       objectReference: {fileID: 8300000, guid: 0e2fbe0e777454f6d9ce0c8e5cb29305, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
-      propertyPath: flappyPigCackles.Array.data[3]
+      propertyPath: 'flappyPigCackles.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: a620e841a2b5046f184c795143bea5c4, type: 3}
     - target: {fileID: 8478620467019488244, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
@@ -574,6 +578,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -670,6 +675,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -766,6 +772,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -862,6 +869,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

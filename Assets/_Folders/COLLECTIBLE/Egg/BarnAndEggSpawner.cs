@@ -8,6 +8,8 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     public CollectableSpawnData SpawnData;
 
+    private Queue<float> windmillSpawns;
+
     [SerializeField] private LevelManagerID lvlID;
 
     private bool checkEggs = false;
@@ -63,7 +65,7 @@ public class BarnAndEggSpawner : MonoBehaviour
     [SerializeField] private Vector2 manaTimeRange;
 
 
-    private Vector2 barnSpawnPos = new Vector2(13.5f, -5.17f);
+    private Vector2 barnSpawnPos = new Vector2(14.5f, -5.17f);
     private EggCollectableMovement[] eggCollectables;
     private int currentBarnIndex = 0;
     private BarnMovement[] barnScript = new BarnMovement[2];
@@ -75,6 +77,8 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     private ParticleSystem[] ammoParticles = new ParticleSystem[2];
     private ParticleSystem[] manaParticles = new ParticleSystem[2];
+
+    private bool justSpawnedEnemies = false;
 
     // Start is called before the first frame update
 
@@ -130,6 +134,46 @@ public class BarnAndEggSpawner : MonoBehaviour
 
         }
 
+
+    }
+
+    public void AddWindmillSpawn(float xPos)
+    {
+        if (windmillSpawns == null)
+            windmillSpawns = new Queue<float>();
+
+        windmillSpawns.Enqueue(xPos);
+
+        // Start a coroutine to dequeue this entry after the calculated time
+        StartCoroutine(RemoveWindmillSpawnAfterDelay(xPos));
+    }
+
+    private IEnumerator RemoveWindmillSpawnAfterDelay(float xPos)
+    {
+        // Base delay of 1.5 seconds
+        float delay = 1.3f;
+
+        // Add 0.5 seconds for every 0.5 units greater than barnSpawnPos.x
+        if (xPos > barnSpawnPos.x)
+        {
+            float additionalTime = ((xPos - barnSpawnPos.x) * 1.2f) * 0.5f;
+            delay += additionalTime;
+        }
+
+        // Wait for the calculated delay
+        yield return new WaitForSeconds(delay);
+
+        // Remove the xPos from the queue
+        if (windmillSpawns != null && windmillSpawns.Count > 0 && windmillSpawns.Peek() == xPos)
+        {
+            windmillSpawns.Dequeue();
+            Debug.Log($"Dequeued windmill spawn at {xPos} after {delay} seconds.");
+        }
+    }
+
+    public void JustSpawnedEnemies()
+    {
+        justSpawnedEnemies = true;
 
     }
     void Start()
@@ -331,17 +375,50 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     private IEnumerator SpawnBarn(float initialDelay)
     {
-        // yield return new WaitForSeconds(Random.Range(4f, 7f));
         yield return new WaitForSeconds(initialDelay);
 
         while (true)
         {
+            // Reset the spawn condition
+            justSpawnedEnemies = false;
+
+            // Wait until enemies have been spawned
+            yield return new WaitUntil(() => justSpawnedEnemies);
+            yield return new WaitForSeconds(.5f);
+
+            // Ensure barnSpawnPos.x is at least 4.5f away from all windmill spawn positions
+            bool isValidPosition = false;
+            while (!isValidPosition)
+            {
+                isValidPosition = true; // Assume the position is valid initially
+
+                if (windmillSpawns != null && windmillSpawns.Count > 0)
+                {
+                    foreach (float windmillX in windmillSpawns)
+                    {
+                        if (Mathf.Abs(barnSpawnPos.x - windmillX) < 4.5f)
+                        {
+                            isValidPosition = false; // Found a conflict
+                            break;
+                        }
+                    }
+                }
+
+                if (!isValidPosition)
+                {
+                    // Wait for another second before rechecking
+                    yield return new WaitForSeconds(1.7f);
+                }
+            }
+
+            // Get barn spawn data and spawn the barn
             Vector2 data = SpawnData.ReturnBarnTime();
-            int n = Mathf.RoundToInt(data.y);
-            GetBarn(n);
+            int side = Mathf.RoundToInt(data.y);
+            GetBarn(side);
+
+            // Wait for the specified time before spawning the next barn
             yield return new WaitForSeconds(data.x);
         }
-
     }
     private bool CheckIfEggIsThree(float val)
     {

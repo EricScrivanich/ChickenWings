@@ -124,7 +124,7 @@ public class PowerUps : MonoBehaviour
         
         // Set the dashing velocity
         rb.gravityScale = 0;
-        rb.velocity = new Vector2(dashSpeed, 0);
+        rb.linearVelocity = new Vector2(dashSpeed, 0);
 
         // Wait for dash to complete
         while (Time.time < startTime + dashDuration)
@@ -133,7 +133,7 @@ public class PowerUps : MonoBehaviour
         }
 
         // Reset the velocity after dashing
-        rb.velocity = new Vector2(1f, rb.velocity.y);
+        rb.linearVelocity = new Vector2(1f, rb.linearVelocity.y);
         rb.gravityScale = originalGravityScale;
         
         playerMovement.disableKeyPress = false;
@@ -142,7 +142,7 @@ public class PowerUps : MonoBehaviour
 
     public void Drop()
     {
-        rb.velocity = new Vector2(0, dropSpeed);
+        rb.linearVelocity = new Vector2(0, dropSpeed);
         AudioManager.instance.PlayDownJumpSound(); 
 
         
@@ -153,7 +153,7 @@ public class PowerUps : MonoBehaviour
     
      if (isDropping)
         
-            rb.velocity = new Vector2(.5f, bounceHeight);
+            rb.linearVelocity = new Vector2(.5f, bounceHeight);
             AudioManager.instance.PlayBounceSound(); 
             isDropping = false;
             playerMovement.disableKeyPress = false;

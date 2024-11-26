@@ -39,6 +39,9 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private Color pressColor;
     private Color unPressColor;
+    [SerializeField] private GameObject levelLockedPrefab;
+
+    private LevelLockedDisplay lockedDisplay;
 
     private void Awake()
     {
@@ -117,7 +120,22 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         type = 3;
         if (lockButtons) return;
-        PressInitializedTween();
+        string s = SaveManager.instance.CheckAdditonalChallenges(-1);
+        Debug.Log(s);
+
+        if (s == null)
+            PressInitializedTween();
+
+        else
+        {
+            if (lockedDisplay == null)
+            {
+                var parent = GameObject.Find("Canvas").GetComponent<Transform>();
+                lockedDisplay = Instantiate(levelLockedPrefab, parent).GetComponent<LevelLockedDisplay>();
+            }
+
+            lockedDisplay.Show(s, true, true);
+        }
 
     }
 

@@ -16,7 +16,8 @@ public class LevelChallenges : ScriptableObject
         CheckCertainNonAllowedInputs,
         CheckAmmo,
         CheckPigsByAmmoTypeWithPigType,
-        CheckPigsByBulletIdWithPigType
+        CheckPigsByBulletIdWithPigType,
+        CheckCompletedRings
     }
 
 
@@ -38,6 +39,7 @@ public class LevelChallenges : ScriptableObject
     [SerializeField] private int[] TrackedPigAmountsByID;
 
     [SerializeField] private List<int> CertainNonAllowedInputs;
+    [SerializeField] private List<Vector2Int> ringsTypeAndAmount;
 
     public int GetAmountOfChallenges()
     {
@@ -249,6 +251,23 @@ public class LevelChallenges : ScriptableObject
 
                 return 1;
 
+            case ChallengeTypes.CheckCompletedRings:
+
+                if (ringsTypeAndAmount.Count == 0) return 0;
+                var ringList = lvlID.ReturnRingData();
+                if (ringList == null || ringList.Length < 1) return 1;
+                bool complete = true;
+                foreach (var ring in ringsTypeAndAmount)
+                {
+                    if (ringList[ring.x] < ring.y)
+                    {
+                        return 1;
+
+                    }
+
+                }
+                return 2;
+
 
         }
 
@@ -369,6 +388,24 @@ public class LevelChallenges : ScriptableObject
                     return true;
 
                 return false;
+
+            case ChallengeTypes.CheckCompletedRings:
+
+                if (ringsTypeAndAmount.Count == 0) return false;
+                var ringList = lvlID.ReturnRingData();
+                if (ringList == null || ringList.Length < 1) return false;
+                bool complete = true;
+                foreach (var ring in ringsTypeAndAmount)
+                {
+                    if (ringList[ring.x] < ring.y)
+                    {
+                        complete = false;
+                        break;
+                    }
+
+                }
+                return complete;
+
         }
 
         return false;

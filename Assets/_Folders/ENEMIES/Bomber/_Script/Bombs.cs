@@ -23,10 +23,10 @@ public class Bombs : MonoBehaviour
     private void FixedUpdate()
     {
         // Only rotate if the object is moving
-        if (rb.velocity != Vector2.zero && !isDropped)
+        if (rb.linearVelocity != Vector2.zero && !isDropped)
         {
             // Get the angle in degrees of the current velocity vector
-            Quaternion targetRot = Quaternion.LookRotation(Vector3.forward, rb.velocity.normalized);
+            Quaternion targetRot = Quaternion.LookRotation(Vector3.forward, rb.linearVelocity.normalized);
 
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, rotationSpeed * Time.fixedDeltaTime);
         }
@@ -39,7 +39,7 @@ public class Bombs : MonoBehaviour
         if (dropped)
         {
 
-            rb.velocity = force * dropForceAverage;
+            rb.linearVelocity = force * dropForceAverage;
             isDropped = true;
             rb.angularVelocity = 50 * side;
 
@@ -52,7 +52,7 @@ public class Bombs : MonoBehaviour
 
 
             rotationSpeed = 100;
-            rb.velocity = transform.up * force;
+            rb.linearVelocity = transform.up * force;
         }
 
     }

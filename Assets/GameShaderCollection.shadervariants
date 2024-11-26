@@ -8,6 +8,51 @@ ShaderVariantCollection:
   m_PrefabAsset: {fileID: 0}
   m_Name: GameShaderCollection
   m_Shaders:
+  - first: {fileID: 4800000, guid: a53f4bb29f3644b43b5075c6dcfecb32, type: 3}
+    second:
+      variants:
+      - keywords: FADE_ON OVERLAY_ON SHAKEUV_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 79ee6cefbc672a44e97359d4d14ea301, type: 3}
     second:
-      variants: []
+      variants:
+      - keywords: ATLAS_ON GLOWLIGHT_ON GLOW_ON WAVEUV_ON
+        passType: 0
+      - keywords: CHANGECOLOR2_ON GLOWLIGHT_ON OUTTEX_ON
+        passType: 0
+      - keywords: CLIPPING_ON GLOWLIGHT_ON TEXTURESCROLL_ON
+        passType: 0
+      - keywords: CLIPPING_ON TEXTURESCROLL_ON
+        passType: 0
+      - keywords: FADE_ON
+        passType: 0
+      - keywords: FADE_ON GRADIENT2COL_ON HITEFFECT_ON OUTBASE_ON OUTDIST_ON
+        passType: 0
+      - keywords: FADE_ON HITEFFECT_ON
+        passType: 0
+      - keywords: GLOWLIGHT_ON ONLYOUTLINE_ON OUTTEX_ON OVERLAY_ON
+        passType: 0
+      - keywords: GLOWLIGHT_ON RECTSIZE_ON TEXTURESCROLL_ON
+        passType: 0
+      - keywords: GRADIENT2COL_ON GRADIENT_ON RECTSIZE_ON
+        passType: 0
+      - keywords: HITEFFECT_ON
+        passType: 0
+      - keywords: HITEFFECT_ON OUTBASE_ON SHINE_ON
+        passType: 0
+      - keywords: HITEFFECT_ON OVERLAYMULT_ON OVERLAY_ON
+        passType: 0
+      - keywords: HITEFFECT_ON SHINE_ON
+        passType: 0
+      - keywords: MOTIONBLUR_ON OUTBASE_ON OUTDIST_ON
+        passType: 0
+      - keywords: OUTBASE_ON OUTDIST_ON OVERLAY_ON TWISTUV_ON
+        passType: 0
+      - keywords: OUTDIST_ON TWISTUV_ON
+        passType: 0
+      - keywords: RECTSIZE_ON TEXTURESCROLL_ON
+        passType: 0
+      - keywords: TEXTURESCROLL_ON
+        passType: 0
+      - keywords: TWISTUV_ON
+        passType: 0

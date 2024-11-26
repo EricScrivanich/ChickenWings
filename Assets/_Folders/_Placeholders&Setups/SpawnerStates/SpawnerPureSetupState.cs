@@ -11,6 +11,8 @@ public class SpawnerPureSetupState : SpawnBaseState
     private bool failedRings;
     private bool setupDone = false;
 
+    private bool isSpecialGoldRing;
+
     private bool completedRings;
     private int ringTypeSpawned;
 
@@ -23,6 +25,8 @@ public class SpawnerPureSetupState : SpawnBaseState
         canContinueToNextSetup = false;
         setupDone = false;
         failedRings = false;
+        isSpecialGoldRing = spawner.transitionLogic.SpecialGoldRings;
+
         if (!ignoreTriggerReset)
         {
             currentTrigger = 0;
@@ -36,7 +40,7 @@ public class SpawnerPureSetupState : SpawnBaseState
 
         // if (spawner.pureSetups[spawner.CurrentPureSetup] != null)
         if (spawner.pureSetups.Length > spawner.CurrentPureSetup)
-            spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger);
+            spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger, true);
 
         else
             return;
@@ -47,7 +51,7 @@ public class SpawnerPureSetupState : SpawnBaseState
 
     public void SetRingType(int type)
     {
-        Debug.Log("Set new ring type in set Ring: " + type);
+        // Debug.Log("Set new ring type in set Ring: " + type);
 
         ringTypeSpawned = type;
     }
@@ -74,7 +78,7 @@ public class SpawnerPureSetupState : SpawnBaseState
     public override void SetupHitTarget(SpawnStateManager spawner)
     {
         setupDone = true;
-        if (failedRings && spawner.pureSetups[spawner.CurrentPureSetup].mustCompleteRingSequence)
+        if (failedRings && spawner.pureSetups[spawner.CurrentPureSetup].mustCompleteRingSequence && !isSpecialGoldRing)
         {
             spawner.SwitchStateWithLogic();
         }
@@ -94,7 +98,15 @@ public class SpawnerPureSetupState : SpawnBaseState
         }
         else
         {
-            spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger);
+            if (isSpecialGoldRing)
+            {
+
+                spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger, !failedRings);
+
+            }
+
+            else
+                spawner.pureSetups[spawner.CurrentPureSetup].SpawnTrigger(spawner, currentTrigger, true);
             currentTrigger++;
         }
 
@@ -111,7 +123,7 @@ public class SpawnerPureSetupState : SpawnBaseState
     {
         if (spawner.pureSetups[spawner.CurrentPureSetup].mustCompleteRingSequence && type == ringTypeSpawned)
         {
-            if (isCorrect)
+            if (isCorrect && !isSpecialGoldRing)
             {
 
                 if (spawner.pureSetups[spawner.CurrentPureSetup].mustCompleteRingSequence)
@@ -131,13 +143,17 @@ public class SpawnerPureSetupState : SpawnBaseState
                 // spawner.SwitchStateWithLogic();
                 failedRings = true;
 
-                if (setupDone)
+                if (setupDone && !isSpecialGoldRing)
                 {
                     spawner.SwitchStateWithLogic();
                 }
 
             }
         }
+
+        else if (type == ringTypeSpawned && isSpecialGoldRing && !isCorrect)
+            failedRings = true;
+
 
     }
 }

@@ -424,10 +424,7 @@ MonoBehaviour:
   delay: 0
   sr: {fileID: 6700727688221413979}
   animData: {fileID: 11400000, guid: b82ee5d1ca8bd4f819cf5c6d46bf5619, type: 2}
-  pigAnimData: {fileID: 0}
   pool: {fileID: 11400000, guid: f589c2cd9877c4b6597ee259d04c7c5d, type: 2}
-  dropDelay: 1.2
-  initialDropDelay: 0
   dropPosition: {fileID: 7660390433439342439}
   minMaxYVel: {x: -0.6, y: 1.2}
   velocityLerpSpeed: 0.5
@@ -443,7 +440,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: f621a69ce1696428aa10cfb27f9bd500, type: 2}
-  m_CullingMode: 2
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0

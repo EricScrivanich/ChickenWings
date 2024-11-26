@@ -14,6 +14,7 @@ public class EggAmmoDisplay : MonoBehaviour
     [SerializeField] private bool ignoreSwitch;
     [SerializeField] private bool startHidden;
 
+
     private Image buttonImage;
     public static Action<int, int> SwitchAmmoEvent;
     public static Action<int> EquipAmmoEvent;
@@ -65,6 +66,7 @@ public class EggAmmoDisplay : MonoBehaviour
     private Sequence ChainedShotgunSequence;
     private Sequence MaxWaitChainedShotgunSequence;
     private Sequence MoveChainedGroupSeq;
+    private Sequence ChainedGroupShownSeq;
 
     private Coroutine rotateShotgunRoutine;
 
@@ -698,6 +700,13 @@ public class EggAmmoDisplay : MonoBehaviour
     {
         if (currentAmmoType == 1)
         {
+            // if (arrowsAreShown && direction == 0)
+            // {
+            //     arrowsAreShown = false;
+            //     OnFadeArrows(false);
+            //     Debug.LogError("ON ZERO WITH ARROWS");
+
+            // }
 
             if (!arrowsAreShown)
             {
@@ -749,6 +758,7 @@ public class EggAmmoDisplay : MonoBehaviour
 
             if (direction == -2 && arrowsAreShown)
             {
+
                 arrowsAreShown = false;
                 OnFadeArrows(false);
             }
@@ -933,10 +943,35 @@ public class EggAmmoDisplay : MonoBehaviour
         if (use)
         {
             MaxWaitChainedShotgunSequence = DOTween.Sequence();
-            MaxWaitChainedShotgunSequence.Append(chainedFill.DOFillAmount(1, .1f));
+            MaxWaitChainedShotgunSequence.Append(chainedFill.DOFillAmount(1, .1f).From(0));
             MaxWaitChainedShotgunSequence.Append(chainedFill.DOFillAmount(0, 2.3f).SetEase(Ease.OutSine));
 
             MaxWaitChainedShotgunSequence.Play().OnComplete(() => player.globalEvents.OnUseChainedAmmo?.Invoke(false));
+
+        }
+
+
+
+    }
+
+    private void ShowChainedGroup(bool show)
+    {
+        if (ChainedGroupShownSeq != null && ChainedGroupShownSeq.IsPlaying())
+            ChainedGroupShownSeq.Kill();
+
+        ChainedGroupShownSeq = DOTween.Sequence();
+
+        if (show)
+        {
+            ChainedGroupShownSeq.Append(chainedShotgunGroup.DOFade(1, .2f).From(0));
+            ChainedGroupShownSeq.Join(chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1, .3f).From(BoundariesManager.vectorThree1 * 1.3f));
+            ChainedGroupShownSeq.Play();
+        }
+        else
+        {
+            ChainedGroupShownSeq.Append(chainedShotgunGroup.DOFade(0, .15f));
+            ChainedGroupShownSeq.Join(chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1 * 1.3f, .2f));
+            ChainedGroupShownSeq.Play();
 
         }
 
@@ -996,8 +1031,7 @@ public class EggAmmoDisplay : MonoBehaviour
         if (show)
         {
             // chainedFill.color = colorSO.DashImageManaHighlight;
-            chainedShotgunGroup.DOFade(1, .3f).From(0);
-            chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1, .3f).From(BoundariesManager.vectorThree1 * 1.3f);
+            ShowChainedGroup(true);
         }
         else
         {
@@ -1005,10 +1039,12 @@ public class EggAmmoDisplay : MonoBehaviour
             // swipe2.FlashAmmoTween(false);
             eggs[1].FlashAmmoTween(false);
             UpdateChainedAmmoMaxWait(false);
+            ShowChainedGroup(false);
 
-            chainedShotgunGroup.DOFade(0, .15f);
 
-            chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1 * 1.3f, .2f);
+            // chainedShotgunGroup.DOFade(0, .15f);
+
+            // chainedShotgunGroup.transform.DOScale(BoundariesManager.vectorThree1 * 1.3f, .2f);
             if (arrowsAreShown)
                 OnRotateWithShotgun(-2);
 

@@ -47,7 +47,7 @@ public class PlayerDashState : PlayerBaseState
         // {
         //     player.ID.globalEvents.CanDashSlash?.Invoke(true);
         // }
-        player.rb.drag = .35f;
+        player.rb.linearDamping = .35f;
 
         rotZ = 0;
         passedTime = false;
@@ -82,7 +82,7 @@ public class PlayerDashState : PlayerBaseState
 
         }
         player.rb.gravityScale = player.originalGravityScale;
-        player.rb.drag = 0f;
+        player.rb.linearDamping = 0f;
         player.ChangeCollider(0);
 
     }
@@ -146,7 +146,7 @@ public class PlayerDashState : PlayerBaseState
             passedTime = true;
 
 
-            player.rb.drag = dragAmount;
+            player.rb.linearDamping = dragAmount;
             // player.rb.gravityScale = player.originalGravityScale;
             // player.rb.velocity = new Vector2(2, player.rb.velocity.y);
 
@@ -180,7 +180,7 @@ public class PlayerDashState : PlayerBaseState
 
             if (dragTime > dragDuration)
             {
-                player.rb.drag = 0;
+                player.rb.linearDamping = 0;
 
             }
 

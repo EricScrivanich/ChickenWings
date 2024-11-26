@@ -17,13 +17,14 @@ namespace AllIn1SpriteShader
     {
         public enum ShaderTypes
         {
-            Default,
-            ScaledTime,
-            MaskedUI,
-            Urp2dRenderer,
-            Invalid
+            Default = 0,
+            ScaledTime = 1,
+            MaskedUI = 2,
+            Urp2dRenderer = 3,
+			Lit = 5,
+            Invalid = 4,
         }
-        public ShaderTypes shaderTypes = ShaderTypes.Invalid;
+        public ShaderTypes currentShaderType = ShaderTypes.Invalid;
 
         private Material currMaterial, prevMaterial;
         private bool matAssigned = false, destroyed = false;
@@ -68,12 +69,15 @@ namespace AllIn1SpriteShader
 
         private void MakeNewMaterial(bool getShaderTypeFromPrefs, string shaderName = "AllIn1SpriteShader")
         {
-            SetMaterial(AfterSetAction.Clear, getShaderTypeFromPrefs, shaderName);
+            bool operationSuccessful = SetMaterial(AfterSetAction.Clear, getShaderTypeFromPrefs, shaderName);
+            #if UNITY_EDITOR
+            if(operationSuccessful) AllIn1ShaderWindow.ShowSceneViewNotification("AllIn1SpriteShader: Material Created and Assigned");
+            #endif
         }
 
-        public void MakeCopy()
+        public bool MakeCopy()
         {
-            SetMaterial(AfterSetAction.CopyMaterial, false, GetStringFromShaderType());
+            return SetMaterial(AfterSetAction.CopyMaterial, false, GetStringFromShaderType());
         }
 
         private void ResetAllProperties(bool getShaderTypeFromPrefs, string shaderName)
@@ -83,23 +87,28 @@ namespace AllIn1SpriteShader
 
         private string GetStringFromShaderType()
         {
-            if (shaderTypes == ShaderTypes.Default) return "AllIn1SpriteShader";
-            else if (shaderTypes == ShaderTypes.ScaledTime) return "AllIn1SpriteShaderScaledTime";
-            else if (shaderTypes == ShaderTypes.MaskedUI) return "AllIn1SpriteShaderUiMask";
-            else if (shaderTypes == ShaderTypes.Urp2dRenderer) return "AllIn1Urp2dRenderer";
+            currentShaderType = ShaderTypes.Default;
+            if(currentShaderType == ShaderTypes.Default) return"AllIn1SpriteShader";
+            else if(currentShaderType == ShaderTypes.ScaledTime) return"AllIn1SpriteShaderScaledTime";
+            else if(currentShaderType == ShaderTypes.MaskedUI) return"AllIn1SpriteShaderUiMask";
+            else if(currentShaderType == ShaderTypes.Urp2dRenderer) return"AllIn1Urp2dRenderer";
+            else if(currentShaderType == ShaderTypes.Lit) return"AllIn1SpriteShaderLit";
             else return "AllIn1SpriteShader";
         }
 
-        private void SetMaterial(AfterSetAction action, bool getShaderTypeFromPrefs, string shaderName)
+        private bool SetMaterial(AfterSetAction action, bool getShaderTypeFromPrefs, string shaderName)
         {
-            Shader allIn1Shader = Resources.Load(shaderName, typeof(Shader)) as Shader;
+            #if UNITY_EDITOR
+            Shader allIn1Shader = AllIn1ShaderWindow.FindShader(shaderName);
             if (getShaderTypeFromPrefs)
             {
                 int shaderVariant = PlayerPrefs.GetInt("allIn1DefaultShader");
-                if (shaderVariant == 1) allIn1Shader = Resources.Load("AllIn1SpriteShaderScaledTime", typeof(Shader)) as Shader;
-                else if (shaderVariant == 2) allIn1Shader = Resources.Load("AllIn1SpriteShaderUiMask", typeof(Shader)) as Shader;
-                else if (shaderVariant == 3) allIn1Shader = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
-            }
+                currentShaderType = (ShaderTypes)shaderVariant;
+                if (shaderVariant == 1) allIn1Shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderScaledTime");
+                else if (shaderVariant == 2) allIn1Shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderUiMask");
+                else if (shaderVariant == 3) allIn1Shader = AllIn1ShaderWindow.FindShader("AllIn1Urp2dRenderer");
+                else if (shaderVariant == 5) allIn1Shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderLit");
+			}
 
             if (!Application.isPlaying && Application.isEditor && allIn1Shader != null)
             {
@@ -116,7 +125,8 @@ namespace AllIn1SpriteShader
                     GetComponent<Renderer>().sharedMaterial = currMaterial;
                     GetComponent<Renderer>().sharedMaterial.hideFlags = HideFlags.None;
                     matAssigned = true;
-                    DoAfterSetAction(action);
+
+					DoAfterSetAction(action);
                 }
                 else
                 {
@@ -138,17 +148,25 @@ namespace AllIn1SpriteShader
                 if (!rendererExists)
                 {
                     MissingRenderer();
-                    return;
+                    return false;
                 }
                 else
                 {
                     SetSceneDirty();
+                    return true;
                 }
             }
             else if (allIn1Shader == null)
             {
-                Debug.LogError("Make sure the AllIn1SpriteShader shader variants are inside the Resource folder!");
+                #if UNITY_EDITOR
+                string logErrorMessage = "Make sure all AllIn1SpriteShader shader variants are present. Maybe delete the asset and download it again?";
+                Debug.LogError(logErrorMessage);
+                AllIn1ShaderWindow.ShowSceneViewNotification(logErrorMessage);
+                #endif
+                return false;
             }
+            #endif
+            return false;
         }
 
         private void DoAfterSetAction(AfterSetAction action)
@@ -164,7 +182,7 @@ namespace AllIn1SpriteShader
             }
         }
 
-        public void TryCreateNew()
+        public bool TryCreateNew()
         {
             bool rendererExists = false;
             Renderer sr = GetComponent<Renderer>();
@@ -201,6 +219,7 @@ namespace AllIn1SpriteShader
                 MissingRenderer();
             }
             SetSceneDirty();
+            return rendererExists;
         }
 
         public void ClearAllKeywords()
@@ -318,18 +337,16 @@ namespace AllIn1SpriteShader
             SetSceneDirty();
         }
 
-        public void SaveMaterial()
+        public bool SaveMaterial()
         {
 #if UNITY_EDITOR
-            string sameMaterialPath = AllIn1ShaderWindow.materialsSavesPath;
-            if (PlayerPrefs.HasKey("All1ShaderMaterials")) sameMaterialPath = PlayerPrefs.GetString("All1ShaderMaterials");
-            else PlayerPrefs.SetString("All1ShaderMaterials", AllIn1ShaderWindow.materialsSavesPath);
+            string sameMaterialPath = AllIn1ShaderWindow.GetMaterialSavePath();
             sameMaterialPath += "/";
             if (!System.IO.Directory.Exists(sameMaterialPath))
             {
                 EditorUtility.DisplayDialog("The desired Material Save Path doesn't exist",
                     "Go to Window -> AllIn1ShaderWindow and set a valid folder", "Ok");
-                return;
+                return false;
             }
             sameMaterialPath += gameObject.name;
             string fullPath = sameMaterialPath + ".mat";
@@ -339,6 +356,9 @@ namespace AllIn1SpriteShader
             }
             else DoSaving(fullPath);
             SetSceneDirty();
+            return true;
+#else
+            return false;
 #endif
         }
         private void SaveMaterialWithOtherName(string path, int i = 1)
@@ -429,14 +449,15 @@ namespace AllIn1SpriteShader
 #endif
         }
 
-        public void ToggleSetAtlasUvs(bool activate)
+        public bool ToggleSetAtlasUvs(bool activate)
         {
+            bool success = false;
             SetAtlasUvs atlasUvs = GetComponent<SetAtlasUvs>();
             if (activate)
             {
                 if (atlasUvs == null) atlasUvs = gameObject.AddComponent<SetAtlasUvs>();
-                atlasUvs.GetAndSetUVs();
-                SetKeyword("ATLAS_ON", true);
+                if (atlasUvs != null) success = atlasUvs.GetAndSetUVs();
+                if(success) SetKeyword("ATLAS_ON", true);
             }
             else
             {
@@ -444,13 +465,22 @@ namespace AllIn1SpriteShader
                 {
                     atlasUvs.ResetAtlasUvs();
                     DestroyImmediate(atlasUvs);
+                    success = true;
+                }
+                else
+                {
+                    #if UNITY_EDITOR
+                    EditorUtility.DisplayDialog("Missing Atlas Uv Setup", "This GameObject (" + gameObject.name + ") has no Atlas Uv Setup.", "Ok");
+                    #endif
+                    return false;
                 }
                 SetKeyword("ATLAS_ON", false);
             }
             SetSceneDirty();
+            return success;
         }
 
-        public void ApplyMaterialToHierarchy()
+        public bool ApplyMaterialToHierarchy()
         {
             Renderer sr = GetComponent<Renderer>();
             Graphic image = GetComponent<Graphic>();
@@ -463,11 +493,12 @@ namespace AllIn1SpriteShader
             else
             {
                 MissingRenderer();
-                return;
+                return false;
             }
 
             List<Transform> children = new List<Transform>();
             GetAllChildren(transform, ref children);
+            bool hasPerformedOperation = false;
             foreach (Transform t in children)
             {
                 sr = t.gameObject.GetComponent<Renderer>();
@@ -477,7 +508,10 @@ namespace AllIn1SpriteShader
                     image = t.gameObject.GetComponent<Graphic>();
                     if (image != null) image.material = matToApply;
                 }
+                hasPerformedOperation = true;
             }
+
+            return hasPerformedOperation;
         }
 
         public void CheckIfValidTarget()
@@ -496,7 +530,7 @@ namespace AllIn1SpriteShader
             }
         }
 
-        public void RenderToImage()
+        public bool RenderToImage()
         {
 #if UNITY_EDITOR
             if (currMaterial == null)
@@ -505,27 +539,41 @@ namespace AllIn1SpriteShader
                 if (currMaterial == null)
                 {
                     MissingRenderer();
-                    return;
+                    return false;
                 }
             }
             Texture tex = currMaterial.GetTexture("_MainTex");
-            if (tex != null) RenderAndSaveTexture(currMaterial, tex);
+            if(tex != null)
+            {
+                bool success = RenderAndSaveTexture(currMaterial, tex);
+                if(!success) return false;
+            }
             else
             {
                 SpriteRenderer sr = GetComponent<SpriteRenderer>();
                 Graphic i = GetComponent<Graphic>();
-                if (sr != null) tex = sr.sprite.texture;
-                else if (i != null) tex = i.mainTexture;
+                if (sr != null && sr.sprite != null && sr.sprite.texture != null) tex = sr.sprite.texture;
+                else if (i != null && i.mainTexture != null) tex = i.mainTexture;
 
-                if (tex != null) RenderAndSaveTexture(currMaterial, tex);
-                else EditorUtility.DisplayDialog("No valid target texture found", "All In 1 Shader component couldn't find a valid Main Texture in this GameObject (" +
+                if(tex != null)
+                {
+                    bool success = RenderAndSaveTexture(currMaterial, tex);
+                    if(!success) return false;
+                }
+                else{
+                    EditorUtility.DisplayDialog("No valid target texture found", "All In 1 Shader component couldn't find a valid Main Texture in this GameObject (" +
                                                                                   gameObject.name + "). This means that the material you are using has no Main Texture or that the texture couldn't be reached through the Renderer component you are using." +
-                                                                                  " Please make sure to have a valid Main Texture in the Material", "Ok");
+                                                                                  " Please make sure to have a valid Main Texture in the Material or Renderer/Graphic component", "Ok");
+                    return false;
+                }
             }
+            return true;
+#else
+            return false;
 #endif
         }
 
-        private void RenderAndSaveTexture(Material targetMaterial, Texture targetTexture)
+        private bool RenderAndSaveTexture(Material targetMaterial, Texture targetTexture)
         {
 #if UNITY_EDITOR
             float scaleSlider = 1;
@@ -536,15 +584,13 @@ namespace AllIn1SpriteShader
             reaultTex.ReadPixels(new Rect(0, 0, renderTarget.width, renderTarget.height), 0, 0);
             reaultTex.Apply();
 
-            string path = AllIn1ShaderWindow.renderImagesSavesPath;
-            if (PlayerPrefs.HasKey("All1ShaderRenderImages")) path = PlayerPrefs.GetString("All1ShaderRenderImages");
-            else PlayerPrefs.SetString("All1ShaderRenderImages", AllIn1ShaderWindow.renderImagesSavesPath);
+            string path = AllIn1ShaderWindow.GetRenderImageSavePath();
             path += "/";
             if (!System.IO.Directory.Exists(path))
             {
                 EditorUtility.DisplayDialog("The desired Material to Image Save Path doesn't exist",
                     "Go to Window -> AllIn1ShaderWindow and set a valid folder", "Ok");
-                return;
+                return false;
             }
             string fullPath = path + gameObject.name + ".png";
             if (System.IO.File.Exists(fullPath)) fullPath = GetNewValidPath(path + gameObject.name);
@@ -553,6 +599,11 @@ namespace AllIn1SpriteShader
             string fileName = fullPath.Replace(path, "");
             fileName = fileName.Replace(".png", "");
             fullPath = EditorUtility.SaveFilePanel("Save Render Image", path, fileName, "png");
+            if(string.IsNullOrEmpty(fullPath))
+            {
+                Debug.Log("Save operation was cancelled or no valid path was selected.");
+                return false;
+            }
 
             byte[] bytes = reaultTex.EncodeToPNG();
             File.WriteAllBytes(fullPath, bytes);
@@ -561,10 +612,14 @@ namespace AllIn1SpriteShader
             DestroyImmediate(reaultTex);
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(pingPath, typeof(Texture)));
             Debug.Log("Render Image saved to: " + fullPath + " with scale: " + scaleSlider + " (it can be changed in Window -> AllIn1ShaderWindow)");
+            return true;
+#else
+			return false;
 #endif
-        }
 
-        private string GetNewValidPath(string path, int i = 1)
+		}
+
+		private string GetNewValidPath(string path, int i = 1)
         {
             int number = i;
             string newPath = path + "_" + number.ToString();
@@ -577,7 +632,7 @@ namespace AllIn1SpriteShader
             return fullPath;
         }
 
-        #region normalMapCreator
+		#region normalMapCreator
         protected virtual void OnEnable()
         {
 #if UNITY_EDITOR
@@ -633,15 +688,18 @@ namespace AllIn1SpriteShader
 
             normalMapSr = GetComponent<SpriteRenderer>();
             normalMapRenderer = GetComponent<Renderer>();
+            Debug.LogError($"NORMALMAP_ON: {normalMapRenderer.sharedMaterial.IsKeywordEnabled("NORMALMAP_ON")}  -t:{Time.time}");
             if (normalMapSr != null)
             {
                 isSpriteRenderer = true;
                 SetNewNormalTexture();
+                if(!normalMapSr.sharedMaterial.IsKeywordEnabled("NORMALMAP_ON")) normalMapSr.sharedMaterial.EnableKeyword("NORMALMAP_ON");
             }
             else if (normalMapRenderer != null)
             {
                 isSpriteRenderer = false;
                 SetNewNormalTexture();
+                if(!normalMapRenderer.sharedMaterial.IsKeywordEnabled("NORMALMAP_ON")) normalMapRenderer.sharedMaterial.EnableKeyword("NORMALMAP_ON");
             }
             else
             {
@@ -663,9 +721,7 @@ namespace AllIn1SpriteShader
         private void SetNewNormalTexture()
         {
 #if UNITY_EDITOR
-            path = AllIn1ShaderWindow.normalMapSavesPath;
-            if (PlayerPrefs.HasKey("All1ShaderNormals")) path = PlayerPrefs.GetString("All1ShaderNormals");
-            else PlayerPrefs.SetString("All1ShaderNormals", AllIn1ShaderWindow.normalMapSavesPath);
+            path = AllIn1ShaderWindow.GetNormalMapSavePath();
             path += "/";
             if (!System.IO.Directory.Exists(path))
             {
@@ -708,8 +764,8 @@ namespace AllIn1SpriteShader
         {
 #if UNITY_EDITOR
             Texture2D normalM = null;
-            if (isSpriteRenderer) normalM = CreateNormalMap(normalMapSr.sprite.texture, normalStrength, normalSmoothing);
-            else normalM = CreateNormalMap(mainTex2D, normalStrength, normalSmoothing);
+            if(isSpriteRenderer) normalM = AllIn1ShaderWindow.CreateNormalMap(normalMapSr.sprite.texture, normalStrength, normalSmoothing);
+            else normalM = AllIn1ShaderWindow.CreateNormalMap(mainTex2D, normalStrength, normalSmoothing);
 
             byte[] bytes = normalM.EncodeToPNG();
 
@@ -753,109 +809,6 @@ namespace AllIn1SpriteShader
             computingNormal = false;
 #endif
         }
-
-        private Texture2D CreateNormalMap(Texture2D t, float normalMult = 5f, int normalSmooth = 0)
-        {
-            Color[] pixels = new Color[t.width * t.height];
-            Texture2D texNormal = new Texture2D(t.width, t.height, TextureFormat.RGB24, false, false);
-            Vector3 vScale = new Vector3(0.3333f, 0.3333f, 0.3333f);
-
-            for (int y = 0; y < t.height; y++)
-            {
-                for (int x = 0; x < t.width; x++)
-                {
-                    Color tc = t.GetPixel(x - 1, y - 1);
-                    Vector3 cSampleNegXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x, y - 1);
-                    Vector3 cSampleZerXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y - 1);
-                    Vector3 cSamplePosXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x - 1, y);
-                    Vector3 cSampleNegXZerY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y);
-                    Vector3 cSamplePosXZerY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x - 1, y + 1);
-                    Vector3 cSampleNegXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x, y + 1);
-                    Vector3 cSampleZerXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y + 1);
-                    Vector3 cSamplePosXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    float fSampleNegXNegY = Vector3.Dot(cSampleNegXNegY, vScale);
-                    float fSampleZerXNegY = Vector3.Dot(cSampleZerXNegY, vScale);
-                    float fSamplePosXNegY = Vector3.Dot(cSamplePosXNegY, vScale);
-                    float fSampleNegXZerY = Vector3.Dot(cSampleNegXZerY, vScale);
-                    float fSamplePosXZerY = Vector3.Dot(cSamplePosXZerY, vScale);
-                    float fSampleNegXPosY = Vector3.Dot(cSampleNegXPosY, vScale);
-                    float fSampleZerXPosY = Vector3.Dot(cSampleZerXPosY, vScale);
-                    float fSamplePosXPosY = Vector3.Dot(cSamplePosXPosY, vScale);
-                    float edgeX = (fSampleNegXNegY - fSamplePosXNegY) * 0.25f + (fSampleNegXZerY - fSamplePosXZerY) * 0.5f + (fSampleNegXPosY - fSamplePosXPosY) * 0.25f;
-                    float edgeY = (fSampleNegXNegY - fSampleNegXPosY) * 0.25f + (fSampleZerXNegY - fSampleZerXPosY) * 0.5f + (fSamplePosXNegY - fSamplePosXPosY) * 0.25f;
-                    Vector2 vEdge = new Vector2(edgeX, edgeY) * normalMult;
-                    Vector3 norm = new Vector3(vEdge.x, vEdge.y, 1.0f).normalized;
-                    Color c = new Color(norm.x * 0.5f + 0.5f, norm.y * 0.5f + 0.5f, norm.z * 0.5f + 0.5f, 1);
-                    pixels[x + y * t.width] = c;
-                }
-            }
-
-            if (normalSmooth > 0f)
-            {
-                float step = 0.00390625f * normalSmooth;
-                for (int y = 0; y < t.height; y++)
-                {
-                    for (int x = 0; x < t.width; x++)
-                    {
-                        float pixelsToAverage = 0.0f;
-                        Color c = pixels[(x + 0) + ((y + 0) * t.width)];
-                        pixelsToAverage++;
-                        if (x - normalSmooth > 0)
-                        {
-                            if (y - normalSmooth > 0)
-                            {
-                                c += pixels[(x - normalSmooth) + ((y - normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                            c += pixels[(x - normalSmooth) + ((y + 0) * t.width)];
-                            pixelsToAverage++;
-                            if (y + normalSmooth < t.height)
-                            {
-                                c += pixels[(x - normalSmooth) + ((y + normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                        }
-                        if (y - normalSmooth > 0)
-                        {
-                            c += pixels[(x + 0) + ((y - normalSmooth) * t.width)];
-                            pixelsToAverage++;
-                        }
-                        if (y + normalSmooth < t.height)
-                        {
-                            c += pixels[(x + 0) + ((y + normalSmooth) * t.width)];
-                            pixelsToAverage++;
-                        }
-                        if (x + normalSmooth < t.width)
-                        {
-                            if (y - normalSmooth > 0)
-                            {
-                                c += pixels[(x + normalSmooth) + ((y - normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                            c += pixels[(x + normalSmooth) + ((y + 0) * t.width)];
-                            pixelsToAverage++;
-                            if (y + normalSmooth < t.height)
-                            {
-                                c += pixels[(x + normalSmooth) + ((y + normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                        }
-                        pixels[x + y * t.width] = c / pixelsToAverage;
-                    }
-                }
-            }
-
-            texNormal.SetPixels(pixels);
-            texNormal.Apply();
-            return texNormal;
-        }
-        #endregion
+		#endregion
     }
 }
