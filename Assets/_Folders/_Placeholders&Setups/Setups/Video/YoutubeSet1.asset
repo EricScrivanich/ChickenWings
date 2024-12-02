@@ -29,6 +29,14 @@ MonoBehaviour:
     - rid: 4599887744137429339
   - dataArray:
     - rid: 4599887744137429341
+  - dataArray:
+    - rid: 4599887744137429341
+  - dataArray:
+    - rid: 4599887768728895491
+  - dataArray:
+    - rid: 4599887768728895490
+  - dataArray:
+    - rid: 4599887744137429341
   collectableSetup:
   - dataArray: []
   - dataArray:
@@ -36,10 +44,9 @@ MonoBehaviour:
   - dataArray:
     - rid: 4599887744137429342
   - dataArray: []
-  - dataArray: []
   isRandomSetup: 0
-  testFromTrigger: 0
-  startTestTrigger: 1
+  testFromTrigger: 1
+  startTestTrigger: 4
   ignoreXTriggetTime: 1
   XTriggerForRecording: 0
   references:
@@ -152,3 +159,22 @@ MonoBehaviour:
           scale: {x: 1, y: 1, z: 1}
           rotation: {x: -0, y: -0, z: -0.0024008949, w: 0.99999714}
           speed: 5.4
+    - rid: 4599887768728895490
+      type: {class: WindMillSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 20
+        data:
+        - position: {x: 16.23885, y: 1.5413702}
+          bladeAmount: 3
+          bladeScaleMultiplier: 1
+          bladeSpeed: -130
+          startRot: 0
+    - rid: 4599887768728895491
+      type: {class: FlappyPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 3
+        data:
+        - position: {x: 14.680464, y: 1.2491724}
+          scaleFactor: 0.84
+        - position: {x: -15.318476, y: 1.3952711}
+          scaleFactor: 0.92

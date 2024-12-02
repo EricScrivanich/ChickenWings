@@ -2057,7 +2057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shaderTypes: 3
+  currentShaderType: 4
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0
@@ -6295,6 +6295,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LevelIndex: 0
   sceneSO: {fileID: 0}
+  barnObj: {fileID: 0}
+  eggButtonMoveScript: {fileID: 0}
   TriggerSectionActivateAfterEventType: {fileID: 0}
   activicationDelay: 0
   activateAfterDelay: []
@@ -7993,6 +7995,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2491365211705833927, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2491365211705833927, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -8154,6 +8160,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6374855506334777829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6374855506334777829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}
+      propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6374855506334777829, guid: f29f3f26d22da44d091f4e23a38b70e0, type: 3}

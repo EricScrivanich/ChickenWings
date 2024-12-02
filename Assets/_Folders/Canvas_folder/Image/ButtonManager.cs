@@ -35,29 +35,29 @@ public class ButtonManager : MonoBehaviour
     // Start is called before the first frame update
 
 #if UNITY_EDITOR
-    void Awake()
-    {
-        moveRectsForRecording = true;
+    // void Awake()
+    // {
+    //     moveRectsForRecording = true;
 
-        if (moveRectsForRecording)
-        {
-            foreach (var r in moveRects)
-            {
-                // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
-                r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountSetVariable, r.anchoredPosition.y);
-            }
+    //     if (moveRectsForRecording)
+    //     {
+    //         foreach (var r in moveRects)
+    //         {
+    //             // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
+    //             r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountSetVariable, r.anchoredPosition.y);
+    //         }
 
-            if (GameObject.Find("CanvasScreen") != null)
-            {
-                RectTransform lives = GameObject.Find("Lives3").GetComponent<RectTransform>();
+    //         if (GameObject.Find("CanvasScreen") != null)
+    //         {
+    //             RectTransform lives = GameObject.Find("Lives3").GetComponent<RectTransform>();
 
-                // if (lives != null)
-                //     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
-                if (lives != null)
-                    lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountSetVariable, lives.anchoredPosition.y);
-            }
-        }
-    }
+    //             // if (lives != null)
+    //             //     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
+    //             if (lives != null)
+    //                 lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountSetVariable, lives.anchoredPosition.y);
+    //         }
+    //     }
+    // }
 
 #endif
 
