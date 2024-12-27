@@ -66,6 +66,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
     public void EnableAmmo(Sprite mainImage, Sprite ThreeImage, bool mana, float speedVar)
     {
         hasCrossedScreen = false;
+        
         if (this.gameObject.activeInHierarchy)
         {
             gameObject.SetActive(false);

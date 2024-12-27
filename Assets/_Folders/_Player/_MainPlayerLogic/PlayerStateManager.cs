@@ -109,8 +109,12 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerParachuteState ParachuteState = new PlayerParachuteState();
     public PlayerNextSectionState NextSectionState = new PlayerNextSectionState();
     public PlayerShotgunState ShotgunState = new PlayerShotgunState();
+    public PlayerNestState NestState = new PlayerNestState();
 
-    #endregion 
+
+
+
+    #endregion
 
     #region AnimationHashes
     public readonly int DashTrigger = Animator.StringToHash("DashTrigger");
@@ -239,7 +243,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-        Time.timeScale = FrameRateManager.TargetTimeScale;
+
 
         justSwitchedUsingChainedShotgun = false;
         shotgunEquipped = false;
@@ -300,6 +304,7 @@ public class PlayerStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = FrameRateManager.TargetTimeScale;
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
         AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), mutePlayerAudio);
         HapticFeedbackManager.instance.LoadSavedData();
@@ -366,6 +371,9 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.EnableButtons?.Invoke(false);
 
         currentState = StartingState;
+        // currentState = IdleState;
+
+        // currentState = NestState;
 
         currentState.EnterState(this);
 
@@ -564,7 +572,7 @@ public class PlayerStateManager : MonoBehaviour
     public void SwitchState(PlayerBaseState newState)
     {
 
-
+        if (currentState == NestState) return;
 
         currentState.ExitState(this);
 
@@ -1732,9 +1740,15 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
+    private void HitWater(bool hit)
+    {
+        NestState.OnHitWater(hit);
+    }
+
     private void OnEnable()
     {
         ID.events.OnJump += HandleJump;
+        ID.events.OnWater += HitWater;
         ID.globalEvents.OnSetNewPlayerMovementData += OnChangeMovementData;
         ID.events.OnAimJoystick += CalculateGlobalRotationTarget;
         // ID.events.OnAttack += HandleClocker;
@@ -1769,6 +1783,8 @@ public class PlayerStateManager : MonoBehaviour
     private void OnDisable()
     {
         ID.events.OnJump -= HandleJump;
+        ID.events.OnWater -= HitWater;
+
         ID.events.OnAttack -= HandleShotgun;
         ID.events.OnAimJoystick -= CalculateGlobalRotationTarget;
         ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;

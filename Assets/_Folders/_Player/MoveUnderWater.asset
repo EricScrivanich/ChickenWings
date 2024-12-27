@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d1a22450bf8e4553bb071265dc2430f, type: 3}
+  m_Name: MoveUnderWater
+  m_EditorClassIdentifier: 
+  maxFallSpeed: -7
+  GravityScale: 0.9
+  JumpForce: {x: 0, y: 0}
+  JumpDrag: 0
+  DragLerpSpeed: 0
+  DragLerpDuration: 0
+  RemoveJumpForce: {x: 0, y: 0}
+  addJumpForce: 0
+  FlipRightInitialForceVector: {x: 4, y: 6}
+  FlipRightAddForce: {x: 0, y: 0}
+  FlipRightDownForce: {x: 0, y: 0}
+  flipRightAddForceTime: 0
+  flipRightDownForceTime: 0
+  FlipLeftInitialForceVector: {x: -4, y: 6}
+  FlipLeftAddForce: {x: 0, y: 0}
+  FlipLeftDownForce: {x: 0, y: 0}
+  flipLeftAddForceTime: 0
+  flipLeftDownForceTime: 0
+  maxAmpRadRatio: 0.5
+  outerAmp: 0
+  innerAmp: 3.14
+  innerCutoff: 0.05
+  drag: 0.05

@@ -38,13 +38,25 @@ public class ColliderEnemy : MonoBehaviour
     {
         Debug.Log("collide solid");
 
-        if (collision.gameObject.tag == "Floor") //&& floorCollision
+        if (collision.gameObject.CompareTag("Floor")) //&& floorCollision
         {
 
             ID.events.HitGround?.Invoke();
             // ID.Lives = 0;
             // Kill();
             // DeadEvent.TriggerEvent();
+        }
+        else if (collision.gameObject.CompareTag("Manager"))
+        {
+            ID.events.OnWater?.Invoke(true);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Manager"))
+        {
+            ID.events.OnWater?.Invoke(false);
         }
     }
 
@@ -69,7 +81,7 @@ public class ColliderEnemy : MonoBehaviour
     }
 
 
-   
+
 
 
 

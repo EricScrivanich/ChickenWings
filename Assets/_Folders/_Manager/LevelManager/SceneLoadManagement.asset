@@ -30,6 +30,7 @@ MonoBehaviour:
   - Level13
   - Level14
   - Level15
+  - Level16
   Levels_Name:
   - Menu
   - Jumping
@@ -48,6 +49,7 @@ MonoBehaviour:
   - Windy Ways
   - Actually Hard
   - Flappy Frenzy
+  - Jetty Betty
   Level_Challenges:
   - {fileID: 0}
   - {fileID: 0}
@@ -66,6 +68,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 42e212f8b84424f57ad7365cb1c72e64, type: 2}
   - {fileID: 11400000, guid: f99e37412d5a545b0b8d79853659183b, type: 2}
   - {fileID: 11400000, guid: be8101e89c5484a048e67f311bb762ba, type: 2}
+  - {fileID: 11400000, guid: 05d60eed3598e40cb9f72b7d5eee4618, type: 2}
   OtherGameModes_Scene:
   - KingPig
   - _Mountains
@@ -75,15 +78,17 @@ MonoBehaviour:
   Levels_UI: []
   Gamemodes_Scene: []
   Gamemodes_UI: []
-  levelsByAdditionalNeededChallengesToUnlock: 0d0000000e0000001000000011000000
+  levelsByAdditionalNeededChallengesToUnlock: 0d0000000e000000100000001100000012000000
   additionalNeededUnlockText:
   - You need at least ONE Certified Master Badge to unlock Level 13. Earn a Badge
     by beating all challenges for a level on the same attempt.
   - You need at least 9 Stars to Unlock Level 14
   - You need at least TWO Certified Master Badges to unlock Level 16. Earn a Badge
     by beating all challenges for a level on the same attempt.
+  - You need at least 17 Stars to Unlock Level 17
   additonalChallengeTypeAndAmount:
   - {x: 1, y: 1}
   - {x: 0, y: 9}
   - {x: 1, y: 2}
+  - {x: 0, y: 17}
   - {x: 2, y: 2}

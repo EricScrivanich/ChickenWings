@@ -27,37 +27,87 @@ public class ButtonManager : MonoBehaviour
 
     [SerializeField] private float moveAmountForRecording;
 
+
+#if UNITY_EDITOR
     private float moveAmountSetVariable = 250;
 
     [SerializeField] private RectTransform[] moveRects;
+    [SerializeField] private RectTransform[] moveRectsLeftSide;
 
     [SerializeField] private bool moveRectsForRecording;
+
+    [SerializeField] private bool moveLeftRects;
     // Start is called before the first frame update
 
-#if UNITY_EDITOR
-    // void Awake()
-    // {
-    //     moveRectsForRecording = true;
 
-    //     if (moveRectsForRecording)
-    //     {
-    //         foreach (var r in moveRects)
-    //         {
-    //             // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
-    //             r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountSetVariable, r.anchoredPosition.y);
-    //         }
+    void Awake()
+    {
 
-    //         if (GameObject.Find("CanvasScreen") != null)
-    //         {
-    //             RectTransform lives = GameObject.Find("Lives3").GetComponent<RectTransform>();
+        if (moveRectsForRecording)
+        {
 
-    //             // if (lives != null)
-    //             //     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
-    //             if (lives != null)
-    //                 lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountSetVariable, lives.anchoredPosition.y);
-    //         }
-    //     }
-    // }
+            if (moveLeftRects)
+
+            {
+
+                foreach (var r in moveRectsLeftSide)
+                {
+                    // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
+                    r.anchoredPosition = new Vector2(r.anchoredPosition.x + moveAmountSetVariable, r.anchoredPosition.y);
+                }
+
+                if (GameObject.Find("CanvasScreen") != null)
+                {
+
+                    if (GameObject.Find("ProgressBar") != null)
+                    {
+                        RectTransform progBar = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
+                        if (progBar != null)
+                            progBar.anchoredPosition = new Vector2(progBar.anchoredPosition.x + moveAmountForRecording, progBar.anchoredPosition.y);
+
+                    }
+
+                    if (GameObject.Find("ScoreGroup") != null)
+                    {
+                        RectTransform score = GameObject.Find("ScoreGroup").GetComponent<RectTransform>();
+                        if (score != null)
+                            score.anchoredPosition = new Vector2(score.anchoredPosition.x + moveAmountForRecording, score.anchoredPosition.y);
+
+                    }
+
+
+
+
+
+                }
+
+
+
+            }
+
+            else
+
+            {
+                foreach (var r in moveRects)
+                {
+                    // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
+                    r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountSetVariable, r.anchoredPosition.y);
+                }
+
+                if (GameObject.Find("CanvasScreen") != null)
+                {
+                    RectTransform lives = GameObject.Find("Lives3").GetComponent<RectTransform>();
+
+                    // if (lives != null)
+                    //     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
+                    if (lives != null)
+                        lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountSetVariable, lives.anchoredPosition.y);
+                }
+
+            }
+
+        }
+    }
 
 #endif
 

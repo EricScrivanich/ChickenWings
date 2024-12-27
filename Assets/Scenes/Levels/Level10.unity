@@ -6822,8 +6822,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -851, y: 473}
-  m_SizeDelta: {x: 670, y: 180}
+  m_AnchoredPosition: {x: -851, y: 472.90997}
+  m_SizeDelta: {x: 670, y: 179.82}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1534610405
 MonoBehaviour:
@@ -9490,6 +9490,18 @@ PrefabInstance:
     - target: {fileID: 3045815054641156525, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: showScore
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3222486909674329710, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: moveLeftRects
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3222486909674329710, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: moveRectsForRecording
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3222486909674329710, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: moveAmountForRecording
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3407464144378043522, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_fontColor.b

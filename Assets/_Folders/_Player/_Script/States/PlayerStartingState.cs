@@ -16,13 +16,20 @@ public class PlayerStartingState : PlayerBaseState
     private Vector2 initialForce = new Vector2(8.3f, 8.9f);
     public override void EnterState(PlayerStateManager player)
     {
-        player.transform.position = startPosition;
+
         hasFinishedLocked = false;
         player.maxFallSpeed = startMaxFallSpeed;
         currentRotation = 120;
+        // player.transform.position = startPosition;
+        // player.AdjustForce(initialForce);
+
+        player.transform.position = Vector2.zero;
+
+
+
 
         // player.rb.velocity = new Vector2(0, 5);
-        player.AdjustForce(initialForce);
+
 
         time = 0;
         AudioManager.instance.PlayStartSound();

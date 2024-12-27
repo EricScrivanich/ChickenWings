@@ -6,6 +6,8 @@ public struct PlayerEvents
 {
     public Action OnJump;
 
+    public Action<bool> OnWater;
+
     public Action<bool> OnFlipRight;
     public Action<bool> OnFlipLeft;
     public Action<bool> OnDash;

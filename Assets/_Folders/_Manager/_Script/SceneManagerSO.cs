@@ -134,7 +134,7 @@ public class SceneManagerSO : ScriptableObject
     }
     public string ReturnSceneNameGameMode(int index)
     {
-        if (OtherGameModes_Scene[index] != null)
+        if (OtherGameModes_Scene.Count > index && OtherGameModes_Scene[index] != null)
             return OtherGameModes_Scene[index];
         else
             return "none";

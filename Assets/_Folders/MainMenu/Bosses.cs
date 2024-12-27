@@ -73,7 +73,7 @@ public class LevelGroups : MonoBehaviour
 
         int totalStars = 0;
         int totalBadges = 0;
-        for (int i = 1; i < sceneSO.ReturnNumberOfLevels(); i++)
+        for (int i = 1; i < sceneSO.ReturnNumberOfLevels() + 1; i++)
         {
             Debug.Log("FROM BOSSES");
 
@@ -94,8 +94,6 @@ public class LevelGroups : MonoBehaviour
     {
         if (currentLevelGroupIndex > 0 && !isMoving)
         {
-
-
             isMoving = true;
             HapticFeedbackManager.instance.PressUIButton();
             levelGroups[currentLevelGroupIndex - 1].gameObject.SetActive(true);

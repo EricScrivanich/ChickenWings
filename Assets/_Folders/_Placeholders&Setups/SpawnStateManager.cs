@@ -350,6 +350,7 @@ public class SpawnStateManager : MonoBehaviour
 
     public void GetEggByType(Vector2 pos, int type, float speed)
     {
+
         bool shotgun = false;
         bool three = false;
 
