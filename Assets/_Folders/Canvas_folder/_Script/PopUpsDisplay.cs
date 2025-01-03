@@ -17,6 +17,7 @@ public class PopUpsDisplay : MonoBehaviour
 
     [Header("Level Title Display")]
     [SerializeField] private GameObject LevelNamePrefab;
+    [SerializeField] private TextMeshProUGUI GameSpeedText;
 
     [SerializeField] private float fadeInDuration = 1f; // Duration of the fade-in
     [SerializeField] private float fadeOutDuration = 1f; // Duration of the fade-out
@@ -63,6 +64,7 @@ public class PopUpsDisplay : MonoBehaviour
     {
         isLevel = true;
 
+
         string s = SceneManager.GetActiveScene().name;
         levelNum = 0;
 
@@ -104,6 +106,8 @@ public class PopUpsDisplay : MonoBehaviour
 
         // gameOver.gameObject.SetActive(false);
         Frozen.SetActive(false);
+        GameSpeedText.text = "Game Speed: " + PlayerPrefs.GetFloat("GameSpeed", 1).ToString("F2");
+
 
         if (sceneSO.ReturnLevelChallenges() != null)
         {
@@ -155,19 +159,30 @@ public class PopUpsDisplay : MonoBehaviour
 
                 // Move the text to the target position
                 .Join(textRectTransform.DOAnchorPos(textTargetPosition, textMoveDuration).SetEase(moveInEase))
+                .Join(GameSpeedText.DOFade(1, textMoveDuration).SetEase(Ease.InSine))
+
 
                 // Keep the text on screen for displayDuration
                 .AppendInterval(displayDuration)
 
                 // Fade out both text objects
                 .Append(textLevelName.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine)
-                .Join(textLevelNum.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine);
+                .Join(textLevelNum.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine)
+                .Join(GameSpeedText.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine);
 
-            textSequence.Play().SetUpdate(true);
+
+            textSequence.Play().SetUpdate(true).OnComplete(() => DeleteDisplayTexts(textObj, GameSpeedText.gameObject));
 
         }
 
 
+
+    }
+
+    private void DeleteDisplayTexts(GameObject levelName, GameObject gameSpeed)
+    {
+        Destroy(levelName);
+        Destroy(gameSpeed);
 
     }
 

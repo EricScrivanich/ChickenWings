@@ -24,10 +24,13 @@ public class ScoreDisplay : MonoBehaviour
 
     [SerializeField] private bool flappyFrenzy;
 
+    [SerializeField] private Color highScoreColor;
+
 
     // Start is called before the first frame update
     void Start()
     {
+
         beatenHighScore = false;
         highScoreText = GetComponent<TextMeshProUGUI>();
         highScore = PlayerPrefs.GetInt("EndlessHighScore", 0);
@@ -56,7 +59,7 @@ public class ScoreDisplay : MonoBehaviour
     void UpdateScore(int scoreAdded)
     {
         lvlID.inputEvent.OnUpdateObjective?.Invoke("score", scoreAdded);
-        if (player.Score > highScore && !beatenHighScore)
+        if (player.Score > highScore && !beatenHighScore && !FrameRateManager.under1)
         {
             beatenHighScore = true;
             highScoreText.text = "NEW BEST";
@@ -240,16 +243,39 @@ public class ScoreDisplay : MonoBehaviour
 
     }
 
+    private void OnSwitchTimeScale(bool isOver1)
+    {
+        if (!isOver1 && beatenHighScore)
+        {
+            if (newBestSeq != null && newBestSeq.IsPlaying())
+                newBestSeq.Kill();
+
+
+            PlayerPrefs.SetInt("EndlessHighScore", player.Score);
+            PlayerPrefs.Save();
+
+            highScore = PlayerPrefs.GetInt("EndlessHighScore", 0);
+
+            highScoreText.color = highScoreColor;
+            highScoreText.text = ("Best: " + highScore.ToString());
+
+        }
+
+    }
+
     private void OnEnable()
     {
         player.globalEvents.OnAddScore += UpdateScore;
         player.globalEvents.OnKillPig += KillPigScore;
+        FrameRateManager.OnChangeGameTimeScale += OnSwitchTimeScale;
     }
     private void OnDisable()
     {
         player.globalEvents.OnAddScore -= UpdateScore;
         player.globalEvents.OnKillPig -= KillPigScore;
-        if (player.Score > highScore)
+        FrameRateManager.OnChangeGameTimeScale -= OnSwitchTimeScale;
+
+        if (player.Score > highScore && !FrameRateManager.under1)
         {
             PlayerPrefs.SetInt("EndlessHighScore", player.Score);
             PlayerPrefs.Save();

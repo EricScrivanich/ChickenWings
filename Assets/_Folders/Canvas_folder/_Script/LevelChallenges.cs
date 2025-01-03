@@ -283,6 +283,8 @@ public class LevelChallenges : ScriptableObject
     {
         var c = challenges[challengeIndex];
 
+        if (FrameRateManager.under1) return false;
+
         switch (c)
         {
             case ChallengeTypes.None:

@@ -118,7 +118,16 @@ public class Level7Special : MonoBehaviour
             signs[0].SpecialRetract();
             StartCoroutine(Delay(1));
             swipeImage.gameObject.SetActive(true);
-            swipeImage.DOFade(.9f, .25f).SetUpdate(true).OnComplete(SwipeTween);
+
+            if (slideSeq != null && slideSeq.IsPlaying())
+                slideSeq.Kill();
+
+
+            slideSeq = DOTween.Sequence();
+            slideSeq.AppendInterval(.4f);
+            slideSeq.Append(swipeImage.DOFade(.9f, .25f).OnComplete(SwipeTween));
+            slideSeq.Play().SetUpdate(true);
+
 
 
 
@@ -133,7 +142,12 @@ public class Level7Special : MonoBehaviour
 
     private void SwipeTween()
     {
+        if (slideSeq != null && slideSeq.IsPlaying())
+            slideSeq.Kill();
+
+
         slideSeq = DOTween.Sequence();
+
         slideSeq.Append(swipeImage.rectTransform.DOMoveX(startSlidePos - swipeAmount, swipeDuration).From(startSlidePos));
         slideSeq.Play().SetLoops(-1).SetUpdate(true);
 

@@ -414,19 +414,42 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
 
+        // controls.Movement.EggJoystick.performed += ctx =>
+        // {
+        //     // float xMoveAmount = ctx.ReadValue<Vector2>().x;
+        //     // if (xMoveAmount < -.25f)
+        //     //     ID.events.OnAimJoystick(1);
+        //     // else if (xMoveAmount > .25f)
+        //     //     ID.events.OnAimJoystick(-1);
+
+
+        //     // ID.events.OnAimJoystick(ctx.ReadValue<Vector2>());
+        // };
+        // // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
+        // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
         controls.Movement.EggJoystick.performed += ctx =>
         {
-            float xMoveAmount = ctx.ReadValue<Vector2>().x;
-            if (xMoveAmount < -.25f)
-                ID.events.OnAimJoystick(1);
-            else if (xMoveAmount > .25f)
-                ID.events.OnAimJoystick(-1);
+            // float xMoveAmount = ctx.ReadValue<Vector2>().x;
+            // if (xMoveAmount < -.7f)
+            //     ID.events.OnAimJoystick(1);
+            // else if (xMoveAmount > .7f)
+            //     ID.events.OnAimJoystick(-1);
+
+            Vector2 moveAmount = ctx.ReadValue<Vector2>().normalized;
+            // if (xMoveAmount < -.7f)
+            //     ID.events.OnAimJoystick(1);
+            // else if (xMoveAmount > .7f)
+            //     ID.events.OnAimJoystick(-1);
+
+            ID.events.OnAimJoystick?.Invoke(moveAmount);
+
 
 
             // ID.events.OnAimJoystick(ctx.ReadValue<Vector2>());
         };
         // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
-        controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
+        // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
+        controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
 
 
 

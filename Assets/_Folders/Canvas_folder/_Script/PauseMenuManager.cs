@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using TMPro;
 
 
 
@@ -12,6 +13,16 @@ public class PauseMenuManager : MonoBehaviour
 
     // private PauseMenuButton pauseButton;
 
+    [SerializeField] private CanvasGroup gameSpeedGroup;
+    [SerializeField] private TextMeshProUGUI gameSpeedText;
+    [SerializeField] private ChallengesUIManager challenges;
+
+    [SerializeField] private Image leftArrow;
+    [SerializeField] private Image rightArrow;
+
+    private float displayedGameSpeed;
+
+
     [SerializeField] private Image DarkPanel;
 
 
@@ -19,7 +30,7 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private RectTransform target;
 
 
-    private Vector2 endPosition = new Vector2(0, -880);
+    private Vector2 endPosition = new Vector2(0, -800);
     private Vector2 startPos = new Vector2(0, 80);
 
     private Sequence sequence;
@@ -33,6 +44,7 @@ public class PauseMenuManager : MonoBehaviour
 
     private void Awake()
     {
+        displayedGameSpeed = PlayerPrefs.GetFloat("GameSpeed", 1);
         DarkPanel.GetComponent<RectTransform>().position = Vector2.zero;
         DarkPanel.gameObject.SetActive(false);
 
@@ -68,7 +80,8 @@ public class PauseMenuManager : MonoBehaviour
         if (fadeIn)
         {
             DarkPanel.gameObject.SetActive(true);
-            DarkPanel.DOFade(.65f, .5f).SetEase(Ease.InOutSine).From(0).SetUpdate(true);
+            DarkPanel.DOFade(.78f, .5f).SetEase(Ease.InOutSine).From(0).SetUpdate(true);
+            gameSpeedGroup.DOFade(1, .65f).From(0).SetUpdate(true).SetEase(Ease.InSine);
 
         }
         else
@@ -77,10 +90,96 @@ public class PauseMenuManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+
+        leftArrow.enabled = true;
+        rightArrow.enabled = true;
+        if (displayedGameSpeed <= .7f)
+            leftArrow.enabled = false;
+        else if (displayedGameSpeed >= 2)
+            rightArrow.enabled = false;
+
+        gameSpeedText.text = displayedGameSpeed.ToString("F2");
+
+    }
+    public void SaveOrDefault(bool saveNew)
+    {
+        if (saveNew)
+        {
+            PlayerPrefs.SetFloat("GameSpeed", displayedGameSpeed);
+            PlayerPrefs.Save();
+
+            if (displayedGameSpeed < .85f)
+            {
+                FrameRateManager.under085 = true;
+                FrameRateManager.under1 = true;
+
+            }
+            else if (displayedGameSpeed < 1)
+            {
+                FrameRateManager.under1 = true;
+                challenges.TurnChallengesRed();
+            }
+            FrameRateManager.OnChangeGameTimeScale?.Invoke(displayedGameSpeed >= 1);
+
+            FrameRateManager.TargetTimeScale = FrameRateManager.BaseTimeScale * PlayerPrefs.GetFloat("GameSpeed", 1);
+        }
+
+
+        else
+        {
+
+            displayedGameSpeed = 1;
+            gameSpeedText.text = displayedGameSpeed.ToString("F2");
+        }
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public void ChangeGameSpeed(bool isRight)
+    {
+        float x = .05f;
+
+
+        if (!isRight) x = -.05f;
+        displayedGameSpeed += x;
+        displayedGameSpeed = Mathf.Round(displayedGameSpeed * 100f) / 100f;
+
+        leftArrow.enabled = true;
+        rightArrow.enabled = true;
+
+        if (displayedGameSpeed <= .7f)
+            leftArrow.enabled = false;
+        else if (displayedGameSpeed >= 1.5f)
+            rightArrow.enabled = false;
+
+        gameSpeedText.text = displayedGameSpeed.ToString("F2");
+
+
+    }
+
+    public void RestoreToSavedValues()
+    {
+        displayedGameSpeed = PlayerPrefs.GetFloat("GameSpeed", 1);
+        gameSpeedText.text = displayedGameSpeed.ToString("F2");
+
+    }
+
     private IEnumerator DarkPanelFadeOut()
     {
         yield return new WaitForSecondsRealtime(.7f);
-        DarkPanel.DOFade(0, .2f).SetEase(Ease.InOutSine).From(0).SetUpdate(true).OnComplete(SetDarkPanelUnactive);
+        DarkPanel.DOFade(0, .2f).SetEase(Ease.InOutSine).SetUpdate(true).OnComplete(SetDarkPanelUnactive);
+        gameSpeedGroup.DOFade(0, .2f).SetEase(Ease.InOutSine).SetUpdate(true);
     }
 
     private void SetDarkPanelUnactive()
@@ -93,7 +192,7 @@ public class PauseMenuManager : MonoBehaviour
         PauseButtonActions.lockButtons = false;
         target.anchoredPosition = endPosition;
 
-        DarkPanel.DOFade(.4f, 0);
+        DarkPanel.DOFade(.78f, 0);
 
     }
 

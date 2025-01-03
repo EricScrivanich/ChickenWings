@@ -35,5 +35,5 @@ public struct PlayerEvents
     public Action<int> OnStopJumpAir;
     public Action<int> OnSwitchAmmoType;
 
-    public Action<int> OnAimJoystick;
+    public Action<Vector2> OnAimJoystick;
 }

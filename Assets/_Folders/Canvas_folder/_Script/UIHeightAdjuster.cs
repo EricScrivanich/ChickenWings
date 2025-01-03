@@ -227,6 +227,19 @@ public class UIHeightAdjuster : MonoBehaviour
 
     }
 
+    public void TurnRed()
+    {
+        fillImage.DOColor(colorSO.StarCardDisabledFillColor, .3f).SetUpdate(true);
+
+        outlineImage.DOColor(colorSO.StarCardDisabledOutlineColor, .3f).SetUpdate(true);
+
+        if (seq != null && seq.IsPlaying())
+            seq.Kill();
+
+        StarImage.color = disabledStarColor;
+
+    }
+
 
     private void AdjustHeight()
     {

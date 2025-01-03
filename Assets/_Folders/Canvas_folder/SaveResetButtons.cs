@@ -32,7 +32,8 @@ public class SaveResetButtons : MonoBehaviour
     [SerializeField] private Color disabledFillColor;
     private void Awake()
     {
-        group = GetComponent<CanvasGroup>();
+        if (type != 4)
+            group = GetComponent<CanvasGroup>();
         button = GetComponent<Button>();
         rect = GetComponent<RectTransform>();
 
@@ -52,6 +53,9 @@ public class SaveResetButtons : MonoBehaviour
             text.color = normalTextOutlineColor;
             outlineImage.color = normalTextOutlineColor;
         }
+
+        else if (type == 4)
+            SetPressable(4, true);
 
 
 
@@ -75,6 +79,8 @@ public class SaveResetButtons : MonoBehaviour
     {
         ButtonColorManager.OnSetSaveResetButtonPressable += SetPressable;
         ButtonColorManager.OnHideSaveDefaultButtons += Hide;
+
+        if (type == 5) SetPressable(5, false);
 
     }
     private void OnDisable()
@@ -154,6 +160,11 @@ public class SaveResetButtons : MonoBehaviour
 
         }
 
+    }
+
+    public void SetPressableButton(bool pressable)
+    {
+        SetPressable(type, pressable);
     }
 
     public void CheckIfNeedsSave()

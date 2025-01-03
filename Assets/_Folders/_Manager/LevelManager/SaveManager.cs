@@ -60,7 +60,7 @@ public class SaveManager : MonoBehaviour
             Debug.LogError("Data array is not the correct size for this level.");
             return;
         }
-
+        Debug.LogError("Updating Level Data In level saved data for some reason buh");
         // Update CompletedLevel and MasteredLevel if data contains true values
         if (data[0]) levelData.CompletedLevel = true;
         if (data[1]) levelData.MasteredLevel = true;
@@ -208,7 +208,7 @@ public class SaveManager : MonoBehaviour
         // If level data does not exist, check if sceneSO has data for this level and initialize it if so
         if (levelData == null || (levelData.ChallengeCompletion.Length < 1 && sceneSO.ReturnChallengeCountByLevel(levelId) > 0))
         {
-            Debug.Log("GETTING GROM SVAE");
+
             int challengeCount = sceneSO.ReturnChallengeCountByLevel(levelId);
 
             if (challengeCount > 0) // If sceneSO indicates there are challenges for this level

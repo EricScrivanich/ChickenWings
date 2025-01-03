@@ -20,10 +20,10 @@ public class PlayerStartingState : PlayerBaseState
         hasFinishedLocked = false;
         player.maxFallSpeed = startMaxFallSpeed;
         currentRotation = 120;
-        // player.transform.position = startPosition;
-        // player.AdjustForce(initialForce);
+        player.transform.position = startPosition;
+        player.AdjustForce(initialForce);
 
-        player.transform.position = Vector2.zero;
+        // player.transform.position = Vector2.zero;
 
 
 

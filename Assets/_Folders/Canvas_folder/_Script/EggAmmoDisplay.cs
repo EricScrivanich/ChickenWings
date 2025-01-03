@@ -14,6 +14,11 @@ public class EggAmmoDisplay : MonoBehaviour
     [SerializeField] private bool ignoreSwitch;
     [SerializeField] private bool startHidden;
 
+    [SerializeField] private Image directionArrow;
+
+    private Sequence directionArrowFadeSeq;
+    private bool startedDirection = false;
+
 
     private Image buttonImage;
     public static Action<int, int> SwitchAmmoEvent;
@@ -143,6 +148,8 @@ public class EggAmmoDisplay : MonoBehaviour
         shotgunText.color = colorSO.disabledButtonColorFull;
         startChainedGroupPosition = chainedShotgunGroup.transform.localPosition;
         endChainedGroupPosition = startChainedGroupPosition + moveAmount;
+        directionArrow.color = colorSO.normalButtonColorFull;
+        directionArrow.DOFade(0, 0);
         chainedShotgunGroup.gameObject.GetComponent<Image>().color = colorSO.normalButtonColor;
         chainedShotgunGroup.alpha = 0;
         buttonImage = GetComponent<Image>();
@@ -1078,6 +1085,49 @@ public class EggAmmoDisplay : MonoBehaviour
             player.globalEvents.OnUseChainedAmmo?.Invoke(false);
     }
 
+    private void ShowRotationArrow(Vector2 target)
+    {
+        if (!startedDirection && target != Vector2.zero)
+        {
+            if (directionArrowFadeSeq != null && directionArrowFadeSeq.IsPlaying())
+                directionArrowFadeSeq.Kill();
+
+            directionArrowFadeSeq = DOTween.Sequence();
+
+            directionArrowFadeSeq.Append(directionArrow.DOFade(1, .2f));
+            directionArrowFadeSeq.Play().SetUpdate(true);
+            startedDirection = true;
+        }
+
+        if (startedDirection)
+        {
+
+            if (target == Vector2.zero)
+            {
+                startedDirection = false;
+                if (directionArrowFadeSeq != null && directionArrowFadeSeq.IsPlaying())
+                    directionArrowFadeSeq.Kill();
+
+                directionArrowFadeSeq = DOTween.Sequence();
+
+                directionArrowFadeSeq.Append(directionArrow.DOFade(0, .1f));
+                directionArrowFadeSeq.Play().SetUpdate(true);
+
+            }
+            else
+            {
+                float targetAngle = Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg;
+
+                // Set the rotation of the arrow to match the direction
+                directionArrow.rectTransform.rotation = Quaternion.Euler(0, 0, targetAngle - 90);
+
+            }
+
+        }
+
+
+    }
+
 
 
 
@@ -1096,7 +1146,8 @@ public class EggAmmoDisplay : MonoBehaviour
         EggAmmoDisplay.HideEggButtonEvent += HideEggButton;
 
         EggAmmoDisplay.AmmoOnZero += ChangeZeroAmmo;
-        player.events.OnAimJoystick += OnRotateWithShotgun;
+        // player.events.OnAimJoystick += OnRotateWithShotgun;
+        player.events.OnAimJoystick += ShowRotationArrow;
 
 
 
@@ -1116,7 +1167,9 @@ public class EggAmmoDisplay : MonoBehaviour
         // EggUnequippedParent.OnHideEggButton -= HideEggButton;
         EggAmmoDisplay.HideEggButtonEvent -= HideEggButton;
         EggAmmoDisplay.AmmoOnZero -= ChangeZeroAmmo;
-        player.events.OnAimJoystick -= OnRotateWithShotgun;
+        // player.events.OnAimJoystick -= OnRotateWithShotgun;
+        player.events.OnAimJoystick -= ShowRotationArrow;
+
 
 
         DOTween.Kill(this);

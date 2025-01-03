@@ -120,7 +120,23 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         type = 3;
         if (lockButtons) return;
+
+        if (!SaveManager.instance.HasCompletedLevel(sceneLoader.ReturnLevelNumber()))
+        {
+            string needToCompleteAtHigherSpeed = "Complete the entire level at a speed of .85 or above for this level to count";
+            if (lockedDisplay == null)
+            {
+                var parent = GameObject.Find("Canvas").GetComponent<Transform>();
+                lockedDisplay = Instantiate(levelLockedPrefab, parent).GetComponent<LevelLockedDisplay>();
+            }
+            lockedDisplay.Show(needToCompleteAtHigherSpeed, true, true);
+            return;
+
+
+        }
         string s = SaveManager.instance.CheckAdditonalChallenges(-1);
+
+
         Debug.Log(s);
 
         if (s == null)

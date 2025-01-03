@@ -220,6 +220,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
     private float targetRotateSpeedShotgun;
+    private Vector2 targetRotationShotgun;
     // [SerializeField] private float baseRotateSpeedShotgun;
     // [SerializeField] private float lerpTargetRotateSpeedSpeed;
 
@@ -241,7 +242,33 @@ public class PlayerStateManager : MonoBehaviour
     {
 
 
+        if (mutePlayerAudio)
+            FrameRateManager.TargetTimeScale = .95f;
+        else
+        {
+            float newScale = PlayerPrefs.GetFloat("GameSpeed", 1);
+            if (newScale < .85f)
+            {
+                FrameRateManager.under085 = true;
+                FrameRateManager.under1 = true;
 
+            }
+            else if (newScale < 1)
+            {
+                FrameRateManager.under085 = false;
+                FrameRateManager.under1 = true;
+            }
+            else
+            {
+                FrameRateManager.under085 = false;
+                FrameRateManager.under1 = false;
+            }
+
+
+            FrameRateManager.TargetTimeScale = FrameRateManager.BaseTimeScale * newScale;
+            Time.timeScale = FrameRateManager.TargetTimeScale;
+
+        }
 
 
 
@@ -307,6 +334,8 @@ public class PlayerStateManager : MonoBehaviour
         Time.timeScale = FrameRateManager.TargetTimeScale;
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
         AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), mutePlayerAudio);
+
+
         HapticFeedbackManager.instance.LoadSavedData();
 
         if (ammoManager != null)
@@ -449,8 +478,28 @@ public class PlayerStateManager : MonoBehaviour
             if (!ignoreRotation)
                 currentState.RotateState(this);
 
+            // else
+            //     rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, targetRotateSpeedShotgun, 9 * Time.fixedDeltaTime);
+
             else
-                rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, targetRotateSpeedShotgun, 9 * Time.fixedDeltaTime);
+            {
+                float targetAngle = Mathf.Atan2(targetRotationShotgun.y, targetRotationShotgun.x) * Mathf.Rad2Deg;
+
+                // Get the current rotation of the Rigidbody2D
+                float currentAngle = rb.rotation;
+
+                // Calculate the shortest angle difference between the current and target angle
+                float angleDifference = Mathf.DeltaAngle(currentAngle, targetAngle);
+                if (Mathf.Abs(angleDifference) < 50) angleDifference *= 1.5f;
+
+                // Calculate the desired angular velocity to close the angle difference
+                float desiredAngularVelocity = angleDifference * 3.5f; // Adjust the multiplier (2f) to control rotation speed
+
+
+
+                // Smoothly adjust the Rigidbody2D's angular velocity
+                rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, desiredAngularVelocity, 5f * Time.fixedDeltaTime);
+            }
 
 
             // else
@@ -1356,28 +1405,20 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-    public void CalculateGlobalRotationTarget(int val)
+    // public void CalculateGlobalRotationTarget(int val)
+    public void CalculateGlobalRotationTarget(Vector2 val)
     {
-        // movingJoystick = true;
-        // // Convert joystick input to an angle
-        // shotgunAimRotationTarget = Mathf.Atan2(joystickInput.y, joystickInput.x) * Mathf.Rad2Deg;
 
-        // if (joystickInput.x < -.4f)
-        //     targetRotateSpeedShotgun = baseRotateSpeedShotgun;
-        // else if (joystickInput.x > .4f)
-        //     targetRotateSpeedShotgun = -baseRotateSpeedShotgun;
-
-        // if (joystickInput == Vector2.zero)
-        //     ignoreRotation = false;
-        // else
-        //     ignoreRotation = true;
 
 
         movingJoystick = true;
-        // Convert joystick input to an angle
 
-        if (val == 0) return;
-        targetRotateSpeedShotgun = 400 * val;
+
+        // if (val == 0) return;
+        // targetRotateSpeedShotgun = 400 * val;
+
+        if (val == Vector2.zero) return;
+        targetRotationShotgun = val;
 
         if (!ignoreRotation) ignoreRotation = true;
 

@@ -5,6 +5,7 @@ using System;
 using DG.Tweening;
 using UnityEngine.UI;
 
+
 public class ChallengesUIManager : MonoBehaviour
 {
 
@@ -19,6 +20,8 @@ public class ChallengesUIManager : MonoBehaviour
     private Sequence starSeq;
 
     private CanvasGroup group;
+
+
 
     [SerializeField] private float scaleForLevelStart;
 
@@ -67,6 +70,7 @@ public class ChallengesUIManager : MonoBehaviour
 
     void Start()
     {
+
         hasInitialized = true;
         group = GetComponent<CanvasGroup>();
 
@@ -85,7 +89,8 @@ public class ChallengesUIManager : MonoBehaviour
             if (shownType == 1)
             {
                 bool[] data = new bool[2];
-                data[0] = true;
+                if (!FrameRateManager.under085)
+                    data[0] = true;
                 data[1] = false;
                 SaveManager.instance.UpdateLevelData(sceneSO.ReturnLevelNumber(), data);
             }
@@ -118,7 +123,13 @@ public class ChallengesUIManager : MonoBehaviour
         // }
 
 
-        if (shownType == 2) padding *= .4f;
+        if (shownType == 2)
+        {
+
+            padding *= .38f;
+
+        }
+
 
 
         float currentYPosition = 0f; // Starting Y position for the first challenge
@@ -150,6 +161,18 @@ public class ChallengesUIManager : MonoBehaviour
 
         CardActionsBasedOnShownType();
 
+        if (FrameRateManager.under1) TurnChallengesRed();
+
+    }
+
+    public void TurnChallengesRed()
+    {
+        if (challengeCards == null || challengeCards.Length <= 0)
+            return;
+        foreach (var item in challengeCards)
+        {
+            item.TurnRed();
+        }
     }
 
     public void FadeOut(float dur)
@@ -330,14 +353,20 @@ public class ChallengesUIManager : MonoBehaviour
     {
         int challengeCount = currentLevelChallenge.GetAmountOfChallenges();
         bool[] data = new bool[challengeCount + 2];
+        Debug.LogError("Checking Level Complettion Bruh");
+        if (!FrameRateManager.under085)
+        {
+            data[0] = true;
+        }
 
 
-        data[0] = true;
+
         bool completedAll = true;
 
         for (int i = 0; i < challengeCount; i++)
         {
             bool complete = currentLevelChallenge.CheckChallengeCompletion(i);
+            if (FrameRateManager.under1) complete = false;
 
             if (!complete) completedAll = false;
 
