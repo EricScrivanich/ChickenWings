@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -11,6 +12,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback allows you to chain any number of target MMF Players and play them in sequence, with optional delays before and after")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Feedbacks/MMF Player Chain")]
 	public class MMF_PlayerChain : MMF_Feedback
 	{
@@ -30,6 +32,9 @@ namespace MoreMountains.Feedbacks
 			/// whether this player is active in the list or not. Inactive players will be skipped when playing the chain of players
 			[Tooltip("whether this player is active in the list or not. Inactive players will be skipped when playing the chain of players")]
 			public bool Inactive = false;
+			/// if this is true, the sequence will be blocked until this player has completed playing
+			[Tooltip("if this is true, the sequence will be blocked until this player has completed playing")]
+			public bool WaitUntilComplete = true;
 		}
 		
 		/// a static bool used to disable all feedbacks of this type at once
@@ -95,6 +100,7 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		protected virtual IEnumerator PlayChain()
 		{
+			IsPlaying = true;
 			foreach (PlayerChainItem item in Players)
 			{
 				if ((item == null) || (item.TargetPlayer == null) || item.Inactive)
@@ -104,11 +110,40 @@ namespace MoreMountains.Feedbacks
 
 				if (item.Delay.x > 0) { yield return WaitFor(item.Delay.x); }
 				
-				item.TargetPlayer.PlayFeedbacks();
-				yield return WaitFor(item.TargetPlayer.TotalDuration);
+				if (item.WaitUntilComplete) 
+				{
+					item.TargetPlayer.PlayFeedbacks();
+					yield return WaitFor(item.TargetPlayer.TotalDuration);
+					while (item.TargetPlayer.IsPlaying)
+					{
+						yield return null;
+					}
+				} 
+				else 
+				{
+					item.TargetPlayer.PlayFeedbacks();
+				}
 				
 				if (item.Delay.y > 0) { yield return WaitFor(item.Delay.y); }
 			}
+			while (FeedbacksStillPlaying())
+			{
+				yield return null;
+			}
+			IsPlaying = false;
+		}
+	
+		protected virtual bool FeedbacksStillPlaying()
+		{
+			bool feedbacksStillPlaying = false;
+			foreach (PlayerChainItem item in Players)
+			{
+				if (item.TargetPlayer.IsPlaying)
+				{
+					feedbacksStillPlaying = true;
+				}
+			}
+			return feedbacksStillPlaying;
 		}
 
 		/// <summary>

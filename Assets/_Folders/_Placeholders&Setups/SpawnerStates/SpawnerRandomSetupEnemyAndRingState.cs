@@ -71,6 +71,8 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
 
     public override void ExitState(SpawnStateManager spawner)
     {
+        Debug.LogError("Exit Ring State");
+
         completedRings = false;
         currentTriggerAmount = 0;
 
@@ -101,8 +103,11 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
     }
     public override void SetupHitTarget(SpawnStateManager spawner)
     {
+        Debug.LogError("Set hit tar");
+
         if (breakSafe)
         {
+            Debug.LogError("USING break safe SRSER 106");
             spawner.SwitchStateWithLogic();
             return;
         }
@@ -135,6 +140,8 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
 
     public override void RingsFinished(SpawnStateManager spawner, int type, bool isCorrect)
     {
+        Debug.LogError("Ring Finsished");
+
         // if (isCorrect)
         // {
 
@@ -164,6 +171,8 @@ public class SpawnerRandomSetupEnemyAndRingState : SpawnBaseState
                 breakSafe = true;
                 if (canContinue)
                 {
+                    Debug.LogError("Continue SRSER 106");
+
                     spawner.SwitchStateWithLogic();
                 }
             }

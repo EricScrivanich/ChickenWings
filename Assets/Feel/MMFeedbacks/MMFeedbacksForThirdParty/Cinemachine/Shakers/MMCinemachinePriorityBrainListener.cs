@@ -2,6 +2,8 @@
 using UnityEngine;
 #if MM_CINEMACHINE
 using Cinemachine;
+#elif MM_CINEMACHINE3
+using Unity.Cinemachine;
 #endif
 using MoreMountains.Feedbacks;
 
@@ -10,8 +12,8 @@ namespace MoreMountains.FeedbacksForThirdParty
 	/// <summary>
 	/// Add this to a Cinemachine brain and it'll be able to accept custom blend transitions (used with MMFeedbackCinemachineTransition)
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Cinemachine/MMCinemachinePriorityBrainListener")]
-	#if MM_CINEMACHINE
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Cinemachine/MM Cinemachine Priority Brain Listener")]
+	#if MM_CINEMACHINE || MM_CINEMACHINE3
 	[RequireComponent(typeof(CinemachineBrain))]
 	#endif
 	public class MMCinemachinePriorityBrainListener : MonoBehaviour
@@ -24,9 +26,10 @@ namespace MoreMountains.FeedbacksForThirdParty
 		public virtual float GetTime() { return (TimescaleMode == TimescaleModes.Scaled) ? Time.time : Time.unscaledTime; }
 		public virtual float GetDeltaTime() { return (TimescaleMode == TimescaleModes.Scaled) ? Time.deltaTime : Time.unscaledDeltaTime; }
     
-		#if MM_CINEMACHINE    
+		#if MM_CINEMACHINE || MM_CINEMACHINE3
 		protected CinemachineBrain _brain;
 		protected CinemachineBlendDefinition _initialDefinition;
+		#endif
 		protected Coroutine _coroutine;
 
 		/// <summary>
@@ -34,9 +37,12 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// </summary>
 		protected virtual void Awake()
 		{
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
 			_brain = this.gameObject.GetComponent<CinemachineBrain>();
+			#endif
 		}
 
+		#if MM_CINEMACHINE || MM_CINEMACHINE3
 		/// <summary>
 		/// When getting an event we change our default transition if needed
 		/// </summary>
@@ -56,13 +62,26 @@ namespace MoreMountains.FeedbacksForThirdParty
 				}
 				else
 				{
+					#if MM_CINEMACHINE
 					_initialDefinition = _brain.m_DefaultBlend;
+					#elif MM_CINEMACHINE3
+					_initialDefinition = _brain.DefaultBlend;
+					#endif
 				}
-				_brain.m_DefaultBlend = blendDefinition;
+				#if MM_CINEMACHINE
+					_brain.m_DefaultBlend = blendDefinition;
+				#elif MM_CINEMACHINE3
+					_brain.DefaultBlend = blendDefinition;
+				#endif
 				TimescaleMode = timescaleMode;
-				_coroutine = StartCoroutine(ResetBlendDefinition(blendDefinition.m_Time));                
+				#if MM_CINEMACHINE
+				_coroutine = StartCoroutine(ResetBlendDefinition(blendDefinition.m_Time));    
+				#elif MM_CINEMACHINE3
+				_coroutine = StartCoroutine(ResetBlendDefinition(blendDefinition.Time));    
+				#endif            
 			}
 		}
+		#endif
 
 		/// <summary>
 		/// a coroutine used to reset the default transition to its initial value
@@ -75,7 +94,11 @@ namespace MoreMountains.FeedbacksForThirdParty
 			{
 				yield return null;
 			}
+			#if MM_CINEMACHINE
 			_brain.m_DefaultBlend = _initialDefinition;
+			#elif MM_CINEMACHINE3
+			_brain.DefaultBlend = _initialDefinition;
+			#endif
 			_coroutine = null;
 		}
 
@@ -85,7 +108,9 @@ namespace MoreMountains.FeedbacksForThirdParty
 		protected virtual void OnEnable()
 		{
 			_coroutine = null;
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
 			MMCinemachinePriorityEvent.Register(OnMMCinemachinePriorityEvent);
+			#endif
 		}
 
 		/// <summary>
@@ -98,8 +123,9 @@ namespace MoreMountains.FeedbacksForThirdParty
 				StopCoroutine(_coroutine);
 			}
 			_coroutine = null;
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
 			MMCinemachinePriorityEvent.Unregister(OnMMCinemachinePriorityEvent);
+			#endif
 		}
-		#endif
 	}
 }

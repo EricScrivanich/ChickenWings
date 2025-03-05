@@ -5,6 +5,9 @@ using UnityEngine;
 public class HeliDamaged : MonoBehaviour, IDamageable
 {
     [SerializeField] private HelicopterID ID;
+
+    public bool CanPerfectScythe => false;
+
     // public void Damage(int damageAmount)
     // {
 

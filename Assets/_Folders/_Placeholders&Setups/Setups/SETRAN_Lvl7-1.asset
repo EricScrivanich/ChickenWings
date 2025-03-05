@@ -12,27 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0e5791ba2244ff68bc8cac128cb9fc, type: 3}
   m_Name: SETRAN_Lvl7-1
   m_EditorClassIdentifier: 
+  eventCallBack_Trigger_ID_Delay: []
+  eggTriggerAndIndexAndType: []
+  eggPosition: []
+  eggSpeed: []
   mustCompleteRingSequence: 0
   enemyTriggerForEachRingIndex: 
+  enemyTriggerForEachRingIndexWeights: 
   enemySetup:
   - dataArray:
-    - rid: 3018405038736801800
-    - rid: 3018405038736801801
+    - rid: 1213214777865404676
+    - rid: 1213214777865404677
   - dataArray:
     - rid: 3018405060841308171
     - rid: 3018405060841308172
   - dataArray:
-    - rid: 3018405060841308175
-    - rid: 3018405060841308176
+    - rid: 1213214777865404678
+    - rid: 1213214777865404679
   collectableSetup: []
   isRandomSetup: 1
+  testFromTrigger: 0
+  startTestTrigger: 0
+  ignoreXTriggetTime: 0
+  XTriggerForRecording: 0
   references:
     version: 2
     RefIds:
-    - rid: 3018405038736801800
+    - rid: 1213214777865404676
       type: {class: JetPackPigSO, ns: , asm: Assembly-CSharp}
       data:
-        TimeToTrigger: 1.3345795
+        TimeToTrigger: 0
         data:
         - position: {x: 14.5, y: -3.18}
           scale: {x: 0.9, y: 0.85, z: 1}
@@ -43,13 +52,7 @@ MonoBehaviour:
         - position: {x: 18.18, y: 2.13}
           scale: {x: 0.9, y: 0.85, z: 1}
           speed: 10
-        - position: {x: 18.18, y: -1.87}
-          scale: {x: 0.9, y: 0.85, z: 1}
-          speed: 10
-        - position: {x: 21.28, y: -0.65}
-          scale: {x: 0.87, y: 0.8, z: 1}
-          speed: 10.7
-    - rid: 3018405038736801801
+    - rid: 1213214777865404677
       type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
       data:
         TimeToTrigger: 5.7
@@ -58,6 +61,32 @@ MonoBehaviour:
           scale: {x: 1.2, y: 1.2, z: 1.2}
           speed: 4.2
           hasHammer: 1
+    - rid: 1213214777865404678
+      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 5.8
+        data:
+        - position: {x: 21, y: -0.73}
+          scale: {x: 1.1, y: 1.1, z: 1.1}
+          speed: 3.8
+          hasHammer: 1
+    - rid: 1213214777865404679
+      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
+      data:
+        TimeToTrigger: 0
+        data:
+        - position: {x: 13.37, y: 2.39}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4.8
+          yForce: 5.8
+          distanceToFlap: 1
+          startingFallSpot: -1
+        - position: {x: 15.82, y: -1.77}
+          scale: {x: 0.9, y: 0.9, z: 0.9}
+          speed: 4.4
+          yForce: 6.2
+          distanceToFlap: 0.8
+          startingFallSpot: 1
     - rid: 3018405060841308171
       type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
       data:
@@ -83,30 +112,4 @@ MonoBehaviour:
           speed: 4.5
           yForce: 6.3
           distanceToFlap: 1.2
-          startingFallSpot: 1
-    - rid: 3018405060841308175
-      type: {class: TenderizerPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 5.6
-        data:
-        - position: {x: 21, y: -0.73}
-          scale: {x: 1.1, y: 1.1, z: 1.1}
-          speed: 3.8
-          hasHammer: 1
-    - rid: 3018405060841308176
-      type: {class: BigPigSO, ns: , asm: Assembly-CSharp}
-      data:
-        TimeToTrigger: 2.0045455
-        data:
-        - position: {x: 12.71, y: 1.54}
-          scale: {x: 0.9, y: 0.9, z: 0.9}
-          speed: 4.8
-          yForce: 5.8
-          distanceToFlap: 1
-          startingFallSpot: -1
-        - position: {x: 15.82, y: -1.77}
-          scale: {x: 0.9, y: 0.9, z: 0.9}
-          speed: 4.4
-          yForce: 6.2
-          distanceToFlap: 0.8
           startingFallSpot: 1

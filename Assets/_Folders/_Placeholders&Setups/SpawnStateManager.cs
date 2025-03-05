@@ -394,6 +394,8 @@ public class SpawnStateManager : MonoBehaviour
     public void SwitchStateWithLogic()
     {
         int type = 0;
+        Debug.LogError("Trying to swichch state with logic");
+
         // if (!transitionLogic.loopStates)
         // {
         //     type = transitionLogic.GetRandomSequenceIndex();
@@ -470,11 +472,15 @@ public class SpawnStateManager : MonoBehaviour
 
         if (currentState != null)
             currentState.EnterState(this);
+        Debug.LogError("Enteted current state");
+
 
         // currentTransitionLogicIndex++;
 
         if (transitionLogic.CheckForNewIntensity())
             currentRandomSpawnIntensityData.CheckForNextTranstion();
+        Debug.LogError("Checked for next Tran");
+
 
         // if (currentTransitionLogicIndex >= transitionLogic.OrderedSequnece.Length)
         // {
@@ -766,9 +772,20 @@ public class SpawnStateManager : MonoBehaviour
     #region EventListeners
     private void SetNewTransitionLogic(SpawnStateTransitionLogic logic, bool revert)
     {
+        Debug.LogError("Setting New Tran Logic");
+
         if (logic == null && prevTransitonLogic == null) return;
 
-        if (logic == null) transitionLogic = prevTransitonLogic;
+        if (logic == null)
+        {
+            Debug.LogError("NULL Logic");
+
+            if (prevTransitonLogic != null)
+                transitionLogic = prevTransitonLogic;
+
+            else Debug.LogError("NO PREV LOGIC SSM 776");
+        }
+
 
         else
         {
@@ -838,9 +855,11 @@ public class SpawnStateManager : MonoBehaviour
     private void SetNewIntensity(RandomSpawnIntensity newIntensitySet, bool returningToPrev)
     {
 
+        Debug.LogError("ABOUT TO SET INTNTIY SSM 848");
         currentRandomSpawnIntensityData = newIntensitySet;
         // if (!returningToPrev)
         newIntensitySet.EnterIntensity();
+        Debug.LogError("JUST ENTERED INNTNT SSM 852");
         if (newIntensitySet.missileBasePigChance > 0 && MissilePigTimer == null && canSpawnMissilePig == false)
             MissilePigTimer = StartCoroutine(MissilePigTimerCoroutine(newIntensitySet.minMissilePigDelay));
         Debug.Log("Set Intensity: " + currentRandomSpawnIntensityData);
@@ -850,8 +869,11 @@ public class SpawnStateManager : MonoBehaviour
         //     currentTransitionLogicIndex = newIntensitySet.OverrideStateTransiton - 1;
         //     transitionLogicOverriden = true;
         // }
+        Debug.LogError("BOUTTO SET RANDOM SSM 862");
 
         pureRandomEnemyState.SetNewIntensity(this, currentRandomSpawnIntensityData);
+        Debug.LogError("FINSIHSED SET NEW INTENSTIRY");
+
 
     }
 
@@ -1069,6 +1091,30 @@ public class SpawnStateManager : MonoBehaviour
         normalPigIndex++;
     }
 
+    public void GetPigNew(RecordedDataStruct d)
+    {
+        if (normalPigIndex >= normalPig.Length) normalPigIndex = 0;
+        var script = normalPig[normalPigIndex];
+        if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
+
+        script.RetrieveRecordedData(d);
+        normalPigIndex++;
+
+    }
+
+    // public void GetBigPigNew(RecordedDataStruct d)
+    // {
+    //     if (bigPigIndex >= bigPig.Length) bigPigIndex = 0;
+    //     var script = bigPig[bigPigIndex];
+    //     if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
+
+    //     script.RetrieveRecordedData(d);
+
+       
+    //     bigPigIndex++;
+    // }
+
+
     public void GetPilotPig(Vector2 pos, Vector3 scale, float speed, int flightMode, float minY, float maxY, float yForce, float maxYSpeed, float xTrigger)
     {
         if (pilotPigIndex >= pilotPig.Length) pilotPigIndex = 0;
@@ -1219,6 +1265,8 @@ public class SpawnStateManager : MonoBehaviour
         }
 
     }
+
+   
 
     public void GetHotAirBalloon(Vector2 position, int type, float xTrigger, float yTarget, float speed, float delay)
     {

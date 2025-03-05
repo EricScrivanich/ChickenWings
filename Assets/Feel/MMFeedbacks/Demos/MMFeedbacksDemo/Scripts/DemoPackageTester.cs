@@ -8,13 +8,14 @@ namespace MoreMountains.Feedbacks
 	/// This class, meant to be used in MMFeedbacks demos, will check for requirements, and output an
 	/// error message if necessary.
 	/// </summary>
+	[AddComponentMenu("")]
 	public class DemoPackageTester : MonoBehaviour
 	{
 		[MMFInformation("This component is only used to display an error in the console in case dependencies for this demo haven't been installed. You can safely remove it if you want, and typically you wouldn't want to keep that in your own game.", MMFInformationAttribute.InformationType.Warning, false)]
 		/// does the scene require post processing to be installed?
 		public bool RequiresPostProcessing;
 		/// does the scene require TextMesh Pro to be installed?
-		public bool RequiresTMP;
+		// public bool RequiresTMP;
 		/// does the scene require Cinemachine to be installed?
 		public bool RequiresCinemachine;
 
@@ -39,16 +40,16 @@ namespace MoreMountains.Feedbacks
 			bool missingDependencies = false;
 			string missingString = "";
 			bool cinemachineFound = false;
-			bool tmpFound = false;
+			//bool tmpFound = false;
 			bool postProcessingFound = false;
             
-			#if MM_CINEMACHINE
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
 			cinemachineFound = true;
 			#endif
                         
-			#if MM_TEXTMESHPRO
+			/*#if MM_UGUI2
 			tmpFound = true;
-			#endif
+			#endif*/
                         
 			#if MM_POSTPROCESSING
 			postProcessingFound = true;
@@ -65,12 +66,12 @@ namespace MoreMountains.Feedbacks
 				missingString += "Cinemachine";
 			}
 
-			if (RequiresTMP && !tmpFound)
+			/*if (RequiresTMP && !tmpFound)
 			{
 				missingDependencies = true;
 				if (missingString != "") { missingString += ", "; }
 				missingString += "TextMeshPro";
-			}
+			}*/
             
 			if (RequiresPostProcessing && !postProcessingFound)
 			{

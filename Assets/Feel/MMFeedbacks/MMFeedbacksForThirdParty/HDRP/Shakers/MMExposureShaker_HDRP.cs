@@ -14,7 +14,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_HDRP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMExposureShaker_HDRP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Exposure Shaker HDRP")]
 	public class MMExposureShaker_HDRP : MMShaker
 	{
 		[MMInspectorGroup("Exposure Intensity", true, 46)]

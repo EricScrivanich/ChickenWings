@@ -8,7 +8,7 @@ namespace MoreMountains.Feedbacks
 	/// <summary>
 	/// Add this to an audio distortion low pass to shake its values remapped along a curve 
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Audio/MMAudioFilterLowPassShaker")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Audio/MM Audio Filter Low Pass Shaker")]
 	[RequireComponent(typeof(AudioLowPassFilter))]
 	public class MMAudioFilterLowPassShaker : MMShaker
 	{

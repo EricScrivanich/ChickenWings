@@ -1,7 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using MoreMountains.Feedbacks;
+using UnityEngine.Scripting.APIUpdating;
+#if MM_HDRP
+using UnityEngine.Rendering.HighDefinition;
+#endif
 
 namespace MoreMountains.FeedbacksForThirdParty
 {
@@ -14,6 +16,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_HDRP
 	[FeedbackPath("PostProcess/Color Adjustments HDRP")]
 	#endif
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.HDRP")]
 	[FeedbackHelp("This feedback allows you to control color adjustments' post exposure, hue shift, saturation and contrast over time. " +
 	              "It requires you have in your scene an object with a Volume " +
 	              "with Color Adjustments active, and a MMColorAdjustmentsShaker_HDRP component.")]
@@ -24,6 +27,8 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// sets the inspector color for this feedback        
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.PostProcessColor; } }
+		public override bool HasCustomInspectors => true;
+		public override bool HasAutomaticShakerSetup => true;
 		#endif
         
 		/// the duration of this feedback is the duration of the shake
@@ -182,6 +187,16 @@ namespace MoreMountains.FeedbacksForThirdParty
 				ColorFilterMode, ColorFilterGradient, ColorFilterDestination, ColorFilterCurve,
 				FeedbackDuration,
 				RelativeIntensity, channelData:ChannelData, restore:true);
+		}
+		
+		/// <summary>
+		/// Automaticall sets up the post processing profile and shaker
+		/// </summary>
+		public override void AutomaticShakerSetup()
+		{
+			#if MM_HDRP && UNITY_EDITOR
+			MMHDRPHelpers.GetOrCreateVolume<ColorAdjustments, MMColorAdjustmentsShaker_HDRP>(Owner, "ColorAdjustments");
+			#endif
 		}
 	}
 }

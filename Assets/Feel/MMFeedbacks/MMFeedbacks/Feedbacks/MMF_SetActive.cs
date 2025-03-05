@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback allows you to change the state of the target gameobject from active to inactive (or the opposite), on init, play, stop or reset. For each of these you can specify if you want to force a state (active or inactive), or toggle it (active becomes inactive, inactive becomes active).")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("GameObject/Set Active")]
 	public class MMF_SetActive : MMF_Feedback
 	{
@@ -17,10 +19,25 @@ namespace MoreMountains.Feedbacks
 		public static bool FeedbackTypeAuthorized = true;
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
-		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.GameObjectColor; } }
-		public override bool EvaluateRequiresSetup() { return (TargetGameObject == null); }
-		public override string RequiredTargetText { get { return TargetGameObject != null ? TargetGameObject.name : "";  } }
-		public override string RequiresSetupText { get { return "This feedback requires that a TargetGameObject be set to be able to work properly. You can set one below."; } }
+		public override Color FeedbackColor => MMFeedbacksInspectorColors.GameObjectColor; 
+		public override bool EvaluateRequiresSetup() => (TargetGameObject == null); 
+		public override string RequiredTargetText => TargetGameObject != null ? TargetGameObject.name : "";
+		public override string RequiredTargetTextExtra
+		{
+			get
+			{
+				if (ExtraTargetGameObjects == null)
+				{
+					return "";
+				}
+				if (ExtraTargetGameObjects.Count > 0)
+				{
+					return " (+"+ExtraTargetGameObjects.Count+")";
+				}
+				return "";
+			}
+		}
+		public override string RequiresSetupText => "This feedback requires that a TargetGameObject be set to be able to work properly. You can set one below."; 
 		#endif
 		public override bool HasAutomatedTargetAcquisition => true;
 		protected override void AutomateTargetAcquisition() => TargetGameObject = FindAutomatedTargetGameObject();
@@ -34,7 +51,7 @@ namespace MoreMountains.Feedbacks
 		public GameObject TargetGameObject;
 		/// a list of extra gameobjects we want to change the active state of
 		[Tooltip("a list of extra gameobjects we want to change the active state of")]
-		public List<GameObject> ExtraTargetGameObjects;
+		public List<GameObject> ExtraTargetGameObjects = new List<GameObject>();
         
 		[MMFInspectorGroup("States", true, 14)]
 		/// whether or not we should alter the state of the target object on init
@@ -96,12 +113,15 @@ namespace MoreMountains.Feedbacks
 			if (Active && (TargetGameObject != null))
 			{
 				_initialState = TargetGameObject.activeInHierarchy;
-				
-				for (int i = 0; i < ExtraTargetGameObjects.Count; i++)
-				{
-					_initialStates.Add(ExtraTargetGameObjects[i].activeInHierarchy);
-				}
 
+				if (ExtraTargetGameObjects != null)
+				{
+					for (int i = 0; i < ExtraTargetGameObjects.Count; i++)
+					{
+						_initialStates.Add(ExtraTargetGameObjects[i].activeInHierarchy);
+					}	
+				}
+				
 				if (SetStateOnInit)
 				{
 					SetStatus(StateOnInit);

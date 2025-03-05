@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 #if MM_CINEMACHINE
 using Cinemachine;
+#elif MM_CINEMACHINE3
+using Unity.Cinemachine;
 #endif
 using MoreMountains.Feedbacks;
 using MoreMountains.Tools;
@@ -10,9 +12,11 @@ namespace MoreMountains.FeedbacksForThirdParty
 	/// <summary>
 	/// This class will allow you to trigger zooms on your cinemachine camera by sending MMCameraZoomEvents from any other class
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Cinemachine/MMCinemachineFreeLookZoom")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Cinemachine/MM Cinemachine Free Look Zoom")]
 	#if MM_CINEMACHINE
 	[RequireComponent(typeof(Cinemachine.CinemachineFreeLook))]
+	#elif MM_CINEMACHINE3
+	[RequireComponent(typeof(CinemachineCamera))]
 	#endif
 	public class MMCinemachineFreeLookZoom : MonoBehaviour
 	{
@@ -64,6 +68,9 @@ namespace MoreMountains.FeedbacksForThirdParty
 		
 		#if MM_CINEMACHINE
 		protected Cinemachine.CinemachineFreeLook _freeLookCamera;
+		#elif MM_CINEMACHINE3
+		protected CinemachineCamera _freeLookCamera;
+		#endif
 		protected float _initialFieldOfView;
 		protected MMCameraZoomModes _mode;
 		protected bool _zooming = false;
@@ -83,8 +90,13 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// </summary>
 		protected virtual void Awake()
 		{
+			#if MM_CINEMACHINE
 			_freeLookCamera = this.gameObject.GetComponent<Cinemachine.CinemachineFreeLook>();
 			_initialFieldOfView = _freeLookCamera.m_Lens.FieldOfView;
+			#elif MM_CINEMACHINE3
+			_freeLookCamera = this.gameObject.GetComponent<CinemachineCamera>();
+			_initialFieldOfView = _freeLookCamera.Lens.FieldOfView;
+			#endif
 		}	
         
 		/// <summary>
@@ -101,7 +113,11 @@ namespace MoreMountains.FeedbacksForThirdParty
 			if (_elapsedTime <= _transitionDuration)
 			{
 				float t = MMMaths.Remap(_elapsedTime, 0f, _transitionDuration, 0f, 1f);
+				#if MM_CINEMACHINE
 				_freeLookCamera.m_Lens.FieldOfView = Mathf.LerpUnclamped(_startFieldOfView, _targetFieldOfView, ZoomTween.Evaluate(t));
+				#elif MM_CINEMACHINE3
+				_freeLookCamera.Lens.FieldOfView = Mathf.LerpUnclamped(_startFieldOfView, _targetFieldOfView, ZoomTween.Evaluate(t));
+				#endif
 			}
 			else
 			{
@@ -146,7 +162,12 @@ namespace MoreMountains.FeedbacksForThirdParty
 			_elapsedTime = 0f;
 			_mode = mode;
 
-			_startFieldOfView = _freeLookCamera.m_Lens.FieldOfView;
+			#if MM_CINEMACHINE
+				_startFieldOfView = _freeLookCamera.m_Lens.FieldOfView;
+			#elif MM_CINEMACHINE3
+				_startFieldOfView = _freeLookCamera.Lens.FieldOfView;
+			#endif
+			
 			_transitionDuration = transitionDuration;
 			_duration = duration;
 			_transitionDuration = transitionDuration;
@@ -207,7 +228,11 @@ namespace MoreMountains.FeedbacksForThirdParty
 			}
 			if (restore)
 			{
+				#if MM_CINEMACHINE
 				_freeLookCamera.m_Lens.FieldOfView = _initialFieldOfView;
+				#elif MM_CINEMACHINE3
+				_freeLookCamera.Lens.FieldOfView = _initialFieldOfView;
+				#endif
 				return;
 			}
 			this.Zoom(mode, newFieldOfView, transitionDuration, duration, relative, tweenType);
@@ -228,6 +253,5 @@ namespace MoreMountains.FeedbacksForThirdParty
 		{
 			MMCameraZoomEvent.Unregister(OnCameraZoomEvent);
 		}
-		#endif
 	}
 }

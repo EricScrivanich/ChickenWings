@@ -14,7 +14,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_HDRP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMDepthOfFieldShaker_HDRP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Depth Of Field Shaker HDRP")]
 	public class MMDepthOfFieldShaker_HDRP : MMShaker
 	{
 		[MMInspectorGroup("Focus Distance", true, 53)]

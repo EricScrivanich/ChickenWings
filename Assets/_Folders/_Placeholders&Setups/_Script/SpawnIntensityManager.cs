@@ -140,35 +140,36 @@ public class SpawnIntensityManager : MonoBehaviour
         {
 
 
-
+            // return;
 
 
             int newIntensityIndex = 0;
+            Debug.LogError("StartingFORLOOP L 147");
 
             for (int i = 0; i < nextIntentisityObjectiveValues.Length; i++)
             {
-                if (currentObjectivesObtained >= nextIntentisityObjectiveValues[i])
+                if (currentObjectivesObtained > nextIntentisityObjectiveValues[i])
                 {
                     if (!spawnIntensitiesNormal[i].hasCompleted)
                     {
                         newIntensityIndex = i; // Update to the most recent true statement
                         if (spawnIntensitiesNormal[i].mustComplete && !spawnIntensitiesNormal[i].hasCompleted)
                         {
-                            Debug.LogError("WE GOTTA FINSIH another first bud");
+                            Debug.LogError("WE GOTTA FINSIH another first bud L 157");
                             break;
                         }
 
 
 
 
-                        Debug.Log("SetNewIntensity From Update Objective: " + i);
+                        Debug.LogError("SetNewIntensity From Update Objective:  L 164" + i);
                     }
 
 
                 }
                 else
                 {
-                    Debug.Log("But why tho bruh");
+                    Debug.LogError("But why tho bruh L 171");
                     break; // Stop checking if the condition is not met
                 }
             }
@@ -182,6 +183,8 @@ public class SpawnIntensityManager : MonoBehaviour
 
             if (currentIntensityIndex < spawnIntensitiesNormal.Length)
             {
+                Debug.LogError("WE about to set instnesity L 186, current int is: " + currentIntensityIndex);
+
                 lvlID.SetNewIntensity(currentIntensityIndex);
                 var intensity = spawnIntensitiesNormal[currentIntensityIndex];
                 ignoreNextIntensityTrigger = intensity.IgnoreItensityTriggers;
@@ -338,6 +341,7 @@ public class SpawnIntensityManager : MonoBehaviour
 
         if (lives == 1 && spawnIntensitiesHealth.Length > 0 && canSpawnHealthRings)
         {
+
             waitingOnHealth = false;
             Debug.Log("Set NEW Intesntiy from Health override");
             canSpawnHealthRings = false;

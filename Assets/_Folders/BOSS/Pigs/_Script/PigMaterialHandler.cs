@@ -9,6 +9,16 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     // 0 normal, 1 jetPack, 2 bigPig, 3 tenderizer
 
     [SerializeField] private PlayerID player;
+    // [SerializeField] private SpriteRenderer headSprite;
+    [SerializeField] private GameObject enableObjectOnDeath;
+    [SerializeField] private GameObject disableObjectOnDeath;
+   
+
+    [SerializeField] private int health = 1;
+    [SerializeField] private float totalDamageTime;
+
+    private int currentHealth;
+    private bool isStuck;
 
 
     [Header("0-Normal; 1-Jetpack; 2-BigPig; 3-Tenderizer; 4-Pilot; 5- Missile; 6-BomberPlane; 7-Flappy; 8-Gas; 9-Balloon")]
@@ -27,14 +37,13 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     [SerializeField] private SpriteRenderer[] sprites;
     [SerializeField] private Material pigMaterial;
     [SerializeField] private Material defaultMat;
-    [SerializeField] private Transform body;
+
     private Material instanceMaterial;
 
     private bool hasCrossedScreen;
+    private bool canPerfectScythe;
 
-
-
-
+    public bool CanPerfectScythe => !isHit;
 
     private void Awake()
     {
@@ -46,6 +55,21 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     private void Start()
     {
         explosionPool = PoolKit.GetPool("ExplosionPool");
+
+        if (health > 1)
+        {
+            instanceMaterial = new Material(pigMaterial);
+            instanceMaterial.SetFloat("_HitEffectBlend", 0);
+
+
+            foreach (var pig in sprites)
+            {
+                pig.material = instanceMaterial;
+            }
+
+        }
+
+
 
 
 
@@ -80,6 +104,10 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     {
         if (pigType != 7)
             Ticker.OnTickAction015 += Tick;
+
+
+
+        currentHealth = health;
         initialScale = transform.localScale.x;
 
         hasCrossedScreen = false;
@@ -94,6 +122,11 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
                 col.enabled = true;
             }
             isHit = false;
+            isStuck = false;
+
+            if (enableObjectOnDeath != null) enableObjectOnDeath.SetActive(false);
+            if (disableObjectOnDeath != null) disableObjectOnDeath.SetActive(true);
+
         }
 
         // if (isScalable)
@@ -132,27 +165,69 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     public void Damage(int damageAmount, int type, int id)
     {
-        if (!isHit)
+        if (!isHit && (!isStuck || type == 4))
         {
+
+            if (damageAmount == -1)
+            {
+                AudioManager.instance.PlayScytheHitNoise(true);
+                isStuck = true;
+                player.globalEvents.OnScythePig?.Invoke(this, pigType);
+                return;
+            }
+
+            if (type == 3) AudioManager.instance.PlayScytheHitNoise(false);
             isHit = true;
+
+            if (enableObjectOnDeath != null) enableObjectOnDeath.SetActive(true);
+            if (disableObjectOnDeath != null) disableObjectOnDeath.SetActive(false);
+
+
             AudioManager.instance.PlayPigDeathSound(pigTypeAudio);
-            player.AddKillPig(pigType, type, id);
+
+            currentHealth -= damageAmount;
 
 
 
-            instanceMaterial = new Material(pigMaterial);
-            foreach (var col in colls)
+
+            if (currentHealth <= 0)
             {
-                col.enabled = false;
+
+                player.AddKillPig(pigType, type, id);
+
+
+
+
+                foreach (var col in colls)
+                {
+                    col.enabled = false;
+                }
+
+                if (health <= 1)
+                {
+                    instanceMaterial = new Material(pigMaterial);
+
+                    foreach (var pig in sprites)
+                    {
+                        pig.material = instanceMaterial;
+                    }
+
+                }
+
+
+                StartCoroutine(Explode(.45f));
+
+            }
+            else
+            {
+                foreach (var col in colls)
+                {
+                    col.enabled = false;
+                }
+                StartCoroutine(DamageCor(totalDamageTime));
             }
 
-            foreach (var pig in sprites)
-            {
-                pig.material = instanceMaterial;
-            }
 
-
-            StartCoroutine(Explode(.45f));
         }
         // instanceMaterial.SetColor("_ColorChangeNewCol", new Color(Random.Range(250, 255), Random.Range(80, 170), Random.Range(160, 180), 1));
     }
@@ -209,6 +284,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
             yield return null;
         }
         player.globalEvents.OnKillPig?.Invoke(pigType);
+        isStuck = false;
 
         gameObject.SetActive(false);
         // Ensure the final values are set
@@ -218,6 +294,49 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         Destroy(instanceMaterial);
 
 
+    }
+
+    private IEnumerator DamageCor(float time)
+    {
+        float elapsedTime = 0.0f;
+        float cycleTime = time / 3f; // Divide the total time into 3 cycles
+        float hitEffectBlendStart = 0f;
+        float hitEffectBlendEnd = 0.1f;
+
+        for (int i = 0; i < 3; i++) // Loop 3 times for 3 cycles
+        {
+            elapsedTime = 0;
+
+            // Blend towards End
+            while (elapsedTime < cycleTime / 2f) // First half of the cycle
+            {
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / (cycleTime / 2f);
+                float currentHitEffectBlend = Mathf.Lerp(hitEffectBlendStart, hitEffectBlendEnd, t);
+
+                instanceMaterial.SetFloat("_HitEffectBlend", currentHitEffectBlend);
+                yield return null;
+            }
+
+            elapsedTime = 0;
+
+            // Blend back to Start
+            while (elapsedTime < cycleTime / 2f) // Second half of the cycle
+            {
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / (cycleTime / 2f);
+                float currentHitEffectBlend = Mathf.Lerp(hitEffectBlendEnd, hitEffectBlendStart, t);
+
+                instanceMaterial.SetFloat("_HitEffectBlend", currentHitEffectBlend);
+                yield return null;
+            }
+        }
+        foreach (var col in colls)
+        {
+            col.enabled = true;
+        }
+        isStuck = false;
+        isHit = false;
     }
 }
 

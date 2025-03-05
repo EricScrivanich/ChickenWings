@@ -60,6 +60,8 @@ public class PlayerFlipRightState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.AdjustForce(JumpForce);
+        player.SetHingeTargetAngle(320);
+
         tweeningAng = true;
 
         hasFadedJumpAir = false;

@@ -7,6 +7,8 @@ public class MissilePigScript : MonoBehaviour
 {
     [SerializeField] private float turn_speed;
 
+    [SerializeField] private Transform pupil;
+
     public int movementType;
     public int missileType;
     public bool flippedPig;
@@ -55,6 +57,10 @@ public class MissilePigScript : MonoBehaviour
 
     [SerializeField] private SpriteRenderer missileImage;
     private Animator anim;
+
+    private Vector2 lookDirection;
+    private Vector2 normalDirection = new Vector2(1, 1);
+    private Vector2 flippedDirection = new Vector2(-1, 1);
 
 
 
@@ -305,6 +311,7 @@ public class MissilePigScript : MonoBehaviour
 
     private void OnEnable()
     {
+        Ticker.OnTickAction015 += MoveEyesWithTicker;
         if (!isInitialized)
         {
             missileImage.enabled = true;
@@ -344,6 +351,7 @@ public class MissilePigScript : MonoBehaviour
                 speed = flippedMoveSpeed;
                 anim.speed = 1.4f;
                 transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+                lookDirection = flippedDirection;
 
                 if (flippedW)
                 {
@@ -364,6 +372,8 @@ public class MissilePigScript : MonoBehaviour
             else
             {
                 speed = normalMoveSpeed;
+                lookDirection = normalDirection;
+
                 anim.speed = 1f;
 
 
@@ -388,6 +398,7 @@ public class MissilePigScript : MonoBehaviour
                 flippedAngleAdj = 180;
                 flippedXAdj = -1;
 
+
             }
             else
             {
@@ -400,6 +411,30 @@ public class MissilePigScript : MonoBehaviour
 
 
         }
+    }
+
+    private void MoveEyesWithTicker()
+    {
+        if (player != null)
+        {
+            Vector2 direction = player.position - pupil.position; // Calculate the direction to the player
+            // Ensure it's 2D
+            direction.Normalize(); // Normalize the direction
+
+            if (flipped)
+            {
+                direction *= flippedDirection;
+            }
+
+            // Move the pupil within the eye's radius
+            pupil.localPosition = direction * .05f;
+        }
+
+    }
+
+    private void OnDisable()
+    {
+        Ticker.OnTickAction015 -= MoveEyesWithTicker;
     }
 
     public void Initialize(float xPos, int type, int moveType)
@@ -498,7 +533,7 @@ public class MissilePigScript : MonoBehaviour
         }
 
 
-        transform.position = new Vector2(xPos, BoundariesManager.GroundPosition + .85f);
+        transform.position = new Vector2(xPos, BoundariesManager.GroundPosition + .67f);
         gameObject.SetActive(true);
 
     }

@@ -14,7 +14,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_HDRP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMPaniniProjectionShaker_HDRP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Panini Projection Shaker HDRP")]
 	public class MMPaniniProjectionShaker_HDRP : MMShaker
 	{
 		[MMInspectorGroup("Panini Projection Distance", true, 49)]

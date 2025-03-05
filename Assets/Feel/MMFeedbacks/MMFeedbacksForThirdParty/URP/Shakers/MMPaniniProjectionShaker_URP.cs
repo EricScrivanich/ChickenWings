@@ -16,7 +16,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMPaniniProjectionShaker_URP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Panini Projection Shaker URP")]
 	public class MMPaniniProjectionShaker_URP : MMShaker
 	{
 		[MMInspectorGroup("Distance", true, 62)]

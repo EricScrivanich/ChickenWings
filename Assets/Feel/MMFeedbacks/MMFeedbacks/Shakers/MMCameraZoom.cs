@@ -10,7 +10,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	/// This class will allow you to trigger zooms on your camera by sending MMCameraZoomEvents from any other class
 	/// </summary>
 	[RequireComponent(typeof(Camera))]
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Camera/MMCameraZoom")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Camera/MM Camera Zoom")]
 	public class MMCameraZoom : MonoBehaviour
 	{
 		[Header("Channel")]

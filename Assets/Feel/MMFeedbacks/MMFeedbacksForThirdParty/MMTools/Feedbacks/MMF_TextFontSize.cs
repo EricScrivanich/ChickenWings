@@ -1,6 +1,8 @@
-﻿using MoreMountains.Tools;
+﻿#if MM_UI
+using MoreMountains.Tools;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -9,6 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback lets you control the font size of a target Text over time.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("UI/Text Font Size")]
 	public class MMF_TextFontSize : MMF_FeedbackBase
 	{
@@ -20,6 +23,7 @@ namespace MoreMountains.Feedbacks
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetText be set to be able to work properly. You can set one below."; } }
 		#endif
 		public override bool HasAutomatedTargetAcquisition => true;
+		public override bool CanForceInitialValue => true;
 		protected override void AutomateTargetAcquisition() => TargetText = FindAutomatedTarget<Text>();
 
 		[MMFInspectorGroup("Target", true, 58, true)]
@@ -30,7 +34,7 @@ namespace MoreMountains.Feedbacks
 		[MMFInspectorGroup("Font Size", true, 59)]
 		/// the curve to tween on
 		[Tooltip("the curve to tween on")]
-		[MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime)]
+		[MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime, (int)Modes.ToDestination)]
 		public MMTweenType FontSizeCurve = new MMTweenType(new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
 		/// the value to remap the curve's 0 to
 		[Tooltip("the value to remap the curve's 0 to")]
@@ -44,6 +48,10 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the value to move to in instant mode")]
 		[MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.Instant)]
 		public float InstantFontSize;
+		/// the value to move to in destination mode
+		[Tooltip("the value to move to in destination mode")]
+		[MMFEnumCondition("Mode", (int)Modes.ToDestination)]
+		public float DestinationFontSize;
         
 		protected override void FillTargets()
 		{
@@ -63,8 +71,10 @@ namespace MoreMountains.Feedbacks
 			target.RemapLevelZero = RemapZero;
 			target.RemapLevelOne = RemapOne;
 			target.InstantLevel = InstantFontSize;
+			target.ToDestinationLevel = DestinationFontSize;
 
 			_targets.Add(target);
 		}
 	}
 }
+#endif

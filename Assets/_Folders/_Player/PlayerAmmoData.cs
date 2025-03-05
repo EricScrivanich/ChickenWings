@@ -7,9 +7,12 @@ public class PlayerStartingStatsForLevels : ScriptableObject
 {
     [SerializeField] private GameObject eggPrefab;
     [SerializeField] private GameObject shotgunPrefab;
+    [SerializeField] private bool startHidden = false;
 
     private Egg_Regular[] eggPool;
     private ShotgunBlast[] shotgunPool;
+
+    public int numberOfWeapons { get; private set; }
 
     [SerializeField] private int eggPoolSize;
     [SerializeField] private int shotgunPoolSize;
@@ -22,8 +25,11 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     public int startingNormalEggAmmo;
     public int startingShotgunAmmo;
 
+    public int[] AvailableAmmos;
+
     public void Initialize()
     {
+        numberOfWeapons = 0;
         currentEggIndex = 0;
         currentShotgunIndex = 0;
         eggID = 0;
@@ -46,7 +52,19 @@ public class PlayerStartingStatsForLevels : ScriptableObject
             obj.gameObject.SetActive(false);
 
         }
+
+        if (eggPoolSize > 0) numberOfWeapons++;
+        if (shotgunPoolSize > 0) numberOfWeapons++;
     }
+
+    public int ReturnStartingEquipedAmmo()
+    {
+        if ((startingNormalEggAmmo <= 0 && startingShotgunAmmo <= 0) || startHidden) return 0;
+        else if (startingNormalEggAmmo > startingShotgunAmmo) return 0;
+        else if (startingShotgunAmmo >= startingNormalEggAmmo) return 1;
+        else return 0;
+    }
+    // public int ReturnNextAva
 
     public void GetShotgunBlast(Vector2 pos, Quaternion rotation, bool chained)
     {

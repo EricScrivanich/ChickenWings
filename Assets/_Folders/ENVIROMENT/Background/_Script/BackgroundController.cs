@@ -31,6 +31,8 @@ public class BackgroundController : MonoBehaviour
 
     private const float ResetPosition = -51f;
     private const float Offset = 80f;
+
+    
     private void Awake()
     {
 

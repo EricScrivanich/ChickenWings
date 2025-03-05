@@ -7,7 +7,9 @@ public class ColliderEnemy : MonoBehaviour
     public PlayerID ID;
     private bool floorCollision = true;
     public GameEvent DeadEvent;
-    private int lives;
+
+
+
     [SerializeField] private GameObject featherParticles;
     [SerializeField] private GameObject smokeParticles;
     // private SpriteRenderer spriteRenderer;
@@ -15,6 +17,8 @@ public class ColliderEnemy : MonoBehaviour
     private float flashDuration;
     [SerializeField] private int numberOfFlashes = 5; // Number of times to flash
     [SerializeField] private float totalFlashTime = 1f;
+
+    private PlayerStateManager player;
 
 
 
@@ -24,7 +28,9 @@ public class ColliderEnemy : MonoBehaviour
     }
     void Start()
     {
-        lives = ID.Lives;
+        player = GetComponentInParent<PlayerStateManager>();
+        player.SetColliders(this, null);
+
         // spriteRenderer = GetComponentInParent<SpriteRenderer>();
 
 
@@ -65,11 +71,30 @@ public class ColliderEnemy : MonoBehaviour
         Debug.Log("collide trig");
         Debug.Log(collider.gameObject);
 
-        if (collider.CompareTag("Plane")) // && !isFlashing 
+        if (collider.CompareTag("Plane") || collider.CompareTag("Block") || collider.CompareTag("Weapon")) // && !isFlashing 
         {
-            ID.events.LoseLife?.Invoke();
+            player.HandleDamaged();
+            return;
 
         }
+        // else if (collider.CompareTag("Weapon"))
+        // {
+        //     if (player.CanPerectParry || player.CanParry)
+        //     {
+        //         IParryable parryableAttack = collider.gameObject.GetComponent<IParryable>();
+        //         if (parryableAttack != null)
+        //         {
+        //             parryableAttack.Parry();
+        //             AudioManager.instance.PlayParryNoise(true);
+        //         }
+        //     }
+
+
+        //     else player.HandleDamaged();
+
+
+        // }
+
         IExplodable explodableEntity = collider.gameObject.GetComponent<IExplodable>();
         if (explodableEntity != null)
         {

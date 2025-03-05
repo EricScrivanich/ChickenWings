@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using MoreMountains.Tools;
-#if MM_TEXTMESHPRO
+#if MM_UGUI2
 using TMPro;
 #endif
 
@@ -11,7 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	public class MMFloatingTextMeshPro : MMFloatingText
 	{
-		#if MM_TEXTMESHPRO
+		#if MM_UGUI2
 		[Header("TextMeshPro")]
 		/// the TextMeshPro object to use to display values
 		public TextMeshPro TargetTextMeshPro;

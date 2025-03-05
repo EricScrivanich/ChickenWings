@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿#if MM_UI
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +10,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you trigger cross fades on a target Graphic.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("UI/Graphic CrossFade")]
 	public class MMF_GraphicCrossFade : MMF_Feedback
 	{
@@ -143,3 +144,4 @@ namespace MoreMountains.Feedbacks
 		}
 	}
 }
+#endif

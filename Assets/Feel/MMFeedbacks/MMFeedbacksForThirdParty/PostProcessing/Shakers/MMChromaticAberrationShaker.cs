@@ -10,7 +10,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	/// <summary>
 	/// Add this class to a Camera with a chromatic aberration post processing and it'll be able to "shake" its values by getting events
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMChromaticAberrationShaker")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Chromatic Aberration Shaker")]
 	#if MM_POSTPROCESSING
 	[RequireComponent(typeof(PostProcessVolume))]
 	#endif

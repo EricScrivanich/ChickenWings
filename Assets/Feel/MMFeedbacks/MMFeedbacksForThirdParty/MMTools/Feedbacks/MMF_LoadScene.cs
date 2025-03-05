@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
 using UnityEngine.SceneManagement;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -11,6 +12,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will request the load of a new scene, using the method of your choice")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("Scene/Load Scene")]
 	public class MMF_LoadScene : MMF_Feedback
 	{
@@ -65,6 +67,10 @@ namespace MoreMountains.Feedbacks
 		         "If left empty, that scene will be automatically created, but you can specify any scene to use for that. Usually you'll want your own anti spill scene to be just an empty scene, but you can customize its lighting settings for example.")]
 		[MMFEnumCondition("LoadingMode", (int)LoadingModes.MMAdditiveSceneLoadingManager)]
 		public string AntiSpillSceneName = "";
+		/// in additive mode, whether or not to display debug logs of the loading sequence
+		[Tooltip("in additive mode, whether or not to display debug logs of the loading sequence")]
+		[MMFEnumCondition("LoadingMode", (int)LoadingModes.MMAdditiveSceneLoadingManager)]
+		public bool DebugMode = false;
 		
 		[MMFInspectorGroup("Loading Scene Delays", true, 58)] 
 		/// a delay (in seconds) to apply before the first fade plays
@@ -76,9 +82,12 @@ namespace MoreMountains.Feedbacks
 		/// a delay (in seconds) to apply after the first fade plays
 		[Tooltip("a delay (in seconds) to apply after the first fade plays")]
 		public float AfterEntryFadeDelay = 0f;
-		/// a delay (in seconds) to apply before the exit fade plays
-		[Tooltip("a delay (in seconds) to apply before the exit fade plays")]
-		public float BeforeExitFadeDelay = 0f;
+		/// a delay (in seconds) to apply before the scene gets activated
+		[Tooltip("a delay (in seconds) to apply before the scene gets activated")]
+		public float BeforeSceneActivationDelay = 0f;
+		/// a delay applied after the scene is loaded
+		[Tooltip("a delay applied after the scene is loaded")]
+		public float AfterSceneActivationDelay = 0f;
 		/// the duration (in seconds) of the exit fade
 		[Tooltip("the duration (in seconds) of the exit fade")]
 		public float ExitFadeDuration = 0.2f;
@@ -112,7 +121,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="feedbacksIntensity"></param>
 		protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
 		{
-			if (!Active || !FeedbackTypeAuthorized)
+			if (!Active || !FeedbackTypeAuthorized || (DestinationSceneName == ""))
 			{
 				return;
 			}
@@ -132,10 +141,12 @@ namespace MoreMountains.Feedbacks
 						Priority, SecureLoad, InterpolateProgress, 
 						BeforeEntryFadeDelay, EntryFadeDuration,
 						AfterEntryFadeDelay,
-						BeforeExitFadeDelay, ExitFadeDuration,
+						BeforeSceneActivationDelay, 
+						AfterSceneActivationDelay,
+						ExitFadeDuration,
 						EntryFadeTween, ExitFadeTween,
 						ProgressInterpolationSpeed, FadeMode, UnloadMethod, AntiSpillSceneName,
-						SpeedIntervals);
+						SpeedIntervals, DebugMode);
 					break;
 			}
 		}

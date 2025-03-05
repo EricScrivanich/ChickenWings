@@ -12,6 +12,10 @@ public class PauseMenuManager : MonoBehaviour
 
 
     // private PauseMenuButton pauseButton;
+    [SerializeField] private SceneManagerSO sceneSO;
+    [SerializeField] private TextMeshProUGUI scoreWarning;
+    [SerializeField] private TextMeshProUGUI challengeWarning;
+    [SerializeField] private TextMeshProUGUI levelWarning;
 
     [SerializeField] private CanvasGroup gameSpeedGroup;
     [SerializeField] private TextMeshProUGUI gameSpeedText;
@@ -30,7 +34,7 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private RectTransform target;
 
 
-    private Vector2 endPosition = new Vector2(0, -800);
+    private Vector2 endPosition = new Vector2(0, -830);
     private Vector2 startPos = new Vector2(0, 80);
 
     private Sequence sequence;
@@ -47,6 +51,39 @@ public class PauseMenuManager : MonoBehaviour
         displayedGameSpeed = PlayerPrefs.GetFloat("GameSpeed", 1);
         DarkPanel.GetComponent<RectTransform>().position = Vector2.zero;
         DarkPanel.gameObject.SetActive(false);
+
+    }
+    private void Start()
+    {
+        scoreWarning.enabled = false;
+        challengeWarning.enabled = false;
+        levelWarning.enabled = false;
+
+        CheckWarnings();
+
+    }
+
+
+    private void CheckWarnings()
+    {
+        if (FrameRateManager.under1)
+        {
+            if (sceneSO.isLevel)
+            {
+                challengeWarning.enabled = true;
+
+                if (FrameRateManager.under085)
+                {
+                    levelWarning.enabled = true;
+                }
+
+            }
+            else
+            {
+
+                scoreWarning.enabled = true;
+            }
+        }
 
     }
     public void DropSignTween()
@@ -93,6 +130,8 @@ public class PauseMenuManager : MonoBehaviour
     private void OnEnable()
     {
 
+
+
         leftArrow.enabled = true;
         rightArrow.enabled = true;
         if (displayedGameSpeed <= .7f)
@@ -122,6 +161,7 @@ public class PauseMenuManager : MonoBehaviour
                 challenges.TurnChallengesRed();
             }
             FrameRateManager.OnChangeGameTimeScale?.Invoke(displayedGameSpeed >= 1);
+            CheckWarnings();
 
             FrameRateManager.TargetTimeScale = FrameRateManager.BaseTimeScale * PlayerPrefs.GetFloat("GameSpeed", 1);
         }

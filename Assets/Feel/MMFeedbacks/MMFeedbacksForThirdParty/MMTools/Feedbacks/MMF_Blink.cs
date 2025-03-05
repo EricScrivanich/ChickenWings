@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -11,6 +12,7 @@ namespace MoreMountains.Feedbacks
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback lets you trigger a blink on an MMBlink object.")]
 	[FeedbackPath("Renderer/MMBlink")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	public class MMF_Blink : MMF_Feedback
 	{
 		/// sets the inspector color for this feedback

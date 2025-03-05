@@ -8,6 +8,23 @@ public class PlayerStateManager : MonoBehaviour
     [ExposedScriptableObject]
     public PlayerID ID;
 
+    [SerializeField] private bool bounceOffGround;
+
+
+    [SerializeField] private Material invincibleMat;
+    [SerializeField] private TrailRenderer invincibleTrail;
+
+    [SerializeField] private GameObject ScythePrefab;
+    [SerializeField] private GameObject parryPrefab;
+    private EggShield eggShield;
+    [SerializeField] private GameObject cursorPrefab;
+    [SerializeField] private ButtonColorsSO colorSO;
+
+    private Queue<Scythe> scythes;
+
+
+    [SerializeField] private ParryCollisions parry;
+
     public GameObject feather;
 
     [ExposedScriptableObject]
@@ -23,18 +40,28 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private int yForceSubtractMultiplier;
     public bool useChainedAmmo { get; private set; }
 
-    private Coroutine aimCouroutine;
-    private Coroutine reloadCouroutine;
-    private Coroutine MaxSlowTimeCouroutine;
+    public Coroutine aimCouroutine;
+    public Coroutine reloadCouroutine;
+    public Coroutine MaxSlowTimeCouroutine;
+    public Coroutine SlowTimeRoutine;
+    public Coroutine SpeedTimeRoutine;
+    public Coroutine MaxSlowTimeRoutine;
+    public Coroutine ShotgunRotationRoutine;
+
+    private bool checkingMaxTime = false;
+    private bool slowingTime = false;
+    private bool speedingTime = false;
+
+    private bool ammoButtonPressed;
 
 
 
 
-    private Coroutine ShotgunNormalRotationRoutine;
-    private Coroutine ShotgunAimingRotationRoutine;
 
-    private float shotgunRotationTarget;
-    private float shotgunAimRotationTarget;
+    public Coroutine ShotgunAimingRotationRoutine;
+
+    public float shotgunRotationTarget;
+
     [SerializeField] private float shotgunRotationSpeed;
     [SerializeField] private float shotgunAimRotationSpeed;
 
@@ -99,7 +126,7 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerDashState DashState = new PlayerDashState();
     public PlayerDropState DropState = new PlayerDropState();
     public PlayerBounceState BounceState = new PlayerBounceState();
-    public PlayerSlashState SlashState = new PlayerSlashState();
+    public PlayerScytheState ScytheState = new PlayerScytheState();
 
     public PlayerDashSlashState DashSlash = new PlayerDashSlashState();
     public PlayerIdleState IdleState = new PlayerIdleState();
@@ -110,6 +137,27 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerNextSectionState NextSectionState = new PlayerNextSectionState();
     public PlayerShotgunState ShotgunState = new PlayerShotgunState();
     public PlayerNestState NestState = new PlayerNestState();
+    public PlayerParryState ParryState = new PlayerParryState();
+    public PlayerNullState NullState = new PlayerNullState();
+    public PlayerStuckSyctheState StuckState = new PlayerStuckSyctheState();
+
+    public PigMaterialHandler stuckPig { get; private set; }
+
+
+    AmmoBaseState currentWeaponState;
+    AmmoBaseState prevWeaponState;
+    private int currentWeaponIndex;
+    [SerializeField] private int numberOfWeapons;
+
+
+    public AmmoEggState AmmoStateEgg = new AmmoEggState();
+    public AmmoShotgunState AmmoStateShotgun = new AmmoShotgunState();
+    public AmmoHiddenState AmmoStateHidden = new AmmoHiddenState();
+    public AmmoBoomerangState AmmoStateBoomerang = new AmmoBoomerangState();
+    public AmmoCageState AmmoStateCage = new AmmoCageState();
+    public AmmoScytheState AmmoStateScythe = new AmmoScytheState();
+
+    private int[] availableAmmos;
 
 
 
@@ -204,9 +252,9 @@ public class PlayerStateManager : MonoBehaviour
     private bool justSwitchedUsingChainedShotgun;
     private bool canDash;
     private bool shotgunReleased = false;
-    public bool shotgunEquipped { get; private set; }
+    public bool shotgunEquipped; //{ get; private set; }
     private bool startedAim = false;
-    private bool movingJoystick = false;
+    public bool movingJoystick = false;
     private bool shootChainThenReset;
     private bool canShootShotgun = true;
     private bool inSlowMo = false;
@@ -238,6 +286,7 @@ public class PlayerStateManager : MonoBehaviour
     public Animator anim { get; private set; }
     // 
 
+    #region Base
     private void Awake()
     {
 
@@ -328,18 +377,48 @@ public class PlayerStateManager : MonoBehaviour
 
 
     }
+
+    public void SetHingeTargetAngle(int target)
+    {
+        // CustomHingeJoint2D.OnSetRotationTarget?.Invoke(target);
+        ID.globalEvents.SetCageAngle?.Invoke(target);
+    }
+
+    public void SetShotgunRotationAndActive(bool active, int rot)
+    {
+        if (!active)
+        {
+            shotgunObj.SetActive(false);
+            return;
+        }
+        shotgunObj.transform.localEulerAngles = new Vector3(0, 0, rot);
+        shotgunObj.SetActive(true);
+
+    }
     // Start is called before the first frame update
     void Start()
     {
-        Time.timeScale = FrameRateManager.TargetTimeScale;
+
+
+        // if (invTrail != null)
+        // {
+        //     invTrail.startColor = new Color(colorSO.WeaponColor.r, colorSO.WeaponColor.g, colorSO.WeaponColor.b, 1f);
+        //     invTrail.gameObject.SetActive(false);
+        // }
+        if (invincibleTrail != null) invincibleTrail.gameObject.SetActive(false);
+        if (invincibleMat != null) invincibleMat.SetFloat("_Alpha", 0);
+
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
         AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), mutePlayerAudio);
+
+        if (mutePlayerAudio) Time.timeScale = .95f;
 
 
         HapticFeedbackManager.instance.LoadSavedData();
 
-        if (ammoManager != null)
-            ammoManager.Initialize();
+        // if (swipeTracker != null)
+        //     swipeTracker.SetActive(false);
+
         if (GetComponent<PlayerAddForceBoundaries>() != null)
         {
             playerBoundaries = GetComponent<PlayerAddForceBoundaries>();
@@ -358,10 +437,43 @@ public class PlayerStateManager : MonoBehaviour
 
 
         }
-
-
-
         currentJumpAirIndex = 0;
+
+        if (cursorPrefab != null)
+        {
+
+            var obj = Instantiate(cursorPrefab).GetComponent<CursorTracker>();
+
+            if (obj != null)
+            {
+                obj.player = ID;
+            }
+
+        }
+        if (ScythePrefab != null)
+        {
+            scythes = new Queue<Scythe>();
+
+            for (int i = 0; i < 3; i++)
+            {
+                var s = Instantiate(ScythePrefab).GetComponent<Scythe>();
+                // s.playerTrans = this.transform;
+                s.SetColorsAndPlayer(colorSO.WeaponColor, parry.transform);
+                s.gameObject.SetActive(false);
+
+                scythes.Enqueue(s);
+            }
+
+
+        }
+        if (parryPrefab != null)
+        {
+            eggShield = Instantiate(parryPrefab).GetComponent<EggShield>();
+            eggShield.followPos = parry.transform;
+            eggShield.gameObject.SetActive(false);
+        }
+
+
 
 
 
@@ -401,14 +513,58 @@ public class PlayerStateManager : MonoBehaviour
 
         currentState = StartingState;
         // currentState = IdleState;
-
-        // currentState = NestState;
-
+        ID.events.EnableButtons(true);
         currentState.EnterState(this);
+        // currentWeaponState = AmmoStateHidden;
 
-        // feather.transform.position = transform.position;
+        if (ammoManager != null)
+        {
+            ammoManager.Initialize();
+            int startingAmmo = ammoManager.ReturnStartingEquipedAmmo();
+
+            switch (startingAmmo)
+            {
+                case -1:
+                    currentWeaponState = AmmoStateHidden;
+                    break;
+                case 0:
+                    currentWeaponState = AmmoStateEgg;
+                    break;
+                case 1:
+                    currentWeaponState = AmmoStateShotgun;
+                    break;
+                case 2:
+                    currentWeaponState = AmmoStateBoomerang;
+                    break;
+
+            }
+
+            if (startingAmmo != -1)
+            {
+                currentWeaponIndex = startingAmmo;
+
+                ID.UiEvents.OnSendShownSidebarAmmos?.Invoke(ammoManager.AvailableAmmos, startingAmmo);
+
+            }
+            else
+            {
+                currentWeaponIndex = 0;
+                // ID.canPressEggButton = false;
+                // ID.UiEvents.OnSendShownSidebarAmmos?.Invoke(ammoManager.AvailableAmmos, 0);
 
 
+            }
+
+            currentWeaponState.EnterState(this, 0);
+            // ID.CheckAmmosOnZero(0);
+
+            // ID.SetAmountOfWeapons(ammoManager.numberOfWeapons);
+        }
+
+        else
+        {
+            GameObject.Find("EggButton")?.SetActive(false);
+        }
     }
 
     public void SetAddForceAtBoundaries(bool isActive)
@@ -477,29 +633,31 @@ public class PlayerStateManager : MonoBehaviour
 
             if (!ignoreRotation)
                 currentState.RotateState(this);
+            else
+                TargetRotationLogic();
 
             // else
             //     rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, targetRotateSpeedShotgun, 9 * Time.fixedDeltaTime);
 
-            else
-            {
-                float targetAngle = Mathf.Atan2(targetRotationShotgun.y, targetRotationShotgun.x) * Mathf.Rad2Deg;
+            // else
+            // {
+            //     float targetAngle = Mathf.Atan2(targetRotationShotgun.y, targetRotationShotgun.x) * Mathf.Rad2Deg;
 
-                // Get the current rotation of the Rigidbody2D
-                float currentAngle = rb.rotation;
+            //     // Get the current rotation of the Rigidbody2D
+            //     float currentAngle = rb.rotation;
 
-                // Calculate the shortest angle difference between the current and target angle
-                float angleDifference = Mathf.DeltaAngle(currentAngle, targetAngle);
-                if (Mathf.Abs(angleDifference) < 50) angleDifference *= 1.5f;
+            //     // Calculate the shortest angle difference between the current and target angle
+            //     float angleDifference = Mathf.DeltaAngle(currentAngle, targetAngle);
+            //     if (Mathf.Abs(angleDifference) < 50) angleDifference *= 1.7f;
 
-                // Calculate the desired angular velocity to close the angle difference
-                float desiredAngularVelocity = angleDifference * 3.5f; // Adjust the multiplier (2f) to control rotation speed
+            //     // Calculate the desired angular velocity to close the angle difference
+            //     float desiredAngularVelocity = angleDifference * 3.5f; // Adjust the multiplier (2f) to control rotation speed
 
 
 
-                // Smoothly adjust the Rigidbody2D's angular velocity
-                rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, desiredAngularVelocity, 5f * Time.fixedDeltaTime);
-            }
+            //     // Smoothly adjust the Rigidbody2D's angular velocity
+            //     rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, desiredAngularVelocity, 7f * Time.fixedDeltaTime);
+            // }
 
 
             // else
@@ -513,24 +671,78 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
+    // public IEnumerator SwitchToIdleTimer(float delay)
+    // {
+    //     yield return new WaitForSeconds(delay);
+    //     SwitchState(IdleState);
+    // }
+
     public void BaseRotationLogic()
     {
         // Check if the Rigidbody is moving upwards and hasn't reached the max rotation limit
         if (rb.linearVelocity.y > 0 && rotZ < maxRotUp)
         {
-            rotZ += jumpRotSpeed * Time.deltaTime;
+            rotZ += jumpRotSpeed * Time.fixedDeltaTime;
         }
         // Check if the Rigidbody is moving downwards and hasn't reached the max rotation limit
         else if (rb.linearVelocity.y <= 0 && rotZ > maxRotDown)
         {
-            rotZ -= jumpRotSpeed * Time.deltaTime;
+            rotZ -= jumpRotSpeed * Time.fixedDeltaTime;
         }
 
         // Smoothly interpolate the rotation towards the target rotation
-        float newRotation = Mathf.LerpAngle(rb.rotation, rotZ, Time.deltaTime * rotationLerpSpeed);
+        float newRotation = Mathf.LerpAngle(rb.rotation, rotZ, Time.fixedDeltaTime * rotationLerpSpeed);
 
         // Apply the new rotation
+        rb.SetRotation(newRotation);
+    }
+    private float targetRotation;
+    private bool rotatingPositive;
+    private float rotateToTargetSpeed;
+
+    public void RotateToTargetFromWeaponState(float targetAngle, float speed)
+    {
+
+        rb.angularVelocity = 0;
+        targetRotation = targetAngle;
+        rotateToTargetSpeed = speed;
+
+
+        ignoreRotation = true;
+
+
+
+    }
+
+    public void TargetRotationLogic()
+    {
+
+        float currentRotation = rb.rotation;
+        float angleDifference = Mathf.DeltaAngle(currentRotation, targetRotation);
+
+        // Determine the correct direction
+        // float rotationDirection = rotatingPositive ? 1f : -1f;
+
+        // // Ensure we rotate in the specified direction
+        // if (rotatingPositive && angleDifference < 0) rotationDirection = 1f;
+        // if (!rotatingPositive && angleDifference > 0) rotationDirection = -1f;
+
+        // Move towards the target at the specified speed
+        float newRotation = Mathf.MoveTowardsAngle(currentRotation, targetRotation, rotateToTargetSpeed * Time.deltaTime);
         rb.MoveRotation(newRotation);
+
+        // Stop rotating when we reach the target
+        if (Mathf.Approximately(newRotation, targetRotation))
+        {
+            AmmoStateShotgun.HitRotationTarget(this);
+
+        }
+
+
+
+
+        // Apply the new rotation
+
     }
     private void ChangeConstantForce(float newSpeed)
     {
@@ -588,31 +800,136 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-    public void ChangeCollider(int index)
+
+
+
+
+    public void SwitchWeaponState(int direction, int specificWeapon)
     {
-        if (index < 0)
+        Debug.Log("Ammo button press is: " + ammoButtonPressed);
+        if (ammoManager.AvailableAmmos.Length < 2) return;
+        if (ammoButtonPressed && specificWeapon == -1) return;
+        if (currentWeaponState != null)
         {
-            for (int i = 0; i < ColliderType.Count; i++)
+            prevWeaponState = currentWeaponState;
+            Debug.Log("Prev Weapon State is: " + prevWeaponState);
+            currentWeaponState.ExitState(this);
+        }
+
+        if (direction == -2)
+        {
+            bool foundNewAmmo = false;
+            int i = 0;
+            for (int n = currentWeaponIndex + 1; i < ammoManager.AvailableAmmos.Length; n++)
             {
-                // If the current index matches the parameter, enable the collider, otherwise disable it.
-                ColliderType[i].enabled = false;
+                if (n >= ammoManager.AvailableAmmos.Length) n = 0;
+                if (ID.ReturnNextAvailableAmmo(ammoManager.AvailableAmmos[n]))
+                {
+                    foundNewAmmo = true;
+                    specificWeapon = n;
+
+                    if ((specificWeapon - currentWeaponIndex == 1) || (currentWeaponIndex == ammoManager.AvailableAmmos.Length - 1 && specificWeapon == 0))
+                        direction = 1;
+                    else if ((specificWeapon - currentWeaponIndex == -1) || (specificWeapon == ammoManager.AvailableAmmos.Length - 1 && currentWeaponIndex == 0))
+                        direction = -1;
+                    else direction = -2;
+                    break;
+
+                }
+                else i++;
 
             }
+            if (!foundNewAmmo)
+            {
+                int val = currentWeaponIndex + 1;
+                direction = 1;
+                if (val >= ammoManager.AvailableAmmos.Length) val = 0;
+
+                specificWeapon = val;
+            }
+        }
+
+
+
+
+        if (specificWeapon >= 0)
+        {
+            ammoButtonPressed = false;
+
+            currentWeaponIndex = System.Array.IndexOf(ammoManager.AvailableAmmos, specificWeapon);
+            switch (specificWeapon)
+            {
+
+                case 0:
+                    currentWeaponState = AmmoStateEgg;
+                    break;
+                case 1:
+                    currentWeaponState = AmmoStateShotgun;
+                    break;
+                case 2:
+                    currentWeaponState = AmmoStateBoomerang;
+
+                    break;
+                case 3:
+                    currentWeaponState = AmmoStateScythe;
+                    break;
+            }
+
+            currentWeaponState.EnterState(this, direction);
+            return;
+
+
+        }
+
+        else if (specificWeapon == -3)
+        {
+
+        }
+        else if (direction == 0 && currentWeaponState != AmmoStateHidden)
+        {
+
+
+            ammoButtonPressed = false;
+
+            currentWeaponState = AmmoStateHidden;
+            currentWeaponState.EnterState(this, 0);
             return;
 
         }
-        for (int i = 0; i < ColliderType.Count; i++)
+        else
         {
-            // If the current index matches the parameter, enable the collider, otherwise disable it.
-            ColliderType[i].enabled = (i == index);
+            HapticFeedbackManager.instance.SwitchAmmo();
+
+            currentWeaponIndex += direction;
+
+            if (currentWeaponIndex >= ammoManager.AvailableAmmos.Length)
+                currentWeaponIndex = 0;
+            else if (currentWeaponIndex < 0)
+                currentWeaponIndex = ammoManager.AvailableAmmos.Length - 1;
+
         }
-    }
 
+        switch (ammoManager.AvailableAmmos[currentWeaponIndex])
+        {
 
+            case 0:
+                currentWeaponState = AmmoStateEgg;
+                break;
+            case 1:
+                currentWeaponState = AmmoStateShotgun;
+                break;
+            case 2:
+                currentWeaponState = AmmoStateBoomerang;
 
-    public void SetCanRotateSlash()
-    {
-        rotateSlash = true;
+                break;
+            case 3:
+                currentWeaponState = AmmoStateScythe;
+                break;
+        }
+
+        // Debug.LogError("Current Weapon State is: " + currentWeaponState);
+
+        currentWeaponState.EnterState(this, direction);
 
     }
 
@@ -632,6 +949,12 @@ public class PlayerStateManager : MonoBehaviour
         {
             ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
         }
+        // if (ID.trackParrySwipe)
+
+        if (newState != ShotgunState)
+        {
+            AmmoStateShotgun.StopChainedAmmo(this, true);
+        }
         currentState = newState;
 
 
@@ -647,15 +970,22 @@ public class PlayerStateManager : MonoBehaviour
 
 
         }
-        newState.EnterState(this);
 
+        //if (usingScythePower && currentState != ScytheState && currentState != NullState)
+        if (usingScythePower)
+        {
+            SetUseScythePowerSpeed(170, 1.7f);
 
+        }
+        currentState.EnterState(this);
+
+        // Debug.Log("Switched state to: " + newState);
 
     }
 
+    #endregion
 
-
-
+    #region handle events
 
     void HandleJump()
     {
@@ -682,9 +1012,8 @@ public class PlayerStateManager : MonoBehaviour
 
         if (isHolding)
         {
-            // anim.SetTrigger("JumpHoldTrigger");
-            anim.SetTrigger(JumpHoldTrigger);
 
+            anim.SetTrigger(JumpHoldTrigger);
         }
         else
         {
@@ -707,8 +1036,6 @@ public class PlayerStateManager : MonoBehaviour
         ID.isHolding = isHolding;
 
     }
-
-
 
 
 
@@ -846,7 +1173,7 @@ public class PlayerStateManager : MonoBehaviour
         if (ID.Ammo > 0)
         {
 
-            // GameObject egg = pool.SpawnGO("Egg_Regular", transform.position, Vector3.zero, null);
+
             AudioManager.instance.PlayEggDrop();
             float force = 0;
 
@@ -865,100 +1192,14 @@ public class PlayerStateManager : MonoBehaviour
 
         }
     }
-
-    private void HandleShotgun(bool holding)
+    public void GetEgg(float force)
     {
-        if (ammoManager == null) return;
-        // Debug.LogError("Can Shoot is: " + canShootShotgun + " shotgun release is: " + shotgunReleased + " in slow mo is: " + inSlowMo);
-        // if (shotgunReleased) return;
-        if (holding && canShootShotgun)
-        {
-
-            if (ID.ShotgunAmmo <= 0 && !useChainedAmmo)
-            {
-                // Debug.Log("ShotgunAmmo is 0 or less and not using chained ammo. Exiting.");
-                return;
-            }
+        ammoManager.GetEgg(transform.position, force);
 
 
-            if (inSlowMo)
-            {
-                // StopCoroutine(shotgunSlow);
-                StopCoroutine(reloadCouroutine);
-            }
-
-            if (MaxSlowTimeCouroutine != null)
-                StopCoroutine(MaxSlowTimeCouroutine);
-
-            MaxSlowTimeCouroutine = StartCoroutine(ShootIfOverTime());
-
-
-            startedAim = true;
-            ID.events.EnableButtons?.Invoke(false);
-
-            // anim.SetTrigger("Aim");
-            anim.SetBool(AimShotgunBool, true);
-            aimCouroutine = StartCoroutine(AimShotgunCourintine());
-            // shotgunSlow = StartCoroutine(SlowTime(slowTimeDuration, slowTimeTarget));
-
-
-
-            // Debug.Log("YDFD");
-            // lastState = currentState;
-            // rotateWithLastState = true;
-            // SwitchState(ParachuteState);
-
-        }
-        else if (!holding && startedAim)
-        {
-            // Debug.Log("Realeased");
-            ID.events.EnableButtons?.Invoke(true);
-
-
-            if (ID.ShotgunAmmo > 0)
-            {
-                // Debug.Log($"ShotgunAmmo is greater than 0. Current ShotgunAmmo: {ID.ShotgunAmmo}");
-                // Debug.Log($"ShotgunAmmo decremented. New ShotgunAmmo: {ID.ShotgunAmmo}");
-
-                ID.ShotgunAmmo--;
-
-                // if (ID.ShotgunAmmo <= 0) ID.globalEvents.OnUseChainedAmmo?.Invoke(false); // remove for chained ammo to work
-
-            }
-
-            if (useChainedAmmo)
-            {
-                // Debug.Log($"Using chained ammo. Current ChainedShotgunAmmo: {ID.ChainedShotgunAmmo}");
-
-                ID.ChainedShotgunAmmo--;
-
-
-
-            }
-
-            else if (ID.ShotgunAmmo == 0 && !useChainedAmmo)
-            {
-                // Debug.Log("ShotgunAmmo is 0 and not using chained ammo. Triggering event to start using chained ammo.");
-
-                ID.globalEvents.OnUseChainedAmmo?.Invoke(true);
-
-            }
-
-            if (useChainedAmmo && ID.ChainedShotgunAmmo <= 0)
-            {
-                // Debug.Log("ChainedShotgunAmmo is less than 0. Triggering event to stop using chained ammo.");
-                shootChainThenReset = true;
-                useChainedAmmo = false;
-                // ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
-
-            }
-            shotgunReleased = true;
-            canShootShotgun = false;
-            startedAim = false;
-
-
-        }
     }
+
+
 
 
 
@@ -997,9 +1238,420 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
+    private void HandleCollectCage()
+    {
+        if (currentWeaponState != null)
+        {
+            prevWeaponState = currentWeaponState;
+            currentWeaponState.ExitState(this);
+
+        }
+        currentWeaponState = AmmoStateCage;
+        currentWeaponState.EnterState(this, 0);
+
+    }
+
+    public Vector2 centerTouchStartPos { get; private set; }
+
+    private void HandlePressWeaponButton(Vector2 pos)
+    {
+        if (!ammoButtonPressed)
+        {
+            centerTouchStartPos = pos;
+            currentWeaponState.PressButton(this, pos);
+            ammoButtonPressed = true;
+        }
+
+
+
+    }
+
+    private void HandleDragWeaponButton(Vector2 pos)
+    {
+        currentWeaponState.SwipeButton(this, pos);
+    }
+
+    private void HandleReleaseWeaponButton()
+    {
+        if (ammoButtonPressed)
+        {
+            ID.events.ReleaseSwipe?.Invoke();
+            currentWeaponState.ReleaseButton(this);
+            ammoButtonPressed = false;
+        }
+
+
+    }
+
+
+    private float scytheUseSpeed;
+    private float scythePower;
+    public bool usingScythePower = false;
+
+    public void SetUseScythePowerSpeed(float s, float pitch)
+    {
+        scytheUseSpeed = s;
+        ID.UiEvents.ChangeScythePowerPitch?.Invoke(pitch);
+    }
+    public void UseScythePower(int amount)
+    {
+        scythePower -= amount;
+    }
+    public void ActivateScythePower()
+    {
+        scythePower = 100;
+
+        if (!usingScythePower)
+        {
+
+            // SetTrailActive(true);
+            if (doingDamageFlash)
+            {
+                StopCoroutine(damagedRoutine);
+                ID.PlayerMaterial.SetFloat("_Alpha", 1);
+                doingDamageFlash = false;
+            }
+            if (isUndamagable) StopCoroutine(undamagableRoutine);
+            isDamaged = true;
+            ScythePowerRoutine = StartCoroutine(ScytheGlideTimer(false));
+        }
+        else
+        {
+            StopCoroutine(ScythePowerRoutine);
+            ScythePowerRoutine = StartCoroutine(ScytheGlideTimer(!changingMat));
+
+        }
+    }
+    WaitForSeconds initialScythePowerDelay = new WaitForSeconds(.25f);
+    WaitForSeconds finishScythePowerDelay = new WaitForSeconds(.25f);
+    private Coroutine ScythePowerRoutine;
+    private bool changingMat = false;
+    private IEnumerator ScytheGlideTimer(bool isGoing)
+    {
+        usingScythePower = true;
+        bool usingPower = true;
+        ID.UiEvents.ShowScythePower?.Invoke(true, .25f);
+
+
+        if (isGoing)
+            yield return initialScythePowerDelay;
+        else
+        {
+            float t = 0;
+            invincibleTrail.emitting = true;
+            invincibleTrail.gameObject.SetActive(true);
+
+            // invincibleTrail.transform.localScale = Vector3.one * 1.9f;
+
+
+            while (t < .25f)
+            {
+
+                t += Time.deltaTime;
+
+                float p = t / .25f;
+
+                float alpha = Mathf.Lerp(0, 1, p);
+                float scale = Mathf.Lerp(1.9f, 1.7f, p);
+                invincibleTrail.transform.localScale = Vector3.one * scale;
+                invincibleMat.SetFloat("_Alpha", alpha);
+            }
+
+            invincibleTrail.transform.localScale = Vector3.one * 1.7f;
+            invincibleMat.SetFloat("_Alpha", 1);
+            // invincibleTrail.emitting = false;
+
+        }
+        while (usingPower)
+        {
+            scythePower = Mathf.MoveTowards(scythePower, 0, scytheUseSpeed * Time.deltaTime);
+
+            if (scythePower <= 0)
+            {
+                usingPower = false;
+                ID.UiEvents.UseScythePower?.Invoke(0);
+            }
+            else
+            {
+                ID.UiEvents.UseScythePower?.Invoke(scythePower * .01f);
+
+
+            }
+
+            yield return null;
+        }
+        ID.UiEvents.ShowScythePower?.Invoke(false, .28f);
+        ID.UiEvents.StuckPigScythe?.Invoke(false);
+
+        float time = 0;
+
+        invincibleTrail.emitting = false;
+        changingMat = true;
+
+        while (time < .35f)
+        {
+
+            time += Time.deltaTime;
+
+            float p = time / .35f;
+
+            float alpha = Mathf.Lerp(1, 0, p);
+            float scale = Mathf.Lerp(1.7f, 1.9f, p);
+            invincibleTrail.transform.localScale = Vector3.one * scale;
+            invincibleMat.SetFloat("_Alpha", alpha);
+        }
+        invincibleTrail.gameObject.SetActive(false);
+        usingScythePower = false;
+
+
+        // yield return finishScythePowerDelay;
+        // SetTrailActive(false);
+        isDamaged = false;
+
+
+
+    }
+    private void HandleStuckPig(PigMaterialHandler pig, int t)
+    {
+        stuckPig = pig;
+        StuckState.SetPigType(t);
+
+        SwitchState(StuckState);
+    }
+    private void HandleSwipeStuckPig(Vector2 dir)
+    {
+        if (ID.scytheIsStuck)
+            StuckState.Swipe(this, dir);
+    }
+    private void HandleReleaseStick()
+    {
+        if (ID.scytheIsStuck)
+            StuckState.ReleaseStick(this);
+        // SwitchState(NullState);
+
+    }
+
+    #endregion
+
+
+    #region Parries and scythe
+    private bool canParry = true;
+
+    public void HandleSuccesfulParry()
+    {
+
+        if (currentState == ParryState)
+        {
+            AudioManager.instance.PlayParrySound();
+            ParryState.Parried(this);
+            // parry.SuccesfulParry();
+            // ID.events.OnTrackParrySwipe?.Invoke(true);
+            ID.trackParrySwipe = true;
+
+        }
+
+
+
+
+    }
+
+
+
+
+    public void StopSuccesfulParry()
+    {
+        // parry.StopAttackMode();
+    }
+
+    private void HandleEnterParryState(bool enter)
+    {
+        if (enter && canParry)
+        {
+            // ID.trackParrySwipe = true;
+            SwitchState(ParryState);
+            canParry = false;
+            // eggShield.Initialize(parry.transform.position);
+            StartCoroutine(ParryCooldownCoroutine(.8f));
+        }
+
+        // else
+        // {
+        //     parry.DoParry(false);
+        //     parrying = false;
+        //     SwitchState(IdleState);
+        // }
+
+
+    }
+    public void DoParry(bool on)
+    {
+        // parry.gameObject.SetActive(!on);
+
+        // parry.DoParry(on);
+
+
+    }
+    private void GetScytheAttack(byte direction)
+    {
+        var s = scythes.Dequeue();
+        s.Attack(direction);
+        scythes.Enqueue(s);
+        SwitchState(ScytheState);
+
+        switch (direction)
+        {
+            case 0:
+                rb.SetRotation(70);
+                rb.angularVelocity = -400;
+                // transform.localScale = scaleTopFront;
+                break;
+            case 1:
+                // transform.localScale = scaleBotFront;
+                break;
+
+            case 2:
+                // transform.localScale = scaleBotBack;
+                break;
+            case 3:
+                // transform.localScale = scaleTopBack;
+                break;
+        }
+    }
+
+    private Vector3 scaleTopFront = new Vector3(1, 1, 1);
+    private Vector3 scaleTopBack = new Vector3(-1, 1, 1);
+    private Vector3 scaleBotFront = new Vector3(1, -1, 1);
+    private Vector3 scaleBotBack = new Vector3(-1, -1, 1);
+    private float maxRotation = 85;
+
+    public void GetScytheSwipeAttack(float angle)
+    {
+        Vector3 scale;
+        float r;
+        int dir = 1;
+        float targetAngle = 0;
+
+
+        if (angle < 0)
+        {
+            if (angle == -135)
+            {
+                scale = scaleTopBack;
+                dir = 1;
+                r = 135;
+            }
+            else if (angle == -225)
+            {
+                scale = scaleBotBack;
+                dir = -1;
+                r = 225;
+            }
+            else if (angle == -300)
+            {
+                scale = scaleBotFront;
+                dir = 1;
+                r = 135;
+            }
+            else if (angle == -350)
+            {
+                scale = scaleTopFront;
+                dir = -1;
+
+                r = 225;
+
+            }
+            else
+            {
+                r = 0;
+                dir = 1;
+                scale = scaleTopFront;
+            }
+        }
+        else
+        {
+            if (angle == 0) angle = 360;
+
+            // Debug.Log("Recieved angle of: " + angle);
+
+            if (angle >= 270)
+            {
+                dir = -1;
+                scale = scaleTopFront;
+                if (angle == 270) r = 270;
+                else
+                    r = -ReturnLerpedAngle(360 - angle);
+
+            }
+            else if (angle <= 90)
+            {
+                dir = 1;
+
+                scale = scaleBotFront;
+                r = ReturnLerpedAngle(Mathf.Abs(angle));
+            }
+            else if (angle > 90 && angle < 180)
+            {
+                dir = -1;
+
+                scale = scaleBotBack;
+                r = -ReturnLerpedAngle(180 - angle);
+            }
+            else
+            {
+                dir = 1;
+
+                scale = scaleTopBack;
+                if (angle == 180) r = 8;
+                else
+                    r = ReturnLerpedAngle(angle - 180);
+            }
+
+
+        }
+
+
+
+        Debug.Log("Targer angle is: " + targetAngle);
+        ScytheState.SetTargets(dir);
+
+
+        var s = scythes.Dequeue();
+
+        SwitchState(ScytheState);
+        s.SwipeAttack(parry.transform.position, r, scale);
+        scythes.Enqueue(s);
+
+    }
+
+    private float ReturnLerpedAngle(float dif)
+    {
+        float p = Mathf.Lerp(0, maxRotation, dif / 90);
+        // p = Mathf.Round(p / 10) * 10; // Rounds to the nearest 10
+        Debug.Log("Difference is: " + dif + " added angle is: " + p);
+        return p;
+    }
+
+    // private void HandleShowSwipeTracker(bool track)
+    // {
+    //     swipeTracker.SetActive(track);
+    // }
+
+
+    private IEnumerator ParryCooldownCoroutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        canParry = true;
+
+    }
+
+    #endregion
+
+
+    #region shotgun
     public void StopShotgun(bool paused)
     {
-        if (paused)
+        if (paused && currentWeaponState == AmmoStateShotgun)
         {
             Debug.LogError("STOPPING SHOTGUN");
 
@@ -1008,7 +1660,19 @@ public class PlayerStateManager : MonoBehaviour
             if (aimCouroutine != null) StopCoroutine(aimCouroutine);
             if (reloadCouroutine != null) StopCoroutine(reloadCouroutine);
             if (MaxSlowTimeCouroutine != null) StopCoroutine(MaxSlowTimeCouroutine);
-            if (ShotgunNormalRotationRoutine != null) StopCoroutine(ShotgunNormalRotationRoutine);
+            if (ShotgunRotationRoutine != null) StopCoroutine(ShotgunRotationRoutine);
+            if (slowingTime) StopCoroutine(SlowTimeRoutine);
+            if (speedingTime) StopCoroutine(SpeedTimeRoutine);
+            if (checkingMaxTime) StopCoroutine(MaxSlowTimeRoutine);
+            ammoButtonPressed = false;
+            ID.UiEvents.OnUseJoystick?.Invoke(false);
+
+            slowingTime = false;
+            speedingTime = false;
+            checkingMaxTime = false;
+            ID.UiEvents.ReleaseScope?.Invoke(false);
+            ID.events.EnableButtons?.Invoke(true);
+
 
             Time.timeScale = FrameRateManager.TargetTimeScale;
             AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
@@ -1029,8 +1693,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-
-    private void GetShotgunBlast()
+    public void GetShotgunBlast(bool chainShot)
     {
         // ignoreParticleCollision = true;
         // Debug.LogError("Gettting blast");
@@ -1044,26 +1707,8 @@ public class PlayerStateManager : MonoBehaviour
         // asdfsf
         // asdfdsaf
         AudioManager.instance.PlayShoutgunNoise(0);
-        // float rotationInDegrees = transform.eulerAngles.z;
-
-        // // Convert rotation to radians for trigonometric functions
-        // float rotationInRadians = rotationInDegrees * Mathf.Deg2Rad;
-
-        // // Calculate the direction vector
-        // Vector2 direction = new Vector2(Mathf.Cos(rotationInRadians), Mathf.Sin(rotationInRadians));
-
-        // Apply the velocity (note that we negate the direction because your example implies leftward motion at 0 degrees)
-        // rb.velocity = -direction * velocityMagnitude;
-
-
 
         Vector2 force = -shotgunObj.transform.right * velocityMagnitude;
-
-
-
-
-
-
 
         float yVelRatio = force.y / velocityMagnitude;
         float addedY = 0;
@@ -1083,13 +1728,9 @@ public class PlayerStateManager : MonoBehaviour
         else if (yVelRatio < .5f && yPos < 0)
         {
             subtractY = -yForceSubtractMultiplier * (yPos / -5);
-            if (justSwitchedUsingChainedShotgun) subtractY *= 1.05f;
+            if (chainShot) subtractY *= 1.05f;
 
         }
-
-
-
-
 
         // if (yVelRatio > 0) addedY = yVelRatio * yForceMultiplier;
         // else if (yVelRatio < 0) addedY = yVelRatio * yForceMultiplier * -1;
@@ -1097,255 +1738,42 @@ public class PlayerStateManager : MonoBehaviour
         // Vector2 og = new Vector2(force.x, force.y + addedY);
         Vector2 finalForce = new Vector2(force.x + (subtractY * xVal), force.y + addedY - subtractY);
 
-        if (justSwitchedUsingChainedShotgun) finalForce *= 1.14f;
+        if (chainShot) finalForce *= 1.14f;
 
         // Debug.LogError("Subtract y of: " + subtractY + "OriginalForce: " + og + " new force: " + finalForce);
 
         AdjustForce(finalForce);
         SwitchState(ShotgunState);
 
-        if (useChainedAmmo && !justSwitchedUsingChainedShotgun)
-            justSwitchedUsingChainedShotgun = true;
+
+        if (useChainedAmmo && !chainShot)
+            chainShot = true;
 
     }
 
-    // private IEnumerator SlowTime(float duration, float target)
-    // {
-    //     Debug.LogError("Starting slow time with duration of: " + duration + " target is: " + target);
-    //     inSlowMo = true;
-    //     float currentTimeScale = Time.timeScale;
-
-    //     float time = 0;
-    //     if (target < .9f)
-    //         AudioManager.instance.PlaySlowMotionSound(true);
-    //     else
-    //     {
-    //         // yield return new WaitForSecondsRealtime(.15f);
-    //         while (time < duration * .35f)
-    //         {
-    //             time += Time.unscaledDeltaTime;
-    //             float newTime = Mathf.Lerp(currentTimeScale, 1 * .35f, time / duration);
-    //             AudioManager.instance.SlowAudioPitch(newTime);
-    //             Time.timeScale = newTime;
-
-
-    //             yield return null;
-    //         }
-    //         time = 0;
-
-    //         pool.Spawn("ShotgunShell", shellSpawnPoint.position, shellSpawnPoint.rotation);
-    //         AudioManager.instance.PlaySlowMotionSound(false);
-    //         canShootShotgun = true;
-    //         Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
-    //         AudioManager.instance.PlayShoutgunNoise(1);
-    //     }
-
-    //     while (time < duration * .75f)
-    //     {
-    //         time += Time.unscaledDeltaTime;
-    //         float newTime = Mathf.Lerp(currentTimeScale, target, time / duration);
-    //         AudioManager.instance.SlowAudioPitch(newTime);
-    //         Time.timeScale = newTime;
-
-
-    //         yield return null;
-    //     }
-
-    //     if (target < .9f)
-    //     {
-    //         yield return new WaitUntil(() => shotgunReleased);
-    //         shotgunReleased = false;
-    //         anim.SetTrigger("Shoot");
-    //         GetShotgunBlast();
-    //         // yield return new WaitForSecondsRealtime(.2f);
-    //         shotgunReleased = false;
-    //         shotgunSlow = StartCoroutine(SlowTime(speedTimeDuration, 1));
-
-    //         // yield break;
-
-    //     }
-    //     else
-    //     {
-
-
-
-    //         inSlowMo = false;
-
-    //     }
-    // }
-    private IEnumerator AimShotgunCourintine()
+    public void GetShell()
     {
-        movingJoystick = false;
-        float currentTimeScale = Time.timeScale;
-        float currentFallSpeed = maxFallSpeed;
-
-        float time = 0;
-        shotgunRotationTarget *= .7f;
-        AudioManager.instance.PlaySlowMotionSound(true);
-        while (time < slowTimeDuration)
-        {
-            time += Time.unscaledDeltaTime;
-            float newTime = Mathf.Lerp(currentTimeScale, slowTimeTarget, time / slowTimeDuration);
-            maxFallSpeed = Mathf.Lerp(currentFallSpeed, -8, time / slowTimeDuration);
-            Time.timeScale = newTime;
-            AudioManager.instance.SlowAudioPitch(newTime);
-
-
-            yield return null;
-        }
-        StopCoroutine(ShotgunNormalRotationRoutine);
-
-        // yield return new WaitForSeconds(aimToShootDelay);
-        yield return new WaitUntil(() => shotgunReleased);
-        shotgunReleased = false;
-        GetShotgunBlast();
-
-        // anim.SetTrigger("Shoot");
-        // anim.SetTrigger(ShootShotgunTrigger);
-        anim.SetBool(AimShotgunBool, false);
-        // yield return new WaitForSecondsRealtime(.2f);
-
-        reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
-    }
-
-    private IEnumerator ShootIfOverTime()
-    {
-        yield return new WaitForSeconds(1.2f);
-
-        if (startedAim == true)
-        {
-            startedAim = false;
-            StopCoroutine(aimCouroutine);
-            shotgunReleased = false;
-            GetShotgunBlast();
-            ID.events.EnableButtons?.Invoke(true);
-            // anim.SetTrigger("Shoot");
-            // anim.SetTrigger(ShootShotgunTrigger);
-            anim.SetBool(AimShotgunBool, false);
-            // yield return new WaitForSecondsRealtime(.2f);
-
-            reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
-
-        }
-    }
-
-    private IEnumerator ReloadShotgunCourintine()
-    {
-        // StopCoroutine(ShotgunAimingRotationRoutine);
-        movingJoystick = false;
-
-        shotgunRotationTarget = 45;
-
-        ShotgunNormalRotationRoutine = StartCoroutine(RotateShotgun());
-        inSlowMo = true;
-        float currentTimeScale = Time.timeScale;
-
-        float time = 0;
         pool.Spawn("ShotgunShell", shellSpawnPoint.position, shellSpawnPoint.rotation);
-
-        // yield return new WaitForSeconds(canShootDelay);
-        shotgunRotationTarget = -20;
-        canShootShotgun = true;
-        // Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
-        yield return new WaitForSecondsRealtime(reloadDelay);
-        while (time < reloadDuration)
-        {
-            time += Time.unscaledDeltaTime;
-            float newTime = Mathf.Lerp(currentTimeScale, reloadTimeTarget, time / reloadDuration);
-            AudioManager.instance.SlowAudioPitch(newTime);
-            Time.timeScale = newTime;
-
-
-            yield return null;
-        }
-        AudioManager.instance.PlaySlowMotionSound(false);
         AudioManager.instance.PlayShoutgunNoise(1);
-
-
-
-
-        time = 0;
-
-
-
-        float mfs = maxFallSpeed;
-
-        while (time < speedTimeDuration)
-        {
-            time += Time.deltaTime;
-            float newTime = Mathf.Lerp(reloadTimeTarget, FrameRateManager.TargetTimeScale, time / speedTimeDuration);
-            maxFallSpeed = Mathf.Lerp(mfs, originalMaxFallSpeed, time / speedTimeDuration);
-            AudioManager.instance.SlowAudioPitch(newTime);
-            Time.timeScale = newTime;
-
-
-            yield return null;
-        }
-        inSlowMo = false;
-        Time.timeScale = FrameRateManager.TargetTimeScale;
-        AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
-        if (shootChainThenReset) ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
-
     }
 
-    private void SwitchAmmo(int type)
+
+    public void RotateShotgun(bool rotate)
     {
-        if (type == 1)
+        if (rotate)
         {
-            shotgunEquipped = true;
-            movingJoystick = false;
-
-            // anim.SetTrigger("Equip");
-            shotgunObj.transform.localEulerAngles = new Vector3(0, 0, -45);
-            shotgunObj.SetActive(true);
-            anim.SetTrigger(EquipShotgunTrigger);
-
-
-
-            shotgunRotationTarget = -20;
-            ShotgunNormalRotationRoutine = StartCoroutine(RotateShotgun());
-
+            if (ShotgunRotationRoutine != null) StopCoroutine(ShotgunRotationRoutine);
+            ShotgunRotationRoutine = StartCoroutine(RotateShotgunCoroutine());
         }
-        else if (shotgunEquipped)
+        else
         {
-            movingJoystick = false;
-
-            if (ShotgunNormalRotationRoutine != null)
-
-                StopCoroutine(ShotgunNormalRotationRoutine);
-
-            if (ShotgunAimingRotationRoutine != null)
-                StopCoroutine(ShotgunAimingRotationRoutine);
-
-            // anim.SetTrigger("UnEquip");
-
-            anim.SetTrigger(UnEquipShotgunTrigger);
-            anim.SetBool(AimShotgunBool, false);
-
-            shotgunObj.SetActive(false);
-            shotgunEquipped = false;
-
+            if (ShotgunRotationRoutine != null) StopCoroutine(ShotgunRotationRoutine);
+            // shotgunObj.transform.localEulerAngles = new Vector3(0, 0, shotgunRotationTarget);
         }
-
-    }
-    private void SetShotgunRotTarget(int rot)
-    {
-        if (shotgunEquipped)
-            shotgunRotationTarget = rot;
     }
 
-    public void ReloadShotgun()
-    {
-        // canShootShotgun = true;
-        // Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
-        // AudioManager.instance.PlayShoutgunNoise(1);
 
-
-        //get shell here
-
-    }
-
-    private IEnumerator RotateShotgun()
+    public IEnumerator RotateShotgunCoroutine()
     {
         while (true)
         {
@@ -1370,42 +1798,18 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    // private IEnumerator RotateWhileAiming()
-    // {
 
-
-    //     while (shotgunEquipped)
-    //     {
-    //         if (!movingJoystick) yield return null;
-
-
+    private void SetShotgunRotTarget(int rot)
+    {
+        if (shotgunEquipped)
+            shotgunRotationTarget = rot;
+    }
 
 
 
-    //         // Quaternion currentRotation = shotgunObj.transform.rotation;
-    //         // Quaternion targetRotation = Quaternion.Euler(0, 0, shotgunAimRotationTarget);
-
-    //         // // Calculate the angular difference between the current and target rotations
-    //         // float angleDifference = Quaternion.Angle(currentRotation, targetRotation);
-    //         // if (angleDifference < 1f)
-    //         // {
-    //         //     // shotgunObj.transform.localRotation = targetRotation; // Snap to the final rotation to avoid any minor differences
-    //         //     yield return null;
-    //         // }
-
-    //         // Lerp the rotation towards the target
-    //         // shotgunObj.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, shotgunAimRotationSpeed * Time.deltaTime);
-
-    //         // If the angular difference is less than 1 degree, stop yielding (rotation complete)
-
-
-    //         yield return null; // Wait for the next frame
-    //     }
-    // }
 
 
 
-    // public void CalculateGlobalRotationTarget(int val)
     public void CalculateGlobalRotationTarget(Vector2 val)
     {
 
@@ -1417,13 +1821,101 @@ public class PlayerStateManager : MonoBehaviour
         // if (val == 0) return;
         // targetRotateSpeedShotgun = 400 * val;
 
-        if (val == Vector2.zero) return;
-        targetRotationShotgun = val;
+        if (val == Vector2.zero)
+        {
+            ignoreRotation = false;
+            return;
+        }
 
         if (!ignoreRotation) ignoreRotation = true;
+        targetRotationShotgun = val;
+
+
 
 
     }
+
+
+    #endregion
+
+
+
+
+
+    public void SetTimeScale(bool slowDown, float duration, float targetTime = 0, float maxSlowTime = 0)
+    {
+        if (slowDown)
+        {
+            if (speedingTime) StopCoroutine(SpeedTimeRoutine);
+            speedingTime = false;
+            slowingTime = true;
+            if (maxSlowTime > 0)
+            {
+                MaxSlowTimeRoutine = StartCoroutine(MaxSlowTimeCoroutine(maxSlowTime));
+                checkingMaxTime = true;
+            }
+            SlowTimeRoutine = StartCoroutine(SlowTimeCoroutine(targetTime, duration));
+        }
+        else
+        {
+            if (slowingTime) StopCoroutine(SlowTimeRoutine);
+            if (checkingMaxTime) StopCoroutine(MaxSlowTimeRoutine);
+            slowingTime = false;
+            speedingTime = true;
+            SpeedTimeRoutine = StartCoroutine(SpeedTimeCoroutine(duration));
+        }
+
+    }
+    private IEnumerator MaxSlowTimeCoroutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        checkingMaxTime = false;
+        currentWeaponState.ReleaseButton(this);
+
+
+    }
+    private IEnumerator SlowTimeCoroutine(float targetTime, float duration)
+    {
+        float currentTimeScale = Time.timeScale;
+        float currentFallSpeed = maxFallSpeed;
+
+        float time = 0;
+        AudioManager.instance.PlaySlowMotionSound(true);
+        while (time < duration)
+        {
+            time += Time.unscaledDeltaTime;
+            float newTime = Mathf.Lerp(currentTimeScale, targetTime, time / duration);
+            Time.timeScale = newTime;
+            AudioManager.instance.SlowAudioPitch(newTime);
+
+
+            yield return null;
+        }
+        slowingTime = false;
+    }
+    private IEnumerator SpeedTimeCoroutine(float duration)
+    {
+        float currentTimeScale = Time.timeScale;
+
+        float time = 0;
+
+        while (time < duration)
+        {
+            time += Time.unscaledDeltaTime;
+            float newTime = Mathf.Lerp(currentTimeScale, FrameRateManager.TargetTimeScale, time / duration);
+            AudioManager.instance.SlowAudioPitch(newTime);
+            Time.timeScale = newTime;
+
+
+            yield return null;
+        }
+        AudioManager.instance.PlaySlowMotionSound(false);
+        speedingTime = false;
+
+    }
+
+
+
 
 
     private void HandleNextSectionTrigger(float duration, float centerDuration, bool isClockwise, Transform trans, Vector2 centPos, bool doTween)
@@ -1439,23 +1931,71 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    private void HandleBubble(bool isInside)
-    {
+    #region damage/collision
+    // private ColliderEnemy enemyCollider;
 
+    // public void SetEnemyCollider(ColliderEnemy e)
+    // {
+    //     enemyCollider = e;
+    // }
+
+    public bool CanPerectParry { get; private set; }
+    public bool CanParry { get; private set; }
+
+    private ColliderEnemy enemyCollider;
+    private ParryCollisions parryCollider;
+
+    public void SetColliders(ColliderEnemy e, ParryCollisions p)
+    {
+        if (e != null) enemyCollider = e;
+        if (p != null)
+        {
+            parryCollider = p;
+            p.gameObject.SetActive(false);
+        }
 
     }
 
+    public void SetParry(bool startedParry)
+    {
+        if (startedParry)
+        {
+            enemyCollider.gameObject.SetActive(false);
+            parryCollider.gameObject.SetActive(true);
+        }
+        else enemyCollider.gameObject.SetActive(true);
 
+    }
 
-    private void HandleDamaged()
+    public void SetParryType(bool perfect, bool normal)
+    {
+        CanPerectParry = perfect;
+        CanParry = normal;
+    }
+
+    // public byte CheckParry()
+    // {
+    //     if (ParryState.canPerfectParry)
+    //     {
+
+    //     }
+    //     else if (ParryState.canParry)
+    //     {
+
+    //     }
+    //     else
+    //         HandleDamaged();
+    // }
+    public void HandleDamaged()
     {
 
         if (!isDamaged)
         {
-            if (useChainedAmmo)
-            {
-                ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
-            }
+            // if (useChainedAmmo)
+            // {
+            //     ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+            // }
+            AmmoStateShotgun.StopChainedAmmo(this, true);
 
             isDamaged = true;
 
@@ -1493,7 +2033,7 @@ public class PlayerStateManager : MonoBehaviour
         DashSlash.IgnoreForce(true);
 
     }
-
+    private Coroutine damagedRoutine;
     private void DamageEffects()
     {
         ID.globalEvents.ShakeCamera?.Invoke(.5f, .14f);
@@ -1508,7 +2048,7 @@ public class PlayerStateManager : MonoBehaviour
         Feather.Play();
         AudioManager.instance.PlayDamageSound();
 
-        StartCoroutine(Flash());
+        damagedRoutine = StartCoroutine(Flash());
 
         FeatherParticleQueue.Enqueue(Feather);
 
@@ -1518,6 +2058,27 @@ public class PlayerStateManager : MonoBehaviour
         SwitchState(IdleState);
         AdjustForce(vel);
     }
+
+    public void ChangeCollider(int index)
+    {
+        if (index < 0)
+        {
+            for (int i = 0; i < ColliderType.Count; i++)
+            {
+                // If the current index matches the parameter, enable the collider, otherwise disable it.
+                ColliderType[i].enabled = false;
+
+            }
+            return;
+
+        }
+        for (int i = 0; i < ColliderType.Count; i++)
+        {
+            // If the current index matches the parameter, enable the collider, otherwise disable it.
+            ColliderType[i].enabled = (i == index);
+        }
+    }
+
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
@@ -1541,7 +2102,6 @@ public class PlayerStateManager : MonoBehaviour
                 else if (pos.normal.x < -.7f)
                 {
 
-                    // rb.velocity = new Vector2(-6.5f, 2);
 
                     EnterIdleStateWithVel(new Vector2(-6.3f, 2));
 
@@ -1581,28 +2141,53 @@ public class PlayerStateManager : MonoBehaviour
         }
 
 
-        // particleCollider.transform.position = 
 
-        // ID.events.LoseLife?.Invoke();
 
     }
 
-
+    private Vector2 addedForce = new Vector2(0f, 8f);
     private void HandleGroundCollision()
     {
 
 
         if (!isDropping)
         {
-            HandleDamaged();
-            AdjustForce(new Vector2(0, 12.5f));
-            SwitchState(IdleState);
-            // if (isTutorial)
-            // {
-            //     HandleDamaged();
-            //     return;
-            // }
-            // Die();
+
+
+
+
+            if (bounceOffGround)
+            {
+                AudioManager.instance.PlayBoingSound();
+                float x = rb.linearVelocity.x * Random.Range(.8f, 1.2f);
+                if (Mathf.Abs(x) < 2f)
+                {
+                    x = Random.Range(.5f, 3.3f);
+
+                    int d = Random.Range(0, 2);
+
+                    if (d >= 1) x *= -1;
+                }
+                SwitchState(NullState);
+
+                rb.angularDamping = .3f;
+                int r = Random.Range(350, 450);
+                if (x < 0)
+                    rb.angularVelocity = r;
+                else
+                    rb.angularVelocity = -r;
+
+                AdjustForce(new Vector2(x, Random.Range(11.5f, 14.3f)));
+            }
+            else
+            {
+                HandleDamaged();
+                AdjustForce(new Vector2(0, 12.5f));
+                SwitchState(IdleState);
+
+            }
+
+
         }
         else
         {
@@ -1654,10 +2239,10 @@ public class PlayerStateManager : MonoBehaviour
     }
 
 
-
+    private bool doingDamageFlash = false;
     private IEnumerator Flash()
     {
-
+        doingDamageFlash = true;
 
         for (int i = 0; i < 5; i++)
         {
@@ -1669,6 +2254,7 @@ public class PlayerStateManager : MonoBehaviour
             yield return new WaitForSeconds(.12f);
         }
         ID.PlayerMaterial.SetFloat("_Alpha", 1);
+        doingDamageFlash = false;
 
         isDamaged = false;
     }
@@ -1704,38 +2290,47 @@ public class PlayerStateManager : MonoBehaviour
             AdjustForce(new Vector2(-5, targetYVelocity));
         }
     }
-    public IEnumerator SetUndamagableCourintine(bool setBoolInitial, float duration)
+    private Coroutine undamagableRoutine;
+    private bool isUndamagable;
+
+    public void ResetDamagable()
     {
+        if (isUndamagable)
+        {
+            StopCoroutine(undamagableRoutine);
+            // SetTrailActive(false);
+        }
+        if (!doingDamageFlash) isDamaged = false;
+
+    }
+    public void SetUndamagable(bool fromStuck, float duration)
+    {
+        if (doingDamageFlash)
+        {
+            StopCoroutine(damagedRoutine);
+            ID.PlayerMaterial.SetFloat("_Alpha", 1);
+            doingDamageFlash = false;
+        }
+        if (isUndamagable) StopCoroutine(undamagableRoutine);
+        undamagableRoutine = StartCoroutine(SetUndamagableCourintine(fromStuck, duration));
+
+    }
+
+    private IEnumerator SetUndamagableCourintine(bool fromStuck, float duration)
+    {
+        isUndamagable = true;
+
         isDamaged = true;
         yield return new WaitForSeconds(duration);
+
+        // if (fromStuck) SetTrailActive(false);
+        isUndamagable = false;
+
         isDamaged = false;
 
     }
 
-    private IEnumerator DashCooldown(float time)
-    {
-        canDash = false;
-
-        yield return new WaitForSeconds(time);
-        ID.globalEvents.CanDash?.Invoke(true);
-        canDash = true;
-    }
-    IEnumerator DropCooldown()
-    {
-        canDrop = false;
-
-        yield return new WaitForSeconds(dropCooldownTime);
-        ID.globalEvents.CanDrop?.Invoke(true);
-
-        canDrop = true;
-    }
-
-    IEnumerator WaitForAnim()
-    {
-        yield return new WaitForSeconds(.3f);
-        anim.SetBool("JumpHeld", false);
-    }
-
+    #endregion
     private void BucketCompletion(Transform position)
     {
 
@@ -1786,8 +2381,39 @@ public class PlayerStateManager : MonoBehaviour
         NestState.OnHitWater(hit);
     }
 
+
+    public void SetIfWeaponButtonPressed(bool isPressed)
+    {
+        ammoButtonPressed = isPressed;
+    }
+    public void CollectAmmo(int type)
+    {
+        if (currentWeaponState == null) return;
+
+
+        if (currentWeaponState != AmmoStateCage)
+            currentWeaponState.CollectAmmo(this, type);
+        else
+            prevWeaponState.CollectAmmo(this, type);
+
+    }
+
+    private void SetScythePosition(Vector2 pos)
+    {
+        AmmoStateScythe.SetCenterPos(pos);
+
+    }
+
+
+
     private void OnEnable()
     {
+        ID.events.OnSetScythePos += SetScythePosition;
+        ID.events.OnReleaseStick += HandleReleaseStick;
+        ID.events.OnScytheAttack += GetScytheAttack;
+        ID.events.OnSwipeScytheAttack += GetScytheSwipeAttack;
+        ID.UiEvents.OnSwitchWeapon += SwitchWeaponState;
+        ID.events.OnTouchCenter += HandlePressWeaponButton;
         ID.events.OnJump += HandleJump;
         ID.events.OnWater += HitWater;
         ID.globalEvents.OnSetNewPlayerMovementData += OnChangeMovementData;
@@ -1807,7 +2433,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.HitGround += HandleGroundCollision;
         // ID.globalEvents.SetCanDashSlash += HandleDashSlash;
         ID.events.OnDashSlash += HandleDashSlash;
-        ID.events.OnAttack += HandleShotgun;
+
 
         ID.globalEvents.OnUseChainedAmmo += UsingChainedAmmo;
         ID.globalEvents.OnFinishedLevel += LevelFinished;
@@ -1817,16 +2443,46 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnOffScreen += OffScreen;
         ID.events.HitBoss += HitBoss;
         ID.globalEvents.OnEnterNextSectionTrigger += HandleNextSectionTrigger;
-        ID.events.OnSwitchAmmoType += SwitchAmmo;
+
+        ID.UiEvents.OnCollectAmmo += CollectAmmo;
         PauseMenuButton.OnPauseGame += StopShotgun;
+        ID.events.OnCollectCage += HandleCollectCage;
+        ID.events.OnDragCenter += HandleDragWeaponButton;
+
+        ID.events.OnPerformParry += HandleEnterParryState;
+        ID.globalEvents.OnScythePig += HandleStuckPig;
+        ID.events.OnStuckScytheSwipe += HandleSwipeStuckPig;
+        ID.events.OnReleaseCenter += HandleReleaseWeaponButton;
+
+        // ID.events.OnTrackParrySwipe += HandleShowSwipeTracker;
+
         // ID.events.OnAttack += HandleSlash;
     }
     private void OnDisable()
     {
+        if (currentWeaponState != null)
+            currentWeaponState.ExitState(this);
+
+        ID.events.OnSetScythePos -= SetScythePosition;
+        ID.events.OnReleaseStick -= HandleReleaseStick;
+
+
+
+        ID.events.OnScytheAttack -= GetScytheAttack;
+        ID.events.OnSwipeScytheAttack -= GetScytheSwipeAttack;
+
+
+        ID.UiEvents.OnSwitchWeapon -= SwitchWeaponState;
+        ID.events.OnTouchCenter -= HandlePressWeaponButton;
+        ID.events.OnPerformParry -= HandleEnterParryState;
+
+
+
+
         ID.events.OnJump -= HandleJump;
         ID.events.OnWater -= HitWater;
 
-        ID.events.OnAttack -= HandleShotgun;
+
         ID.events.OnAimJoystick -= CalculateGlobalRotationTarget;
         ID.globalEvents.OnUseChainedAmmo -= UsingChainedAmmo;
         ID.globalEvents.OnFinishedLevel -= LevelFinished;
@@ -1859,288 +2515,280 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnAdjustConstantSpeed -= ChangeConstantForce;
         ID.globalEvents.OnOffScreen -= OffScreen;
         ID.events.HitBoss -= HitBoss;
-        ID.events.OnSwitchAmmoType -= SwitchAmmo;
+
+        ID.UiEvents.OnCollectAmmo -= CollectAmmo;
+        ID.events.OnCollectCage -= HandleCollectCage;
+
         PauseMenuButton.OnPauseGame -= StopShotgun;
+        ID.events.OnDragCenter -= HandleDragWeaponButton;
+        ID.globalEvents.OnScythePig -= HandleStuckPig;
+        ID.events.OnStuckScytheSwipe -= HandleSwipeStuckPig;
+        ID.events.OnReleaseCenter -= HandleReleaseWeaponButton;
 
 
-
+        // ID.events.OnTrackParrySwipe -= HandleShowSwipeTracker;
 
 
 
     }
 
-    // private void HandleClocker(bool usingClocker)
-    // {
-    //     if (usingClocker)
-    //     {
-    //         ID.UsingClocker = usingClocker;
-    //         Time.timeScale = .4f;
-    //         anim.SetBool("GetGunBool", true);
-    //         StartCoroutine(DrawLine());
-    //     }
-    //     else
-    //     {
-    //         Time.timeScale = originalTimeScale;
-    //         line.enabled = false;
-    //         anim.SetBool("GetGunBool", false);
 
-    //     }
-
-    // }
-
-    // IEnumerator DrawLine()
-    // {
-    //     line.enabled = true;
-    //     float startTime = Time.time;
-    //     float distance = Vector3.Distance(startPoint, endPoint);
-    //     float fracJourney = 0f;
-
-    //     line.SetPosition(0, startPoint);
-    //     line.SetPosition(1, startPoint); // Start with the line collapsed at the start point
-
-    //     while (fracJourney < 1f)
-    //     {
-    //         float distCovered = (Time.time - startTime) * drawSpeed;
-    //         fracJourney = distCovered / distance;
-    //         Vector2 currentPoint = Vector2.Lerp(startPoint, endPoint, fracJourney);
-
-    //         line.SetPosition(1, currentPoint); // Update the end point
-
-    //         yield return null;
-    //     }
-
-    //     line.SetPosition(1, endPoint); // Ensure the line is fully drawn to the end point
-    // }
-
-
-
-
-
-    // void HandleAttack(bool attacking)
-    // {
-
-    //     if (attacking && !disableButtons && ID.numberOfPowersThatCanBeUsed >= 1)
-    //     {
-    //         ID.numberOfPowersThatCanBeUsed--;
-    //         ID.CurrentMana -= ID.ManaNeeded;
-    //         ID.globalEvents.UsePower?.Invoke();
-    //         // ResetHoldJump();
-    //         isAttacking = true;
-    //         SwitchState(SlashState);
-    //     }
-    //     else if (!attacking && isAttacking)
-    //     {
-    //         // invoked false by featherAnimation, called function on AddDamage()
-
-    //         maxFallSpeed = ID.MaxFallSpeed;
-    //         attackObject.SetActive(false);
-    //         anim.SetBool("AttackBool", false);
-    //         disableButtons = false;
-    //         isAttacking = false;
-    //         CheckIfIsTryingToParachute();
-    //     }
-    // }
-
-    // public void CheckIfIsTryingToParachute()
-    // {
-    //     if (isTryingToParachute)
-    //     {
-    //         HandleParachute(true);
-    //     }
-    //     else
-    //     {
-    //         SwitchState(IdleState);
-    //     }
-
-    // }
-    // public void HandleParachute(bool isPressing)
-    // {
-    //     isTryingToParachute = isPressing;
-
-    //     if (isPressing && !disableButtons)
-    //     {
-    //         if (ID.StaminaUsed < ID.MaxStamina)
-    //         {
-    //             Debug.Log("Holding chute");
-
-    //             SwitchState(ParachuteState);
-    //             isParachuting = true;
-    //             ID.globalEvents.OnUseStamina?.Invoke(true);
-    //         }
-    //         else
-    //         {
-    //             StartFillStaminaCoroutine();
-
-    //             ID.globalEvents.OnZeroStamina?.Invoke();
-
-    //         }
-
-    //     }
-    //     else if (!isPressing && isParachuting)
-    //     {
-    //         // ResetParachute();
-    //         SwitchState(IdleState);
-    //     }
-    // }
-
-
-    // public void HandleClocker(bool b)
-    // {
-    //     if (b)
-    //     {
-    //         Time.timeScale = 0.2f;
-    //         justStartedClocker = true;
-    //         anim.SetBool("GetGunBool", true);
-
-
-    //         ID.UsingClocker = true;
-    //         maxFallSpeed = -6.5f;
-    //         if (justFlippedRight)
-    //         {
-    //             FlipRightState.ReEnterState();
-    //         }
-    //         else{
-    //             FlipLeftState.ReEnterState();
-    //         }
-    //         AudioManager.instance.SlowMotionPitch(true);
-
-    //     }
-    //     else
-    //     {
-
-    //         Time.timeScale = originalTimeScale;
-    //         AudioManager.instance.SlowMotionPitch(false);
-
-
-    //         ID.UsingClocker = false;
-    //         maxFallSpeed = ID.MaxFallSpeed;
-
-
-    //     }
-
-    // }
-
-    // private IEnumerator FillStamina()
-    // {
-    //     yield return new WaitForSeconds(2.5f);
-
-    //     while (ID.StaminaUsed > 0 && !jumpHeld)
-    //     {
-
-    //         ID.StaminaUsed -= staminaFill * Time.deltaTime;
-    //         yield return null; // Wait for the next frame
-    //     }
-
-    //     if (!jumpHeld)
-    //     {
-    //         ID.StaminaUsed = 0;
-    //         ID.globalEvents.OnUseStamina?.Invoke(false);
-
-    //     }
-    // }
-
-    // public void UseStamina(float amount)
-    // {
-    //     ID.StaminaUsed += amount * Time.deltaTime;
-
-    //     if (ID.StaminaUsed >= ID.MaxStamina)
-    //     {
-    //         // ResetHoldJump();
-    //         // ResetParachute();
-
-    //         ID.globalEvents.OnZeroStamina?.Invoke();
-    //         SwitchState(IdleState);
-
-    //     }
-
-
-    // }
-
-    // public void StartFillStaminaCoroutine()
-    // {
-    //     if (fillStaminaCoroutine != null)
-    //     {
-    //         StopCoroutine(fillStaminaCoroutine);
-    //     }
-    //     fillStaminaCoroutine = StartCoroutine(FillStamina());
-    // }
-
-
-
-
-    // private void ResetHoldJump()
-    // {
-    //     if (jumpHeld)
-    //     {
-    //         jumpHeld = false;
-    //         anim.SetBool("JumpHeld", false);
-    //         maxFallSpeed = ID.MaxFallSpeed;
-    //         StartFillStaminaCoroutine();
-    //     }
-
-
-    // }
-
-    // private void ResetParachute()
-    // {
-    //     if (isParachuting)
-    //     {
-    //         isParachuting = false;
-    //         anim.SetBool("ParachuteBool", false);
-    //         StartFillStaminaCoroutine();
-    //         maxFallSpeed = ID.MaxFallSpeed;
-    //         disableButtons = false;
-
-
-    //     }
-
-    // }
-
-
-
-    // public void ShowSword(bool isShown)
-    // {
-    //     if (isShown)
-    //     {
-    //         Sword.SetActive(true);
-    //     }
-    //     StartCoroutine(SwordCoroutine(isShown));
-
-    // }
-
-    // private IEnumerator SwordCoroutine(bool isShown)
-    // {
-
-    //     float duration = 0.1f; // Duration in seconds over which the fade will occur
-    //     float elapsedTime = 0;
-    //     if (isShown)
-    //     {
-
-
-    //         while (elapsedTime < duration)
-    //         {
-    //             elapsedTime += Time.deltaTime;
-    //             float alpha = Mathf.Lerp(0, 1, elapsedTime / duration);
-    //             SwordSprite.color = new Color(SwordSprite.color.r, SwordSprite.color.g, SwordSprite.color.b, alpha);
-    //             yield return null;
-    //         }
-
-    //         // Ensure the final alpha is set to the target value
-    //         SwordSprite.color = new Color(SwordSprite.color.r, SwordSprite.color.g, SwordSprite.color.b, 1);
-    //     }
-    //     else{
-    //         while (elapsedTime < duration)
-    //         {
-    //             elapsedTime += Time.deltaTime;
-    //             float alpha = Mathf.Lerp(1, 0, elapsedTime / duration);
-    //             SwordSprite.color = new Color(SwordSprite.color.r, SwordSprite.color.g, SwordSprite.color.b, alpha);
-    //             yield return null;
-    //         }
-
-    //         // Ensure the final alpha is set to the target value
-    //         SwordSprite.color = new Color(SwordSprite.color.r, SwordSprite.color.g, SwordSprite.color.b, 1);
-    //         Sword.SetActive(false);
-
-    //     }
-    // }
 }
+
+
+//OLD SHOTGUN
+
+// public void HandleShotgun(bool holding)
+// {
+//     if (ammoManager == null) return;
+//     // Debug.LogError("Can Shoot is: " + canShootShotgun + " shotgun release is: " + shotgunReleased + " in slow mo is: " + inSlowMo);
+//     // if (shotgunReleased) return;
+//     if (holding && canShootShotgun)
+//     {
+
+//         if (ID.ShotgunAmmo <= 0 && !useChainedAmmo)
+//         {
+//             // Debug.Log("ShotgunAmmo is 0 or less and not using chained ammo. Exiting.");
+//             return;
+//         }
+
+
+//         if (inSlowMo)
+//         {
+//             // StopCoroutine(shotgunSlow);
+//             StopCoroutine(reloadCouroutine);
+//         }
+
+//         if (MaxSlowTimeCouroutine != null)
+//             StopCoroutine(MaxSlowTimeCouroutine);
+
+//         MaxSlowTimeCouroutine = StartCoroutine(ShootIfOverTime());
+
+
+//         startedAim = true;
+//         ID.events.EnableButtons?.Invoke(false);
+
+//         // anim.SetTrigger("Aim");
+//         anim.SetBool(AimShotgunBool, true);
+//         aimCouroutine = StartCoroutine(AimShotgunCourintine());
+//         // shotgunSlow = StartCoroutine(SlowTime(slowTimeDuration, slowTimeTarget));
+
+
+
+//         // Debug.Log("YDFD");
+//         // lastState = currentState;
+//         // rotateWithLastState = true;
+//         // SwitchState(ParachuteState);
+
+//     }
+//     else if (!holding && startedAim)
+//     {
+//         // Debug.Log("Realeased");
+//         ID.events.EnableButtons?.Invoke(true);
+
+
+//         if (ID.ShotgunAmmo > 0)
+//         {
+//             // Debug.Log($"ShotgunAmmo is greater than 0. Current ShotgunAmmo: {ID.ShotgunAmmo}");
+//             // Debug.Log($"ShotgunAmmo decremented. New ShotgunAmmo: {ID.ShotgunAmmo}");
+
+//             ID.ShotgunAmmo--;
+
+//             // if (ID.ShotgunAmmo <= 0) ID.globalEvents.OnUseChainedAmmo?.Invoke(false); // remove for chained ammo to work
+
+//         }
+
+//         if (useChainedAmmo)
+//         {
+//             // Debug.Log($"Using chained ammo. Current ChainedShotgunAmmo: {ID.ChainedShotgunAmmo}");
+
+//             ID.ChainedShotgunAmmo--;
+
+
+
+//         }
+
+//         else if (ID.ShotgunAmmo == 0 && !useChainedAmmo)
+//         {
+//             // Debug.Log("ShotgunAmmo is 0 and not using chained ammo. Triggering event to start using chained ammo.");
+
+//             ID.globalEvents.OnUseChainedAmmo?.Invoke(true);
+
+//         }
+
+//         if (useChainedAmmo && ID.ChainedShotgunAmmo <= 0)
+//         {
+//             // Debug.Log("ChainedShotgunAmmo is less than 0. Triggering event to stop using chained ammo.");
+//             shootChainThenReset = true;
+//             useChainedAmmo = false;
+//             // ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+
+//         }
+//         shotgunReleased = true;
+//         canShootShotgun = false;
+//         startedAim = false;
+
+
+//     }
+// }
+
+
+// private IEnumerator MaxSlowTime(float duration)
+// {
+
+// }
+// public IEnumerator AimShotgunCourintine()
+// {
+//     movingJoystick = false;
+//     float currentTimeScale = Time.timeScale;
+//     float currentFallSpeed = maxFallSpeed;
+
+//     float time = 0;
+//     shotgunRotationTarget *= .7f;
+//     AudioManager.instance.PlaySlowMotionSound(true);
+//     while (time < slowTimeDuration)
+//     {
+//         time += Time.unscaledDeltaTime;
+//         float newTime = Mathf.Lerp(currentTimeScale, slowTimeTarget, time / slowTimeDuration);
+//         // maxFallSpeed = Mathf.Lerp(currentFallSpeed, -8, time / slowTimeDuration);
+//         Time.timeScale = newTime;
+//         AudioManager.instance.SlowAudioPitch(newTime);
+
+
+//         yield return null;
+//     }
+//     StopCoroutine(ShotgunRotationRoutine);
+
+//     // yield return new WaitForSeconds(aimToShootDelay);
+//     yield return new WaitUntil(() => shotgunReleased);
+//     shotgunReleased = false;
+//     GetShotgunBlast(false);
+
+//     // anim.SetTrigger("Shoot");
+//     // anim.SetTrigger(ShootShotgunTrigger);
+//     anim.SetBool(AimShotgunBool, false);
+//     // yield return new WaitForSecondsRealtime(.2f);
+
+//     reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
+// }
+
+// public IEnumerator ShootIfOverTime()
+// {
+//     yield return new WaitForSeconds(ID.maxShotgunHoldTime);
+
+//     if (startedAim == true)
+//     {
+//         startedAim = false;
+//         StopCoroutine(aimCouroutine);
+//         shotgunReleased = false;
+//         GetShotgunBlast(false);
+//         ID.events.EnableButtons?.Invoke(true);
+//         // anim.SetTrigger("Shoot");
+//         // anim.SetTrigger(ShootShotgunTrigger);
+//         anim.SetBool(AimShotgunBool, false);
+//         // yield return new WaitForSecondsRealtime(.2f);
+
+//         reloadCouroutine = StartCoroutine(ReloadShotgunCourintine());
+
+//     }
+// }
+
+// public IEnumerator ReloadShotgunCourintine()
+// {
+//     // StopCoroutine(ShotgunAimingRotationRoutine);
+//     movingJoystick = false;
+
+//     shotgunRotationTarget = 45;
+
+//     ShotgunRotationRoutine = StartCoroutine(RotateShotgunCoroutine());
+//     inSlowMo = true;
+//     float currentTimeScale = Time.timeScale;
+
+//     float time = 0;
+//     pool.Spawn("ShotgunShell", shellSpawnPoint.position, shellSpawnPoint.rotation);
+
+//     // yield return new WaitForSeconds(canShootDelay);
+//     shotgunRotationTarget = -20;
+//     canShootShotgun = true;
+//     // Debug.LogError("Rlaoding shotgun, Can Shoot is: " + canShootShotgun);
+//     yield return new WaitForSecondsRealtime(reloadDelay);
+//     while (time < reloadDuration)
+//     {
+//         time += Time.unscaledDeltaTime;
+//         float newTime = Mathf.Lerp(currentTimeScale, reloadTimeTarget, time / reloadDuration);
+//         AudioManager.instance.SlowAudioPitch(newTime);
+//         Time.timeScale = newTime;
+
+
+//         yield return null;
+//     }
+//     AudioManager.instance.PlaySlowMotionSound(false);
+//     AudioManager.instance.PlayShoutgunNoise(1);
+
+
+
+
+//     time = 0;
+
+
+
+//     float mfs = maxFallSpeed;
+
+//     while (time < speedTimeDuration)
+//     {
+//         time += Time.deltaTime;
+//         float newTime = Mathf.Lerp(reloadTimeTarget, FrameRateManager.TargetTimeScale, time / speedTimeDuration);
+//         maxFallSpeed = Mathf.Lerp(mfs, originalMaxFallSpeed, time / speedTimeDuration);
+//         AudioManager.instance.SlowAudioPitch(newTime);
+//         Time.timeScale = newTime;
+
+
+//         yield return null;
+//     }
+//     inSlowMo = false;
+//     Time.timeScale = FrameRateManager.TargetTimeScale;
+//     AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
+//     if (shootChainThenReset) ID.globalEvents.OnUseChainedAmmo?.Invoke(false);
+
+// }
+
+// private void SwitchAmmo(int type)
+// {
+//     if (type == 1)
+//     {
+//         shotgunEquipped = true;
+//         movingJoystick = false;
+
+//         // anim.SetTrigger("Equip");
+//         shotgunObj.transform.localEulerAngles = new Vector3(0, 0, -45);
+//         shotgunObj.SetActive(true);
+//         anim.SetTrigger(EquipShotgunTrigger);
+
+
+
+//         shotgunRotationTarget = -20;
+//         ShotgunRotationRoutine = StartCoroutine(RotateShotgunCoroutine());
+
+//     }
+//     else if (shotgunEquipped)
+//     {
+//         movingJoystick = false;
+
+//         if (ShotgunRotationRoutine != null)
+
+//             StopCoroutine(ShotgunRotationRoutine);
+
+//         if (ShotgunAimingRotationRoutine != null)
+//             StopCoroutine(ShotgunAimingRotationRoutine);
+
+//         // anim.SetTrigger("UnEquip");
+
+//         anim.SetTrigger(UnEquipShotgunTrigger);
+//         anim.SetBool(AimShotgunBool, false);
+
+//         shotgunObj.SetActive(false);
+//         shotgunEquipped = false;
+
+//     }
+
+// }

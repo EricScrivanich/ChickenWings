@@ -8,7 +8,7 @@ namespace MoreMountains.Feedbacks
 	/// <summary>
 	/// Add this to a camera and it'll let you control its orthographic size over time, can be piloted by a MMFeedbackCameraOrthographicSize
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Camera/MMCameraOrthographicSizeShaker")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Camera/MM Camera Orthographic Size Shaker")]
 	[RequireComponent(typeof(Camera))]
 	public class MMCameraOrthographicSizeShaker : MMShaker
 	{

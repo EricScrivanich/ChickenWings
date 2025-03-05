@@ -47,11 +47,13 @@ public class ColorFlasher : MonoBehaviour
     {
         if (flashSeq != null && flashSeq.IsPlaying())
             flashSeq.Kill();
-        flashSeq = DOTween.Sequence();
 
-        flashSeq.Append(image.DOColor(colorSO.normalButtonColor, flashDur));
+        image.color = colorSO.normalButtonColor;
+        // flashSeq = DOTween.Sequence();
 
-        flashSeq.Play().SetUpdate(true);
+        // flashSeq.Append(image.DOColor(colorSO.normalButtonColor, flashDur));
+
+        // flashSeq.Play().SetUpdate(true);
 
     }
 }

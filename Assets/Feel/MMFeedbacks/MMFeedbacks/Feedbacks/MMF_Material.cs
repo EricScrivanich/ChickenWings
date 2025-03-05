@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you change the material of the target renderer everytime it's played.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Renderer/Material")]
 	public class MMF_Material : MMF_Feedback
 	{
@@ -86,6 +88,10 @@ namespace MoreMountains.Feedbacks
 
 		protected virtual void InitializeMaterials()
 		{
+			if (Materials == null)
+			{
+				Materials = new List<Material>();
+			}
 			if (TargetRenderer == null)
 			{
 				return;
@@ -124,7 +130,7 @@ namespace MoreMountains.Feedbacks
             
 			if (Materials.Count == 0)
 			{
-				Debug.LogError("[MMFeedbackMaterial on " + Owner.name + "] The Materials array is empty.");
+				Debug.LogWarning("[Material Feedback] The material feedback on "+Owner.name+" has an empty Materials array.");
 				return;
 			}
 
@@ -132,7 +138,7 @@ namespace MoreMountains.Feedbacks
 
 			if (Materials[newIndex] == null)
 			{
-				Debug.LogError("[MMFeedbackMaterial on " + Owner.name + "] Attempting to switch to a null material.");
+				Debug.LogWarning("[Material Feedback] The material feedback on "+Owner.name+" is attempting to switch to a null material.");
 				return;
 			}
 
@@ -140,6 +146,7 @@ namespace MoreMountains.Feedbacks
 			{
 				for (int i = 0; i < RendererMaterialIndexes.Length; i++)
 				{
+					if (_coroutines[i] != null) { Owner.StopCoroutine(_coroutines[i]); }
 					_coroutines[i] = Owner.StartCoroutine(TransitionMaterial(TargetRenderer.materials[RendererMaterialIndexes[i]], Materials[newIndex], RendererMaterialIndexes[i]));
 				}
 			}

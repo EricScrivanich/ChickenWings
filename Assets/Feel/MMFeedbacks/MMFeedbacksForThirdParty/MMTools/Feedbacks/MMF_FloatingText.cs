@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -20,6 +21,7 @@ namespace MoreMountains.Feedbacks
 	              "You'll find such prefabs already made in the MMTools/Tools/MMFloatingText/Prefabs folder, but feel free to create your own. " +
 	              "Using that feedback will always spawn the same text. While this may be what you want, if you're using the Corgi Engine or TopDown Engine, you'll find dedicated versions " +
 	              "directly hooked to the Health component, letting you display damage taken.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("UI/Floating Text")]
 	public class MMF_FloatingText : MMF_Feedback
 	{
@@ -86,6 +88,9 @@ namespace MoreMountains.Feedbacks
 		/// the direction to apply to the new floating text (leave it to 0 to let the Spawner decide based on its settings)
 		[Tooltip("the direction to apply to the new floating text (leave it to 0 to let the Spawner decide based on its settings)")]
 		public Vector3 Direction = Vector3.zero;
+		/// a transform to attach the floating text to for the duration of its lifetime. it will then move relative to it
+		[Tooltip("a transform to attach the floating text to for the duration of its lifetime. it will then move relative to it")]
+		public Transform AttachmentTransform;
 
 		protected Vector3 _playPosition;
 		protected string _value;
@@ -131,7 +136,8 @@ namespace MoreMountains.Feedbacks
 			
 			_value = UseIntensityAsValue ? feedbacksIntensity.ToString() : Value;
 			
-			MMFloatingTextSpawnEvent.Trigger(ChannelData, _playPosition, _value, Direction, Intensity * intensityMultiplier, ForceLifetime, Lifetime, ForceColor, AnimateColorGradient, ComputedTimescaleMode == TimescaleModes.Unscaled);
+			MMFloatingTextSpawnEvent.Trigger(ChannelData, _playPosition, _value, Direction, Intensity * intensityMultiplier, ForceLifetime, Lifetime, ForceColor, AnimateColorGradient, 
+				ComputedTimescaleMode == TimescaleModes.Unscaled, AttachmentTransform);
 		}
 
 		protected virtual float ApplyRounding(float value)

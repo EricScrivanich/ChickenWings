@@ -19,7 +19,7 @@ namespace MoreMountains.Feedbacks
 	/// This class provides a custom inspector to add and customize feedbacks, and public methods to trigger them, stop them, etc.
 	/// You can either use it on its own, or bind it from another class and trigger it from there.
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/MMFeedbacks")]
+	[AddComponentMenu("")]
 	public class MMFeedbacks : MonoBehaviour
 	{
 		/// the possible directions MMFeedbacks can be played
@@ -36,7 +36,7 @@ namespace MoreMountains.Feedbacks
         
 		/// the possible initialization modes. If you use Script, you'll have to initialize manually by calling the Initialization method and passing it an owner
 		/// Otherwise, you can have this component initialize itself at Awake or Start, and in this case the owner will be the MMFeedbacks itself
-		public enum InitializationModes { Script, Awake, Start }
+		public enum InitializationModes { Script, Awake, Start, OnEnable }
 		/// the chosen initialization mode
 		[Tooltip("the chosen initialization modes. If you use Script, you'll have to initialize manually by calling the " +
 		         "Initialization method and passing it an owner. Otherwise, you can have this component initialize " +
@@ -71,6 +71,9 @@ namespace MoreMountains.Feedbacks
 		/// a time multiplier that will be applied to all feedback durations (initial delay, duration, delay between repeats...)
 		[Tooltip("a time multiplier that will be applied to all feedback durations (initial delay, duration, delay between repeats...)")]
 		public float DurationMultiplier = 1f;
+		/// a multiplier to apply to all timescale operations (1: normal, less than 1: slower operations, higher than 1: faster operations)
+		[Tooltip("a multiplier to apply to all timescale operations (1: normal, less than 1: slower operations, higher than 1: faster operations)")]
+		public float TimescaleMultiplier = 1f;
 		/// if this is true, will expose a RandomDurationMultiplier. The final duration of each feedback will be : their base duration * DurationMultiplier * a random value between RandomDurationMultiplier.x and RandomDurationMultiplier.y
 		[Tooltip("if this is true, will expose a RandomDurationMultiplier. The final duration of each feedback will be : their base duration * DurationMultiplier * a random value between RandomDurationMultiplier.x and RandomDurationMultiplier.y")]
 		public bool RandomizeDuration = false;
@@ -150,12 +153,13 @@ namespace MoreMountains.Feedbacks
 		public virtual float ElapsedTime => IsPlaying ? GetTime() - _lastStartAt : 0f;
 		/// the amount of times this MMFeedbacks has been played
 		public int TimesPlayed { get; protected set; }
+
 		/// whether or not the execution of this MMFeedbacks' sequence is being prevented and waiting for a Resume() call
-		public bool InScriptDrivenPause { get; set; }
+		public bool InScriptDrivenPause;
 		/// true if this MMFeedbacks contains at least one loop
 		public bool ContainsLoop { get; set; }
 		/// true if this feedback should change play direction next time it's played
-		public bool ShouldRevertOnNextPlay { get; set; }
+		public bool ShouldChangeDirectionOnNextPlay { get; set; }
 		/// true if this player is forcing unscaled mode
 		public bool ForcingUnscaledTimescaleMode { get { return (ForceTimescaleMode && ForcedTimescaleMode == TimescaleModes.Unscaled);  } }
 		/// The total duration (in seconds) of all the active feedbacks in this MMFeedbacks
@@ -295,10 +299,10 @@ namespace MoreMountains.Feedbacks
 		/// </summary>
 		/// <param name="position"></param>
 		/// <param name="feedbacksIntensity"></param>
-		/// <param name="forceRevert"></param>
-		public virtual async System.Threading.Tasks.Task PlayFeedbacksTask(Vector3 position, float feedbacksIntensity = 1.0f, bool forceRevert = false)
+		/// <param name="forceChangeDirection"></param>
+		public virtual async System.Threading.Tasks.Task PlayFeedbacksTask(Vector3 position, float feedbacksIntensity = 1.0f, bool forceChangeDirection = false)
 		{
-			PlayFeedbacks(position, feedbacksIntensity, forceRevert);
+			PlayFeedbacks(position, feedbacksIntensity, forceChangeDirection);
 			while (IsPlaying)
 			{
 				await System.Threading.Tasks.Task.Yield();
@@ -326,9 +330,9 @@ namespace MoreMountains.Feedbacks
 		/// <param name="position"></param>
 		/// <param name="feedbacksOwner"></param>
 		/// <param name="feedbacksIntensity"></param>
-		public virtual void PlayFeedbacks(Vector3 position, float feedbacksIntensity = 1.0f, bool forceRevert = false)
+		public virtual void PlayFeedbacks(Vector3 position, float feedbacksIntensity = 1.0f, bool forceChangeDirection = false)
 		{
-			PlayFeedbacksInternal(position, feedbacksIntensity, forceRevert);
+			PlayFeedbacksInternal(position, feedbacksIntensity, forceChangeDirection);
 		}
 
 		/// <summary>
@@ -342,9 +346,9 @@ namespace MoreMountains.Feedbacks
 		/// <summary>
 		/// Plays all feedbacks using the MMFeedbacks' position as reference, and no attenuation, and in reverse (from bottom to top)
 		/// </summary>
-		public virtual void PlayFeedbacksInReverse(Vector3 position, float feedbacksIntensity = 1.0f, bool forceRevert = false)
+		public virtual void PlayFeedbacksInReverse(Vector3 position, float feedbacksIntensity = 1.0f, bool forceChangeDirection = false)
 		{
-			PlayFeedbacksInternal(position, feedbacksIntensity, forceRevert);
+			PlayFeedbacksInternal(position, feedbacksIntensity, forceChangeDirection);
 		}
 
 		/// <summary>
@@ -353,8 +357,8 @@ namespace MoreMountains.Feedbacks
 		public virtual void PlayFeedbacksOnlyIfReversed()
 		{
             
-			if ( (Direction == Directions.BottomToTop && !ShouldRevertOnNextPlay)
-			     || ((Direction == Directions.TopToBottom) && ShouldRevertOnNextPlay) )
+			if ( (Direction == Directions.BottomToTop && !ShouldChangeDirectionOnNextPlay)
+			     || ((Direction == Directions.TopToBottom) && ShouldChangeDirectionOnNextPlay) )
 			{
 				PlayFeedbacks();
 			}
@@ -363,13 +367,13 @@ namespace MoreMountains.Feedbacks
 		/// <summary>
 		/// Plays all feedbacks in the sequence, but only if this MMFeedbacks is playing in reverse order
 		/// </summary>
-		public virtual void PlayFeedbacksOnlyIfReversed(Vector3 position, float feedbacksIntensity = 1.0f, bool forceRevert = false)
+		public virtual void PlayFeedbacksOnlyIfReversed(Vector3 position, float feedbacksIntensity = 1.0f, bool forceChangeDirection = false)
 		{
             
-			if ( (Direction == Directions.BottomToTop && !ShouldRevertOnNextPlay)
-			     || ((Direction == Directions.TopToBottom) && ShouldRevertOnNextPlay) )
+			if ( (Direction == Directions.BottomToTop && !ShouldChangeDirectionOnNextPlay)
+			     || ((Direction == Directions.TopToBottom) && ShouldChangeDirectionOnNextPlay) )
 			{
-				PlayFeedbacks(position, feedbacksIntensity, forceRevert);
+				PlayFeedbacks(position, feedbacksIntensity, forceChangeDirection);
 			}
 		}
         
@@ -387,11 +391,11 @@ namespace MoreMountains.Feedbacks
 		/// <summary>
 		/// Plays all feedbacks in the sequence, but only if this MMFeedbacks is playing in normal order
 		/// </summary>
-		public virtual void PlayFeedbacksOnlyIfNormalDirection(Vector3 position, float feedbacksIntensity = 1.0f, bool forceRevert = false)
+		public virtual void PlayFeedbacksOnlyIfNormalDirection(Vector3 position, float feedbacksIntensity = 1.0f, bool forceChangeDirection = false)
 		{
 			if (Direction == Directions.TopToBottom)
 			{
-				PlayFeedbacks(position, feedbacksIntensity, forceRevert);
+				PlayFeedbacks(position, feedbacksIntensity, forceChangeDirection);
 			}
 		}
 
@@ -401,11 +405,11 @@ namespace MoreMountains.Feedbacks
 		/// </summary>
 		/// <param name="position">The position at which the MMFeedbacks should play</param>
 		/// <param name="feedbacksIntensity">The intensity of the feedback</param>
-		/// <param name="forceRevert">Whether or not the MMFeedbacks should play in reverse or not</param>
+		/// <param name="forceChangeDirection">Whether or not the MMFeedbacks should play in reverse or not</param>
 		/// <returns></returns>
-		public virtual IEnumerator PlayFeedbacksCoroutine(Vector3 position, float feedbacksIntensity = 1.0f, bool forceRevert = false)
+		public virtual IEnumerator PlayFeedbacksCoroutine(Vector3 position, float feedbacksIntensity = 1.0f, bool forceChangeDirection = false)
 		{
-			PlayFeedbacks(position, feedbacksIntensity, forceRevert);
+			PlayFeedbacks(position, feedbacksIntensity, forceChangeDirection);
 			while (IsPlaying)
 			{
 				yield return null;    
@@ -421,7 +425,7 @@ namespace MoreMountains.Feedbacks
 		/// </summary>
 		/// <param name="position"></param>
 		/// <param name="feedbacksIntensity"></param>
-		protected virtual void PlayFeedbacksInternal(Vector3 position, float feedbacksIntensity, bool forceRevert = false)
+		protected virtual void PlayFeedbacksInternal(Vector3 position, float feedbacksIntensity, bool forceChangeDirection = false)
 		{
 			if (!CanPlay)
 			{
@@ -458,13 +462,13 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
             
-			if (ShouldRevertOnNextPlay)
+			if (ShouldChangeDirectionOnNextPlay)
 			{
-				Revert();
-				ShouldRevertOnNextPlay = false;
+				ChangeDirection();
+				ShouldChangeDirectionOnNextPlay = false;
 			}
 
-			if (forceRevert)
+			if (forceChangeDirection)
 			{
 				Direction = (Direction == Directions.BottomToTop) ? Directions.TopToBottom : Directions.BottomToTop;
 			}
@@ -480,15 +484,15 @@ namespace MoreMountains.Feedbacks
             
 			if (ComputedInitialDelay > 0f)
 			{
-				StartCoroutine(HandleInitialDelayCo(position, feedbacksIntensity, forceRevert));
+				StartCoroutine(HandleInitialDelayCo(position, feedbacksIntensity, forceChangeDirection));
 			}
 			else
 			{
-				PreparePlay(position, feedbacksIntensity, forceRevert);
+				PreparePlay(position, feedbacksIntensity, forceChangeDirection);
 			}
 		}
 
-		protected virtual void PreparePlay(Vector3 position, float feedbacksIntensity, bool forceRevert = false)
+		protected virtual void PreparePlay(Vector3 position, float feedbacksIntensity, bool forceChangeDirection = false)
 		{
 			Events.TriggerOnPlay(this);
 
@@ -497,7 +501,7 @@ namespace MoreMountains.Feedbacks
 			
 			if (!_pauseFound)
 			{
-				PlayAllFeedbacks(position, feedbacksIntensity, forceRevert);
+				PlayAllFeedbacks(position, feedbacksIntensity, forceChangeDirection);
 			}
 			else
 			{
@@ -525,7 +529,7 @@ namespace MoreMountains.Feedbacks
 			}
 		}
 
-		protected virtual void PlayAllFeedbacks(Vector3 position, float feedbacksIntensity, bool forceRevert = false)
+		protected virtual void PlayAllFeedbacks(Vector3 position, float feedbacksIntensity, bool forceChangeDirection = false)
 		{
 			// if no pause was found, we just play all feedbacks at once
 			for (int i = 0; i < Feedbacks.Count; i++)
@@ -537,11 +541,11 @@ namespace MoreMountains.Feedbacks
 			}
 		}
 
-		protected virtual IEnumerator HandleInitialDelayCo(Vector3 position, float feedbacksIntensity, bool forceRevert = false)
+		protected virtual IEnumerator HandleInitialDelayCo(Vector3 position, float feedbacksIntensity, bool forceChangeDirection = false)
 		{
 			IsPlaying = true;
 			yield return MMFeedbacksCoroutine.WaitFor(ComputedInitialDelay);
-			PreparePlay(position, feedbacksIntensity, forceRevert);
+			PreparePlay(position, feedbacksIntensity, forceChangeDirection);
 		}
         
 		protected virtual void Update()
@@ -554,7 +558,7 @@ namespace MoreMountains.Feedbacks
 				}
 				IsPlaying = false;
 				Events.TriggerOnComplete(this);
-				ApplyAutoRevert();
+				ApplyAutoChangeDirection();
 				this.enabled = false;
 				_shouldStop = false;
 			}
@@ -565,7 +569,7 @@ namespace MoreMountains.Feedbacks
 					if (GetTime() - _startTime > _totalDuration)
 					{
 						_shouldStop = true;
-					}    
+					}
 				}
 			}
 			else
@@ -599,157 +603,7 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		protected virtual IEnumerator PausedFeedbacksCo(Vector3 position, float feedbacksIntensity)
 		{
-			IsPlaying = true;
-
-			int i = (Direction == Directions.TopToBottom) ? 0 : Feedbacks.Count-1;
-
-			while ((i >= 0) && (i < Feedbacks.Count))
-			{
-				if (!IsPlaying)
-				{
-					yield break;
-				}
-
-				if (Feedbacks[i] == null)
-				{
-					yield break;
-				}
-                
-				if (((Feedbacks[i].Active) && (Feedbacks[i].ScriptDrivenPause)) || InScriptDrivenPause)
-				{
-					InScriptDrivenPause = true;
-
-					bool inAutoResume = (Feedbacks[i].ScriptDrivenPauseAutoResume > 0f); 
-					float scriptDrivenPauseStartedAt = GetTime();
-					float autoResumeDuration = Feedbacks[i].ScriptDrivenPauseAutoResume;
-                    
-					while (InScriptDrivenPause)
-					{
-						if (inAutoResume && (GetTime() - scriptDrivenPauseStartedAt > autoResumeDuration))
-						{
-							ResumeFeedbacks();
-						}
-						yield return null;
-					} 
-				}
-
-				// handles holding pauses
-				if ((Feedbacks[i].Active)
-				    && ((Feedbacks[i].HoldingPause == true) || (Feedbacks[i].LooperPause == true))
-				    && (Feedbacks[i].ShouldPlayInThisSequenceDirection))
-				{
-					Events.TriggerOnPause(this);
-					// we stay here until all previous feedbacks have finished
-					while (GetTime() - _lastStartAt < _holdingMax)
-					{
-						yield return null;
-					}
-					_holdingMax = 0f;
-					_lastStartAt = GetTime();
-				}
-
-				// plays the feedback
-				if (FeedbackCanPlay(Feedbacks[i]))
-				{
-					Feedbacks[i].Play(position, feedbacksIntensity);
-				}
-
-				// Handles pause
-				if ((Feedbacks[i].Pause != null) && (Feedbacks[i].Active) && (Feedbacks[i].ShouldPlayInThisSequenceDirection))
-				{
-					bool shouldPause = true;
-					if (Feedbacks[i].Chance < 100)
-					{
-						float random = Random.Range(0f, 100f);
-						if (random > Feedbacks[i].Chance)
-						{
-							shouldPause = false;
-						}
-					}
-
-					if (shouldPause)
-					{
-						yield return Feedbacks[i].Pause;
-						Events.TriggerOnResume(this);
-						_lastStartAt = GetTime();
-						_holdingMax = 0f;
-					}
-				}
-
-				// updates holding max
-				if (Feedbacks[i].Active)
-				{
-					if ((Feedbacks[i].Pause == null) && (Feedbacks[i].ShouldPlayInThisSequenceDirection) && (!Feedbacks[i].Timing.ExcludeFromHoldingPauses))
-					{
-						float feedbackDuration = Feedbacks[i].TotalDuration;
-						_holdingMax = Mathf.Max(feedbackDuration, _holdingMax);
-					}
-				}
-
-				// handles looper
-				if ((Feedbacks[i].LooperPause == true)
-				    && (Feedbacks[i].Active)
-				    && (Feedbacks[i].ShouldPlayInThisSequenceDirection)
-				    && (((Feedbacks[i] as MMFeedbackLooper).NumberOfLoopsLeft > 0) || (Feedbacks[i] as MMFeedbackLooper).InInfiniteLoop))
-				{
-					// we determine the index we should start again at
-					bool loopAtLastPause = (Feedbacks[i] as MMFeedbackLooper).LoopAtLastPause;
-					bool loopAtLastLoopStart = (Feedbacks[i] as MMFeedbackLooper).LoopAtLastLoopStart;
-
-					int newi = 0;
-
-					int j = (Direction == Directions.TopToBottom) ? i - 1 : i + 1;
-
-					while ((j >= 0) && (j <= Feedbacks.Count))
-					{
-						// if we're at the start
-						if (j == 0)
-						{
-							newi = j - 1;
-							break;
-						}
-						if (j == Feedbacks.Count)
-						{
-							newi = j ;
-							break;
-						}
-						// if we've found a pause
-						if ((Feedbacks[j].Pause != null)
-						    && (Feedbacks[j].FeedbackDuration > 0f)
-						    && loopAtLastPause && (Feedbacks[j].Active))
-						{
-							newi = j;
-							break;
-						}
-						// if we've found a looper start
-						if ((Feedbacks[j].LooperStart == true)
-						    && loopAtLastLoopStart
-						    && (Feedbacks[j].Active))
-						{
-							newi = j;
-							break;
-						}
-
-						j += (Direction == Directions.TopToBottom) ? -1 : 1;
-					}
-					i = newi;
-				}
-				i += (Direction == Directions.TopToBottom) ? 1 : -1;
-			}
-			float unscaledTimeAtEnd = GetTime();
-			while (GetTime() - unscaledTimeAtEnd < _holdingMax)
-			{
-				yield return null;
-			}
-            
-			while (HasFeedbackStillPlaying())
-			{
-				yield return null;
-			}
-            
-			IsPlaying = false;
-			Events.TriggerOnComplete(this);
-			ApplyAutoRevert();
+			yield return null;
 		}
 
 		#endregion
@@ -815,9 +669,9 @@ namespace MoreMountains.Feedbacks
 		/// <summary>
 		/// Changes the direction of this MMFeedbacks
 		/// </summary>
-		public virtual void Revert()
+		public virtual void ChangeDirection()
 		{
-			Events.TriggerOnRevert(this);
+			Events.TriggerOnChangeDirection(this);
 			Direction = (Direction == Directions.BottomToTop) ? Directions.TopToBottom : Directions.BottomToTop;
 		}
 
@@ -972,13 +826,13 @@ namespace MoreMountains.Feedbacks
 		}
 
 		/// <summary>
-		/// Readies the MMFeedbacks to revert direction on the next play
+		/// Readies the MMFeedbacks to change direction on the next play
 		/// </summary>
-		protected virtual void ApplyAutoRevert()
+		protected virtual void ApplyAutoChangeDirection()
 		{
 			if (AutoChangeDirectionOnEnd)
 			{
-				ShouldRevertOnNextPlay = true;
+				ShouldChangeDirectionOnNextPlay = true;
 			}
 		}
         

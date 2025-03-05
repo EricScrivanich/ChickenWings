@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
-#if MM_TEXTMESHPRO
+#if MM_UGUI2
 using TMPro;
 #endif
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -13,9 +14,10 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you update a TMP text value over time, with a value going from A to B over time, on a curve")]
-	#if MM_TEXTMESHPRO
+	#if MM_UGUI2
 	[FeedbackPath("TextMesh Pro/TMP Count To")]
 	#endif
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.TextMeshPro")]
 	public class MMF_TMPCountTo : MMF_Feedback
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -24,7 +26,7 @@ namespace MoreMountains.Feedbacks
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.TMPColor; } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetTMPText be set to be able to work properly. You can set one below."; } }
 		#endif
-		#if UNITY_EDITOR && MM_TEXTMESHPRO
+		#if UNITY_EDITOR && MM_UGUI2
 		public override bool EvaluateRequiresSetup() { return (TargetTMPText == null); }
 		public override string RequiredTargetText { get { return TargetTMPText != null ? TargetTMPText.name : "";  } }
 		#endif
@@ -32,7 +34,7 @@ namespace MoreMountains.Feedbacks
 		/// the duration of this feedback is the duration of the scale animation
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(Duration); } set { Duration = value; } }
         
-		#if MM_TEXTMESHPRO
+		#if MM_UGUI2
 		public override bool HasAutomatedTargetAcquisition => true;
 		protected override void AutomateTargetAcquisition() => TargetTMPText = FindAutomatedTarget<TMP_Text>();
 
@@ -69,6 +71,7 @@ namespace MoreMountains.Feedbacks
 		protected float _startTime;
 		protected float _lastRefreshAt;
 		protected string _initialText;
+		protected Coroutine _coroutine;
         
 		/// <summary>
 		/// On play we change the text of our target TMPText over time
@@ -82,7 +85,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
 			if (TargetTMPText == null)
 			{
 				return;
@@ -90,7 +93,7 @@ namespace MoreMountains.Feedbacks
 
 			_initialText = TargetTMPText.text;
 			#endif
-			Owner.StartCoroutine(CountCo());
+			_coroutine = Owner.StartCoroutine(CountCo());
 		}
 
 		/// <summary>
@@ -99,6 +102,7 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		protected virtual IEnumerator CountCo()
 		{
+			IsPlaying = true;
 			_lastRefreshAt = -float.MaxValue;
 			float currentValue = CountFrom;
 			_startTime = FeedbackTime;
@@ -115,6 +119,7 @@ namespace MoreMountains.Feedbacks
 				yield return null;
 			}
 			UpdateText(CountTo);
+			IsPlaying = false;
 		}
 
 		/// <summary>
@@ -132,7 +137,7 @@ namespace MoreMountains.Feedbacks
 				_newText = currentValue.ToString(Format);
 			}
 	        
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
 			TargetTMPText.text = _newText;
 			#endif
 		}
@@ -150,6 +155,22 @@ namespace MoreMountains.Feedbacks
 		}
 		
 		/// <summary>
+		/// On stop, we interrupt counting if it was active
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="feedbacksIntensity"></param>
+		protected override void CustomStopFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
+		{
+			if (!Active || !FeedbackTypeAuthorized || (_coroutine == null))
+			{
+				return;
+			}
+			IsPlaying = false;
+			Owner.StopCoroutine(_coroutine);
+			_coroutine = null;
+		}
+		
+		/// <summary>
 		/// On restore, we put our object back at its initial position
 		/// </summary>
 		protected override void CustomRestoreInitialValues()
@@ -158,7 +179,7 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
 			TargetTMPText.text = _initialText;
 			#endif
 		}

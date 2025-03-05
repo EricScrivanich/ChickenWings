@@ -20,6 +20,9 @@ public class GameModeButton : MonoBehaviour
     [SerializeField] private RectTransform Lock;
     private Sequence lockMoveTween;
 
+    private int requiredTapsToHack = 3;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +48,21 @@ public class GameModeButton : MonoBehaviour
 
     }
 
+    public void HackTimeTrialLock()
+    {
+        requiredTapsToHack--;
+        Debug.Log("Yug");
+
+        if (requiredTapsToHack <= 0)
+        {
+            Debug.Log("Yug unlocked");
+
+            neededUnlockIndex = 0;
+            isUnlocked = true;
+        }
+
+    }
+
     public void PressButton()
     {
         if (isUnlocked)
@@ -56,7 +74,7 @@ public class GameModeButton : MonoBehaviour
         else
         {
             // GameObject.Find("MenuButtons").GetComponent<LevelLockedManager>().CheckLockedLevel(levelNum);
-            LevelLockedManager.OnShowLevelLocked?.Invoke(neededUnlockIndex, false,false);
+            LevelLockedManager.OnShowLevelLocked?.Invoke(neededUnlockIndex, false, false);
 
             if (Lock != null)
             {

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using MoreMountains.Feedbacks;
 using UnityEngine.Rendering;
+using MoreMountains.Tools;
 #if MM_URP
 using UnityEngine.Rendering.Universal;
 #endif
@@ -13,18 +14,35 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMGlobalPostProcessingVolumeAutoBlend_URP")]
-	public class MMGlobalPostProcessingVolumeAutoBlend_URP : MonoBehaviour
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Global Post Processing Volume Auto Blend URP")]
+	public class MMGlobalPostProcessingVolumeAutoBlend_URP : MonoBehaviour, MMEventListener<MMPostProcessingVolumeAutoBlendURPShakeEvent>
 	{
 		/// the possible timescales this blend can operate on
 		public enum TimeScales { Scaled, Unscaled }
 		/// the possible blend trigger modes 
 		public enum BlendTriggerModes { OnEnable, Script }
+		
+		[Header("Channel")]
+		/// whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what.
+		/// MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable
+		[Tooltip("whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what. " +
+		         "MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable")]
+		public MMChannelModes ChannelMode = MMChannelModes.Int;
+		/// the channel to listen to - has to match the one on the feedback
+		[Tooltip("the channel to listen to - has to match the one on the feedback")]
+		[MMEnumCondition("ChannelMode", (int)MMChannelModes.Int)]
+		public int Channel = 0;
+		/// the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel,
+		/// right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name
+		[Tooltip("the MMChannel definition asset to use to listen for events. The feedbacks targeting this shaker will have to reference that same MMChannel definition to receive events - to create a MMChannel, " +
+		         "right click anywhere in your project (usually in a Data folder) and go MoreMountains > MMChannel, then name it with some unique name")]
+		[MMEnumCondition("ChannelMode", (int)MMChannelModes.MMChannel)]
+		public MMChannel MMChannelDefinition = null;
 
 		[Header("Blend")]
 		/// the trigger mode for this MMGlobalPostProcessingVolumeAutoBlend
 		/// Start : will play automatically on enable
-		public BlendTriggerModes BlendTriggerMode = BlendTriggerModes.OnEnable;
+		public BlendTriggerModes BlendTriggerMode = BlendTriggerModes.Script;
 		/// the duration of the blend (in seconds)
 		public float BlendDuration = 1f;
 		/// the curve to use to blend
@@ -81,6 +99,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		{
 			_volume = this.gameObject.GetComponent<Volume>();
 			_volume.weight = InitialWeight;
+			this.MMEventStartListening<MMPostProcessingVolumeAutoBlendURPShakeEvent>();
 		}
 		#endif
 
@@ -191,5 +210,130 @@ namespace MoreMountains.FeedbacksForThirdParty
 			_volume.weight = _initial;
 			#endif
 		}
+		
+		/// <summary>
+		/// When we catch a MMPostProcessingVolumeAutoBlendShakeEvent, we start blending
+		/// </summary>
+		/// <param name="eventType"></param>
+		/// <exception cref="NotImplementedException"></exception>
+		public void OnMMEvent(MMPostProcessingVolumeAutoBlendURPShakeEvent shakeEvent)
+		{
+			#if MM_URP
+			if (shakeEvent.TargetAutoBlend != null)
+			{
+				if (!shakeEvent.TargetAutoBlend.Equals(this))
+				{
+					return;
+				}
+			}
+			else
+			{
+				bool eventMatch = shakeEvent.ChannelData != null && MMChannel.Match(shakeEvent.ChannelData, ChannelMode, Channel, MMChannelDefinition);
+				if (!eventMatch)
+				{
+					return;
+				}
+			}
+			
+			if (shakeEvent.Mode == MMF_GlobalPPVolumeAutoBlend_URP.Modes.Default)
+			{
+				if (!shakeEvent.NormalPlayDirection)
+				{
+					if (shakeEvent.BlendAction == MMF_GlobalPPVolumeAutoBlend_URP.Actions.Blend)
+					{
+						BlendBack();
+						return;
+					}
+					if (shakeEvent.BlendAction == MMF_GlobalPPVolumeAutoBlend_URP.Actions.BlendBack)
+					{
+						Blend();
+						return;
+					}
+				}
+				else
+				{
+					if (shakeEvent.BlendAction == MMF_GlobalPPVolumeAutoBlend_URP.Actions.Blend)
+					{
+						Blend();
+						return;
+					}
+					if (shakeEvent.BlendAction == MMF_GlobalPPVolumeAutoBlend_URP.Actions.BlendBack)
+					{
+						BlendBack();
+						return;
+					}    
+				}
+			}
+			else
+			{
+				BlendDuration = shakeEvent.BlendDuration;
+				Curve = shakeEvent.BlendCurve;
+				TimeScale = shakeEvent.TimeScale;
+				if (!shakeEvent.NormalPlayDirection)
+				{
+					InitialWeight = shakeEvent.FinalWeight;
+					FinalWeight = shakeEvent.InitialWeight;   
+				}
+				else
+				{
+					InitialWeight = shakeEvent.InitialWeight;
+					FinalWeight = shakeEvent.FinalWeight;    
+				}
+				Blend();
+			}
+			#endif
+		}
+
+		/// <summary>
+		/// On Destroy, we stop listening for events
+		/// </summary>
+		protected void OnDestroy()
+		{
+			this.MMEventStopListening<MMPostProcessingVolumeAutoBlendURPShakeEvent>();
+		}
 	}
+	
+	/// <summary>
+	/// An event used to trigger vignette shakes
+	/// </summary>
+	public struct MMPostProcessingVolumeAutoBlendURPShakeEvent
+	{
+		static MMPostProcessingVolumeAutoBlendURPShakeEvent e;
+		
+		public MMChannelData ChannelData;
+		public MMGlobalPostProcessingVolumeAutoBlend_URP TargetAutoBlend;
+		public MMF_GlobalPPVolumeAutoBlend_URP.Modes Mode;
+		public MMF_GlobalPPVolumeAutoBlend_URP.Actions BlendAction;
+		public float BlendDuration;
+		public AnimationCurve BlendCurve;
+		public float InitialWeight;
+		public float FinalWeight;
+		public bool NormalPlayDirection;
+		public MMGlobalPostProcessingVolumeAutoBlend_URP.TimeScales TimeScale;
+
+		public static void Trigger(
+			MMChannelData channelData,
+			MMGlobalPostProcessingVolumeAutoBlend_URP targetAutoBlend,
+			MMF_GlobalPPVolumeAutoBlend_URP.Modes mode,
+			MMF_GlobalPPVolumeAutoBlend_URP.Actions blendAction,
+			float blendDuration,
+			AnimationCurve blendCurve,
+			float initialWeight,
+			float finalWeight,
+			bool normalPlayDirection,
+			MMGlobalPostProcessingVolumeAutoBlend_URP.TimeScales timeScale)
+		{
+			e.ChannelData = channelData;
+			e.TargetAutoBlend = targetAutoBlend;
+			e.Mode = mode;
+			e.BlendAction = blendAction;
+			e.BlendDuration = blendDuration;
+			e.BlendCurve = blendCurve;
+			e.InitialWeight = initialWeight;
+			e.FinalWeight = finalWeight;
+			e.NormalPlayDirection = normalPlayDirection;
+			e.TimeScale = timeScale;
+			MMEventManager.TriggerEvent(e);
+		}
+	}	
 }

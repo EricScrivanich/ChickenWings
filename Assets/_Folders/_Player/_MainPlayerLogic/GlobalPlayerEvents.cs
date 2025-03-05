@@ -8,8 +8,11 @@ public struct GlobalPlayerEvents
 
     public Action<int> OnUpdateChainedShotgunAmmo;
     public Action<float> OnUpdateChainedShotgunMaxWait;
+    public Action<float> OnUpdateScytheAmmo;
+    public Action<float> OnUpdateBoomerangAmmo;
 
     public Action<bool> OnHideEggButton;
+    public Action<PigMaterialHandler, int> OnScythePig;
 
     public Action<bool> OnUseChainedAmmo;
     public Action OnInfiniteLives;
@@ -53,7 +56,8 @@ public struct GlobalPlayerEvents
 
     public Action<bool> OnPlayerFrozen;
 
-
+    public Action OnReleaseCage;
+    public Action<int> SetCageAngle;
 
     public Action OnZeroStamina;
     public Action AddMana;
@@ -78,6 +82,8 @@ public struct GlobalPlayerEvents
     public Action OnOffScreen;
 
     public Action OnFinishedLevel;
+    public Action<Vector2, float> ThrowItem;
+    public Action<int, bool> EquipItem;
 
 
 }

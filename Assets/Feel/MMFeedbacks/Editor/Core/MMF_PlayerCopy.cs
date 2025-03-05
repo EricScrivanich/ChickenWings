@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEditor;
+using System.Linq;
+using UnityEngine;
 using Object = UnityEngine.Object;
-
 
 namespace MoreMountains.Feedbacks
 {
@@ -16,8 +12,6 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	static class MMF_PlayerCopy
 	{
-		// Single Copy --------------------------------------------------------------------
-
 		static public System.Type Type { get; private set; }
 		public static readonly List<MMF_Feedback> CopiedFeedbacks = new List<MMF_Feedback>();
 		public static readonly Dictionary<MMF_Player, List<MMF_Feedback>> RuntimeChanges = new Dictionary<MMF_Player, List<MMF_Feedback>>();
@@ -35,6 +29,41 @@ namespace MoreMountains.Feedbacks
 			"m_Name",
 			"m_EditorClassIdentifier"
 		};
+		
+		static MMF_PlayerCopy()
+		{
+			EditorApplication.playModeStateChanged += ModeChanged;
+		}
+
+		private static void ModeChanged(PlayModeStateChange playModeState)
+		{
+			switch (playModeState)
+			{
+				case PlayModeStateChange.ExitingPlayMode:
+					StoreRuntimeChanges();
+					break;
+        
+				case PlayModeStateChange.EnteredEditMode:
+					ApplyRuntimeChanges();
+					break;
+			}
+		}
+
+		private static void StoreRuntimeChanges()
+		{
+			foreach (MMF_Player player in Object.FindObjectsByType<MMF_Player>(FindObjectsInactive.Include, FindObjectsSortMode.None).Where(p => p.KeepPlayModeChanges))
+			{
+				MMF_PlayerCopy.StoreRuntimeChanges(player);
+			}
+		}
+
+		private static void ApplyRuntimeChanges()
+		{
+			foreach (MMF_Player player in Object.FindObjectsByType<MMF_Player>(FindObjectsInactive.Include, FindObjectsSortMode.None).Where(MMF_PlayerCopy.RuntimeChanges.ContainsKey))
+			{
+				MMF_PlayerCopy.ApplyRuntimeChanges(player);
+			}
+		}
 
 		static public bool HasCopy()
 		{
@@ -69,7 +98,7 @@ namespace MoreMountains.Feedbacks
 
 		// Multiple Copy ----------------------------------------------------------
 
-		static public void PasteAll(MMF_PlayerEditor targetEditor)
+		static public void PasteAll(MMF_PlayerEditorUITK targetEditor)
 		{
 			foreach (MMF_Feedback feedback in MMF_PlayerCopy.CopiedFeedbacks)
 			{

@@ -4,7 +4,7 @@ using MoreMountains.Tools;
 namespace MoreMountains.Feedbacks
 {
 	[RequireComponent(typeof(MMFeedbacks))]
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Feedbacks/MMFeedbacksShaker")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Feedbacks/MM Feedbacks Shaker")]
 	public class MMFeedbacksShaker : MMShaker
 	{
 		protected MMFeedbacks _mmFeedbacks;

@@ -42,7 +42,7 @@ namespace MoreMountains.Feedbacks
 
 		public bool CameraShake = true;
 		public bool CameraZoom = true;
-		#if MM_CINEMACHINE
+		#if MM_CINEMACHINE || MM_CINEMACHINE3
 		public bool CinemachineImpulse = true;
 		public bool CinemachineImpulseClear = true;
 		public bool CinemachineImpulseSource = true;
@@ -194,7 +194,7 @@ namespace MoreMountains.Feedbacks
 		[MMInspectorGroup("TextMesh Pro", true, 30)] [MMInspectorButton("ToggleTextMeshPro")]
 		public bool ToggleTextMeshProButton;
 
-		#if MM_TEXTMESHPRO
+		#if MM_UGUI2
 		public bool TMPAlpha = true;
 		public bool TMPCharacterSpacing = true;
 		public bool TMPColor = true;
@@ -246,7 +246,7 @@ namespace MoreMountains.Feedbacks
 		{
 			CameraShake = !CameraShake;
 			CameraZoom = !CameraZoom;
-			#if MM_CINEMACHINE
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
 			CinemachineImpulse = !CinemachineImpulse;
 			CinemachineImpulseClear = !CinemachineImpulseClear;
 			CinemachineImpulseSource = !CinemachineImpulseSource;
@@ -397,7 +397,7 @@ namespace MoreMountains.Feedbacks
 			VideoPlayer = !VideoPlayer;
 		}
 		
-		#if MM_TEXTMESHPRO
+		#if MM_UGUI2
 		private void ToggleTextMeshPro()
 		{
 			TMPAlpha = !TMPAlpha;
@@ -422,391 +422,163 @@ namespace MoreMountains.Feedbacks
 		private void Start()
 		{
 			MMF_Animation.FeedbackTypeAuthorized = AnimationParameter;
-			MMFeedbackAnimation.FeedbackTypeAuthorized = AnimationParameter;
-			  
 			MMF_AnimatorSpeed.FeedbackTypeAuthorized = AnimatorSpeed;
-			MMFeedbackAnimatorSpeed.FeedbackTypeAuthorized = AnimatorSpeed;
-			  
 			MMF_AudioFilterDistortion.FeedbackTypeAuthorized = AudioFilterDistortion;
-			MMFeedbackAudioFilterDistortion.FeedbackTypeAuthorized = AudioFilterDistortion;
-			  
 			MMF_AudioFilterEcho.FeedbackTypeAuthorized = AudioFilterEcho;
-			MMFeedbackAudioFilterEcho.FeedbackTypeAuthorized = AudioFilterEcho;
-			  
 			MMF_AudioFilterHighPass.FeedbackTypeAuthorized = AudioFilterHighPass;
-			MMFeedbackAudioFilterHighPass.FeedbackTypeAuthorized = AudioFilterHighPass;
-			  
 			MMF_AudioFilterLowPass.FeedbackTypeAuthorized = AudioFilterLowPass;
-			MMFeedbackAudioFilterLowPass.FeedbackTypeAuthorized = AudioFilterLowPass;
-			  
 			MMF_AudioFilterReverb.FeedbackTypeAuthorized = AudioFilterReverb;
-			MMFeedbackAudioFilterReverb.FeedbackTypeAuthorized = AudioFilterReverb;
-			  
 			MMF_AudioMixerSnapshotTransition.FeedbackTypeAuthorized = AudioMixerSnapshotTransition;
-			MMFeedbackAudioMixerSnapshotTransition.FeedbackTypeAuthorized = AudioMixerSnapshotTransition;
-			  
 			MMF_AudioSource.FeedbackTypeAuthorized = AudioSource;
-			MMFeedbackAudioSource.FeedbackTypeAuthorized = AudioSource;
-			  
 			MMF_AudioSourcePitch.FeedbackTypeAuthorized = AudioSourcePitch;
-			MMFeedbackAudioSourcePitch.FeedbackTypeAuthorized = AudioSourcePitch;
-			  
 			MMF_AudioSourceStereoPan.FeedbackTypeAuthorized = AudioSourceStereoPan;
-			MMFeedbackAudioSourceStereoPan.FeedbackTypeAuthorized = AudioSourceStereoPan;
-			  
 			MMF_AudioSourceVolume.FeedbackTypeAuthorized = AudioSourceVolume;
-			MMFeedbackAudioSourceVolume.FeedbackTypeAuthorized = AudioSourceVolume;
-		  
 			MMF_Playlist.FeedbackTypeAuthorized = MMPlaylist;
-			MMFeedbackPlaylist.FeedbackTypeAuthorized = MMPlaylist;
-			  
 			MMF_MMSoundManagerAllSoundsControl.FeedbackTypeAuthorized = MMSoundManagerAllSoundsControl;
-			MMFeedbackMMSoundManagerAllSoundsControl.FeedbackTypeAuthorized = MMSoundManagerAllSoundsControl;
-		  
 			MMF_MMSoundManagerSaveLoad.FeedbackTypeAuthorized = MMSoundManagerSaveAndLoad;
-			MMFeedbackMMSoundManagerSaveLoad.FeedbackTypeAuthorized = MMSoundManagerSaveAndLoad;
-			  
 			MMF_MMSoundManagerSound.FeedbackTypeAuthorized = MMSoundManagerSound;
-			MMFeedbackMMSoundManagerSound.FeedbackTypeAuthorized = MMSoundManagerSound;
-			  
 			MMF_MMSoundManagerSoundControl.FeedbackTypeAuthorized = MMSoundManagerSoundControl;
-			MMFeedbackMMSoundManagerSoundControl.FeedbackTypeAuthorized = MMSoundManagerSoundControl;
-			  
 			MMF_MMSoundManagerSoundFade.FeedbackTypeAuthorized = MMSoundManagerSoundFade;
-			MMFeedbackMMSoundManagerSoundFade.FeedbackTypeAuthorized = MMSoundManagerSoundFade;
-			  
 			MMF_MMSoundManagerTrackControl.FeedbackTypeAuthorized = MMSoundManagerTrackControl;
-			MMFeedbackMMSoundManagerTrackControl.FeedbackTypeAuthorized = MMSoundManagerTrackControl;
-			  
 			MMF_MMSoundManagerTrackFade.FeedbackTypeAuthorized = MMSoundManagerTrackFade;
-			MMFeedbackMMSoundManagerTrackFade.FeedbackTypeAuthorized = MMSoundManagerTrackFade;
-			  
 			MMF_Sound.FeedbackTypeAuthorized = Sound;
-			MMFeedbackSound.FeedbackTypeAuthorized = Sound;
-			  
 			MMF_CameraShake.FeedbackTypeAuthorized = CameraShake;
-			MMFeedbackCameraShake.FeedbackTypeAuthorized = CameraShake;
-			  
 			MMF_CameraZoom.FeedbackTypeAuthorized = CameraZoom;
-			MMFeedbackCameraZoom.FeedbackTypeAuthorized = CameraZoom;
 		  
-			#if MM_CINEMACHINE
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
 			MMF_CinemachineImpulse.FeedbackTypeAuthorized = CinemachineImpulse;
-			MMFeedbackCinemachineImpulse.FeedbackTypeAuthorized = CinemachineImpulse;
-			  
 			MMF_CinemachineImpulseClear.FeedbackTypeAuthorized = CinemachineImpulseClear;
-			MMFeedbackCinemachineImpulseClear.FeedbackTypeAuthorized = CinemachineImpulseClear;
-			  
 			MMF_CinemachineImpulseSource.FeedbackTypeAuthorized = CinemachineImpulseSource;
-			  
 			MMF_CinemachineTransition.FeedbackTypeAuthorized = CinemachineTransition;
-			MMFeedbackCinemachineTransition.FeedbackTypeAuthorized = CinemachineTransition;
 			#endif
 		  
 			MMF_CameraClippingPlanes.FeedbackTypeAuthorized = ClippingPlanes;
-			MMFeedbackCameraClippingPlanes.FeedbackTypeAuthorized = ClippingPlanes;
-			  
-			MMF_Fade.FeedbackTypeAuthorized = Fade;
-			MMFeedbackFade.FeedbackTypeAuthorized = Fade;
-		  
 			MMF_CameraFieldOfView.FeedbackTypeAuthorized = FieldOfView;
-			MMFeedbackCameraFieldOfView.FeedbackTypeAuthorized = FieldOfView;
-			  
-			MMF_Flash.FeedbackTypeAuthorized = Flash;
-			MMFeedbackFlash.FeedbackTypeAuthorized = Flash;
-		  
 			MMF_CameraOrthographicSize.FeedbackTypeAuthorized = OrthographicSize;
-			MMFeedbackCameraOrthographicSize.FeedbackTypeAuthorized = OrthographicSize;
-			  
 			MMF_DebugComment.FeedbackTypeAuthorized = Comment;
-			MMFeedbackDebugComment.FeedbackTypeAuthorized = Comment;
-			  
 			MMF_DebugLog.FeedbackTypeAuthorized = Log;
-			MMFeedbackDebugLog.FeedbackTypeAuthorized = Log;
-			  
 			MMF_MMGameEvent.FeedbackTypeAuthorized = MMGameEvent;
-			MMFeedbackMMGameEvent.FeedbackTypeAuthorized = MMGameEvent;
-		  
 			MMF_Events.FeedbackTypeAuthorized = UnityEvents;
-			MMFeedbackEvents.FeedbackTypeAuthorized = UnityEvents;
-		  
 			MMF_Broadcast.FeedbackTypeAuthorized = Broadcast;
-			MMFeedbackBroadcast.FeedbackTypeAuthorized = Broadcast;
-		  
 			MMF_Collider.FeedbackTypeAuthorized = Collider;
-			MMFeedbackCollider.FeedbackTypeAuthorized = Collider;
-			  
 			MMF_Collider2D.FeedbackTypeAuthorized = Collider2D;
-			MMFeedbackCollider2D.FeedbackTypeAuthorized = Collider2D;
-			  
 			MMF_Destroy.FeedbackTypeAuthorized = DestroyTargetObject;
-			MMFeedbackDestroy.FeedbackTypeAuthorized = DestroyTargetObject;
-			  
 			MMF_Enable.FeedbackTypeAuthorized = EnableBehaviour;
-			MMFeedbackEnable.FeedbackTypeAuthorized = EnableBehaviour;
-			  
 			MMF_FloatController.FeedbackTypeAuthorized = FloatController;
-			MMFeedbackFloatController.FeedbackTypeAuthorized = FloatController;
-			  
 			MMF_InstantiateObject.FeedbackTypeAuthorized = InstantiateObject;
-			MMFeedbackInstantiateObject.FeedbackTypeAuthorized = InstantiateObject;
-		  
 			MMF_RadioSignal.FeedbackTypeAuthorized = MMRadioSignal;
-			MMFeedbackRadioSignal.FeedbackTypeAuthorized = MMRadioSignal;
-		  
 			MMF_Rigidbody.FeedbackTypeAuthorized = Rigidbody;
-			MMFeedbackRigidbody.FeedbackTypeAuthorized = Rigidbody;
-			  
 			MMF_Rigidbody2D.FeedbackTypeAuthorized = Rigidbody2D;
-			MMFeedbackRigidbody2D.FeedbackTypeAuthorized = Rigidbody2D;
-			  
 			MMF_SetActive.FeedbackTypeAuthorized = SetActive;
-			MMFeedbackSetActive.FeedbackTypeAuthorized = SetActive;
 		  
 			#if MOREMOUNTAINS_NICEVIBRATIONS_INSTALLED
 			MMF_Haptics.FeedbackTypeAuthorized = HapticClip;
-			MMFeedbackHaptics.FeedbackTypeAuthorized = HapticClip;
-
 			MMF_NVContinuous.FeedbackTypeAuthorized = HapticContinuous;
-			MMFeedbackNVContinuous.FeedbackTypeAuthorized = HapticContinuous;
-			  
 			MMF_NVControl.FeedbackTypeAuthorized = HapticControl;
-			MMFeedbackNVControl.FeedbackTypeAuthorized = HapticControl;
-			  
 			MMF_NVEmphasis.FeedbackTypeAuthorized = HapticEmphasis;
-			MMFeedbackNVEmphasis.FeedbackTypeAuthorized = HapticEmphasis;
-			  
 			MMF_NVPreset.FeedbackTypeAuthorized = HapticPreset;
-			MMFeedbackNVPreset.FeedbackTypeAuthorized = HapticPreset;
 			#endif
   
 			MMF_Light.FeedbackTypeAuthorized = Light;
-			MMFeedbackLight.FeedbackTypeAuthorized = Light;
-		  
 			MMF_Looper.FeedbackTypeAuthorized = Looper;
-			MMFeedbackLooper.FeedbackTypeAuthorized = Looper;
-			  
 			MMF_LooperStart.FeedbackTypeAuthorized = LooperStart;
-			MMFeedbackLooperStart.FeedbackTypeAuthorized = LooperStart;
-			  
 			MMF_ParticlesInstantiation.FeedbackTypeAuthorized = ParticlesInstantiation;
-			MMFeedbackParticlesInstantiation.FeedbackTypeAuthorized = ParticlesInstantiation;
-			  
 			MMF_Particles.FeedbackTypeAuthorized = ParticlesPlay;
-			MMFeedbackParticles.FeedbackTypeAuthorized = ParticlesPlay;
-			  
 			MMF_HoldingPause.FeedbackTypeAuthorized = HoldingPause;
-			MMFeedbackHoldingPause.FeedbackTypeAuthorized = HoldingPause;
-		  
 			MMF_Pause.FeedbackTypeAuthorized = Pause;
-			MMFeedbackPause.FeedbackTypeAuthorized = Pause;
-
 			MMF_Flicker.FeedbackTypeAuthorized = Flicker;
-			MMFeedbackFlicker.FeedbackTypeAuthorized = Flicker;
-			  
 			MMF_Fog.FeedbackTypeAuthorized = Fog;
-			MMFeedbackFog.FeedbackTypeAuthorized = Fog;
-			  
 			MMF_Material.FeedbackTypeAuthorized = Material;
-			MMFeedbackMaterial.FeedbackTypeAuthorized = Material;
-		  
 			MMF_Blink.FeedbackTypeAuthorized = MMBlink;
-			MMFeedbackBlink.FeedbackTypeAuthorized = MMBlink;
-			  
 			MMF_ShaderGlobal.FeedbackTypeAuthorized = ShaderGlobal;
-			MMFeedbackShaderGlobal.FeedbackTypeAuthorized = ShaderGlobal;
-			  
-			MMF_ShaderController.FeedbackTypeAuthorized = ShaderController;
-			MMFeedbackShaderController.FeedbackTypeAuthorized = ShaderController;
-			  
 			MMF_Skybox.FeedbackTypeAuthorized = Skybox;
-			MMFeedbackSkybox.FeedbackTypeAuthorized = Skybox;
-			  
 			MMF_SpriteRenderer.FeedbackTypeAuthorized = SpriteRenderer;
-			MMFeedbackSpriteRenderer.FeedbackTypeAuthorized = SpriteRenderer;
-			  
 			MMF_TextureOffset.FeedbackTypeAuthorized = TextureOffset;
-			MMFeedbackTextureOffset.FeedbackTypeAuthorized = TextureOffset;
-			  
 			MMF_TextureScale.FeedbackTypeAuthorized = TextureScale;
-			MMFeedbackTextureScale.FeedbackTypeAuthorized = TextureScale;
-			  
 			MMF_LoadScene.FeedbackTypeAuthorized = LoadScene;
-			MMFeedbackLoadScene.FeedbackTypeAuthorized = LoadScene;
-		  
 			MMF_UnloadScene.FeedbackTypeAuthorized = UnloadScene;
-			MMFeedbackUnloadScene.FeedbackTypeAuthorized = UnloadScene;
-		  
 			MMF_FreezeFrame.FeedbackTypeAuthorized = FreezeFrame;
-			MMFeedbackFreezeFrame.FeedbackTypeAuthorized = FreezeFrame;
-			  
 			MMF_TimescaleModifier.FeedbackTypeAuthorized = TimescaleModifier;
-			MMFeedbackTimescaleModifier.FeedbackTypeAuthorized = TimescaleModifier;
-			  
 			MMF_DestinationTransform.FeedbackTypeAuthorized = Destination;
-			MMFeedbackDestinationTransform.FeedbackTypeAuthorized = Destination;
-			  
 			MMF_Position.FeedbackTypeAuthorized = Position;
-			MMFeedbackPosition.FeedbackTypeAuthorized = Position;
-			  
 			MMF_PositionShake.FeedbackTypeAuthorized = PositionShake;
-			  
 			MMF_RotatePositionAround.FeedbackTypeAuthorized = RotatePositionAround;
-			  
 			MMF_Rotation.FeedbackTypeAuthorized = Rotation;
-			MMFeedbackRotation.FeedbackTypeAuthorized = Rotation;
-			  
 			MMF_RotationShake.FeedbackTypeAuthorized = RotationShake;
-			  
 			MMF_Scale.FeedbackTypeAuthorized = Scale;
-			MMFeedbackScale.FeedbackTypeAuthorized = Scale;
-			  
 			MMF_ScaleShake.FeedbackTypeAuthorized = ScaleShake;
-			  
 			MMF_SquashAndStretch.FeedbackTypeAuthorized = SquashAndStretch;
-			MMFeedbackSquashAndStretch.FeedbackTypeAuthorized = SquashAndStretch;
-			  
 			MMF_Wiggle.FeedbackTypeAuthorized = Wiggle;
-			MMFeedbackWiggle.FeedbackTypeAuthorized = Wiggle;
-		  
 			MMF_CanvasGroup.FeedbackTypeAuthorized = CanvasGroup;
-			MMFeedbackCanvasGroup.FeedbackTypeAuthorized = CanvasGroup;
-		  
 			MMF_CanvasGroupBlocksRaycasts.FeedbackTypeAuthorized = CanvasGroupBlocksRaycasts;
-			MMFeedbackCanvasGroupBlocksRaycasts.FeedbackTypeAuthorized = CanvasGroupBlocksRaycasts;
 			  
 			MMF_FloatingText.FeedbackTypeAuthorized = FloatingText;
-			MMFeedbackFloatingText.FeedbackTypeAuthorized = FloatingText;
-			  
-			MMF_Graphic.FeedbackTypeAuthorized = Graphic;
-			  
-			MMF_GraphicCrossFade.FeedbackTypeAuthorized = GraphicCrossFade;
-			  
-			MMF_Image.FeedbackTypeAuthorized = Image;
-			MMFeedbackImage.FeedbackTypeAuthorized = Image;
-			  
-			MMF_ImageAlpha.FeedbackTypeAuthorized = ImageAlpha;
-			MMFeedbackImageAlpha.FeedbackTypeAuthorized = ImageAlpha;
-			  
-			MMF_ImageFill.FeedbackTypeAuthorized = ImageFill;
-			  
-			MMF_ImageRaycastTarget.FeedbackTypeAuthorized = ImageRaycastTarget;
-			MMFeedbackImageRaycastTarget.FeedbackTypeAuthorized = ImageRaycastTarget;
-			  
-			MMF_ImageTextureOffset.FeedbackTypeAuthorized = ImageTextureOffset;
-			  
-			MMF_ImageTextureScale.FeedbackTypeAuthorized = ImageTextureScale;
-			
 			MMF_RectTransformAnchor.FeedbackTypeAuthorized = RectTransformAnchor;
-			MMFeedbackRectTransformAnchor.FeedbackTypeAuthorized = RectTransformAnchor;
-		  
 			MMF_RectTransformOffset.FeedbackTypeAuthorized = RectTransformOffset;
-			MMFeedbackRectTransformOffset.FeedbackTypeAuthorized = RectTransformOffset;
-		  
 			MMF_RectTransformPivot.FeedbackTypeAuthorized = RectTransformPivot;
-			MMFeedbackRectTransformPivot.FeedbackTypeAuthorized = RectTransformPivot;
-		  
 			MMF_RectTransformSizeDelta.FeedbackTypeAuthorized = RectTransformSizeDelta;
-			MMFeedbackRectTransformSizeDelta.FeedbackTypeAuthorized = RectTransformSizeDelta;
-		  
-			MMF_Text.FeedbackTypeAuthorized = Text;
-			MMFeedbackText.FeedbackTypeAuthorized = Text;
-			  
-			MMF_TextColor.FeedbackTypeAuthorized = TextColor;
-			MMFeedbackTextColor.FeedbackTypeAuthorized = TextColor;
-		  
-			MMF_TextFontSize.FeedbackTypeAuthorized = TextFontSize;
-			MMFeedbackTextFontSize.FeedbackTypeAuthorized = TextFontSize;
-		  
 			MMF_VideoPlayer.FeedbackTypeAuthorized = VideoPlayer;
-			MMFeedbackVideoPlayer.FeedbackTypeAuthorized = VideoPlayer;
+			
+			#if MM_UI
+			MMF_ShaderController.FeedbackTypeAuthorized = ShaderController;
+			MMF_Graphic.FeedbackTypeAuthorized = Graphic;
+			MMF_GraphicCrossFade.FeedbackTypeAuthorized = GraphicCrossFade;
+			MMF_Image.FeedbackTypeAuthorized = Image;
+			MMF_ImageAlpha.FeedbackTypeAuthorized = ImageAlpha;
+			MMF_ImageFill.FeedbackTypeAuthorized = ImageFill;
+			MMF_ImageRaycastTarget.FeedbackTypeAuthorized = ImageRaycastTarget;
+			MMF_ImageTextureOffset.FeedbackTypeAuthorized = ImageTextureOffset;
+			MMF_ImageTextureScale.FeedbackTypeAuthorized = ImageTextureScale;
+			MMF_Text.FeedbackTypeAuthorized = Text;
+			MMF_TextColor.FeedbackTypeAuthorized = TextColor;
+			MMF_TextFontSize.FeedbackTypeAuthorized = TextFontSize;
+			MMF_Fade.FeedbackTypeAuthorized = Fade;
+			MMF_Flash.FeedbackTypeAuthorized = Flash;
+			#endif
 			
 			#if MM_POSTPROCESSING
 			MMF_Bloom.FeedbackTypeAuthorized = Bloom;
-			MMFeedbackBloom.FeedbackTypeAuthorized = Bloom;
-			  
 			MMF_ChromaticAberration.FeedbackTypeAuthorized = ChromaticAberration;
-			MMFeedbackChromaticAberration.FeedbackTypeAuthorized = ChromaticAberration;
-			  
 			MMF_ColorGrading.FeedbackTypeAuthorized = ColorGrading;
-			MMFeedbackColorGrading.FeedbackTypeAuthorized = ColorGrading;
-			  
 			MMF_DepthOfField.FeedbackTypeAuthorized = DepthOfField;
-			MMFeedbackDepthOfField.FeedbackTypeAuthorized = DepthOfField;
-		  
 			MMF_GlobalPPVolumeAutoBlend.FeedbackTypeAuthorized = GlobalPPVolumeAutoBlend;
-			MMFeedbackGlobalPPVolumeAutoBlend.FeedbackTypeAuthorized = GlobalPPVolumeAutoBlend;
-			  
 			MMF_LensDistortion.FeedbackTypeAuthorized = LensDistortion;
-			MMFeedbackLensDistortion.FeedbackTypeAuthorized = LensDistortion;
-			  
 			MMF_Vignette.FeedbackTypeAuthorized = Vignette;
-			MMFeedbackVignette.FeedbackTypeAuthorized = Vignette;
-			  
 			MMF_PPMovingFilter.FeedbackTypeAuthorized = PPMovingFilter;
-			MMFeedbackPPMovingFilter.FeedbackTypeAuthorized = PPMovingFilter;
 			#endif
 			
 			#if MM_HDRP
-			
 			MMF_Bloom_HDRP.FeedbackTypeAuthorized = Bloom;
 			MMF_ChromaticAberration_HDRP.FeedbackTypeAuthorized = ChromaticAberration;
 			MMF_LensDistortion_HDRP.FeedbackTypeAuthorized = LensDistortion;
 			MMF_ColorAdjustments_HDRP.FeedbackTypeAuthorized = ColorGrading;
 			MMF_LensDistortion_HDRP.FeedbackTypeAuthorized = LensDistortion;
 			MMF_Vignette_HDRP.FeedbackTypeAuthorized = Vignette;
-			
 			#endif
 			
 			#if MM_URP
-			
 			MMF_Bloom_URP.FeedbackTypeAuthorized = Bloom;
 			MMF_ChromaticAberration_URP.FeedbackTypeAuthorized = ChromaticAberration;
 			MMF_LensDistortion_URP.FeedbackTypeAuthorized = LensDistortion;
 			MMF_ColorAdjustments_URP.FeedbackTypeAuthorized = ColorGrading;
 			MMF_LensDistortion_URP.FeedbackTypeAuthorized = LensDistortion;
 			MMF_Vignette_URP.FeedbackTypeAuthorized = Vignette;
-			
 			#endif
 			
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
 			MMF_TMPAlpha.FeedbackTypeAuthorized = TMPAlpha;
-			MMFeedbackTMPAlpha.FeedbackTypeAuthorized = TMPAlpha;
-			  
 			MMF_TMPCharacterSpacing.FeedbackTypeAuthorized = TMPCharacterSpacing;
-			MMFeedbackTMPCharacterSpacing.FeedbackTypeAuthorized = TMPCharacterSpacing;
-			  
 			MMF_TMPColor.FeedbackTypeAuthorized = TMPColor;
-			MMFeedbackTMPColor.FeedbackTypeAuthorized = TMPColor;
-			  
 			MMF_TMPCountTo.FeedbackTypeAuthorized = TMPCountTo;
-			  
 			MMF_TMPDilate.FeedbackTypeAuthorized = TMPDilate;
-			MMFeedbackTMPDilate.FeedbackTypeAuthorized = TMPDilate;
-			  
 			MMF_TMPFontSize.FeedbackTypeAuthorized = TMPFontSize;
-			MMFeedbackTMPFontSize.FeedbackTypeAuthorized = TMPFontSize;
-			  
 			MMF_TMPLineSpacing.FeedbackTypeAuthorized = TMPLineSpacing;
-			MMFeedbackTMPLineSpacing.FeedbackTypeAuthorized = TMPLineSpacing;
-			  
 			MMF_TMPOutlineColor.FeedbackTypeAuthorized = TMPOutlineColor;
-			MMFeedbackTMPOutlineColor.FeedbackTypeAuthorized = TMPOutlineColor;
-			  
 			MMF_TMPOutlineWidth.FeedbackTypeAuthorized = TMPOutlineWidth;
-			MMFeedbackTMPOutlineWidth.FeedbackTypeAuthorized = TMPOutlineWidth;
-			  
 			MMF_TMPParagraphSpacing.FeedbackTypeAuthorized = TMPParagraphSpacing;
-			MMFeedbackTMPParagraphSpacing.FeedbackTypeAuthorized = TMPParagraphSpacing;
-			  
 			MMF_TMPSoftness.FeedbackTypeAuthorized = TMPSoftness;
-			MMFeedbackTMPSoftness.FeedbackTypeAuthorized = TMPSoftness;
-		  
 			MMF_TMPText.FeedbackTypeAuthorized = TMPText;
-			MMFeedbackTMPText.FeedbackTypeAuthorized = TMPText;
-			  
 			MMF_TMPTextReveal.FeedbackTypeAuthorized = TMPTextReveal;
-			MMFeedbackTMPTextReveal.FeedbackTypeAuthorized = TMPTextReveal;
 			#endif
 		}
 	}

@@ -20,6 +20,8 @@ TagManager:
   - PlayerAttack
   - Bucket
   - SolidEnemy
+  - Weapon
+  - Block
   layers:
   - Default
   - TransparentFX
@@ -27,10 +29,10 @@ TagManager:
   - Player
   - Water
   - UI
-  - CameraBoundry
+  - Weapon
   - Camera
   - Ground
-  - Shell
+  - Parry
   - Barn
   - Plane
   - Fireball
@@ -50,9 +52,9 @@ TagManager:
   - FlappyPig
   - ParticleCollider
   - GasCloud
-  - 
-  - 
-  - 
+  - Cage
+  - InsideCage
+  - Ball
   m_SortingLayers:
   - name: Background
     uniqueID: 1099250889

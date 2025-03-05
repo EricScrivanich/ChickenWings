@@ -76,7 +76,7 @@ namespace MoreMountains.Feedbacks
 	}
 
 	[RequireComponent(typeof(MMWiggle))]
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Camera/MMCameraShaker")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Camera/MM Camera Shaker")]
 	/// <summary>
 	/// A class to add to your camera. It'll listen to MMCameraShakeEvents and will shake your camera accordingly
 	/// </summary>

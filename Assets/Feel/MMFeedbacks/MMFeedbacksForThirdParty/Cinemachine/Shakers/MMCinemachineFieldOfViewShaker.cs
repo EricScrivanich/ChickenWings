@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 #if MM_CINEMACHINE
 using Cinemachine;
+#elif MM_CINEMACHINE3
+using Unity.Cinemachine;
 #endif
 using MoreMountains.Feedbacks;
 using MoreMountains.Tools;
@@ -10,9 +12,11 @@ namespace MoreMountains.FeedbacksForThirdParty
 	/// <summary>
 	/// Add this to a Cinemachine virtual camera and it'll let you control its field of view over time, can be piloted by a MMFeedbackCameraFieldOfView
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Cinemachine/MMCinemachineFieldOfViewShaker")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Cinemachine/MM Cinemachine Field Of View Shaker")]
 	#if MM_CINEMACHINE
 	[RequireComponent(typeof(CinemachineVirtualCamera))]
+	#elif MM_CINEMACHINE3
+	[RequireComponent(typeof(CinemachineCamera))]
 	#endif
 	public class MMCinemachineFieldOfViewShaker : MMShaker
 	{
@@ -34,6 +38,9 @@ namespace MoreMountains.FeedbacksForThirdParty
 
 		#if MM_CINEMACHINE
 		protected CinemachineVirtualCamera _targetCamera;
+		#elif  MM_CINEMACHINE3
+		protected CinemachineCamera _targetCamera;
+		#endif
 		protected float _initialFieldOfView;
 		protected float _originalShakeDuration;
 		protected bool _originalRelativeFieldOfView;
@@ -47,7 +54,11 @@ namespace MoreMountains.FeedbacksForThirdParty
 		protected override void Initialization()
 		{
 			base.Initialization();
+			#if MM_CINEMACHINE
 			_targetCamera = this.gameObject.GetComponent<CinemachineVirtualCamera>();
+			#elif  MM_CINEMACHINE3
+			_targetCamera = this.gameObject.GetComponent<CinemachineCamera>();
+			#endif
 		}
 
 		/// <summary>
@@ -64,7 +75,16 @@ namespace MoreMountains.FeedbacksForThirdParty
 		protected override void Shake()
 		{
 			float newFieldOfView = ShakeFloat(ShakeFieldOfView, RemapFieldOfViewZero, RemapFieldOfViewOne, RelativeFieldOfView, _initialFieldOfView);
+			SetFieldOfView(newFieldOfView);
+		}
+
+		protected virtual void SetFieldOfView(float newFieldOfView)
+		{
+			#if MM_CINEMACHINE
 			_targetCamera.m_Lens.FieldOfView = newFieldOfView;
+			#elif  MM_CINEMACHINE3
+			_targetCamera.Lens.FieldOfView = newFieldOfView;
+			#endif
 		}
 
 		/// <summary>
@@ -72,7 +92,11 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// </summary>
 		protected override void GrabInitialValues()
 		{
+			#if MM_CINEMACHINE
 			_initialFieldOfView = _targetCamera.m_Lens.FieldOfView;
+			#elif  MM_CINEMACHINE3
+			_initialFieldOfView = _targetCamera.Lens.FieldOfView;
+			#endif
 		}
 
 		/// <summary>
@@ -142,7 +166,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		protected override void ResetTargetValues()
 		{
 			base.ResetTargetValues();
-			_targetCamera.m_Lens.FieldOfView = _initialFieldOfView;
+			SetFieldOfView(_initialFieldOfView);
 		}
 
 		/// <summary>
@@ -175,6 +199,5 @@ namespace MoreMountains.FeedbacksForThirdParty
 			base.StopListening();
 			MMCameraFieldOfViewShakeEvent.Unregister(OnMMCameraFieldOfViewShakeEvent);
 		}
-		#endif
 	}
 }

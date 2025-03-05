@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -15,6 +16,7 @@ namespace MoreMountains.Feedbacks
 	[FeedbackHelp("This feedback will move the current 'head' of an MMFeedbacks sequence back to another feedback above in the list. " +
 	              "What feedback the head lands on depends on your settings : you can decide to have it loop at last pause, " +
 	              "or at the last LoopStart feedback in the list (or both). Furthermore, you can decide to have it loop multiple times and cause a pause when met.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Loop/Looper")]
 	public class MMF_Looper : MMF_Pause
 	{
@@ -34,6 +36,7 @@ namespace MoreMountains.Feedbacks
 		public bool InfiniteLoop = false;
 		/// how many times this loop should run
 		[Tooltip("how many times this loop should run")]
+		[MMCondition("InfiniteLoop", true, true)]
 		public int NumberOfLoops = 2;
 		/// the amount of loops left (updated at runtime)
 		[Tooltip("the amount of loops left (updated at runtime)")]
@@ -55,6 +58,7 @@ namespace MoreMountains.Feedbacks
 		/// sets the color of this feedback in the inspector
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.LooperColor; } }
+		public override Color DisplayColor { get { return MMFeedbacksInspectorColors.LooperColor.MMDarken(0.25f); } }
 		#endif
 		public override bool LooperPause { get { return true; } }
 
@@ -70,6 +74,10 @@ namespace MoreMountains.Feedbacks
 			base.CustomInitialization(owner);
 			InInfiniteLoop = InfiniteLoop;
 			NumberOfLoopsLeft = NumberOfLoops;
+			if (OnLoop == null)
+			{
+				OnLoop = new UnityEvent();
+			}
 		}
 
 		/// <summary>
@@ -81,6 +89,7 @@ namespace MoreMountains.Feedbacks
 		{
 			if (Active)
 			{
+				ProcessNewPauseDuration();
 				InInfiniteLoop = InfiniteLoop;
 				NumberOfLoopsLeft--;
 				Owner.StartCoroutine(PlayPause());

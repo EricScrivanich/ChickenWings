@@ -4,18 +4,23 @@ using System;
 using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
-using UnityEngine.EventSystems;
 
 
 
 
 
 
-public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+
+
+public class StateInputSystem : MonoBehaviour
 {
 
 
     private InputController controls;
+
+    private int trackedTouchIndex = -1;
+    private int touchCount;
+    private bool isTrackingTouch = false;
 
     private bool specialEnableButtonsActive = false;
 
@@ -81,6 +86,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
 
+
     [Header("Dash Icon")]
     private Sequence dashIconSequence;
     private float startingDashIconX;
@@ -119,11 +125,78 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     private const float swipeThreshold = 0.3f; // Adjust as needed
     private const float tapTimeThreshold = 0.2f; // Adjust as needed
     public PlayerID ID;
+    private bool parrySwipe = false;
+
+    private int currentTouchCount;
+
+    private int currentTrackedSwipe = 0;
+
+    private bool currentlyTrackingSwipe = false;
+    private bool isMousePressed = false;
+    private bool trackingCenterTouch;
+
+
 
     [SerializeField] private RectTransform touchButtonRectTransform;
 
+
+    // public void OnPointerDown(PointerEventData eventData)
+    // {
+    //     Debug.Log("Touches is: " + Touch.activeTouches.Count);
+    //     // Check if there are exactly two touches on the screen
+    //     if (Touch.activeTouches.Count == 2)
+    //     {
+    //         // Two-finger touch start detected, invoke parachute open event
+    //         // ID.IsTwoTouchPoints = true;
+    //         parrySwipe = true;
+    //         ID.events.OnPerformParry?.Invoke(true);
+    //     }
+    // }
+
+    // public void OnPointerUp(PointerEventData eventData)
+    // {
+    //     if (parrySwipe && Touch.activeTouches.Count < 2)
+    //     {
+    //         parrySwipe = false;
+    //         ID.events.OnPerformParry?.Invoke(false);
+    //     }
+    //     // Debug.Log("Up");
+
+
+    // }
+
+    private bool trackingTwoFingerTouch;
+    private void SetSwipesActive(bool doubleTap, Vector2 pos)
+    {
+        if (ButtonsEnabled && !trackingCenterTouch && !trackingTwoFingerTouch)
+        {
+            trackingCenterTouch = true;
+            ID.events.OnTouchCenter?.Invoke(pos);
+            ID.events.OnShowCursor?.Invoke(pos, 0);
+        }
+
+
+        // if ()
+    }
+    private void QuickCenterRelease()
+    {
+        // ID.events.ReleaseSwipe?.Invoke();
+        trackingCenterTouch = false;
+        ID.events.OnReleaseCenter?.Invoke();
+    }
+
+    private void TwoFingerTouch()
+    {
+        if (ButtonsEnabled)
+        {
+            ID.events.OnPerformParry?.Invoke(true);
+            trackingTwoFingerTouch = true;
+            trackingCenterTouch = false;
+        }
+    }
     private void Awake()
     {
+
         ID.UsingClocker = false;
 
 
@@ -132,13 +205,271 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
         controls = new InputController();
 
+
+
+        // control
+
+        controls.Movement.ScytheStick.performed += ctx =>
+        {
+            ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
+            // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+
+        };
+
+        // controls.Movement.ScytheStick.canceled += ctx =>
+        // {
+        //     ID.events.OnReleaseStick?.Invoke();
+        //     // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+
+        // };
+
+
+        controls.Movement.MouseClick.performed += ctx => isMousePressed = true;
+        controls.Movement.MouseClick.canceled += ctx =>
+        {
+
+            isMousePressed = false;
+            if (trackingCenterTouch)
+            {
+                // ID.events.ReleaseSwipe?.Invoke();
+                trackingCenterTouch = false;
+                ID.events.OnReleaseCenter?.Invoke();
+            }
+        };
+
+        controls.Movement.Cursor.performed += ctx =>
+        {
+
+            if (trackingCenterTouch && isMousePressed)
+            {
+                Vector2 p = ctx.ReadValue<Vector2>();
+                ID.events.SendParrySwipeData?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p);
+
+            }
+
+
+
+
+        };
+
+
+
+
+
+
+
+        // controls.Movement.Parry.canceled += ctx =>
+        // {
+        //     ID.events.OnPerformParry?.Invoke(false);
+        // };
+
+        controls.Movement.Finger1.performed += ctx =>
+      {
+
+          if (trackingCenterTouch && trackedTouchIndex == 1)
+          {
+              Vector2 p = ctx.ReadValue<Vector2>();
+              ID.events.SendParrySwipeData?.Invoke(p);
+              ID.events.OnDragCenter?.Invoke(p);
+          }
+
+      };
+
+
+        controls.Movement.Finger1Press.canceled += ctx =>
+       {
+
+
+           if (trackingCenterTouch && trackedTouchIndex == 1)
+           {
+               trackingCenterTouch = false;
+               ID.events.OnReleaseCenter?.Invoke();
+           }
+
+
+       };
+
+        controls.Movement.Finger2.performed += ctx =>
+        {
+            if (trackingCenterTouch && trackedTouchIndex == 2)
+            {
+                Vector2 p = ctx.ReadValue<Vector2>();
+                ID.events.SendParrySwipeData?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p);
+            }
+
+
+
+        };
+
+        controls.Movement.Finger2Press.canceled += ctx =>
+       {
+           trackingTwoFingerTouch = false;
+           if (trackingCenterTouch && trackedTouchIndex == 2)
+           {
+               trackingCenterTouch = false;
+               ID.events.OnReleaseCenter?.Invoke();
+           }
+
+
+       };
+
+        controls.Movement.Finger1Press.performed += ctx =>
+        {
+
+
+            if (!trackingCenterTouch)
+                trackedTouchIndex = 1;
+            // currentTouchCount++;
+
+            // if (currentTouchCount == 2 && !ID.pressingButton)
+            // {
+            //     ID.events.OnPerformParry?.Invoke(true);
+            // }
+
+            // 
+
+
+        };
+
+        controls.Movement.Finger2Press.performed += ctx =>
+       {
+           if (!trackingCenterTouch)
+               trackedTouchIndex = 2;
+
+       };
+
+        controls.Movement.Parry.performed += ctx =>
+         {
+             if (ButtonsEnabled)
+                 ID.events.OnPerformParry?.Invoke(true);
+         };
+
+
+
+
+
+
+        //     controls.Movement.Finger1Press.canceled += ctx =>
+        //    {
+        //        if (ID.trackParrySwipe)
+        //        {
+        //            // ID.events.OnTrackParrySwipe?.Invoke(false);
+        //            ID.events.ReleaseSwipe?.Invoke();
+
+        //            currentlyTrackingSwipe = false;
+        //        }
+
+
+        //    };
+
+        // controls.Movement.Finger2Press.canceled += ctx =>
+        // {
+        //     currentTouchCount--;
+
+        //     if (currentTouchCount < 0) currentTouchCount = 0;
+
+        //     if (ID.trackParrySwipe)
+        //     {
+        //         ID.events.OnTrackParrySwipe?.Invoke(false);
+        //         currentlyTrackingSwipe = false;
+        //         if (currentTouchCount == 0)
+        //         {
+        //             ID.events.OnPerformParry?.Invoke(false);
+        //             currentTrackedSwipe = 0;
+
+        //         }
+        //         else if (currentTouchCount == 1)
+        //         {
+        //             currentTrackedSwipe = 2;
+        //         }
+        //     }
+
+
+        // };
+
+
+
+
+
+
+
+
+
+        // controls.Movement.Finger2.performed += ctx =>
+        // {
+
+
+
+        //     if (ID.trackParrySwipe && currentTrackedSwipe == 2)
+        //     {
+        //         if (!currentlyTrackingSwipe)
+        //         {
+        //             ID.events.OnTrackParrySwipe?.Invoke(true);
+        //             currentlyTrackingSwipe = true;
+        //         }
+        //         Vector2 moveAmount = ctx.ReadValue<Vector2>();
+        //         // Debug.Log("Finger2 is : " + moveAmount);
+        //         ID.events.SendParrySwipeData?.Invoke(moveAmount);
+        //     }
+
+
+
+
+        // };
+
+
+
+
+        //     controls.Movement.Finger1.canceled += ctx =>
+        //    {
+
+
+
+
+
+        //    };
+
+        //     controls.Movement.Finger2.canceled += ctx =>
+        //    {
+
+        //        currentTouchCount--;
+
+        //        if (currentTouchCount < 0) currentTouchCount = 0;
+
+        //        if (ID.trackParrySwipe)
+        //        {
+        //            ID.events.OnTrackParrySwipe?.Invoke(false);
+        //            currentlyTrackingSwipe = false;
+
+
+        //            if (currentTouchCount == 0)
+        //            {
+        //                ID.events.OnPerformParry?.Invoke(false);
+        //                currentTrackedSwipe = 0;
+
+        //            }
+        //            else if (currentTouchCount == 1)
+        //            {
+        //                currentTrackedSwipe = 2;
+        //            }
+        //        }
+
+
+
+
+        //    };
+
+
         // Bind existing actions to methods
 
 
         controls.Movement.Jump.performed += ctx =>
         {
-            if (ButtonsEnabled)
+            if (ButtonsEnabled && !ID.trackParrySwipe)
             {
+                Debug.LogError("Pressed Jump");
                 SpecialEnableButtonsCheck(0);
                 ID.events.OnJump?.Invoke();
                 HapticFeedbackManager.instance.PlayerButtonPress();
@@ -149,6 +480,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
         controls.Movement.JumpRight.performed += ctx =>
         {
+            ID.pressingFlipRButton = true;
+
             if (ButtonsEnabled)
             {
                 SpecialEnableButtonsCheck(1);
@@ -160,12 +493,16 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         };
         controls.Movement.JumpRight.canceled += ctx =>
         {
+            ID.pressingFlipRButton = false;
+
             if (ButtonsEnabled) ID.events.OnFlipRight?.Invoke(false);
             flipRightImage.color = colorsSO.normalButtonColor;
         };
 
         controls.Movement.JumpLeft.performed += ctx =>
         {
+            ID.pressingFlipLButton = true;
+
             if (ButtonsEnabled)
             {
                 SpecialEnableButtonsCheck(2);
@@ -178,42 +515,34 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         };
         controls.Movement.JumpLeft.canceled += ctx =>
         {
+            ID.pressingFlipLButton = false;
             if (ButtonsEnabled) ID.events.OnFlipLeft?.Invoke(false);
             flipLeftImage.color = colorsSO.normalButtonColor;
         };
 
         controls.Movement.EggJoystick.performed += ctx =>
         {
-            // float xMoveAmount = ctx.ReadValue<Vector2>().x;
-            // if (xMoveAmount < -.7f)
-            //     ID.events.OnAimJoystick(1);
-            // else if (xMoveAmount > .7f)
-            //     ID.events.OnAimJoystick(-1);
-
-            Vector2 moveAmount = ctx.ReadValue<Vector2>().normalized;
-            // if (xMoveAmount < -.7f)
-            //     ID.events.OnAimJoystick(1);
-            // else if (xMoveAmount > .7f)
-            //     ID.events.OnAimJoystick(-1);
-
-            ID.events.OnAimJoystick?.Invoke(moveAmount);
 
 
-
-            // ID.events.OnAimJoystick(ctx.ReadValue<Vector2>());
+            if (ID.canUseJoystick)
+            {
+                Vector2 moveAmount = ctx.ReadValue<Vector2>().normalized;
+                ID.events.OnAimJoystick?.Invoke(moveAmount);
+            }
         };
-        // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
-        // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
+
         controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
 
         controls.Movement.Dash.performed += ctx =>
         {
+            ID.pressingDashButton = true;
             if (ButtonsEnabled)
             {
 
                 if (canDash)
                 {
                     SpecialEnableButtonsCheck(3);
+                    Debug.LogError("Pressed Dash");
                     ID.events.OnDash?.Invoke(true);
                     HapticFeedbackManager.instance.PlayerButtonPress();
 
@@ -249,6 +578,7 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         };
         controls.Movement.Dash.canceled += ctx =>
         {
+            ID.pressingDashButton = false;
             if (ButtonsEnabled)
             {
                 stillHoldingDash = false;
@@ -272,17 +602,25 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
         controls.Movement.SwitchAmmoRight.performed += ctx =>
         {
-            if (!eggButtonHidden)
-                ID.globalEvents.OnSwitchAmmo?.Invoke(false);
+            // if (!eggButtonHidden)
+            //     ID.globalEvents.OnSwitchAmmo?.Invoke(false);
+            // if (ID.canPressEggButton)
+            ID.UiEvents.OnSwitchWeapon?.Invoke(1, -1);
+
+
         };
 
 
 
 
-
+        controls.Movement.Drop.canceled += ctx =>
+        {
+            ID.pressingDropButton = false;
+        };
 
         controls.Movement.Drop.performed += ctx =>
         {
+            ID.pressingDropButton = true;
             if (ButtonsEnabled)
             {
 
@@ -316,29 +654,23 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         };
         controls.Movement.DropEgg.performed += ctx =>
         {
+            ID.pressingEggButton = true;
             if (ButtonsEnabled && !eggButtonHidden)
             {
+                ID.events.OnPressAmmo?.Invoke(true);
 
-                // ID.globalEvents.OnEggButton?.Invoke(true);
-                if (!usingShotgun)
-                {
-                    SpecialEnableButtonsCheck(5);
-                    ID.events.OnEggDrop?.Invoke();
-                }
-
-                else if (usingShotgun)
-                {
-                    SpecialEnableButtonsCheck(6);
-                    ID.events.OnAttack?.Invoke(true);
-                }
 
             }
         };
 
         controls.Movement.DropEgg.canceled += ctx =>
        {
-           if (usingShotgun)
-               ID.events.OnAttack?.Invoke(false);
+           ID.pressingEggButton = false;
+           //    if (ID.canPressEggButton)
+           ID.events.OnPressAmmo?.Invoke(false);
+
+           //    if (usingShotgun)
+           //        ID.events.OnAttack?.Invoke(false);
        };
 
         controls.Movement.JumpHold.performed += ctx =>
@@ -364,18 +696,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        // Debug.Log("Down");
-
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        // Debug.Log("Up");
 
 
-    }
 
     private void SpecialEnableButtonsCheck(int type)
     {
@@ -389,6 +711,11 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             ID.AddPlayerInput(type);
         }
+    }
+
+    private void TrackTouchPosition(Vector2 pos)
+    {
+
     }
 
     void Start()
@@ -987,9 +1314,14 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     }
 
+
+
     private void OnEnable()
     {
         controls.Movement.Enable();
+
+        ID.events.OnPointerCenter += SetSwipesActive;
+        ID.events.TwoFingerCenterTouch += TwoFingerTouch;
         ID.globalEvents.OnHideEggButton += HideEggButton;
 
         ID.events.EnableButtons += ActivateButtons;
@@ -1000,6 +1332,8 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
         ID.globalEvents.CanDashSlash += ExitDash;
         ID.events.SpecialEnableButtons += SpecialActivateButtons;
+        ID.events.QuickCenterRelease += QuickCenterRelease;
+
         if (manaUsed)
             ID.globalEvents.OnGetMana += GatherMana;
     }
@@ -1010,12 +1344,18 @@ public class StateInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         DOTween.Kill(this);
         controls.Movement.Disable();
         ID.globalEvents.OnHideEggButton -= HideEggButton;
+        ID.events.TwoFingerCenterTouch -= TwoFingerTouch;
+
 
         ID.events.EnableButtons -= ActivateButtons;
         ID.events.OnDash -= HandleDashNew;
         ID.globalEvents.CanDashSlash -= ExitDash;
         ID.events.OnSwitchAmmoType -= SetUsingShotgun;
         ID.events.SpecialEnableButtons -= SpecialActivateButtons;
+
+
+        ID.events.OnPointerCenter -= SetSwipesActive;
+        ID.events.QuickCenterRelease -= QuickCenterRelease;
 
 
 

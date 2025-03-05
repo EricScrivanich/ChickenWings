@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using MoreMountains.Feedbacks;
 using MoreMountains.Tools;
 using UnityEngine.Rendering;
@@ -16,7 +14,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMBloomShaker_URP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Bloom Shaker URP")]
 	public class MMBloomShaker_URP : MMShaker
 	{
 		/// whether or not to add to the initial value

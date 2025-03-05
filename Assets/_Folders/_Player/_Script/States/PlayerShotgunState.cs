@@ -7,6 +7,11 @@ public class PlayerShotgunState : PlayerBaseState
     // private float ignoreParticleTimer = 0;
     // private float ignoreParticleDuration = .3f;
     // private bool ignoringTime = true;
+
+    private float increaseMaxFallSpeedDuration = .45f;
+    private float fallSpeed = -7f;
+    private float time = 0;
+
     public override void EnterState(PlayerStateManager player)
     {
         // ignoringTime = true;
@@ -28,7 +33,7 @@ public class PlayerShotgunState : PlayerBaseState
 
         //     }
         // }
-        player.maxFallSpeed = -6;
+        player.maxFallSpeed = fallSpeed;
         player.rb.angularDamping = .35f;
         player.rb.gravityScale *= .95f;
 
@@ -58,7 +63,11 @@ public class PlayerShotgunState : PlayerBaseState
 
     public override void FixedUpdateState(PlayerStateManager player)
     {
-
+        if (time < increaseMaxFallSpeedDuration)
+        {
+            time += Time.fixedDeltaTime;
+            player.maxFallSpeed = Mathf.Lerp(fallSpeed, player.originalMaxFallSpeed, time / increaseMaxFallSpeedDuration);
+        }
 
     }
 
@@ -76,6 +85,8 @@ public class PlayerShotgunState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+
+
         // if (ignoringTime)
         // {
         //     ignoreParticleTimer += Time.deltaTime;

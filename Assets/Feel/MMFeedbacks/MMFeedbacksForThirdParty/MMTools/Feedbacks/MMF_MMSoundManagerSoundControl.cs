@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using MoreMountains.Tools;
 using UnityEngine.Audio;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -12,6 +13,7 @@ namespace MoreMountains.Feedbacks
 	/// This feedback will let you control a specific sound (or sounds), targeted by SoundID, which has to match the SoundID of the sound you intially played. You will need a MMSoundManager in your scene for this to work.
 	/// </summary>
 	[AddComponentMenu("")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("Audio/MMSoundManager Sound Control")]
 	[FeedbackHelp("This feedback will let you control a specific sound (or sounds), targeted by SoundID, which has to match the SoundID of the sound you intially played. You will need a MMSoundManager in your scene for this to work.")]
 	public class MMF_MMSoundManagerSoundControl : MMF_Feedback

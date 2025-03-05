@@ -40,6 +40,15 @@ public class AudioManager : MonoBehaviour
     // [SerializeField] private AudioClip shotgunShell;
     // [SerializeField] private AudioClip shotgunFutureBlast;
     [SerializeField] private AudioClip[] shotgunShells;
+    [SerializeField] private AudioClip[] boings;
+
+    [SerializeField] private AudioClip parrySound;
+    [SerializeField] private AudioClip perfectScythe;
+    [SerializeField] private AudioClip normalScythe;
+    [SerializeField] private AudioClip parryStart;
+    [SerializeField] private AudioClip parryHit;
+
+
 
 
     [Header("Eggs")]
@@ -95,6 +104,12 @@ public class AudioManager : MonoBehaviour
 
 
     [Header("Volumes")]
+    [SerializeField] private float parryStartVolume;
+    [SerializeField] private float parryHitVolume;
+    [SerializeField] private float perfectScytheVolume;
+    [SerializeField] private float normalScytheVolume;
+    [SerializeField] private float boingVolume;
+    [SerializeField] private float parryVolume;
     [SerializeField] private float starWhooshVolume;
     [SerializeField] private float badgeSlapVolume;
     [SerializeField] private float buttonClickVolume;
@@ -230,6 +245,14 @@ public class AudioManager : MonoBehaviour
         }
 
     }
+    public void PlayScytheHitNoise(bool isPerfect)
+    {
+        if (isPerfect)
+            chickenSource.PlayOneShot(perfectScythe, perfectScytheVolume);
+        else
+            chickenSource.PlayOneShot(normalScythe, normalScytheVolume);
+
+    }
     public void SlowMotionPitch(bool isSlow)
     {
         if (isSlow)
@@ -248,7 +271,12 @@ public class AudioManager : MonoBehaviour
         }
 
     }
-
+    public void PlayParryNoise(bool hit)
+    {
+        if (hit)
+            chickenSource.PlayOneShot(parryHit, parryHitVolume);
+        else chickenSource.PlayOneShot(parryStart, parryStartVolume);
+    }
     public void LoadVolume(float musicVol, float sfxVolume, bool mutePlayerInputVolume = false)
     {
 
@@ -265,6 +293,11 @@ public class AudioManager : MonoBehaviour
             chickenSource.volume = 0;
 
 
+    }
+
+    public void PlayParrySound()
+    {
+        chickenSource.PlayOneShot(parrySound, parryVolume);
     }
 
     public void PlayBlobNoise(bool enter)
@@ -317,6 +350,13 @@ public class AudioManager : MonoBehaviour
 
         }
 
+    }
+
+    public void PlayBoingSound()
+    {
+        int r = Random.Range(0, boings.Length);
+
+        chickenSource.PlayOneShot(boings[r], boingVolume);
     }
 
     public void PlayFartSound()

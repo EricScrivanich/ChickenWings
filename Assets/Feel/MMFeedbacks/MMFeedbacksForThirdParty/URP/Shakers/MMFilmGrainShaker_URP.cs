@@ -16,7 +16,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMFilmGrainShaker_URP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Film Grain Shaker URP")]
 	public class MMFilmGrainShaker_URP : MMShaker
 	{
 		[MMInspectorGroup("Film Grain Intensity", true, 51)]

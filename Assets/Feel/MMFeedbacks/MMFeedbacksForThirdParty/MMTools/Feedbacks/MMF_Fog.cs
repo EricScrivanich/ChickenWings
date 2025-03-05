@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you animate the density, color, end and start distance of your scene's fog")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("Renderer/Fog")]
 	public class MMF_Fog : MMF_Feedback
 	{
@@ -21,6 +23,7 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return Mode.ToString();  } }
 		#endif
 		public override bool HasRandomness => true;
+		public override bool HasCustomInspectors => true; 
 
 		/// the possible modes for this feedback
 		public enum Modes { OverTime, Instant }
@@ -109,6 +112,29 @@ namespace MoreMountains.Feedbacks
 		protected float _initialStartDistance;
 		protected float _initialEndDistance;
 		protected float _initialDensity;
+		
+		protected Color _initialInstantColor;
+		protected float _initialInstantStartDistance;
+		protected float _initialInstantEndDistance;
+		protected float _initialInstantDensity;
+		
+		protected override void CustomInitialization(MMF_Player owner)
+		{
+			base.CustomInitialization(owner);
+
+			if (Active)
+			{
+				_initialInstantColor = RenderSettings.fogColor;
+				_initialInstantStartDistance = RenderSettings.fogStartDistance;
+				_initialInstantEndDistance = RenderSettings.fogEndDistance;
+				_initialInstantDensity = RenderSettings.fogDensity;
+
+				if (ColorOverTime == null)
+				{
+					ColorOverTime = new Gradient();
+				}
+			}
+		}
 
 		/// <summary>
 		/// On Play we change the values of our fog
@@ -133,22 +159,22 @@ namespace MoreMountains.Feedbacks
 				case Modes.Instant:
 					if (ModifyColor)
 					{
-						RenderSettings.fogColor = InstantColor;
+						RenderSettings.fogColor = NormalPlayDirection ? InstantColor : _initialColor;
 					}
 
 					if (ModifyStartDistance)
 					{
-						RenderSettings.fogStartDistance = StartDistanceInstantChange;
+						RenderSettings.fogStartDistance = NormalPlayDirection ? StartDistanceInstantChange : _initialInstantStartDistance;
 					}
 
 					if (ModifyEndDistance)
 					{
-						RenderSettings.fogEndDistance = EndDistanceInstantChange;
+						RenderSettings.fogEndDistance = NormalPlayDirection ? EndDistanceInstantChange : _initialInstantEndDistance;
 					}
 
 					if (ModifyFogDensity)
 					{
-						RenderSettings.fogDensity = DensityInstantChange * intensityMultiplier;
+						RenderSettings.fogDensity = NormalPlayDirection ? DensityInstantChange * intensityMultiplier : _initialInstantDensity;
 					}
 					break;
 				case Modes.OverTime:
@@ -156,6 +182,7 @@ namespace MoreMountains.Feedbacks
 					{
 						return;
 					}
+					if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 					_coroutine = Owner.StartCoroutine(FogSequence(intensityMultiplier));
 					break;
 			}

@@ -9,7 +9,7 @@ namespace MoreMountains.Feedbacks
 	/// <summary>
 	/// A MMSequencer with ready made slots to play MMFeedbacks
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Sequencing/MMFeedbacksSequencer")]
+	[AddComponentMenu("More Mountains/Feedbacks/Sequencing/MM Feedbacks Sequencer")]
 	public class MMFeedbacksSequencer : MMSequencer
 	{
 		/// the list of audio clips to play (one per track)

@@ -55,6 +55,23 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the delay (in seconds) between two firings of this feedback. This doesn't include the duration of the feedback.")]
 		public float DelayBetweenRepeats = 1f;
 
+		[Header("PlayCount")]
+		/// the number of times this feedback's been played since its initialization (or last reset if SetPlayCountToZeroOnReset is true) 
+		[Tooltip("the number of times this feedback's been played since its initialization (or last reset if SetPlayCountToZeroOnReset is true)")]
+		[MMFReadOnly]
+		public int PlayCount = 0;
+		/// whether or not to limit the amount of times this feedback can be played. beyond that amount, it won't play anymore 
+		[Tooltip("whether or not to limit the amount of times this feedback can be played. beyond that amount, it won't play anymore")]
+		public bool LimitPlayCount = false;
+		/// if LimitPlayCount is true, the maximum amount of times this feedback can be played
+		[Tooltip("if LimitPlayCount is true, the maximum amount of times this feedback can be played")]
+		[MMFCondition("LimitPlayCount", true)]
+		public int MaxPlayCount = 3;
+		/// if LimitPlayCount is true, whether or not to reset the play count to zero when the feedback is reset
+		[Tooltip("if LimitPlayCount is true, whether or not to reset the play count to zero when the feedback is reset")]
+		[MMFCondition("LimitPlayCount", true)]
+		public bool SetPlayCountToZeroOnReset = false;
+		
 		[Header("Play Direction")]
 		/// this defines how this feedback should play when the host MMFeedbacks is played :
 		/// - always (default) : this feedback will always play

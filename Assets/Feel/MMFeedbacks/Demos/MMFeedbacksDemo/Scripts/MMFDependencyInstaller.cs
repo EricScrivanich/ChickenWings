@@ -5,6 +5,7 @@ using UnityEditor.PackageManager;
 #endif
 using UnityEngine;
 using System.Threading.Tasks;
+using MoreMountains.Tools;
 
 namespace MoreMountains.Feedbacks
 {
@@ -21,7 +22,6 @@ namespace MoreMountains.Feedbacks
 		private static string[] _packages = new string[] 
 		{"com.unity.cinemachine", 
 			"com.unity.postprocessing", 
-			"com.unity.textmeshpro",
 			"com.unity.2d.animation"
 		};
 
@@ -35,7 +35,7 @@ namespace MoreMountains.Feedbacks
 			_listRequest = null;
 			_addRequest = null;
             
-			Debug.Log("[MMFDependencyInstaller] Installation start");
+			MMDebug.DebugLogInfo("[MMFDependencyInstaller] Installation start");
 			_listRequest = Client.List();    
             
 			EditorApplication.update += ListProgress;
@@ -88,7 +88,7 @@ namespace MoreMountains.Feedbacks
 					if (package.name == _packages[_currentIndex])
 					{
 						packageFound = true;
-						Debug.Log("[MMFDependencyInstaller] "+package.name+" is already installed");
+						MMDebug.DebugLogInfo("[MMFDependencyInstaller] "+package.name+" is already installed");
 						_currentIndex++;
 						InstallNext();
 						return;
@@ -97,15 +97,15 @@ namespace MoreMountains.Feedbacks
 
 				if (!packageFound)
 				{
-					Debug.Log("[MMFDependencyInstaller] installing "+_packages[_currentIndex]);
+					MMDebug.DebugLogInfo("[MMFDependencyInstaller] installing "+_packages[_currentIndex]);
 					_addRequest = Client.Add(_packages[_currentIndex]);
 					EditorApplication.update += AddProgress;
 				}
 			}
 			else
 			{
-				Debug.Log("[MMFDependencyInstaller] Installation complete");
-				Debug.Log("[MMFDependencyInstaller] It's recommended to now close that scene and reopen it before playing it.");
+				MMDebug.DebugLogInfo("[MMFDependencyInstaller] Installation complete");
+				MMDebug.DebugLogInfo("[MMFDependencyInstaller] It's recommended to now close that scene and reopen it before playing it.");
 			}
 		}
 
@@ -123,7 +123,7 @@ namespace MoreMountains.Feedbacks
 				}
 				else if (_listRequest.Status >= StatusCode.Failure)
 				{
-					Debug.Log(_listRequest.Error.message);
+					MMDebug.DebugLogInfo(_listRequest.Error.message);
 				}
 			}
 		}
@@ -137,13 +137,13 @@ namespace MoreMountains.Feedbacks
 			{
 				if (_addRequest.Status == StatusCode.Success)
 				{
-					Debug.Log("[MMFDependencyInstaller] "+_addRequest.Result.packageId+" has been installed");
+					MMDebug.DebugLogInfo("[MMFDependencyInstaller] "+_addRequest.Result.packageId+" has been installed");
 					_currentIndex++;
 					InstallNext();
 				}
 				else if (_addRequest.Status >= StatusCode.Failure)
 				{
-					Debug.Log(_addRequest.Error.message);
+					MMDebug.DebugLogInfo(_addRequest.Error.message);
 				}
 				EditorApplication.update -= AddProgress;
 			}

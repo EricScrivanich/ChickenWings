@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    private Transform playerTransform;
+    private Transform targetTransform;
     private SpriteRenderer sprite;
     private float YPos = 3.65f;
     private float leftXPos = -9.65f;
     private float rightXPos = 9.65f;
+    private int type;
 
     private Vector3 leftRotation = new Vector3(0, 0, 90);
     private Vector3 rightRotation = new Vector3(0, 0, -90);
 
     [SerializeField] private Color originalColor;
     [SerializeField] private Color frozenColor;
+    [SerializeField] private Color chicCageColor;
 
     private bool isLeft;
     private bool isTop;
@@ -23,7 +25,22 @@ public class Arrow : MonoBehaviour
     private void Awake()
     {
         sprite = GetComponent<SpriteRenderer>();
-        playerTransform = GameObject.Find("Player").GetComponent<Transform>();
+
+
+    }
+
+    public void InitializeArrow(Transform target, int t)
+    {
+        targetTransform = target;
+        type = t;
+        if (type == 1)
+        {
+            sprite.color = chicCageColor;
+            transform.localScale = new Vector3(.9f, .9f, .9f);
+        }
+
+
+
 
     }
     // Update is called once per frame
@@ -32,16 +49,16 @@ public class Arrow : MonoBehaviour
 
         if (isTop)
         {
-            transform.position = new Vector2(playerTransform.position.x, YPos);
-            if (playerTransform.position.y > BoundariesManager.TopPlayerBoundary)
+            transform.position = new Vector2(targetTransform.position.x, YPos);
+            if (targetTransform.position.y > BoundariesManager.TopPlayerBoundary && type == 0)
             {
                 sprite.color = frozenColor;
 
             }
 
         }
-        else if (isLeft) transform.position = new Vector2(leftXPos, playerTransform.position.y);
-        else transform.position = new Vector2(rightXPos, playerTransform.position.y);
+        else if (isLeft) transform.position = new Vector2(leftXPos, targetTransform.position.y);
+        else transform.position = new Vector2(rightXPos, targetTransform.position.y);
 
     }
 
@@ -66,7 +83,8 @@ public class Arrow : MonoBehaviour
             isTop = false;
             transform.eulerAngles = rightRotation;
         }
-        sprite.color = originalColor;
+        if (type == 0)
+            sprite.color = originalColor;
 
 
         gameObject.SetActive(true);

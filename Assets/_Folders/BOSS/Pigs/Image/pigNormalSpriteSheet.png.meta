@@ -3,7 +3,7 @@ guid: 1af192e27acf9402880246e18ccb7ae2
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -67,7 +67,7 @@ TextureImporter:
   swizzle: 50462976
   cookieLightType: 0
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -80,7 +80,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -93,8 +93,8 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
+  - serializedVersion: 4
+    buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -106,7 +106,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -119,7 +119,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -136,37 +136,17 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: HeadUp
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 835
-        width: 199
-        height: 188
-      alignment: 9
-      pivot: {x: 0.94991714, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 88b72664f419c4a0f83c6c8e265b5b79
-      internalID: 862303622
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Body
       rect:
         serializedVersion: 2
-        x: 298
-        y: 775
-        width: 312
+        x: 652
+        y: 211
+        width: 315
         height: 229
       alignment: 9
       pivot: {x: 0.005444747, y: 0.4896925}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -178,37 +158,17 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HeadMidUp
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 626
-        width: 199
-        height: 188
-      alignment: 9
-      pivot: {x: 0.9503741, y: 0.5000003}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e631af154ddb6418a95004afa42b901e
-      internalID: 1578215050
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: EarFront
       rect:
         serializedVersion: 2
-        x: 298
-        y: 633
-        width: 75
-        height: 102
+        x: 51
+        y: 216
+        width: 82
+        height: 96
       alignment: 9
-      pivot: {x: 0.32440674, y: 0.16048177}
+      pivot: {x: 0.6352234, y: 0.19296646}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -220,37 +180,17 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HeadStraight
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 417
-        width: 199
-        height: 188
-      alignment: 9
-      pivot: {x: 0.95679563, y: 0.498241}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4f718249d9c4e415783d102fa94c6a32
-      internalID: -347509856
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: EarBack
       rect:
         serializedVersion: 2
-        x: 458
-        y: 640
-        width: 61
-        height: 95
+        x: 193
+        y: 229
+        width: 87
+        height: 72
       alignment: 9
-      pivot: {x: 0.3720633, y: 0.18680741}
+      pivot: {x: 0.6597616, y: 0.24703047}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -262,58 +202,17 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HeadMidDown
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 210
-        width: 200
-        height: 188
-      alignment: 9
-      pivot: {x: 0.94886214, y: 0.497824}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ccbdd993c151843d0865d0fd0602d652
-      internalID: -1259680608
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HeadDown
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 1
-        width: 199
-        height: 188
-      alignment: 9
-      pivot: {x: 0.9556204, y: 0.4999998}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c9323379a23c84a8da61dc79f3e76ec0
-      internalID: 2089250552
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Tail
       rect:
         serializedVersion: 2
-        x: 453
-        y: 541
+        x: 459
+        y: 468
         width: 64
         height: 62
       alignment: 9
       pivot: {x: 0.31076002, y: 0.170357}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -329,12 +228,13 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 249
-        y: 42
+        y: 48
         width: 93
-        height: 116
+        height: 110
       alignment: 9
-      pivot: {x: 0.55355835, y: 0.76151365}
+      pivot: {x: 0.56122285, y: 0.7420725}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -349,13 +249,14 @@ TextureImporter:
       name: FootDown
       rect:
         serializedVersion: 2
-        x: 395
-        y: 75
-        width: 80
-        height: 83
+        x: 388
+        y: 66
+        width: 98
+        height: 92
       alignment: 9
-      pivot: {x: 0.6925541, y: 0.8914324}
+      pivot: {x: 0.44337246, y: 0.8337288}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -373,10 +274,11 @@ TextureImporter:
         x: 539
         y: 66
         width: 90
-        height: 91
+        height: 97
       alignment: 9
       pivot: {x: 0.50000066, y: 0.6575554}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -394,10 +296,11 @@ TextureImporter:
         x: 680
         y: 66
         width: 110
-        height: 93
+        height: 90
       alignment: 9
-      pivot: {x: 0.478388, y: 0.61247337}
+      pivot: {x: 0.4071034, y: 0.68912286}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -412,13 +315,14 @@ TextureImporter:
       name: PiGSpriteSheetNew_0
       rect:
         serializedVersion: 2
-        x: 841
-        y: 30
+        x: 831
+        y: 51
         width: 96
         height: 128
       alignment: 9
       pivot: {x: 0.43561554, y: 0.75258535}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -440,6 +344,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.24641103, y: 0.1361507}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -461,6 +366,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.2625284, y: 0.118335865}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -482,6 +388,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.26456806, y: 0.5933845}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -503,6 +410,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.27344263, y: 0.8733338}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -524,6 +432,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.26731968, y: 0.862969}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -545,6 +454,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.27490073, y: 0.2413268}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -566,6 +476,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.26085636, y: 0.06801695}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -587,6 +498,7 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.34346977, y: 0.093227185}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -597,7 +509,228 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_8
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 426
+        width: 81
+        height: 76
+      alignment: 9
+      pivot: {x: 0.6089793, y: 0.25839394}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c0ba3113f52147238fad6b30d199199
+      internalID: 1219272910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_9
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 335
+        width: 83
+        height: 57
+      alignment: 9
+      pivot: {x: 0.69068384, y: 0.45661578}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65bbff0c243dc40be95c9b66c9443dcd
+      internalID: 69921494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_10
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 431
+        width: 91
+        height: 72
+      alignment: 9
+      pivot: {x: 0.6576154, y: 0.28705344}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 248c96576fdec495780cf1efadf82dbd
+      internalID: -137529435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_11
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 338
+        width: 85
+        height: 70
+      alignment: 9
+      pivot: {x: 0.72888434, y: 0.36175537}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65a00727d647145f7b02c80d0eadcbbb
+      internalID: -497345344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_12
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 441
+        width: 77
+        height: 73
+      alignment: 9
+      pivot: {x: 0.6926959, y: 0.20866917}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f936652b707f40b0a14e3f8b3d1465b
+      internalID: 809151233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_13
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 335
+        width: 75
+        height: 90
+      alignment: 9
+      pivot: {x: 0.6714571, y: 0.30635002}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ecba1fec32699459792cea121a951261
+      internalID: -113989585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_14
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 825
+        width: 221
+        height: 193
+      alignment: 9
+      pivot: {x: 0.89747345, y: 0.5077312}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e03cef6fd1fe84c01840acd1e6b31253
+      internalID: -1022920008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_15
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 611
+        width: 226
+        height: 192
+      alignment: 9
+      pivot: {x: 0.8855367, y: 0.5000003}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4eb127560fe14df68cbed582830c8b0
+      internalID: 102520853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_16
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 604
+        width: 221
+        height: 214
+      alignment: 9
+      pivot: {x: 0.89072263, y: 0.49080566}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5ff18887312540958456f33e3f42939
+      internalID: 288033068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pigNormalSpriteSheet_17
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 822
+        width: 222
+        height: 198
+      alignment: 9
+      pivot: {x: 0.9205179, y: 0.4895226}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 087d43f58dc5b4aceb84e39d4369f594
+      internalID: -954323398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
@@ -607,6 +740,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
     nameFileIdTable:
       Body: 1081337345
       EarBack: 268066689
@@ -641,12 +776,22 @@ TextureImporter:
       WingUp: -1582615751
       pigNormalSpriteSheet_0: -386245875
       pigNormalSpriteSheet_1: 1666058204
+      pigNormalSpriteSheet_10: -137529435
+      pigNormalSpriteSheet_11: -497345344
+      pigNormalSpriteSheet_12: 809151233
+      pigNormalSpriteSheet_13: -113989585
+      pigNormalSpriteSheet_14: -1022920008
+      pigNormalSpriteSheet_15: 102520853
+      pigNormalSpriteSheet_16: 288033068
+      pigNormalSpriteSheet_17: -954323398
       pigNormalSpriteSheet_2: 410337113
       pigNormalSpriteSheet_3: 686211161
       pigNormalSpriteSheet_4: -1508308997
       pigNormalSpriteSheet_5: 1889915370
       pigNormalSpriteSheet_6: -12296853
       pigNormalSpriteSheet_7: 2082635330
+      pigNormalSpriteSheet_8: 1219272910
+      pigNormalSpriteSheet_9: 69921494
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -8,7 +8,7 @@ public class ColliderCollectable : MonoBehaviour
     {
         if (collider.gameObject.GetComponent<ICollectible>() == null)
         {
-            Debug.Log("Game object has not collectable interface, object is: " + collider.gameObject + " transfrom: " + collider.gameObject.transform.position);
+
             return;
         }
         collider.gameObject.GetComponent<ICollectible>().Collected();

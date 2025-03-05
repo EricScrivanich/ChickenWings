@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -11,6 +12,7 @@ namespace MoreMountains.Feedbacks
 	/// This feedback will animate the scale of the target object over time when played
 	/// </summary>
 	[AddComponentMenu("")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Transform/Scale")]
 	[FeedbackHelp("This feedback will animate the target's scale on the 3 specified animation curves, for the specified duration (in seconds). You can apply a multiplier, that will multiply each animation curve value.")]
 	public class MMF_Scale : MMF_Feedback
@@ -66,22 +68,19 @@ namespace MoreMountains.Feedbacks
 		public bool AnimateX = true;
 		/// the x scale animation definition
 		[Tooltip("the x scale animation definition")]
-		[MMFCondition("AnimateX", true)]
-		public MMTweenType AnimateScaleTweenX = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)));
+		public MMTweenType AnimateScaleTweenX = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)), "AnimateX");
 		/// if this is true, should animate the Y scale value
 		[Tooltip("if this is true, should animate the Y scale value")]
 		public bool AnimateY = true;
 		/// the y scale animation definition
 		[Tooltip("the y scale animation definition")]
-		[MMFCondition("AnimateY", true)]
-		public MMTweenType AnimateScaleTweenY = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)));
+		public MMTweenType AnimateScaleTweenY = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)), "AnimateY");
 		/// if this is true, should animate the z scale value
 		[Tooltip("if this is true, should animate the z scale value")]
 		public bool AnimateZ = true;
 		/// the z scale animation definition
 		[Tooltip("the z scale animation definition")]
-		[MMFCondition("AnimateZ", true)]
-		public MMTweenType AnimateScaleTweenZ = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)));
+		public MMTweenType AnimateScaleTweenZ = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0)), "AnimateZ");
 		/// if this is true, the AnimateX curve only will be used, and applied to all axis
 		[Tooltip("if this is true, the AnimateX curve only will be used, and applied to all axis")] 
 		public bool UniformScaling = false;
@@ -158,6 +157,7 @@ namespace MoreMountains.Feedbacks
 					{
 						return;
 					}
+					if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 					_coroutine = Owner.StartCoroutine(AnimateScale(AnimateScaleTarget, Vector3.zero, FeedbackDuration, AnimateScaleTweenX, AnimateScaleTweenY, AnimateScaleTweenZ, RemapCurveZero * intensityMultiplier, RemapCurveOne * intensityMultiplier));
 				}
 				if (Mode == Modes.ToDestination)
@@ -166,6 +166,7 @@ namespace MoreMountains.Feedbacks
 					{
 						return;
 					}
+					if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 					_coroutine = Owner.StartCoroutine(ScaleToDestination());
 				}                   
 			}
@@ -422,6 +423,12 @@ namespace MoreMountains.Feedbacks
 			MMFeedbacksHelpers.MigrateCurve(AnimateScaleX, AnimateScaleTweenX, Owner);
 			MMFeedbacksHelpers.MigrateCurve(AnimateScaleY, AnimateScaleTweenY, Owner);
 			MMFeedbacksHelpers.MigrateCurve(AnimateScaleZ, AnimateScaleTweenZ, Owner);
+			if (string.IsNullOrEmpty(AnimateScaleTweenX.ConditionPropertyName))
+			{
+				AnimateScaleTweenX.ConditionPropertyName = "AnimateX";
+				AnimateScaleTweenY.ConditionPropertyName = "AnimateY";
+				AnimateScaleTweenZ.ConditionPropertyName = "AnimateZ";	
+			}
 		}
 		
 		/// <summary>

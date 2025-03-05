@@ -8,7 +8,7 @@ namespace MoreMountains.Feedbacks
 	/// <summary>
 	/// This class lets you record sequences via input presses
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Sequencing/MMInputSequenceRecorder")]
+	[AddComponentMenu("More Mountains/Feedbacks/Sequencing/MM Input Sequence Recorder")]
 	[ExecuteAlways]
 	public class MMInputSequenceRecorder : MonoBehaviour
 	{

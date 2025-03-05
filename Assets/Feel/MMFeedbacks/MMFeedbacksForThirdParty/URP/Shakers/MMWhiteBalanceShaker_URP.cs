@@ -16,7 +16,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMWhiteBalanceShaker_URP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM White Balance Shaker URP")]
 	public class MMWhiteBalanceShaker_URP : MMShaker
 	{
 		/// whether or not to add to the initial value

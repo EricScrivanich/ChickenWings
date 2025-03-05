@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -7,6 +8,7 @@ namespace MoreMountains.Feedbacks
 	/// Scale shakers, as the name suggests, are used to shake the scale of a transform, along a direction, with optional noise and other fine control options.
 	/// </summary>
 	[AddComponentMenu("")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Transform/Scale Shake")]
 	[FeedbackHelp("This feedback lets you emit a ScaleShake event. This will be caught by MMScaleShakers (on the specified channel)." +
 	              " Scale shakers, as the name suggests, are used to shake the scale of a transform, along a direction, with optional noise and other fine control options.")]

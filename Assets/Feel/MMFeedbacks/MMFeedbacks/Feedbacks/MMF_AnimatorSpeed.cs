@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you change the speed of a target animator, either once, or instantly and then reset it, or interpolate it over time")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Animation/Animator Speed")]
 	public class MMF_AnimatorSpeed : MMF_Feedback 
 	{
@@ -72,7 +74,7 @@ namespace MoreMountains.Feedbacks
 
 			if (BoundAnimator == null)
 			{
-				Debug.LogWarning("No animator was set for " + Owner.name);
+				Debug.LogWarning("[Animator Speed Feedback] The animator speed feedback on "+Owner.name+" doesn't have a BoundAnimator, it won't work. You need to specify one in its inspector.");
 				return;
 			}
 
@@ -87,6 +89,7 @@ namespace MoreMountains.Feedbacks
 			}
 			else
 			{
+				if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 				_coroutine = Owner.StartCoroutine(ChangeSpeedCo());
 			}
 		}

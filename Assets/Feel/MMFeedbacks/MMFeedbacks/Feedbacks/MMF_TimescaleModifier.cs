@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback triggers a MMTimeScaleEvent, which, if you have a MMTimeManager object in your scene, will be caught and used to modify the timescale according to the specified settings. These settings are the new timescale (0.5 will be twice slower than normal, 2 twice faster, etc), the duration of the timescale modification, and the optional speed at which to transition between normal and altered time scale.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Time/Timescale Modifier")]
 	public class MMF_TimescaleModifier : MMF_Feedback
 	{
@@ -27,7 +29,8 @@ namespace MoreMountains.Feedbacks
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.TimeColor; } }
 		public override string RequiredTargetText { get { return Mode.ToString() + " x" + TimeScale ;  } }
-		public override bool HasCustomInspectors { get { return true; } }
+		public override bool HasCustomInspectors => true;
+		public override bool HasAutomaticShakerSetup => true;
 		#endif
 
 		[MMFInspectorGroup("Timescale Modifier", true, 63)]
@@ -61,8 +64,8 @@ namespace MoreMountains.Feedbacks
 		public float TimeScaleLerpSpeed = 1f;
 		/// in Duration mode, the curve to use to lerp the timescale
 		[Tooltip("in Duration mode, the curve to use to lerp the timescale")]
-		[MMFEnumCondition("TimescaleLerpMode", (int)MMTimeScaleLerpModes.Duration)]
-		public MMTweenType TimescaleLerpCurve = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1))); 
+		public MMTweenType TimescaleLerpCurve = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1)), 
+			enumConditionPropertyName:"TimescaleLerpMode", enumConditionValues:(int)MMTimeScaleLerpModes.Duration); 
 		/// in Duration mode, the duration of the timescale interpolation, in unscaled time seconds
 		[Tooltip("in Duration mode, the duration of the timescale interpolation, in unscaled time seconds")]
 		[MMFEnumCondition("TimescaleLerpMode", (int)MMTimeScaleLerpModes.Duration)]
@@ -73,8 +76,8 @@ namespace MoreMountains.Feedbacks
 		public bool TimeScaleLerpOnReset = false;
 		/// in Duration mode, the curve to use to lerp the timescale
 		[Tooltip("in Duration mode, the curve to use to lerp the timescale")]
-		[MMFEnumCondition("TimescaleLerpMode", (int)MMTimeScaleLerpModes.Duration)]
-		public MMTweenType TimescaleLerpCurveOnReset = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1)));
+		public MMTweenType TimescaleLerpCurveOnReset = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1)), 
+			enumConditionPropertyName:"TimescaleLerpMode", enumConditionValues:(int)MMTimeScaleLerpModes.Duration);
 		/// in Duration mode, the duration of the timescale interpolation, in unscaled time seconds
 		[Tooltip("in Duration mode, the duration of the timescale interpolation, in unscaled time seconds")]
 		[MMFEnumCondition("TimescaleLerpMode", (int)MMTimeScaleLerpModes.Duration)]
@@ -135,6 +138,37 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			MMTimeScaleEvent.Trigger(MMTimeScaleMethods.Reset, TimeScale, 0f, false, 0f, true);
+		}
+		
+		/// <summary>
+		/// Automatically adds a MMTimeManager to the scene
+		/// </summary>
+		public override void AutomaticShakerSetup()
+		{
+			(MMTimeManager timeManager, bool createdNew) = Owner.gameObject.MMFindOrCreateObjectOfType<MMTimeManager>("MMTimeManager", null);
+			if (createdNew)
+			{
+				MMDebug.DebugLogInfo("Added a MMTimeManager to the scene. You're all set.");	
+			}
+		}
+		
+		/// <summary>
+		/// On Validate, we init our curves conditions if needed
+		/// </summary>
+		public override void OnValidate()
+		{
+			base.OnValidate();
+			if (string.IsNullOrEmpty(TimescaleLerpCurve.EnumConditionPropertyName))
+			{
+				TimescaleLerpCurve.EnumConditionPropertyName = "TimescaleLerpMode";
+				TimescaleLerpCurveOnReset.EnumConditionPropertyName = "TimescaleLerpMode";
+				TimescaleLerpCurve.EnumConditions = new bool[32];
+			}
+			if (TimescaleLerpCurve.EnumConditions[(int)MMTimeScaleLerpModes.Duration] == false)
+			{
+				TimescaleLerpCurve.EnumConditions[(int)MMTimeScaleLerpModes.Duration] = true;
+				TimescaleLerpCurveOnReset.EnumConditions[(int)MMTimeScaleLerpModes.Duration] = true;
+			}
 		}
 	}
 }

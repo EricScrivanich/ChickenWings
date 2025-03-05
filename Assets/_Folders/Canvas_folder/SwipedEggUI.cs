@@ -17,6 +17,8 @@ public class SwipedEggUI : MonoBehaviour
     [SerializeField] private float pressedEggDurationIN;
     [SerializeField] private float pressedEggDurationOUT;
 
+
+
     private Sequence eggPressSeq;
 
     private Sequence rotationSeq;
@@ -29,6 +31,8 @@ public class SwipedEggUI : MonoBehaviour
     private float currentZoom = 1;
 
     private Coroutine eggPressedRoutine;
+
+    
 
 
     private Material eggMaterial;
@@ -72,25 +76,35 @@ public class SwipedEggUI : MonoBehaviour
     private void Awake()
     {
 
-        parentScript = GetComponentInParent<EggAmmoDisplay>();
+        // parentScript = GetComponentInParent<EggAmmoDisplay>();
         rect = GetComponent<RectTransform>();
         // text.color = new Color(colorSO.normalButtonColor.r, colorSO.normalButtonColor.g, colorSO.normalButtonColor.b, 1);
         text.color = Color.white;
-        originalEggPos = eggIMG.rectTransform.localPosition.y;
+        // originalEggPos = eggIMG.rectTransform.localPosition.y;
 
 
     }
 
+    public RectTransform ReturnRect()
+    {
+        return rect;
+    }
+
+    public TextMeshProUGUI ReturnTextObject()
+    {
+        return text;
+    }
+
     private void Start()
     {
-        if (currentType == 1)
-        {
-            if (player.ShotgunAmmo == 0)
-            {
-                OnZero = true;
-                FlashAmmoTween(false);
-            }
-        }
+        // if (currentType == 1)
+        // {
+        //     if (player.ShotgunAmmo == 0)
+        //     {
+        //         OnZero = true;
+        //         FlashAmmoTween(false);
+        //     }
+        // }
 
     }
 
@@ -213,6 +227,7 @@ public class SwipedEggUI : MonoBehaviour
 
 
     }
+
     public void Equip(bool clockwise, int type)
     {
         if (type != currentType) return;

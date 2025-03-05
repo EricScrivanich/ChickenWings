@@ -10,7 +10,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	/// <summary>
 	/// Add this class to a Camera with a lens distortion post processing and it'll be able to "shake" its values by getting events
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMLensDistortionShaker")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Lens Distortion Shaker")]
 	#if MM_POSTPROCESSING
 	[RequireComponent(typeof(PostProcessVolume))]
 	#endif

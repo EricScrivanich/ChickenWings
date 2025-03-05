@@ -16,7 +16,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMLensDistortionShaker_URP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Lens Distortion Shaker URP")]
 	public class MMLensDistortionShaker_URP : MMShaker
 	{
 		[MMInspectorGroup("Lens Distortion Intensity", true, 51)]

@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -11,6 +13,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will instantiate the specified ParticleSystem at the specified position on Start or on Play, optionally nesting them.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Particles/Particles Instantiation")]
 	public class MMF_ParticlesInstantiation : MMF_Feedback
 	{
@@ -38,7 +41,7 @@ namespace MoreMountains.Feedbacks
 		[MMFInspectorGroup("Particles Instantiation", true, 37, true)]
 		/// whether the particle system should be cached or created on demand the first time
 		[Tooltip("whether the particle system should be cached or created on demand the first time")]
-		public Modes Mode = Modes.Cached;
+		public Modes Mode = Modes.Pool;
 		
 		/// the initial and planned size of this object pool
 		[Tooltip("the initial and planned size of this object pool")]
@@ -108,12 +111,18 @@ namespace MoreMountains.Feedbacks
 		[MMFCondition("ForceSimulationSpeed", true)]
 		public Vector2 ForcedSimulationSpeed = new Vector2(0.1f,1f);
 
+		/// the particle system instantiated by this feedback
+		public ParticleSystem InstantiatedParticleSystem => _instantiatedParticleSystem;
+		/// the particle systems instantiated by this feedback
+		public List<ParticleSystem> InstantiatedRandomParticleSystems => _instantiatedRandomParticleSystems;
+
 		protected ParticleSystem _instantiatedParticleSystem;
 		protected List<ParticleSystem> _instantiatedRandomParticleSystems;
 
 		protected MMMiniObjectPooler _objectPooler; 
 		protected GameObject _newGameObject;
 		protected bool _poolCreatedOrFound = false;
+		protected Vector3 _scriptPosition;
 		
 		/// <summary>
 		/// On init, instantiates the particle system, positions it and nests it if needed
@@ -136,6 +145,16 @@ namespace MoreMountains.Feedbacks
 		protected virtual void CreatePools(MMF_Player owner)
 		{
 			if (Mode != Modes.Pool)
+			{
+				return;
+			}
+
+			if (RandomParticlePrefabs == null)
+			{
+				RandomParticlePrefabs = new List<ParticleSystem>();
+			}
+
+			if ((ParticlesPrefab == null) && (RandomParticlePrefabs.Count == 0))
 			{
 				return;
 			}
@@ -271,6 +290,7 @@ namespace MoreMountains.Feedbacks
 				system.Stop();
 				
 				system.transform.position = GetPosition(Owner.transform.position);
+				
 				if (ApplyRotation)
 				{
 					system.transform.rotation = GetRotation(Owner.transform);    
@@ -345,9 +365,9 @@ namespace MoreMountains.Feedbacks
 				case PositionModes.WorldPosition:
 					return TargetWorldPosition + Offset;
 				case PositionModes.Script:
-					return position + Offset;
+					return _scriptPosition + Offset;
 				default:
-					return position + Offset;
+					return _scriptPosition + Offset;
 			}
 		}
 
@@ -363,6 +383,8 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
+			_scriptPosition = position;
+			
 			if (Mode == Modes.Pool)
 			{
 				if (_objectPooler != null)
@@ -396,6 +418,8 @@ namespace MoreMountains.Feedbacks
 				}
 				_instantiatedParticleSystem.Stop();
 				_instantiatedParticleSystem.transform.position = GetPosition(position);
+				PositionParticleSystem(_instantiatedParticleSystem);
+				_instantiatedParticleSystem.gameObject.SetActive(true);
 				PlayTargetParticleSystem(_instantiatedParticleSystem);
 			}
 

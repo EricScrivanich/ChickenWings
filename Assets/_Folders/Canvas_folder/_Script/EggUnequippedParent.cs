@@ -6,10 +6,17 @@ using DG.Tweening;
 using UnityEngine.UI;
 public class EggUnequippedParent : MonoBehaviour
 {
+
+    [SerializeField] private PlayerID player;
+    [SerializeField] private ButtonColorsSO colorSO;
+
     [SerializeField] private float hideButtonDuration;
     [SerializeField] private float showButtonDuration;
     [SerializeField] private float EquipDuration;
     [SerializeField] private float UnEquipDuration;
+    private Image mainImage;
+
+
 
     private Button button;
 
@@ -55,6 +62,9 @@ public class EggUnequippedParent : MonoBehaviour
     private void Awake()
     {
         button = GetComponent<Button>();
+        mainImage = GetComponent<Image>();
+        mainImage.color = colorSO.normalButtonColor;
+        outlineRect.GetComponent<Image>().color = colorSO.OutLineColor;
         foreach (var item in eggs)
         {
             item.localPosition = eggEquippedAndHiddenPostion.localPosition;
@@ -62,24 +72,33 @@ public class EggUnequippedParent : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+
+
+    }
+
     private void OnEnable()
     {
 
-        EggAmmoDisplay.EquipAmmoEvent += EquipAmmo;
-        EggAmmoDisplay.UnequipAmmoEvent += UnEquipAmmo;
-        EggAmmoDisplay.HideEggButtonEvent += HideEggButton;
+        // EggAmmoDisplay.EquipAmmoEvent += EquipAmmo;
+        // EggAmmoDisplay.UnequipAmmoEvent += UnEquipAmmo;
+        // EggAmmoDisplay.HideEggButtonEvent += HideEggButton;
 
 
     }
     private void OnDisable()
     {
+        switchingAmmoSeq?.Kill();
         DOTween.Kill(this);
-        EggAmmoDisplay.EquipAmmoEvent -= EquipAmmo;
-        EggAmmoDisplay.UnequipAmmoEvent -= UnEquipAmmo;
-        EggAmmoDisplay.HideEggButtonEvent -= HideEggButton;
+        // EggAmmoDisplay.EquipAmmoEvent -= EquipAmmo;
+        // EggAmmoDisplay.UnequipAmmoEvent -= UnEquipAmmo;
+        // EggAmmoDisplay.HideEggButtonEvent -= HideEggButton;
 
 
     }
+
+
 
     private void SwitchAmmoTween()
     {
@@ -102,13 +121,13 @@ public class EggUnequippedParent : MonoBehaviour
         Debug.Log("EquippingAmmo");
         currentEquippedAmmoType = type;
 
-        if (isShown)
-        {
-            Debug.Log("EquippingAmmo while hidden");
+        // if (isShown)
+        // {
+        //     Debug.Log("EquippingAmmo while hidden");
 
-            OnPress();
-            return;
-        }
+        //     OnPress();
+        //     return;
+        // }
         SwitchAmmoTween();
 
 
@@ -131,44 +150,57 @@ public class EggUnequippedParent : MonoBehaviour
 
     }
 
-
-    // Update is called once per frame
-    public void OnPress()
+    public void ShowOrHide(bool hide, Sequence seq)
     {
         int nonEquippedEgg = 0;
 
         if (currentEquippedAmmoType == 0)
             nonEquippedEgg = 1;
 
-        if (isShown)
+
+
+
+        if (!hide)
         {
             isShown = false;
             // EquipAmmo(currentEquippedAmmoType);
             // UnEquipAmmo(nonEquippedEgg);
-            mainRect.DOSizeDelta(new Vector2(startEndWidth.x, mainRect.sizeDelta.y), showButtonDuration).SetEase(showingButtonEase).SetUpdate(true);
-            outlineRect.DOSizeDelta(new Vector2(startEndWidth.x, outlineRect.sizeDelta.y), showButtonDuration).SetEase(showingButtonEase).SetUpdate(true);
+            seq.Join(mainRect.DOSizeDelta(new Vector2(startEndWidth.x, mainRect.sizeDelta.y), showButtonDuration).SetEase(showingButtonEase));
+            seq.Join(outlineRect.DOSizeDelta(new Vector2(startEndWidth.x, outlineRect.sizeDelta.y), showButtonDuration).SetEase(showingButtonEase));
+            seq.Join(mainImage.DOColor(colorSO.normalButtonColor, showButtonDuration).From(colorSO.highlightButtonColor));
 
-            mainRect.DOScale(startEndScale.x, showButtonDuration).SetUpdate(true);
-            mainRect.DOLocalMoveX(mainRectStartPos.localPosition.x, showButtonDuration).SetEase(showingButtonEase).SetUpdate(true);
+            seq.Join(mainRect.DOScale(startEndScale.x, showButtonDuration));
+            seq.Join(mainRect.DOLocalMoveX(mainRectStartPos.localPosition.x, showButtonDuration).SetEase(showingButtonEase));
 
         }
         else
         {
             isShown = true;
 
-            eggs[currentEquippedAmmoType].DOLocalMove(eggButtonHiddenPosition1.localPosition, hideButtonDuration).SetUpdate(true);
-            eggs[nonEquippedEgg].DOLocalMove(eggButtonHiddenPosition2.localPosition, hideButtonDuration).SetUpdate(true);
-            mainRect.DOSizeDelta(new Vector2(startEndWidth.y, mainRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase).SetUpdate(true);
-            outlineRect.DOSizeDelta(new Vector2(startEndWidth.y, outlineRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase).SetUpdate(true);
+            seq.Join(eggs[currentEquippedAmmoType].DOLocalMove(eggButtonHiddenPosition1.localPosition, hideButtonDuration));
+            seq.Join(mainImage.DOColor(colorSO.normalButtonColor, hideButtonDuration).From(colorSO.highlightButtonColor));
 
-            mainRect.DOScale(startEndScale.y, hideButtonDuration).SetUpdate(true);
-            mainRect.DOLocalMoveX(mainRectHiddenButtonPosition.localPosition.x, hideButtonDuration).SetEase(hidingButtonEase).SetUpdate(true);
+            seq.Join(eggs[nonEquippedEgg].DOLocalMove(eggButtonHiddenPosition2.localPosition, hideButtonDuration));
+            seq.Join(mainRect.DOSizeDelta(new Vector2(startEndWidth.y, mainRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase));
+            seq.Join(outlineRect.DOSizeDelta(new Vector2(startEndWidth.y, outlineRect.sizeDelta.y), hideButtonDuration).SetEase(hidingButtonEase));
+
+            seq.Join(mainRect.DOScale(startEndScale.y, hideButtonDuration));
+            seq.Join(mainRect.DOLocalMoveX(mainRectHiddenButtonPosition.localPosition.x, hideButtonDuration).SetEase(hidingButtonEase));
 
 
         }
+
+    }
+
+
+    // Update is called once per frame
+    public void OnPress()
+    {
+        player.UiEvents.OnSwitchWeapon?.Invoke(0,-1);
         HapticFeedbackManager.instance.SoftImpactButton();
 
-        EggAmmoDisplay.HideEggButtonEvent?.Invoke(isShown);
+        // EggAmmoDisplay.HideEggButtonEvent?.Invoke(isShown);
+
 
 
 

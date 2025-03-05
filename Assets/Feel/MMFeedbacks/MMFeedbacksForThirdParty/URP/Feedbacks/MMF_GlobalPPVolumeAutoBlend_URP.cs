@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Feedbacks;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.FeedbacksForThirdParty
 {
@@ -13,6 +14,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[FeedbackPath("PostProcess/Global PP Volume Auto Blend URP")]
 	#endif
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.URP")]
 	public class MMF_GlobalPPVolumeAutoBlend_URP : MMF_Feedback
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -27,12 +29,12 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.PostProcessColor; } }
-		public override bool EvaluateRequiresSetup() { return (TargetAutoBlend == null); }
 		public override string RequiredTargetText { get { return TargetAutoBlend != null ? TargetAutoBlend.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetCanvasGroup be set to be able to work properly. You can set one below."; } }
 		#endif
 		public override bool HasAutomatedTargetAcquisition => true;
 		protected override void AutomateTargetAcquisition() => TargetAutoBlend = FindAutomatedTarget<MMGlobalPostProcessingVolumeAutoBlend_URP>();
+		public override bool HasChannel => true;
 
 		/// defines the duration of the feedback
 		public override float FeedbackDuration
@@ -98,34 +100,8 @@ namespace MoreMountains.FeedbacksForThirdParty
 				return;
 			}
             
-			if (TargetAutoBlend == null)
-			{
-				Debug.LogWarning(Owner.name + " : this MMFeedbackGlobalPPVolumeAutoBlend needs a TargetAutoBlend, please set one in its inspector.");
-				return;
-			}
-			if (Mode == Modes.Default)
-			{
-				if (BlendAction == Actions.Blend)
-				{
-					TargetAutoBlend.Blend();
-					return;
-				}
-				if (BlendAction == Actions.BlendBack)
-				{
-					TargetAutoBlend.BlendBack();
-					return;
-				}
-			}
-			else
-			{
-				TargetAutoBlend.TimeScale = (ComputedTimescaleMode == TimescaleModes.Scaled) ? MMGlobalPostProcessingVolumeAutoBlend_URP.TimeScales.Scaled : MMGlobalPostProcessingVolumeAutoBlend_URP.TimeScales.Unscaled;
-				TargetAutoBlend.BlendDuration = FeedbackDuration;
-				TargetAutoBlend.Curve = BlendCurve;
-				TargetAutoBlend.InitialWeight = InitialWeight;
-				TargetAutoBlend.FinalWeight = FinalWeight;
-				TargetAutoBlend.Blend();
-			}
-            
+			MMGlobalPostProcessingVolumeAutoBlend_URP.TimeScales timeScale = (ComputedTimescaleMode == TimescaleModes.Scaled) ? MMGlobalPostProcessingVolumeAutoBlend_URP.TimeScales.Scaled : MMGlobalPostProcessingVolumeAutoBlend_URP.TimeScales.Unscaled;
+            MMPostProcessingVolumeAutoBlendURPShakeEvent.Trigger(ChannelData, TargetAutoBlend, Mode, BlendAction, ApplyTimeMultiplier(BlendDuration), BlendCurve, InitialWeight, FinalWeight, NormalPlayDirection, timeScale);
 		}
         
 		/// <summary>

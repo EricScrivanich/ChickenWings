@@ -87,8 +87,8 @@ public class BucketCollisionState : PlayerBaseState
 
             player.ID.events.EnableButtons?.Invoke(true);
             player.bucketIsExploded = false;
-            player.StartCoroutine(player.SetUndamagableCourintine(true, 1.4f));
-            
+            player.SetUndamagable(false, 1.4f);
+
             player.SwitchState(player.IdleState);
 
             // }

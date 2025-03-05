@@ -14,6 +14,10 @@ namespace KingdomOfNight
         public static void LoadHelicopter() { OpenScene("Assets/scenes/Boss/Helicopter.unity"); }
         [MenuItem("Scenes/Boss/KingPig")]
         public static void LoadKingPig() { OpenScene("Assets/scenes/Boss/KingPig.unity"); }
+        [MenuItem("Scenes/Boss/LevelCreator")]
+        public static void LoadLevelCreator() { OpenScene("Assets/scenes/Boss/LevelCreator.unity"); }
+        [MenuItem("Scenes/Boss/Scythe")]
+        public static void LoadScythe() { OpenScene("Assets/scenes/Boss/Scythe.unity"); }
         [MenuItem("Scenes/Levels/EnemyVideo")]
         public static void LoadEnemyVideo() { OpenScene("Assets/scenes/Levels/EnemyVideo.unity"); }
         [MenuItem("Scenes/Levels/Level1")]
@@ -30,6 +34,8 @@ namespace KingdomOfNight
         public static void LoadLevel14() { OpenScene("Assets/scenes/Levels/Level14.unity"); }
         [MenuItem("Scenes/Levels/Level15")]
         public static void LoadLevel15() { OpenScene("Assets/scenes/Levels/Level15.unity"); }
+        [MenuItem("Scenes/Levels/Level16")]
+        public static void LoadLevel16() { OpenScene("Assets/scenes/Levels/Level16.unity"); }
         [MenuItem("Scenes/Levels/Level2")]
         public static void LoadLevel2() { OpenScene("Assets/scenes/Levels/Level2.unity"); }
         [MenuItem("Scenes/Levels/Level3")]
@@ -48,16 +54,22 @@ namespace KingdomOfNight
         public static void LoadLevel8() { OpenScene("Assets/scenes/Levels/Level8.unity"); }
         [MenuItem("Scenes/Levels/Level9")]
         public static void LoadLevel9() { OpenScene("Assets/scenes/Levels/Level9.unity"); }
+        [MenuItem("Scenes/Levels/YoutubeVideos")]
+        public static void LoadYoutubeVideos() { OpenScene("Assets/scenes/Levels/YoutubeVideos.unity"); }
         [MenuItem("Scenes/Main/Basics")]
         public static void LoadBasics() { OpenScene("Assets/scenes/Main/Basics.unity"); }
         [MenuItem("Scenes/Main/BasicsPig")]
         public static void LoadBasicsPig() { OpenScene("Assets/scenes/Main/BasicsPig.unity"); }
         [MenuItem("Scenes/Main/BasicsSlowed")]
         public static void LoadBasicsSlowed() { OpenScene("Assets/scenes/Main/BasicsSlowed.unity"); }
+        [MenuItem("Scenes/Main/BeachBall")]
+        public static void LoadBeachBall() { OpenScene("Assets/scenes/Main/BeachBall.unity"); }
         [MenuItem("Scenes/Main/FlappyFrenzy")]
         public static void LoadFlappyFrenzy() { OpenScene("Assets/scenes/Main/FlappyFrenzy.unity"); }
         [MenuItem("Scenes/Main/MainMenu")]
         public static void LoadMainMenu() { OpenScene("Assets/scenes/Main/MainMenu.unity"); }
+        [MenuItem("Scenes/Main/TinyWingsTest")]
+        public static void LoadTinyWingsTest() { OpenScene("Assets/scenes/Main/TinyWingsTest.unity"); }
         [MenuItem("Scenes/Main/TutorialVideos")]
         public static void LoadTutorialVideos() { OpenScene("Assets/scenes/Main/TutorialVideos.unity"); }
         [MenuItem("Scenes/TimeTrial/_Mountains 1")]

@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using MoreMountains.Tools;
 using UnityEngine.Audio;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -12,6 +13,7 @@ namespace MoreMountains.Feedbacks
 	/// This feedback lets you trigger fades on a specific sound via the MMSoundManager. You will need a MMSoundManager in your scene for this to work.
 	/// </summary>
 	[AddComponentMenu("")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("Audio/MMSoundManager Sound Fade")]
 	[FeedbackHelp("This feedback lets you trigger fades on a specific sound via the MMSoundManager. You will need a MMSoundManager in your scene for this to work.")]
 	public class MMF_MMSoundManagerSoundFade : MMF_Feedback

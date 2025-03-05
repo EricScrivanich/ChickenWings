@@ -10,6 +10,8 @@ public class Level7Special : MonoBehaviour
     [SerializeField] private Transform playerTran;
     [SerializeField] private PlayerID player;
 
+    [SerializeField] private GameObject swipeHand;
+
 
     [SerializeField] private float startSlidePos;
     [SerializeField] private float swipeAmount;
@@ -172,9 +174,28 @@ public class Level7Special : MonoBehaviour
             hasSwipedButton = true;
             eggSpawner.enabled = true;
 
-            swipeImage.DOFade(0, .25f).SetUpdate(true).OnComplete(() => slideSeq?.Kill());
+            swipeImage.DOFade(0, .25f).SetUpdate(true).OnComplete(SwipeTweenComplete);
             // StartCoroutine(ChangeTime());
 
+
+        }
+    }
+
+    private void SwipeTweenComplete()
+    {
+        slideSeq?.Kill();
+        swipeHand.gameObject.SetActive(false);
+    }
+
+    private void SwitchWeapon(int type, int amount, int dir)
+    {
+        if (type == 0)
+        {
+            RetractAfterShowButton(false);
+        }
+        else if (type == 1)
+        {
+            RetractAfterSwipe(1);
 
         }
     }
@@ -189,15 +210,19 @@ public class Level7Special : MonoBehaviour
     {
         // player.globalEvents.OnUseChainedAmmo += ShowChainedAmmo;
 
-        EggAmmoDisplay.HideEggButtonEvent += RetractAfterShowButton;
+        // EggAmmoDisplay.HideEggButtonEvent += RetractAfterShowButton;
 
-        EggAmmoDisplay.EquipAmmoEvent += RetractAfterSwipe;
+        // EggAmmoDisplay.EquipAmmoEvent += RetractAfterSwipe;
+
+        player.UiEvents.OnSwitchDisplayedWeapon += SwitchWeapon;
     }
 
     private void OnDisable()
     {
-        EggAmmoDisplay.HideEggButtonEvent -= RetractAfterShowButton;
-        EggAmmoDisplay.EquipAmmoEvent -= RetractAfterSwipe;
+        // EggAmmoDisplay.HideEggButtonEvent -= RetractAfterShowButton;
+        // EggAmmoDisplay.EquipAmmoEvent -= RetractAfterSwipe;
+        player.UiEvents.OnSwitchDisplayedWeapon -= SwitchWeapon;
+
 
     }
 

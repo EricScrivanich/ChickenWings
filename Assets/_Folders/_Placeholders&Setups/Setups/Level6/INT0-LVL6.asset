@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lvlID: {fileID: 0}
   IgnoreItensityTriggers: 0
+  mustComplete: 0
   overrideStateTransiton: 0
   collectableSpawnData: {fileID: 0}
   transtionLogicStart: {fileID: 0}
@@ -34,13 +35,13 @@ MonoBehaviour:
   amountOfWaveWeights:
   - 0
   - 0
+  - 0.5
   - 0.4
-  - 0.6
   waveSizeWeights:
   - 0
   - 0.4
-  - 0.5
-  - 0.1
+  - 0.4
+  - 0
   xSpawnRange: {x: 12.5, y: 20}
   xSpawnRangeMissilePig: {x: 0, y: 0}
   shootingRangeAdjustment: 0
@@ -58,3 +59,4 @@ MonoBehaviour:
   JetpackPig_BB: {fileID: 11400000, guid: 958900b3d5e0f42d8958ab3f411ec282, type: 2}
   BigPig_BB: {fileID: 0}
   TenderizerPig_BB: {fileID: 0}
+  ignoreOverride: 0

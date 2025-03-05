@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
-#if MM_TEXTMESHPRO
+#if MM_UGUI2
 using MoreMountains.Tools;
 using TMPro;
 #endif
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -14,9 +18,10 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you reveal words, lines, or characters in a target TMP, one at a time")]
-	#if MM_TEXTMESHPRO
+	#if MM_UGUI2
 	[FeedbackPath("TextMesh Pro/TMP Text Reveal")]
 	#endif
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.TextMeshPro")]
 	public class MMF_TMPTextReveal : MMF_Feedback
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -25,14 +30,14 @@ namespace MoreMountains.Feedbacks
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.TMPColor; } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetTMPText be set to be able to work properly. You can set one below."; } }
 		#endif
-		#if UNITY_EDITOR && MM_TEXTMESHPRO
+		#if UNITY_EDITOR && MM_UGUI2
 		public override bool EvaluateRequiresSetup() { return (TargetTMPText == null); }
 		public override string RequiredTargetText { get { return TargetTMPText != null ? TargetTMPText.name : "";  } }
 		#endif
 
 		protected string _originalText;
 		
-		#if MM_TEXTMESHPRO
+		#if MM_UGUI2
 		public override bool HasAutomatedTargetAcquisition => true;
 		protected override void AutomateTargetAcquisition() => TargetTMPText = FindAutomatedTarget<TMP_Text>();
 
@@ -49,7 +54,28 @@ namespace MoreMountains.Feedbacks
 				}
 				else
 				{
-					if ((TargetTMPText == null) || (TargetTMPText.textInfo == null))
+					if (TargetTMPText == null)
+					{
+						return 0f;
+					}
+					
+					if (TargetTMPText.textInfo == null)
+					{
+						bool initiallyActive = TargetTMPText.gameObject.activeSelf;
+						TargetTMPText.gameObject.SetActive(true);
+						TargetTMPText.ForceMeshUpdate(true);
+						TargetTMPText.gameObject.SetActive(initiallyActive);
+					}
+
+					if (AllowHierarchyActivationForDurationComputation)
+					{
+						List<Transform> disabledParents = TargetTMPText.transform.MMEnumerateAllParents(true).Where(p => !p.gameObject.activeSelf).ToList();
+						disabledParents.ForEach(p => p.gameObject.SetActive(true));
+						TargetTMPText.ForceMeshUpdate(true);
+						disabledParents.ForEach(p => p.gameObject.SetActive(false));
+					}
+
+					if (TargetTMPText.textInfo == null)
 					{
 						return 0f;
 					}
@@ -88,6 +114,31 @@ namespace MoreMountains.Feedbacks
 				if (DurationMode == DurationModes.TotalDuration)
 				{
 					RevealDuration = value;
+					
+					if (TargetTMPText != null)
+					{
+						if (ReplaceText)
+						{
+							_originalText = TargetTMPText.text;
+							TargetTMPText.text = NewText;
+						}
+						switch (RevealMode)
+						{
+							case RevealModes.Character:
+								IntervalBetweenReveals = value / RichTextLength(TargetTMPText.text);
+								break;
+							case RevealModes.Lines:
+								IntervalBetweenReveals = value / TargetTMPText.textInfo.lineCount;
+								break;
+							case RevealModes.Words:
+								IntervalBetweenReveals = value / TargetTMPText.textInfo.wordCount;
+								break;
+						}
+						if (ReplaceText)
+						{
+							TargetTMPText.text = _originalText;
+						}
+					}
 				}
 				else
 				{
@@ -118,6 +169,7 @@ namespace MoreMountains.Feedbacks
 				}
 			}
 		}
+		
 		#endif
 
 		/// the possible ways to reveal the text
@@ -125,7 +177,7 @@ namespace MoreMountains.Feedbacks
 		/// whether to define duration by the time interval between two unit reveals, or by the total duration the reveal should take
 		public enum DurationModes { Interval, TotalDuration }
 
-		#if MM_TEXTMESHPRO
+		#if MM_UGUI2
 		[MMFInspectorGroup("Target", true, 12, true)]
 		/// the target TMP_Text component we want to change the text on
 		[Tooltip("the target TMP_Text component we want to change the text on")]
@@ -137,6 +189,9 @@ namespace MoreMountains.Feedbacks
 		/// whether or not to replace the current TMP target's text on play
 		[Tooltip("whether or not to replace the current TMP target's text on play")]
 		public bool ReplaceText = false;
+		/// if this is true, the maxVisible Characters/Lines/Words will be set to 0 on initialization
+		[Tooltip("if this is true, the maxVisible Characters/Lines/Words will be set to 0 on initialization")]
+		public bool HideTextOnInitialization = false;
 		/// the new text to replace the old one with
 		[Tooltip("the new text to replace the old one with")]
 		[TextArea]
@@ -160,6 +215,9 @@ namespace MoreMountains.Feedbacks
 		/// a UnityEvent to invoke every time a reveal happens (word, line or character)
 		[Tooltip("a UnityEvent to invoke every time a reveal happens (word, line or character)")]
 		public UnityEvent OnReveal;
+		/// alright so that one will be weird : for reasons, TextMeshPro won't let you read the length of a disabled text, so to do so, we need to enable it, even if it's just to disable it again right after. If you're targeting a disabled text, or a text that is part of a disabled hierarchy, you'll probably want to set this to true so that the system can proceed with accurate duration computation. If you don't, and your target transform is disabled, duration won't be computed correctly.
+		[Tooltip("alright so that one will be weird : for reasons, TextMeshPro won't let you read the length of a disabled text, so to do so, we need to enable it, even if it's just to disable it again right after. If you're targeting a disabled text, or a text that is part of a disabled hierarchy, you'll probably want to set this to true so that the system can proceed with accurate duration computation. If you don't, and your target transform is disabled, duration won't be computed correctly.")]
+		public bool AllowHierarchyActivationForDurationComputation = false;
 
 		protected float _delay;
 		protected Coroutine _coroutine;
@@ -170,7 +228,45 @@ namespace MoreMountains.Feedbacks
 		protected int _totalWords;
 		protected string _initialText;
 		protected int _indexLastTime = -1;
-        
+
+		/// <summary>
+		/// Sets the maximum amount of visible characters/words/lines to 0 if needed 
+		/// </summary>
+		/// <param name="owner"></param>
+		protected override void CustomInitialization(MMF_Player owner)
+		{
+			base.CustomInitialization(owner);
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+
+			#if MM_UGUI2
+            
+			if (TargetTMPText == null)
+			{
+				return;
+			}
+			
+			if (HideTextOnInitialization)
+			{
+				switch (RevealMode)
+				{
+					case RevealModes.Character:
+						TargetTMPText.maxVisibleCharacters = 0;
+						break;
+					case RevealModes.Lines:
+						TargetTMPText.maxVisibleLines = 0;
+						break;
+					case RevealModes.Words:
+						TargetTMPText.maxVisibleWords = 0;
+						break;
+				}
+			}
+			
+			#endif
+		}
+
 		/// <summary>
 		/// On play we change the text of our target TMPText
 		/// </summary>
@@ -183,11 +279,16 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
             
 			if (TargetTMPText == null)
 			{
 				return;
+			}
+
+			if (DurationMode == DurationModes.TotalDuration)
+			{
+				FeedbackDuration = RevealDuration;
 			}
 
 			_initialText = TargetTMPText.text;
@@ -199,6 +300,7 @@ namespace MoreMountains.Feedbacks
 				TargetTMPText.ForceMeshUpdate();
 			}
 			_richTextLength = RichTextLength(TargetTMPText.text);
+			if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 			switch (RevealMode)
 			{
 				case RevealModes.Character:
@@ -220,7 +322,7 @@ namespace MoreMountains.Feedbacks
 			#endif
 		}
 
-		#if MM_TEXTMESHPRO
+		#if MM_UGUI2
 
 		/// <summary>
 		/// Reveals characters one at a time
@@ -231,7 +333,7 @@ namespace MoreMountains.Feedbacks
 			float startTime = FeedbackTime;
 			_totalCharacters = _richTextLength;
 			int visibleCharacters = 0;
-			float lastCharAt = 0f;
+			float lastCharAt = FeedbackTime;
 	            
 			IsPlaying = true;
 			while ((visibleCharacters <= _totalCharacters) && !Owner.SkippingToTheEnd)
@@ -245,7 +347,13 @@ namespace MoreMountains.Feedbacks
 		            
 				TargetTMPText.maxVisibleCharacters = visibleCharacters;
 				InvokeRevealEvents();
-				visibleCharacters++;                
+
+				float timeSinceLastChar = time - lastCharAt;
+				int numberOfIntervals = (int)Mathf.Round(timeSinceLastChar / IntervalBetweenReveals);
+				for (int i = 0; i < numberOfIntervals; i++)
+				{
+					visibleCharacters++;
+				}            
 				lastCharAt = time;
 
 				// we adjust our delay
@@ -390,24 +498,30 @@ namespace MoreMountains.Feedbacks
 			bool insideTag = false;
 
 			richText = richText.Replace("<br>", "-");
-		        
+			var tagName = new StringBuilder();
 			foreach (char character in richText)
 			{
 				if (character == '<')
 				{
 					insideTag = true;
+					tagName.Clear();
 					continue;
 				}
 				else if (character == '>')
 				{
+					if(tagName.ToString().StartsWith("sprite")) richTextLength++;
 					insideTag = false;
 				}
 				else if (!insideTag)
 				{
 					richTextLength++;
 				}
+				else
+				{
+					tagName.Append(character);
+				}
 			}
-	 
+
 			return richTextLength;
 		}
 
@@ -451,7 +565,7 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
 			TargetTMPText.text = _initialText;
 			#endif
 		}

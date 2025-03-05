@@ -5,47 +5,81 @@ using UnityEngine.EventSystems;
 
 public class AmmoSwipeManager : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
-    private EggAmmoDisplay parentScript;
+    // private EggAmmoDisplay parentScript;
+    [SerializeField] private PlayerID player;
+
     private bool isRotating;
     private bool isPressed;
     private float lastPointerPosition;
     private float dragThreshold = 60;
+    private bool hasReleased = true;
     // Start is called before the first frame update
     void Start()
     {
-        parentScript = GetComponentInParent<EggAmmoDisplay>();
+        // parentScript = GetComponentInParent<EggAmmoDisplay>();
 
     }
 
     // Update is called once per frame
     public void OnDrag(PointerEventData eventData)
     {
-        if (!isRotating && isPressed)
+
+        // if (!isRotating && isPressed)
+        // {
+        //     float dragDistanceX = eventData.position.x - lastPointerPosition;
+
+        //     if (dragDistanceX < -dragThreshold)
+        //     {
+        //         // parentScript.RotateChamber(false);
+        //         player.UiEvents.OnSwitchWeapon?.Invoke(1);
+        //         isRotating = true;
+        //         // Invoke("SetRotatingFalse", .4f);
+        //     }
+        //     else if (dragDistanceX > dragThreshold)
+        //     {
+        //         // parentScript.RotateChamber(true);
+        //         player.UiEvents.OnSwitchWeapon?.Invoke(-1);
+
+        //         isRotating = true;
+        //         // Invoke("SetRotatingFalse", .4f);
+        //     }
+
+
+        // }
+
+        if (isPressed && hasReleased)
         {
             float dragDistanceX = eventData.position.x - lastPointerPosition;
 
             if (dragDistanceX < -dragThreshold)
             {
-                parentScript.RotateChamber(false);
+                // parentScript.RotateChamber(false);
+                player.UiEvents.OnPressAmmoSideButton?.Invoke(2);
+                hasReleased = false;
+                player.UiEvents.OnSwitchWeapon?.Invoke(1, -1);
                 isRotating = true;
-                Invoke("SetRotatingFalse", .4f);
+
+                // Invoke("SetRotatingFalse", .4f);
             }
             else if (dragDistanceX > dragThreshold)
             {
-                parentScript.RotateChamber(true);
+                // parentScript.RotateChamber(true);
+                hasReleased = false;
+                player.UiEvents.OnPressAmmoSideButton?.Invoke(2);
+
+                player.UiEvents.OnSwitchWeapon?.Invoke(-1, -1);
+
                 isRotating = true;
-                Invoke("SetRotatingFalse", .4f);
+
+                // Invoke("SetRotatingFalse", .4f);
             }
 
 
         }
 
-
-
-
-
-
     }
+
+
     private void SetRotatingFalse()
     {
         AudioManager.instance.PlayChamberCock();
@@ -57,8 +91,16 @@ public class AmmoSwipeManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        // player.UiEvents.OnPressAmmoSideButton?.Invoke(2);
+
+        if (hasReleased) player.UiEvents.OnSwitchWeapon?.Invoke(-2, -1);
+
+
         isPressed = false;
-        parentScript.HighlightButtons(false);
+        hasReleased = true;
+        // player.UiEvents.OnClickAmmoSwitch?.Invoke(false);
+
+        // parentScript.HighlightButtons(false);
 
 
 
@@ -67,9 +109,14 @@ public class AmmoSwipeManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     public void OnPointerDown(PointerEventData eventData)
     {
+
+        player.UiEvents.OnPressAmmoSideButton?.Invoke(1);
+
+
         isPressed = true;
         lastPointerPosition = eventData.position.x;
-        parentScript.HighlightButtons(true);
+        // player.UiEvents.OnClickAmmoSwitch?.Invoke(true);
+        // parentScript.HighlightButtons(true);
 
 
 

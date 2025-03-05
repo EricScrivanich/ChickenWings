@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -9,6 +10,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback allows you to control one or more target MMF Players")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Feedbacks/MMF Player Control")]
 	public class MMF_PlayerControl : MMF_Feedback
 	{
@@ -22,6 +24,57 @@ namespace MoreMountains.Feedbacks
 		
 		public override bool HasChannel => false;
 
+		public override float FeedbackDuration
+		{
+			get
+			{
+				if (TargetPlayers == null)
+				{
+					return 0f;
+				}
+
+				if (!WaitForTargetPlayersToFinish)
+				{
+					return 0f;
+				}
+
+				if ((Mode == Modes.PlayFeedbacks) && (TargetPlayers.Count > 0))
+				{
+					float totalDuration = 0f;
+					foreach (MMF_Player player in TargetPlayers)
+					{
+						if ((player != null) && (totalDuration < player.TotalDuration))
+						{
+							totalDuration = player.TotalDuration;	
+						}
+					}
+
+					return totalDuration;
+				}
+
+				return 0f;
+			}
+		}
+
+		public override bool IsPlaying
+		{
+			get
+			{
+				if (WaitForTargetPlayersToFinish)
+				{
+					foreach (MMF_Player player in TargetPlayers)
+					{
+						if (player.IsPlaying)
+						{
+							return true;
+						}
+					}	
+				}
+				
+				return false;
+			}
+		}
+
 		public enum Modes
 		{
 			PlayFeedbacks,
@@ -33,7 +86,7 @@ namespace MoreMountains.Feedbacks
 			PlayFeedbacksOnlyIfReversed,
 			PlayFeedbacksOnlyIfNormalDirection,
 			ResetFeedbacks,
-			Revert,
+			ChangeDirection,
 			SetDirectionTopToBottom,
 			SetDirectionBottomToTop,
 			RestoreInitialValues,
@@ -47,6 +100,9 @@ namespace MoreMountains.Feedbacks
 		/// a list of target MMF_Players to play
 		[Tooltip("a specific MMFeedbacks / MMF_Player to play")]
 		public List<MMF_Player> TargetPlayers;
+		/// if this is true, this feedback will be considered as Playing while any of the target players are still Playing
+		[Tooltip("if this is true, this feedback will be considered as Playing while any of the target players are still Playing")]
+		public bool WaitForTargetPlayersToFinish = true;
 
 		public Modes Mode = Modes.PlayFeedbacks;
 
@@ -57,6 +113,10 @@ namespace MoreMountains.Feedbacks
 		protected override void CustomInitialization(MMF_Player owner)
 		{
 			base.CustomInitialization(owner);
+			if (TargetPlayers == null)
+			{
+				TargetPlayers = new List<MMF_Player>();
+			}
 		}
 
 		/// <summary>
@@ -94,7 +154,7 @@ namespace MoreMountains.Feedbacks
 					foreach (MMF_Player player in TargetPlayers) { player.Initialization(); }
 					break;
 				case Modes.PlayFeedbacksInReverse:
-					foreach (MMF_Player player in TargetPlayers) { player.PlayFeedbacksInReverse(position, feedbacksIntensity); }
+					foreach (MMF_Player player in TargetPlayers) { player.PlayFeedbacksInReverse(position, feedbacksIntensity, true); }
 					break;
 				case Modes.PlayFeedbacksOnlyIfReversed:
 					foreach (MMF_Player player in TargetPlayers) { player.PlayFeedbacksOnlyIfReversed(position, feedbacksIntensity); }
@@ -105,8 +165,8 @@ namespace MoreMountains.Feedbacks
 				case Modes.ResetFeedbacks:
 					foreach (MMF_Player player in TargetPlayers) { player.ResetFeedbacks(); }
 					break;
-				case Modes.Revert:
-					foreach (MMF_Player player in TargetPlayers) { player.Revert(); }
+				case Modes.ChangeDirection:
+					foreach (MMF_Player player in TargetPlayers) { player.ChangeDirection(); }
 					break;
 				case Modes.SetDirectionTopToBottom:
 					foreach (MMF_Player player in TargetPlayers) { player.SetDirectionTopToBottom(); }

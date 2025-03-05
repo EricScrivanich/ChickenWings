@@ -90,6 +90,8 @@ public class SpecialStateInputSystem : MonoBehaviour
     private Image dashCooldownIN;
     private CanvasGroup dashCooldownGroup;
 
+    private int currentEquipedAmmo = 0;
+
 
 
     [Header("Dash Icon")]
@@ -429,26 +431,15 @@ public class SpecialStateInputSystem : MonoBehaviour
         // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
         controls.Movement.EggJoystick.performed += ctx =>
         {
-            // float xMoveAmount = ctx.ReadValue<Vector2>().x;
-            // if (xMoveAmount < -.7f)
-            //     ID.events.OnAimJoystick(1);
-            // else if (xMoveAmount > .7f)
-            //     ID.events.OnAimJoystick(-1);
-
-            Vector2 moveAmount = ctx.ReadValue<Vector2>().normalized;
-            // if (xMoveAmount < -.7f)
-            //     ID.events.OnAimJoystick(1);
-            // else if (xMoveAmount > .7f)
-            //     ID.events.OnAimJoystick(-1);
-
-            ID.events.OnAimJoystick?.Invoke(moveAmount);
 
 
-
-            // ID.events.OnAimJoystick(ctx.ReadValue<Vector2>());
+            if (ID.canUseJoystick)
+            {
+                Vector2 moveAmount = ctx.ReadValue<Vector2>().normalized;
+                ID.events.OnAimJoystick?.Invoke(moveAmount);
+            }
         };
-        // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
-        // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
+
         controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(Vector2.zero);
 
 
@@ -490,51 +481,77 @@ public class SpecialStateInputSystem : MonoBehaviour
         // };
 
 
+        //     controls.Movement.DropEgg.performed += ctx =>
+        //    {
+        //        if (ButtonsEnabled && !eggButtonHidden)
+        //        {
+
+        //            if (!trackingInputs)
+        //            {
+        //                if (!usingShotgun)
+        //                {
+        //                    ID.events.OnEggDrop?.Invoke();
+        //                }
+
+        //                else if (usingShotgun)
+        //                    ID.events.OnAttack?.Invoke(true);
+
+        //            }
+        //            else if (!usingShotgun && CheckInputs("Egg"))
+        //            {
+        //                var player = GetComponent<PlayerStateManager>();
+        //                player.EnterIdleStateWithVel(new Vector2(0, .5f));
+        //                ID.events.OnEggDrop?.Invoke();
+
+        //                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+        //            }
+        //            else if (usingShotgun && CheckInputs("Shotgun"))
+        //            {
+        //                ID.events.OnAttack?.Invoke(true);
+        //                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+
+        //            }
+        //            // ID.globalEvents.OnEggButton?.Invoke(true);
+
+        //        }
+        //    };
+
         controls.Movement.DropEgg.performed += ctx =>
-       {
-           if (ButtonsEnabled && !eggButtonHidden)
-           {
+        {
+            if (ButtonsEnabled && !eggButtonHidden )
+            {
+                if (!trackingInputs)
+                    ID.events.OnPressAmmo?.Invoke(true);
+                else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
+                {
+                    var player = GetComponent<PlayerStateManager>();
+                    player.EnterIdleStateWithVel(new Vector2(0, .5f));
+                    ID.events.OnPressAmmo?.Invoke(true);
+                    if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
 
-               if (!trackingInputs)
-               {
-                   if (!usingShotgun)
-                   {
-                       ID.events.OnEggDrop?.Invoke();
-                   }
+                }
+                else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
+                {
+                    ID.events.OnPressAmmo?.Invoke(true);
+                    if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+                }
 
-                   else if (usingShotgun)
-                       ID.events.OnAttack?.Invoke(true);
 
-               }
-               else if (!usingShotgun && CheckInputs("Egg"))
-               {
-                   var player = GetComponent<PlayerStateManager>();
-                   player.EnterIdleStateWithVel(new Vector2(0, .5f));
-                   ID.events.OnEggDrop?.Invoke();
-
-                   if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
-               }
-               else if (usingShotgun && CheckInputs("Shotgun"))
-               {
-                   ID.events.OnAttack?.Invoke(true);
-                   if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
-
-               }
-               // ID.globalEvents.OnEggButton?.Invoke(true);
-
-           }
-       };
+            }
+        };
 
         controls.Movement.DropEgg.canceled += ctx =>
        {
-           if (usingShotgun)
-               ID.events.OnAttack?.Invoke(false);
+           ID.events.OnPressAmmo?.Invoke(false);
        };
 
         controls.Movement.SwitchAmmoRight.performed += ctx =>
      {
-         if (!eggButtonHidden)
-             ID.globalEvents.OnSwitchAmmo?.Invoke(false);
+         //  if (!eggButtonHidden)
+         //      ID.globalEvents.OnSwitchAmmo?.Invoke(false);
+         if (ID.canPressEggButton)
+             ID.UiEvents.OnSwitchWeapon?.Invoke(1,-1);
+
      };
 
 
@@ -1277,6 +1294,12 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     }
 
+    public int ReturnCurrentAmmo()
+    {
+        return currentEquipedAmmo;
+
+    }
+
 
 
 
@@ -1438,6 +1461,12 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     }
 
+    private void SetNewEquipedAmmo(int nextAmmoType, int amountOfAmmo, int direction)
+    {
+        currentEquipedAmmo = nextAmmoType;
+
+    }
+
     private void OnEnable()
     {
         controls.Movement.Enable();
@@ -1452,6 +1481,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         ID.globalEvents.OnHideEggButton += HideEggButton;
         ID.events.OnSwitchAmmoType += SetUsingShotgun;
+        ID.UiEvents.OnSwitchDisplayedWeapon += SetNewEquipedAmmo;
         if (manaUsed)
             ID.globalEvents.OnGetMana += GatherMana;
     }
@@ -1468,12 +1498,17 @@ public class SpecialStateInputSystem : MonoBehaviour
         ID.globalEvents.FillPlayerMana -= FillAllMana;
         ID.globalEvents.OnHideEggButton -= HideEggButton;
         ID.events.OnSwitchAmmoType -= SetUsingShotgun;
+        ID.UiEvents.OnSwitchDisplayedWeapon -= SetNewEquipedAmmo;
+
 
 
         ID.events.OnDash -= HandleDashNew;
         ID.globalEvents.CanDashSlash -= ExitDash;
         StopAllCoroutines();
         DOTween.Kill(this);
+        DOTween.Kill(flashSequence);
+        DOTween.Kill(dashIconSequence);
+        DOTween.Kill(dropButtonSeq);
 
 
 

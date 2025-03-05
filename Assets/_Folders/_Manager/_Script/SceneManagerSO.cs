@@ -16,6 +16,8 @@ public class SceneManagerSO : ScriptableObject
     [SerializeField] private List<string> Gamemodes_Scene;
     [SerializeField] private List<Scene> Gamemodes_UI;
 
+    public bool isLevel;
+
     [SerializeField] private List<int> levelsByAdditionalNeededChallengesToUnlock;
     [SerializeField] private List<string> additionalNeededUnlockText;
 
@@ -109,9 +111,6 @@ public class SceneManagerSO : ScriptableObject
 
         SceneManager.LoadScene(OtherGameModes_Scene[type]);
         SaveManager.instance.PreWarmShaders();
-
-
-
 
     }
 

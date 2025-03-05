@@ -19,86 +19,122 @@ namespace MoreMountains.Feedbacks
 
 		[Header("Type")]
 		/// the position mode : none, random or ping pong - none won't do anything, random will randomize min and max bounds, ping pong will oscillate between min and max bounds
+		[Tooltip("the position mode : none, random or ping pong - none won't do anything, random will randomize min and max bounds, ping pong will oscillate between min and max bounds")]
 		public WiggleTypes WiggleType = WiggleTypes.Random;
 		/// if this is true, unscaled delta time, otherwise regular delta time
+		[Tooltip("if this is true, unscaled delta time, otherwise regular delta time")]
 		public bool UseUnscaledTime = false;
+		/// a multiplier to apply to all time related operations, allowing you to speed up or slow down the wiggle
+		[Tooltip("a multiplier to apply to all time related operations, allowing you to speed up or slow down the wiggle")]
+		public float TimeMultiplier = 1f;
+		
 		/// whether or not this object should start wiggling automatically on Start()
+		[Tooltip("whether or not this object should start wiggling automatically on Start()")]
 		public bool StartWigglingAutomatically = true;
 		/// if this is true, position will be ping ponged with an ease in/out curve
+		[Tooltip("if this is true, position will be ping ponged with an ease in/out curve")]
 		public bool SmoothPingPong = true;
 
 		[Header("Speed")]
 		/// Whether or not the position's speed curve will be used
+		[Tooltip("Whether or not the position's speed curve will be used")]
 		public bool UseSpeedCurve = false;
 		/// an animation curve to define the speed over time from one position to the other (x), and the actual position (y), allowing for overshoot
+		[Tooltip("an animation curve to define the speed over time from one position to the other (x), and the actual position (y), allowing for overshoot")]
 		public AnimationCurve SpeedCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
 		[Header("Frequency")]
 		/// the minimum time (in seconds) between two position changes
+		[Tooltip("the minimum time (in seconds) between two position changes")]
 		public float FrequencyMin = 0f;
 		/// the maximum time (in seconds) between two position changes
+		[Tooltip("the maximum time (in seconds) between two position changes")]
 		public float FrequencyMax = 1f;
 
 		[Header("Amplitude")]
 		/// the minimum position the object can have
+		[Tooltip("the minimum position the object can have")]
 		public Vector3 AmplitudeMin = Vector3.zero;
 		/// the maximum position the object can have
+		[Tooltip("the maximum position the object can have")]
 		public Vector3 AmplitudeMax = Vector3.one;
 		/// if this is true, amplitude will be relative, otherwise world space
+		[Tooltip("if this is true, amplitude will be relative, otherwise world space")]
 		public bool RelativeAmplitude = true;
 		/// if this is true, all amplitude values will match the x amplitude value
+		[Tooltip("if this is true, all amplitude values will match the x amplitude value")]
 		public bool UniformValues = false;
 		/// if this is true, when randomizing amplitude, the resulting vector's length will be forced to match ForcedVectorLength
+		[Tooltip("if this is true, when randomizing amplitude, the resulting vector's length will be forced to match ForcedVectorLength")]
 		public bool ForceVectorLength = false;
 		/// the length of the randomized amplitude if ForceVectorLength is true
+		[Tooltip("the length of the randomized amplitude if ForceVectorLength is true")]
 		[MMCondition("ForceVectorLength", true)]
 		public float ForcedVectorLength = 1f;
 
 		[Header("Curve")]
 		/// a curve to animate this property on
+		[Tooltip("a curve to animate this property on")]
 		public AnimationCurve Curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 		/// the minimum value to randomize the curve's zero remap to
+		[Tooltip("the minimum value to randomize the curve's zero remap to")]
 		public Vector3 RemapCurveZeroMin = Vector3.zero;
 		/// the maximum value to randomize the curve's zero remap to
+		[Tooltip("the maximum value to randomize the curve's zero remap to")]
 		public Vector3 RemapCurveZeroMax = Vector3.zero;
 		/// the minimum value to randomize the curve's one remap to
+		[Tooltip("the minimum value to randomize the curve's one remap to")]
 		public Vector3 RemapCurveOneMin = Vector3.one;
 		/// the maximum value to randomize the curve's one remap to
+		[Tooltip("the maximum value to randomize the curve's one remap to")]
 		public Vector3 RemapCurveOneMax = Vector3.one;
 		/// whether or not to add the initial value of this property to the curve's outcome
+		[Tooltip("whether or not to add the initial value of this property to the curve's outcome")]
 		public bool RelativeCurveAmplitude = true;
 		/// whether or not the curve should be read from left to right, then right to left
+		[Tooltip("whether or not the curve should be read from left to right, then right to left")]
 		public bool CurvePingPong = false;
 
 		[Header("Pause")]
 		/// the minimum time to spend between two random positions
+		[Tooltip("the minimum time to spend between two random positions")]
 		public float PauseMin = 0f;
 		/// the maximum time to spend between two random positions
+		[Tooltip("the maximum time to spend between two random positions")]
 		public float PauseMax = 0f;
 
 		[Header("Limited Time")]
 		/// if this is true, this property will only animate for the specified time
+		[Tooltip("if this is true, this property will only animate for the specified time")]
 		public bool LimitedTime = false;
 		/// the maximum time left
+		[Tooltip("the maximum time left")]
 		public float LimitedTimeTotal;
 		/// the animation curve to use to decrease the effect of the wiggle as time goes
+		[Tooltip("the animation curve to use to decrease the effect of the wiggle as time goes")]
 		public AnimationCurve LimitedTimeFalloff = AnimationCurve.Linear(0f, 1f, 1f, 0f);
 		/// if this is true, original position will be restored when time left reaches zero
+		[Tooltip("if this is true, original position will be restored when time left reaches zero")]
 		public bool LimitedTimeResetValue = true;
 		/// the actual time left
+		[Tooltip("the actual time left")]
 		[MMFReadOnly]
 		public float LimitedTimeLeft;        
 
 		[Header("Noise Frequency")]
 		/// the minimum time between two changes of noise frequency
+		[Tooltip("the minimum time between two changes of noise frequency")]
 		public Vector3 NoiseFrequencyMin = Vector3.zero;
 		/// the maximum time between two changes of noise frequency
+		[Tooltip("the maximum time between two changes of noise frequency")]
 		public Vector3 NoiseFrequencyMax = Vector3.one;
 
 		[Header("Noise Shift")]
 		/// how much the noise should be shifted at minimum
+		[Tooltip("how much the noise should be shifted at minimum")]
 		public Vector3 NoiseShiftMin = Vector3.zero;
 		/// how much the noise should be shifted at maximum
+		[Tooltip("how much the noise should be shifted at maximum")]
 		public Vector3 NoiseShiftMax = Vector3.zero;
 
 
@@ -108,7 +144,9 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		public float GetDeltaTime()
 		{
-			return UseUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
+			float deltaTime = UseUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
+			deltaTime *= TimeMultiplier;
+			return deltaTime;
 		}
 
 		/// <summary>
@@ -117,7 +155,9 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		public float GetTime()
 		{
-			return UseUnscaledTime ? Time.unscaledTime : Time.time;
+			float time = UseUnscaledTime ? Time.unscaledTime : Time.time;
+			time *= TimeMultiplier;
+			return time;
 		}
 	}
 
@@ -148,7 +188,7 @@ namespace MoreMountains.Feedbacks
 	/// <summary>
 	/// Add this class to a GameObject to be able to control its position/rotation/scale individually and periodically, allowing it to "wiggle" (or just move however you want on a periodic basis)
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Various/MMWiggle")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Various/MM Wiggle")]
 	public class MMWiggle : MonoBehaviour 
 	{
 		/// the possible update modes
@@ -221,6 +261,10 @@ namespace MoreMountains.Feedbacks
 		/// </summary>
 		public virtual void Initialization()
 		{
+			if (PositionWiggleProperties == null) { PositionWiggleProperties = new WiggleProperties(); }
+			if (RotationWiggleProperties == null) { RotationWiggleProperties = new WiggleProperties(); }
+			if (ScaleWiggleProperties == null) { ScaleWiggleProperties = new WiggleProperties(); }
+			
 			_positionInternalProperties.initialValue = transform.localPosition;
 			_positionInternalProperties.startValue = this.transform.localPosition;
 
@@ -684,6 +728,18 @@ namespace MoreMountains.Feedbacks
 			transform.localPosition = _positionInternalProperties.initialValue;
 			transform.localEulerAngles = _rotationInternalProperties.initialValue;
 			transform.localScale = _scaleInternalProperties.initialValue;
+		}
+
+		/// <summary>
+		/// On Validate, if the app is running, we reinitialize to allow for faster iteration times
+		/// </summary>
+		protected virtual void OnValidate()
+		{
+			if (!Application.isPlaying)
+			{
+				return;
+			}
+			Initialization();
 		}
 	}
 }

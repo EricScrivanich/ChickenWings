@@ -59,6 +59,7 @@ public class PlayerFlipLeftState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.AdjustForce(JumpForce);
+        player.SetHingeTargetAngle(50);
         // player.transform.eulerAngles = Vector3.zero;
         finishedLerpRot = false;
         tweeningAng = true;

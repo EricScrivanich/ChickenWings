@@ -593,8 +593,8 @@ Transform:
   m_GameObject: {fileID: 6740215959129325446}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1249156, y: 1, z: 1}
+  m_LocalPosition: {x: -0.305, y: -0.036, z: 0}
+  m_LocalScale: {x: 1.1249156, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7739352847732186187}
@@ -834,6 +834,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  health: 1
+  totalDamageTime: 0
   pigType: 4
   isScalable: 0
   pigTypeAudio: 0
@@ -851,7 +853,6 @@ MonoBehaviour:
   - {fileID: 196232078045999114}
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  body: {fileID: 0}
 --- !u!1 &7531350597852955848
 GameObject:
   m_ObjectHideFlags: 0

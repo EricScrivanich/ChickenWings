@@ -45,7 +45,7 @@ public class ShotgunBlast : MonoBehaviour
         id = iD;
 
     }
-
+   
     private void OnEnable()
     {
         col.enabled = true;
@@ -54,7 +54,7 @@ public class ShotgunBlast : MonoBehaviour
         time = 0;
         sr.sprite = img[0];
         Vector2 force = transform.right * forceAmount;
-
+hasBeenBlocked = false;
 
         float xVelRatio = force.x / forceAmount;
         float addedX = 0;
@@ -144,12 +144,21 @@ public class ShotgunBlast : MonoBehaviour
         // Once the sequence is complete, mark the animation as finished
         // sequence.OnComplete(() => gameObject.SetActive(false));
     }
-
+private bool hasBeenBlocked;
     private void OnTriggerEnter2D(Collider2D collider)
     {
+        if (collider.gameObject.CompareTag("Block"))
+        {
+            hasBeenBlocked = true;
+            AudioManager.instance.PlayParrySound();
+            rb.linearVelocity *= .4f;
+            DisableCollider();
+            Debug.Log("Attack was blocked boi");
+            return;
+        }
 
         IDamageable damageableEntity = collider.gameObject.GetComponent<IDamageable>();
-        if (damageableEntity != null)
+        if (damageableEntity != null && !hasBeenBlocked)
         {
             int type = 1;
             if (isChained) type = 2;

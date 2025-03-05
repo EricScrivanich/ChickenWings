@@ -36,6 +36,8 @@ public class PlayerDashState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         player.rb.angularVelocity = 0;
+        player.SetHingeTargetAngle(270);
+
         player.isDashing = true;
         // player.rb.freezeRotation = true;
 
@@ -61,7 +63,7 @@ public class PlayerDashState : PlayerBaseState
         AudioManager.instance.PlayDashSound();
         dashingTime = 0;
         // player.rb.velocity = new Vector2(dashPower, 0);
-     
+
 
 
     }

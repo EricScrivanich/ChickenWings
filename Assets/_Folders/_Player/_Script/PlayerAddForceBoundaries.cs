@@ -7,6 +7,7 @@ public class PlayerAddForceBoundaries : MonoBehaviour
     private Rigidbody2D rb;
     private PlayerStateManager stateManager;
     [SerializeField] private GameObject arrowPrefab;
+    [SerializeField] private bool dontSlowFall;
     private Arrow arrow;
     private float slowDownFallBoundary = -1.5f;
     private float addForceDownBoundary = 4.8f;
@@ -46,6 +47,7 @@ public class PlayerAddForceBoundaries : MonoBehaviour
     public void CreateArrow(GameObject arrowObject)
     {
         arrow = Instantiate(arrowObject).GetComponent<Arrow>();
+        arrow.InitializeArrow(transform, 0);
         arrow.gameObject.SetActive(false);
 
     }
@@ -83,7 +85,7 @@ public class PlayerAddForceBoundaries : MonoBehaviour
             }
         }
 
-        if (playerTransform.position.y < slowDownFallBoundary && !stateManager.isDropping)
+        if (playerTransform.position.y < slowDownFallBoundary && !stateManager.isDropping && !dontSlowFall)
         {
             hasChangedMaxFallSpeed = true;
             stateManager.maxFallSpeed = originalMaxFallSpeed + ((slowDownFallBoundary - playerTransform.position.y) * 1.5f);

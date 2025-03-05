@@ -145,6 +145,8 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
 
     public override void SetNewIntensity(SpawnStateManager spawner, RandomSpawnIntensity spawnIntensity)
     {
+        Debug.LogError("Setting new int in rnadom");
+        
         // Debug.LogError("Set new intensity in script");
 
         if (useWaveAmount)
@@ -173,6 +175,8 @@ public class SpawnerPureRandomEnemyState : SpawnBaseState
         // Calculate and cache the center and half range for Big Pig's ySpawnRange
         bigPigYRangeCenter = (bigPigBoundingBox.ySpawnRange.x + bigPigBoundingBox.ySpawnRange.y) / 2f;
         bigPigYRangeHalf = Mathf.Abs(bigPigBoundingBox.ySpawnRange.y - bigPigBoundingBox.ySpawnRange.x) / 2f;
+
+        Debug.LogError("Finsished Setting INT in Random");
 
     }
 

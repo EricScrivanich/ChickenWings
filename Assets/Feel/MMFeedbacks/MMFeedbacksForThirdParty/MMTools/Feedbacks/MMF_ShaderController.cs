@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
+using UnityEngine.Scripting.APIUpdating;
 
+#if MM_UI
 namespace MoreMountains.Feedbacks
 {
 	/// <summary>
@@ -10,6 +12,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback lets you trigger a one time play on a target ShaderController.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("Renderer/ShaderController")]
 	public class MMF_ShaderController : MMF_Feedback
 	{
@@ -107,6 +110,11 @@ namespace MoreMountains.Feedbacks
 		/// <param name="owner"></param>
 		protected override void CustomInitialization(MMF_Player owner)
 		{
+			if (TargetShaderControllerList == null)
+			{
+				TargetShaderControllerList = new List<ShaderController>();
+			}
+			
 			if (Active && (TargetShaderController != null))
 			{
 				_oneTimeDurationStorage = TargetShaderController.OneTimeDuration;
@@ -247,3 +255,4 @@ namespace MoreMountains.Feedbacks
 		}
 	}
 }
+#endif

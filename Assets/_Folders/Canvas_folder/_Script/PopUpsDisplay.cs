@@ -14,6 +14,7 @@ public class PopUpsDisplay : MonoBehaviour
     [SerializeField] private RectTransform levelChallengesPos;
 
     [SerializeField] private SceneManagerSO sceneSO;
+    
 
     [Header("Level Title Display")]
     [SerializeField] private GameObject LevelNamePrefab;
@@ -174,6 +175,8 @@ public class PopUpsDisplay : MonoBehaviour
             textSequence.Play().SetUpdate(true).OnComplete(() => DeleteDisplayTexts(textObj, GameSpeedText.gameObject));
 
         }
+
+        sceneSO.isLevel = isLevel;
 
 
 

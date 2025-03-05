@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -9,6 +10,7 @@ namespace MoreMountains.Feedbacks
 	/// This feedback lets you control the stereo pan of a target AudioSource over time.
 	/// </summary>
 	[AddComponentMenu("")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Audio/AudioSource Stereo Pan")]
 	[FeedbackHelp("This feedback lets you control the stereo pan of a target AudioSource over time.")]
 	public class MMF_AudioSourceStereoPan : MMF_Feedback

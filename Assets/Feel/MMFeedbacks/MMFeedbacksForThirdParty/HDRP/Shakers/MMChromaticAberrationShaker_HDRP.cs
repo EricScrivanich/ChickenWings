@@ -14,7 +14,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_HDRP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMChromaticAberrationShaker_HDRP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Chromatic Aberration Shaker HDRP")]
 	public class MMChromaticAberrationShaker_HDRP : MMShaker
 	{
 		[MMInspectorGroup("Chromatic Aberration Intensity", true, 44)]

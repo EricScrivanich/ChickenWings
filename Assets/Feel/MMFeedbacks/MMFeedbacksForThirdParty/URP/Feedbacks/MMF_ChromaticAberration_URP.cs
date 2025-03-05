@@ -1,7 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using MoreMountains.Feedbacks;
+using UnityEngine.Scripting.APIUpdating;
+#if MM_URP
+using UnityEngine.Rendering.Universal;
+#endif
 
 namespace MoreMountains.FeedbacksForThirdParty
 {
@@ -15,6 +17,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[FeedbackPath("PostProcess/Chromatic Aberration URP")]
 	#endif
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.URP")]
 	public class MMF_ChromaticAberration_URP : MMF_Feedback
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -22,6 +25,8 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.PostProcessColor; } }
+		public override bool HasCustomInspectors => true;
+		public override bool HasAutomaticShakerSetup => true;
 		#endif
 
 		/// the duration of this feedback is the duration of the shake
@@ -52,10 +57,6 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// the curve to animate the intensity on
 		[Tooltip("the curve to animate the intensity on")]
 		public AnimationCurve Intensity = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-		/// the multiplier to apply to the intensity curve
-		[Tooltip("the multiplier to apply to the intensity curve")]
-		[Range(0f, 1f)]
-		public float Amplitude = 1.0f;
 		/// whether or not to add to the initial intensity
 		[Tooltip("whether or not to add to the initial intensity")]
 		public bool RelativeIntensity = false;
@@ -104,6 +105,16 @@ namespace MoreMountains.FeedbacksForThirdParty
 			}
             
 			MMChromaticAberrationShakeEvent_URP.Trigger(Intensity, FeedbackDuration, RemapIntensityZero, RemapIntensityOne, RelativeIntensity, channelData:ChannelData, restore:true);
+		}
+		
+		/// <summary>
+		/// Automaticall sets up the post processing profile and shaker
+		/// </summary>
+		public override void AutomaticShakerSetup()
+		{
+			#if MM_URP && UNITY_EDITOR
+			MMURPHelpers.GetOrCreateVolume<ChromaticAberration, MMChromaticAberrationShaker_URP>(Owner, "Chromatic Aberration");
+			#endif
 		}
 	}
 }

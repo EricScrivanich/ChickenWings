@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -7,6 +8,7 @@ namespace MoreMountains.Feedbacks
 	/// Rotation shakers, as the name suggests, are used to shake the rotation of a transform, along a direction, with optional noise and other fine control options.
 	/// </summary>
 	[AddComponentMenu("")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Transform/Rotation Shake")]
 	[FeedbackHelp("This feedback lets you emit a RotationShake event. This will be caught by MMRotationShakers (on the specified channel)." +
 	              " Rotation shakers, as the name suggests, are used to shake the rotation of a transform, along a direction, with optional noise and other fine control options.")]

@@ -101,16 +101,9 @@ public class ModifiedOnScreenStick : OnScreenControl, IPointerDownHandler, IPoin
         get => m_Behaviour;
         set => m_Behaviour = value;
     }
-
-    private void Start()
+    private void Awake()
     {
-        // if (m_MovableRect == null)
-        // {
-        //     Debug.LogError("Movable Rect is not assigned in the ModifiedOnScreenStick component.");
-        //     return;
-        // }
 
-        // m_StartPos = m_MovableRect.anchoredPosition;
         m_StartPos = gameObject.GetComponent<Image>().rectTransform.anchoredPosition;
 
         if (m_UseIsolatedInputActions)
@@ -150,15 +143,30 @@ public class ModifiedOnScreenStick : OnScreenControl, IPointerDownHandler, IPoin
             m_PointerDownPos = m_StartPos;
             CreateDynamicOriginClickable();
         }
+
+    }
+    private void Start()
+    {
+        // if (m_MovableRect == null)
+        // {
+        //     Debug.LogError("Movable Rect is not assigned in the ModifiedOnScreenStick component.");
+        //     return;
+        // }
+
+        // m_StartPos = m_MovableRect.anchoredPosition;
+
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        
         if (m_UseIsolatedInputActions)
             return;
 
         if (eventData == null)
             throw new ArgumentNullException(nameof(eventData));
+
+
 
         BeginInteraction(eventData.position, eventData.pressEventCamera);
     }

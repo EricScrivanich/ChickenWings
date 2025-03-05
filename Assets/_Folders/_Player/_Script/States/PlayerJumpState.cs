@@ -14,6 +14,10 @@ public class PlayerJumpState : PlayerBaseState
     // private float slightUpwardsForce = 12f;
     private float slightUpwardsForce = 15f;
 
+    private float jumpDelay = .06f;
+    private float jumpTimer;
+    private bool hasJumped;
+
     private Vector2 jumpForce;
     // private Vector2 removerAddedJumpForce;
     private float addJumpForce;
@@ -23,18 +27,9 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void EnterState(PlayerStateManager player)
     {
-        player.AdjustForce(jumpForce);
-        player.rb.angularVelocity = 0;
-        // player.anim.SetTrigger("JumpTrigger"); 
-        hasFadedJumpAir = false;
+        hasJumped = false;
+        jumpTimer = jumpDelay;
 
-        jumpAirIndex = player.CurrentJumpAirIndex;
-        // player.rb.drag = drag;
-        // drag = dragCon;
-        // player.rb.velocity = new Vector2(0, player.jumpForce);
-
-        // player.rb.AddForce(new Vector2(0, player.jumpForce),ForceMode2D.Impulse);
-        AudioManager.instance.PlayCluck();
 
         // player.anim.SetBool("FlipRightBool", false);
         // player.anim.SetBool("FlipLeftBool", false);
@@ -74,7 +69,7 @@ public class PlayerJumpState : PlayerBaseState
 
         if (player.ID.isHolding)
         {
-            Debug.LogError("YUHHHH");
+
             player.rb.AddForce(new Vector2(0, addJumpForce - Mathf.Abs(player.rb.linearVelocity.y)));
             startHoldJumpAnimation = true;
 
@@ -110,6 +105,29 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+        if (!hasJumped)
+        {
+            jumpTimer -= Time.deltaTime;
+
+            if (jumpTimer <= 0)
+            {
+                hasJumped = true;
+
+                player.AdjustForce(jumpForce);
+                player.SetHingeTargetAngle(0);
+                player.rb.angularVelocity = 0;
+                // player.anim.SetTrigger("JumpTrigger"); 
+                hasFadedJumpAir = false;
+
+                jumpAirIndex = player.CurrentJumpAirIndex;
+                // player.rb.drag = drag;
+                // drag = dragCon;
+                // player.rb.velocity = new Vector2(0, player.jumpForce);
+
+                // player.rb.AddForce(new Vector2(0, player.jumpForce),ForceMode2D.Impulse);
+                AudioManager.instance.PlayCluck();
+            }
+        }
         // if (player.jumpHeld)
         // {
         //     player.SwitchState(player.HoldJumpState);

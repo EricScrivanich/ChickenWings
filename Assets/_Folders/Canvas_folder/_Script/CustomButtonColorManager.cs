@@ -6,12 +6,12 @@ using UnityEngine.UI;
 using TMPro;
 public class CustomButtonColorManager : MonoBehaviour
 {
-    [SerializeField] private EggAmmoDisplay eggButton;
-    [SerializeField] private ButtonManager butMan;
+    [SerializeField] private SpecialStateInputSystem playerS;
+
     [SerializeField] private CustomButtonOptions options;
     [SerializeField] private ButtonColorsSO tempSO;
 
-    [SerializeField] private TextMeshProUGUI[] texts;
+    public List<TextMeshProUGUI> texts;
     [SerializeField] private Image scopeFill;
     [SerializeField] private Image ringFill;
     private int currentOutlineInd;
@@ -229,15 +229,26 @@ public class CustomButtonColorManager : MonoBehaviour
     {
         if (type == 0)
         {
+
             foreach (var tt in texts)
             {
                 tt.color = tempSO.disabledButtonColorFull;
 
+
             }
-            if (eggButton.ReturnCurrentAmmoType() == 1)
-                ringFill.color = tempSO.disabledButtonColor;
+            if (playerS.ReturnCurrentAmmo() == 1)
+            {
+                ringFill.color = tempSO.disabledButtonColorFull;
+                scopeFill.color = tempSO.DisabledScopeFillColor;
+
+            }
+
             else
+            {
                 scopeFill.color = tempSO.normalButtonColor;
+                ringFill.color = tempSO.normalButtonColor;
+            }
+
 
 
         }

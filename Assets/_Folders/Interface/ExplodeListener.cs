@@ -12,6 +12,7 @@ public class ExplodeListener : MonoBehaviour, IExplodable, IDamageable
 
     private Pool pool;
 
+    public bool CanPerfectScythe => false;
 
     private void Start()
     {

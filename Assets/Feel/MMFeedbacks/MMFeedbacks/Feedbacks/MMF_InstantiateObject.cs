@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -9,6 +10,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback allows you to instantiate the object specified in its inspector, at the feedback's position (plus an optional offset). You can also optionally (and automatically) create an object pool at initialization to save on performance. In that case you'll need to specify a pool size (usually the maximum amount of these instantiated objects you plan on having in your scene at each given time).")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("GameObject/Instantiate Object")]
 	public class MMF_InstantiateObject : MMF_Feedback
 	{
@@ -93,6 +95,9 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the transform the pool of objects will be parented to")]
 		[MMFCondition("CreateObjectPool", true)] 
 		public Transform PoolParentTransform;
+
+		/// the game object instantiated by this feedback	
+		public GameObject InstantiatedGameObject => _newGameObject;
 
 		protected MMMiniObjectPooler _objectPooler; 
 		protected GameObject _newGameObject;

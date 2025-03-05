@@ -9,6 +9,35 @@ public class PlayerID : ScriptableObject
 
     public List<float> particleYPos { get; private set; }
     [SerializeField] private LevelManagerID lvlID;
+    public bool pressingEggButton;
+    public bool pressingDashButton;
+    public bool pressingDropButton;
+    public bool pressingFlipRButton;
+    public bool pressingFlipLButton;
+    public bool pressingSwitchButton;
+    public bool pressingHideButton;
+
+    public bool scytheIsStuck;
+
+    public bool pressingButton
+    {
+        get
+        {
+            if (!pressingFlipLButton && !pressingFlipRButton && !pressingDashButton && !pressingDropButton && !pressingEggButton && !pressingSwitchButton && !pressingHideButton)
+                return false;
+            else
+                return true;
+        }
+    }
+
+
+    public bool chamberIsRotating;
+
+    public bool canPressEggButton;
+    public bool canUseJoystick;
+
+    public int amountOfWeapons { get; private set; }
+
 
 
     public List<int> PlayerInputs { get; private set; }
@@ -18,7 +47,7 @@ public class PlayerID : ScriptableObject
 
 
     public bool constantPlayerForceBool;
-
+    public float maxShotgunHoldTime { get; private set; } = 1.2f;
 
     public float constantPlayerForce;
     private bool resetingValues;
@@ -30,6 +59,9 @@ public class PlayerID : ScriptableObject
     public bool isAlive;
     public Material PlayerMaterial;
     public bool IsTwoTouchPoints;
+
+    public bool CanParry;
+    public bool CanPerectParry;
     [SerializeField] private int startingShotgunAmmo;
     [SerializeField] private int startingChainedShotgunAmmo;
     private int maxAddedChainShotgunAmmo = 5;
@@ -81,6 +113,11 @@ public class PlayerID : ScriptableObject
     private int shotgunAmmo;
     private int chainedShotgunAmmo;
 
+    public bool usingChainedAmmo;
+    // public bool ammosOnZero;
+    public bool ammosButtonHidden;
+
+
     public int Ammo
     {
         get
@@ -92,9 +129,12 @@ public class PlayerID : ScriptableObject
 
             normalAmmo = value;
             globalEvents.OnUpdateAmmo?.Invoke(normalAmmo);
+            UiEvents.OnCollectAmmo?.Invoke(0);
+            // if (ammosOnZero) CheckAmmosOnZero(0);
 
         }
     }
+    public int BoomerangAmmo;
 
     public int ShotgunAmmo
     {
@@ -108,11 +148,31 @@ public class PlayerID : ScriptableObject
 
 
             shotgunAmmo = value;
+
             globalEvents.OnUpdateShotgunAmmo?.Invoke(shotgunAmmo);
+            UiEvents.OnCollectAmmo?.Invoke(1);
+            // if (ammosOnZero) CheckAmmosOnZero(1);
+
 
         }
     }
+    public void SetAmountOfWeapons(int n)
+    {
+        amountOfWeapons = n;
+    }
+    private int scytheAmmo;
+    public int ScytheAmmo
+    {
+        get
+        {
+            return scytheAmmo;
+        }
 
+        set
+        {
+            scytheAmmo = value;
+        }
+    }
     public int ChainedShotgunAmmo
     {
         get
@@ -146,18 +206,72 @@ public class PlayerID : ScriptableObject
         }
     }
 
-    public PlayerEvents events;
-    public GlobalPlayerEvents globalEvents;
+    public bool ReturnNextAvailableAmmo(int checkType)
+    {
+        switch (checkType)
+        {
+            case 0:
+                if (Ammo > 0) return true;
 
+
+                break;
+            case 1:
+                if (shotgunAmmo > 0) return true;
+
+
+                break;
+        }
+        return false;
+    }
+
+
+    public bool trackParrySwipe;
+
+    public PlayerEvents events;
+    public UiEvents UiEvents;
+    public GlobalPlayerEvents globalEvents;
+    // public void CheckAmmosOnZero(int collectedIndex)
+    // {
+    //     if (!ammosOnZero && ShotgunAmmo <= 0 && Ammo <= 0)
+    //     {
+    //         ammosOnZero = true;
+    //         if (collectedIndex == -1)
+    //         {
+    //             Debug.Log("ammo zero");
+    //             // canPressEggButton = false;
+    //             UiEvents.OnSwitchWeapon?.Invoke(0, -2);
+    //         }
+
+    //     }
+    //     else if (ammosOnZero)
+    //     {
+    //         ammosOnZero = false;
+
+    //         if (ammosButtonHidden)
+    //         {
+    //             UiEvents.OnResetSidebarAmmos?.Invoke(collectedIndex);
+    //             UiEvents.OnSwitchWeapon?.Invoke(0, collectedIndex);
+
+
+    //         }
+    //     }
+
+    // }
 
     public void ResetValues(PlayerStartingStatsForLevels stats)
     {
+        // ammosOnZero = false;
+        ammosButtonHidden = false;
+        trackParrySwipe = false;
+        scytheIsStuck = false;
 
         resetingValues = true;
+        canUseJoystick = false;
         isAlive = true;
         particleYPos = new List<float>();
         PlayerInputs = new List<int>();
         KilledPigs = new List<Vector3Int>();
+        pressingEggButton = false;
 
 
         PlayerMaterial.SetFloat("_Alpha", 1);
@@ -179,6 +293,16 @@ public class PlayerID : ScriptableObject
 
         resetingValues = false;
         addedChainShotgunAmmo = 0;
+
+
+
+        pressingEggButton = false;
+        pressingDashButton = false;
+        pressingDropButton = false;
+        pressingFlipRButton = false;
+        pressingFlipLButton = false;
+        pressingSwitchButton = false;
+        pressingHideButton = false;
 
 
     }

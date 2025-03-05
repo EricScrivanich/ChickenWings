@@ -16,7 +16,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_URP
 	[RequireComponent(typeof(Volume))]
 	#endif
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMMotionBlurShaker_URP")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Motion Blur Shaker URP")]
 	public class MMMotionBlurShaker_URP : MMShaker
 	{
 		[MMInspectorGroup("Motion Blur Intensity", true, 61)]

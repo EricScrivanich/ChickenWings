@@ -1,7 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using MoreMountains.Feedbacks;
+using UnityEngine.Scripting.APIUpdating;
+#if MM_HDRP
+using UnityEngine.Rendering.HighDefinition;
+#endif
 
 namespace MoreMountains.FeedbacksForThirdParty
 {
@@ -16,6 +18,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	#if MM_HDRP
 	[FeedbackPath("PostProcess/White Balance HDRP")]
 	#endif
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.HDRP")]
 	public class MMF_WhiteBalance_HDRP : MMF_Feedback
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -23,6 +26,8 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.PostProcessColor; } }
+		public override bool HasCustomInspectors => true;
+		public override bool HasAutomaticShakerSetup => true;
 		#endif
 
 		/// the duration of this feedback is the duration of the shake
@@ -115,6 +120,16 @@ namespace MoreMountains.FeedbacksForThirdParty
 			
 			MMWhiteBalanceShakeEvent_HDRP.Trigger(ShakeTemperature, FeedbackDuration, RemapTemperatureZero, RemapTemperatureOne,
 				ShakeTint, RemapTintZero, RemapTintOne, RelativeValues, channelData:ChannelData, restore:true);
+		}
+		
+		/// <summary>
+		/// Automaticall sets up the post processing profile and shaker
+		/// </summary>
+		public override void AutomaticShakerSetup()
+		{
+			#if MM_HDRP && UNITY_EDITOR
+			MMHDRPHelpers.GetOrCreateVolume<WhiteBalance, MMWhiteBalanceShaker_HDRP>(Owner, "WhiteBalance");
+			#endif
 		}
 	}
 }

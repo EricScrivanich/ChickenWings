@@ -31,7 +31,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""Fireball"",
                     ""type"": ""Button"",
                     ""id"": ""65cbda46-3c59-45c5-84c0-f4670e81305b"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -94,7 +94,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""TouchPress"",
                     ""type"": ""Button"",
                     ""id"": ""c8666c9d-9f9a-44c8-bb01-83f974e4900a"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -112,7 +112,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""Parachute"",
                     ""type"": ""Button"",
                     ""id"": ""267adbde-d536-4f69-acf1-6296c8214c71"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""Hold(duration=0.1)"",
                     ""initialStateCheck"": false
@@ -121,7 +121,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""6a7bb245-7739-4352-a7ae-757bdda03107"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -152,6 +152,78 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Parry"",
+                    ""type"": ""Button"",
+                    ""id"": ""39317f21-516d-4ac9-9092-65462f989d96"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Finger1"",
+                    ""type"": ""Value"",
+                    ""id"": ""f3dba7fd-62b8-4eca-8fb3-d7282a84aded"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Finger2"",
+                    ""type"": ""Value"",
+                    ""id"": ""bdb83564-aa55-43f1-9528-78b208745e8a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Cursor"",
+                    ""type"": ""Value"",
+                    ""id"": ""e16de448-4c6f-47e7-a3c8-eff0103230a8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""b5a7659e-a41d-4218-b2c1-a8c67c25fb4c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Finger1Press"",
+                    ""type"": ""Button"",
+                    ""id"": ""402a2127-185b-4a1f-941e-4c8d51739f64"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Finger2Press"",
+                    ""type"": ""Button"",
+                    ""id"": ""52ec2e1e-f0d9-4a07-954c-509764b986e5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ScytheStick"",
+                    ""type"": ""Value"",
+                    ""id"": ""f467a2e1-3b7a-4f5e-82ec-910d70491803"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -180,7 +252,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""2b7079e5-c39a-4c93-9bc7-410e1ac8487c"",
-                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -202,7 +274,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""7c57ff5b-84f5-48d5-a121-b44e03cce482"",
-                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -246,7 +318,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""1118d868-368b-43b5-88e6-4caae8c07017"",
-                    ""path"": ""<Keyboard>/d"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -268,7 +340,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d5ef087a-7730-41b6-b474-5933a45b45f7"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -357,7 +429,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""71785b00-5b5a-4d60-a60a-bfe45c783bc6"",
                     ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": ""Hold(duration=0.07,pressPoint=0.2),Tap(pressPoint=0.2)"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Mobile"",
                     ""action"": ""Jump"",
@@ -367,7 +439,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""47e0b5fe-6038-46bf-aba8-7552f7a46f65"",
-                    ""path"": ""<Keyboard>/upArrow"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -416,6 +488,94 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
                     ""action"": ""SwitchAmmoRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf7b388c-28cc-4057-87aa-fadfcf6c81c8"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Parry"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""038266cd-44a2-4c9b-b5cc-54d43586cd4d"",
+                    ""path"": ""<Touchscreen>/touch0/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Finger1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0b80bf30-2322-4d9e-9f05-7b81dfc016b8"",
+                    ""path"": ""<Touchscreen>/touch1/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Finger2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ff58ee2f-19e1-4384-8bbb-aca16047ab20"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Cursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8441d966-0d2f-4f44-a9e2-c0fa72351951"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""MouseClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fdff57cc-ec27-401a-896c-02da72ebe67c"",
+                    ""path"": ""<Touchscreen>/touch0/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Finger1Press"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""de286ed4-8cb4-49cf-8134-d6ccff632993"",
+                    ""path"": ""<Touchscreen>/touch1/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Finger2Press"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0eb466c8-22a1-4b84-a9d1-a0544dc66093"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScytheStick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -513,6 +673,14 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_Movement_DashSlash = m_Movement.FindAction("DashSlash", throwIfNotFound: true);
         m_Movement_EggJoystick = m_Movement.FindAction("EggJoystick", throwIfNotFound: true);
         m_Movement_SwitchAmmoRight = m_Movement.FindAction("SwitchAmmoRight", throwIfNotFound: true);
+        m_Movement_Parry = m_Movement.FindAction("Parry", throwIfNotFound: true);
+        m_Movement_Finger1 = m_Movement.FindAction("Finger1", throwIfNotFound: true);
+        m_Movement_Finger2 = m_Movement.FindAction("Finger2", throwIfNotFound: true);
+        m_Movement_Cursor = m_Movement.FindAction("Cursor", throwIfNotFound: true);
+        m_Movement_MouseClick = m_Movement.FindAction("MouseClick", throwIfNotFound: true);
+        m_Movement_Finger1Press = m_Movement.FindAction("Finger1Press", throwIfNotFound: true);
+        m_Movement_Finger2Press = m_Movement.FindAction("Finger2Press", throwIfNotFound: true);
+        m_Movement_ScytheStick = m_Movement.FindAction("ScytheStick", throwIfNotFound: true);
         // Special
         m_Special = asset.FindActionMap("Special", throwIfNotFound: true);
         m_Special_ResetGame = m_Special.FindAction("ResetGame", throwIfNotFound: true);
@@ -597,6 +765,14 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private readonly InputAction m_Movement_DashSlash;
     private readonly InputAction m_Movement_EggJoystick;
     private readonly InputAction m_Movement_SwitchAmmoRight;
+    private readonly InputAction m_Movement_Parry;
+    private readonly InputAction m_Movement_Finger1;
+    private readonly InputAction m_Movement_Finger2;
+    private readonly InputAction m_Movement_Cursor;
+    private readonly InputAction m_Movement_MouseClick;
+    private readonly InputAction m_Movement_Finger1Press;
+    private readonly InputAction m_Movement_Finger2Press;
+    private readonly InputAction m_Movement_ScytheStick;
     public struct MovementActions
     {
         private @InputController m_Wrapper;
@@ -615,6 +791,14 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         public InputAction @DashSlash => m_Wrapper.m_Movement_DashSlash;
         public InputAction @EggJoystick => m_Wrapper.m_Movement_EggJoystick;
         public InputAction @SwitchAmmoRight => m_Wrapper.m_Movement_SwitchAmmoRight;
+        public InputAction @Parry => m_Wrapper.m_Movement_Parry;
+        public InputAction @Finger1 => m_Wrapper.m_Movement_Finger1;
+        public InputAction @Finger2 => m_Wrapper.m_Movement_Finger2;
+        public InputAction @Cursor => m_Wrapper.m_Movement_Cursor;
+        public InputAction @MouseClick => m_Wrapper.m_Movement_MouseClick;
+        public InputAction @Finger1Press => m_Wrapper.m_Movement_Finger1Press;
+        public InputAction @Finger2Press => m_Wrapper.m_Movement_Finger2Press;
+        public InputAction @ScytheStick => m_Wrapper.m_Movement_ScytheStick;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -666,6 +850,30 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @SwitchAmmoRight.started += instance.OnSwitchAmmoRight;
             @SwitchAmmoRight.performed += instance.OnSwitchAmmoRight;
             @SwitchAmmoRight.canceled += instance.OnSwitchAmmoRight;
+            @Parry.started += instance.OnParry;
+            @Parry.performed += instance.OnParry;
+            @Parry.canceled += instance.OnParry;
+            @Finger1.started += instance.OnFinger1;
+            @Finger1.performed += instance.OnFinger1;
+            @Finger1.canceled += instance.OnFinger1;
+            @Finger2.started += instance.OnFinger2;
+            @Finger2.performed += instance.OnFinger2;
+            @Finger2.canceled += instance.OnFinger2;
+            @Cursor.started += instance.OnCursor;
+            @Cursor.performed += instance.OnCursor;
+            @Cursor.canceled += instance.OnCursor;
+            @MouseClick.started += instance.OnMouseClick;
+            @MouseClick.performed += instance.OnMouseClick;
+            @MouseClick.canceled += instance.OnMouseClick;
+            @Finger1Press.started += instance.OnFinger1Press;
+            @Finger1Press.performed += instance.OnFinger1Press;
+            @Finger1Press.canceled += instance.OnFinger1Press;
+            @Finger2Press.started += instance.OnFinger2Press;
+            @Finger2Press.performed += instance.OnFinger2Press;
+            @Finger2Press.canceled += instance.OnFinger2Press;
+            @ScytheStick.started += instance.OnScytheStick;
+            @ScytheStick.performed += instance.OnScytheStick;
+            @ScytheStick.canceled += instance.OnScytheStick;
         }
 
         private void UnregisterCallbacks(IMovementActions instance)
@@ -712,6 +920,30 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @SwitchAmmoRight.started -= instance.OnSwitchAmmoRight;
             @SwitchAmmoRight.performed -= instance.OnSwitchAmmoRight;
             @SwitchAmmoRight.canceled -= instance.OnSwitchAmmoRight;
+            @Parry.started -= instance.OnParry;
+            @Parry.performed -= instance.OnParry;
+            @Parry.canceled -= instance.OnParry;
+            @Finger1.started -= instance.OnFinger1;
+            @Finger1.performed -= instance.OnFinger1;
+            @Finger1.canceled -= instance.OnFinger1;
+            @Finger2.started -= instance.OnFinger2;
+            @Finger2.performed -= instance.OnFinger2;
+            @Finger2.canceled -= instance.OnFinger2;
+            @Cursor.started -= instance.OnCursor;
+            @Cursor.performed -= instance.OnCursor;
+            @Cursor.canceled -= instance.OnCursor;
+            @MouseClick.started -= instance.OnMouseClick;
+            @MouseClick.performed -= instance.OnMouseClick;
+            @MouseClick.canceled -= instance.OnMouseClick;
+            @Finger1Press.started -= instance.OnFinger1Press;
+            @Finger1Press.performed -= instance.OnFinger1Press;
+            @Finger1Press.canceled -= instance.OnFinger1Press;
+            @Finger2Press.started -= instance.OnFinger2Press;
+            @Finger2Press.performed -= instance.OnFinger2Press;
+            @Finger2Press.canceled -= instance.OnFinger2Press;
+            @ScytheStick.started -= instance.OnScytheStick;
+            @ScytheStick.performed -= instance.OnScytheStick;
+            @ScytheStick.canceled -= instance.OnScytheStick;
         }
 
         public void RemoveCallbacks(IMovementActions instance)
@@ -809,6 +1041,14 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnDashSlash(InputAction.CallbackContext context);
         void OnEggJoystick(InputAction.CallbackContext context);
         void OnSwitchAmmoRight(InputAction.CallbackContext context);
+        void OnParry(InputAction.CallbackContext context);
+        void OnFinger1(InputAction.CallbackContext context);
+        void OnFinger2(InputAction.CallbackContext context);
+        void OnCursor(InputAction.CallbackContext context);
+        void OnMouseClick(InputAction.CallbackContext context);
+        void OnFinger1Press(InputAction.CallbackContext context);
+        void OnFinger2Press(InputAction.CallbackContext context);
+        void OnScytheStick(InputAction.CallbackContext context);
     }
     public interface ISpecialActions
     {

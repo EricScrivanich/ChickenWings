@@ -22,6 +22,7 @@ public class ButtonColorsSO : ScriptableObject
     public Color highlightButtonColor;
     public Color disabledButtonColor;
     public Color disabledButtonColorFull;
+    public Color WeaponColor;
     public Color DashImageManaHighlight;
     public Color DashImageManaHighlight2;
     public Color DashImageManaDisabled;

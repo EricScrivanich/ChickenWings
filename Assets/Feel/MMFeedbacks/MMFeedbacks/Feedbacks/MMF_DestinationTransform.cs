@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you animate the position/rotation/scale of a target transform to match the one of a destination transform.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Transform/Destination")]
 	public class MMF_DestinationTransform : MMF_Feedback
 	{
@@ -91,24 +93,21 @@ namespace MoreMountains.Feedbacks
 		public bool SeparatePositionCurve = false;
 		/// the curve to use to animate the position on
 		[Tooltip("the curve to use to animate the position on")]
-		[MMFCondition("SeparatePositionCurve", true)]
-		public MMTweenType AnimatePositionTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
+		public MMTweenType AnimatePositionTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)), "SeparatePositionCurve");
         
 		/// whether or not to use a separate animation curve to animate the rotation
 		[Tooltip("whether or not to use a separate animation curve to animate the rotation")]
 		public bool SeparateRotationCurve = false;
 		/// the curve to use to animate the rotation on
 		[Tooltip("the curve to use to animate the rotation on")]
-		[MMFCondition("SeparateRotationCurve", true)]
-		public MMTweenType AnimateRotationTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
+		public MMTweenType AnimateRotationTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)), "SeparateRotationCurve");
         
 		/// whether or not to use a separate animation curve to animate the scale
 		[Tooltip("whether or not to use a separate animation curve to animate the scale")]
 		public bool SeparateScaleCurve = false;
 		/// the curve to use to animate the scale on
-		[Tooltip("the curve to use to animate the scale on")]
-		[MMFCondition("SeparateScaleCurve", true)]
-		public MMTweenType AnimateScaleTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
+		[Tooltip("the curve to use to animate the scale on")] 
+		public MMTweenType AnimateScaleTween = new MMTweenType( new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)), "SeparateScaleCurve");
         
 		/// the duration of this feedback is the duration of the movement
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(Duration); } set { Duration = value; } }
@@ -149,6 +148,7 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
+			if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 			_coroutine = Owner.StartCoroutine(AnimateToDestination());
 		}
 
@@ -267,6 +267,12 @@ namespace MoreMountains.Feedbacks
 			MMFeedbacksHelpers.MigrateCurve(AnimatePositionCurve, AnimatePositionTween, Owner);
 			MMFeedbacksHelpers.MigrateCurve(AnimateRotationCurve, AnimateRotationTween, Owner);
 			MMFeedbacksHelpers.MigrateCurve(AnimateScaleCurve, AnimateScaleTween, Owner);
+			if (string.IsNullOrEmpty(AnimatePositionTween.ConditionPropertyName))
+			{
+				AnimatePositionTween.ConditionPropertyName = "SeparatePositionCurve";
+				AnimateRotationTween.ConditionPropertyName = "SeparateRotationCurve";
+				AnimateScaleTween.ConditionPropertyName = "SeparateScaleCurve";
+			}
 		}
 	}    
 }

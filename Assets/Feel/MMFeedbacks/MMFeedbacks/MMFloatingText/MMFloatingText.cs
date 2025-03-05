@@ -21,6 +21,8 @@ namespace MoreMountains.Feedbacks
 		/// the TextMesh used to display the value
 		[Tooltip("the TextMesh used to display the value")]
 		public TextMesh TargetTextMesh;
+		/// the MMFollowTarget component associated to this floating text
+		public MMFollowTarget FollowTarget;
         
 		[Header("Debug")]
 
@@ -103,7 +105,8 @@ namespace MoreMountains.Feedbacks
 			if (TargetTextMesh != null)
 			{
 				_initialTextColor = TargetTextMesh.color;
-			}            
+			}
+			FollowTarget = this.gameObject.MMGetOrAddComponent<MMFollowTarget>();
 		}
 
 		/// <summary>

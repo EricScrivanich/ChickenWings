@@ -43,70 +43,70 @@ public class ButtonManager : MonoBehaviour
     void Awake()
     {
 
-        if (moveRectsForRecording)
-        {
+        //     if (moveRectsForRecording)
+        //     {
 
-            if (moveLeftRects)
+        //         if (moveLeftRects)
 
-            {
+        //         {
 
-                foreach (var r in moveRectsLeftSide)
-                {
-                    // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
-                    r.anchoredPosition = new Vector2(r.anchoredPosition.x + moveAmountSetVariable, r.anchoredPosition.y);
-                }
+        //             foreach (var r in moveRectsLeftSide)
+        //             {
+        //                 // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
+        //                 r.anchoredPosition = new Vector2(r.anchoredPosition.x + moveAmountSetVariable, r.anchoredPosition.y);
+        //             }
 
-                if (GameObject.Find("CanvasScreen") != null)
-                {
+        //             if (GameObject.Find("CanvasScreen") != null)
+        //             {
 
-                    if (GameObject.Find("ProgressBar") != null)
-                    {
-                        RectTransform progBar = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
-                        if (progBar != null)
-                            progBar.anchoredPosition = new Vector2(progBar.anchoredPosition.x + moveAmountForRecording, progBar.anchoredPosition.y);
+        //                 if (GameObject.Find("ProgressBar") != null)
+        //                 {
+        //                     RectTransform progBar = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
+        //                     if (progBar != null)
+        //                         progBar.anchoredPosition = new Vector2(progBar.anchoredPosition.x + moveAmountForRecording, progBar.anchoredPosition.y);
 
-                    }
+        //                 }
 
-                    if (GameObject.Find("ScoreGroup") != null)
-                    {
-                        RectTransform score = GameObject.Find("ScoreGroup").GetComponent<RectTransform>();
-                        if (score != null)
-                            score.anchoredPosition = new Vector2(score.anchoredPosition.x + moveAmountForRecording, score.anchoredPosition.y);
+        //                 if (GameObject.Find("ScoreGroup") != null)
+        //                 {
+        //                     RectTransform score = GameObject.Find("ScoreGroup").GetComponent<RectTransform>();
+        //                     if (score != null)
+        //                         score.anchoredPosition = new Vector2(score.anchoredPosition.x + moveAmountForRecording, score.anchoredPosition.y);
 
-                    }
-
-
+        //                 }
 
 
 
-                }
+
+
+        //             }
 
 
 
-            }
+        //         }
 
-            else
+        //         else
 
-            {
-                foreach (var r in moveRects)
-                {
-                    // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
-                    r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountSetVariable, r.anchoredPosition.y);
-                }
+        //         {
+        //             foreach (var r in moveRects)
+        //             {
+        //                 // r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountForRecording, r.anchoredPosition.y);
+        //                 r.anchoredPosition = new Vector2(r.anchoredPosition.x - moveAmountSetVariable, r.anchoredPosition.y);
+        //             }
 
-                if (GameObject.Find("CanvasScreen") != null)
-                {
-                    RectTransform lives = GameObject.Find("Lives3").GetComponent<RectTransform>();
+        //             if (GameObject.Find("CanvasScreen") != null)
+        //             {
+        //                 RectTransform lives = GameObject.Find("Lives3").GetComponent<RectTransform>();
 
-                    // if (lives != null)
-                    //     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
-                    if (lives != null)
-                        lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountSetVariable, lives.anchoredPosition.y);
-                }
+        //                 // if (lives != null)
+        //                 //     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountForRecording, lives.anchoredPosition.y);
+        //                 if (lives != null)
+        //                     lives.anchoredPosition = new Vector2(lives.anchoredPosition.x - moveAmountSetVariable, lives.anchoredPosition.y);
+        //             }
 
-            }
+        //         }
 
-        }
+        //     }
     }
 
 #endif

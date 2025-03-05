@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Net.Mime;
-using UnityEngine;
+﻿using UnityEngine;
+#if MM_UI
 using UnityEngine.UI;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -11,6 +10,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you control the RaycastTarget parameter of a target image, turning it on or off on play")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("UI/Image RaycastTarget")]
 	public class MMF_ImageRaycastTarget : MMF_Feedback
 	{
@@ -69,3 +69,4 @@ namespace MoreMountains.Feedbacks
 		}
 	}
 }
+#endif

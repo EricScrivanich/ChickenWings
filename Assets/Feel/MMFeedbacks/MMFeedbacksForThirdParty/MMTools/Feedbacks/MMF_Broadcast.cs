@@ -1,5 +1,7 @@
 ﻿using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
+using UnityEngine.Serialization;
 
 namespace MoreMountains.Feedbacks
 {
@@ -8,6 +10,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback lets you broadcast a float value to the MMRadio system.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("GameObject/Broadcast")]
 	public class MMF_Broadcast : MMF_FeedbackBase
 	{
@@ -20,7 +23,7 @@ namespace MoreMountains.Feedbacks
 		[Header("Level")]
 		/// the curve to tween the intensity on
 		[Tooltip("the curve to tween the intensity on")]
-		[MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime)]
+		[MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime, (int)Modes.ToDestination)]
 		public MMTweenType Curve = new MMTweenType(new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0)));
 		/// the value to remap the intensity curve's 0 to
 		[Tooltip("the value to remap the intensity curve's 0 to")]
@@ -34,6 +37,10 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the value to move the intensity to in instant mode")]
 		[MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.Instant)]
 		public float InstantChange;
+		/// the value to move the intensity to in destination mode
+		[Tooltip("the value to move the intensity to in destination mode")]
+		[MMFEnumCondition("Mode", (int)Modes.ToDestination)]
+		public float DestinationValue;
 
 		protected MMF_BroadcastProxy _proxy;
         
@@ -66,6 +73,7 @@ namespace MoreMountains.Feedbacks
 			target.RemapLevelZero = RemapZero;
 			target.RemapLevelOne = RemapOne;
 			target.InstantLevel = InstantChange;
+			target.ToDestinationLevel = DestinationValue;
 
 			_targets.Add(target);
 		}

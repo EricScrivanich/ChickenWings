@@ -11,7 +11,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 	/// <summary>
 	/// This class will set the depth of field to focus on the set of targets specified in its inspector.
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMAutoFocus")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MM Auto Focus")]
 	#if MM_POSTPROCESSING
 	[RequireComponent(typeof(PostProcessVolume))]
 	#endif

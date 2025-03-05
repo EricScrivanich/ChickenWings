@@ -19,6 +19,8 @@ public class BoundariesManager : MonoBehaviour
 
     public static float GroundSpeed = 4.7f;
 
+    public static readonly Vector3 FlippedXScale = new Vector3(-1, 1, 1);
+
     public static float GroundPosition = -4.9f;
 
     // Start is called before the first frame update

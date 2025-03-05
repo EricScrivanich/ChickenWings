@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+#if MM_UI
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -53,13 +54,13 @@ namespace MoreMountains.Feedbacks
     
 	[RequireComponent(typeof(Image))]
 	[RequireComponent(typeof(CanvasGroup))]
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Various/MMFlash")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Various/MM Flash")]
 	/// <summary>
 	/// Add this class to an image and it'll flash when getting a MMFlashEvent
 	/// </summary>
-	public class MMFlash : MonoBehaviour
+	public class MMFlash : MMMonoBehaviour
 	{
-		[Header("Flash")]
+		[MMInspectorGroup("Flash", true, 121)] 
 		/// whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what.
 		/// MMChannel scriptable objects require you to create them in advance, but come with a readable name and are more scalable
 		[Tooltip("whether to listen on a channel defined by an int or by a MMChannel scriptable object. Ints are simple to setup but can get messy and make it harder to remember what int corresponds to what. " +
@@ -82,7 +83,7 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("if this is true, the MMFlash will stop before playing on every new event received")]
 		public bool Interruptable = false;
 		
-		[Header("Interpolation")]
+		[MMInspectorGroup("Interpolation", true, 122)] 
 		/// the animation curve to use when flashing in
 		[Tooltip("the animation curve to use when flashing in")]
 		public MMTweenType FlashInTween = new MMTweenType(MMTween.MMTweenCurve.LinearTween);
@@ -90,7 +91,7 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the animation curve to use when flashing out")]
 		public MMTweenType FlashOutTween = new MMTweenType(MMTween.MMTweenCurve.LinearTween);
 
-		[Header("Debug")]
+		[MMInspectorGroup("Debug", true, 123)] 
 		/// the set of test settings to use when pressing the DebugTest button
 		[Tooltip("the set of test settings to use when pressing the DebugTest button")]
 		public MMFlashDebugSettings DebugSettings;
@@ -191,6 +192,11 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
+			Flash(flashColor, duration, alpha, timescaleMode);
+		}
+
+		public virtual void Flash(Color flashColor, float duration, float alpha, TimescaleModes timescaleMode)
+		{
 			if (_flashing && Interruptable)
 			{
 				_flashing = false;
@@ -208,7 +214,7 @@ namespace MoreMountains.Feedbacks
 				_timescaleMode = timescaleMode;
 				_flashStartedTimestamp = GetTime();
 			}
-		} 
+		}
 
 		/// <summary>
 		/// On enable we start listening for events
@@ -227,3 +233,4 @@ namespace MoreMountains.Feedbacks
 		}		
 	}
 }
+#endif

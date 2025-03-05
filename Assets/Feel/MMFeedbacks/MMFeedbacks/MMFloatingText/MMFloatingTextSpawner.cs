@@ -18,11 +18,11 @@ namespace MoreMountains.Feedbacks
 		static public void Unregister(Delegate callback) { OnEvent -= callback; }
 
 		public delegate void Delegate(MMChannelData channelData, Vector3 spawnPosition, string value, Vector3 direction, float intensity,
-			bool forceLifetime = false, float lifetime = 1f, bool forceColor = false, Gradient animateColorGradient = null, bool useUnscaledTime = false);
+			bool forceLifetime = false, float lifetime = 1f, bool forceColor = false, Gradient animateColorGradient = null, bool useUnscaledTime = false, Transform attachmentTransform = null);
 		static public void Trigger(MMChannelData channelData, Vector3 spawnPosition, string value, Vector3 direction, float intensity,
-			bool forceLifetime = false, float lifetime = 1f, bool forceColor = false, Gradient animateColorGradient = null, bool useUnscaledTime = false)
+			bool forceLifetime = false, float lifetime = 1f, bool forceColor = false, Gradient animateColorGradient = null, bool useUnscaledTime = false, Transform attachmentTransform = null)
 		{
-			OnEvent?.Invoke(channelData, spawnPosition, value, direction, intensity, forceLifetime, lifetime, forceColor, animateColorGradient, useUnscaledTime);
+			OnEvent?.Invoke(channelData, spawnPosition, value, direction, intensity, forceLifetime, lifetime, forceColor, animateColorGradient, useUnscaledTime, attachmentTransform);
 		} 
 	}
 	#endregion
@@ -111,13 +111,15 @@ namespace MoreMountains.Feedbacks
 		/// whether or not to animate the X movement of spawned texts
 		[Tooltip("whether or not to animate the X movement of spawned texts")]
 		public bool AnimateX = false;
-		/// the value to which the x movement curve's zero should be remapped to
-		[Tooltip("the value to which the x movement curve's zero should be remapped to")]
+		/// the value to which the x movement curve's zero should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness
+		[Tooltip("the value to which the x movement curve's zero should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness")]
 		[MMCondition("AnimateX", true)] 
+		[MMVector("Min", "Max")]
 		public Vector2 RemapXZero = Vector2.zero;
-		/// the value to which the x movement curve's one should be remapped to
-		[Tooltip("the value to which the x movement curve's one should be remapped to")]
+		/// the value to which the x movement curve's one should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness
+		[Tooltip("the value to which the x movement curve's one should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness")]
 		[MMCondition("AnimateX", true)] 
+		[MMVector("Min", "Max")]
 		public Vector2 RemapXOne = Vector2.one;
 		/// the curve on which to animate the x movement
 		[Tooltip("the curve on which to animate the x movement")]
@@ -126,13 +128,15 @@ namespace MoreMountains.Feedbacks
 		/// whether or not to animate the Y movement of spawned texts
 		[Tooltip("whether or not to animate the Y movement of spawned texts")]
 		public bool AnimateY = true;
-		/// the value to which the y movement curve's zero should be remapped to
-		[Tooltip("the value to which the y movement curve's zero should be remapped to")]
+		/// the value to which the y movement curve's zero should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness
+		[Tooltip("the value to which the y movement curve's zero should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness")]
 		[MMCondition("AnimateY", true)] 
+		[MMVector("Min", "Max")]
 		public Vector2 RemapYZero = Vector2.zero;
-		/// the value to which the y movement curve's one should be remapped to
-		[Tooltip("the value to which the y movement curve's one should be remapped to")]
+		/// the value to which the y movement curve's one should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness
+		[Tooltip("the value to which the y movement curve's one should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness")]
 		[MMCondition("AnimateY", true)]
+		[MMVector("Min", "Max")]
 		public Vector2 RemapYOne = new Vector2(5f, 5f);
 		/// the curve on which to animate the y movement
 		[Tooltip("the curve on which to animate the y movement")]
@@ -141,13 +145,15 @@ namespace MoreMountains.Feedbacks
 		/// whether or not to animate the Z movement of spawned texts
 		[Tooltip("whether or not to animate the Z movement of spawned texts")]
 		public bool AnimateZ = false;
-		/// the value to which the z movement curve's zero should be remapped to
-		[Tooltip("the value to which the z movement curve's zero should be remapped to")]
+		/// the value to which the z movement curve's zero should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness
+		[Tooltip("the value to which the z movement curve's zero should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness")]
 		[MMCondition("AnimateZ", true)] 
+		[MMVector("Min", "Max")]
 		public Vector2 RemapZZero = Vector2.zero;
-		/// the value to which the z movement curve's one should be remapped to
-		[Tooltip("the value to which the z movement curve's one should be remapped to")]
+		/// the value to which the z movement curve's one should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness
+		[Tooltip("the value to which the z movement curve's one should be remapped to, randomized between its min and max - put the same value in both min and max if you don't want any randomness")]
 		[MMCondition("AnimateZ", true)] 
+		[MMVector("Min", "Max")]
 		public Vector2 RemapZOne = Vector2.one;
 		/// the curve on which to animate the z movement
 		[Tooltip("the curve on which to animate the z movement")]
@@ -284,9 +290,17 @@ namespace MoreMountains.Feedbacks
 		/// <summary>
 		/// On awake we initialize our spawner
 		/// </summary>
-		protected virtual void Start()
+		protected virtual void Awake()
 		{
 			Initialization();
+		}
+
+		/// <summary>
+		/// On Start we grab our main camera if needed
+		/// </summary>
+		protected virtual void Start()
+		{
+			GrabMainCamera();
 		}
 
 		/// <summary>
@@ -295,7 +309,6 @@ namespace MoreMountains.Feedbacks
 		protected virtual void Initialization()
 		{
 			InstantiateObjectPool();
-			GrabMainCamera();
 		}
 
 		/// <summary>
@@ -391,7 +404,8 @@ namespace MoreMountains.Feedbacks
 		/// <param name="forceColor"></param>
 		/// <param name="animateColorGradient"></param>
 		protected virtual void Spawn(string value, Vector3 position, Vector3 direction, float intensity = 1f,
-			bool forceLifetime = false, float lifetime = 1f, bool forceColor = false, Gradient animateColorGradient = null)
+			bool forceLifetime = false, float lifetime = 1f, bool forceColor = false, Gradient animateColorGradient = null, 
+			Transform attachmentTransform = null)
 		{
 			if (!CanSpawn)
 			{
@@ -441,11 +455,14 @@ namespace MoreMountains.Feedbacks
 			// we activate the object
 			nextGameObject.gameObject.SetActive(true);
 			nextGameObject.gameObject.MMGetComponentNoAlloc<MMPoolableObject>().TriggerOnSpawnComplete();
-
+			
 			// we position the object
 			nextGameObject.transform.position = this.transform.position + _spawnOffset;
 
 			_floatingText = nextGameObject.MMGetComponentNoAlloc<MMFloatingText>();
+
+			_floatingText.FollowTarget.Target = attachmentTransform;
+			
 			_floatingText.SetUseUnscaledTime(UseUnscaledTime, true);
 			_floatingText.ResetPosition();
 			_floatingText.SetProperties(value, _lifetime, _direction, AnimateMovement, 
@@ -471,7 +488,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="forceColor"></param>
 		/// <param name="animateColorGradient"></param>
 		public virtual void OnMMFloatingTextSpawnEvent(MMChannelData channelData, Vector3 spawnPosition, string value, Vector3 direction, float intensity,
-			bool forceLifetime = false, float lifetime = 1f, bool forceColor = false, Gradient animateColorGradient = null, bool useUnscaledTime = false)
+			bool forceLifetime = false, float lifetime = 1f, bool forceColor = false, Gradient animateColorGradient = null, bool useUnscaledTime = false, Transform attachmentTransform = null)
 		{
 			if (!MMChannel.Match(channelData, ChannelMode, Channel, MMChannelDefinition))
 			{
@@ -479,7 +496,7 @@ namespace MoreMountains.Feedbacks
 			}
 
 			UseUnscaledTime = useUnscaledTime;
-			Spawn(value, spawnPosition, direction, intensity, forceLifetime, lifetime, forceColor, animateColorGradient);
+			Spawn(value, spawnPosition, direction, intensity, forceLifetime, lifetime, forceColor, animateColorGradient, attachmentTransform);
 		}
     
 		/// <summary>

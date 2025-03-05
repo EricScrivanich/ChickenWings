@@ -1,6 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
+using UnityEngine.Serialization;
+#if MM_UI
+using UnityEngine.UI;
 
 namespace MoreMountains.Feedbacks
 {
@@ -9,6 +12,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("On play, this feedback will broadcast a MMFlashEvent. If you create a UI image with a MMFlash component on it (see example in the Demo scene), it will intercept that event, and flash (usually you'll want it to take the full size of your screen, but that's not mandatory). In the feedback's inspector, you can define the color of the flash, its duration, alpha, and a FlashID. That FlashID needs to be the same on your feedback and MMFlash for them to work together. This allows you to have multiple MMFlashs in your scene, and flash them separately.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Camera/Flash")]
 	public class MMF_Flash : MMF_Feedback
 	{
@@ -18,6 +22,8 @@ namespace MoreMountains.Feedbacks
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
 		public override string RequiredTargetText => RequiredChannelText;
+		public override bool HasCustomInspectors => true;
+		public override bool HasAutomaticShakerSetup => true;
 		#endif
 		/// the duration of this feedback is the duration of the flash
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(FlashDuration); } set { FlashDuration = value; } }
@@ -38,6 +44,11 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the ID of the flash (usually 0). You can specify on each MMFlash object an ID, allowing you to have different flash images in one scene and call them separately (one for damage, one for health pickups, etc)")]
 		public int FlashID = 0;
 
+		[Header("Optional Target")] 
+		/// this field lets you bind a specific MMFlash to this feedback. If left empty, the feedback will trigger a MMFlashEvent instead, targeting all matching flashes. If you fill it, only that specific MMFlash will be targeted.
+		[Tooltip("this field lets you bind a specific MMFlash to this feedback. If left empty, the feedback will trigger a MMFlashEvent instead, targeting all matching flashes. If you fill it, only that specific MMFlash will be targeted.")]
+		public MMFlash TargetFlash;
+
 		/// <summary>
 		/// On Play we trigger a flash event
 		/// </summary>
@@ -50,7 +61,14 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
-			MMFlashEvent.Trigger(FlashColor, FeedbackDuration * intensityMultiplier, FlashAlpha, FlashID, ChannelData, ComputedTimescaleMode);
+			if (TargetFlash != null)
+			{
+				TargetFlash.Flash(FlashColor, FlashDuration * intensityMultiplier, FlashAlpha, ComputedTimescaleMode);
+			}
+			else
+			{
+				MMFlashEvent.Trigger(FlashColor, FeedbackDuration * intensityMultiplier, FlashAlpha, FlashID, ChannelData, ComputedTimescaleMode);	
+			}
 		}
 
 		/// <summary>
@@ -79,5 +97,35 @@ namespace MoreMountains.Feedbacks
 			}
 			MMFlashEvent.Trigger(FlashColor, FeedbackDuration, FlashAlpha, FlashID, ChannelData, ComputedTimescaleMode, stop:true);
 		}
+		
+		/// <summary>
+		/// Automatically tries to add a MMFlash setup to the scene
+		/// </summary>
+		public override void AutomaticShakerSetup()
+		{
+			if (Object.FindAnyObjectByType<MMFlash>() != null)
+			{
+				return;
+			}
+			
+			(Canvas canvas, bool createdNewCanvas) = Owner.gameObject.MMFindOrCreateObjectOfType<Canvas>("FlashCanvas", null);
+			canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+			(Image image, bool createdNewImage) = canvas.gameObject.MMFindOrCreateObjectOfType<Image>("FlashImage", canvas.transform, true);
+			image.raycastTarget = false;
+			image.color = Color.white;
+			
+			RectTransform rectTransform = image.GetComponent<RectTransform>();
+			rectTransform.anchorMin = new Vector2(0f, 0f);
+			rectTransform.anchorMax = new Vector2(1f, 1f);
+			rectTransform.offsetMin = Vector2.zero;
+			rectTransform.offsetMax = Vector2.zero;
+			
+			image.gameObject.AddComponent<MMFlash>();
+			image.gameObject.GetComponent<CanvasGroup>().alpha = 0;
+			image.gameObject.GetComponent<CanvasGroup>().interactable = false;
+
+			MMDebug.DebugLogInfo("Added a MMFlash to the scene. You're all set.");
+		}
 	}
 }
+#endif

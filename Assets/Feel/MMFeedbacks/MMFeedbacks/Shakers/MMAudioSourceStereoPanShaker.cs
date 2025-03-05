@@ -8,7 +8,7 @@ namespace MoreMountains.Feedbacks
 	/// <summary>
 	/// Add this to an AudioSource to shake its stereo pan values remapped along a curve 
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Audio/MMAudioSourceStereoPanShaker")]
+	[AddComponentMenu("More Mountains/Feedbacks/Shakers/Audio/MM Audio Source Stereo Pan Shaker")]
 	[RequireComponent(typeof(AudioSource))]
 	public class MMAudioSourceStereoPanShaker : MMShaker
 	{

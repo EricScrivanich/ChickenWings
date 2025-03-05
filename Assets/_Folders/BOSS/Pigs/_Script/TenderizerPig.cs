@@ -12,6 +12,8 @@ public class TenderizerPig : MonoBehaviour, ICollectible
     private float baseSpeed = 3.5f;
     private float frequency = 1.4f;
     private float initialY;
+
+    private bool parried = false;
     private Animator anim;
     [SerializeField] private GameObject Hammer;
 
@@ -75,9 +77,10 @@ public class TenderizerPig : MonoBehaviour, ICollectible
 
     private void MoveEyesWithTicker()
     {
+    
         if (player != null && hasHammer)
         {
-            Vector2 direction = player.position - eye.position; // Calculate the direction to the player
+            Vector2 direction = player.position - pupil.position; // Calculate the direction to the player
             // Ensure it's 2D
             direction.Normalize(); // Normalize the direction
 
@@ -97,10 +100,27 @@ public class TenderizerPig : MonoBehaviour, ICollectible
         yield return new WaitForSeconds(.45f);
         AudioManager.instance.PlayPigHammerSwingSound();
         yield return new WaitForSeconds(1.9f);
-        detection.enabled = true;
+
+        if (!parried)
+            detection.enabled = true;
+
+        else
+        {
+            yield return new WaitForSeconds(4f);
+            parried = false;
+            detection.enabled = true;
+
+        }
 
 
 
+    }
+
+    public void GetParried()
+    {
+        detection.enabled = false;
+        anim.SetTrigger("Parried");
+        parried = true;
     }
 
     public void Collected()

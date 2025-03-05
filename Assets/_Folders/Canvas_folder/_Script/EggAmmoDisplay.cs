@@ -160,7 +160,7 @@ public class EggAmmoDisplay : MonoBehaviour
         scopeFill.color = colorSO.normalButtonColor;
         timerFill.DOFade(0, 0);
         arrows.DOFade(0, 0);
-        joystickController = GetComponent<ModifiedOnScreenStick>();
+        // joystickController = GetComponent<ModifiedOnScreenStick>();
 
         originalYPos = scopeRect.localPosition.y;
 
@@ -643,6 +643,7 @@ public class EggAmmoDisplay : MonoBehaviour
 
         HapticFeedbackManager.instance.PlayerButtonPress();
         normalEggPressSequence.Append(scopeRect.DOScale(BoundariesManager.vectorThree1 * scaleAmountOnPress, buttonPressTweenDuration));
+
         normalEggPressSequence.Join(currentEgg.DOScale(BoundariesManager.vectorThree1 * (scaleAmountOnPress + .05f), buttonPressTweenDuration).SetEase(Ease.OutSine));
         normalEggPressSequence.Join(currentEgg.DOLocalMoveY(originalEggY + addedYOnPress + 5, buttonPressTweenDuration));
         normalEggPressSequence.Join(scopeRect.DOLocalMoveY(originalYPos + addedYOnPress, buttonPressTweenDuration));

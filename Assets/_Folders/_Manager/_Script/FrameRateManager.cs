@@ -18,7 +18,7 @@ public class FrameRateManager : MonoBehaviour
     public static bool under085;
     void Awake()
     {
-        Time.timeScale = TargetTimeScale;
+        // Time.timeScale = TargetTimeScale;
         Application.targetFrameRate = targetFrameRate; 
 
     }

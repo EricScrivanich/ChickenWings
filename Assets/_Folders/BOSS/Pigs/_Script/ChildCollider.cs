@@ -5,9 +5,12 @@ using UnityEngine;
 public class ChildCollider : MonoBehaviour, IDamageable
 {
     private PigMaterialHandler parentScript;
-    public void Damage(int damageAmount, int bullet,int id)
+
+    public bool CanPerfectScythe => true;
+
+    public void Damage(int damageAmount, int bullet, int id)
     {
-        parentScript.Damage(damageAmount,bullet,id);
+        parentScript.Damage(damageAmount, bullet, id);
     }
 
     // Start is called before the first frame update
@@ -17,5 +20,5 @@ public class ChildCollider : MonoBehaviour, IDamageable
     }
 
     // Update is called once per frame
-    
+
 }

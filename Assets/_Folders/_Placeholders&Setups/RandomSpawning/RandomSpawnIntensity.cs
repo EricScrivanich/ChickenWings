@@ -162,6 +162,8 @@ public class RandomSpawnIntensity : ScriptableObject
     public bool ignoreOverride = false;
     public void CheckForNextTranstion()
     {
+        Debug.LogError("CHeck next Tran");
+
         hasCompleted = true;
         Debug.Log("Checking for next transition in Random Spawn Instensity");
         if (transtionLogicEnd == null || lvlID != null)
@@ -183,6 +185,7 @@ public class RandomSpawnIntensity : ScriptableObject
 
     public void EnterIntensity()
     {
+        Debug.LogError("Trying to enter Int");
 
         // if (transtionLogicStart != null && !hasEntered)
         if (transtionLogicStart != null)
@@ -194,6 +197,7 @@ public class RandomSpawnIntensity : ScriptableObject
         }
         else
         {
+            lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(null, false);
             // lvlID.outputEvent.OnSetNewTransitionLogic?.Invoke(null, true);
 
         }

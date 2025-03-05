@@ -1,7 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+#if MM_UI
 using UnityEngine.UI;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will let you change the color of a target Graphic over time.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("UI/Graphic")]
 	public class MMF_Graphic : MMF_Feedback
 	{
@@ -67,6 +69,7 @@ namespace MoreMountains.Feedbacks
 
 		protected Coroutine _coroutine;
 		protected Color _initialColor;
+		protected Color _initialInstantColor;
 
 		/// <summary>
 		/// On init we turn the Graphic off if needed
@@ -82,6 +85,15 @@ namespace MoreMountains.Feedbacks
 				{
 					Turn(false);
 				}
+
+				if (TargetGraphic == null)
+				{
+					Debug.LogWarning("[Graphic Feedback] The graphic feedback on "+Owner.name+" doesn't have a Target Graphic, it won't work. You need to specify a graphic in its inspector.");
+				}
+				else
+				{
+					_initialInstantColor = TargetGraphic.color;	
+				}
 			}
 		}
 
@@ -92,7 +104,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="feedbacksIntensity"></param>
 		protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
 		{
-			if (!Active || !FeedbackTypeAuthorized)
+			if (!Active || !FeedbackTypeAuthorized || (TargetGraphic == null))
 			{
 				return;
 			}
@@ -104,7 +116,7 @@ namespace MoreMountains.Feedbacks
 				case Modes.Instant:
 					if (ModifyColor)
 					{
-						TargetGraphic.color = InstantColor;
+						TargetGraphic.color = NormalPlayDirection ? InstantColor : _initialInstantColor;
 					}
 					break;
 				case Modes.OverTime:
@@ -112,6 +124,7 @@ namespace MoreMountains.Feedbacks
 					{
 						return;
 					}
+					if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 					_coroutine = Owner.StartCoroutine(GraphicSequence());
 					break;
 			}
@@ -141,7 +154,10 @@ namespace MoreMountains.Feedbacks
 				Turn(false);
 			}
 			IsPlaying = false;
-			Owner.StopCoroutine(_coroutine);
+			if (_coroutine != null)
+			{
+				Owner.StopCoroutine(_coroutine);	
+			}
 			_coroutine = null;
 			yield return null;
 		}
@@ -175,7 +191,12 @@ namespace MoreMountains.Feedbacks
 			{
 				Turn(false);    
 			}
-			Owner.StopCoroutine(_coroutine);
+
+			if (_coroutine != null)
+			{
+				Owner.StopCoroutine(_coroutine);
+			}
+
 			_coroutine = null;
 		}
 
@@ -202,3 +223,4 @@ namespace MoreMountains.Feedbacks
 		}
 	}
 }
+#endif

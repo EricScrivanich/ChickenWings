@@ -1,9 +1,10 @@
 ﻿using MoreMountains.Tools;
 using UnityEngine;
 using System.Collections;
-#if MM_TEXTMESHPRO
+#if MM_UGUI2
 using TMPro;
 #endif
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -12,9 +13,10 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback lets you dilate a TMP text over time.")]
-	#if MM_TEXTMESHPRO
+	#if MM_UGUI2
 	[FeedbackPath("TextMesh Pro/TMP Dilate")]
 	#endif
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.TextMeshPro")]
 	public class MMF_TMPDilate : MMF_Feedback
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -25,7 +27,7 @@ namespace MoreMountains.Feedbacks
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.TMPColor; } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetTMPText be set to be able to work properly. You can set one below."; } }
 		#endif
-		#if UNITY_EDITOR && MM_TEXTMESHPRO
+		#if UNITY_EDITOR && MM_UGUI2
 		public override bool EvaluateRequiresSetup() { return (TargetTMPText == null); }
 		public override string RequiredTargetText { get { return TargetTMPText != null ? TargetTMPText.name : "";  } }
 		#endif
@@ -34,7 +36,7 @@ namespace MoreMountains.Feedbacks
 		/// the duration of this feedback is the duration of the transition, or 0 if instant
 		public override float FeedbackDuration { get { return (Mode == MMFeedbackBase.Modes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 
-		#if MM_TEXTMESHPRO
+		#if MM_UGUI2
 		public override bool HasAutomatedTargetAcquisition => true;
 		protected override void AutomateTargetAcquisition() => TargetTMPText = FindAutomatedTarget<TMP_Text>();
 
@@ -57,8 +59,7 @@ namespace MoreMountains.Feedbacks
 		public float Duration = 0.5f;
 		/// the curve to tween on
 		[Tooltip("the curve to tween on")]
-		[MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime)]
-		public MMTweenType DilateCurve = new MMTweenType(new AnimationCurve(new Keyframe(0, 0.5f), new Keyframe(0.3f, 1f), new Keyframe(1, 0.5f)));
+		public MMTweenType DilateCurve = new MMTweenType(new AnimationCurve(new Keyframe(0, 0.5f), new Keyframe(0.3f, 1f), new Keyframe(1, 0.5f)), "", "Mode", (int)MMFeedbackBase.Modes.OverTime);
 		/// the value to remap the curve's 0 to
 		[Tooltip("the value to remap the curve's 0 to")]
 		[MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime)]
@@ -90,7 +91,12 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
+			if (TargetTMPText == null)
+			{
+				Debug.LogWarning("[TMP Dilate Feedback] The TMP Dilate feedback on "+Owner.name+" doesn't have a TargetTMPText, it won't work. You need to specify one in its inspector.");
+				return;
+			}
 			_initialDilate = TargetTMPText.fontMaterial.GetFloat(ShaderUtilities.ID_FaceDilate);
 			#endif
 		}
@@ -107,7 +113,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
 			if (TargetTMPText == null)
 			{
 				return;
@@ -118,7 +124,8 @@ namespace MoreMountains.Feedbacks
 				switch (Mode)
 				{
 					case MMFeedbackBase.Modes.Instant:
-						TargetTMPText.fontMaterial.SetFloat(ShaderUtilities.ID_FaceDilate, InstantDilate);
+						float newDilate = NormalPlayDirection ? InstantDilate : _initialDilate;
+						TargetTMPText.fontMaterial.SetFloat(ShaderUtilities.ID_FaceDilate, newDilate);
 						TargetTMPText.UpdateMeshPadding();
 						break;
 					case MMFeedbackBase.Modes.OverTime:
@@ -126,6 +133,7 @@ namespace MoreMountains.Feedbacks
 						{
 							return;
 						}
+						if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 						_coroutine = Owner.StartCoroutine(ApplyValueOverTime());
 						break;
 				}
@@ -162,7 +170,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="time"></param>
 		protected virtual void SetValue(float time)
 		{
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
 			float intensity = MMTween.Tween(time, 0f, 1f, RemapZero, RemapOne, DilateCurve);
 			float newValue = intensity;
 			if (RelativeValues)
@@ -172,6 +180,26 @@ namespace MoreMountains.Feedbacks
 			TargetTMPText.fontMaterial.SetFloat(ShaderUtilities.ID_FaceDilate, newValue);
 			TargetTMPText.UpdateMeshPadding();
 			#endif
+		}
+
+		/// <summary>
+		/// Stops the animation if needed
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="feedbacksIntensity"></param>
+		protected override void CustomStopFeedback(Vector3 position, float feedbacksIntensity = 1)
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			base.CustomStopFeedback(position, feedbacksIntensity);
+			IsPlaying = false;
+			if (_coroutine != null)
+			{
+				Owner.StopCoroutine(_coroutine);
+				_coroutine = null;
+			}
 		}
 		
 		/// <summary>
@@ -183,10 +211,24 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			#if MM_TEXTMESHPRO
+			#if MM_UGUI2
 			TargetTMPText.fontMaterial.SetFloat(ShaderUtilities.ID_FaceDilate, _initialDilate);
 			TargetTMPText.UpdateMeshPadding();
 			#endif
+		}
+		
+		/// <summary>
+		/// On Validate, we init our curves conditions if needed
+		/// </summary>
+		public override void OnValidate()
+		{
+			base.OnValidate();
+			if (string.IsNullOrEmpty(DilateCurve.EnumConditionPropertyName))
+			{
+				DilateCurve.EnumConditionPropertyName = "Mode";
+				DilateCurve.EnumConditions = new bool[32];
+				DilateCurve.EnumConditions[(int)MMFeedbackBase.Modes.OverTime] = true;
+			}
 		}
 	}
 }

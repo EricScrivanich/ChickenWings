@@ -2,14 +2,18 @@
 using MoreMountains.Feedbacks;
 #if MM_CINEMACHINE
 using Cinemachine;
+#elif MM_CINEMACHINE3
+using Unity.Cinemachine;
 #endif
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.FeedbacksForThirdParty
 {
 	[AddComponentMenu("")]
-	#if MM_CINEMACHINE
+	#if MM_CINEMACHINE || MM_CINEMACHINE3
 	[FeedbackPath("Camera/Cinemachine Impulse Source")]
 	#endif
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.Cinemachine")]
 	[FeedbackHelp("This feedback lets you generate an impulse on a Cinemachine Impulse source. You'll need a Cinemachine Impulse Listener on your camera for this to work.")]
 	public class MMF_CinemachineImpulseSource : MMF_Feedback
 	{
@@ -18,7 +22,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 			public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
-			#if MM_CINEMACHINE
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
 				public override bool EvaluateRequiresSetup() { return (ImpulseSource == null); }
 				public override string RequiredTargetText { get { return ImpulseSource != null ? ImpulseSource.name : "";  } }
 			#endif
@@ -31,7 +35,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 		/// the velocity to apply to the impulse shake
 		[Tooltip("the velocity to apply to the impulse shake")]
 		public Vector3 Velocity = new Vector3(1f,1f,1f);
-		#if MM_CINEMACHINE
+		#if MM_CINEMACHINE || MM_CINEMACHINE3
 			/// the impulse definition to broadcast
 			[Tooltip("the impulse definition to broadcast")]
 			public CinemachineImpulseSource ImpulseSource;
@@ -50,7 +54,7 @@ namespace MoreMountains.FeedbacksForThirdParty
 				return;
 			}
 
-			#if MM_CINEMACHINE
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
 			if (ImpulseSource != null)
 			{
 				ImpulseSource.GenerateImpulse(Velocity);
@@ -71,8 +75,8 @@ namespace MoreMountains.FeedbacksForThirdParty
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
             
-			#if MM_CINEMACHINE
-			CinemachineImpulseManager.Instance.Clear();
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
+				CinemachineImpulseManager.Instance.Clear();
 			#endif
 		}
 		
@@ -86,8 +90,8 @@ namespace MoreMountains.FeedbacksForThirdParty
 				return;
 			}
             
-			#if MM_CINEMACHINE
-			CinemachineImpulseManager.Instance.Clear();
+			#if MM_CINEMACHINE || MM_CINEMACHINE3
+				CinemachineImpulseManager.Instance.Clear();
 			#endif
 		}
 	}
