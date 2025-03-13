@@ -696,7 +696,7 @@ public class EnemySetupRecorderEditor : Editor
                 {
                     position = targets[i].transform.position,
                     type = targets[i].type,
-                    xTrigger = targets[i].xTrigger,
+                    xTrigger = targets[i].initialDelay,
                     yTarget = targets[i].yTarget,
                     speed = targets[i].speed,
                     delay = targets[i].delay

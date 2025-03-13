@@ -197,7 +197,7 @@ public class SetupPlacer : MonoBehaviour
                 obj.transform.parent = EnemySetupTransform;
                 var script = obj.GetComponent<HotAirBalloon>();
                 script.type = hotAirBalloonDataItem.type;
-                script.xTrigger = hotAirBalloonDataItem.xTrigger;
+                script.initialDelay = hotAirBalloonDataItem.xTrigger;
                 script.yTarget = hotAirBalloonDataItem.yTarget;
                 script.speed = hotAirBalloonDataItem.speed;
                 script.delay = hotAirBalloonDataItem.delay;

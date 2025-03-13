@@ -76,6 +76,11 @@ public class ButtonColorsSO : ScriptableObject
 
     public Color DisabledScopeFillColor;
 
+    [Header("Level Creator Colors")]
+    public Color SelectedLineColor;
+    public Color NormalLineColor;
+    public Color PassedLineColor;
+
 
     public void LoadOptions(int n, int o, int d)
     {

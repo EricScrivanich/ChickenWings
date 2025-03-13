@@ -20,9 +20,9 @@ public class EnviromentMovement : MonoBehaviour
             }
         }
     }
-    void Update()
-    {
-        transform.position = new Vector2(Camera.main.transform.position.x, 0);
+    // void Update()
+    // {
+    //     transform.position = new Vector2(Camera.main.transform.position.x, 0);
 
-    }
+    // }
 }

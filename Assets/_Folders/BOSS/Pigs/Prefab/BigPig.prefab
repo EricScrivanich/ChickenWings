@@ -363,6 +363,7 @@ GameObject:
   - component: {fileID: 3164253519135378300}
   - component: {fileID: 8267107679454248672}
   - component: {fileID: 2055917171654855731}
+  - component: {fileID: 8632549078930744658}
   m_Layer: 11
   m_Name: BigPig
   m_TagString: Plane
@@ -448,13 +449,11 @@ MonoBehaviour:
   legObject: {fileID: 1044796378813754421}
   tailObject: {fileID: 1259376156917655193}
   line: {fileID: 0}
-  useNewVaraibles: 0
-  maxYVelocity: 2
-  minYVelocity: -2
-  upDamping: 0.05
-  downDamping: 0.05
   predictionSteps: 50
-  predictionStepTime: 0.05
+  _sineFrequency: 5
+  _sineMagnitude: 2.5
+  predictionTime: 0
+  gameTime: 0
 --- !u!95 &3164253519135378300
 Animator:
   serializedVersion: 7
@@ -527,6 +526,29 @@ SortingGroup:
   m_SortingLayer: 4
   m_SortingOrder: -1
   m_SortAtRoot: 0
+--- !u!114 &8632549078930744658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2529404850862653700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9163d5b507b45f888f3637bbe24226, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backLegs: {fileID: 1044796378813754421}
+  wings: {fileID: 7554601025303345340}
+  tail: {fileID: 1259376156917655193}
+  body: {fileID: 2868042445897479462}
+  backLegsPosition: {fileID: 7211890000928095358}
+  wingsPosition: {fileID: 6877764185142625130}
+  tailPosition: {fileID: 8747035296085279836}
+  bodyMinScaleX: 0.9
+  bodyMaxScaleX: 1.05
+  minScale: 0.8
+  maxScale: 1.1
 --- !u!1 &3411038676898783217
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,8 +738,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.32439166, y: -0.3350159}
-  m_Radius: 0.87535506
+  m_Offset: {x: -0.24506097, y: -0.21470888}
+  m_Radius: 0.92347825
 --- !u!114 &962924102920625662
 MonoBehaviour:
   m_ObjectHideFlags: 0

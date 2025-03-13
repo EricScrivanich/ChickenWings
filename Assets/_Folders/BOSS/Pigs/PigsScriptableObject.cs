@@ -8,6 +8,20 @@ public class PigsScriptableObject : ScriptableObject
     [SerializeField] private Sprite[] OnPigDeathFace;
     [SerializeField] private float setMagPercent;
 
+    [Header("Indexs For Each Value Type: Bool, Byte, Int, Float, Vector2")]
+    [SerializeField] private byte[] IndexsPerValue;
+
+    public string ObjectTitle;
+
+    public Vector2Int[] ParameterByOrder;
+
+    public string[] parameterTitles;
+
+
+
+
+    public float baseScale;
+
     public Vector2 MinMaxSpeed;
     public Vector2 MinMaxAmp;
     public Vector2 MinMaxFreq;

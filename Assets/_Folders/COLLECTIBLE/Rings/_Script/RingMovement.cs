@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class RingMovement : MonoBehaviour, ICollectible
+public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
 {
     // public int doesTriggerInt;
 
@@ -23,7 +23,7 @@ public class RingMovement : MonoBehaviour, ICollectible
 
 
 
-    private Transform _transform;
+    // private Transform _transform;
     private Rigidbody2D rb;
     [SerializeField] private SpriteRenderer backRing;
 
@@ -54,7 +54,7 @@ public class RingMovement : MonoBehaviour, ICollectible
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        _transform = GetComponent<Transform>();
+        // _transform = GetComponent<Transform>();
 
         sprite = GetComponent<SpriteRenderer>();
         col = GetComponent<EdgeCollider2D>();
@@ -63,25 +63,38 @@ public class RingMovement : MonoBehaviour, ICollectible
         Debug.Log("lerp start boundary is: " + lerpStartBoundary);
 
 
+
+
     }
 
 
-    private void Update()
+    // private void Update()
+    // {
+    //     // _transform.position += Vector3.left * speed * Time.deltaTime;
+
+
+    //     // if (doesTriggerInt != 0 && hasNotTriggered)
+    //     // {
+    //     //     if ((speed > 0 && _transform.position.x < xCordinateTrigger) || (speed < 0 && _transform.position.x > xCordinateTrigger))
+    //     //     {
+    //     //         ID.ringEvent.OnRingTrigger?.Invoke(doesTriggerInt);
+    //     //         hasNotTriggered = false;
+
+
+    //     //     }
+
+    //     // }
+
+
+
+
+
+
+    // }
+    private void FixedUpdate()
     {
-        _transform.position += Vector3.left * speed * Time.deltaTime;
 
-
-        // if (doesTriggerInt != 0 && hasNotTriggered)
-        // {
-        //     if ((speed > 0 && _transform.position.x < xCordinateTrigger) || (speed < 0 && _transform.position.x > xCordinateTrigger))
-        //     {
-        //         ID.ringEvent.OnRingTrigger?.Invoke(doesTriggerInt);
-        //         hasNotTriggered = false;
-
-
-        //     }
-
-        // }
+        rb.MovePosition(rb.position + Vector2.left * speed * Time.fixedDeltaTime);
 
         if (speed > 0)
         {
@@ -90,14 +103,14 @@ public class RingMovement : MonoBehaviour, ICollectible
 
 
 
-            if (isCorrect && _transform.position.x < BoundariesManager.leftViewBoundary)
+            if (isCorrect && rb.position.x < BoundariesManager.leftViewBoundary)
             {
                 // Debug.Log($"Passed: {isCorrect} from GameObject {gameObject.name} at frame {Time.frameCount}");
                 HandleCorrectRing();
                 ID.ringEvent.OnCreateNewSequence?.Invoke(false, index);
                 return;
             }
-            else if (_transform.position.x < BoundariesManager.leftBoundary)
+            else if (rb.position.x < BoundariesManager.leftBoundary)
             {
 
                 gameObject.SetActive(false);
@@ -109,7 +122,7 @@ public class RingMovement : MonoBehaviour, ICollectible
         {
             if (!correctCollision && transform.position.x >= lerpStartBoundary)
                 LerpSpeedTowardsBoundary();
-            if (isCorrect && _transform.position.x > BoundariesManager.rightViewBoundary)
+            if (isCorrect && rb.position.x > BoundariesManager.rightViewBoundary)
             {
                 HandleCorrectRing();
 
@@ -121,7 +134,7 @@ public class RingMovement : MonoBehaviour, ICollectible
 
             }
 
-            else if (_transform.position.x > BoundariesManager.rightBoundary)
+            else if (rb.position.x > BoundariesManager.rightBoundary)
             {
 
                 gameObject.SetActive(false);
@@ -131,14 +144,11 @@ public class RingMovement : MonoBehaviour, ICollectible
         }
 
 
-
-
-
     }
 
     private void LerpSpeedTowardsBoundary()
     {
-        float distanceToBoundary = Mathf.Abs(_transform.position.x - lerpEndBoundary);
+        float distanceToBoundary = Mathf.Abs(rb.position.x - lerpEndBoundary);
         float lerpFactor = Mathf.Clamp01(distanceToBoundary / lerpStartOffset);
         speed = Mathf.Lerp(originalSpeed * lerpedSpeedPercentage, originalSpeed, lerpFactor);
     }
@@ -355,5 +365,56 @@ public class RingMovement : MonoBehaviour, ICollectible
 
         // }
         // isCorrect = false;
+    }
+
+  
+    public void ApplyRecordedData(RecordedDataStruct data)
+    {
+        transform.position = data.startPos;
+        speed = data.speed;
+        int scaleFlip = 1;
+        float addedXScale = 0;
+        if (data.scale > 1) addedXScale = (data.scale - 1) * .9f;
+        if (speed < 0) scaleFlip = -1;
+        transform.localScale = new Vector3(1.05f * scaleFlip + addedXScale, data.scale, data.scale);
+
+
+
+        rb.rotation = data.timeInterval;
+        // transform.ro
+    }
+    public float TimeAtCreateObject(int index)
+    {
+        return 0;
+    }
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        speed = data.speed;
+        int scaleFlip = 1;
+        float addedXScale = 0;
+        if (data.scale > 1) addedXScale = (data.scale - 1) * .9f;
+        if (speed < 0) scaleFlip = -1;
+        transform.localScale = new Vector3(1.05f * scaleFlip + addedXScale, data.scale, data.scale);
+
+
+        transform.eulerAngles = new Vector3(0, 0, data.timeInterval);
+    }
+
+ 
+
+    public bool ShowLine()
+    {
+        return false;
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        return new Vector2(currPos.x + (-speed * time), currPos.y);
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        return 0;
     }
 }

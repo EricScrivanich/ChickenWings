@@ -322,6 +322,7 @@ GameObject:
   - component: {fileID: 1944153489549500312}
   - component: {fileID: 66901339332722841}
   - component: {fileID: 2454187349646226091}
+  - component: {fileID: 1276336251284769455}
   m_Layer: 11
   m_Name: NormalPig
   m_TagString: Plane
@@ -385,6 +386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 359615f741359444eb5b59985b4112a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 0
   headSprite: {fileID: 5088269677243982766}
   pigID: {fileID: 11400000, guid: 17130485a260242c7a0735ef26237f14, type: 2}
   frontLegs: {fileID: 2752491233751144196}
@@ -392,18 +394,31 @@ MonoBehaviour:
   wings: {fileID: 642074383968923899}
   tail: {fileID: 3834485154131804242}
   body: {fileID: 357748487732977913}
-  frontLegsPosition: {fileID: 7595224992504357739}
+  frontLegsPosition: {fileID: 0}
   backLegsPosition: {fileID: 6813974260692759026}
   wingsPosition: {fileID: 4438767337380101504}
   tailPosition: {fileID: 5731793649703512238}
   addYForce: 2.5
   belowAmount: 0.2
+  testobj: {fileID: 0}
   ySpeed: 2
   xSpeed: 6.5
   amplitude: 0.4
   frequency: 0.6
   R: 2
+  flapMovement: 0
   sinDownSpeed: 0.8
+  _sineFrequency: 0.8234375
+  _sineMagnitude: 0.515625
+  desiredOscillationTime: 0
+  offsetX: 0
+  minSineMagnitude: 0.465625
+  maxSineMagnitude: 0.565625
+  flapAnimStart: 2.3
+  testWaitTime: 0
+  phaseOffset: 0
+  magPercent: 0
+  magDiff: 0.05
 --- !u!95 &1944153489549500312
 Animator:
   serializedVersion: 7
@@ -477,6 +492,29 @@ SortingGroup:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_SortAtRoot: 0
+--- !u!114 &1276336251284769455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2425336107443998327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9163d5b507b45f888f3637bbe24226, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backLegs: {fileID: 6840480931914924450}
+  wings: {fileID: 642074383968923899}
+  tail: {fileID: 3834485154131804242}
+  body: {fileID: 357748487732977913}
+  backLegsPosition: {fileID: 6813974260692759026}
+  wingsPosition: {fileID: 4438767337380101504}
+  tailPosition: {fileID: 5731793649703512238}
+  bodyMinScaleX: 0.92
+  bodyMaxScaleX: 1.1
+  minScale: 0.82
+  maxScale: 1.15
 --- !u!1 &2927166378316838539
 GameObject:
   m_ObjectHideFlags: 0
@@ -1472,7 +1510,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6813974260692759026}
-  - {fileID: 7595224992504357739}
   - {fileID: 4438767337380101504}
   - {fileID: 5731793649703512238}
   m_Father: {fileID: 648548854110508760}
@@ -1590,34 +1627,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5c725029024c4895a0b9a9cbad7d227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &8868842500983963109
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7595224992504357739}
-  m_Layer: 11
-  m_Name: FrontLegsPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7595224992504357739
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8868842500983963109}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.102, y: 0.035, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 357748487732977913}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

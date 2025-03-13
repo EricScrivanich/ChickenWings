@@ -18,7 +18,7 @@
                     "name": "DropEgg",
                     "type": "Button",
                     "id": "c8406085-9a15-49ea-abe0-cfeaa5057678",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -560,50 +560,88 @@
             ]
         },
         {
-            "name": "Special",
+            "name": "LevelCreator",
             "id": "89737611-948f-48ca-9565-39ddf240200a",
             "actions": [
                 {
-                    "name": "ResetGame",
+                    "name": "Finger1Press",
                     "type": "Button",
-                    "id": "cd5e4810-d90d-4db2-af42-5e682f6b0ddb",
-                    "expectedControlType": "Button",
+                    "id": "45e70696-90c1-48b5-9e35-5123eba41f05",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Finger1Pos",
+                    "type": "Value",
+                    "id": "8f0d85d4-eca9-4570-acd9-098497705e1e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "CursorClick",
+                    "type": "Button",
+                    "id": "d307f141-d5c9-40b2-84f1-4db248acddb1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CursorPos",
+                    "type": "Value",
+                    "id": "77f05261-ace6-490b-bf5b-dd444dc2cb1e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
                 {
                     "name": "",
-                    "id": "736e6183-b0e0-4a19-bf47-5c3589aa0ae2",
-                    "path": "<Keyboard>/upArrow",
+                    "id": "a7f57d9c-a9ab-413e-b4a9-b17c28c501cc",
+                    "path": "<Touchscreen>/touch0/press",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "ResetGame",
+                    "groups": ";Mobile",
+                    "action": "Finger1Press",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "c1886e7d-e7b3-4feb-9977-82229d0f8918",
+                    "id": "0b4f6e57-bff5-4d00-8090-ae98b2a41019",
+                    "path": "<Touchscreen>/touch0/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mobile",
+                    "action": "Finger1Pos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d3607148-b743-4ea9-a632-7173f5db09d5",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "ResetGame",
+                    "groups": ";Keyboard",
+                    "action": "CursorClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "368892b5-9405-43e0-8235-f32537793a6b",
-                    "path": "<Gamepad>/buttonSouth",
+                    "id": "bee76cf7-05e0-4c1a-9504-af667fc8b6ed",
+                    "path": "<Mouse>/position",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Mobile",
-                    "action": "ResetGame",
+                    "groups": ";Keyboard",
+                    "action": "CursorPos",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PigMovementBasic : MonoBehaviour, IRecordableObject
 {
-    [SerializeField] private int id;
+    [SerializeField] private short id;
     [SerializeField] private SpriteRenderer headSprite;
 
     [ExposedScriptableObject]
@@ -136,16 +136,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
     [SerializeField] private float magDiff;
 
-    private void OnValidate()
-    {
-        // _sineMagnitude = pigID.ReturnMag(xSpeed, magPercent);
-        // _sineFrequency = pigID.ReturnFreq(xSpeed, magPercent);
 
-        pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
-        minSineMagnitude = _sineMagnitude - magDiff;
-        maxSineMagnitude = _sineMagnitude + magDiff;
-        // _sineFrequency = (2 * Mathf.PI) / desiredOscillationTime;
-    }
 
     // public void 
 
@@ -156,6 +147,8 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
     {
         startTime = Time.time;
         pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        minSineMagnitude = _sineMagnitude - magDiff;
+        maxSineMagnitude = _sineMagnitude + magDiff;
         startX = transform.position.x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
         if (!hasInitialized)
         {
@@ -165,14 +158,14 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
 
 
-            if (body != null)
-            {
-                body.localScale = new Vector3(((.85f - transform.localScale.x) * .5f) + 1, 1, 1);
-                frontLegs.position = frontLegsPosition.position;
-                backLegs.position = backLegsPosition.position;
-                wings.position = wingsPosition.position;
-                tail.position = tailPosition.position;
-            }
+            // if (body != null)
+            // {
+            //     body.localScale = new Vector3(((.85f - transform.localScale.x) * .5f) + 1, 1, 1);
+            //     frontLegs.position = frontLegsPosition.position;
+            //     backLegs.position = backLegsPosition.position;
+            //     wings.position = wingsPosition.position;
+            //     tail.position = tailPosition.position;
+            // }
 
 
         }
@@ -249,41 +242,11 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
 
 
-    private void FixedUpdate()
+
+
+    public float ReturnPhaseOffset(float x)
     {
-
-
-
-
-        _position += Vector2.left * Time.fixedDeltaTime * xSpeed;
-        float period;
-        if (flapMovement)
-
-            period = Mathf.Abs(Mathf.Sin((_position.x - startX) * _sineFrequency));
-        else
-            period = Mathf.Sin((_position.x - startX) * _sineFrequency);
-
-        // Dynamically adjust sine magnitude using Lerp
-        float dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, Mathf.Abs(period));
-
-        // Apply movement with dynamic sine magnitude
-        rb.MovePosition(_position + Vector2.up * period * dynamicMagnitude);
-
-        // Trigger flap animation at the bottom of the sine wave
-        if (!hasFlapped && period < flapAnimStart)
-        {
-            anim.SetTrigger("Flap");
-            hasFlapped = true;
-        }
-        if (hasFlapped && period > flapAnimStart)
-        {
-            hasFlapped = false;
-        }
-
-
-
-
-
+        return x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
     }
 
     private void OnDrawGizmos()
@@ -306,13 +269,12 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
         {
             // Move left by a fixed step size
             simulatedPosition += Vector2.left * stepSize * dir;
-            float period;
+
 
             // Calculate the sine wave offset using the new movement logic
-            if (flapMovement)
-                period = Mathf.Abs(Mathf.Sin((simulatedPosition.x - startXX) * _sineFrequency));
-            else
-                period = Mathf.Sin((simulatedPosition.x - startXX) * _sineFrequency);
+
+            float period = Mathf.Abs(Mathf.Sin((simulatedPosition.x - startXX) * _sineFrequency));
+
 
             float dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, Mathf.Abs(period));
 
@@ -325,6 +287,65 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
             previousPoint = pos;
         }
     }
+
+    private void FixedUpdate()
+    {
+
+
+
+
+        _position += Vector2.left * Time.fixedDeltaTime * xSpeed;
+
+
+
+        float period = Mathf.Abs(Mathf.Sin((_position.x - startX) * _sineFrequency));
+
+        // Dynamically adjust sine magnitude using Lerp
+        float dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, period);
+
+        // Apply movement with dynamic sine magnitude
+        rb.MovePosition(_position + Vector2.up * period * dynamicMagnitude);
+
+        // Trigger flap animation at the bottom of the sine wave
+        if (!hasFlapped && period < flapAnimStart)
+        {
+            anim.SetTrigger("Flap");
+            hasFlapped = true;
+        }
+        if (hasFlapped && period > flapAnimStart)
+        {
+            hasFlapped = false;
+        }
+
+
+
+
+
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+
+
+        // Compute horizontal position based on time
+        float xPos = currPos.x + (-xSpeed * time);
+
+        // Apply phase offset correction
+
+
+        // Compute sine wave period at this x position
+        float period = Mathf.Abs(Mathf.Sin((xPos - phaseOffset) * _sineFrequency));
+
+        // Dynamically adjust sine magnitude using Lerp
+        float dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, period);
+
+        // Compute final vertical position
+        float yPos = currPos.y + (period * dynamicMagnitude);
+
+        return new Vector2(xPos, yPos);
+
+    }
+
 
     public void InitializePig()
     {
@@ -339,12 +360,12 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
         // Invoke("SetAnimSpeed", Random.Range(0f, .5f));
 
 
-        body.localScale = new Vector3(((.8f - Mathf.Abs(transform.localScale.x)) * .8f) + 1, 1, 1);
+        // body.localScale = new Vector3(((.8f - Mathf.Abs(transform.localScale.x)) * .8f) + 1, 1, 1);
 
-        frontLegs.position = frontLegsPosition.position;
-        backLegs.position = backLegsPosition.position;
-        wings.position = wingsPosition.position;
-        tail.position = tailPosition.position;
+        // frontLegs.position = frontLegsPosition.position;
+        // backLegs.position = backLegsPosition.position;
+        // wings.position = wingsPosition.position;
+        // tail.position = tailPosition.position;
         hasInitialized = true;
 
 
@@ -352,23 +373,15 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
     }
 
-    public RecordedDataStruct RecordData()
-    {
-        return new RecordedDataStruct(
-        id,
-        transform.position,
-        Mathf.Abs(transform.localScale.x),
-        xSpeed,
-        magPercent,
-        0,
-        0,
-        0);
-    }
+    
 
-    public void RetrieveRecordedData(RecordedDataStruct data)
+    public void ApplyRecordedData(RecordedDataStruct data)
     {
         transform.position = data.startPos;
-        transform.localScale = Vector3.one * data.scale;
+        transform.localScale = Vector3.one * (data.scale * pigID.baseScale);
+        Debug.Log("APPLIED SCLAE OF: " + data.scale);
+        phaseOffset = data.delayInterval;
+
         if (data.speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
         xSpeed = data.speed;
         magPercent = data.magPercent;
@@ -376,6 +389,33 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
 
 
+    }
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+
+
+        transform.localScale = Vector3.one * (data.scale * pigID.baseScale);
+        Debug.Log("APPLIED SCLAE OF: " + data.scale);
+
+        if (data.speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
+        xSpeed = data.speed;
+        magPercent = data.magPercent;
+        phaseOffset = data.delayInterval;
+        pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        minSineMagnitude = _sineMagnitude - magDiff;
+        maxSineMagnitude = _sineMagnitude + magDiff;
+
+
+
+
+    }
+    public bool ShowLine()
+    {
+        return true;
+    }
+    public float TimeAtCreateObject(int index)
+    {
+        return 0;
     }
 
     public void ShowPath(bool isSelected)

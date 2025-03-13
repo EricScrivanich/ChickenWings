@@ -1097,7 +1097,7 @@ public class SpawnStateManager : MonoBehaviour
         var script = normalPig[normalPigIndex];
         if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
 
-        script.RetrieveRecordedData(d);
+        // script.RetrieveRecordedData(d);
         normalPigIndex++;
 
     }
@@ -1110,7 +1110,7 @@ public class SpawnStateManager : MonoBehaviour
 
     //     script.RetrieveRecordedData(d);
 
-       
+
     //     bigPigIndex++;
     // }
 
@@ -1266,7 +1266,7 @@ public class SpawnStateManager : MonoBehaviour
 
     }
 
-   
+
 
     public void GetHotAirBalloon(Vector2 position, int type, float xTrigger, float yTarget, float speed, float delay)
     {
@@ -1275,7 +1275,7 @@ public class SpawnStateManager : MonoBehaviour
         hotAirBalloon.transform.position = position;
         hotAirBalloon.transform.localScale = BoundariesManager.vectorThree1;
         hotAirBalloon.type = type;
-        hotAirBalloon.xTrigger = xTrigger;
+        hotAirBalloon.initialDelay = xTrigger;
         hotAirBalloon.yTarget = yTarget;
         hotAirBalloon.speed = speed;
         hotAirBalloon.delay = delay;

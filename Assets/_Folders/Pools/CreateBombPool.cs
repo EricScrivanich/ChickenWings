@@ -14,9 +14,7 @@ public class CreateBombPool : MonoBehaviour
     {
         pool.MakePools();
 
-        data = obj.RecordData();
-
-        Debug.Log("Data speed is: " + data.speed);
+       
 
     }
 

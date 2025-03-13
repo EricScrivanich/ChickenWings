@@ -40,7 +40,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""DropEgg"",
                     ""type"": ""Button"",
                     ""id"": ""c8406085-9a15-49ea-abe0-cfeaa5057678"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -582,50 +582,88 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""Special"",
+            ""name"": ""LevelCreator"",
             ""id"": ""89737611-948f-48ca-9565-39ddf240200a"",
             ""actions"": [
                 {
-                    ""name"": ""ResetGame"",
+                    ""name"": ""Finger1Press"",
                     ""type"": ""Button"",
-                    ""id"": ""cd5e4810-d90d-4db2-af42-5e682f6b0ddb"",
-                    ""expectedControlType"": ""Button"",
+                    ""id"": ""45e70696-90c1-48b5-9e35-5123eba41f05"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Finger1Pos"",
+                    ""type"": ""Value"",
+                    ""id"": ""8f0d85d4-eca9-4570-acd9-098497705e1e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""CursorClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""d307f141-d5c9-40b2-84f1-4db248acddb1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CursorPos"",
+                    ""type"": ""Value"",
+                    ""id"": ""77f05261-ace6-490b-bf5b-dd444dc2cb1e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""736e6183-b0e0-4a19-bf47-5c3589aa0ae2"",
-                    ""path"": ""<Keyboard>/upArrow"",
+                    ""id"": ""a7f57d9c-a9ab-413e-b4a9-b17c28c501cc"",
+                    ""path"": ""<Touchscreen>/touch0/press"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ResetGame"",
+                    ""groups"": "";Mobile"",
+                    ""action"": ""Finger1Press"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""c1886e7d-e7b3-4feb-9977-82229d0f8918"",
+                    ""id"": ""0b4f6e57-bff5-4d00-8090-ae98b2a41019"",
+                    ""path"": ""<Touchscreen>/touch0/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Mobile"",
+                    ""action"": ""Finger1Pos"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d3607148-b743-4ea9-a632-7173f5db09d5"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ResetGame"",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""CursorClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""368892b5-9405-43e0-8235-f32537793a6b"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""id"": ""bee76cf7-05e0-4c1a-9504-af667fc8b6ed"",
+                    ""path"": ""<Mouse>/position"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Mobile"",
-                    ""action"": ""ResetGame"",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""CursorPos"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -681,15 +719,18 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_Movement_Finger1Press = m_Movement.FindAction("Finger1Press", throwIfNotFound: true);
         m_Movement_Finger2Press = m_Movement.FindAction("Finger2Press", throwIfNotFound: true);
         m_Movement_ScytheStick = m_Movement.FindAction("ScytheStick", throwIfNotFound: true);
-        // Special
-        m_Special = asset.FindActionMap("Special", throwIfNotFound: true);
-        m_Special_ResetGame = m_Special.FindAction("ResetGame", throwIfNotFound: true);
+        // LevelCreator
+        m_LevelCreator = asset.FindActionMap("LevelCreator", throwIfNotFound: true);
+        m_LevelCreator_Finger1Press = m_LevelCreator.FindAction("Finger1Press", throwIfNotFound: true);
+        m_LevelCreator_Finger1Pos = m_LevelCreator.FindAction("Finger1Pos", throwIfNotFound: true);
+        m_LevelCreator_CursorClick = m_LevelCreator.FindAction("CursorClick", throwIfNotFound: true);
+        m_LevelCreator_CursorPos = m_LevelCreator.FindAction("CursorPos", throwIfNotFound: true);
     }
 
     ~@InputController()
     {
         UnityEngine.Debug.Assert(!m_Movement.enabled, "This will cause a leak and performance issues, InputController.Movement.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_Special.enabled, "This will cause a leak and performance issues, InputController.Special.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_LevelCreator.enabled, "This will cause a leak and performance issues, InputController.LevelCreator.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -962,51 +1003,75 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     }
     public MovementActions @Movement => new MovementActions(this);
 
-    // Special
-    private readonly InputActionMap m_Special;
-    private List<ISpecialActions> m_SpecialActionsCallbackInterfaces = new List<ISpecialActions>();
-    private readonly InputAction m_Special_ResetGame;
-    public struct SpecialActions
+    // LevelCreator
+    private readonly InputActionMap m_LevelCreator;
+    private List<ILevelCreatorActions> m_LevelCreatorActionsCallbackInterfaces = new List<ILevelCreatorActions>();
+    private readonly InputAction m_LevelCreator_Finger1Press;
+    private readonly InputAction m_LevelCreator_Finger1Pos;
+    private readonly InputAction m_LevelCreator_CursorClick;
+    private readonly InputAction m_LevelCreator_CursorPos;
+    public struct LevelCreatorActions
     {
         private @InputController m_Wrapper;
-        public SpecialActions(@InputController wrapper) { m_Wrapper = wrapper; }
-        public InputAction @ResetGame => m_Wrapper.m_Special_ResetGame;
-        public InputActionMap Get() { return m_Wrapper.m_Special; }
+        public LevelCreatorActions(@InputController wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Finger1Press => m_Wrapper.m_LevelCreator_Finger1Press;
+        public InputAction @Finger1Pos => m_Wrapper.m_LevelCreator_Finger1Pos;
+        public InputAction @CursorClick => m_Wrapper.m_LevelCreator_CursorClick;
+        public InputAction @CursorPos => m_Wrapper.m_LevelCreator_CursorPos;
+        public InputActionMap Get() { return m_Wrapper.m_LevelCreator; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(SpecialActions set) { return set.Get(); }
-        public void AddCallbacks(ISpecialActions instance)
+        public static implicit operator InputActionMap(LevelCreatorActions set) { return set.Get(); }
+        public void AddCallbacks(ILevelCreatorActions instance)
         {
-            if (instance == null || m_Wrapper.m_SpecialActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_SpecialActionsCallbackInterfaces.Add(instance);
-            @ResetGame.started += instance.OnResetGame;
-            @ResetGame.performed += instance.OnResetGame;
-            @ResetGame.canceled += instance.OnResetGame;
+            if (instance == null || m_Wrapper.m_LevelCreatorActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_LevelCreatorActionsCallbackInterfaces.Add(instance);
+            @Finger1Press.started += instance.OnFinger1Press;
+            @Finger1Press.performed += instance.OnFinger1Press;
+            @Finger1Press.canceled += instance.OnFinger1Press;
+            @Finger1Pos.started += instance.OnFinger1Pos;
+            @Finger1Pos.performed += instance.OnFinger1Pos;
+            @Finger1Pos.canceled += instance.OnFinger1Pos;
+            @CursorClick.started += instance.OnCursorClick;
+            @CursorClick.performed += instance.OnCursorClick;
+            @CursorClick.canceled += instance.OnCursorClick;
+            @CursorPos.started += instance.OnCursorPos;
+            @CursorPos.performed += instance.OnCursorPos;
+            @CursorPos.canceled += instance.OnCursorPos;
         }
 
-        private void UnregisterCallbacks(ISpecialActions instance)
+        private void UnregisterCallbacks(ILevelCreatorActions instance)
         {
-            @ResetGame.started -= instance.OnResetGame;
-            @ResetGame.performed -= instance.OnResetGame;
-            @ResetGame.canceled -= instance.OnResetGame;
+            @Finger1Press.started -= instance.OnFinger1Press;
+            @Finger1Press.performed -= instance.OnFinger1Press;
+            @Finger1Press.canceled -= instance.OnFinger1Press;
+            @Finger1Pos.started -= instance.OnFinger1Pos;
+            @Finger1Pos.performed -= instance.OnFinger1Pos;
+            @Finger1Pos.canceled -= instance.OnFinger1Pos;
+            @CursorClick.started -= instance.OnCursorClick;
+            @CursorClick.performed -= instance.OnCursorClick;
+            @CursorClick.canceled -= instance.OnCursorClick;
+            @CursorPos.started -= instance.OnCursorPos;
+            @CursorPos.performed -= instance.OnCursorPos;
+            @CursorPos.canceled -= instance.OnCursorPos;
         }
 
-        public void RemoveCallbacks(ISpecialActions instance)
+        public void RemoveCallbacks(ILevelCreatorActions instance)
         {
-            if (m_Wrapper.m_SpecialActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_LevelCreatorActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
-        public void SetCallbacks(ISpecialActions instance)
+        public void SetCallbacks(ILevelCreatorActions instance)
         {
-            foreach (var item in m_Wrapper.m_SpecialActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_LevelCreatorActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_SpecialActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_LevelCreatorActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
-    public SpecialActions @Special => new SpecialActions(this);
+    public LevelCreatorActions @LevelCreator => new LevelCreatorActions(this);
     private int m_KeyboardSchemeIndex = -1;
     public InputControlScheme KeyboardScheme
     {
@@ -1050,8 +1115,11 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnFinger2Press(InputAction.CallbackContext context);
         void OnScytheStick(InputAction.CallbackContext context);
     }
-    public interface ISpecialActions
+    public interface ILevelCreatorActions
     {
-        void OnResetGame(InputAction.CallbackContext context);
+        void OnFinger1Press(InputAction.CallbackContext context);
+        void OnFinger1Pos(InputAction.CallbackContext context);
+        void OnCursorClick(InputAction.CallbackContext context);
+        void OnCursorPos(InputAction.CallbackContext context);
     }
 }

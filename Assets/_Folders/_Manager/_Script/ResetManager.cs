@@ -36,8 +36,8 @@ public class ResetManager : MonoBehaviour
         controls = new InputController();
 
         // Bind the Reset action to a method
-        controls.Special.ResetGame.performed += ctx => ResetGame();
-        controls.Special.Disable();
+        // controls.Special.ResetGame.performed += ctx => ResetGame();
+        // controls.Special.Disable();
         checkPoint = 0;
 
     }
@@ -202,7 +202,7 @@ public class ResetManager : MonoBehaviour
 
         // canReset = false;
         onRestartGame?.Invoke();
-        controls.Special.Disable();
+        // controls.Special.Disable();
 
         if (GameObject.Find("LevelManager") != null)
         {
@@ -219,7 +219,7 @@ public class ResetManager : MonoBehaviour
     public void PausedReset()
     {
         onRestartGame?.Invoke();
-        controls.Special.Disable();
+        // controls.Special.Disable();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
     }

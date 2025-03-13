@@ -774,6 +774,7 @@ public class PlayerStateManager : MonoBehaviour
     {
 
         currentState.UpdateState(this);
+        
         // currentState.RotateState(this);
         if (transform.position.y > BoundariesManager.TopPlayerBoundary && !isFrozen && !ID.constantPlayerForceBool)
         {
