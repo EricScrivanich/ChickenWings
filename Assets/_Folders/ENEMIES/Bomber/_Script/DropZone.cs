@@ -34,6 +34,47 @@ public class DropZone : MonoBehaviour
 
     }
 
+    public void ApplyCustomizedData(float x, float scaleMultiplier, float planeX, int flipInt)
+    {
+        sr.color = color2;
+        transform.position = new Vector2(x, 0);
+        flipDirectionInt = flipInt;
+        arrows.color = arrowColorStart;
+
+        if (flipInt >= 0) arrows.flipX = false;
+        else arrows.flipX = true;
+
+
+
+
+        dropZone.transform.localScale = new Vector3(normalDropZoneScale.x * scaleMultiplier, normalDropZoneScale.y, normalDropZoneScale.y);
+        if (!gameObject.activeInHierarchy) gameObject.SetActive(true);
+        if (Mathf.Abs(planeX) < 11.3f)
+        {
+            warningTransform.gameObject.SetActive(true);
+
+            warningTransform.position = new Vector2(planeX, BoundariesManager.TopViewBoundary - 1.8f);
+            if (flipInt == -1) warningSprites[2].flipX = true;
+            else warningSprites[2].flipX = false;
+
+            // warningSprites[2].transform.lo
+
+
+
+
+
+        }
+        else
+        {
+            warningTransform.gameObject.SetActive(false);
+        }
+    }
+
+    public float AddedUnits()
+    {
+        return (Mathf.Abs(dropZone.transform.localScale.x) - normalDropZoneScale.x) / 1.5f;
+    }
+
     public void Initilaize(float x, float scaleMultiplier, float planeX, int flipInt)
     {
 

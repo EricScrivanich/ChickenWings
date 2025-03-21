@@ -260,7 +260,7 @@ public class BarnAndEggSpawner : MonoBehaviour
     // Update is called once per frame
     public void GetEggCollectable(Vector2 pos, bool isShotgun, bool isThree, float speed)
     {
-       
+
         if (currentEggCollectableIndex >= eggCollectableCount) currentEggCollectableIndex = 0;
         var obj = eggCollectables[currentEggCollectableIndex];
         obj.transform.position = pos;
@@ -283,6 +283,18 @@ public class BarnAndEggSpawner : MonoBehaviour
 
 
         currentEggCollectableIndex++;
+
+    }
+
+    // public void GetEggByData(RecordedDataClass data, int type)
+    // {
+    //     if (type)
+    // }
+
+    public void SpawnEggWithData(RecordedDataStruct data)
+    {
+        if (currentEggCollectableIndex >= eggCollectableCount) currentEggCollectableIndex = 0;
+        var obj = eggCollectables[currentEggCollectableIndex];
 
     }
 

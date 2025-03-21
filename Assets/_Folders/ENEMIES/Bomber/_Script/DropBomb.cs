@@ -4,7 +4,7 @@ using UnityEngine;
 using HellTap.PoolKit;
 using DG.Tweening;
 
-public class DropBomb : MonoBehaviour
+public class DropBomb : MonoBehaviour, IRecordableObject
 {
     // private Pool pool;
 
@@ -36,9 +36,9 @@ public class DropBomb : MonoBehaviour
 
     private Vector3 rotateMidTarget = new Vector3(0, 0, 7);
 
-    private BoxCollider2D col;
 
 
+    private Rigidbody2D rb;
 
     private bool hasEnteredTriggerArea = false;
 
@@ -93,13 +93,17 @@ public class DropBomb : MonoBehaviour
     private float speedStart;
     private float speedEnd;
 
+    private float xEnter;
+    private float xExit;
+
     private bool hasInitialized = false;
 
     private Vector3 nomralScale;
 
     private void Awake()
     {
-        col = GetComponent<BoxCollider2D>();
+
+        rb = GetComponent<Rigidbody2D>();
         nomralScale = transform.localScale;
         dropZone = Instantiate(dropZonePrefab).GetComponent<DropZone>();
         dropZone.gameObject.SetActive(false);
@@ -117,10 +121,15 @@ public class DropBomb : MonoBehaviour
         // pool = PoolKit.GetPool("ExplosionPool");
 
         // xPos = Random.Range(minX, maxX);
-        if (!hasInitialized)
+        if (!hasInitialized && !ignoreAll)
         {
             if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
             dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
+            float u = dropZone.AddedUnits();
+            xEnter = xDropPosition + ((u + 3) * sideSwitchInteger);
+            xExit = xDropPosition - ((u + 4.7f) * sideSwitchInteger);
+            Debug.Log("Added Units is: " + u + " side switch is: " + sideSwitchInteger);
+            Debug.Log("Bomber initialized with xEnter: " + xEnter + " and xExit: " + xExit);
 
             StartCoroutine(BomberStart());
             hasInitialized = true;
@@ -140,19 +149,12 @@ public class DropBomb : MonoBehaviour
         // }
     }
 
-
+    private bool logstart = false;
     void Update()
     {
-        // if (bomberGoing)
-        // {
-        //     transform.position += Vector3.left * speed * Time.deltaTime;
-        // }
-
         if (bomberGoing)
         {
             transform.position += Vector3.left * speed * Time.deltaTime;
-
-
             propTime += Time.deltaTime;
 
             if (propTime > .07f)
@@ -164,12 +166,51 @@ public class DropBomb : MonoBehaviour
                 propTime = 0;
             }
         }
+        if (!hasEnteredTriggerArea && ((sideSwitchInteger == 1 && transform.position.x < xEnter) || (sideSwitchInteger == -1 && transform.position.x > xEnter)))
+        {
+            Debug.Log("Entered area");
+            // Debug.Log("Bomber entered trigger: " + (Time.time - spawnTimeTest) + " seconds, with scale of: " + dropAreaScaleMultiplier);
+            hasEnteredTriggerArea = true;
+            dropping = true;
+            if (!ignoreAll)
+                StartCoroutine(DropBombs());
+        }
+
+        if (dropping && ((sideSwitchInteger == 1 && transform.position.x < xExit) || (sideSwitchInteger == -1 && transform.position.x > xExit)))
+        {
+            Debug.Log("Exit area");
+
+            dropping = false;
+        }
+
+        //9.3 1.92
+
+
+        // if (bomberGoing)
+        // {
+        //     // if (!logstart)
+        //     // {
+        //     //     Debug.Log("Bomber started at: " + (transform.position.x - xDropPosition) + " at time: " + (Time.time - spawnTimeTest));
+        //     //     logstart = true;
+        //     // }
+        //     // transform.position += Vector3.left * speed * Time.deltaTime;
+
+
+
+        // }
 
 
         // Drop();
 
         // Restart();
     }
+
+    // private void FixedUpdate()
+    // {
+    //     if (bomberGoing)
+    //         rb.MovePosition(rb.position + Vector2.left * speed * Time.fixedDeltaTime);
+
+    // }
 
     private void TweenWhileDropping(bool doTween)
     {
@@ -299,15 +340,7 @@ public class DropBomb : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        if (collider.gameObject.CompareTag("DropZone") && !hasEnteredTriggerArea)
-        {
-            hasEnteredTriggerArea = true;
-            dropping = true;
-            StartCoroutine(DropBombs());
-        }
-    }
+
 
     private void OnDisable()
     {
@@ -321,17 +354,21 @@ public class DropBomb : MonoBehaviour
         }
         DOTween.Kill(this);
         StopAllCoroutines();
+
+        if (ignoreAll && dropZone != null) dropZone.gameObject.SetActive(false);
     }
 
 
     private void OnEnable()
     {
+        if (ignoreAll) return;
         enteredZone = false;
         hasFadedDropZone = false;
 
+
         bomberGoing = false;
         hasEnteredTriggerArea = false;
-        col.enabled = false;
+
         if (speedTarget < 0)
         {
             sideSwitchInteger = -1;
@@ -347,12 +384,16 @@ public class DropBomb : MonoBehaviour
         speedEnd = speedTarget;
         speedStart = speedTarget * startSpeedMultiplier;
         speed = speedStart;
+        transform.position = new Vector2(planeStartX, StartY + 1);
 
         if (hasInitialized)
         {
             if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
 
             dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
+            float u = dropZone.AddedUnits();
+            xEnter = xDropPosition + ((u + 3) * sideSwitchInteger);
+            xExit = xDropPosition - ((u + 4.7f) * sideSwitchInteger);
 
             StartCoroutine(BomberStart());
         }
@@ -362,17 +403,18 @@ public class DropBomb : MonoBehaviour
 
 
     }
-
+    private WaitForSeconds wait1 = new WaitForSeconds(1.5f);
+    private WaitForSeconds wait2 = new WaitForSeconds(.4f);
 
     private IEnumerator BomberStart()
     {
         AudioManager.instance.PlayAirRaidSiren();
 
-        yield return new WaitForSeconds(delayToFlyOverSound);
+        yield return wait1;
         AudioManager.instance.PlayFlyOver();
-        yield return new WaitForSeconds(delayToBomberGoing);
+        yield return wait2;
         EnterOrExitTween(true);
-        col.enabled = true;
+
 
         ChangeDropAreaSprite();
         bomberGoing = true;
@@ -380,22 +422,28 @@ public class DropBomb : MonoBehaviour
 
 
     }
-
+    private WaitForSeconds wait = new WaitForSeconds(.1f);
     private IEnumerator DropBombs()
     {
         int dropCount = 2;
 
         if (sideSwitchInteger == -1) dropCount = 0;
+
+
         while (dropping)
         {
             // pool.Spawn("bomberBomb", dropArea.transform.position, bombRotation);
 
+
+            if (!dropping) break;
+
             pool.GetBomb(dropArea.transform.position, bombRotation * sideSwitchInteger, dropCount, true);
+            yield return wait;
             if (sideSwitchInteger == 1) dropCount--;
 
-            yield return new WaitForSeconds(.1f);
             AudioManager.instance.PlayBombDroppedSound();
-            yield return new WaitForSeconds(dropTime);
+            yield return wait;
+
 
         }
         StartCoroutine(SwitchDropAreaSprite());
@@ -410,17 +458,6 @@ public class DropBomb : MonoBehaviour
 
     }
 
-    private void OnTriggerExit2D(Collider2D collider)
-    {
-        if (collider.gameObject.CompareTag("DropZone"))
-        {
-
-            // Invoke("Testwait", .7f);
-            dropping = false;
-
-            // dropZone.SetActive(false);
-        }
-    }
 
     void Restart()
     {
@@ -442,5 +479,92 @@ public class DropBomb : MonoBehaviour
             ID.bombsDropped = 0;
             spawnTimer = 0;
         }
+    }
+
+    public void ApplyRecordedData(RecordedDataStruct data)
+    {
+        ignoreAll = false;
+        xDropPosition = data.startPos.x;
+        dropAreaScaleMultiplier = data.scale;
+        if (data.type == 0)
+        {
+
+            speedTarget = 8;
+        }
+        else
+        {
+
+            speedTarget = -7;
+
+        }
+        gameObject.SetActive(true);
+
+    }
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        hasEnteredTriggerArea = true;
+        dropping = false;
+        Debug.Log("Applying Data");
+        sideSwitchInteger = 1;
+        xDropPosition = data.startPos.x;
+        if (data.type == 0)
+        {
+            transform.localScale = nomralScale;
+            speedTarget = 8;
+        }
+        else
+        {
+            transform.localScale = new Vector3(-nomralScale.x, nomralScale.y, nomralScale.z);
+            speedTarget = -7;
+            sideSwitchInteger = -1;
+        }
+
+        planeStartX = xDropPosition + ((xDistanceFromZone - 1) * sideSwitchInteger);
+
+        dropZone.ApplyCustomizedData(data.startPos.x, data.scale, planeStartX, sideSwitchInteger);
+        float u = dropZone.AddedUnits();
+        xEnter = xDropPosition + ((u + 3) * sideSwitchInteger);
+        xExit = xDropPosition - ((u + 4.7f) * sideSwitchInteger);
+        ignoreAll = true;
+
+
+    }
+    private bool ignoreAll = false;
+
+    public bool ShowLine()
+    {
+        return false;
+    }
+
+    public float TimeAtCreateObject(int index)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        if (time < 1.92f)
+        {
+            return new Vector2(xDropPosition + (xDistanceFromZone * sideSwitchInteger), StartY);
+
+        }
+        else
+        {
+            return new Vector2(xDropPosition + (9.3f * sideSwitchInteger) - ((time - 1.92f) * speedTarget), EndY);
+        }
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        Debug.Log("Returning Data");
+
+        if ((sideSwitchInteger == 1 && transform.position.x < xExit - .8f) || (sideSwitchInteger == -1 && transform.position.x > xExit + .8f))
+        {
+            Debug.Log("Returning Data 2 with side " + sideSwitchInteger);
+            return -1;
+        }
+
+        else return 1;
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "LevelCreatorColors", menuName = "LevelCreatorColors", order = 0)]
 public class LevelCreatorColors : ScriptableObject
 {
+    public Color MainUIColor;
+    public Color SelctedUIColor;
     public Vector3 arrowNormalScale;
     public Vector3 arrowSelectedScale;
     public Color SelectedPigOutlineColor;
@@ -19,4 +21,8 @@ public class LevelCreatorColors : ScriptableObject
     public Color ArrowNullColor;
     public float TimeStampTimeSpacing;
     public Color[] timeStampColors;
+
+    public Color[] RingColors;
+
+
 }

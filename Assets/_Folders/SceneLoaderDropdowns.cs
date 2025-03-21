@@ -16,6 +16,8 @@ namespace KingdomOfNight
         public static void LoadKingPig() { OpenScene("Assets/scenes/Boss/KingPig.unity"); }
         [MenuItem("Scenes/Boss/LevelCreator")]
         public static void LoadLevelCreator() { OpenScene("Assets/scenes/Boss/LevelCreator.unity"); }
+        [MenuItem("Scenes/Boss/LevelPlayer")]
+        public static void LoadLevelPlayer() { OpenScene("Assets/scenes/Boss/LevelPlayer.unity"); }
         [MenuItem("Scenes/Boss/Scythe")]
         public static void LoadScythe() { OpenScene("Assets/scenes/Boss/Scythe.unity"); }
         [MenuItem("Scenes/Levels/EnemyVideo")]

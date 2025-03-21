@@ -82,7 +82,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
         {
             delayTimer += Time.deltaTime;
 
-            if (delayTimer > delay + .8f)
+            if (delayTimer > delay)
             {
                 anim.SetTrigger(DropTrigger);
                 waitingForDelay = false;
@@ -235,7 +235,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
     {
         if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
         {
-            pool.GetBalloonBomb(dropPosition.position, new Vector2(speed, 0));
+            pool.GetBalloonBomb(dropPosition.position, new Vector2(-speed, 0));
         }
 
         waitingForDelay = true;
@@ -247,18 +247,22 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
 
     public void ApplyRecordedData(RecordedDataStruct data)
     {
+        Debug.Log("Applying recorded data");
         transform.position = data.startPos;
+        _position = data.startPos;
         speed = data.speed;
         magPercent = data.magPercent;
         phaseOffset = data.delayInterval;
-        initialDelay = data.scale;
         delay = data.timeInterval;
+        initialDelay = data.scale * delay;
+
 
 
 
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         minSineMagnitude = _sineMagnitude - magDiff;
         maxSineMagnitude = _sineMagnitude + magDiff;
+        gameObject.SetActive(true);
     }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
@@ -266,8 +270,9 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
         speed = data.speed;
         magPercent = data.magPercent;
         phaseOffset = data.delayInterval;
-        initialDelay = data.scale;
         delay = data.timeInterval;
+        initialDelay = data.scale * delay;
+
 
 
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
@@ -284,7 +289,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
 
     public float TimeAtCreateObject(int index)
     {
-        return 0;
+        return (index * delay) + initialDelay;
     }
 
     // private void OnValidate()

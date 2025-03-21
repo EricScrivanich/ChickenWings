@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+// using UnityEditor;
 using UnityEngine.EventSystems;
+
 public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 {
     public static LevelRecordManager instance;
@@ -23,8 +24,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     [SerializeField] private TextMeshProUGUI posXText;
     [SerializeField] private TextMeshProUGUI posYText;
 
-    [field: SerializeField] public Slider valueSliderHorizontal { get; private set; }
-    [field: SerializeField] public TextMeshProUGUI valueSliderText { get; private set; }
+
     [field: SerializeField] public Slider valueSliderVertical { get; private set; }
 
     private SpriteRenderer arrowSprite;
@@ -37,7 +37,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public string levelWorldAndNumber;
 
     private InputController controls;
-    public static readonly float TimePerStep = .1f;
+    public static readonly float TimePerStep = .18f;
     public static ushort CurrentTimeStep { get; private set; }
 
     public LevelData levelData;
@@ -53,7 +53,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public static Action<ushort, float> SetGlobalTime;
     public static Action<GameObject> AddNewObject;
-    public static Action<string> SetSelectedDataType;
+
 
     public static Action PressTimerBar;
     private GameObject objectToAdd;
@@ -62,6 +62,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
     private bool objectClicked = false;
+    private bool screenClicked = false;
 
     public RecordableObjectPlacer currentSelectedObject { get; private set; }
 
@@ -92,13 +93,40 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public void DuplicateObject()
     {
-        var lastData = currentSelectedObject.Data;
-        if (currentSelectedObject != null) currentSelectedObject.SetIsSelected(false);
-        currentSelectedObject = Instantiate(currentSelectedObject);
-        currentSelectedObject.LoadAssetFromSave(lastData);
-        AddNewObjectToList(currentSelectedObject);
-        currentSelectedObject.SetSelectedObject(floatSliders);
 
+        if (currentSelectedObject != null) currentSelectedObject.SetIsSelected(false);
+        var obj = Instantiate(recordableObjectsByID[currentSelectedObject.ID]);
+        RecordedDataStructDynamic copy = currentSelectedObject.Data;
+        obj.LoadAssetFromSave(copy);
+
+        AddNewObjectToList(obj);
+        obj.UpdateBasePosition(new Vector2(currentSelectedObject.transform.position.x + currentSelectedObject.speedChanger, currentSelectedObject.transform.position.y));
+        currentSelectedObject = obj;
+        obj.SetSelectedObject();
+
+    }
+
+    public void DeleteObject()
+    {
+        RecordedObjects.Remove(currentSelectedObject);
+        currentSelectedObject.DestroySelf();
+        currentSelectedObject = null;
+        // for (int i = 0; i < RecordedObjects.Count; i ++)
+        // {
+        //     if (RecordedObjects[i] == currentSelectedObject)
+        //     {
+        //         RecordedObjects.Remove(i);
+        //     }
+        // }
+    }
+
+    public void DeleteAll()
+    {
+        for (int i = 0; i < RecordedObjects.Count; i++)
+        {
+            RecordedObjects[i].DestroySelf();
+        }
+        RecordedObjects.Clear();
     }
 
 
@@ -114,11 +142,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             Destroy(this);
         }
+
+        currentSelectedObject = null;
         HandleReleaseClick();
 
         CurrentTimeStep = 0;
         controls = new InputController();
-
+        CreatePools();
 
 
 
@@ -164,11 +194,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     private void HandleClickObject(Vector2 pos)
     {
-        lastClickedPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        lastClickedPos = Camera.main.ScreenToWorldPoint(pos);
 
         var obj = GetObjectFromTouchPosition(lastClickedPos);
 
-
+        screenClicked = true;
 
 
         if (obj != null)
@@ -176,8 +206,9 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             if (currentSelectedObject != null) currentSelectedObject.SetIsSelected(false);
             currentSelectedObject = obj;
 
-            obj.SetSelectedObject(floatSliders);
+            obj.SetSelectedObject();
             obj.HandleClick(true, arrowPressedType);
+            ReturnRoundedPosition(obj.transform.position);
             lastObjPos = obj.transform.position;
 
             objectClicked = true;
@@ -189,6 +220,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     private void HandleReleaseClick()
     {
         objectClicked = false;
+        screenClicked = false;
         moveCamera = false;
 
         arrowPressedType = 0;
@@ -199,14 +231,14 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     private void HandleMoveObject(Vector2 pos)
     {
-        if (goingToAddObject && pos.y > -5.3f)
+        if (screenClicked && goingToAddObject && pos.y > -5.3f)
         {
             Debug.Log("Adding object");
             if (currentSelectedObject != null) currentSelectedObject.SetIsSelected(false);
             currentSelectedObject = Instantiate(objectToAdd, pos, Quaternion.identity).GetComponent<RecordableObjectPlacer>();
             currentSelectedObject.CreateNew();
             AddNewObjectToList(currentSelectedObject);
-            currentSelectedObject.SetSelectedObject(floatSliders);
+            currentSelectedObject.SetSelectedObject();
             objectClicked = true;
             lastObjPos = Vector2.zero;
             goingToAddObject = false;
@@ -246,6 +278,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         RecordableObjectPlacer obj = null;
         bool arrowFound = false;
+
+        if (hits.Length == 0)
+        {
+            Debug.Log("NO OBJECTS FOUND");
+            return null;
+        }
+
 
         foreach (var hit in hits)
         {
@@ -308,12 +347,30 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
     void Start()
     {
+        Time.timeScale = 0;
         cameraY = Camera.main.transform.position.y;
 
         timeSlider.onValueChanged.AddListener(value => UpdateTime((ushort)value));
         timeSlider.value = 0;
+        float totalSeconds = currentTime / FrameRateManager.BaseTimeScale;
+
+        int minutes = Mathf.FloorToInt(totalSeconds / 60);
+        int seconds = Mathf.FloorToInt(totalSeconds % 60);
+        int decimals = Mathf.FloorToInt((totalSeconds - Mathf.Floor(totalSeconds)) * 100); // Get 2 decimal places
+
+        // Format time as MM:SS.DD
+        timeText.text = $"{minutes:00}:{seconds:00}.{decimals:00}";
         LoadAssets();
         CheckAllObjectsForNewTimeStep();
+        StartCoroutine(InvokeTimeAfterDelay());
+
+
+    }
+
+    private IEnumerator InvokeTimeAfterDelay()
+    {
+        yield return new WaitForEndOfFrame();
+        LevelRecordManager.SetGlobalTime?.Invoke(CurrentTimeStep, 0);
 
     }
 
@@ -335,30 +392,44 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public void SaveAsset()
     {
-        LevelData savedData = ScriptableObject.CreateInstance<LevelData>();
-        savedData.levelName = LevelName;
-        savedData.levelWorldAndNumber = levelWorldAndNumber;
+        // LevelData savedData = ScriptableObject.CreateInstance<LevelData>();
+        // savedData.levelName = LevelName;
+        // savedData.levelWorldAndNumber = levelWorldAndNumber;
 
-        LevelDataConverter.instance.ConvertDataToArrays(RecordedObjects, savedData);
+        // LevelDataConverter.instance.ConvertDataToArrays(RecordedObjects, savedData);
 
 
         if (levelType == LevelType.Main)
-            AssetDatabase.CreateAsset(savedData, "Assets/Levels/" + levelType.ToString() + "/" + levelWorldAndNumber + LevelName + ".asset");
-        else
-            AssetDatabase.CreateAsset(savedData, "Assets/Levels/" + levelType.ToString() + "/" + LevelName + ".asset");
+        {
+            // AssetDatabase.CreateAsset(savedData, "Assets/Levels/" + levelType.ToString() + "/" + levelWorldAndNumber + LevelName + ".asset");
 
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
+
+        }
+        else
+        {
+
+            LevelDataConverter.instance.ConvertDataToJson(RecordedObjects, LevelName);
+
+        }
+
+
+
+
+
+        // AssetDatabase.SaveAssets();
+        // AssetDatabase.Refresh();
 
     }
-
+    public static string LevelPath = "NAMEBU";
     public void LoadAssets()
     {
         RecordedObjects = new List<RecordableObjectPlacer>();
-        if (levelType == LevelType.Main)
-            levelData = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Levels/" + levelType.ToString() + "/" + levelWorldAndNumber + LevelName + ".asset");
+        if (levelType == LevelType.Main) Debug.Log("Loading main level");
+        // levelData = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Levels/" + levelType.ToString() + "/" + levelWorldAndNumber + LevelName + ".asset");
         else
-            levelData = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Levels/" + levelType.ToString() + "/" + LevelName);
+        {
+            levelData.LoadData();
+        }
 
         if (levelData == null)
         {
@@ -371,10 +442,28 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             RecordableObjectPlacer obj = Instantiate(recordableObjectsByID[data[i].ID]);
             obj.LoadAssetFromSave(data[i]);
+            obj.SetIsSelected(false);
             obj.gameObject.SetActive(false);
             RecordedObjects.Add(obj);
         }
     }
+
+
+    // public LevelData GetLevelData()
+    // {
+    //     if (levelType == LevelType.Main)
+    //         levelData = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Levels/" + levelType.ToString() + "/" + levelWorldAndNumber + LevelName + ".asset");
+    //     else
+    //         levelData = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Levels/" + levelType.ToString() + "/" + LevelName);
+
+    //     if (levelData == null)
+    //     {
+    //         Debug.Log("No level data found");
+    //         return null;
+    //     }
+    //     else return levelData;
+
+    // }
     private void AddNewObjectToList(RecordableObjectPlacer newObj)
     {
         RecordedObjects.Add(newObj);
@@ -382,7 +471,21 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
     public void SortRecordedObjectsBySpawnTime()
     {
-        RecordedObjects.Sort((a, b) => a.spawnedTimeStep.CompareTo(b.spawnedTimeStep));
+        RecordedObjects.Sort((a, b) =>
+        {
+            // 1. First, sort by spawnedTimeStep
+            int timeStepComparison = a.spawnedTimeStep.CompareTo(b.spawnedTimeStep);
+            if (timeStepComparison != 0)
+                return timeStepComparison;
+
+            // 2. If time steps are the same, sort by ID
+            int idComparison = a.ID.CompareTo(b.ID);
+            if (idComparison != 0)
+                return idComparison;
+
+            // 3. If ID is also the same, sort by absolute startPos.x (lower absolute values first)
+            return Mathf.Abs(a.Data.startPos.x).CompareTo(Mathf.Abs(b.Data.startPos.x));
+        });
     }
 
     private void OnEnable()
@@ -398,13 +501,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         timeSlider.onValueChanged.RemoveAllListeners();
         LevelRecordManager.AddNewObject -= SetObjectToBeAdded;
         LevelRecordManager.PressTimerBar -= PressTimeBarWhilePlaying;
-        LevelRecordManager.instance.valueSliderHorizontal.onValueChanged.RemoveAllListeners();
+
 
 
 
     }
 
-    private float currentTime;
+    private float currentTime = 0;
     private bool isPlayingAtNormalTime = false;
     public void PlayNormalSpeed()
     {
@@ -474,7 +577,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             currentTime += Time.unscaledDeltaTime * FrameRateManager.BaseTimeScale;
             LevelRecordManager.SetGlobalTime?.Invoke(0, currentTime);
-            float totalSeconds = currentTime;
+            float totalSeconds = currentTime / FrameRateManager.BaseTimeScale;
 
             int minutes = Mathf.FloorToInt(totalSeconds / 60);
             int seconds = Mathf.FloorToInt(totalSeconds % 60);
@@ -518,7 +621,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         LevelRecordManager.SetGlobalTime?.Invoke(val, 0);
 
         // Convert time steps to real-world time (factoring in custom time scale)
-        float totalSeconds = (val * TimePerStep) * FrameRateManager.BaseTimeScale;
+        float totalSeconds = (val * TimePerStep) / FrameRateManager.BaseTimeScale;
 
         int minutes = Mathf.FloorToInt(totalSeconds / 60);
         int seconds = Mathf.FloorToInt(totalSeconds % 60);
@@ -555,6 +658,93 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             i++;
         }
         return null; // No valid parent found
+    }
+    [field: SerializeField] public GameObject projectileLinePrefab;
+    [field: SerializeField] public GameObject positionAtTimePrefab;
+    public Queue<GameObject> ProjectileLines { get; private set; } = new Queue<GameObject>();
+    public Queue<GameObject> PositionAtTimes { get; private set; } = new Queue<GameObject>();
+
+
+    private void CreatePools()
+    {
+        for (int i = 0; i < 80; i++)
+        {
+            if (i == 0)
+            {
+                ProjectileLines.Enqueue(projectileLinePrefab);
+                projectileLinePrefab.SetActive(false);
+            }
+
+            else
+            {
+                var o = Instantiate(projectileLinePrefab);
+                ProjectileLines.Enqueue(o);
+                o.SetActive(false);
+            }
+
+        }
+
+        // for (int i = 0; i < 40; i++)
+        // {
+        //     if (i == 0)
+        //     {
+        //         PositionAtTimes.Enqueue(positionAtTimePrefab);
+        //         positionAtTimePrefab.SetActive(false);
+        //     }
+
+        //     else
+        //     {
+        //         var o = Instantiate(positionAtTimePrefab);
+        //         PositionAtTimes.Enqueue(o);
+        //         o.SetActive(false);
+        //     }
+
+        // }
+
+    }
+
+    public GameObject ReturnPooledRecordingObject(int type)
+    {
+        if (type == 0)
+        {
+            if (PositionAtTimes.Count <= 0)
+            {
+                var o = Instantiate(positionAtTimePrefab);
+
+                return o;
+            }
+            else return PositionAtTimes.Dequeue();
+        }
+        else if (type == 1)
+        {
+            if (ProjectileLines.Count <= 0)
+            {
+                var o = Instantiate(projectileLinePrefab);
+
+                return o;
+            }
+            else return ProjectileLines.Dequeue();
+        }
+
+        else return null;
+
+    }
+
+    public void ReturnPooledObjectToQ(GameObject obj, int type)
+    {
+
+        obj.SetActive(false);
+        if (type == 0)
+        {
+
+            PositionAtTimes.Enqueue(obj);
+        }
+        else if (type == 1)
+        {
+
+            ProjectileLines.Enqueue(obj);
+        }
+
     }
 
 

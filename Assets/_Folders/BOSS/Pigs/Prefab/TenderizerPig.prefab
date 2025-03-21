@@ -794,6 +794,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3211451519360721835}
+  - component: {fileID: 6260373836478798542}
   - component: {fileID: 1497359128130943728}
   - component: {fileID: 6447823062168538188}
   - component: {fileID: 380209552114082525}
@@ -833,6 +834,33 @@ Transform:
   - {fileID: 5208108159602652117}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &6260373836478798542
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5053118216464345145}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 1
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!95 &1497359128130943728
 Animator:
   serializedVersion: 7
@@ -919,6 +947,9 @@ MonoBehaviour:
   eye: {fileID: 0}
   pupil: {fileID: 3595968126987387635}
   eyeRadius: 0.04
+  phaseOffset: 0
+  magPercent: 0
+  pigID: {fileID: 11400000, guid: 14d55fde027b04753845eb575b5f6f27, type: 2}
 --- !u!58 &1277107987063809660
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1031,13 +1062,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5611007544856240974}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.1999, y: -0.9757, z: 0}
-  m_LocalScale: {x: 0.830965, y: 0.8747, z: 0.8747}
+  m_LocalRotation: {x: 0, y: 0, z: -0.42498952, w: 0.9051983}
+  m_LocalPosition: {x: -0.01, y: -1.07, z: 0}
+  m_LocalScale: {x: 0.85, y: 0.8747, z: 0.8747}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3211451519360721835}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -50.3}
 --- !u!212 &6707124781231328652
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1507,14 +1538,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8049576594148610671}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4299, y: -1.0719, z: 0}
-  m_LocalScale: {x: 0.830965, y: 0.8747, z: 0.8747}
+  m_LocalRotation: {x: 0, y: 0, z: -0.42498952, w: 0.9051983}
+  m_LocalPosition: {x: 0.52, y: -1.19, z: 0}
+  m_LocalScale: {x: 0.85, y: 0.8747, z: 0.8747}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6429579565158813508}
   m_Father: {fileID: 3211451519360721835}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -50.3}
 --- !u!212 &3426209765911559573
 SpriteRenderer:
   m_ObjectHideFlags: 0

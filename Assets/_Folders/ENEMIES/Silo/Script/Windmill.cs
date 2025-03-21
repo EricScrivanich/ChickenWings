@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Windmill : MonoBehaviour
+public class Windmill : MonoBehaviour, IRecordableObject
 {
 
     [SerializeField] private Rigidbody2D fanRb;
@@ -24,6 +24,7 @@ public class Windmill : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         joint = GetComponent<HingeJoint2D>();
+        
     }
     private void OnEnable()
     {
@@ -41,7 +42,7 @@ public class Windmill : MonoBehaviour
             Debug.LogError("SpriteRenderer not found on windmill.");
             return;
         }
-        float desiredTotalHeight = Mathf.Abs(transform.position.y - BoundariesManager.GroundPosition + .15f);
+        float desiredTotalHeight = Mathf.Abs(transform.position.y - BoundariesManager.GroundPosition + .14f);
         sr.size = new Vector2(sr.size.x, desiredTotalHeight);
 
     }
@@ -77,5 +78,59 @@ public class Windmill : MonoBehaviour
             }
 
         }
+    }
+
+    public void ApplyRecordedData(RecordedDataStruct data)
+    {
+        transform.position = data.startPos;
+        bladeSpeed = data.speed;
+        if (data.type == 0) bladeSpeed *= -1;
+        startRot = Mathf.RoundToInt(data.delayInterval);
+        Vector3 scale = new Vector3(1, data.scale, 1);
+        foreach (Transform child in fanRb.gameObject.transform)
+        {
+            child.localScale = scale;
+        }
+
+        AdjustHeightToGround();
+        gameObject.SetActive(true);
+    }
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        bladeSpeed = data.speed;
+        if (data.type == 0) bladeSpeed *= -1;
+        startRot = Mathf.RoundToInt(data.delayInterval);
+        Vector3 scale = new Vector3(1, data.scale, 1);
+        foreach (Transform child in fanRb.gameObject.transform)
+        {
+            child.localScale = scale;
+        }
+
+        AdjustHeightToGround();
+
+
+
+    }
+
+    public bool ShowLine()
+    {
+        return false;
+    }
+
+    public float TimeAtCreateObject(int index)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        float rot = (bladeSpeed * time) + startRot;
+        fanRb.transform.eulerAngles = Vector3.forward * rot;
+        return new Vector2(currPos.x - (BoundariesManager.GroundSpeed * time), transform.position.y);
+    }
+    public float ReturnPhaseOffset(float x)
+    {
+        return 0;
     }
 }

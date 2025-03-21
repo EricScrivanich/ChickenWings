@@ -3,7 +3,7 @@ using UnityEngine;
 public class PigWaveMovement : MonoBehaviour, IRecordableObject
 {
     private Rigidbody2D rb;
-
+    [SerializeField] private bool useDynamicMag;
     [SerializeField] private float speed;
     private float _sineFrequency;
     [SerializeField] private float minSineMagnitude = 2.1f;
@@ -17,7 +17,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
     private float speedDiff;
 
     [SerializeField] private float magPercent;
-   
+
 
     [ExposedScriptableObject]
     [SerializeField] private PigsScriptableObject pigID;
@@ -32,7 +32,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
 
     void Start()
     {
-       
+
 
     }
 
@@ -42,17 +42,17 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
 
     }
 
-    // private void OnValidate()
-    // {
-    //     // _sineMagnitude = pigID.ReturnMag(xSpeed, magPercent);
-    //     // _sineFrequency = pigID.ReturnFreq(xSpeed, magPercent);
+    private void OnValidate()
+    {
+        // _sineMagnitude = pigID.ReturnMag(xSpeed, magPercent);
+        // _sineFrequency = pigID.ReturnFreq(xSpeed, magPercent);
 
-    //     pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
-    //     minSineMagnitude = _sineMagnitude - magDiff;
-    //     maxSineMagnitude = _sineMagnitude + magDiff;
+        pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        minSineMagnitude = _sineMagnitude - magDiff;
+        maxSineMagnitude = _sineMagnitude + magDiff;
 
-    //     // _sineFrequency = (2 * Mathf.PI) / desiredOscillationTime;
-    // }
+        // _sineFrequency = (2 * Mathf.PI) / desiredOscillationTime;
+    }
 
     private void OnEnable()
     {
@@ -118,6 +118,8 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         rb.MovePosition(_position + Vector2.up * period * dynamicMagnitude);
 
 
+
+
     }
 
     private void OnDrawGizmos()
@@ -141,7 +143,14 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
             // Move left by a fixed step size
             simulatedPosition += Vector2.left * stepSize * dir;
             float period = Mathf.Sin((simulatedPosition.x - startXX) * _sineFrequency);
-            float dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, Mathf.Abs(period));
+            Vector2 pos;
+            if (useDynamicMag)
+            {
+                float dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, Mathf.Abs(period));
+                pos = simulatedPosition + Vector2.up * period * dynamicMagnitude;
+            }
+            else pos = simulatedPosition + Vector2.up * period * _sineMagnitude;
+
 
             // Calculate the sine wave offset using the new movement logic
 
@@ -151,7 +160,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
 
 
             // Apply vertical offset
-            Vector2 pos = simulatedPosition + Vector2.up * period * dynamicMagnitude;
+
 
             // Draw the predicted movement
             Gizmos.DrawLine(previousPoint, pos);
@@ -159,8 +168,8 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         }
     }
 
-    
-   
+
+
 
     public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
     {
@@ -171,12 +180,17 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
 
         // Compute sine wave period at this x position
         float period = Mathf.Sin((xPos - phaseOffset) * _sineFrequency);
+        float dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, Mathf.Abs(period));
+        float yPos = currPos.y + (period * dynamicMagnitude);
+
+
+
 
         // Dynamically adjust sine magnitude using Lerp
-        float dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, Mathf.Abs(period));
+
 
         // Compute final vertical position
-        float yPos = currPos.y + (period * dynamicMagnitude);
+
 
         return new Vector2(xPos, yPos);
     }
@@ -189,6 +203,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
     public void ApplyRecordedData(RecordedDataStruct data)
     {
         transform.position = data.startPos;
+        _position = data.startPos;
         speed = data.speed;
         magPercent = data.magPercent;
         phaseOffset = data.delayInterval;
@@ -196,6 +211,10 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         minSineMagnitude = _sineMagnitude - magDiff;
         maxSineMagnitude = _sineMagnitude + magDiff;
+        transform.localScale = Vector3.one * (data.scale * pigID.baseScale);
+        if (data.speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
+
+        gameObject.SetActive(true);
     }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
@@ -203,6 +222,8 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         speed = data.speed;
         magPercent = data.magPercent;
         phaseOffset = data.delayInterval;
+        transform.localScale = Vector3.one * (data.scale * pigID.baseScale);
+        if (data.speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
 
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         minSineMagnitude = _sineMagnitude - magDiff;

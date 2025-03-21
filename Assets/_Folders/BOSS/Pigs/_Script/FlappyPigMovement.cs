@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class FlappyPigMovement : MonoBehaviour, IEggable
+public class FlappyPigMovement : MonoBehaviour, IEggable, IRecordableObject
 {
     public float scaleFactor;
     private bool hasFullyEntered;
@@ -127,8 +127,8 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
     void Start()
     {
-
-        playerTarget = GameObject.Find("Player").GetComponent<Transform>();
+        if (GameObject.Find("Player") != null)
+            playerTarget = GameObject.Find("Player").GetComponent<Transform>();
         pigMatHandler = GetComponent<PigMaterialHandler>();
 
 
@@ -256,7 +256,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
         col.offset = Vector2.zero;
         sprite.localPosition = Vector2.zero;
 
-        transform.localScale = BoundariesManager.vectorThree1 * scaleFactor;
+
         cackleTime = 0;
         anim.speed = 0;
 
@@ -427,7 +427,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
             MoveTowardsTarget(targetPosition);
         }
-        else
+        else if (playerTarget != null)
         {
             MoveTowardsTarget(playerTarget.position);  // Move directly towards the player
         }
@@ -599,5 +599,36 @@ public class FlappyPigMovement : MonoBehaviour, IEggable
 
     }
 
+    public void ApplyRecordedData(RecordedDataStruct data)
+    {
+        transform.position = data.startPos;
+        transform.localScale = BoundariesManager.vectorThree1 * data.scale * .9f;
+        scaleFactor = data.scale - .1f;
+        gameObject.SetActive(true);
+    }
 
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        transform.localScale = BoundariesManager.vectorThree1 * data.scale * .9f;
+    }
+
+    public bool ShowLine()
+    {
+        return false;
+    }
+
+    public float TimeAtCreateObject(int index)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        return currPos;
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        return 0;
+    }
 }

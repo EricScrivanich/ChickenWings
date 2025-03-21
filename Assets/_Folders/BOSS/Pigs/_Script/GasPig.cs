@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GasPig : MonoBehaviour
+public class GasPig : MonoBehaviour, IRecordableObject
 {
     public float speed;
     public float delay = 0;
     public float initialDelay;
 
 
-    [HideInInspector]
+    // [HideInInspector]
     public int id;
 
     private bool hasCrossedBoundary;
@@ -20,13 +20,15 @@ public class GasPig : MonoBehaviour
 
     [SerializeField] private Transform cloudSpawn;
 
+    [SerializeField] private SpriteRenderer gasTexture;
+
 
 
     private Animator anim;
+    private Rigidbody2D rb;
 
 
 
-    private float testTimer = 0;
 
     [SerializeField] private bool flying;
     private bool initialized;
@@ -36,6 +38,7 @@ public class GasPig : MonoBehaviour
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Start()
@@ -69,7 +72,7 @@ public class GasPig : MonoBehaviour
         }
         else
         {
-            transform.localScale = BoundariesManager.vectorThree1;
+            // transform.localScale = BoundariesManager.vectorThree1;
             anim.SetTrigger("Walk");
             StartCoroutine(CloudRoutine());
 
@@ -81,10 +84,15 @@ public class GasPig : MonoBehaviour
 
 
     // Update is called once per frame
+
+    private void FixedUpdate()
+    {
+        rb.MovePosition(rb.position + Vector2.left * speed * Time.fixedDeltaTime);
+    }
     void Update()
     {
-        testTimer += Time.deltaTime;
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
+
+        // transform.Translate(Vector2.left * speed * Time.deltaTime);
 
         if (flying && !hasCrossedBoundary)
         {
@@ -108,6 +116,7 @@ public class GasPig : MonoBehaviour
 
 
     }
+    WaitForSeconds awaiterConstant = new WaitForSeconds(.1f);
 
     private IEnumerator CloudRoutine()
     {
@@ -138,10 +147,11 @@ public class GasPig : MonoBehaviour
             // }
 
             anim.SetTrigger("FartTrigger");
-            yield return new WaitForSeconds(.1f);
+            yield return awaiterConstant;
             if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
                 AudioManager.instance.PlayFartSound();
-            yield return new WaitForSeconds(.1f);
+            yield return awaiterConstant;
+
 
 
             // Instantiate(cloud, cloudSpawn.position, Quaternion.identity, transform);
@@ -160,5 +170,171 @@ public class GasPig : MonoBehaviour
     {
         if (flying)
             SmokeTrailPool.OnDisableGasTrail?.Invoke(id);
+    }
+
+    public void ApplyRecordedData(RecordedDataStruct data)
+    {
+        // transform.position = data.startPos;
+        // if (!flying)
+        // {
+        //     speed = data.speed;
+
+        //     if (speed < BoundariesManager.GroundSpeed)
+        //     {
+        //         transform.localScale = Vector3.Scale(Vector3.one, BoundariesManager.FlippedXScale);
+        //     }
+        //     else transform.localScale = Vector3.one;
+
+
+
+        //     initialDelay = data.delayInterval * delay;
+        // }
+        // else
+        // {
+        //     speed = 8;
+
+
+        // }
+        // delay = data.timeInterval;
+
+        // gameObject.SetActive(true);
+        bool f = false;
+        if (!flying)
+        {
+            speed = data.speed;
+
+            if (speed < BoundariesManager.GroundSpeed)
+            {
+                transform.localScale = Vector3.Scale(Vector3.one * .9f, BoundariesManager.FlippedXScale);
+                f = true;
+            }
+            else transform.localScale = Vector3.one * .9f;
+
+
+
+            initialDelay = data.delayInterval * delay;
+        }
+        else
+        {
+            speed = 8;
+
+
+        }
+
+        transform.position = data.startPos;
+
+        // data.type
+        Initialize(speed, data.timeInterval, f, data.delayInterval);
+
+    }
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        if (!flying)
+        {
+            speed = data.speed;
+
+            if (speed < BoundariesManager.GroundSpeed)
+            {
+                transform.localScale = Vector3.Scale(Vector3.one * .9f, BoundariesManager.FlippedXScale);
+            }
+            else transform.localScale = Vector3.one * .9f;
+
+
+
+            initialDelay = data.delayInterval * delay;
+        }
+        else
+        {
+            speed = 8;
+
+
+        }
+        delay = data.timeInterval;
+
+    }
+
+    public bool ShowLine()
+    {
+        if (!flying)
+            return true;
+        else return false;
+    }
+
+    public float TimeAtCreateObject(int index)
+    {
+        return ((index * delay) + initialDelay);
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        if (flying)
+        {
+            Vector2 p = new Vector2(currPos.x + (-speed * time), currPos.y);
+            if (time <= delay)
+            {
+                if (p.x < BoundariesManager.leftBoundary)
+                {
+                    p.x = BoundariesManager.leftBoundary;
+
+                }
+                else
+                {
+                    SetTiledSpritePosition(gasTexture, currPos.x, p.x, currPos.y);
+
+                }
+
+
+            }
+            else
+            {
+                float gasPos = ((delay - time) * 2.1f) + currPos.x;
+
+                if (gasPos <= BoundariesManager.leftBoundary + 2)
+                {
+                    p.x = BoundariesManager.leftBoundary - .1f;
+                    gasTexture.gameObject.SetActive(false);
+                }
+                else
+                {
+                    if (p.x < BoundariesManager.leftBoundary)
+                    {
+                        p.x = BoundariesManager.leftBoundary;
+
+                    }
+                    SetTiledSpritePosition(gasTexture, gasPos, p.x, currPos.y);
+                }
+
+
+
+            }
+            return p;
+        }
+
+        else
+            return new Vector2(currPos.x + (-speed * time), currPos.y);
+    }
+
+    void SetTiledSpritePosition(SpriteRenderer spriteRenderer, float originX, float targetX, float y)
+    {
+        // Get the sprite's world width
+
+        if (!spriteRenderer.gameObject.activeInHierarchy) spriteRenderer.gameObject.SetActive(true);
+
+        float range = originX - targetX;
+        spriteRenderer.size = new Vector2(range, spriteRenderer.size.y);
+
+
+        // Calculate the new position: Since the pivot is on the right side, 
+        // we place the right edge at targetX
+
+
+        // Apply the position
+        spriteRenderer.transform.position = new Vector2(originX, y);
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        return 0;
     }
 }

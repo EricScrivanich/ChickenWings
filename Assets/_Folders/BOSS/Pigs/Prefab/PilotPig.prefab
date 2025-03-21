@@ -670,6 +670,7 @@ GameObject:
   - component: {fileID: 8593314813052039977}
   - component: {fileID: -2259727775895193576}
   - component: {fileID: -8150473846529898941}
+  - component: {fileID: 7455814697594661551}
   - component: {fileID: -4034670026731776184}
   m_Layer: 11
   m_Name: PilotPig
@@ -797,7 +798,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7067416515346818908}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3ddb33d42f3d4ea3aa9e68f03933811, type: 3}
   m_Name: 
@@ -821,6 +822,25 @@ SortingGroup:
   m_SortingLayer: 4
   m_SortingOrder: 1
   m_SortAtRoot: 0
+--- !u!114 &7455814697594661551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7067416515346818908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dae0a01a8a00348e9991d6f6efa5f5cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useDynamicMag: 0
+  speed: 3.9
+  minSineMagnitude: 3.4099998
+  maxSineMagnitude: 3.8899999
+  phaseOffset: -0.77
+  magPercent: 0.7
+  pigID: {fileID: 11400000, guid: c2fc04c9498a94696bb0b086f79e4038, type: 2}
 --- !u!114 &-4034670026731776184
 MonoBehaviour:
   m_ObjectHideFlags: 0

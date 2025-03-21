@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TenderizerPig : MonoBehaviour, ICollectible
+public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
 {
     public float speed;
     public bool hasHammer;
@@ -25,20 +25,35 @@ public class TenderizerPig : MonoBehaviour, ICollectible
 
     private bool flipped;
 
+    private float _sineMagnitude;
+    private float _sineFrequency;
+    private float magDiff;
+    [SerializeField] private float phaseOffset;
+    private float startX;
+
+    private float speedDiff;
+
+    [SerializeField] private float magPercent;
+
+
+
+    [SerializeField] private PigsScriptableObject pigID;
+    Vector2 _position;
+    private Rigidbody2D rb;
+
 
 
     private void Awake()
     {
         detection = GetComponent<CircleCollider2D>();
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
     private void Start()
     {
-        player = GameObject.Find("Player").GetComponent<Transform>();
-        anim = GetComponent<Animator>();
 
-
-
-
+        if (GameObject.Find("Player") != null)
+            player = GameObject.Find("Player").GetComponent<Transform>();
 
     }
 
@@ -49,14 +64,20 @@ public class TenderizerPig : MonoBehaviour, ICollectible
         frequency = baseFrequency + ((baseSpeed - Mathf.Abs(speed)) * .27f);
         initialY = transform.position.y;
         flipped = false;
+
         if (speed < 0)
         {
             flipped = true;
-            transform.eulerAngles = new Vector3(0, 180, 0);
-            speed *= -1;
-        }
 
-        detection.enabled = hasHammer;
+        }
+        // if (speed < 0)
+        // {
+        //     flipped = true;
+        //     transform.eulerAngles = new Vector3(0, 180, 0);
+        //     speed *= -1;
+        // }
+        if (detection != null)
+            detection.enabled = hasHammer;
         Hammer.SetActive(hasHammer);
 
     }
@@ -65,19 +86,29 @@ public class TenderizerPig : MonoBehaviour, ICollectible
     {
         Ticker.OnTickAction015 -= MoveEyesWithTicker;
     }
-    void Update()
+    // void Update()
+    // {
+    //     transform.Translate(Vector2.left * speed * Time.deltaTime);
+
+
+    //     float y = Mathf.Sin(transform.position.x * frequency) * amplitude + initialY;
+    //     transform.position = new Vector2(transform.position.x, y);
+
+    // }
+
+    private void FixedUpdate()
     {
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
+        _position += Vector2.left * Time.fixedDeltaTime * speed;
+
+        float period = Mathf.Sin((_position.x - startX) * _sineFrequency);
 
 
-        float y = Mathf.Sin(transform.position.x * frequency) * amplitude + initialY;
-        transform.position = new Vector2(transform.position.x, y);
 
+        rb.MovePosition(_position + Vector2.up * period * _sineMagnitude);
     }
-
     private void MoveEyesWithTicker()
     {
-    
+
         if (player != null && hasHammer)
         {
             Vector2 direction = player.position - pupil.position; // Calculate the direction to the player
@@ -135,6 +166,65 @@ public class TenderizerPig : MonoBehaviour, ICollectible
     private void PlaySound()
     {
         AudioManager.instance.PlayPigHammerSwingSound();
+    }
+
+    public void ApplyRecordedData(RecordedDataStruct data)
+    {
+        transform.position = data.startPos;
+        _position = data.startPos;
+        transform.localScale = Vector3.one * data.scale;
+        speed = data.speed;
+
+        if (speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
+        magPercent = data.magPercent;
+        phaseOffset = data.delayInterval;
+
+        pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        gameObject.SetActive(true);
+
+    }
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+
+        speed = data.speed;
+        transform.localScale = Vector3.one * data.scale;
+        if (speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
+        magPercent = data.magPercent;
+        phaseOffset = data.delayInterval;
+
+        pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+    }
+
+    public bool ShowLine()
+    {
+        return true;
+    }
+
+    public float TimeAtCreateObject(int index)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        float xPos = currPos.x + (-speed * time);
+
+        // Apply phase offset correction
+
+
+        // Compute sine wave period at this x position
+        float period = Mathf.Sin((xPos - phaseOffset) * _sineFrequency);
+        float yPos = currPos.y + (period * _sineMagnitude);
+
+
+
+        return new Vector2(xPos, yPos);
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        return x + (((Mathf.PI) / _sineFrequency));
     }
     // Update is called once per frame
 

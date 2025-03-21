@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -6,26 +7,26 @@ public class RecordableObjectPlacer : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
 
+    [SerializeField] private GameObject baseIcon;
+    [field: SerializeField] public string Title { get; private set; }
+
     [ExposedScriptableObject]
     public PigsScriptableObject pigID;
 
     [SerializeField] private SpriteRenderer xArrow;
     [SerializeField] private SpriteRenderer yArrow;
     [SerializeField] private GameObject timeStampPrefab;
+    [SerializeField] private GameObject timeStampProjectilePrefab;
+    [SerializeField] private bool useProjectile = false;
     private Transform[] timeStamps;
 
 
     [field: SerializeField] public short ID { get; private set; }
 
-    [SerializeField] private Color selectedOutlinesColor;
+
     [SerializeField] private SpriteRenderer[] selectedOutlines;
     [SerializeField] private SpriteRenderer fill;
     [SerializeField] private SpriteRenderer icon;
-
-
-
-    [SerializeField] private float lineRendTimeStep;
-    [SerializeField] private Transform touchColl;
 
     private Rigidbody2D rb;
     [SerializeField] private LevelCreatorColors colorSO;
@@ -46,7 +47,11 @@ public class RecordableObjectPlacer : MonoBehaviour
         Fart_Offset,
         Glide_Height,
         Glide_Offset,
-        Rotation
+        Rotation,
+        Blade_Speed,
+        Start_Rotation,
+        Fart_Length
+
     }
 
     [Header("Ranges and Default Values")]
@@ -61,6 +66,9 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     public EditableData[] editedData;
 
+    [SerializeField] private string typeTitle;
+    [SerializeField] private string[] typeOptions;
+
     [Header("Speed, Size, Magnitude, Time Interval, Delay, Type")]
 
 
@@ -72,10 +80,36 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     private bool isSelected = false;
 
-    // private bool movingRight = false;
+    private bool movingRight = false;
+    public int speedChanger
+    {
+        get
+        {
+            if (!movingRight) return 1;
+            return -1;
+        }
+    }
 
     private bool rbActive = true;
-    public int speedChanger { get; private set; } = 1;
+
+
+    [Header("Postioning Settings, is goudned adds gorund to minY")]
+
+    [SerializeField] private Vector2 minMaxY;
+    [SerializeField] private float minX;
+
+    public enum PostionType
+    {
+        AnySide,
+        RightSideOnly,
+
+        Grounded,
+        CenterOnly
+    }
+
+    [SerializeField] private PostionType _pType;
+
+    private SpriteRenderer sprite;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -84,6 +118,8 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
         RestoreArrowsDefault();
+
+
 
 
         if (!isSelected)
@@ -103,9 +139,19 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     }
 
+
+
+    public void HideBaseIcon(bool hide)
+    {
+        baseIcon.SetActive(!hide);
+    }
+
     public void SetIsSelected(bool selected)
     {
         isSelected = selected;
+
+        SetProjectileLines();
+
 
         if (isSelected)
         {
@@ -115,7 +161,8 @@ public class RecordableObjectPlacer : MonoBehaviour
                 s.enabled = true;
             }
             xArrow.gameObject.SetActive(true);
-            yArrow.gameObject.SetActive(true);
+            if (_pType != PostionType.Grounded || _pType != PostionType.CenterOnly)
+                yArrow.gameObject.SetActive(true);
             fill.enabled = true;
 
             return;
@@ -150,11 +197,15 @@ public class RecordableObjectPlacer : MonoBehaviour
         line = GetComponent<LineRenderer>();
         obj = prefab.GetComponent<IRecordableObject>();
         rb = prefab.GetComponent<Rigidbody2D>();
+        if (Title == "Ring")
+        {
+            sprite = prefab.GetComponent<SpriteRenderer>();
+        }
 
-        timeStamps = new Transform[colorSO.timeStampColors.Length];
 
         if (obj.ShowLine())
         {
+            timeStamps = new Transform[colorSO.timeStampColors.Length];
             for (int i = 0; i < colorSO.timeStampColors.Length; i++)
             {
                 if (i == 0)
@@ -179,9 +230,11 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
+
+
         foreach (var s in selectedOutlines)
         {
-            s.color = selectedOutlinesColor;
+            s.color = colorSO.SelectedPigOutlineColor;
             s.enabled = false;
         }
     }
@@ -189,18 +242,37 @@ public class RecordableObjectPlacer : MonoBehaviour
     public void CreateNew()
     {
 
-        Data = new RecordedDataStructDynamic(ID, transform.position, SpeedValues.z, 1, MagnitideValues.z, TimeIntervalValues.z, DelayOrPhaseOffsetValues.z, (short)TypeValues.z, LevelRecordManager.CurrentTimeStep, 0);
+        Data = new RecordedDataStructDynamic(ID, transform.position, SpeedValues.z, SizeValues.z, MagnitideValues.z, TimeIntervalValues.z, DelayOrPhaseOffsetValues.z, (short)TypeValues.z, LevelRecordManager.CurrentTimeStep, 0);
+
         Debug.Log("NEw object with scale of " + Data.scale);
         spawnedTimeStep = LevelRecordManager.CurrentTimeStep;
         unspawnedTimeStep = 40000;
 
+        UpdateBasePosition(Data.startPos);
 
 
-
-        UpdateObjectData();
+        // UpdateObjectData();
 
 
     }
+
+    public void LoadAssetFromSave(RecordedDataStructDynamic data)
+    {
+
+        Data = data;
+        transform.position = data.startPos;
+        spawnedTimeStep = data.spawnedStep;
+
+        if (data.speed < 0) movingRight = true;
+
+        unspawnedTimeStep = 40000;
+        UpdateBasePosition(Data.startPos);
+
+        // UpdateObjectData();
+
+
+    }
+
 
     public string FormatEnumName(EditableData data)
     {
@@ -222,24 +294,12 @@ public class RecordableObjectPlacer : MonoBehaviour
     //     }
     // }
 
-    public void LoadAssetFromSave(RecordedDataStructDynamic data)
-    {
-
-        Data = data;
-        transform.position = data.startPos;
-        spawnedTimeStep = data.spawnedStep;
-
-        unspawnedTimeStep = 40000;
-
-        UpdateObjectData();
-
-
-    }
 
     public void HandleClick(bool clicked, int arrowType)
     {
         if (clicked)
         {
+            if (_pType == PostionType.Grounded || _pType == PostionType.CenterOnly) yArrow.gameObject.SetActive(false);
             if (arrowType == 0)
             {
                 xArrow.color = colorSO.ArrowNullColor;
@@ -269,9 +329,11 @@ public class RecordableObjectPlacer : MonoBehaviour
         yArrow.color = colorSO.ArrowYDefaultColor;
         xArrow.transform.localScale = colorSO.arrowNormalScale;
         yArrow.transform.localScale = colorSO.arrowNormalScale;
+
+        if (_pType == PostionType.Grounded || _pType == PostionType.CenterOnly) yArrow.gameObject.SetActive(false);
     }
 
-    public void SetSelectedObject(LevelDataEditors[] floatSliders)
+    public void SetSelectedObject()
     {
         int checkedInt = 0;
 
@@ -280,36 +342,17 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
-        for (int i = 0; i < floatSliders.Length; i++)
+        for (int i = 0; i < editedData.Length; i++)
         {
-            // if (minMaxFloatsAndDefualt[i] == Vector3.zero)
-            // {
-            //     checkedInt++;
 
-            // }
-            // if (minMaxFloatsAndDefualt.Length > i + checkedInt && minMaxFloatsAndDefualt[i + checkedInt] == Vector3.zero)
-            // {
-            //     checkedInt++;
+            int index = i;
 
-            // }
-            // if (minMaxFloatsAndDefualt.Length > i + checkedInt && minMaxFloatsAndDefualt[i + checkedInt] == Vector3.zero)
-            // {
-            //     checkedInt++;
+            if (i == editedData.Length - 1) ValueEditorManager.instance.SendFloatValues(FormatEnumName(editedData[i]), index, true);
 
-            // }
-            if (i >= editedData.Length)
-            {
-                floatSliders[i].gameObject.SetActive(false);
-
-            }
-            else
-            {
-                floatSliders[i].gameObject.SetActive(true);
-                // floatSliders[i].SetDataForFloatSlider(FormatEnumName(editedData[i]), this, minMaxFloatsAndDefualt[i + checkedInt].x, minMaxFloatsAndDefualt[i + checkedInt].y, minMaxFloatsAndDefualt[i + checkedInt].z);
-                floatSliders[i].SetDataForFloatSlider(FormatEnumName(editedData[i]), false);
-            }
+            else ValueEditorManager.instance.SendFloatValues(FormatEnumName(editedData[i]), index, false);
 
         }
+        ValueEditorManager.instance.SendTypeValues(typeTitle, typeOptions);
 
     }
 
@@ -327,17 +370,114 @@ public class RecordableObjectPlacer : MonoBehaviour
         LevelRecordManager.SetGlobalTime -= UpdateObjectPosition;
         line.positionCount = 0;
 
+        if (projectileLines != null && projectileLines.Count > 0)
+        {
+            for (int i = 0; i < projectileLines.Count; i++)
+            {
+
+                if (projectileLines[i] != null)
+
+                    LevelRecordManager.instance.ReturnPooledObjectToQ(projectileLines[i], 1);
+
+            }
+            projectileLines = new List<GameObject>();
+        }
+
     }
 
-    // Update is called once per frame
+    public void DestroySelf()
+    {
+        for (int i = 0; i < projectileLines.Count; i++)
+        {
+            projectileLines[i].transform.parent = null;
+            LevelRecordManager.instance.ReturnPooledObjectToQ(projectileLines[i], 1);
+
+        }
+        projectileLines.Clear();
+        Destroy(this.gameObject);
+    }
+
+    public void UpdateBasePosition(Vector2 pos)
+    {
+        // if (Title == "Windmill") obj.ApplyCustomizedData(Data);
+        Debug.Log("Updating base position");
+
+        if (_pType == PostionType.Grounded)
+        {
+            transform.position = new Vector2(pos.x, BoundariesManager.GroundPosition + minMaxY.x);
+            Data.startPos = transform.position;
+
+            UpdateObjectData();
+
+
+            return;
+
+        }
+        else if (_pType == PostionType.AnySide)
+        {
+            // pos.y = Mathf.Clamp(pos.y, minMaxY.x, minMaxY.y);
+            // if (pos.x <)
+
+        }
+        else if (_pType == PostionType.CenterOnly)
+        {
+            pos.y = Mathf.Clamp(pos.y, minMaxY.x, minMaxY.y);
+            pos.x = Mathf.Clamp(pos.x, -minX, minX);
+            transform.position = pos;
+            Data.startPos = pos;
+            UpdateObjectData();
+
+            return;
+        }
+
+        transform.position = pos;
+        Data.startPos = pos;
+        if (Data.speed > 0 && pos.x < 0)
+        {
+            Data.speed *= -1;
+            movingRight = true;
+
+
+            return;
+        }
+        else if (Data.speed < 0 && pos.x > 0)
+        {
+            Data.speed *= -1;
+            movingRight = false;
+
+
+
+
+            return;
+
+        }
+        UpdateObjectData();
+        UpdateLineRenderer();
+        SetProjectileLines();
+    }
+
     public void UpdateObjectData(bool isScale = false)
     {
         obj.ApplyCustomizedData(Data);
+
         if ((Data.ID == 0 || Data.ID == 2) && isScale)
         {
             prefab.GetComponent<ScaleAdjuster>().SetScales();
         }
+
+        if (Title == "Ring")
+        {
+            sprite.color = colorSO.RingColors[Data.type];
+        }
+
         UpdateLineRenderer();
+        SetProjectileLines();
+
+        // if (Title == "Windmill")
+        // {
+        //     Vector2 nun = obj.PositionAtRelativeTime((LevelRecordManager.CurrentTimeStep - spawnedTimeStep) * LevelRecordManager.TimePerStep, transform.position, 0);
+
+        // }
         UpdateObjectPosition(LevelRecordManager.CurrentTimeStep, 0);
 
 
@@ -348,6 +488,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         if (realTime == 0 && timeStep < spawnedTimeStep)
         {
+            Debug.Log("Time step is less than spawned time step");
             gameObject.SetActive(false);
             return;
         }
@@ -355,12 +496,19 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         Vector2 pos = transform.position;
         float offset = obj.ReturnPhaseOffset(transform.position.x);
+
+
         float t;
         if (realTime != 0)
         {
             if (rbActive)
             {
                 SetLineColor(colorSO.NormalLineColor);
+                if (timeStamps != null)
+                    foreach (var o in timeStamps)
+                    {
+                        o.gameObject.SetActive(false);
+                    }
                 // rb.en
                 // touchColl.gameObject.SetActive(false);
                 rb.simulated = false;
@@ -388,6 +536,11 @@ public class RecordableObjectPlacer : MonoBehaviour
                 Debug.Log("Enabling rb with real time: " + realTime);
 
                 rb.simulated = true;
+                if (timeStamps != null)
+                    foreach (var o in timeStamps)
+                    {
+                        o.gameObject.SetActive(true);
+                    }
 
                 // touchColl.gameObject.SetActive(true);
                 rbActive = true;
@@ -416,7 +569,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         }
 
 
-        if ((Data.speed > 0 && p.x < BoundariesManager.leftBoundary) || (Data.speed < 0 && p.x > BoundariesManager.rightBoundary))
+        if ((Data.speed >= 0 && p.x < BoundariesManager.leftBoundary) || (Data.speed < 0 && p.x > BoundariesManager.rightBoundary))
         {
             if (timeStep == 0)
             {
@@ -437,6 +590,15 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
         prefab.transform.position = p;
+        offset = obj.ReturnPhaseOffset(transform.position.x);
+
+        if (Title == "Bomber" && offset < 0)
+        {
+            unspawnedTimeStep = LevelRecordManager.CurrentTimeStep;
+            gameObject.SetActive(false);
+
+            return;
+        }
 
         // if (rbActive)
         // {
@@ -450,38 +612,79 @@ public class RecordableObjectPlacer : MonoBehaviour
         line.startColor = col;
         line.endColor = col;
     }
-
-    public void UpdateBasePosition(Vector2 pos)
+    private List<GameObject> projectileLines = new List<GameObject>();
+    private void SetProjectileLines()
     {
-        transform.position = pos;
-        if (Data.speed > 0 && pos.x < 0)
-        {
-            Data.speed *= -1;
-            speedChanger = -1;
-            UpdateObjectData();
-        }
-        else if (Data.speed < 0 && pos.x > 0)
-        {
-            Data.speed *= -1;
-            speedChanger = 1;
 
-            UpdateObjectData();
+        if (isSelected && (ID == 10 || ID == 8))
+        {
+            float offset = obj.ReturnPhaseOffset(transform.position.x);
+            Vector2 pos = transform.position;
+            bool returnExtra = false;
+            for (int i = 0; i < 70; i++)
+            {
+                Vector2 p = obj.PositionAtRelativeTime(obj.TimeAtCreateObject(i), pos, offset);
+
+                if ((movingRight && p.x > BoundariesManager.rightBoundary) || (!movingRight && p.x < BoundariesManager.leftBoundary))
+                    returnExtra = true;
+
+                if (projectileLines.Count <= i)
+                {
+                    if (returnExtra) return;
+                    projectileLines.Add(LevelRecordManager.instance.ReturnPooledRecordingObject(1));
+
+
+                }
+
+                if (returnExtra)
+                {
+                    int start = i;
+                    int end = i;
+                    for (int n = i; n < projectileLines.Count; n++)
+                    {
+                        projectileLines[n].transform.parent = null;
+                        projectileLines[n].SetActive(false);
+                        LevelRecordManager.instance.ReturnPooledObjectToQ(projectileLines[n], 1);
+                        end = n;
+
+
+                    }
+
+                    projectileLines.RemoveRange(start, end - start);
+                }
+
+                projectileLines[i].transform.position = p;
+                // projectileLines[i].transform.parent = this.transform;
+                projectileLines[i].SetActive(true);
+            }
+
+
         }
-        Data.startPos = pos;
-        UpdateLineRenderer();
+        else if (projectileLines != null && projectileLines.Count > 0)
+        {
+            for (int i = 0; i < projectileLines.Count; i++)
+            {
+
+                if (projectileLines[i] != null)
+
+                    LevelRecordManager.instance.ReturnPooledObjectToQ(projectileLines[i], 1);
+
+            }
+            projectileLines = new List<GameObject>();
+        }
+
     }
+
 
     private void UpdateLineRenderer()
     {
         if (!obj.ShowLine()) return;
         // Start with zero points
-        bool movingRight = false;
-        if (transform.position.x < 0) movingRight = true;
-        else movingRight = false;
+
         Vector2 pos = transform.position;
         float offset = obj.ReturnPhaseOffset(transform.position.x);
         float checkTime = LevelRecordManager.CurrentTimeStep * LevelRecordManager.TimePerStep;
-        int currentTimeStep = LevelRecordManager.CurrentTimeStep;
+
 
         for (int i = 0; i < 1000; i++)
         {
@@ -507,8 +710,8 @@ public class RecordableObjectPlacer : MonoBehaviour
             }
 
             else
-                checkTime += LevelRecordManager.TimePerStep;
-            currentTimeStep++;
+                checkTime += .07f;
+
 
             // Stop adding points if it reaches boundary or max line length
             if ((movingRight && p.x > BoundariesManager.rightBoundary) ||

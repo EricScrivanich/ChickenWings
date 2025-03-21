@@ -234,7 +234,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
 
     public void SetCorrectRing()
     {
-        if (order == ID.CorrectRing)
+        if (ID != null && order == ID.CorrectRing)
         {
             sprite.material = ID.highlightedMaterial;
             backRing.material = ID.highlightedMaterial;
@@ -309,9 +309,14 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
     {
         // rb.velocity = Vector2.left * speed;
         correctCollision = false;
-        sprite.material = ID.defaultMaterial;
-        backRing.material = ID.defaultMaterial;
-        center.color = ID.CenterColor;
+
+        if (ID != null)
+        {
+            sprite.material = ID.defaultMaterial;
+            backRing.material = ID.defaultMaterial;
+            center.color = ID.CenterColor;
+        }
+
         originalSpeed = speed;
 
         float speedPercentage = Mathf.InverseLerp(lerpOffsetSpeedBasedOnRange.x, lerpOffsetSpeedBasedOnRange.y, MathF.Abs(originalSpeed));
@@ -339,8 +344,8 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
         ID.ringEvent.OnCheckOrder += SetCorrectRing;
         ID.ringEvent.OnCreateNewSequence += NewSetup;
         ID.ringEvent.DisableRings += DisableRings;
-
-        col.enabled = true;
+        if (col != null)
+            col.enabled = true;
 
         SetCorrectRing();
         // hasNotTriggered = true;
@@ -367,7 +372,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
         // isCorrect = false;
     }
 
-  
+
     public void ApplyRecordedData(RecordedDataStruct data)
     {
         transform.position = data.startPos;
@@ -380,7 +385,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
 
 
 
-        rb.rotation = data.timeInterval;
+        transform.eulerAngles = new Vector3(0, 0, data.timeInterval);
         // transform.ro
     }
     public float TimeAtCreateObject(int index)
@@ -401,7 +406,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
         transform.eulerAngles = new Vector3(0, 0, data.timeInterval);
     }
 
- 
+
 
     public bool ShowLine()
     {

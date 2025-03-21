@@ -8,8 +8,8 @@ public class FrameRateManager : MonoBehaviour
     private bool is60;
     private static int frameRate = 60;
     [SerializeField] private int targetFrameRate;
-    public static readonly float BaseTimeScale = .86f;
-    public static float TargetTimeScale = .86f;
+    public static readonly float BaseTimeScale = .9f;
+    public static float TargetTimeScale = .9f;
 
     public static Action<bool> OnChangeGameTimeScale;
 

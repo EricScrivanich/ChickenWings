@@ -18,6 +18,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     private float sliderSensitivity = 0.005f; // Adjust this value to control sensitivity
 
 
+
     private Vector2 pointerStartPos;
     private float initialSliderValue;
 
@@ -30,7 +31,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     private void OnEnable()
     {
 
-        LevelRecordManager.SetSelectedDataType += SetIfSelected;
+
         fillImage.enabled = false;
     }
 
@@ -38,7 +39,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     private void OnDisable()
     {
-        LevelRecordManager.SetSelectedDataType -= SetIfSelected;
+
 
     }
 
@@ -49,6 +50,12 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         {
             v = Mathf.Round(v * 10) / 10;
             recordedObj.Data.speed = v * recordedObj.speedChanger;
+            title.text = Type + ": " + v.ToString();
+        }
+        else if (Type == "Blade Speed")
+        {
+            v = Mathf.RoundToInt(v);
+            recordedObj.Data.speed = v;
             title.text = Type + ": " + v.ToString();
         }
 
@@ -88,10 +95,17 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             return;
         }
 
-        else if (Type == "Drop Delay" || Type == "Fart Delay")
+        else if (Type == "Drop Delay" || Type == "Fart Delay" || Type == "Fart Length")
         {
             v = Mathf.Round(v * 100) / 100;
             recordedObj.Data.timeInterval = v;
+            float t = v / FrameRateManager.BaseTimeScale;
+            t = Mathf.Round(t * 100) / 100;
+
+            title.text = Type + ": " + t.ToString();
+            SetMainSliderText();
+            recordedObj.UpdateObjectData();
+            return;
         }
         else if (Type == "Rotation")
         {
@@ -105,11 +119,24 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             return;
 
         }
+        else if (Type == "Start Rotation")
+        {
+            v = Mathf.RoundToInt(v);
+            // float m = Mathf.Abs(0 - v);
+            // v = Mathf.Abs(v);
+            recordedObj.Data.delayInterval = v;
+
+
+        }
 
         else if (Type == "Drop Offset")
         {
             v = Mathf.Round(v * 100) / 100;
+            title.text = Type + ": " + (v * 100).ToString() + "%";
             recordedObj.Data.scale = v;
+            SetMainSliderText();
+            recordedObj.UpdateObjectData();
+            return;
         }
 
 
@@ -123,7 +150,10 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     private void SetMainSliderText()
     {
         if (isSelected)
-            LevelRecordManager.instance.valueSliderText.text = title.text;
+        {
+            ValueEditorManager.instance.valueSliderText.text = title.text;
+        }
+
 
     }
 
@@ -131,12 +161,13 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
         isSelected = true;
         SetDataForFloatSlider(this.Type, true);
-        LevelRecordManager.SetSelectedDataType?.Invoke(Type);
+        ValueEditorManager.instance.SetSelectedType(Type);
+
         fillImage.enabled = true;
 
     }
 
-    private void SetIfSelected(string type)
+    public void SetIfSelected(string type)
     {
 
         if (isSelected && Type != type)
@@ -162,7 +193,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
 
 
-        LevelRecordManager.instance.valueSliderHorizontal.onValueChanged.RemoveAllListeners();
+        ValueEditorManager.instance.valueSliderHorizontal.onValueChanged.RemoveAllListeners();
         Type = type;
 
         // title.text = Type + ": " + val.ToString();
@@ -174,7 +205,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         // slider.maxValue = max;
         float v = 0;
 
-        if (Type == "Speed")
+        if (Type == "Speed" || Type == "Blade Speed")
         {
             if (setSlider)
                 SetSliderRange(recordedObj.SpeedValues);
@@ -192,14 +223,14 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             if (setSlider) SetSliderRange(recordedObj.MagnitideValues);
             v = recordedObj.Data.magPercent;
         }
-        else if (Type == "Jump Offset" || Type == "Fart Offset" | Type == "Glide Offset")
+        else if (Type == "Jump Offset" || Type == "Fart Offset" | Type == "Glide Offset" || Type == "Start Rotation")
         {
             if (setSlider) SetSliderRange(recordedObj.DelayOrPhaseOffsetValues);
             v = recordedObj.Data.delayInterval;
 
         }
 
-        else if (Type == "Drop Delay" || Type == "Fart Delay")
+        else if (Type == "Drop Delay" || Type == "Fart Delay" || Type == "Fart Length")
         {
             if (setSlider) SetSliderRange(recordedObj.TimeIntervalValues);
 
@@ -221,8 +252,8 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
         if (setSlider)
         {
-            LevelRecordManager.instance.valueSliderHorizontal.value = v;
-            LevelRecordManager.instance.valueSliderHorizontal.onValueChanged.AddListener(this.SetDataFromFloatSlider);
+            ValueEditorManager.instance.valueSliderHorizontal.value = v;
+            ValueEditorManager.instance.valueSliderHorizontal.onValueChanged.AddListener(this.SetDataFromFloatSlider);
 
         }
 
@@ -236,8 +267,8 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     public void SetSliderRange(Vector3 range)
     {
-        LevelRecordManager.instance.valueSliderHorizontal.minValue = range.x;
-        LevelRecordManager.instance.valueSliderHorizontal.maxValue = range.y;
+        ValueEditorManager.instance.valueSliderHorizontal.minValue = range.x;
+        ValueEditorManager.instance.valueSliderHorizontal.maxValue = range.y;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -264,9 +295,9 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             useDragValue = true;
 
             pointerStartPos = eventData.position;
-            startValue = LevelRecordManager.instance.valueSliderHorizontal.value;
-            minVal = LevelRecordManager.instance.valueSliderHorizontal.minValue;
-            maxVal = LevelRecordManager.instance.valueSliderHorizontal.maxValue;
+            startValue = ValueEditorManager.instance.valueSliderHorizontal.value;
+            minVal = ValueEditorManager.instance.valueSliderHorizontal.minValue;
+            maxVal = ValueEditorManager.instance.valueSliderHorizontal.maxValue;
             valueStep = Mathf.Abs(Mathf.Lerp(minVal, maxVal, .01f) - Mathf.Lerp(minVal, maxVal, 0));
 
         }
@@ -279,7 +310,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             float newSliderValue = Mathf.Clamp(startValue + (stepCount * valueStep), minVal, maxVal);
 
             // Apply the value to the slider
-            LevelRecordManager.instance.valueSliderHorizontal.value = newSliderValue;
+            ValueEditorManager.instance.valueSliderHorizontal.value = newSliderValue;
         }
 
         // Get the current slider reference

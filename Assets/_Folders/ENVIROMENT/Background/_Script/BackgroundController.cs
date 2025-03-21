@@ -31,19 +31,25 @@ public class BackgroundController : MonoBehaviour
 
     private const float ResetPosition = -51f;
     private const float Offset = 80f;
+    [SerializeField] private bool levelCreator = false;
 
-    
+
+    private Material[] layerMaterials;
+    private float[] textureScrollSpeeds; // Speed in texture coordinate space
+
+
+
     private void Awake()
     {
-
         BoundariesManager.GroundPosition = layers[0].transform.position.y + .6f;
         BoundariesManager.TopViewBoundary = topViewTransform.position.y;
+        layerMaterials = new Material[layers.Count];
+        // Initialize arrays
+        if (levelCreator)
+        {
 
-        // foreach (var obj in layers)
-        // {
-        //     obj.SetActive(true);
-        // }
-
+            textureScrollSpeeds = new float[layers.Count];
+        }
 
 
         for (int i = 0; i < layers.Count; i++)
@@ -56,21 +62,60 @@ public class BackgroundController : MonoBehaviour
             float spriteWidth = sprite.bounds.size.x;
 
             // Get the material from the renderer
-            Material mat = renderer.material;
+
 
             // Convert world speed to texture coordinate speed
-
-
             float textureSpeed = speeds[i] / spriteWidth;
 
             if (i == 0)
                 textureSpeed = BoundariesManager.GroundSpeed / spriteWidth;
 
-            mat.SetFloat("_TextureScrollXSpeed", textureSpeed);
+            layerMaterials[i] = renderer.material;
+            // Store texture scroll speed for later use
+            if (levelCreator)
+            {
+                textureScrollSpeeds[i] = textureSpeed * 5;
 
+            }
+
+
+            // Set initial scroll speed
+            layerMaterials[i].SetFloat("_TextureScrollXSpeed", textureSpeed);
         }
-
     }
+
+    /// <summary>
+    /// Sets all layer textures to the correct offset based on the given game time
+    /// </summary>
+
+    public void SetTextureOffsetsByTime(ushort gameStep, float realTime)
+    {
+        float gameTime = realTime;
+
+        if (realTime == 0) gameTime = gameStep * LevelRecordManager.TimePerStep;
+        for (int i = 0; i < layerMaterials.Length; i++)
+        {
+            // Calculate what the offset should be at this point in time
+            // Offset = (speed * time) % 1.0 to keep it within 0-1 range
+            float xOffset = (textureScrollSpeeds[i] * gameTime) % 1.0f;
+
+            // Set the offset directly instead of relying on continuous scrolling
+            layerMaterials[i].SetTextureOffset("_MainTex", new Vector2(xOffset, 0));
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (levelCreator)
+            LevelRecordManager.SetGlobalTime += SetTextureOffsetsByTime;
+    }
+    private void OnDisable()
+    {
+        if (levelCreator)
+            LevelRecordManager.SetGlobalTime -= SetTextureOffsetsByTime;
+    }
+
+
     private void Start()
     {
 

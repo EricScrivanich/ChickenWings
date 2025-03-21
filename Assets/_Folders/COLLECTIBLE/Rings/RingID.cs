@@ -99,7 +99,7 @@ public class RingID : ScriptableObject
 
     // }
 
-    public void GetParticles(Transform trans,float speed)
+    public void GetParticles(Transform trans, float speed)
     {
         var ps = particleSystemsQueue.Dequeue();
         ps.transform.position = trans.position;
@@ -183,11 +183,11 @@ public class RingID : ScriptableObject
         Pool.GetSonicWave(position);
 
     }
-    
+
 
     public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, float setSpeed)
     {
-        
+
         RingMovement ringScript = Pool.GetRing(this);
 
         ringScript.transform.position = setPosition;
@@ -204,12 +204,38 @@ public class RingID : ScriptableObject
         ringOrder++;
         if (particlesInUse < poolSize)
         {
-            Debug.Log("YES PARTILCE");
+
             particlesInUse++;
 
             // GetEffect(ringScript);
         }
 
+    }
+
+    public void SpawnRingWithData(RecordedDataStruct data)
+    {
+        RingMovement ringScript = Pool.GetRing(this);
+        ringScript.ApplyRecordedData(data);
+        ringScript.order = ringOrder;
+        ringList.Add(ringScript);
+        ringOrder++;
+        if (particlesInUse < poolSize)
+        {
+
+            particlesInUse++;
+
+            // GetEffect(ringScript);
+        }
+        ringScript.gameObject.SetActive(true);
+
+
+    }
+
+    public void SpawnBucketWithData(RecordedDataStruct data)
+    {
+        BucketScript bucketScript = Pool.GetBucket(this);
+        bucketScript.ApplyRecordedData(data);
+        ringOrder++;
     }
 
 

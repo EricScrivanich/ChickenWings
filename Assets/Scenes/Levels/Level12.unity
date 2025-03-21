@@ -719,7 +719,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  type: 0
   damageAmount: 1
+  raycastAngledCheckAmount: 0
+  origin: {fileID: 0}
+  raycastOffset: {x: 0, y: 0}
+  raycastDistance: 2
+  raycastAngle: 0
 --- !u!61 &199056569
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2041,7 +2047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shaderTypes: 3
+  currentShaderType: 4
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0
@@ -6141,6 +6147,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LevelIndex: 0
   sceneSO: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
+  barnObj: {fileID: 0}
+  eggButtonMoveScript: {fileID: 0}
   TriggerSectionActivateAfterEventType: {fileID: 0}
   activicationDelay: 0
   activateAfterDelay: []
@@ -9625,6 +9633,14 @@ PrefabInstance:
     - target: {fileID: 4763388207710993157, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 5174957847518183628, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -89
+      objectReference: {fileID: 0}
+    - target: {fileID: 5174957847518183628, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -128
       objectReference: {fileID: 0}
     - target: {fileID: 5571557343412231257, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_SizeDelta.x

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BucketScript : MonoBehaviour, ICollectible
+public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 {
     public RingID ID;
     private int ResetCounter = 0;
@@ -40,12 +40,14 @@ public class BucketScript : MonoBehaviour, ICollectible
 
     [SerializeField] private SpriteRenderer ringSpriteBack;
     private Animator anim;
+    private Rigidbody2D rb;
     private float slowDownDuration;
     // Start is called before the first frame update
 
     void Awake()
     {
         anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
         ringTransform = RingRim.GetComponent<Transform>();
         colliders = GetComponents<Collider2D>();
         coloredParticleSprite = ColoredParticles.GetComponent<SpriteRenderer>();
@@ -58,7 +60,7 @@ public class BucketScript : MonoBehaviour, ICollectible
     // Update is called once per frame
     void Update()
     {
-        transform.position += Vector3.left * speed * Time.deltaTime;
+        // transform.position += Vector3.left * speed * Time.deltaTime;
 
         if (isCorrect)
         {
@@ -87,6 +89,10 @@ public class BucketScript : MonoBehaviour, ICollectible
 
         }
 
+    }
+
+    private void FixedUpdate() {
+        rb.MovePosition(rb.position + Vector2.left * speed * Time.fixedDeltaTime);
     }
 
     private void HandleCorrectRing()
@@ -382,5 +388,56 @@ public class BucketScript : MonoBehaviour, ICollectible
 
 
 
+    }
+    public void ApplyRecordedData(RecordedDataStruct data)
+    {
+        transform.position = data.startPos;
+        speed = data.speed;
+        int scaleFlip = 1;
+        float addedXScale = 0;
+        if (data.scale > 1) addedXScale = (data.scale - 1) * .9f;
+        if (speed < 0) scaleFlip = -1;
+        transform.localScale = new Vector3(1.05f * scaleFlip + addedXScale, data.scale, data.scale);
+
+
+
+        rb.rotation = data.timeInterval;
+
+        gameObject.SetActive(true);
+        // transform.ro
+    }
+    public float TimeAtCreateObject(int index)
+    {
+        return 0;
+    }
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        speed = data.speed;
+        int scaleFlip = 1;
+        float addedXScale = 0;
+        if (data.scale > 1) addedXScale = (data.scale - 1) * .9f;
+        if (speed < 0) scaleFlip = -1;
+        transform.localScale = new Vector3(1.05f * scaleFlip + addedXScale, data.scale, data.scale);
+
+
+        transform.eulerAngles = new Vector3(0, 0, data.timeInterval);
+    }
+
+
+
+    public bool ShowLine()
+    {
+        return false;
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        return new Vector2(currPos.x + (-speed * time), currPos.y);
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        return 0;
     }
 }

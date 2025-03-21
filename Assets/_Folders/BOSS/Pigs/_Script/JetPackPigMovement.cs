@@ -72,35 +72,38 @@ public class JetPackPigMovement : MonoBehaviour, IRecordableObject
 
     }
 
-    
+
     public void ApplyRecordedData(RecordedDataStruct data)
     {
         transform.position = data.startPos;
         speed = data.speed;
         int scaleFlip = 1;
         float addedYScale = 0;
-        if (data.scale > 1) addedYScale = (data.scale - 1) * 1.5f;
+        if (data.scale > 1) addedYScale = (data.scale - 1) * 1.1f;
         if (speed < 0) scaleFlip = -1;
 
         transform.localScale = new Vector3(data.scale * scaleFlip * .9f, (.9f * data.scale) + addedYScale, 1);
+        gameObject.SetActive(true);
 
         // if (speed < 0) transform.localScale = BoundariesManager.FlippedXScale * (data.scale * .9f);
         // else
         //     transform.localScale = Vector3.one * (data.scale * .9f);
     }
 
-    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    public void     ApplyCustomizedData(RecordedDataStructDynamic data)
     {
         speed = data.speed;
         int scaleFlip = 1;
         float addedYScale = 0;
-        if (data.scale > 1) addedYScale = (data.scale - 1) * 1.5f;
+        if (data.scale > 1) addedYScale = (data.scale - 1) * 1.1f;
         if (speed < 0) scaleFlip = -1;
+
+        Debug.LogError("Applying custom data, speed is: " + speed);
 
         transform.localScale = new Vector3(data.scale * scaleFlip * .9f, (.9f * data.scale) + addedYScale, 1);
     }
 
-   
+
 
     public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
     {

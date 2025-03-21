@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using HellTap.PoolKit;
 
-public class MissilePigScript : MonoBehaviour
+public class MissilePigScript : MonoBehaviour, IRecordableObject
 {
     [SerializeField] private float turn_speed;
 
@@ -57,6 +57,7 @@ public class MissilePigScript : MonoBehaviour
 
     [SerializeField] private SpriteRenderer missileImage;
     private Animator anim;
+    private Rigidbody2D rb;
 
     private Vector2 lookDirection;
     private Vector2 normalDirection = new Vector2(1, 1);
@@ -75,12 +76,13 @@ public class MissilePigScript : MonoBehaviour
 
 
         pool = PoolKit.GetPool("ExplosionPool");
-
-        player = GameObject.Find("Player").GetComponent<Transform>();
+        if (GameObject.Find("Player") != null)
+            player = GameObject.Find("Player").GetComponent<Transform>();
     }
     void Awake()
     {
         anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
         initalMissilePosition = missileImage.transform.localPosition;
         initalLaunchAimPosition = launchAim.localPosition;
         initalLaunchAimRotation = launchAim.localEulerAngles;
@@ -89,26 +91,30 @@ public class MissilePigScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    // void Update()
+    // {
+    //     // transform.Translate(Vector2.left * speed * Time.deltaTime);
+    //     // if (transform.position.x < BoundariesManager.leftBoundary)
+    //     // {
+    //     //     gameObject.SetActive(false);
+    //     // }
+
+    //     if (player != null && canShoot && transform.position.x < 10 && transform.position.x > -9.5f)
+    //     {
+    //         float distance = player.transform.position.x - transform.position.x;
+    //         bool inRange = (distance > rangesMinMaxVar.x && distance < rangesMinMaxVar.y && Mathf.Abs(transform.position.y) < 12f);
+
+    //         if (inRange)
+    //         {
+    //             StartCoroutine(LaunchMissileNew());
+    //             canShoot = false;
+
+    //         }
+    //     }
+    // }
+    private void FixedUpdate()
     {
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
-        // if (transform.position.x < BoundariesManager.leftBoundary)
-        // {
-        //     gameObject.SetActive(false);
-        // }
-
-        if (player != null && canShoot && transform.position.x < 10 && transform.position.x > -9.5f)
-        {
-            float distance = player.transform.position.x - transform.position.x;
-            bool inRange = (distance > rangesMinMaxVar.x && distance < rangesMinMaxVar.y && Mathf.Abs(transform.position.y) < 12f);
-
-            if (inRange)
-            {
-                StartCoroutine(LaunchMissileNew());
-                canShoot = false;
-
-            }
-        }
+        rb.MovePosition(rb.position + Vector2.left * speed * Time.fixedDeltaTime);
     }
 
     private IEnumerator LaunchMissileNew()
@@ -417,8 +423,20 @@ public class MissilePigScript : MonoBehaviour
     {
         if (player != null)
         {
+            if (canShoot && transform.position.x < 10 && transform.position.x > -9.5f)
+            {
+                float distance = player.transform.position.x - transform.position.x;
+                bool inRange = (distance > rangesMinMaxVar.x && distance < rangesMinMaxVar.y && Mathf.Abs(transform.position.y) < 12f);
+
+                if (inRange)
+                {
+                    StartCoroutine(LaunchMissileNew());
+                    canShoot = false;
+
+                }
+            }
             Vector2 direction = player.position - pupil.position; // Calculate the direction to the player
-            // Ensure it's 2D
+                                                                  // Ensure it's 2D
             direction.Normalize(); // Normalize the direction
 
             if (flipped)
@@ -428,8 +446,9 @@ public class MissilePigScript : MonoBehaviour
 
             // Move the pupil within the eye's radius
             pupil.localPosition = direction * .05f;
-        }
 
+
+        }
     }
 
     private void OnDisable()
@@ -437,7 +456,7 @@ public class MissilePigScript : MonoBehaviour
         Ticker.OnTickAction015 -= MoveEyesWithTicker;
     }
 
-    public void Initialize(float xPos, int type, int moveType)
+    public void Initialize(float xPos, int type, int moveType, bool skip = false)
     {
         isInitialized = true;
         missileImage.enabled = true;
@@ -452,19 +471,32 @@ public class MissilePigScript : MonoBehaviour
         bool flippedP = false;
         bool flippedW = false;
 
+        if (speed < BoundariesManager.GroundSpeed)
+        {
+            flippedP = true;
+        }
         if (type == 1)
         {
-            flippedP = true;
-        }
-        else if (type == 2)
-        {
             flippedW = true;
         }
-        else if (type == 3)
-        {
-            flippedW = true;
-            flippedP = true;
-        }
+
+        // {
+        //     flippedP = true;
+        // }
+
+        // if (type == 1)
+        // {
+        //     flippedP = true;
+        // }
+        // else if (type == 2)
+        // {
+        //     flippedW = true;
+        // }
+        // else if (type == 3)
+        // {
+        //     flippedW = true;
+        //     flippedP = true;
+        // }
 
 
 
@@ -475,7 +507,7 @@ public class MissilePigScript : MonoBehaviour
         if (flippedP)
         {
 
-            speed = flippedMoveSpeed;
+            // speed = flippedMoveSpeed;
             anim.speed = 1.4f;
             transform.rotation = Quaternion.Euler(0f, 180f, 0f);
 
@@ -497,7 +529,7 @@ public class MissilePigScript : MonoBehaviour
         }
         else
         {
-            speed = normalMoveSpeed;
+            // speed = normalMoveSpeed;
             anim.speed = 1f;
 
 
@@ -532,10 +564,58 @@ public class MissilePigScript : MonoBehaviour
 
         }
 
+        if (!skip)
+        {
+            transform.position = new Vector2(xPos, BoundariesManager.GroundPosition + .67f);
+            gameObject.SetActive(true);
+        }
 
-        transform.position = new Vector2(xPos, BoundariesManager.GroundPosition + .67f);
-        gameObject.SetActive(true);
 
+    }
+
+    public void ApplyRecordedData(RecordedDataStruct data)
+    {
+        // transform.position = data.startPos;
+        speed = data.speed;
+        if (speed < BoundariesManager.GroundSpeed)
+        {
+            transform.localScale = Vector3.Scale((Vector3.one * .9f), BoundariesManager.FlippedXScale);
+        }
+        else transform.localScale = Vector3.one * .9f;
+        Initialize(data.startPos.x, data.type, 0, false);
+
+    }
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        speed = data.speed;
+        Initialize(0, data.type, 0, true);
+        // if (speed < BoundariesManager.GroundSpeed)
+        // {
+        //     transform.localScale = Vector3.Scale((Vector3.one * .9f), BoundariesManager.FlippedXScale);
+        // }
+        // else transform.localScale = Vector3.one * .9f;
+
+    }
+
+    public bool ShowLine()
+    {
+        return true;
+    }
+
+    public float TimeAtCreateObject(int index)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        return new Vector2(currPos.x - (time * speed), currPos.y);
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        return 0;
     }
 
     // private void OnEnable()

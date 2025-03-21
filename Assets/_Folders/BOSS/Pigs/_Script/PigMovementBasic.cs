@@ -9,17 +9,17 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
     [ExposedScriptableObject]
     [SerializeField] private PigsScriptableObject pigID;
-    [Header("SpriteObjects")]
-    [SerializeField] private Transform frontLegs;
-    [SerializeField] private Transform backLegs;
-    [SerializeField] private Transform wings;
-    [SerializeField] private Transform tail;
-    [SerializeField] private Transform body;
-    [Header("SpritePositions")]
-    [SerializeField] private Transform frontLegsPosition;
-    [SerializeField] private Transform backLegsPosition;
-    [SerializeField] private Transform wingsPosition;
-    [SerializeField] private Transform tailPosition;
+    // [Header("SpriteObjects")]
+    // [SerializeField] private Transform frontLegs;
+    // [SerializeField] private Transform backLegs;
+    // [SerializeField] private Transform wings;
+    // [SerializeField] private Transform tail;
+    // [SerializeField] private Transform body;
+    // [Header("SpritePositions")]
+    // [SerializeField] private Transform frontLegsPosition;
+    // [SerializeField] private Transform backLegsPosition;
+    // [SerializeField] private Transform wingsPosition;
+    // [SerializeField] private Transform tailPosition;
 
 
 
@@ -50,7 +50,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
     private float initialY;
 
-    [SerializeField] private bool flapMovement;
+
 
 
     // [SerializeField] private float duration;
@@ -95,16 +95,13 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
 
         jumpForce = new Vector2(xSpeed, addYForce);
-        _position = transform.position;
-        _axis = transform.up;
-        _direction = -transform.right;
 
         upGlide = false;
         downGlide = false;
 
         // rb.velocity = new Vector2(xSpeed, 0);
         justJumped = false;
-        if (testobj != null) StartCoroutine(Test());
+
 
         // anim.SetTrigger("FlapTrigger");
         // Invoke("GlideDown", invokeTime);
@@ -127,11 +124,6 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
     }
 
-    private IEnumerator Test()
-    {
-        yield return new WaitForSeconds(testWaitTime);
-        testobj.SetActive(true);
-    }
 
 
     [SerializeField] private float magDiff;
@@ -145,14 +137,13 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
     private float startX;
     private void OnEnable()
     {
-        startTime = Time.time;
-        pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
-        minSineMagnitude = _sineMagnitude - magDiff;
-        maxSineMagnitude = _sineMagnitude + magDiff;
-        startX = transform.position.x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
+
         if (!hasInitialized)
         {
             initialY = transform.position.y;
+            _position = transform.position;
+            _axis = transform.up;
+            _direction = -transform.right;
 
 
 
@@ -346,7 +337,12 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
     }
 
-
+    private void OnValidate()
+    {
+        pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        minSineMagnitude = _sineMagnitude - magDiff;
+        maxSineMagnitude = _sineMagnitude + magDiff;
+    }
     public void InitializePig()
     {
 
@@ -355,9 +351,18 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
             gameObject.SetActive(false);
         }
         initialY = transform.position.y;
-        // anim.speed = 0;
+
 
         // Invoke("SetAnimSpeed", Random.Range(0f, .5f));
+        _position = transform.position;
+        _axis = transform.up;
+        _direction = -transform.right;
+
+
+        pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        minSineMagnitude = _sineMagnitude - magDiff;
+        maxSineMagnitude = _sineMagnitude + magDiff;
+        startX = transform.position.x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
 
 
         // body.localScale = new Vector3(((.8f - Mathf.Abs(transform.localScale.x)) * .8f) + 1, 1, 1);
@@ -373,7 +378,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
     }
 
-    
+
 
     public void ApplyRecordedData(RecordedDataStruct data)
     {
@@ -385,7 +390,13 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
         if (data.speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
         xSpeed = data.speed;
         magPercent = data.magPercent;
+        pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        minSineMagnitude = _sineMagnitude - magDiff;
+        maxSineMagnitude = _sineMagnitude + magDiff;
+        startX = transform.position.x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
 
+        gameObject.SetActive(true);
+        
 
 
 
@@ -394,9 +405,9 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
     {
 
 
+       
+       
         transform.localScale = Vector3.one * (data.scale * pigID.baseScale);
-        Debug.Log("APPLIED SCLAE OF: " + data.scale);
-
         if (data.speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
         xSpeed = data.speed;
         magPercent = data.magPercent;

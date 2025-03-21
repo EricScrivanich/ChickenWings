@@ -9,7 +9,7 @@ public class SmokeTrailPool : MonoBehaviour
     [SerializeField] private PlayerID player;
     [SerializeField] private int gasCloudPoolSize;
     private SmokeTrailLineNew[] jetPackSmokeTrails;
-    private SmokeTrailLineNew[] gasSmokeTrails = new SmokeTrailLineNew[2];
+    private SmokeTrailLineNew[] gasSmokeTrails;
 
     private GasCloud[] gasClouds;
 
@@ -34,7 +34,7 @@ public class SmokeTrailPool : MonoBehaviour
 
 
 
-    private ParticleSystem[] gasParticleSystems = new ParticleSystem[2];
+    private ParticleSystem[] gasParticleSystems;
 
 
 
@@ -65,7 +65,10 @@ public class SmokeTrailPool : MonoBehaviour
 
     public void SetGasPigFlyingPoolSize(int s)
     {
+        Debug.LogError("Gas Pig Flying Pool Size is " + s);
         gasPigFlyingPoolSize = s;
+        gasSmokeTrails = new SmokeTrailLineNew[s];
+        gasParticleSystems = new ParticleSystem[s];
     }
     void Start()
     {
@@ -215,12 +218,12 @@ public class SmokeTrailPool : MonoBehaviour
         //     currentSmokeIndex = 0;
 
     }
-
+    private WaitForSeconds delay = new WaitForSeconds(13);
     private IEnumerator GasCloudCourintine(int id, float delay)
     {
         yield return new WaitForSeconds(delay);
         gasParticleSystems[id].Stop();
-        yield return new WaitForSeconds(13);
+        yield return delay;
         player.NewGasParticles(gasParticleSystems[id].transform.position.y, false);
 
     }

@@ -363,6 +363,7 @@ GameObject:
   - component: {fileID: 3164253519135378300}
   - component: {fileID: 8267107679454248672}
   - component: {fileID: 2055917171654855731}
+  - component: {fileID: 7355525079858446110}
   - component: {fileID: 8632549078930744658}
   m_Layer: 11
   m_Name: BigPig
@@ -430,7 +431,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2529404850862653700}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66cb3f585d77b4318ba1a16757ef45b2, type: 3}
   m_Name: 
@@ -449,10 +450,10 @@ MonoBehaviour:
   legObject: {fileID: 1044796378813754421}
   tailObject: {fileID: 1259376156917655193}
   line: {fileID: 0}
-  predictionSteps: 50
-  _sineFrequency: 5
+  predictionSteps: 120
+  _sineFrequency: 1
   _sineMagnitude: 2.5
-  predictionTime: 0
+  predictionTime: 15
   gameTime: 0
 --- !u!95 &3164253519135378300
 Animator:
@@ -526,6 +527,41 @@ SortingGroup:
   m_SortingLayer: 4
   m_SortingOrder: -1
   m_SortAtRoot: 0
+--- !u!114 &7355525079858446110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2529404850862653700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 359615f741359444eb5b59985b4112a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0
+  headSprite: {fileID: 0}
+  pigID: {fileID: 11400000, guid: 6e10377558dea4e03b11390332d646cb, type: 2}
+  addYForce: 0
+  belowAmount: 0
+  testobj: {fileID: 0}
+  ySpeed: 2.42
+  xSpeed: 5
+  amplitude: 0
+  frequency: -1.23
+  R: 0
+  sinDownSpeed: 0.96
+  _sineFrequency: 0.8808571
+  _sineMagnitude: 1.0628572
+  desiredOscillationTime: 4.74
+  offsetX: 0.22
+  minSineMagnitude: 1.0128572
+  maxSineMagnitude: 1.1128571
+  flapAnimStart: 0.1
+  testWaitTime: 2
+  phaseOffset: 0.82
+  magPercent: 0.04
+  magDiff: 0.049999997
 --- !u!114 &8632549078930744658
 MonoBehaviour:
   m_ObjectHideFlags: 0
