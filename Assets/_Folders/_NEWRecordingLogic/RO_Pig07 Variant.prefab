@@ -100,12 +100,28 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: _pType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: prefab
       value: 
       objectReference: {fileID: 161269931233423592}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <ID>k__BackingField
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: editedData.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: 'editedData.Array.data[0]'
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <DataType>k__BackingField
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: selectedOutlines.Array.size
@@ -116,12 +132,56 @@ PrefabInstance:
       value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <SpeedValues>k__BackingField.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <SpeedValues>k__BackingField.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <SpeedValues>k__BackingField.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: 'selectedOutlines.Array.data[0]'
       value: 
       objectReference: {fileID: 9040887131758137894}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <MagnitideValues>k__BackingField.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <MagnitideValues>k__BackingField.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <MagnitideValues>k__BackingField.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].x
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].y
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2586524398626405546, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: m_Name
       value: RO_Pig07 Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 3605845006182627470, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4501222471741300441, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: m_LocalPosition.x
@@ -222,6 +282,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4266575289827028882}
     m_Modifications:
+    - target: {fileID: 1471339132778416866, guid: e2f0635f46b0c4ca485bde04bfc61c25, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1471339132778416866, guid: e2f0635f46b0c4ca485bde04bfc61c25, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -884308203
+      objectReference: {fileID: 0}
     - target: {fileID: 1686553144424523129, guid: e2f0635f46b0c4ca485bde04bfc61c25, type: 3}
       propertyPath: m_SortingLayer
       value: 4

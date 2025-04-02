@@ -4,11 +4,14 @@ public interface IRecordableObject
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    void ApplyRecordedData(RecordedDataStruct data);
+    // void ApplyRecordedData(RecordedDataStruct data);
+
+    void ApplyFloatOneData(DataStructFloatOne data);
+    void ApplyFloatTwoData(DataStructFloatTwo data);
+    void ApplyFloatThreeData(DataStructFloatThree data);
+    void ApplyFloatFourData(DataStructFloatFour data);
+    void ApplyFloatFiveData(DataStructFloatFive data);
     void ApplyCustomizedData(RecordedDataStructDynamic data);
-
-
-
 
     bool ShowLine();
 

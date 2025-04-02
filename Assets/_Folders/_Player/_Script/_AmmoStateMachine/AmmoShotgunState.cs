@@ -21,7 +21,7 @@ public class AmmoShotgunState : AmmoBaseState
 
     private Vector2 startPos;
 
-    private int dragThreshold = 80;
+    private int dragThreshold = 200;
     private float rotationTarget;
 
 

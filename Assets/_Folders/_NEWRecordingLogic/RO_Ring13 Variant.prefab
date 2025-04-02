@@ -223,6 +223,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 961106156478440806, guid: 0dc39bb21ad1c473396b51a04708ea11, type: 3}
   m_PrefabInstance: {fileID: 4149160181468391290}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &4214839203542318886 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 282278578045442140, guid: 0dc39bb21ad1c473396b51a04708ea11, type: 3}
+  m_PrefabInstance: {fileID: 4149160181468391290}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5770054952035179072
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -244,24 +249,40 @@ PrefabInstance:
       value: Type
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: floatOneIsSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: sprites.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <ID>k__BackingField
-      value: 13
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: editedData.Array.size
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: 'sprites.Array.data[0]'
+      value: 
+      objectReference: {fileID: 4214839203542318886}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <Title>k__BackingField
       value: Ring
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: typeOptions.Array.size
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: 'editedData.Array.data[2]'
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <DataType>k__BackingField
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: 'typeOptions.Array.data[0]'
@@ -326,6 +347,42 @@ PrefabInstance:
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: minMaxFloatsAndDefualt.Array.data[2].x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].y
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].z
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[1].x
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[1].y
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[1].z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[2].x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[2].y
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 2586524398626405546, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: m_Name

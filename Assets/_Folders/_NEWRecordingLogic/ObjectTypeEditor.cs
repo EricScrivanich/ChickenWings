@@ -9,7 +9,7 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
     private string Type;
 
     private string[] typesByIndex;
-    private short currentType;
+    private ushort currentType;
     private Image fillImage;
     private bool isSelected;
 
@@ -45,7 +45,7 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
 
 
 
-        short val = (short)nextIndex;
+        ushort val = (ushort)nextIndex;
         currentType = val;
 
 
@@ -72,6 +72,8 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
     public void OnPress()
     {
         isSelected = true;
+
+        ValueEditorManager.instance.ShowSlider(false);
 
         ValueEditorManager.instance.SetSelectedType(Type);
 

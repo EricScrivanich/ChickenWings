@@ -4,31 +4,32 @@ using UnityEngine;
 public struct RecordedDataStructDynamic
 {
     public short ID;
+    public ushort type;
+
     public ushort spawnedStep;
     public ushort unspawnedStep;
     public Vector2 startPos;
-    public float speed;
-    public float scale;
+    public float float1;
+    public float float2;
 
-    public float magPercent;
-    public float timeInterval;
-    public float delayInterval;
-    public short type;
-
+    public float float3;
+    public float float4;
+    public float float5;
 
 
-    public RecordedDataStructDynamic(short id, Vector2 pos, float sp, float sc, float m, float t, float d, short b, ushort ss, ushort us)
+
+    public RecordedDataStructDynamic(short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep)
     {
         this.ID = id;
+        this.type = typ;
         this.startPos = pos;
-        this.speed = sp;
-        this.scale = sc;
-        this.magPercent = m;
-        this.timeInterval = t;
-        this.delayInterval = d;
-        this.type = b;
-        this.spawnedStep = ss;
-        this.unspawnedStep = us;
+        this.float1 = f1;
+        this.float2 = f2;
+        this.float3 = f3;
+        this.float4 = f4;
+        this.float5 = f5;
+        this.spawnedStep = spawnStep;
+        this.unspawnedStep = unspawnStep;
 
     }
 }

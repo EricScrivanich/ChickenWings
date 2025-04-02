@@ -599,17 +599,36 @@ public class FlappyPigMovement : MonoBehaviour, IEggable, IRecordableObject
 
     }
 
-    public void ApplyRecordedData(RecordedDataStruct data)
+    
+    public void ApplyFloatOneData(DataStructFloatOne data)
     {
         transform.position = data.startPos;
-        transform.localScale = BoundariesManager.vectorThree1 * data.scale * .9f;
-        scaleFactor = data.scale - .1f;
+        transform.localScale = BoundariesManager.vectorThree1 * data.float1 * .9f;
+        scaleFactor = data.float1 - .1f;
         gameObject.SetActive(true);
+
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+
     }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
-        transform.localScale = BoundariesManager.vectorThree1 * data.scale * .9f;
+        transform.localScale = BoundariesManager.vectorThree1 * data.float1 * .9f;
     }
 
     public bool ShowLine()

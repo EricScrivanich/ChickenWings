@@ -35,11 +35,11 @@ RectTransform:
   - {fileID: 7889959407241243319}
   m_Father: {fileID: 1465214727300934074}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -230, y: 20}
-  m_SizeDelta: {x: 425.7, y: 148.9}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -88, y: 20}
+  m_SizeDelta: {x: 310.9, y: 148.9}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &2024927913433396971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57,8 +57,8 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: -18.86
+  m_ChildAlignment: 5
+  m_Spacing: -80
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -81,9 +81,22 @@ MonoBehaviour:
   infiniteLives: 0
   infinitySymbol: {fileID: 0}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  spriteSwitchDelay: 0
-  eggImages: []
-  eggSprites: []
+  spriteSwitchDelay: 0.1
+  eggPrefab: {fileID: 4330020950250227619, guid: 2377cf21fab9046cb914078d7ec91abc, type: 3}
+  eggSprites:
+  - {fileID: -1350651719, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  - {fileID: -1119345771, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  - {fileID: 1515030935, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  - {fileID: 361797146, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  - {fileID: 1887342085, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  - {fileID: 531734507, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  - {fileID: -843697136, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  - {fileID: -735211228, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  - {fileID: 325698672, guid: 929736b4994b34e1691928e1a18fc2d5, type: 3}
+  baseWidth: 130
+  addedWidthPerEgg: 80
+  baseSpacing: -90
+  spacingPerLife: 15
 --- !u!1 &7829778165045570849
 GameObject:
   m_ObjectHideFlags: 0
@@ -128,6 +141,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1359502505218366316}
     m_Modifications:
+    - target: {fileID: 2567189567223446206, guid: 2377cf21fab9046cb914078d7ec91abc, type: 3}
+      propertyPath: m_Maskable
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4330020950250227619, guid: 2377cf21fab9046cb914078d7ec91abc, type: 3}
       propertyPath: m_Name
       value: EggUI (2)

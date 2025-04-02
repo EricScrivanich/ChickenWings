@@ -29,6 +29,7 @@ public class ProgressBar : MonoBehaviour
     private Vector3 startPosition;
     private Vector3 endPosition;
     private bool stopUpdate;
+    private bool showFinish = true;
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +63,7 @@ public class ProgressBar : MonoBehaviour
     private void Awake()
     {
         levelManagerID.outputEvent.OnGetLevelTime += SetDuration;
+        levelManagerID.outputEvent.OnGetLevelTimeNew += SetDurationNew;
         ResetManager.GameOverEvent += OnGameOver;
 
     }
@@ -75,11 +77,18 @@ public class ProgressBar : MonoBehaviour
     {
         duration = d;
     }
+    void SetDurationNew(float total, float starting)
+    {
+        duration = total;
+        actualTime = starting;
+        showFinish = false;
+    }
 
     void FinishLevel()
     {
         chicken.GetComponent<Image>().DOFade(0, .4f);
-        Instantiate(FinishLineEgg, FinishLineEggSpawnPostion, Quaternion.identity);
+        if (showFinish)
+            Instantiate(FinishLineEgg, FinishLineEggSpawnPostion, Quaternion.identity);
 
         fill.DOColor(colorSO.normalButtonColorFull, .3f).OnComplete(finishedTween);
 
@@ -159,6 +168,8 @@ public class ProgressBar : MonoBehaviour
     private void OnDisable()
     {
         levelManagerID.outputEvent.OnGetLevelTime -= SetDuration;
+        levelManagerID.outputEvent.OnGetLevelTimeNew -= SetDurationNew;
+
         ResetManager.GameOverEvent -= OnGameOver;
 
         if (finishSeq != null && finishSeq.IsPlaying())

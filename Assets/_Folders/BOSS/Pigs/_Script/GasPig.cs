@@ -227,12 +227,52 @@ public class GasPig : MonoBehaviour, IRecordableObject
         Initialize(speed, data.timeInterval, f, data.delayInterval);
 
     }
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+        transform.position = data.startPos;
+        speed = 8;
+        delay = data.float1;
+        gameObject.SetActive(true);
+
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+        transform.position = data.startPos;
+        speed = data.float1;
+        delay = data.float2;
+
+        if (speed < BoundariesManager.GroundSpeed)
+        {
+            transform.localScale = Vector3.Scale(Vector3.one * .9f, BoundariesManager.FlippedXScale);
+        }
+        else transform.localScale = Vector3.one * .9f;
+
+
+
+        initialDelay = data.float3 * delay;
+        gameObject.SetActive(true);
+
+
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+
+    }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
         if (!flying)
         {
-            speed = data.speed;
+            speed = data.float1;
 
             if (speed < BoundariesManager.GroundSpeed)
             {
@@ -240,17 +280,18 @@ public class GasPig : MonoBehaviour, IRecordableObject
             }
             else transform.localScale = Vector3.one * .9f;
 
+            delay = data.float2;
 
-
-            initialDelay = data.delayInterval * delay;
+            initialDelay = data.float3 * delay;
         }
         else
         {
             speed = 8;
+            delay = data.float1;
 
 
         }
-        delay = data.timeInterval;
+
 
     }
 

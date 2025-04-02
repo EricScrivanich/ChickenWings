@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EggCollectableMovement : MonoBehaviour, ICollectible
+public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableObject
 {
 
     public PlayerID ID;
     private bool bursted;
+    [SerializeField] private int type;
     private bool isCollected;
 
     private bool hasCrossedScreen = false;
@@ -59,14 +60,41 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
     [SerializeField] private SpriteRenderer shotgunImage;
     [SerializeField] private SpriteRenderer threeImageShotgun;
 
+    private float _sineMagnitude;
+    private float _sineFrequency;
+    private float magDiff;
+    [SerializeField] private float phaseOffset;
+    private float startX;
+
+    private float speedDiff;
+
+    [SerializeField] private float magPercent;
+
+
+    [ExposedScriptableObject]
+    [SerializeField] private PigsScriptableObject pigID;
+    Vector2 _position;
+
+    private Rigidbody2D rb;
+
+    private readonly Vector2 minMaxAmp = new Vector2(.2f, 4f);
+    private readonly Vector2 maxFreqBasedOnAmp = new Vector2(.1f, 3.4f);
+
+    private readonly float minFreq = .05f;
+
+
+
+
     void Awake()
     {
         mainSprite = GetComponent<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
     }
     public void EnableAmmo(Sprite mainImage, Sprite ThreeImage, bool mana, float speedVar)
     {
         hasCrossedScreen = false;
-        
+        _position = transform.position;
+
         if (this.gameObject.activeInHierarchy)
         {
             gameObject.SetActive(false);
@@ -129,15 +157,15 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
 
         if (speedVar == 0)
         {
-            eggSinFrequency = Random.Range(.4f, .75f);
-            eggSinAmplitude = Random.Range(.5f, .9f);
+            _sineFrequency = Random.Range(.4f, .75f);
+            _sineMagnitude = Random.Range(.5f, .9f);
             speed = Random.Range(5.5f, 7.6f);
         }
         else
         {
             speed = speedVar;
-            eggSinFrequency = .4f;
-            eggSinAmplitude = .5f;
+            _sineFrequency = .4f;
+            _sineMagnitude = .5f;
         }
 
         yPos = transform.position.y;
@@ -185,27 +213,46 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
     // }
 
 
-    void Update()
+    // void Update()
+    // {
+
+
+    //     transform.Translate(Vector3.left * speed * Time.deltaTime);
+    //     float x = transform.position.x;
+    //     float y = Mathf.Sin(x * eggSinFrequency) * eggSinAmplitude + yPos; // Calculate y position using sine function
+    //     transform.position = new Vector3(x, y, 0); // Update position
+
+    //     if (isPostiveXSpeed)
+    //     {
+    //         if (transform.position.x < -13) gameObject.SetActive(false);
+    //     }
+    //     else
+    //     {
+    //         if (transform.position.x > 13) gameObject.SetActive(false);
+    //     }
+
+
+
+
+
+    // }
+    private float startY;
+    private void FixedUpdate()
     {
+        _position += Vector2.left * Time.fixedDeltaTime * speed;
+
+        float period = Mathf.Sin((_position.x - startX) * _sineFrequency);
 
 
-        transform.Translate(Vector3.left * speed * Time.deltaTime);
-        float x = transform.position.x;
-        float y = Mathf.Sin(x * eggSinFrequency) * eggSinAmplitude + yPos; // Calculate y position using sine function
-        transform.position = new Vector3(x, y, 0); // Update position
-
-        if (isPostiveXSpeed)
-        {
-            if (transform.position.x < -13) gameObject.SetActive(false);
-        }
-        else
-        {
-            if (transform.position.x > 13) gameObject.SetActive(false);
-        }
+        // Dynamically adjust sine magnitude using Lerp
+        // speed = Mathf.Lerp(minSpeed, maxSpeed, Mathf.Abs(period));
 
 
 
+        // Apply movement with dynamic sine magnitude
+        rb.MovePosition(_position + Vector2.up * period * _sineMagnitude);
 
+        // Animation trigger logic
 
     }
 
@@ -255,7 +302,8 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
             yield return null;
 
         }
-        spawner.GetParticles(!isMana, transform.position);
+        if (spawner != null)
+            spawner.GetParticles(!isMana, transform.position);
         burstTimer = 0;
         duration = .2f;
         mainSprite.enabled = false;
@@ -307,17 +355,31 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
             return;
 
         isCollected = true;
-        if (isMana)
-        {
-            // ID.globalEvents.OnGetMana?.Invoke();
-            ID.ShotgunAmmo += ammoAmount;
 
-        }
-        else
+        switch (type)
         {
-            ID.Ammo += ammoAmount;
-
+            case 0:
+                ID.Ammo += ammoAmount;
+                break;
+            case 1:
+                ID.ShotgunAmmo += ammoAmount;
+                break;
+                // case 2:
+                //     ID.globalEvents.OnGetMana?.Invoke();
+                //     break;
         }
+
+        // if (isMana)
+        // {
+        //     // ID.globalEvents.OnGetMana?.Invoke();
+        //     ID.ShotgunAmmo += ammoAmount;
+
+        // }
+        // else
+        // {
+        //     ID.Ammo += ammoAmount;
+
+        // }
         StartCoroutine(Burst());
         bursted = true;
         // ID.globalEvents.OnAmmoEvent?.Invoke(1);
@@ -325,4 +387,114 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible
 
 
     }
+
+
+
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+        _position = data.startPos;
+
+        transform.position = data.startPos;
+        speed = data.float1;
+        transform.localScale = Vector3.one * data.float2;
+        _sineMagnitude = Mathf.Lerp(minMaxAmp.x, minMaxAmp.y, data.float3);
+        float maxFreq = Mathf.Lerp(maxFreqBasedOnAmp.y, maxFreqBasedOnAmp.x, data.float3);
+        _sineFrequency = Mathf.Lerp(minFreq, maxFreq, data.float4);
+        phaseOffset = data.float5;
+        startX = ReturnPhaseOffset(data.startPos.x);
+        if (data.type == 0)
+        {
+            threeImage.enabled = false;
+            ammoAmount = 1;
+            isThreeAmmo = false;
+        }
+        else
+        {
+            threeImage.enabled = true;
+            ammoAmount = 3;
+            isThreeAmmo = true;
+
+        }
+        gameObject.SetActive(true);
+    }
+
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        speed = data.float1;
+        transform.localScale = Vector3.one * data.float2;
+        _sineMagnitude = Mathf.Lerp(minMaxAmp.x, minMaxAmp.y, data.float3);
+        float maxFreq = Mathf.Lerp(maxFreqBasedOnAmp.y, maxFreqBasedOnAmp.x, data.float3);
+        _sineFrequency = Mathf.Lerp(minFreq, maxFreq, data.float4);
+        phaseOffset = data.float5;
+        if (data.type == 0)
+        {
+            threeImage.enabled = false;
+            ammoAmount = 1;
+            isThreeAmmo = false;
+        }
+        else
+        {
+            threeImage.enabled = true;
+            ammoAmount = 3;
+            isThreeAmmo = true;
+
+        }
+
+    }
+
+    public bool ShowLine()
+    {
+        return true;
+    }
+
+    public float TimeAtCreateObject(int index)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        float xPos = currPos.x + (-speed * time);
+
+        // Apply phase offset correction
+
+
+        // Compute sine wave period at this x position
+        float period = Mathf.Sin((xPos - phaseOffset) * _sineFrequency);
+
+        float yPos = currPos.y + (period * _sineMagnitude);
+
+
+
+
+        // Dynamically adjust sine magnitude using Lerp
+
+
+        // Compute final vertical position
+
+
+        return new Vector2(xPos, yPos);
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        return x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
+    }
 }
+

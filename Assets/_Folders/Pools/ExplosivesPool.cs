@@ -10,12 +10,15 @@ public class ExplosivesPool : ScriptableObject
 
     [SerializeField] private GameObject bombPrefab;
     [SerializeField] private GameObject balloonBombPrefab;
+    [SerializeField] private GameObject bulletPrefab;
 
     private int currentBombIndex;
     private int currentBalloonBombIndex;
 
     private Bombs[] bombPool;
     private BalloonBomb[] balloonBombPool;
+
+    private Queue<Bullet> bullets;
 
 
     public Sprite[] bombLaunchSmoke;
@@ -25,6 +28,8 @@ public class ExplosivesPool : ScriptableObject
     {
         bombPool = new Bombs[bombPoolSize];
         balloonBombPool = new BalloonBomb[balloonBombPoolSize];
+        bullets = new Queue<Bullet>();
+
 
         for (int i = 0; i < bombPoolSize; i++)
         {
@@ -40,6 +45,15 @@ public class ExplosivesPool : ScriptableObject
 
             balloonBombPool[i] = obj.GetComponent<BalloonBomb>();
             obj.SetActive(false);
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            var obj = Instantiate(bulletPrefab);
+            var bullet = obj.GetComponent<Bullet>();
+            bullets.Enqueue(bullet);
+            obj.SetActive(false);
+
         }
     }
 
@@ -64,5 +78,24 @@ public class ExplosivesPool : ScriptableObject
 
         if (currentBalloonBombIndex >= balloonBombPoolSize)
             currentBalloonBombIndex = 0;
+    }
+
+    public void GetBullet(Vector2 pos, float z, float speed, int flipInt)
+    {
+        if (bullets.Count > 0)
+        {
+            var bullet = bullets.Dequeue();
+
+            if (bullet.gameObject.activeInHierarchy)
+            {
+                bullets.Enqueue(bullet);
+                bullet = Instantiate(bulletPrefab).GetComponent<Bullet>();
+                bullet.gameObject.SetActive(false);
+            }
+            bullet.transform.position = pos;
+            bullet.Fire(pos, z, speed, flipInt);
+            bullet.gameObject.SetActive(true);
+            bullets.Enqueue(bullet);
+        }
     }
 }

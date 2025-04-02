@@ -271,6 +271,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 0}
+  iconSprites:
+  - {fileID: 8008226042974377425}
+  - {fileID: 4636768994547050904}
+  - {fileID: 3011287123002324699}
+  baseIcon: {fileID: 0}
+  <Title>k__BackingField: 
   pigID: {fileID: 11400000, guid: 17130485a260242c7a0735ef26237f14, type: 2}
   xArrow: {fileID: 271353895487695797}
   yArrow: {fileID: 6434571614596901981}
@@ -278,33 +284,39 @@ MonoBehaviour:
   timeStampProjectilePrefab: {fileID: 0}
   useProjectile: 0
   <ID>k__BackingField: 0
-  selectedOutlinesColor: {r: 0.34635454, g: 0.98039216, b: 0.23529413, a: 0.7372549}
+  <DataType>k__BackingField: 0
+  <TypeValues>k__BackingField: {x: 0, y: 0, z: 0}
+  editedData: 0000000001000000
+  <FloatValues>k__BackingField: []
+  floatOneIsSpeed: 0
   selectedOutlines:
   - {fileID: 1328303367731163776}
   - {fileID: 2167150243667340787}
   fill: {fileID: 3011287123002324699}
   icon: {fileID: 8008226042974377425}
-  lineRendTimeStep: 0.1
-  touchColl: {fileID: 0}
   colorSO: {fileID: 11400000, guid: 853642562dfed41898e3bffacf12e0b6, type: 2}
   Data:
     ID: 0
+    type: 0
     spawnedStep: 0
     unspawnedStep: 0
     startPos: {x: 0, y: 0}
-    speed: 0
-    scale: 0
-    magPercent: 0
-    timeInterval: 0
-    delayInterval: 0
-    type: 0
+    float1: 0
+    float2: 0
+    float3: 0
+    float4: 0
+    float5: 0
   <SpeedValues>k__BackingField: {x: 3.8, y: 7, z: 5.5}
   <SizeValues>k__BackingField: {x: 0.85, y: 1.1, z: 1}
   <MagnitideValues>k__BackingField: {x: 0.2, y: 0.2, z: 0.2}
   <TimeIntervalValues>k__BackingField: {x: 0, y: 0, z: 0}
   <DelayOrPhaseOffsetValues>k__BackingField: {x: 0, y: 0, z: 0}
-  <TypeValues>k__BackingField: {x: 0, y: 0, z: 0}
-  editedData: 0000000001000000
+  typeTitle: 
+  typeOptions: []
+  minMaxY: {x: 0, y: 0}
+  minX: 0
+  _pType: 0
+  sprites: []
 --- !u!120 &8275658579260760245
 LineRenderer:
   serializedVersion: 2
@@ -329,7 +341,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: face068138ee4446098c09f6ce366620, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -738,7 +750,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0.6, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 1.5, z: 1}
+  m_LocalScale: {x: 2.7, y: 1.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4501222471741300441}
@@ -842,7 +854,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5, y: 1.2}
+  m_Size: {x: 0.54, y: 1.2}
   m_EdgeRadius: 0
 --- !u!1 &3605845006182627470
 GameObject:
@@ -1224,7 +1236,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.01, y: 0.546, z: 0}
-  m_LocalScale: {x: 2, y: 1.5, z: 1}
+  m_LocalScale: {x: 2.7, y: 1.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4501222471741300441}
@@ -1328,5 +1340,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5, y: 1.2}
+  m_Size: {x: 0.54, y: 1.2}
   m_EdgeRadius: 0

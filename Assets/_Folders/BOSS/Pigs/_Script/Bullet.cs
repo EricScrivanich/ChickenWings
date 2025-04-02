@@ -1,0 +1,46 @@
+using UnityEngine;
+
+public class Bullet : MonoBehaviour
+{
+    private Rigidbody2D rb;
+    private float lifeTime = 4.5f;
+    private float time = 0;
+    private TrailRenderer trail;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        trail = GetComponent<TrailRenderer>();
+    }
+
+    private void OnEnable()
+    {
+
+        // rb.angularVelocity = 0f;
+    }
+
+    public void Fire(Vector2 pos, float z, float speed,int flip)
+    {
+        transform.position = pos;
+        transform.rotation = Quaternion.Euler(0, 0, z);
+        rb.linearVelocity = Vector2.zero;
+        gameObject.SetActive(true);
+        trail.emitting = true;
+        rb.AddForce(-transform.right * speed * flip, ForceMode2D.Impulse);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        time += Time.deltaTime;
+
+        if (time > lifeTime)
+        {
+            trail.emitting = false;
+            trail.Clear();
+            gameObject.SetActive(false);
+            time = 0;
+        }
+
+    }
+}

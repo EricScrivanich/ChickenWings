@@ -124,7 +124,11 @@ public class MainMenuScript : MonoBehaviour
 
         StartCoroutine(InitialTweenCourintine());
 
+        for (int i = 1; i < MenuTypes.Count; i++)
+        {
 
+            MenuTypes[i].gameObject.SetActive(false);
+        }
 
         environmentMaterials = new List<Material>();
 
@@ -211,6 +215,8 @@ public class MainMenuScript : MonoBehaviour
             menuToMoveOut = MenuTypes[0];
         }
 
+        menuToMoveIn.gameObject.SetActive(true);
+
         // Perform the tweening sequence with abstracted variables
         menuToMoveOut.DOAnchorPos(new Vector2(menuToMoveOut.anchoredPosition.x + initialShift, menuToMoveOut.anchoredPosition.y), initialDuration)
             .SetEase(Ease.InOutSine)
@@ -229,7 +235,7 @@ public class MainMenuScript : MonoBehaviour
                 }
 
                 // Move the current menu to its final position off-screen
-                menuToMoveOut.DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration);
+                menuToMoveOut.DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration).OnComplete(() => menuToMoveOut.gameObject.SetActive(false));
 
                 if (currentMenu == 2)
                 {

@@ -247,7 +247,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
 
     public void ApplyRecordedData(RecordedDataStruct data)
     {
-        Debug.Log("Applying recorded data");
+       
         transform.position = data.startPos;
         _position = data.startPos;
         speed = data.speed;
@@ -265,13 +265,49 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
         gameObject.SetActive(true);
     }
 
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+        transform.position = data.startPos;
+        _position = data.startPos;
+        speed = data.float1;
+        magPercent = data.float2;
+        phaseOffset = data.float3;
+        delay = data.float4;
+        initialDelay = data.float5 * delay;
+
+
+
+        pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        minSineMagnitude = _sineMagnitude - magDiff;
+        maxSineMagnitude = _sineMagnitude + magDiff;
+        gameObject.SetActive(true);
+
+    }
+
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
-        speed = data.speed;
-        magPercent = data.magPercent;
-        phaseOffset = data.delayInterval;
-        delay = data.timeInterval;
-        initialDelay = data.scale * delay;
+        speed = data.float1;
+        magPercent = data.float2;
+        phaseOffset = data.float3;
+        delay = data.float4;
+        initialDelay = data.float5 * delay;
 
 
 

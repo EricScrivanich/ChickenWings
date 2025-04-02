@@ -168,30 +168,48 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
         AudioManager.instance.PlayPigHammerSwingSound();
     }
 
-    public void ApplyRecordedData(RecordedDataStruct data)
+   
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
     {
         transform.position = data.startPos;
         _position = data.startPos;
-        transform.localScale = Vector3.one * data.scale;
-        speed = data.speed;
-
+        speed = data.float1;
+        transform.localScale = Vector3.one * data.float2;
         if (speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
-        magPercent = data.magPercent;
-        phaseOffset = data.delayInterval;
-
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         gameObject.SetActive(true);
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+        // magPercent = data.float3;
+        // phaseOffset = data.float4;
+
+        // pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
+        // gameObject.SetActive(true);
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
 
     }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
 
-        speed = data.speed;
-        transform.localScale = Vector3.one * data.scale;
+        speed = data.float1;
+        transform.localScale = Vector3.one * data.float2;
         if (speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
-        magPercent = data.magPercent;
-        phaseOffset = data.delayInterval;
+        magPercent = data.float3;
+        phaseOffset = data.float4;
 
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
     }

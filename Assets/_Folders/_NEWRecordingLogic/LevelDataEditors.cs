@@ -4,7 +4,10 @@ using TMPro;
 using UnityEngine.EventSystems;
 public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 {
+    [SerializeField] private LevelCreatorColors colorSO;
     [SerializeField] private Vector2Int dataID;
+
+    private int typeIndex;
     private bool isSelected;
 
     [SerializeField] private TextMeshProUGUI title;
@@ -22,14 +25,19 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     private Vector2 pointerStartPos;
     private float initialSliderValue;
 
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private void Awake()
     {
+
         fillImage = GetComponent<Image>();
+        fillImage.color = colorSO.SelctedUIColor;
     }
     private void OnEnable()
     {
+
 
 
         fillImage.enabled = false;
@@ -42,20 +50,25 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
 
     }
-
+    public void SetTypeIndex(int index)
+    {
+        typeIndex = index;
+    }
     private void SetDataFromFloatSlider(float v)
     {
 
+
+
         if (Type == "Speed")
         {
-            v = Mathf.Round(v * 10) / 10;
-            recordedObj.Data.speed = v * recordedObj.speedChanger;
+            v = (Mathf.Round(v * 10) / 10) * recordedObj.speedChanger;
+            SetValueBasedOnTypeIndex(v);
             title.text = Type + ": " + v.ToString();
         }
         else if (Type == "Blade Speed")
         {
             v = Mathf.RoundToInt(v);
-            recordedObj.Data.speed = v;
+            SetValueBasedOnTypeIndex(v);
             title.text = Type + ": " + v.ToString();
         }
 
@@ -65,7 +78,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             v = Mathf.Round(v * 100) / 100;
             title.text = Type + ": " + Mathf.RoundToInt(v * 100).ToString() + "%";
             SetMainSliderText();
-            recordedObj.Data.scale = v;
+            SetValueBasedOnTypeIndex(v);
 
 
             recordedObj.UpdateObjectData(true);
@@ -76,7 +89,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         else if (Type == "Jump Height" || Type == "Glide Height")
         {
             v = Mathf.Round(v * 100) / 100;
-            recordedObj.Data.magPercent = v;
+            SetValueBasedOnTypeIndex(v);
             title.text = Type + ": " + (v * 100).ToString() + "%";
             SetMainSliderText();
 
@@ -90,7 +103,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             title.text = Type + ": " + (v * 100).ToString() + "%";
             SetMainSliderText();
 
-            recordedObj.Data.delayInterval = v;
+            SetValueBasedOnTypeIndex(v);
             recordedObj.UpdateObjectData();
             return;
         }
@@ -98,7 +111,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         else if (Type == "Drop Delay" || Type == "Fart Delay" || Type == "Fart Length")
         {
             v = Mathf.Round(v * 100) / 100;
-            recordedObj.Data.timeInterval = v;
+            SetValueBasedOnTypeIndex(v);
             float t = v / FrameRateManager.BaseTimeScale;
             t = Mathf.Round(t * 100) / 100;
 
@@ -112,7 +125,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             v = Mathf.RoundToInt(v);
             // float m = Mathf.Abs(0 - v);
             // v = Mathf.Abs(v);
-            recordedObj.Data.timeInterval = -v;
+            SetValueBasedOnTypeIndex(-v);
             title.text = Type + ": " + Mathf.Abs(-v - 90).ToString();
             SetMainSliderText();
             recordedObj.UpdateObjectData();
@@ -122,9 +135,10 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         else if (Type == "Start Rotation")
         {
             v = Mathf.RoundToInt(v);
+            title.text = Type + ": " + v.ToString();
             // float m = Mathf.Abs(0 - v);
             // v = Mathf.Abs(v);
-            recordedObj.Data.delayInterval = v;
+            SetValueBasedOnTypeIndex(v);
 
 
         }
@@ -133,15 +147,25 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         {
             v = Mathf.Round(v * 100) / 100;
             title.text = Type + ": " + (v * 100).ToString() + "%";
-            recordedObj.Data.scale = v;
+            SetValueBasedOnTypeIndex(v);
             SetMainSliderText();
             recordedObj.UpdateObjectData();
             return;
         }
+        else if (Type == "Frequency")
+        {
+            v = Mathf.Round(v * 100) / 100;
+            title.text = Type + ": " + (v * 100).ToString() + "%";
+            SetValueBasedOnTypeIndex(v);
+            SetMainSliderText();
+            recordedObj.UpdateObjectData();
+            return;
+
+        }
 
 
         // valueText.text = v.ToString();
-        title.text = Type + ": " + v.ToString();
+
         SetMainSliderText();
         recordedObj.UpdateObjectData();
 
@@ -157,10 +181,39 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     }
 
+    public void SetValueBasedOnTypeIndex(float val)
+    {
+        switch (typeIndex)
+        {
+            case 0:
+                recordedObj.Data.float1 = val;
+                break;
+            case 1:
+                recordedObj.Data.float2 = val;
+                break;
+            case 2:
+                recordedObj.Data.float3 = val;
+                break;
+            case 3:
+                recordedObj.Data.float4 = val;
+                break;
+            case 4:
+                recordedObj.Data.float5 = val;
+                break;
+
+        }
+    }
+
     public void OnPress()
     {
         isSelected = true;
+        ValueEditorManager.instance.OnPressEditor(true);
+        Debug.Log("OnPress sldier");
+
+
         SetDataForFloatSlider(this.Type, true);
+        ValueEditorManager.instance.ShowSlider(true);
+
         ValueEditorManager.instance.SetSelectedType(Type);
 
         fillImage.enabled = true;
@@ -169,6 +222,8 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     public void SetIfSelected(string type)
     {
+
+
 
         if (isSelected && Type != type)
         {
@@ -193,6 +248,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
 
 
+
         ValueEditorManager.instance.valueSliderHorizontal.onValueChanged.RemoveAllListeners();
         Type = type;
 
@@ -203,51 +259,75 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
         // slider.minValue = min;
         // slider.maxValue = max;
+
+
+        SetSliderRange(recordedObj.FloatValues[typeIndex]);
+
         float v = 0;
+
+        switch (typeIndex)
+        {
+            case 0:
+                v = recordedObj.Data.float1;
+                break;
+            case 1:
+                v = recordedObj.Data.float2;
+                break;
+            case 2:
+                v = recordedObj.Data.float3;
+                break;
+            case 3:
+                v = recordedObj.Data.float4;
+                break;
+            case 4:
+                v = recordedObj.Data.float5;
+                break;
+
+        }
 
         if (Type == "Speed" || Type == "Blade Speed")
         {
-            if (setSlider)
-                SetSliderRange(recordedObj.SpeedValues);
-            v = Mathf.Abs(recordedObj.Data.speed);
+            // if (setSlider)
+            //     SetSliderRange(recordedObj.SpeedValues);
+            v = Mathf.Abs(v);
 
         }
-        else if (Type == "Size")
-        {
-            if (setSlider) SetSliderRange(recordedObj.SizeValues);
+        // else if (Type == "Size")
+        // {
+        //     if (setSlider) SetSliderRange(recordedObj.SizeValues);
 
-            v = recordedObj.Data.scale;
-        }
-        else if (Type == "Jump Height" || Type == "Glide Height")
-        {
-            if (setSlider) SetSliderRange(recordedObj.MagnitideValues);
-            v = recordedObj.Data.magPercent;
-        }
-        else if (Type == "Jump Offset" || Type == "Fart Offset" | Type == "Glide Offset" || Type == "Start Rotation")
-        {
-            if (setSlider) SetSliderRange(recordedObj.DelayOrPhaseOffsetValues);
-            v = recordedObj.Data.delayInterval;
+        //     v = recordedObj.Data.scale;
+        // }
+        // else if (Type == "Jump Height" || Type == "Glide Height")
+        // {
+        //     if (setSlider) SetSliderRange(recordedObj.MagnitideValues);
+        //     v = recordedObj.Data.magPercent;
+        // }
+        // else if (Type == "Jump Offset" || Type == "Fart Offset" | Type == "Glide Offset" || Type == "Start Rotation")
+        // {
+        //     if (setSlider) SetSliderRange(recordedObj.DelayOrPhaseOffsetValues);
+        //     v = recordedObj.Data.delayInterval;
 
-        }
+        // }
 
-        else if (Type == "Drop Delay" || Type == "Fart Delay" || Type == "Fart Length")
-        {
-            if (setSlider) SetSliderRange(recordedObj.TimeIntervalValues);
+        // else if (Type == "Drop Delay" || Type == "Fart Delay" || Type == "Fart Length" || Type == "Frequency")
+        // {
+        //     if (setSlider) SetSliderRange(recordedObj.TimeIntervalValues);
 
-            v = recordedObj.Data.timeInterval;
-        }
+        //     v = recordedObj.Data.timeInterval;
+        // }
         else if (Type == "Rotation")
         {
-            if (setSlider) SetSliderRange(recordedObj.TimeIntervalValues);
-            v = -recordedObj.Data.timeInterval;
+            // if (setSlider) SetSliderRange(recordedObj.TimeIntervalValues);
+            v = -v;
 
         }
-        else if (Type == "Drop Offset")
-        {
-            if (setSlider) SetSliderRange(recordedObj.SizeValues);
+        // else if (Type == "Drop Offset")
+        // {
+        //     if (setSlider) SetSliderRange(recordedObj.SizeValues);
 
-            v = recordedObj.Data.scale;
-        }
+        //     v = recordedObj.Data.scale;
+        // }
         SetDataFromFloatSlider(v);
 
         if (setSlider)
@@ -274,6 +354,8 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         OnPress();
+
+
         useDragValue = false;
         pointerStartPos = eventData.position;
     }
@@ -287,6 +369,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     private float valueStep;
     public void OnDrag(PointerEventData eventData)
     {
+
         float deltaX = eventData.position.x - pointerStartPos.x;
 
         if (!useDragValue && Mathf.Abs(deltaX) > 30)
@@ -316,4 +399,10 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         // Get the current slider reference
 
     }
+
+    // public void OnPointerUp(PointerEventData eventData)
+    // {
+    //     ValueEditorManager.instance.OnPressEditor(false);
+
+    // }
 }

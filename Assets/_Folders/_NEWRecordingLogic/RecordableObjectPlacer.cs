@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 
 public class RecordableObjectPlacer : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
+
+    [SerializeField] private SpriteRenderer[] iconSprites;
 
     [SerializeField] private GameObject baseIcon;
     [field: SerializeField] public string Title { get; private set; }
@@ -22,6 +24,16 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     [field: SerializeField] public short ID { get; private set; }
+    [field: SerializeField] public ushort DataType { get; private set; }
+    [field: SerializeField] public Vector3Int TypeValues { get; private set; }
+
+    public EditableData[] editedData;
+    [field: SerializeField] public Vector3[] FloatValues { get; private set; }
+
+    [SerializeField] private bool floatOneIsSpeed;
+    private float speed;
+
+
 
 
     [SerializeField] private SpriteRenderer[] selectedOutlines;
@@ -50,7 +62,8 @@ public class RecordableObjectPlacer : MonoBehaviour
         Rotation,
         Blade_Speed,
         Start_Rotation,
-        Fart_Length
+        Fart_Length,
+        Frequency
 
     }
 
@@ -60,11 +73,11 @@ public class RecordableObjectPlacer : MonoBehaviour
     [field: SerializeField] public Vector3 MagnitideValues { get; private set; }
     [field: SerializeField] public Vector3 TimeIntervalValues { get; private set; }
     [field: SerializeField] public Vector3 DelayOrPhaseOffsetValues { get; private set; }
-    [field: SerializeField] public Vector3Int TypeValues { get; private set; }
 
 
 
-    public EditableData[] editedData;
+
+
 
     [SerializeField] private string typeTitle;
     [SerializeField] private string[] typeOptions;
@@ -104,12 +117,13 @@ public class RecordableObjectPlacer : MonoBehaviour
         RightSideOnly,
 
         Grounded,
-        CenterOnly
+        CenterOnly,
+        AI
     }
 
     [SerializeField] private PostionType _pType;
 
-    private SpriteRenderer sprite;
+    [SerializeField] private SpriteRenderer[] sprites;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -138,7 +152,15 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     }
+    public void UpdateTimeStep(int step)
+    {
+        spawnedTimeStep = (ushort)step;
+        Data.spawnedStep = spawnedTimeStep;
+        // UpdateObjectData();
+        ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep);
 
+
+    }
 
 
     public void HideBaseIcon(bool hide)
@@ -146,61 +168,17 @@ public class RecordableObjectPlacer : MonoBehaviour
         baseIcon.SetActive(!hide);
     }
 
-    public void SetIsSelected(bool selected)
-    {
-        isSelected = selected;
 
-        SetProjectileLines();
-
-
-        if (isSelected)
-        {
-            SetLineColor(colorSO.SelectedLineColor);
-            foreach (var s in selectedOutlines)
-            {
-                s.enabled = true;
-            }
-            xArrow.gameObject.SetActive(true);
-            if (_pType != PostionType.Grounded || _pType != PostionType.CenterOnly)
-                yArrow.gameObject.SetActive(true);
-            fill.enabled = true;
-
-            return;
-        }
-
-        else if (LevelRecordManager.CurrentTimeStep == spawnedTimeStep)
-        {
-            SetLineColor(colorSO.NormalLineColor);
-
-
-        }
-        else if (LevelRecordManager.CurrentTimeStep > spawnedTimeStep)
-        {
-            SetLineColor(colorSO.PassedLineColor);
-
-        }
-
-        foreach (var s in selectedOutlines)
-        {
-            s.enabled = false;
-        }
-        fill.enabled = false;
-
-        xArrow.gameObject.SetActive(false);
-        yArrow.gameObject.SetActive(false);
-
-
-    }
 
     void Awake()
     {
         line = GetComponent<LineRenderer>();
         obj = prefab.GetComponent<IRecordableObject>();
         rb = prefab.GetComponent<Rigidbody2D>();
-        if (Title == "Ring")
-        {
-            sprite = prefab.GetComponent<SpriteRenderer>();
-        }
+        // if (Title == "Ring")
+        // {
+        //     sprite = prefab.GetComponent<SpriteRenderer>();
+        // }
 
 
         if (obj.ShowLine())
@@ -237,14 +215,43 @@ public class RecordableObjectPlacer : MonoBehaviour
             s.color = colorSO.SelectedPigOutlineColor;
             s.enabled = false;
         }
+
+        iconSprites[1].color = colorSO.iconOutlineColor;
+        iconSprites[2].color = colorSO.iconFillColor;
     }
 
-    public void CreateNew()
+    public void CreateNew(int typeOvveride)
     {
 
-        Data = new RecordedDataStructDynamic(ID, transform.position, SpeedValues.z, SizeValues.z, MagnitideValues.z, TimeIntervalValues.z, DelayOrPhaseOffsetValues.z, (short)TypeValues.z, LevelRecordManager.CurrentTimeStep, 0);
+        ushort type = (ushort)TypeValues.z;
 
-        Debug.Log("NEw object with scale of " + Data.scale);
+        if (typeOvveride >= 0) type = (ushort)typeOvveride;
+
+        float[] floatValues = new float[5];
+
+        for (int i = 0; i < FloatValues.Length; i++)
+        {
+            floatValues[i] = FloatValues[i].z;
+
+        }
+
+
+
+
+
+        Data = new RecordedDataStructDynamic(ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0);
+
+        if (floatOneIsSpeed) speed = floatValues[0];
+        else speed = 0;
+
+        if (Title == "Ring")
+        {
+            foreach (var s in sprites)
+            {
+                s.color = colorSO.RingColors[Data.type];
+            }
+
+        }
         spawnedTimeStep = LevelRecordManager.CurrentTimeStep;
         unspawnedTimeStep = 40000;
 
@@ -255,6 +262,36 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     }
+    private Sequence fadeIconSeq;
+    private bool iconsFaded = false;
+    public void FadeIconImages(bool fade)
+    {
+        if (fadeIconSeq != null && fadeIconSeq.IsPlaying()) fadeIconSeq.Kill();
+        iconsFaded = fade;
+        fadeIconSeq = DOTween.Sequence();
+        if (fade)
+        {
+            fadeIconSeq.Append(xArrow.DOFade(.2f, .2f));
+            fadeIconSeq.Join(yArrow.DOFade(.2f, .2f));
+
+            foreach (var s in iconSprites)
+            {
+                fadeIconSeq.Join(s.DOFade(.2f, .2f));
+            }
+
+        }
+        else
+        {
+            fadeIconSeq.Append(xArrow.DOFade(1, .2f));
+            fadeIconSeq.Join(yArrow.DOFade(1, .2f));
+            foreach (var s in iconSprites)
+            {
+                fadeIconSeq.Join(s.DOFade(1f, .2f));
+            }
+        }
+        fadeIconSeq.Play().SetUpdate(true);
+
+    }
 
     public void LoadAssetFromSave(RecordedDataStructDynamic data)
     {
@@ -262,10 +299,21 @@ public class RecordableObjectPlacer : MonoBehaviour
         Data = data;
         transform.position = data.startPos;
         spawnedTimeStep = data.spawnedStep;
+        if (floatOneIsSpeed) speed = data.float1;
+        else speed = 0;
 
-        if (data.speed < 0) movingRight = true;
+        if (speed < 0) movingRight = true;
 
         unspawnedTimeStep = 40000;
+
+        if (Title == "Ring")
+        {
+            foreach (var s in sprites)
+            {
+                s.color = colorSO.RingColors[Data.type];
+            }
+
+        }
         UpdateBasePosition(Data.startPos);
 
         // UpdateObjectData();
@@ -273,6 +321,10 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     }
 
+    public Sprite GetIcon()
+    {
+        return iconSprites[0].sprite;
+    }
 
     public string FormatEnumName(EditableData data)
     {
@@ -319,7 +371,11 @@ public class RecordableObjectPlacer : MonoBehaviour
             }
         }
         else
+        {
+            if (iconsFaded) FadeIconImages(false);
             RestoreArrowsDefault();
+        }
+
 
     }
 
@@ -335,7 +391,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     public void SetSelectedObject()
     {
-        int checkedInt = 0;
+        if (isSelected) return;
 
         SetIsSelected(true);
 
@@ -355,10 +411,89 @@ public class RecordableObjectPlacer : MonoBehaviour
         ValueEditorManager.instance.SendTypeValues(typeTitle, typeOptions);
 
     }
+    public void SetIsSelected(bool selected)
+    {
+        isSelected = selected;
+
+        SetProjectileLines();
+
+
+        if (isSelected)
+        {
+            SetLineColor(colorSO.SelectedLineColor);
+            iconSprites[1].gameObject.SetActive(true);
+
+            ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep);
+            foreach (var s in selectedOutlines)
+            {
+                s.enabled = true;
+            }
+            xArrow.gameObject.SetActive(true);
+            if (_pType != PostionType.Grounded || _pType != PostionType.CenterOnly)
+                yArrow.gameObject.SetActive(true);
+            fill.enabled = true;
+
+            return;
+        }
+
+        if (LevelRecordManager.CurrentTimeStep > spawnedTimeStep + 3)
+            iconSprites[1].gameObject.SetActive(false);
+
+        if (!LevelRecordManager.ShowLines & obj.ShowLine())
+        {
+            line.positionCount = 0;
+            foreach (var s in timeStamps)
+            {
+                s.gameObject.SetActive(false);
+            }
+
+        }
+        else if (!LevelRecordManager.ShowSpeeds && obj.ShowLine())
+        {
+            foreach (var s in timeStamps)
+            {
+                s.gameObject.SetActive(false);
+            }
+        }
+
+
+
+        if (LevelRecordManager.CurrentTimeStep == spawnedTimeStep)
+        {
+            SetLineColor(colorSO.NormalLineColor);
+
+
+        }
+        else if (LevelRecordManager.CurrentTimeStep > spawnedTimeStep)
+        {
+            SetLineColor(colorSO.PassedLineColor);
+
+        }
+
+        foreach (var s in selectedOutlines)
+        {
+            s.enabled = false;
+        }
+        fill.enabled = false;
+
+        xArrow.gameObject.SetActive(false);
+        yArrow.gameObject.SetActive(false);
+
+
+    }
+
+    private void ChangeViewParameters()
+    {
+        UpdateObjectData();
+
+    }
 
     private void OnEnable()
     {
         LevelRecordManager.SetGlobalTime += UpdateObjectPosition;
+        LevelRecordManager.CheckViewParameters += ChangeViewParameters;
+
+        iconSprites[1].gameObject.SetActive(true);
 
 
         // UpdateObjectData();
@@ -368,6 +503,10 @@ public class RecordableObjectPlacer : MonoBehaviour
     private void OnDisable()
     {
         LevelRecordManager.SetGlobalTime -= UpdateObjectPosition;
+        LevelRecordManager.CheckViewParameters -= ChangeViewParameters;
+
+        if (isSelected && LevelRecordManager.instance != null) LevelRecordManager.instance.UnactivateSelectedObject();
+
         line.positionCount = 0;
 
         if (projectileLines != null && projectileLines.Count > 0)
@@ -432,17 +571,17 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         transform.position = pos;
         Data.startPos = pos;
-        if (Data.speed > 0 && pos.x < 0)
+        if (Data.float1 > 0 && pos.x < 0 && floatOneIsSpeed)
         {
-            Data.speed *= -1;
+            Data.float1 *= -1;
             movingRight = true;
 
 
             return;
         }
-        else if (Data.speed < 0 && pos.x > 0)
+        else if (Data.float1 < 0 && pos.x > 0 && floatOneIsSpeed)
         {
-            Data.speed *= -1;
+            Data.float1 *= -1;
             movingRight = false;
 
 
@@ -465,10 +604,7 @@ public class RecordableObjectPlacer : MonoBehaviour
             prefab.GetComponent<ScaleAdjuster>().SetScales();
         }
 
-        if (Title == "Ring")
-        {
-            sprite.color = colorSO.RingColors[Data.type];
-        }
+
 
         UpdateLineRenderer();
         SetProjectileLines();
@@ -482,13 +618,51 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     }
+    public bool CheckForPoolSizes(ushort timeStep)
+    {
+        float t = timeStep * LevelRecordManager.TimePerStep;
+        float offset = obj.ReturnPhaseOffset(transform.position.x);
+        float addedX = 0;
+
+        if (Title == "Windmill")
+        {
+            addedX = 2;
+        }
+
+        var p = obj.PositionAtRelativeTime(t - (spawnedTimeStep * LevelRecordManager.TimePerStep), transform.position, offset);
+
+        if (_pType != PostionType.CenterOnly && _pType != PostionType.AI && (Data.float1 >= 0 && p.x < BoundariesManager.leftBoundary + addedX) || (Data.float1 < 0 && p.x > BoundariesManager.rightBoundary - addedX))
+        {
+
+
+
+
+            return false;
+        }
+
+
+
+
+
+
+
+        if (Title == "Bomber")
+        {
+            offset = obj.ReturnPhaseOffset(p.x);
+
+            if (offset < 0) return false;
+        }
+
+        return true;
+    }
 
     private void UpdateObjectPosition(ushort timeStep, float realTime)
     {
 
         if (realTime == 0 && timeStep < spawnedTimeStep)
         {
-            Debug.Log("Time step is less than spawned time step");
+            Debug.LogError("Time step is less than spawned time step");
+
             gameObject.SetActive(false);
             return;
         }
@@ -504,11 +678,24 @@ public class RecordableObjectPlacer : MonoBehaviour
             if (rbActive)
             {
                 SetLineColor(colorSO.NormalLineColor);
-                if (timeStamps != null)
-                    foreach (var o in timeStamps)
-                    {
-                        o.gameObject.SetActive(false);
-                    }
+                if ((LevelRecordManager.ShowLines && LevelRecordManager.ShowSpeeds) || isSelected)
+                {
+                    if (timeStamps != null)
+                        foreach (var o in timeStamps)
+                        {
+                            o.gameObject.SetActive(true);
+                        }
+                }
+                else
+                {
+                    if (timeStamps != null)
+                        foreach (var o in timeStamps)
+                        {
+                            o.gameObject.SetActive(false);
+                        }
+                }
+
+
                 // rb.en
                 // touchColl.gameObject.SetActive(false);
                 rb.simulated = false;
@@ -552,25 +739,61 @@ public class RecordableObjectPlacer : MonoBehaviour
         //     gameObject.SetActive(false);
         //     return;
         // }
-        var p = obj.PositionAtRelativeTime(t - (spawnedTimeStep * LevelRecordManager.TimePerStep), pos, offset);
+        float calculatedTime = t - (spawnedTimeStep * LevelRecordManager.TimePerStep);
+        var p = obj.PositionAtRelativeTime(calculatedTime, pos, offset);
         float ts = colorSO.TimeStampTimeSpacing;
 
-        if (obj.ShowLine())
+        if (obj.ShowLine() && ((LevelRecordManager.ShowLines && LevelRecordManager.ShowSpeeds) || isSelected))
         {
             for (int c = 0; c < timeStamps.Length; c++)
             {
 
                 Vector2 p2 = obj.PositionAtRelativeTime(ts + (t - (spawnedTimeStep * LevelRecordManager.TimePerStep)), pos, offset);
+                if ((movingRight && p2.x > BoundariesManager.rightBoundary) || (!movingRight && p2.x < BoundariesManager.leftBoundary))
+                {
+                    timeStamps[c].gameObject.SetActive(false);
+                    ts += colorSO.TimeStampTimeSpacing;
+                    continue;
+                }
+                if (timeStamps[c].gameObject.activeInHierarchy == false)
+                {
+                    timeStamps[c].gameObject.SetActive(true);
+                }
                 timeStamps[c].transform.position = p2;
                 ts += colorSO.TimeStampTimeSpacing;
 
             }
 
         }
-
-
-        if ((Data.speed >= 0 && p.x < BoundariesManager.leftBoundary) || (Data.speed < 0 && p.x > BoundariesManager.rightBoundary))
+        else if (timeStamps != null)
         {
+            foreach (var o in timeStamps)
+            {
+                o.gameObject.SetActive(false);
+            }
+        }
+
+        if (_pType != PostionType.CenterOnly && calculatedTime > .54f && !isSelected)
+        {
+            iconSprites[1].gameObject.SetActive(false);
+        }
+        else if (iconSprites[1].gameObject.activeInHierarchy == false)
+        {
+            iconSprites[1].gameObject.SetActive(true);
+        }
+
+
+
+        if (_pType != PostionType.CenterOnly && _pType != PostionType.AI && (Data.float1 >= 0 && p.x < BoundariesManager.leftBoundary) || (Data.float1 < 0 && p.x > BoundariesManager.rightBoundary))
+        {
+
+            // if (CustomTimeSlider.instance.ChangingObjectTime && !CustomTimeSlider.instance.OverObjectTime)
+            // {
+            //     CustomTimeSlider.instance.RetractTime(true);
+            //     Debug.Log("Retracting time with speed: " + Data.speed + " and pos of: " + p.x + " and time of: " + calculatedTime);
+
+            //     return;
+            // }
             if (timeStep == 0)
             {
 
@@ -590,14 +813,20 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
         prefab.transform.position = p;
-        offset = obj.ReturnPhaseOffset(transform.position.x);
 
-        if (Title == "Bomber" && offset < 0)
+
+        if (Title == "Bomber")
         {
-            unspawnedTimeStep = LevelRecordManager.CurrentTimeStep;
-            gameObject.SetActive(false);
+            offset = obj.ReturnPhaseOffset(p.x);
 
-            return;
+            if (offset < 0)
+            {
+                unspawnedTimeStep = LevelRecordManager.CurrentTimeStep;
+                gameObject.SetActive(false);
+                return;
+            }
+
+
         }
 
         // if (rbActive)
@@ -679,6 +908,12 @@ public class RecordableObjectPlacer : MonoBehaviour
     private void UpdateLineRenderer()
     {
         if (!obj.ShowLine()) return;
+
+        if (!LevelRecordManager.ShowLines && !isSelected)
+        {
+            line.positionCount = 0;
+            return;
+        }
         // Start with zero points
 
         Vector2 pos = transform.position;

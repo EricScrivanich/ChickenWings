@@ -8,6 +8,8 @@ public class LevelManagerID : ScriptableObject
     public InputLvlEvent inputEvent;
     public OutputLvlEvent outputEvent;
 
+    public PlayerStartingStatsForLevels playerStartingStats;
+
     public bool LevelCompleted { get; private set; }
 
     [SerializeField] private GameObject blobBurstPrefab;

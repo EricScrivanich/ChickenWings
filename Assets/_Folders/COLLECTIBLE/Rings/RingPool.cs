@@ -35,6 +35,12 @@ public class RingPool : ScriptableObject
     private Transform parent;
 
     public RingID[] RingType;
+
+    public Coroutine redFadeOut;
+    public Coroutine pinkFadeOut;
+    public Coroutine goldFadeOut;
+    public Coroutine purpleFadeOut;
+    private SpawnStateManager spawnMan;
     public void SpawnRingPool()
     {
         ringPool = new RingMovement[ringAmount];
@@ -55,8 +61,12 @@ public class RingPool : ScriptableObject
             ringPool[i] = ringScript;
         }
     }
-    public void Initialize()
+    public void Initialize(SpawnStateManager sm = null)
     {
+        if (sm != null)
+        {
+            spawnMan = sm;
+        }
         SpawnRingPool();
         SpawnBallPool();
         SpawnBucketPool();
@@ -64,6 +74,7 @@ public class RingPool : ScriptableObject
 
         foreach (var ring in RingType)
         {
+            ring.SetFadingRings(false);
             ring.InitializeVariables();
             ring.InitializeEffectsPool();
             ring.ResetVariables();
@@ -133,9 +144,17 @@ public class RingPool : ScriptableObject
         currentRingIndex++;
         return ring;
 
+    }
 
+    public void SpawnRingByData(DataStructFloatThree data)
+    {
+        RingType[data.type].SpawnRingWithData(data);
 
+    }
 
+    public void SpawnBucketByData(DataStructFloatThree data)
+    {
+        RingType[data.type].SpawnBucketWithData(data);
 
     }
 
@@ -148,6 +167,7 @@ public class RingPool : ScriptableObject
         RingType[index].ringEvent.DisableRings?.Invoke(index);
 
         RingType[index].ResetVariables();
+        RingType[index].SetRingsFailed();
 
     }
     public void GetSonicWave(Vector2 position)
@@ -211,9 +231,38 @@ public class RingPool : ScriptableObject
 
 
     #region Fading/Disabling
+
+    public void StopFade(int index)
+    {
+        switch (index)
+        {
+            case 0:
+
+                spawnMan.StopCoroutine(redFadeOut);
+                DisableRings(0);
+                ResetRedMaterial();
+                break;
+            case 1:
+                spawnMan.StopCoroutine(pinkFadeOut);
+                DisableRings(1);
+                ResetPinkMaterial();
+                break;
+            case 2:
+                spawnMan.StopCoroutine(goldFadeOut);
+                DisableRings(2);
+                ResetGoldMaterial();
+                break;
+            case 3:
+                spawnMan.StopCoroutine(purpleFadeOut);
+                DisableRings(3);
+                ResetPurpleMaterial();
+                break;
+        }
+    }
     public IEnumerator FadeOutRed()
     {
         RingType[0].ReadyToSpawn = false;
+        RingType[0].SetFadingRings(true);
         yield return new WaitForSeconds(.5f);
         float time = 0;
         while (time < 2f)
@@ -230,11 +279,16 @@ public class RingPool : ScriptableObject
         DisableRings(0);
 
         ResetRedMaterial();
+        RingType[0].SetFadingRings(false);
+
     }
 
     public IEnumerator FadeOutPink()
     {
         RingType[1].ReadyToSpawn = false;
+
+        RingType[1].SetFadingRings(true);
+
         float time = 0;
         while (time < 1f)
         {
@@ -249,14 +303,18 @@ public class RingPool : ScriptableObject
         DisableRings(1);
 
         ResetPinkMaterial();
+        RingType[1].SetFadingRings(false);
+
     }
 
-   
+
 
     public IEnumerator FadeOutGold()
     {
 
         RingType[2].ReadyToSpawn = false;
+        RingType[2].SetFadingRings(true);
+
         float time = 0;
         while (time < .4f)
         {
@@ -283,11 +341,15 @@ public class RingPool : ScriptableObject
         DisableRings(2);
 
         ResetGoldMaterial();
+        RingType[2].SetFadingRings(false);
+
     }
 
     public IEnumerator FadeOutPurple()
     {
         RingType[3].ReadyToSpawn = false;
+        RingType[3].SetFadingRings(true);
+
 
         float time = 0;
         while (time < 1f)
@@ -306,7 +368,10 @@ public class RingPool : ScriptableObject
         }
         DisableRings(3);
         yield return new WaitForEndOfFrame();
+
         ResetPurpleMaterial();
+        RingType[3].SetFadingRings(false);
+
     }
 
     public void ResetAllMaterials()
@@ -316,6 +381,7 @@ public class RingPool : ScriptableObject
         ResetGoldMaterial();
         ResetPurpleMaterial();
     }
+
 
     private void ResetRedMaterial()
     {

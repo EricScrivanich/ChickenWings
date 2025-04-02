@@ -44,6 +44,8 @@ public class RingID : ScriptableObject
 
     private int ringOrder;
 
+    public bool FadingRings { get; private set; }
+
 
 
     private const int poolSize = 5;
@@ -56,12 +58,31 @@ public class RingID : ScriptableObject
         objectsToDeactivate.Clear();
         nextIndex = 0;
         triggeredRingOrder = 0;
+        failedRings = false;
+        spawnedBucket = false;
 
         ReturnAllParticles();
         ringList.Clear();
         particlesInUse = 0;
         ReadyToSpawn = true;
 
+    }
+
+    public void SetFadingRings(bool value)
+    {
+        FadingRings = value;
+    }
+    private bool failedRings = false;
+    private bool spawnedBucket = false;
+    public void SetRingsFailed()
+    {
+        failedRings = true;
+
+        if (spawnedBucket)
+        {
+            failedRings = false;
+            spawnedBucket = false;
+        }
     }
 
     public void InitializeVariables()
@@ -188,6 +209,7 @@ public class RingID : ScriptableObject
     public void GetRing(Vector2 setPosition, Quaternion setRotation, Vector2 setScale, float setSpeed)
     {
 
+
         RingMovement ringScript = Pool.GetRing(this);
 
         ringScript.transform.position = setPosition;
@@ -212,11 +234,19 @@ public class RingID : ScriptableObject
 
     }
 
-    public void SpawnRingWithData(RecordedDataStruct data)
+    public void SpawnRingWithData(DataStructFloatThree data)
     {
+        if (failedRings) return;
+        else if (FadingRings)
+        {
+            Pool.StopFade(IDIndex);
+            FadingRings = false;
+            failedRings = false;
+        }
+        spawnedBucket = false;
         RingMovement ringScript = Pool.GetRing(this);
-        ringScript.ApplyRecordedData(data);
         ringScript.order = ringOrder;
+        ringScript.ApplyFloatThreeData(data);
         ringList.Add(ringScript);
         ringOrder++;
         if (particlesInUse < poolSize)
@@ -226,16 +256,28 @@ public class RingID : ScriptableObject
 
             // GetEffect(ringScript);
         }
-        ringScript.gameObject.SetActive(true);
+
 
 
     }
 
-    public void SpawnBucketWithData(RecordedDataStruct data)
+    public void SpawnBucketWithData(DataStructFloatThree data)
     {
+        spawnedBucket = true;
+
+        if (failedRings)
+        {
+            failedRings = false;
+            spawnedBucket = false;
+            return;
+        }
         BucketScript bucketScript = Pool.GetBucket(this);
-        bucketScript.ApplyRecordedData(data);
+        bucketScript.order = ringOrder;
+        bucketScript.ApplyFloatThreeData(data);
+        currentBucket = bucketScript.gameObject;
         ringOrder++;
+
+        Debug.Log("Bucket Order: " + ringOrder);
     }
 
 

@@ -254,7 +254,16 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Plane
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7455814697594661551, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
+      propertyPath: maxSineMagnitude
+      value: 3.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 7455814697594661551, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
+      propertyPath: minSineMagnitude
+      value: 3.1799998
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1466411344348881338, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2807344391490619349, guid: bcc0a2f091b8b4259a0f345726147a75, type: 3}
@@ -297,6 +306,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 9201338505984649302}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: floatOneIsSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <ID>k__BackingField
       value: 4
       objectReference: {fileID: 0}
@@ -311,6 +324,10 @@ PrefabInstance:
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: 'editedData.Array.data[2]'
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <DataType>k__BackingField
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <SizeValues>k__BackingField.x
@@ -357,11 +374,43 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <DelayOrPhaseOffsetValues>k__BackingField.x
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <DelayOrPhaseOffsetValues>k__BackingField.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[0].z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[1].y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[1].z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[2].x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: <FloatValues>k__BackingField.Array.data[2].y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2586524398626405546, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}

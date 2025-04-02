@@ -24,5 +24,9 @@ public class LevelCreatorColors : ScriptableObject
 
     public Color[] RingColors;
 
+    public Color iconOutlineColor;
+    public Color iconFillColor;
+    public Color UnSelectableColor;
+
 
 }

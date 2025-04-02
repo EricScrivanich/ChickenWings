@@ -50,9 +50,13 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
         rb = GetComponent<Rigidbody2D>();
         ringTransform = RingRim.GetComponent<Transform>();
         colliders = GetComponents<Collider2D>();
-        coloredParticleSprite = ColoredParticles.GetComponent<SpriteRenderer>();
-        whiteParticleSprite = WhiteParticles.GetComponent<SpriteRenderer>();
-        ringTransformOriginal = ringTransform.localPosition;
+        if (ID != null)
+        {
+            coloredParticleSprite = ColoredParticles.GetComponent<SpriteRenderer>();
+            whiteParticleSprite = WhiteParticles.GetComponent<SpriteRenderer>();
+            ringTransformOriginal = ringTransform.localPosition;
+        }
+
 
 
 
@@ -91,7 +95,8 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
     }
 
-    private void FixedUpdate() {
+    private void FixedUpdate()
+    {
         rb.MovePosition(rb.position + Vector2.left * speed * Time.fixedDeltaTime);
     }
 
@@ -322,36 +327,40 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
     private void OnEnable()
     {
-        isCorrect = false;
-
-        anim.SetBool("RestartBool", true);
-        EnableColliders();
-        ID.ringEvent.OnCheckOrder += SetCorrectRing;
-        ID.ringEvent.OnCreateNewSequence += NewSetup;
-        ID.ringEvent.DisableRings += DisableBucket;
-        EnableColliders();
-        FadeChildren(1f);
-        StartCoroutine(ResetRing());
-
-
-
-        coloredParticleSprite.color = ID.defaultMaterial.color;
-        speedVar = speed;
-
-
-        ringSpriteFront.material = ID.defaultMaterial;
-        ringSpriteBack.material = ID.defaultMaterial;
-
-
-
-        foreach (SpriteRenderer strip in coloredObjects)
+        if (ID != null)
         {
-            if (strip != null)
-            {
-                strip.color = ID.defaultMaterial.color;
+            isCorrect = false;
 
+            anim.SetBool("RestartBool", true);
+            EnableColliders();
+            ID.ringEvent.OnCheckOrder += SetCorrectRing;
+            ID.ringEvent.OnCreateNewSequence += NewSetup;
+            ID.ringEvent.DisableRings += DisableBucket;
+            EnableColliders();
+            FadeChildren(1f);
+            StartCoroutine(ResetRing());
+
+
+
+            coloredParticleSprite.color = ID.defaultMaterial.color;
+            speedVar = speed;
+
+
+            ringSpriteFront.material = ID.defaultMaterial;
+            ringSpriteBack.material = ID.defaultMaterial;
+
+
+
+            foreach (SpriteRenderer strip in coloredObjects)
+            {
+                if (strip != null)
+                {
+                    strip.color = ID.defaultMaterial.color;
+
+                }
             }
         }
+
 
 
 
@@ -372,19 +381,18 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
     private void OnDisable()
     {
-        isExploded = false;
+        if (ID != null)
+        {
+            isExploded = false;
+            // Debug.Log("reset " + ResetCounter);
+            ResetCounter++;
+            ready = false;
 
+            ID.ringEvent.OnCheckOrder -= SetCorrectRing;
+            ID.ringEvent.OnCreateNewSequence -= NewSetup;
+            ID.ringEvent.DisableRings -= DisableBucket;
 
-
-
-
-        // Debug.Log("reset " + ResetCounter);
-        ResetCounter++;
-        ready = false;
-
-        ID.ringEvent.OnCheckOrder -= SetCorrectRing;
-        ID.ringEvent.OnCreateNewSequence -= NewSetup;
-        ID.ringEvent.DisableRings -= DisableBucket;
+        }
 
 
 
@@ -394,10 +402,10 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
         transform.position = data.startPos;
         speed = data.speed;
         int scaleFlip = 1;
-        float addedXScale = 0;
-        if (data.scale > 1) addedXScale = (data.scale - 1) * .9f;
+
+
         if (speed < 0) scaleFlip = -1;
-        transform.localScale = new Vector3(1.05f * scaleFlip + addedXScale, data.scale, data.scale);
+        transform.localScale = new Vector3(data.scale * scaleFlip, data.scale, data.scale);
 
 
 
@@ -410,18 +418,41 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
     {
         return 0;
     }
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+        // transform.position = data.startPos;
+        transform.SetPositionAndRotation(data.startPos, Quaternion.Euler(0, 0, data.float3));
+        speed = data.float1;
+        int scaleFlip = 1;
+        if (speed < 0) scaleFlip = -1;
+        transform.localScale = new Vector3(data.float2 * scaleFlip, data.float2, data.float2);
+        // transform.eulerAngles = new Vector3(0, 0, data.float3);
+
+        gameObject.SetActive(true);
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+    }
+
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
-        speed = data.speed;
+        speed = data.float1;
         int scaleFlip = 1;
-        float addedXScale = 0;
-        if (data.scale > 1) addedXScale = (data.scale - 1) * .9f;
         if (speed < 0) scaleFlip = -1;
-        transform.localScale = new Vector3(1.05f * scaleFlip + addedXScale, data.scale, data.scale);
-
-
-        transform.eulerAngles = new Vector3(0, 0, data.timeInterval);
+        transform.localScale = new Vector3(data.float2 * scaleFlip, data.float2, data.float2);
+        transform.eulerAngles = new Vector3(0, 0, data.float3);
     }
 
 
@@ -433,6 +464,7 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
     public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
     {
+        Debug.Log("PositionAtRelativeTime for bucket: " + time);
         return new Vector2(currPos.x + (-speed * time), currPos.y);
     }
 

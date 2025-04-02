@@ -439,7 +439,7 @@ public class MissilePigScript : MonoBehaviour, IRecordableObject
                                                                   // Ensure it's 2D
             direction.Normalize(); // Normalize the direction
 
-            if (flipped)
+            if (pigFlipped)
             {
                 direction *= flippedDirection;
             }
@@ -455,7 +455,7 @@ public class MissilePigScript : MonoBehaviour, IRecordableObject
     {
         Ticker.OnTickAction015 -= MoveEyesWithTicker;
     }
-
+    private bool pigFlipped;
     public void Initialize(float xPos, int type, int moveType, bool skip = false)
     {
         isInitialized = true;
@@ -563,6 +563,7 @@ public class MissilePigScript : MonoBehaviour, IRecordableObject
 
 
         }
+        pigFlipped = flippedP;
 
         if (!skip)
         {
@@ -585,10 +586,34 @@ public class MissilePigScript : MonoBehaviour, IRecordableObject
         Initialize(data.startPos.x, data.type, 0, false);
 
     }
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+
+        speed = data.float1;
+        Initialize(data.startPos.x, data.type, 0, false);
+
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+
+    }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
-        speed = data.speed;
+        speed = data.float1;
         Initialize(0, data.type, 0, true);
         // if (speed < BoundariesManager.GroundSpeed)
         // {

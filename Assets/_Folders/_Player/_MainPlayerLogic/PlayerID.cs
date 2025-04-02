@@ -8,7 +8,7 @@ public class PlayerID : ScriptableObject
 {
 
     public List<float> particleYPos { get; private set; }
-    [SerializeField] private LevelManagerID lvlID;
+    public PlayerStartingStatsForLevels playerStartingStats;
     public bool pressingEggButton;
     public bool pressingDashButton;
     public bool pressingDropButton;
@@ -69,10 +69,13 @@ public class PlayerID : ScriptableObject
     [SerializeField] private int startingAmmo;
 
     private int startingScore = 0;
-    [SerializeField] private int startingLives;
+    public int startingLives { get; private set; }
     private int lives;
     [HideInInspector]
     public bool infiniteLives;
+
+
+
     public int Lives
     {
         get
@@ -81,7 +84,7 @@ public class PlayerID : ScriptableObject
         }
         set
         {
-            if (value > 3)
+            if (value > startingLives)
             {
                 return;
             }
@@ -257,8 +260,27 @@ public class PlayerID : ScriptableObject
     //     }
 
     // }
+    public void SetStartingStats(PlayerStartingStatsForLevels stats)
+    {
+        if (stats == null)
+        {
+            Ammo = 0;
+            shotgunAmmo = 0;
+            startingLives = 3;
 
-    public void ResetValues(PlayerStartingStatsForLevels stats)
+        }
+        else
+        {
+            playerStartingStats = stats;
+            Ammo = stats.startingAmmos[0];
+            shotgunAmmo = stats.startingAmmos[1];
+            startingLives = stats.StartingLives;
+        }
+
+        lives = startingLives;
+
+    }
+    public void ResetValues()
     {
         // ammosOnZero = false;
         ammosButtonHidden = false;
@@ -277,19 +299,10 @@ public class PlayerID : ScriptableObject
         PlayerMaterial.SetFloat("_Alpha", 1);
         Score = startingScore;
 
-        if (stats == null)
-        {
-            Ammo = 0;
-            shotgunAmmo = 0;
-        }
-        else
-        {
-            Ammo = stats.startingNormalEggAmmo;
-            shotgunAmmo = stats.startingShotgunAmmo;
-        }
+
 
         chainedShotgunAmmo = startingChainedShotgunAmmo;
-        lives = startingLives;
+
 
         resetingValues = false;
         addedChainShotgunAmmo = 0;

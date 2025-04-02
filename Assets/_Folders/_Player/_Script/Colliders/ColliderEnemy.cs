@@ -77,6 +77,7 @@ public class ColliderEnemy : MonoBehaviour
             return;
 
         }
+
         // else if (collider.CompareTag("Weapon"))
         // {
         //     if (player.CanPerectParry || player.CanParry)
@@ -98,6 +99,7 @@ public class ColliderEnemy : MonoBehaviour
         IExplodable explodableEntity = collider.gameObject.GetComponent<IExplodable>();
         if (explodableEntity != null)
         {
+            player.HandleDamaged();
             explodableEntity.Explode(false);
         }
 

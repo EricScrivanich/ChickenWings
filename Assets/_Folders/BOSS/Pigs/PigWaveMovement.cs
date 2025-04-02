@@ -61,11 +61,11 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         minSineMagnitude = _sineMagnitude - magDiff;
         maxSineMagnitude = _sineMagnitude + magDiff;
 
-        startX = transform.position.x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
+
 
         float period = Mathf.Sin((_position.x - startX) * _sineFrequency);
 
-        if (Mathf.Abs(phaseOffset) > .5f)
+        if (anim != null && Mathf.Abs(phaseOffset) > .5f)
         {
             flyingDown = false;
             anim.SetTrigger("FlyUp");
@@ -82,6 +82,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
 
     private void OnDisable()
     {
+        if (anim == null) return;
         anim.SetBool("GlidingUpBool", false);
         anim.SetBool("GlidingDownBool", false);
 
@@ -200,30 +201,50 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         return x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
     }
 
-    public void ApplyRecordedData(RecordedDataStruct data)
+    
+
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
     {
         transform.position = data.startPos;
         _position = data.startPos;
-        speed = data.speed;
-        magPercent = data.magPercent;
-        phaseOffset = data.delayInterval;
+        speed = data.float1;
+        magPercent = data.float2;
+        phaseOffset = data.float3;
+        transform.localScale = Vector3.one * pigID.baseScale;
+        if (speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
 
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         minSineMagnitude = _sineMagnitude - magDiff;
         maxSineMagnitude = _sineMagnitude + magDiff;
-        transform.localScale = Vector3.one * (data.scale * pigID.baseScale);
-        if (data.speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
 
         gameObject.SetActive(true);
+
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+
     }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
-        speed = data.speed;
-        magPercent = data.magPercent;
-        phaseOffset = data.delayInterval;
-        transform.localScale = Vector3.one * (data.scale * pigID.baseScale);
-        if (data.speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
+        speed = data.float1;
+        magPercent = data.float2;
+        phaseOffset = data.float3;
+        transform.localScale = Vector3.one * pigID.baseScale;
+        if (speed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
 
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         minSineMagnitude = _sineMagnitude - magDiff;

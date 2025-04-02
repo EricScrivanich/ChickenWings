@@ -5,8 +5,12 @@ using HellTap.PoolKit;
 public class PlayerStateManager : MonoBehaviour
 {
     [Header("Scriptable Objects")]
+
     [ExposedScriptableObject]
     public PlayerID ID;
+
+
+
 
     [SerializeField] private bool bounceOffGround;
 
@@ -21,6 +25,7 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private ButtonColorsSO colorSO;
 
     private Queue<Scythe> scythes;
+
 
 
     [SerializeField] private ParryCollisions parry;
@@ -341,7 +346,10 @@ public class PlayerStateManager : MonoBehaviour
 
         stillDashing = false;
 
-        ID.ResetValues(ammoManager);
+        ID.ResetValues();
+        if (ammoManager != null)
+            ID.SetStartingStats(ammoManager);
+
         // holdingFlip = false;
         ID.UsingClocker = false;
         rotateSlash = false;
@@ -560,6 +568,49 @@ public class PlayerStateManager : MonoBehaviour
 
             // ID.SetAmountOfWeapons(ammoManager.numberOfWeapons);
         }
+        else if (ID.playerStartingStats != null)
+        {
+            ammoManager = ID.playerStartingStats;
+            ammoManager.Initialize();
+            int startingAmmo = ammoManager.ReturnStartingEquipedAmmo();
+
+            switch (startingAmmo)
+            {
+                case -1:
+                    currentWeaponState = AmmoStateHidden;
+                    break;
+                case 0:
+                    currentWeaponState = AmmoStateEgg;
+                    break;
+                case 1:
+                    currentWeaponState = AmmoStateShotgun;
+                    break;
+                case 2:
+                    currentWeaponState = AmmoStateBoomerang;
+                    break;
+
+            }
+
+            if (startingAmmo != -1)
+            {
+                currentWeaponIndex = startingAmmo;
+
+                ID.UiEvents.OnSendShownSidebarAmmos?.Invoke(ammoManager.AvailableAmmos, startingAmmo);
+
+            }
+            else
+            {
+                currentWeaponIndex = 0;
+                // ID.canPressEggButton = false;
+                // ID.UiEvents.OnSendShownSidebarAmmos?.Invoke(ammoManager.AvailableAmmos, 0);
+
+
+            }
+
+
+            currentWeaponState.EnterState(this, 0);
+
+        }
 
         else
         {
@@ -774,7 +825,7 @@ public class PlayerStateManager : MonoBehaviour
     {
 
         currentState.UpdateState(this);
-        
+
         // currentState.RotateState(this);
         if (transform.position.y > BoundariesManager.TopPlayerBoundary && !isFrozen && !ID.constantPlayerForceBool)
         {
@@ -2463,6 +2514,8 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (currentWeaponState != null)
             currentWeaponState.ExitState(this);
+
+        if (ID.playerStartingStats != null) ID.playerStartingStats = null;
 
         ID.events.OnSetScythePos -= SetScythePosition;
         ID.events.OnReleaseStick -= HandleReleaseStick;

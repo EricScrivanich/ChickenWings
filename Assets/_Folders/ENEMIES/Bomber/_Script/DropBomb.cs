@@ -99,6 +99,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
     private bool hasInitialized = false;
 
     private Vector3 nomralScale;
+    private bool hasSpawned = false;
 
     private void Awake()
     {
@@ -111,7 +112,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
     }
     void Start()
     {
-
+        hasSpawned = true;
 
 
 
@@ -121,19 +122,19 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         // pool = PoolKit.GetPool("ExplosionPool");
 
         // xPos = Random.Range(minX, maxX);
-        if (!hasInitialized && !ignoreAll)
-        {
-            if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
-            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
-            float u = dropZone.AddedUnits();
-            xEnter = xDropPosition + ((u + 3) * sideSwitchInteger);
-            xExit = xDropPosition - ((u + 4.7f) * sideSwitchInteger);
-            Debug.Log("Added Units is: " + u + " side switch is: " + sideSwitchInteger);
-            Debug.Log("Bomber initialized with xEnter: " + xEnter + " and xExit: " + xExit);
+        // if (!hasInitialized && !ignoreAll)
+        // {
+        //     if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
+        //     dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
+        //     float u = dropZone.AddedUnits();
+        //     xEnter = xDropPosition + ((u + 3) * sideSwitchInteger);
+        //     xExit = xDropPosition - ((u + 4.7f) * sideSwitchInteger);
+        //     Debug.Log("Added Units is: " + u + " side switch is: " + sideSwitchInteger);
+        //     Debug.Log("Bomber initialized with xEnter: " + xEnter + " and xExit: " + xExit);
 
-            StartCoroutine(BomberStart());
-            hasInitialized = true;
-        }
+        //     StartCoroutine(BomberStart());
+        //     hasInitialized = true;
+        // }
 
 
 
@@ -344,6 +345,15 @@ public class DropBomb : MonoBehaviour, IRecordableObject
 
     private void OnDisable()
     {
+        Debug.Log("Bomber disabled");
+
+        if (hasSpawned && !ignoreAll)
+            Stop();
+        if (ignoreAll && dropZone != null) dropZone.gameObject.SetActive(false);
+    }
+
+    public void Stop()
+    {
         if (droppingTweenSeq != null && droppingTweenSeq.IsPlaying())
             droppingTweenSeq.Kill();
 
@@ -354,14 +364,23 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         }
         DOTween.Kill(this);
         StopAllCoroutines();
-
-        if (ignoreAll && dropZone != null) dropZone.gameObject.SetActive(false);
     }
 
 
     private void OnEnable()
     {
+        Debug.Log("Bomber enabled");
         if (ignoreAll) return;
+
+        // }
+
+
+
+
+
+    }
+    private void OnSpawned()
+    {
         enteredZone = false;
         hasFadedDropZone = false;
 
@@ -386,21 +405,16 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         speed = speedStart;
         transform.position = new Vector2(planeStartX, StartY + 1);
 
-        if (hasInitialized)
-        {
-            if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
+        // if (hasInitialized)
+        // {
+        if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
 
-            dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
-            float u = dropZone.AddedUnits();
-            xEnter = xDropPosition + ((u + 3) * sideSwitchInteger);
-            xExit = xDropPosition - ((u + 4.7f) * sideSwitchInteger);
+        dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
+        float u = dropZone.AddedUnits();
+        xEnter = xDropPosition + ((u + 3) * sideSwitchInteger);
+        xExit = xDropPosition - ((u + 4.7f) * sideSwitchInteger);
 
-            StartCoroutine(BomberStart());
-        }
-
-
-
-
+        StartCoroutine(BomberStart());
 
     }
     private WaitForSeconds wait1 = new WaitForSeconds(1.5f);
@@ -500,16 +514,54 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         gameObject.SetActive(true);
 
     }
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+        ignoreAll = false;
+        xDropPosition = data.startPos.x;
+        dropAreaScaleMultiplier = data.float1;
+        if (data.type == 0)
+        {
+
+            speedTarget = 8;
+        }
+        else
+        {
+
+            speedTarget = -7;
+
+        }
+        gameObject.SetActive(true);
+        OnSpawned();
+
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+
+    }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
         hasEnteredTriggerArea = true;
         dropping = false;
         Debug.Log("Applying Data");
-        sideSwitchInteger = 1;
+
         xDropPosition = data.startPos.x;
         if (data.type == 0)
         {
+            sideSwitchInteger = 1;
             transform.localScale = nomralScale;
             speedTarget = 8;
         }
@@ -522,7 +574,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
 
         planeStartX = xDropPosition + ((xDistanceFromZone - 1) * sideSwitchInteger);
 
-        dropZone.ApplyCustomizedData(data.startPos.x, data.scale, planeStartX, sideSwitchInteger);
+        dropZone.ApplyCustomizedData(data.startPos.x, data.float1, planeStartX, sideSwitchInteger);
         float u = dropZone.AddedUnits();
         xEnter = xDropPosition + ((u + 3) * sideSwitchInteger);
         xExit = xDropPosition - ((u + 4.7f) * sideSwitchInteger);
@@ -559,7 +611,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
     {
         Debug.Log("Returning Data");
 
-        if ((sideSwitchInteger == 1 && transform.position.x < xExit - .8f) || (sideSwitchInteger == -1 && transform.position.x > xExit + .8f))
+        if ((sideSwitchInteger == 1 && x < xExit - 5.5f) || (sideSwitchInteger == -1 && x > xExit + 5.5f))
         {
             Debug.Log("Returning Data 2 with side " + sideSwitchInteger);
             return -1;

@@ -12,6 +12,9 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     private Egg_Regular[] eggPool;
     private ShotgunBlast[] shotgunPool;
 
+    public short[] startingAmmos;
+    public short StartingLives;
+
     public int numberOfWeapons { get; private set; }
 
     [SerializeField] private int eggPoolSize;
@@ -34,6 +37,12 @@ public class PlayerStartingStatsForLevels : ScriptableObject
         currentShotgunIndex = 0;
         eggID = 0;
         shotgunID = 0;
+        if (startingAmmos != null && startingAmmos.Length > 0)
+        {
+            startingNormalEggAmmo = startingAmmos[0];
+            startingShotgunAmmo = startingAmmos[1];
+        }
+
 
         eggPool = new Egg_Regular[eggPoolSize];
         for (int i = 0; i < eggPoolSize; i++)

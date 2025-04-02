@@ -20,6 +20,15 @@ public class FolderManager : MonoBehaviour
             Destroy(this);
         }
 
+        for (int i = 0; i < folders.Length; i++)
+        {
+            folders[i].SetActive(false);
+        }
+
+    }
+    private void Start()
+    {
+        folders[0].SetActive(true);
     }
 
     public void SelectFolder(int type)

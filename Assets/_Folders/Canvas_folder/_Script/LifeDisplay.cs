@@ -11,6 +11,8 @@ public class LifeDisplay : MonoBehaviour
     public PlayerID player;
     [SerializeField] private float spriteSwitchDelay;
 
+    [SerializeField] private GameObject eggPrefab;
+
     private Coroutine loseLifeRoutine;
     private Coroutine gainLifeRoutine;
     private int lives;
@@ -19,25 +21,20 @@ public class LifeDisplay : MonoBehaviour
     private GameObject lastBrokenEgg;
 
 
-    [SerializeField] private Image[] eggImages;
+    private Image[] eggImages;
     [SerializeField] private Sprite[] eggSprites;
+    [SerializeField] private float baseWidth;
+    [SerializeField] private float addedWidthPerEgg;
 
-
-
-
-    private void Awake()
-    {
-
-
-
+    [SerializeField] private float baseSpacing = -100;
+    [SerializeField] private float spacingPerLife = 15;
 
 
 
 
 
-        // InitializeEggAnimators();
 
-    }
+
 
 
     public Vector2 ReturnEggPosition()
@@ -85,7 +82,12 @@ public class LifeDisplay : MonoBehaviour
         }
 
         player.infiniteLives = infiniteLives;
+        // player.Lives = startingLives;
         lives = player.Lives;
+
+        InitializeEggs(lives);
+
+        // InitializeEggs(startingLives);
     }
 
     public void SetInfiniteLives(bool isInfinite)
@@ -102,9 +104,29 @@ public class LifeDisplay : MonoBehaviour
     }
 
 
+
+    private void InitializeEggs(int lives)
+    {
+        float w = baseWidth + (lives * addedWidthPerEgg);
+        float s = baseSpacing + (lives * spacingPerLife);
+        eggImages = new Image[lives];
+        GetComponent<RectTransform>().sizeDelta = new Vector2(w, GetComponent<RectTransform>().sizeDelta.y);
+
+        GetComponent<HorizontalLayoutGroup>().spacing = s;
+
+        for (int i = 0; i < lives; i++)
+        {
+            var o = Instantiate(eggPrefab, transform).GetComponent<Image>();
+            eggImages[i] = o;
+
+        }
+
+    }
+
+
     void UpdateLives(int newLives)
     {
-        Debug.Log("Called");
+        Debug.LogError("Updating lives: " + newLives + " current: " + lives);
         if (infiniteLives)
         {
             Debug.Log("Infinite");
@@ -113,7 +135,7 @@ public class LifeDisplay : MonoBehaviour
         // Check if gained a life
         if (newLives > lives)
         {
-            if (lives <= 2)
+            if (lives < player.startingLives)
             {
 
                 if (loseLifeRoutine != null)
@@ -150,7 +172,7 @@ public class LifeDisplay : MonoBehaviour
     private IEnumerator UpdateSpritesOnLoseLife(int lifeNumber)
     {
 
-
+        Debug.LogError("Updating sprites on lose life: " + lifeNumber);
         for (int i = 0; i < eggSprites.Length; i++)
         {
             eggImages[lifeNumber].sprite = eggSprites[i];
@@ -162,7 +184,7 @@ public class LifeDisplay : MonoBehaviour
     private IEnumerator UpdateSpritesOnGainLife(int lifeNumber)
     {
 
-
+        Debug.LogError("Updating sprites on gain life: " + lifeNumber);
 
 
         for (int i = eggSprites.Length - 1; i >= 0; i--)

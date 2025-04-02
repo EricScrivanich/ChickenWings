@@ -46,6 +46,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
 
 
 
+
     // Declare the hash
     // private static readonly int BurstBoolHash = Animator.StringToHash("BurstBool");
     // private static readonly int FadeCenterHash = Animator.StringToHash("FadeCenterBool");
@@ -234,8 +235,10 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
 
     public void SetCorrectRing()
     {
+        Debug.Log("Checking Ring order: " + order + " correct ring: " + ID.CorrectRing);
         if (ID != null && order == ID.CorrectRing)
         {
+            Debug.Log("Correct ring: " + order);
             sprite.material = ID.highlightedMaterial;
             backRing.material = ID.highlightedMaterial;
 
@@ -315,48 +318,53 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
             sprite.material = ID.defaultMaterial;
             backRing.material = ID.defaultMaterial;
             center.color = ID.CenterColor;
+            ID.ringEvent.OnCheckOrder += SetCorrectRing;
+            ID.ringEvent.OnCreateNewSequence += NewSetup;
+            ID.ringEvent.DisableRings += DisableRings;
+            originalSpeed = speed;
+
+            float speedPercentage = Mathf.InverseLerp(lerpOffsetSpeedBasedOnRange.x, lerpOffsetSpeedBasedOnRange.y, MathF.Abs(originalSpeed));
+            lerpStartOffset = Mathf.Lerp(lerpOffsetRangeBasedOnSpeed.x, lerpOffsetRangeBasedOnSpeed.y, speedPercentage);
+
+            if (speed > 0)
+            {
+                lerpEndBoundary = BoundariesManager.leftViewBoundary;
+                lerpStartBoundary = lerpEndBoundary + lerpStartOffset;
+
+            }
+            else
+            {
+                lerpEndBoundary = BoundariesManager.rightViewBoundary;
+                lerpStartBoundary = lerpEndBoundary - lerpStartOffset;
+            }
+
+
+            // burst.color = ID.CenterColor;
+            // burst.transform.localScale = startBurstScale;
+
+
+
+
+            if (col != null)
+                col.enabled = true;
+
+            SetCorrectRing();
         }
 
-        originalSpeed = speed;
 
-        float speedPercentage = Mathf.InverseLerp(lerpOffsetSpeedBasedOnRange.x, lerpOffsetSpeedBasedOnRange.y, MathF.Abs(originalSpeed));
-        lerpStartOffset = Mathf.Lerp(lerpOffsetRangeBasedOnSpeed.x, lerpOffsetRangeBasedOnSpeed.y, speedPercentage);
-
-        if (speed > 0)
-        {
-            lerpEndBoundary = BoundariesManager.leftViewBoundary;
-            lerpStartBoundary = lerpEndBoundary + lerpStartOffset;
-
-        }
-        else
-        {
-            lerpEndBoundary = BoundariesManager.rightViewBoundary;
-            lerpStartBoundary = lerpEndBoundary - lerpStartOffset;
-        }
-
-
-        // burst.color = ID.CenterColor;
-        // burst.transform.localScale = startBurstScale;
-
-
-
-
-        ID.ringEvent.OnCheckOrder += SetCorrectRing;
-        ID.ringEvent.OnCreateNewSequence += NewSetup;
-        ID.ringEvent.DisableRings += DisableRings;
-        if (col != null)
-            col.enabled = true;
-
-        SetCorrectRing();
         // hasNotTriggered = true;
 
     }
 
     void OnDisable()
     {
-        ID.ringEvent.OnCheckOrder -= SetCorrectRing;
-        ID.ringEvent.OnCreateNewSequence -= NewSetup;
-        ID.ringEvent.DisableRings -= DisableRings;
+        if (ID != null)
+        {
+            ID.ringEvent.OnCheckOrder -= SetCorrectRing;
+            ID.ringEvent.OnCreateNewSequence -= NewSetup;
+            ID.ringEvent.DisableRings -= DisableRings;
+        }
+
 
 
         // if (!isFaded)
@@ -392,18 +400,39 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
     {
         return 0;
     }
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+    }
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+    }
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+        // transform.position = data.startPos;
+        transform.SetPositionAndRotation(data.startPos, Quaternion.Euler(0, 0, data.float3));
+        speed = data.float1;
+        int scaleFlip = 1;
+        if (speed < 0) scaleFlip = -1;
+        transform.localScale = new Vector3(data.float2 * scaleFlip, data.float2, data.float2);
+        // transform.eulerAngles = new Vector3(0, 0, data.float3);
+        gameObject.SetActive(true);
+    }
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+
+
+    }
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+    }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
-        speed = data.speed;
+        speed = data.float1;
         int scaleFlip = 1;
-        float addedXScale = 0;
-        if (data.scale > 1) addedXScale = (data.scale - 1) * .9f;
         if (speed < 0) scaleFlip = -1;
-        transform.localScale = new Vector3(1.05f * scaleFlip + addedXScale, data.scale, data.scale);
-
-
-        transform.eulerAngles = new Vector3(0, 0, data.timeInterval);
+        transform.localScale = new Vector3(data.float2 * scaleFlip, data.float2, data.float2);
+        transform.eulerAngles = new Vector3(0, 0, data.float3);
     }
 
 

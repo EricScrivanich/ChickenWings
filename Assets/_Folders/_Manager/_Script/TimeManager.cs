@@ -28,9 +28,13 @@ public class TimeManager : MonoBehaviour
 
     private void Start()
     {
-        GameObject.Find("Background").GetComponent<EnviromentMovement>().enabled = player.constantPlayerForceBool;
+        if (GameObject.Find("Background") != null)
+        {
+            GameObject.Find("Background").GetComponent<EnviromentMovement>().enabled = player.constantPlayerForceBool;
+        }
 
-      
+
+
         // StartCoroutine(AddScore());
 
 

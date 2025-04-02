@@ -288,7 +288,7 @@ Transform:
   m_GameObject: {fileID: 2172210907734772808}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.3714, y: 1.1079, z: 0}
+  m_LocalPosition: {x: -0.44, y: 1.42, z: 0}
   m_LocalScale: {x: 0.8747, y: 0.830965, z: 0.8747}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -636,13 +636,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2805159757416678712}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.013677191, w: 0.9999065}
-  m_LocalPosition: {x: -0.373, y: -0.042, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.37945613, w: 0.92520976}
+  m_LocalPosition: {x: -0.43, y: -0.24, z: 0}
   m_LocalScale: {x: 1, y: 0.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 223833923287948005}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -1.567}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 44.6}
 --- !u!212 &6714245488897943338
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1023,6 +1023,7 @@ MonoBehaviour:
   - {fileID: 489614939608621037}
   - {fileID: 7212124968288278936}
   - {fileID: 8123791724645839643}
+  - {fileID: 6714245488897943338}
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!210 &7577326095344756254

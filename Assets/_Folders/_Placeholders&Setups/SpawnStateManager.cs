@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class SpawnStateManager : MonoBehaviour
 {
+    [SerializeField] private bool isTestPlayer = false;
     [SerializeField] private LevelManagerID LvlID;
 
     private BarnAndEggSpawner eggSpawner;
@@ -186,6 +187,9 @@ public class SpawnStateManager : MonoBehaviour
             transitionLogic.Reset();
             prevTransitonLogic = transitionLogic;
         }
+        if (isTestPlayer) currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
+        if (levelData != null)
+            levelData.InitializeData(this, currentSpawnStep);
     }
     void Start()
     {
@@ -194,7 +198,7 @@ public class SpawnStateManager : MonoBehaviour
         // currentTransitionLogicIndex = 0;
         eggSpawner = GetComponent<BarnAndEggSpawner>();
 
-        LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
+
 
         if (randomEnemySetups != null && randomEnemySetups.Length > 0)
         {
@@ -215,8 +219,27 @@ public class SpawnStateManager : MonoBehaviour
         }
 
 
+        if (!isTestPlayer)
+        {
+            LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
+            SpawnPools();
+            if (startDelay > 0)
+            {
+                StartCoroutine(SwitchToStartingStateAfterDelay(startDelay));
 
-        SpawnPools();
+            }
+            else if (startingState == -2)
+            {
+                NextLogicTriggerAfterDelay(startingStateDelay, -1);
+            }
+        }
+
+        else
+        {
+            LvlID.outputEvent.OnGetLevelTimeNew?.Invoke((levelData.finalSpawnStep + 3) * LevelRecordManager.TimePerStep, currentSpawnStep * LevelRecordManager.TimePerStep);
+            StartCoroutine(SpawnDataNew());
+        }
+
 
 #if UNITY_EDITOR
         bool isTesting = false;
@@ -241,19 +264,12 @@ public class SpawnStateManager : MonoBehaviour
 
 #endif
         //current old logic
-        // if (startDelay > 0)
-        // {
-        //     StartCoroutine(SwitchToStartingStateAfterDelay(startDelay));
 
-        // }
-        // else if (startingState == -2)
-        // {
-        //     NextLogicTriggerAfterDelay(startingStateDelay, -1);
-        // }
 
         // levelData = levelData = AssetDatabase.LoadAssetAtPath < LevelData >
-        levelData.InitializeData(this);
-        StartCoroutine(SpawnDataNew());
+
+
+
 
 
 
@@ -262,11 +278,13 @@ public class SpawnStateManager : MonoBehaviour
 
     private IEnumerator SpawnDataNew()
     {
+
         while (true)
         {
+            yield return wait;
             // Debug.Log("Spawning step: " + currentSpawnStep);
             levelData.NextSpawnStep(currentSpawnStep);
-            yield return wait;
+
             currentSpawnStep++;
         }
 
@@ -929,19 +947,19 @@ public class SpawnStateManager : MonoBehaviour
         switch (index)
         {
             case 0:
-                StartCoroutine(ringPool.FadeOutRed());
+                ringPool.redFadeOut = StartCoroutine(ringPool.FadeOutRed());
                 break;
             case 1:
-                StartCoroutine(ringPool.FadeOutPink());
+                ringPool.pinkFadeOut = StartCoroutine(ringPool.FadeOutPink());
 
                 break;
             case 2:
 
-                StartCoroutine(ringPool.FadeOutGold());
+                ringPool.goldFadeOut = StartCoroutine(ringPool.FadeOutGold());
                 break;
             case 3:
 
-                StartCoroutine(ringPool.FadeOutPurple());
+                ringPool.purpleFadeOut = StartCoroutine(ringPool.FadeOutPurple());
                 break;
             default:
                 break;
@@ -1043,9 +1061,17 @@ public class SpawnStateManager : MonoBehaviour
             // Instantiate the prefab and assign it to the pool array
             var obj = Instantiate(pilotPigPrefab);
             obj.SetActive(false);
+            obj.GetComponent<PilotPig>().enabled = true;
+
+            if (obj.GetComponent<PigWaveMovement>() != null)
+            {
+                obj.GetComponent<PigWaveMovement>().enabled = false;
+            }
+
 
             // Get the pilotPigMovement component and store it in the array
             pilotPig[i] = obj.GetComponent<PilotPig>();
+
         }
 
         pilotPigNew = new PigWaveMovement[pilotPigPoolSize];
@@ -1057,16 +1083,6 @@ public class SpawnStateManager : MonoBehaviour
 
             // Get the pilotPigMovement component and store it in the array
             pilotPigNew[i] = obj.GetComponent<PigWaveMovement>();
-        }
-        BigPigNew = new PigMovementBasic[bigPigPoolSize];
-        for (int i = 0; i < BigPigNew.Length; i++)
-        {
-            // Instantiate the prefab and assign it to the pool array
-            var obj = Instantiate(bigPigPrefab);
-            obj.SetActive(false);
-
-            // Get the normalPigMovement component and store it in the array
-            BigPigNew[i] = obj.GetComponent<PigMovementBasic>();
         }
 
 
@@ -1101,6 +1117,11 @@ public class SpawnStateManager : MonoBehaviour
             // Instantiate the prefab and assign it to the pool array
             var obj = Instantiate(bigPigPrefab);
             obj.SetActive(false);
+            obj.GetComponent<BigPigMovement>().enabled = true;
+            if (obj.GetComponent<PigMovementBasic>() != null)
+            {
+                obj.GetComponent<PigMovementBasic>().enabled = false;
+            }
 
             // Get the bigPigMovement component and store it in the array
             bigPig[i] = obj.GetComponent<BigPigMovement>();
@@ -1319,7 +1340,7 @@ public class SpawnStateManager : MonoBehaviour
         hotAirBalloon.type = type;
         hotAirBalloon.initialDelay = xTrigger;
         hotAirBalloon.yTarget = yTarget;
-        hotAirBalloon.speed = speed;
+        hotAirBalloon.speed = -speed;
         hotAirBalloon.delay = delay;
         hotAirBalloon.gameObject.SetActive(true);
         hotAirBalloonIndex++;
@@ -1362,109 +1383,5 @@ public class SpawnStateManager : MonoBehaviour
 
     #endregion
 
-    public void SpawnObject(RecordedDataStruct data)
-    {
-        Debug.LogError("Spawning Object: " + data.ID);
-        switch (data.ID)
-        {
-            case 0:
-                if (normalPigIndex >= normalPig.Length) normalPigIndex = 0;
-                var script = normalPig[normalPigIndex];
-                if (script.gameObject.activeInHierarchy) script.gameObject.SetActive(false);
-                script.ApplyRecordedData(data);
-                normalPigIndex++;
-                break;
-            case 1: //Jet pack
-                if (jetPackPigIndex >= jetPackPig.Length) jetPackPigIndex = 0;
-                var scriptJet = jetPackPig[jetPackPigIndex];
-                if (scriptJet.gameObject.activeInHierarchy) scriptJet.gameObject.SetActive(false);
-                scriptJet.ApplyRecordedData(data);
-                jetPackPigIndex++;
-                break;
-            case 2: //Big pig
-                if (bigPigIndex >= BigPigNew.Length) bigPigIndex = 0;
-                var scriptBig = BigPigNew[bigPigIndex];
-                if (scriptBig.gameObject.activeInHierarchy) scriptBig.gameObject.SetActive(false);
-                scriptBig.ApplyRecordedData(data);
-                bigPigIndex++;
-                break;
-            case 3: //Tennderizer pig
-                if (tenderizerPigIndex >= tenderizerPig.Length) tenderizerPigIndex = 0;
-                var scriptTenderizer = tenderizerPig[tenderizerPigIndex];
-                if (scriptTenderizer.gameObject.activeInHierarchy) scriptTenderizer.gameObject.SetActive(false);
-                scriptTenderizer.ApplyRecordedData(data);
-                tenderizerPigIndex++;
-                break;
-            case 4: //Pilot pig
-                if (pilotPigIndex >= pilotPigNew.Length) pilotPigIndex = 0;
-                var scriptPilot = pilotPigNew[pilotPigIndex];
-                if (scriptPilot.gameObject.activeInHierarchy) scriptPilot.gameObject.SetActive(false);
-                scriptPilot.ApplyRecordedData(data);
-                pilotPigIndex++;
-                break;
-            case 5: //missile pig
-                if (missilePigIndex >= missilePig.Length) missilePigIndex = 0;
-                var scriptMissile = missilePig[missilePigIndex];
-                if (scriptMissile.gameObject.activeInHierarchy) scriptMissile.gameObject.SetActive(false);
-                scriptMissile.ApplyRecordedData(data);
-                missilePigIndex++;
-                break;
-            case 6: // bomber plane
-                if (bomberPlaneIndex >= bomberPlanes.Length) bomberPlaneIndex = 0;
-                var scriptBomber = bomberPlanes[bomberPlaneIndex];
-                if (scriptBomber.gameObject.activeInHierarchy) scriptBomber.gameObject.SetActive(false);
-                scriptBomber.ApplyRecordedData(data);
-                bomberPlaneIndex++;
-                break;
-            case 7: // flappy pig
-                if (flappyPigIndex >= flappyPigs.Length) flappyPigIndex = 0;
-                var scriptFlappy = flappyPigs[flappyPigIndex];
-                if (scriptFlappy.gameObject.activeInHierarchy) scriptFlappy.gameObject.SetActive(false);
-                scriptFlappy.ApplyRecordedData(data);
-                flappyPigIndex++;
-                break;
-            case 8: // gas pig
 
-                if (gasPigIndex >= gasPigs.Length) gasPigIndex = 0;
-                var scriptGas1 = gasPigs[gasPigIndex];
-                if (scriptGas1.gameObject.activeInHierarchy) scriptGas1.gameObject.SetActive(false);
-                scriptGas1.ApplyRecordedData(data);
-                gasPigIndex++;
-
-
-                break;
-            case 9:
-                if (gasPigFlyingIndex >= gasPigsFlying.Length) gasPigFlyingIndex = 0;
-                var scriptGas = gasPigsFlying[gasPigFlyingIndex];
-                if (scriptGas.gameObject.activeInHierarchy) scriptGas.gameObject.SetActive(false);
-                scriptGas.ApplyRecordedData(data);
-                gasPigFlyingIndex++;
-                break;
-
-            case 10: // hot air balloon
-                if (hotAirBalloonIndex >= hotAirBalloons.Length) hotAirBalloonIndex = 0;
-                var scriptHotAir = hotAirBalloons[hotAirBalloonIndex];
-                if (scriptHotAir.gameObject.activeInHierarchy) scriptHotAir.gameObject.SetActive(false);
-                scriptHotAir.ApplyRecordedData(data);
-                hotAirBalloonIndex++;
-                break;
-            case 11: // windmill
-                if (windMillIndex >= windMills.Length) windMillIndex = 0;
-                var scriptWind = windMills[windMillIndex];
-                if (scriptWind.gameObject.activeInHierarchy) scriptWind.gameObject.SetActive(false);
-                scriptWind.ApplyRecordedData(data);
-                windMillIndex++;
-                break;
-            case 12: // barn
-                break;
-            case 13:
-                ringPool.RingType[data.type].SpawnRingWithData(data);
-                break;
-            case 14:
-                ringPool.RingType[data.type].SpawnBucketWithData(data);
-                break;
-                // case 14:
-
-        }
-    }
 }

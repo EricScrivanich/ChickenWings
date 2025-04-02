@@ -75,6 +75,7 @@ public class AudioManager : MonoBehaviour
     // 0 ,1 are good, we are using 0
     // [SerializeField] private AudioClip[] longFarts;
     [SerializeField] private AudioClip longFart;
+    [SerializeField] private AudioClip uziGunShot;
 
 
 
@@ -104,6 +105,8 @@ public class AudioManager : MonoBehaviour
 
 
     [Header("Volumes")]
+    [SerializeField] private float uziGunShotVolume;
+
     [SerializeField] private float parryStartVolume;
     [SerializeField] private float parryHitVolume;
     [SerializeField] private float perfectScytheVolume;
@@ -350,6 +353,11 @@ public class AudioManager : MonoBehaviour
 
         }
 
+    }
+
+    public void PlayUziGunShot()
+    {
+        audioSource.PlayOneShot(uziGunShot, uziGunShotVolume);
     }
 
     public void PlayBoingSound()

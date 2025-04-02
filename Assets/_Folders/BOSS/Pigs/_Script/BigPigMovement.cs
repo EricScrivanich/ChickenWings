@@ -22,7 +22,7 @@ public class BigPigMovement : MonoBehaviour
 
     // The height the pig would reach after applying yForce
 
-    private static readonly int FlapTriggerHash = Animator.StringToHash("FlapTrigger");
+    private static readonly int FlapTriggerHash = Animator.StringToHash("Flap");
 
     [Header("Positions")]
     [SerializeField] private Transform wingPosition;

@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,8 +42,10 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     [Header("Egg")]
     [SerializeField] private GameObject eggCollectablePrefab;
+    [SerializeField] private GameObject shotgunCollectablePrefab;
     [SerializeField] private int eggCollectableCount;
     private int currentEggCollectableIndex;
+    private int currentShotgunCollectableIndex;
 
     [SerializeField] private Vector2 eggTimeRange;
     private float eggOffsetTime = 0;
@@ -77,6 +80,8 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     private ParticleSystem[] ammoParticles = new ParticleSystem[2];
     private ParticleSystem[] manaParticles = new ParticleSystem[2];
+
+    private static System.Action<Vector2, int> OnGetAmmoParticles;
 
     private bool justSpawnedEnemies = false;
 

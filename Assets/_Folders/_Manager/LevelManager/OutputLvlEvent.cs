@@ -39,11 +39,13 @@ public struct OutputLvlEvent
 
     public Action<float> OnGetLevelTime;
 
-
-    
-
+    public Action<float, float> OnGetLevelTimeNew;
 
 
-    public Action<RandomSpawnIntensity,bool> OnSetNewIntensity;
+
+
+
+
+    public Action<RandomSpawnIntensity, bool> OnSetNewIntensity;
     public Action<SpawnStateTransitionLogic, bool> OnSetNewTransitionLogic;
 }
