@@ -441,7 +441,7 @@ public class CustomTimeSlider : MonoBehaviour
 
     public void NextTimeStep(bool forward)
     {
-        if (timeStepList[timeStepList.Count - 1] < currentIndex)
+        if (timeStepList.Count > 0 && timeStepList[timeStepList.Count - 1] < currentIndex)
         {
             if (forward) return;
             else

@@ -184,7 +184,7 @@ public class RingSpawner : MonoBehaviour
 
                 if (ringType.triggeredRingOrder == totalRingPlaceholders)
                 {
-                    ringType.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale,  placeholderData.speed);
+                    ringType.GetBucket(placeholderData.position, placeholderData.rotation, placeholderData.scale, placeholderData.speed);
                 }
                 else
                 {
@@ -242,7 +242,7 @@ public class RingSpawner : MonoBehaviour
         }
         else
         {
-            StartCoroutine(SequenceFinishedCourintine(1.5f, index));
+            // StartCoroutine(SequenceFinishedCourintine(1.5f, index));
 
             // Pool.RingType[index].ResetVariables();
             // SpawnRings(4f);

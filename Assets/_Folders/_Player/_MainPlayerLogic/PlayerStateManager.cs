@@ -4,6 +4,7 @@ using UnityEngine;
 using HellTap.PoolKit;
 public class PlayerStateManager : MonoBehaviour
 {
+    [SerializeField] private bool ignoreStartingState;
     [Header("Scriptable Objects")]
 
     [ExposedScriptableObject]
@@ -420,8 +421,6 @@ public class PlayerStateManager : MonoBehaviour
         AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), mutePlayerAudio);
 
         if (mutePlayerAudio) Time.timeScale = .95f;
-
-
         HapticFeedbackManager.instance.LoadSavedData();
 
         // if (swipeTracker != null)
@@ -519,8 +518,12 @@ public class PlayerStateManager : MonoBehaviour
 
         ID.events.EnableButtons?.Invoke(false);
 
-        currentState = StartingState;
-        // currentState = IdleState;
+        if (ignoreStartingState)
+            currentState = IdleState;
+
+        else
+            currentState = StartingState;
+
         ID.events.EnableButtons(true);
         currentState.EnterState(this);
         // currentWeaponState = AmmoStateHidden;

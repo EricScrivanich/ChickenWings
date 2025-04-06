@@ -170,6 +170,12 @@ public class RingPool : ScriptableObject
         RingType[index].SetRingsFailed();
 
     }
+
+    public void ResetRings(int index)
+    {
+        RingType[index].ResetVariables();
+
+    }
     public void GetSonicWave(Vector2 position)
     {
         if (SonicWave != null)

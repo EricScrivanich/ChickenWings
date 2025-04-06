@@ -49,6 +49,7 @@ public class RingID : ScriptableObject
 
 
     private const int poolSize = 5;
+
     public void ResetVariables()
     {
 
@@ -58,8 +59,8 @@ public class RingID : ScriptableObject
         objectsToDeactivate.Clear();
         nextIndex = 0;
         triggeredRingOrder = 0;
-        failedRings = false;
-        spawnedBucket = false;
+        // failedRings = false;
+        // spawnedBucket = false;
 
         ReturnAllParticles();
         ringList.Clear();
@@ -77,6 +78,7 @@ public class RingID : ScriptableObject
     public void SetRingsFailed()
     {
         failedRings = true;
+        Debug.LogError("Failed Rings: " + failedRings + " Spawned Bucket: " + spawnedBucket);
 
         if (spawnedBucket)
         {
@@ -89,6 +91,8 @@ public class RingID : ScriptableObject
     {
         CorrectRing = 1;
         ringOrder = 1;
+        failedRings = false;
+        spawnedBucket = false;
     }
 
     // public void GetEffect(RingMovement ring)
@@ -236,13 +240,20 @@ public class RingID : ScriptableObject
 
     public void SpawnRingWithData(DataStructFloatThree data)
     {
-        if (failedRings) return;
-        else if (FadingRings)
+        Debug.LogError("Spawn Ring with Data:");
+
+        if (failedRings && !spawnedBucket)
         {
-            Pool.StopFade(IDIndex);
-            FadingRings = false;
-            failedRings = false;
+            Debug.LogError("Failed Rings: " + failedRings + " Spawned Bucket: " + spawnedBucket);
+            return;
         }
+        // else if (FadingRings)
+        // {
+        //     Pool.StopFade(IDIndex);
+        //     FadingRings = false;
+        //     failedRings = false;
+        // }
+        failedRings = false;
         spawnedBucket = false;
         RingMovement ringScript = Pool.GetRing(this);
         ringScript.order = ringOrder;

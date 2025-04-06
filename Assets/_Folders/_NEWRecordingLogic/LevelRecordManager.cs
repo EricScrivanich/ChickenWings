@@ -400,6 +400,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         };
 
         Debug.LogError("starting stats isL " + levelData.startingStats.name);
+        ViewObject.SetActive(true);
 
 
     }
@@ -601,11 +602,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     private Vector2 ReturnRoundedPosition(Vector2 pos)
     {
-        float x = Mathf.Round(pos.x / 0.05f) * 0.05f;
-        posXText.text = x.ToString("0.00"); // Keep two decimal places
+        float x = Mathf.Round(pos.x / 0.1f) * 0.1f;
+        posXText.text = x.ToString("0.0"); // Keep two decimal places
 
-        float y = Mathf.Round(pos.y / 0.05f) * 0.05f;
-        posYText.text = y.ToString("0.00");
+        float y = Mathf.Round(pos.y / 0.1f) * 0.1f;
+        posYText.text = y.ToString("0.0");
         return new Vector2(x, y);
     }
     private int typeOvveride = -1;
@@ -779,7 +780,15 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
         dif = Mathf.RoundToInt(dif / (TimePerStep / FrameRateManager.BaseTimeScale));
         int newMax = finalSpawnStep + dif;
-        int min = RecordedObjects[RecordedObjects.Count - 1].spawnedTimeStep;
+        int min = 49;
+        if (RecordedObjects.Count > 0)
+        {
+            min = RecordedObjects[RecordedObjects.Count - 1].spawnedTimeStep;
+
+            if (min < 49) min = 49;
+        }
+
+
         if (newMax <= min)
         {
             newMax = min + 1;

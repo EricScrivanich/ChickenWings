@@ -235,7 +235,7 @@ public class MainMenuScript : MonoBehaviour
                 }
 
                 // Move the current menu to its final position off-screen
-                menuToMoveOut.DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration).OnComplete(() => menuToMoveOut.gameObject.SetActive(false));
+                menuToMoveOut.DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration).OnComplete(() => { if (menuToMoveOut != MenuTypes[0]) menuToMoveOut.gameObject.SetActive(false); });
 
                 if (currentMenu == 2)
                 {
@@ -254,7 +254,10 @@ public class MainMenuScript : MonoBehaviour
             });
 
 
+
     }
+
+
     public void ChangeTime()
     {
         if (!isDay)

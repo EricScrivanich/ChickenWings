@@ -931,7 +931,8 @@ public class SpawnStateManager : MonoBehaviour
         else
         {
             LvlID.AddCompletedRings(index);
-            StartCoroutine(RingSequenceFinishedCourintine(1.5f, index));
+            ringPool.ResetRings(index);
+            // StartCoroutine(RingSequenceFinishedCourintine(1.5f, index));
 
 
         }
@@ -947,19 +948,19 @@ public class SpawnStateManager : MonoBehaviour
         switch (index)
         {
             case 0:
-                ringPool.redFadeOut = StartCoroutine(ringPool.FadeOutRed());
+                StartCoroutine(ringPool.FadeOutRed());
                 break;
             case 1:
-                ringPool.pinkFadeOut = StartCoroutine(ringPool.FadeOutPink());
+                StartCoroutine(ringPool.FadeOutPink());
 
                 break;
             case 2:
 
-                ringPool.goldFadeOut = StartCoroutine(ringPool.FadeOutGold());
+                StartCoroutine(ringPool.FadeOutGold());
                 break;
             case 3:
 
-                ringPool.purpleFadeOut = StartCoroutine(ringPool.FadeOutPurple());
+                StartCoroutine(ringPool.FadeOutPurple());
                 break;
             default:
                 break;
