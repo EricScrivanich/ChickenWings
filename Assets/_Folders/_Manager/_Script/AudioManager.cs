@@ -76,6 +76,7 @@ public class AudioManager : MonoBehaviour
     // [SerializeField] private AudioClip[] longFarts;
     [SerializeField] private AudioClip longFart;
     [SerializeField] private AudioClip uziGunShot;
+    [SerializeField] private AudioClip heavyGunShot;
 
 
 
@@ -355,9 +356,20 @@ public class AudioManager : MonoBehaviour
 
     }
 
-    public void PlayUziGunShot()
+    public void PlayUziGunShot(ushort type)
     {
-        audioSource.PlayOneShot(uziGunShot, uziGunShotVolume);
+        switch (type)
+        {
+            case 0:
+                audioSource.PlayOneShot(uziGunShot, uziGunShotVolume);
+                break;
+            case 1:
+                audioSource.PlayOneShot(heavyGunShot, uziGunShotVolume);
+                break;
+            default:
+                break;
+        }
+
     }
 
     public void PlayBoingSound()

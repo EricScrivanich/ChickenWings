@@ -61,7 +61,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
         col = GetComponent<EdgeCollider2D>();
 
 
-        Debug.Log("lerp start boundary is: " + lerpStartBoundary);
+       
 
 
 
@@ -235,10 +235,10 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
 
     public void SetCorrectRing()
     {
-        Debug.Log("Checking Ring order: " + order + " correct ring: " + ID.CorrectRing);
+      
         if (ID != null && order == ID.CorrectRing)
         {
-            Debug.Log("Correct ring: " + order);
+         
             sprite.material = ID.highlightedMaterial;
             backRing.material = ID.highlightedMaterial;
 

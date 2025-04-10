@@ -1,8 +1,11 @@
 using UnityEngine;
+using PathCreation;
 
 public class Pigarang : MonoBehaviour
 {
     private Rigidbody2D rb;
+
+    [SerializeField] private AnimationCurve speedCurve;
 
     [SerializeField] private float speed = 10f;
     [SerializeField] private float maxDistance = 10f;
@@ -20,10 +23,32 @@ public class Pigarang : MonoBehaviour
     private float returnSpeed = 10f; // Speed at which the boomerang returns
     [SerializeField] private float maxReturnSpeed;
     [SerializeField] private float spinSpeed;
+    private PathCreator path;
+    private float time;
+    private float totalTime;
+    private float dynmamicSpeed;
+
+    private float distanceTravelled = 0f;
+    private bool flipDirection;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+    }
+
+    public void ThrowUsingPath(PathCreator p, float totalT, bool flipped)
+    {
+        path = p;
+        flipDirection = flipped;
+        if (flipped)
+        {
+            rb.angularVelocity = -spinSpeed;
+            distanceTravelled = 1;
+        }
+        else rb.angularVelocity = spinSpeed;
+        totalTime = totalT;
+
 
     }
 
@@ -46,22 +71,47 @@ public class Pigarang : MonoBehaviour
     }
     private void FixedUpdate()
     {
-
-        if (rb.linearVelocity.magnitude < peakedMag && !peaked)
+        if (path != null)
         {
-            peaked = true;
-            returnSpeed = finalReturnSpeed;
-        }
-        if (returning)
-        {
-            rb.AddForce(returnDirection * returnSpeed);
+            time += Time.fixedDeltaTime * dynmamicSpeed;
 
-            if (peaked && rb.linearVelocity.magnitude > maxReturnSpeed)
+            float p = Mathf.InverseLerp(0, totalTime, time);
+            dynmamicSpeed = speedCurve.Evaluate(p);
+
+            if (flipDirection) p = 1 - p;
+
+            rb.MovePosition(path.path.GetPointAtTime(p));
+
+
+            if (p >= 1 && !flipDirection)
             {
-                returning = false;
-
+                Destroy(gameObject);
             }
+            else if (p <= 0 && flipDirection)
+            {
+                Destroy(gameObject);
+            }
+
+
         }
+
+
+
+        // if (rb.linearVelocity.magnitude < peakedMag && !peaked)
+        // {
+        //     peaked = true;
+        //     returnSpeed = finalReturnSpeed;
+        // }
+        // if (returning)
+        // {
+        //     rb.AddForce(returnDirection * returnSpeed);
+
+        //     if (peaked && rb.linearVelocity.magnitude > maxReturnSpeed)
+        //     {
+        //         returning = false;
+
+        //     }
+        // }
 
     }
 

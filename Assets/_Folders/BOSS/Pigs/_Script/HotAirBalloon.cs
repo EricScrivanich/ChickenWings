@@ -6,10 +6,21 @@ using DG.Tweening;
 public class HotAirBalloon : MonoBehaviour, IRecordableObject
 {
 
-
+    [SerializeField] private int balloonType;
+    [SerializeField] private Gun gun;
     private int currentSpriteIndex = 0;
+    private bool inRange;
 
     private readonly float spriteSwitchTime = .08f;
+
+    [SerializeField] private Transform gunTransform;
+    [SerializeField] private float offsetGunRotation;
+    private float gunRotationSpeed;
+    [SerializeField] private float gunRotationSpeedShooting;
+    [SerializeField] private float gunRotationSpeedAiming;
+    [SerializeField] private float minShootAngle;
+
+
 
     public int type;
     public float speed;
@@ -20,8 +31,12 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
 
     public readonly int DropTrigger = Animator.StringToHash("DropTrigger");
     public readonly int ResetTrigger = Animator.StringToHash("Reset");
+    public readonly int ReverseTrigger = Animator.StringToHash("Reverse");
 
+    private Transform player;
+    private float eyeRadius = 0.05f; // Radius within which the pupil can move
 
+    private bool usingGun = false;
     private bool waitingForDelay;
 
     private Rigidbody2D rb;
@@ -38,6 +53,8 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
     [SerializeField] private Vector2 minMaxYVel;
     [SerializeField] private float velocityLerpSpeed;
     [SerializeField] private float liftForce = 5f;
+    private float targetGunRotation = 0;
+
 
     private bool addingYForce;
     private float targetYVelocity;
@@ -54,6 +71,9 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
     private float magDiff;
     [SerializeField] private float phaseOffset;
     private float startX;
+
+    [SerializeField] private Transform pupils;
+    private bool isReversingGun;
 
     private float speedDiff;
 
@@ -75,37 +95,24 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
         anim = GetComponent<Animator>();
     }
 
+    private void Start()
+    {
+        if (balloonType > 0)
+        {
+            player = GameObject.Find("Player").GetComponent<Transform>();
+
+            usingGun = true;
+            gunRotationSpeed = gunRotationSpeedAiming;
+
+
+        }
+    }
+
+
+
     // Update is called once per frame
     void Update()
     {
-        if (waitingForDelay)
-        {
-            delayTimer += Time.deltaTime;
-
-            if (delayTimer > delay)
-            {
-                anim.SetTrigger(DropTrigger);
-                waitingForDelay = false;
-                delayTimer = 0;
-
-            }
-
-        }
-        else if (!startedAnim)
-        {
-            delayTimer += Time.deltaTime;
-
-            if (delayTimer > initialDelay)
-            {
-                // anim.speed = Random.Range(.75f, .9f);
-                anim.SetTrigger(DropTrigger);
-                delayTimer = 0;
-                startedAnim = true;
-            }
-
-        }
-
-
 
         time += Time.deltaTime;
 
@@ -122,6 +129,92 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
             time = 0;
 
         }
+
+        if (usingGun)
+        {
+
+
+            // Lerp the rotation angle
+            float newRotation = Mathf.LerpAngle(gunTransform.eulerAngles.z, targetGunRotation, Time.deltaTime * gunRotationSpeed);
+
+
+            // Apply the new rotation (make sure the gun rotates on Z-axis for 2D)
+            gunTransform.rotation = Quaternion.Euler(0f, 0f, newRotation);
+
+        }
+
+        if (waitingForDelay)
+        {
+
+            delayTimer += Time.deltaTime;
+
+            if (delayTimer >= delay)
+            {
+                switch (balloonType)
+                {
+                    case 0:
+                        anim.SetTrigger(DropTrigger);
+                        break;
+                    case 1:
+                        if (!inRange) return;
+                        Debug.Log("Fire");
+                        gun.Fire(false);
+                        waitingForDelay = true;
+                        // anim.speed = Random.Range(.75f, .9f);
+                        break;
+                    case 2:
+                        // anim.speed = Random.Range(.75f, .9f);
+                        break;
+
+                }
+
+                // waitingForDelay = false;
+                delayTimer = 0;
+
+            }
+
+        }
+        else if (!startedAnim)
+        {
+            delayTimer += Time.deltaTime;
+
+            if (delayTimer >= initialDelay)
+            {
+
+                // anim.speed = Random.Range(.75f, .9f);
+                switch (balloonType)
+                {
+                    case 0:
+                        anim.SetTrigger(DropTrigger);
+                        break;
+                    case 1:
+                    case 2:
+                        if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
+                            waitingForDelay = true;
+                        else
+                            return;
+                        // anim.speed = Random.Range(.75f, .9f);
+                        break;
+
+
+                    // anim.speed = Random.Range(.75f, .9f);
+
+                    default:
+                        break;
+                }
+
+                delayTimer = 0;
+                startedAnim = true;
+
+            }
+
+        }
+
+
+
+
+
+
 
 
     }
@@ -148,6 +241,81 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
         currentSpriteIndex = Random.Range(0, animData.sprites.Length - 1);
         sr.sprite = animData.sprites[currentSpriteIndex];
         rb.linearVelocity = new Vector2(speed, 0);
+
+        if (balloonType > 0)
+        {
+            Ticker.OnTickAction015 += SetGunRotationTarget;
+            anim.SetBool(ReverseTrigger, false);
+            isReversingGun = false;
+        }
+
+
+
+    }
+    private void OnDisable()
+    {
+        if (balloonType > 0)
+        {
+            Ticker.OnTickAction015 -= SetGunRotationTarget;
+        }
+    }
+
+
+    private void SetGunRotationTarget()
+    {
+        if (Mathf.Abs(transform.position.x) > BoundariesManager.rightViewBoundary)
+        {
+            anim.speed = 0;
+            inRange = false;
+            return;
+        }
+        Vector2 direction = player.position - gunTransform.position;
+        direction.Normalize();
+
+        // Calculate the angle in degrees
+        targetGunRotation = (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) + offsetGunRotation;
+        Debug.Log("Target gun rotation: " + targetGunRotation);
+        float angleDiff = Mathf.DeltaAngle(gunTransform.eulerAngles.z, targetGunRotation);
+        Debug.Log("Angle diff: " + angleDiff);
+
+        if (!inRange && Mathf.Abs(angleDiff) <= minShootAngle)
+        {
+            Debug.Log("In range");
+            inRange = true;
+            delayTimer = .1f;
+            waitingForDelay = true;
+
+            gunRotationSpeed = gunRotationSpeedShooting;
+        }
+        else if (inRange && Mathf.Abs(angleDiff) > minShootAngle)
+        {
+            Debug.Log("Out of range");
+            inRange = false;
+            gunRotationSpeed = gunRotationSpeedAiming;
+        }
+
+
+
+        if (angleDiff < 0 && !isReversingGun) anim.SetBool(ReverseTrigger, true);
+        else if (angleDiff >= 0 && isReversingGun) anim.SetBool(ReverseTrigger, false);
+        if (Mathf.Abs(angleDiff) < 5) anim.speed = 0;
+
+        else if (inRange)
+        {
+            anim.speed = .3f;
+        }
+        else anim.speed = 1;
+
+
+
+        Vector2 eyeDirection = player.position - pupils.position; // Calculate the direction to the player
+                                                                  // Ensure it's 2D
+        eyeDirection.Normalize(); // Normalize the direction
+
+
+
+        // Move the pupil within the eye's radius
+        pupils.localPosition = eyeDirection * eyeRadius;
 
 
 
@@ -247,7 +415,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
 
     public void ApplyRecordedData(RecordedDataStruct data)
     {
-       
+
         transform.position = data.startPos;
         _position = data.startPos;
         speed = data.speed;
