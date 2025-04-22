@@ -7,20 +7,18 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PlayerMaterial
+  m_Name: LaserTimer
   m_Shader: {fileID: 4800000, guid: 79ee6cefbc672a44e97359d4d14ea301, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - CHANGECOLOR2_ON
-  - GLOWLIGHT_ON
-  - OUTTEX_ON
-  m_InvalidKeywords:
-  - _GLOWAFFECTLIGHT_ON
+  - ATLAS_ON
+  - RADIALCLIPPING_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -76,7 +74,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OverlayTex:
-        m_Texture: {fileID: 2800000, guid: 74087f6d03f233e4a8a142fa01f9e5cf, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ShineMask:
@@ -88,9 +86,9 @@ Material:
     - _Alpha: 1
     - _AlphaCutoffValue: 0.25
     - _AlphaOutlineBlend: 1
-    - _AlphaOutlineGlow: 5.26
+    - _AlphaOutlineGlow: 5
     - _AlphaOutlineMinAlpha: 0
-    - _AlphaOutlinePower: 5
+    - _AlphaOutlinePower: 1
     - _AlphaRoundThreshold: 0.5
     - _BillboardY: 0
     - _BlurHD: 0
@@ -118,7 +116,7 @@ Material:
     - _DistortAmount: 0.5
     - _DistortTexXSpeed: 5
     - _DistortTexYSpeed: 5
-    - _EditorDrawers: 6
+    - _EditorDrawers: 15
     - _FadeAmount: -0.1
     - _FadeBurnGlow: 2
     - _FadeBurnTransition: 0.075
@@ -127,13 +125,13 @@ Material:
     - _FlickerAlpha: 0
     - _FlickerFreq: 0.2
     - _FlickerPercent: 0.05
-    - _GhostBlend: 0.375
-    - _GhostColorBoost: 1.51
+    - _GhostBlend: 1
+    - _GhostColorBoost: 1
     - _GhostTransparency: 0
     - _GlitchAmount: 3
     - _GlitchSize: 1
     - _Glow: 10
-    - _GlowAffectLight: 1
+    - _GlowAffectLight: 0
     - _GlowGlobal: 1
     - _GradBlend: 1
     - _GradBoostX: 1.2
@@ -147,10 +145,10 @@ Material:
     - _GreyscaleBlend: 1
     - _GreyscaleLuminosity: 0
     - _GreyscaleOutline: 0
-    - _HandDrawnAmount: 9.1
-    - _HandDrawnSpeed: 4.46
-    - _HitEffectBlend: 0
-    - _HitEffectGlow: 1.14
+    - _HandDrawnAmount: 10
+    - _HandDrawnSpeed: 5
+    - _HitEffectBlend: 1
+    - _HitEffectGlow: 5
     - _HologramBlend: 1
     - _HologramMaxAlpha: 0.75
     - _HologramMinAlpha: 0.1
@@ -164,12 +162,12 @@ Material:
     - _InnerOutlineGlow: 4
     - _InnerOutlineThickness: 1
     - _LitAmount: 1
-    - _MaxXUV: 1
-    - _MaxYUV: 1
-    - _MinXUV: 0
-    - _MinYUV: 0
-    - _MotionBlurAngle: 0
-    - _MotionBlurDist: -1.99
+    - _MaxXUV: 0.77734375
+    - _MaxYUV: 0.97265625
+    - _MinXUV: 0.42578125
+    - _MinYUV: 0.625
+    - _MotionBlurAngle: 0.1
+    - _MotionBlurDist: 1.25
     - _MyDstMode: 10
     - _MySrcMode: 5
     - _NegativeAmount: 1
@@ -182,26 +180,26 @@ Material:
     - _OutlineDistortAmount: 0.5
     - _OutlineDistortTexXSpeed: 5
     - _OutlineDistortTexYSpeed: 5
-    - _OutlineGlow: 4.08
+    - _OutlineGlow: 1.5
     - _OutlinePixelWidth: 1
     - _OutlineTexXSpeed: 10
     - _OutlineTexYSpeed: 0
     - _OutlineWidth: 0.004
     - _OverlayBlend: 1
-    - _OverlayGlow: 0.69
-    - _OverlayTextureScrollXSpeed: 1.21
-    - _OverlayTextureScrollYSpeed: 0
+    - _OverlayGlow: 1
+    - _OverlayTextureScrollXSpeed: 0.25
+    - _OverlayTextureScrollYSpeed: 0.25
     - _PinchUvAmount: 0.35
-    - _PixelateSize: 42
+    - _PixelateSize: 32
     - _PosterizeGamma: 0.75
     - _PosterizeNumColors: 8
     - _PosterizeOutline: 0
-    - _RadialClip: 45
+    - _RadialClip: 360
     - _RadialClip2: 0
-    - _RadialStartAngle: 90
+    - _RadialStartAngle: 0
     - _RandomSeed: 0
     - _RectSize: 1
-    - _RotateUvAmount: -0
+    - _RotateUvAmount: 0
     - _RoundWaveSpeed: 2
     - _RoundWaveStrength: 0.7
     - _ShadowAlpha: 0.5
@@ -232,13 +230,13 @@ Material:
     - _ZWrite: 0
     - _ZoomUvAmount: 0.5
     m_Colors:
-    - _AlphaOutlineColor: {r: 0.9245283, g: 0, b: 0, a: 1}
+    - _AlphaOutlineColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorChangeNewCol: {r: 0.9528302, g: 0.8758858, b: 0.23820755, a: 1}
-    - _ColorChangeNewCol2: {r: 0.9245283, g: 0.9245283, b: 0.30962977, a: 1}
+    - _ColorChangeNewCol: {r: 1, g: 1, b: 0, a: 1}
+    - _ColorChangeNewCol2: {r: 1, g: 1, b: 0, a: 1}
     - _ColorChangeNewCol3: {r: 1, g: 1, b: 0, a: 1}
-    - _ColorChangeTarget: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorChangeTarget2: {r: 0.73333335, g: 0.73333335, b: 0.73333335, a: 1}
+    - _ColorChangeTarget: {r: 1, g: 0, b: 0, a: 1}
+    - _ColorChangeTarget2: {r: 1, g: 0, b: 0, a: 1}
     - _ColorChangeTarget3: {r: 1, g: 0, b: 0, a: 1}
     - _ColorSwapBlue: {r: 1, g: 1, b: 1, a: 1}
     - _ColorSwapGreen: {r: 1, g: 1, b: 1, a: 1}
@@ -250,7 +248,7 @@ Material:
     - _GradTopLeftCol: {r: 1, g: 0, b: 0, a: 1}
     - _GradTopRightCol: {r: 1, g: 1, b: 0, a: 1}
     - _GreyscaleTintColor: {r: 1, g: 1, b: 1, a: 1}
-    - _HitEffectColor: {r: 1, g: 0.73003083, b: 0.6839622, a: 1}
+    - _HitEffectColor: {r: 1, g: 1, b: 1, a: 1}
     - _HologramStripeColor: {r: 0, g: 1, b: 1, a: 1}
     - _InnerOutlineColor: {r: 1, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}

@@ -11,7 +11,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
     private float baseFrequency = 1.4f;
     private float baseSpeed = 3.5f;
     private float frequency = 1.4f;
-    private float initialY;
+
 
     private bool parried = false;
     private Animator anim;
@@ -62,8 +62,10 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
     {
         Ticker.OnTickAction015 += MoveEyesWithTicker;
         frequency = baseFrequency + ((baseSpeed - Mathf.Abs(speed)) * .27f);
-        initialY = transform.position.y;
+
         flipped = false;
+        startX = transform.position.x;
+        _position = transform.position;
 
         if (speed < 0)
         {
@@ -168,7 +170,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
         AudioManager.instance.PlayPigHammerSwingSound();
     }
 
-   
+
     public void ApplyFloatOneData(DataStructFloatOne data)
     {
 

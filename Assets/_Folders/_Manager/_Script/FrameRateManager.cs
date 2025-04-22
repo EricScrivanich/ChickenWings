@@ -22,6 +22,11 @@ public class FrameRateManager : MonoBehaviour
         Application.targetFrameRate = targetFrameRate;
 
     }
+    void OnDestroy()
+    {
+        Time.timeScale = BaseTimeScale;
+
+    }
 
     // public void SwitchFrameRate()
     // {
@@ -38,4 +43,7 @@ public class FrameRateManager : MonoBehaviour
     //     reset.SpecialReset();
 
     // }
+
+
 }
+

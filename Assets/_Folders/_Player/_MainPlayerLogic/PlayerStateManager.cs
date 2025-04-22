@@ -828,8 +828,14 @@ public class PlayerStateManager : MonoBehaviour
     {
 
         currentState.UpdateState(this);
+        FrozenCheck();
 
-        // currentState.RotateState(this);
+
+
+    }
+
+    private void FrozenCheck()
+    {
         if (transform.position.y > BoundariesManager.TopPlayerBoundary && !isFrozen && !ID.constantPlayerForceBool)
         {
             // ResetHoldJump();

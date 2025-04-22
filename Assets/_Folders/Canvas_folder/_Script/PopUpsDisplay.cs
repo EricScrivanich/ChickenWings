@@ -14,7 +14,7 @@ public class PopUpsDisplay : MonoBehaviour
     [SerializeField] private RectTransform levelChallengesPos;
 
     [SerializeField] private SceneManagerSO sceneSO;
-    
+
 
     [Header("Level Title Display")]
     [SerializeField] private GameObject LevelNamePrefab;
@@ -310,6 +310,7 @@ public class PopUpsDisplay : MonoBehaviour
 
     private void FinishLevel()
     {
+        Debug.Log("Finish Level");
         Time.timeScale = 0;
 
     }

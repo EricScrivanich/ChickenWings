@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerAddForceBoundaries : MonoBehaviour
 {
@@ -24,6 +25,19 @@ public class PlayerAddForceBoundaries : MonoBehaviour
     private bool isLeft;
     private bool isRight;
 
+    [SerializeField] private float moveCameraPlayerYStart;
+    [SerializeField] private float moveCameraPlayerYEnd;
+
+    [SerializeField] private float cameraMaxZoom;
+    [SerializeField] private float cameraMaxY;
+    [SerializeField] private float cameraMoveSmoothSpeed = 2f;
+    [SerializeField] private float cameraZoomSmoothSpeed = 2f;
+    private float cameraMinZoom = 5.5f;
+    private float cameraOriginalZoom;
+    private float cameraOriginalY;
+    private Camera mainCam;
+
+
     private Transform playerTransform;
     // Start is called before the first frame update
     void Start()
@@ -35,8 +49,11 @@ public class PlayerAddForceBoundaries : MonoBehaviour
         rightBoundary = BoundariesManager.rightPlayerBoundary;
 
         rb = GetComponent<Rigidbody2D>();
+        mainCam = Camera.main;
 
         originalMaxFallSpeed = stateManager.originalMaxFallSpeed;
+        cameraOriginalY = mainCam.transform.position.y;
+        cameraOriginalZoom = mainCam.orthographicSize;
 
 
 
@@ -114,6 +131,33 @@ public class PlayerAddForceBoundaries : MonoBehaviour
         }
 
     }
+
+    private void HandleCameraFollowZoom()
+    {
+        float playerY = playerTransform.position.y;
+
+        if (playerY > moveCameraPlayerYStart)
+        {
+            float t = Mathf.InverseLerp(moveCameraPlayerYStart, moveCameraPlayerYEnd, playerY);
+            float targetY = Mathf.Lerp(cameraOriginalY, cameraMaxY, t);
+            float targetZoom = Mathf.Lerp(cameraOriginalZoom, cameraMaxZoom, t);
+
+            Vector3 camPos = mainCam.transform.position;
+            camPos.y = Mathf.Lerp(camPos.y, targetY, Time.deltaTime * cameraMoveSmoothSpeed);
+            mainCam.transform.position = camPos;
+
+            mainCam.orthographicSize = Mathf.Lerp(mainCam.orthographicSize, targetZoom, Time.deltaTime * cameraZoomSmoothSpeed);
+        }
+        else
+        {
+            // Smoothly return to original values if player goes back down
+            Vector3 camPos = mainCam.transform.position;
+            camPos.y = Mathf.Lerp(camPos.y, cameraOriginalY, Time.deltaTime * cameraMoveSmoothSpeed);
+            mainCam.transform.position = camPos;
+
+            mainCam.orthographicSize = Mathf.Lerp(mainCam.orthographicSize, cameraOriginalZoom, Time.deltaTime * cameraZoomSmoothSpeed);
+        }
+    }
     public void SetMaxFallSpeed(float speed)
     {
         originalMaxFallSpeed = speed;
@@ -122,6 +166,7 @@ public class PlayerAddForceBoundaries : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // HandleCameraFollowZoom();
         if (isTop && playerTransform.position.y < topBoundary)
         {
             arrow.gameObject.SetActive(false);

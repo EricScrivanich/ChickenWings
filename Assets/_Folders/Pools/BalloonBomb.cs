@@ -54,7 +54,7 @@ public class BalloonBomb : MonoBehaviour
 
     private void OnDisable()
     {
-        Debug.Log("Total time: " + totalTime);
+       
 
         DOTween.Kill(this);
     }
@@ -63,7 +63,7 @@ public class BalloonBomb : MonoBehaviour
     public void Initilaize(Vector2 force)
     {
         gameObject.SetActive(true);
-        Debug.Log("Bomb initillized");
+       
         rb.linearVelocity = force;
     }
 }
