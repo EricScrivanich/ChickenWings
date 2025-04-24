@@ -27,6 +27,9 @@ public class LaserParent : MonoBehaviour
     [SerializeField] private float laserStartFade;
     [SerializeField] private float laserInbetweenFade;
 
+    public float currentLaserFadeAmount = 1;
+    public float currentTimeLeft = 0;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -42,6 +45,7 @@ public class LaserParent : MonoBehaviour
 
         lasers[0] = laserPrefab;
         lasers[0].SetLaserMaterial(laserMaterial);
+        lasers[0].SetLaserParent(this);
         for (int i = 1; i < laserCount; i++)
         {
             lasers[i] = Instantiate(laserPrefab);
@@ -49,6 +53,7 @@ public class LaserParent : MonoBehaviour
             lasers[i].transform.localPosition = new Vector2(0, 0);
             lasers[i].transform.localRotation = Quaternion.Euler(0, 0, currentAngle);
             lasers[i].SetLaserMaterial(laserMaterial);
+            lasers[i].SetLaserParent(this);
 
 
 
@@ -95,6 +100,18 @@ public class LaserParent : MonoBehaviour
 
         bool useParticles = false;
         laserSpeed = initialLaserSpeed;
+        currentLaserFadeAmount = 0;
+        currentTimeLeft = cooldownDuration;
+
+        for (int i = 0; i < laserCount; i++)
+        {
+
+            lasers[i].SetUseParticles(true);
+        }
+        for (int i = 0; i < laserCount; i++)
+        {
+            lasers[i].SetLaserGroundHit();
+        }
         while (time < cooldownDuration)
         {
 
@@ -102,17 +119,29 @@ public class LaserParent : MonoBehaviour
             time += Time.deltaTime;
             timerMaterial.SetFloat("_RadialClip", Mathf.Lerp(360, 0, time / cooldownDuration));
             laserMaterial.SetFloat("_FadeAmount", Mathf.Lerp(laserStartFade, laserInbetweenFade, time / cooldownDuration));
-            laserSpeed = Mathf.Lerp(initialLaserSpeed, finalLaserSpeed, time / cooldownDuration);
-            if (!useParticles && time > cooldownDuration * .3f)
+
+            for (int i = 0; i < laserCount; i++)
             {
-                for (int i = 0; i < laserCount; i++)
-                {
-                    useParticles = true;
-                    lasers[i].SetUseParticles(true);
-                }
+                lasers[i].SetLaserScale(Mathf.Lerp(.3f, .8f, time / cooldownDuration));
             }
+            // laserMaterial.SetFloat("_ZoomUvAmount", Mathf.Lerp(1.5f, 1.2f, time / cooldownDuration));
+
+            laserSpeed = Mathf.Lerp(initialLaserSpeed, 5, time / cooldownDuration);
+            currentLaserFadeAmount = Mathf.Lerp(0, 1, time / cooldownDuration);
+            currentTimeLeft = cooldownDuration - time;
+            // if (!useParticles && time > cooldownDuration * .3f)
+            // {
+            //     for (int i = 0; i < laserCount; i++)
+            //     {
+            //         useParticles = true;
+            //         lasers[i].SetUseParticles(true);
+            //     }
+            // }
             yield return null;
         }
+        currentLaserFadeAmount = 1;
+        currentTimeLeft = 0;
+
         timerMaterial.SetFloat("_RadialClip", 0);
         laserSpeed = finalLaserSpeed;
 
@@ -126,10 +155,18 @@ public class LaserParent : MonoBehaviour
     private IEnumerator LaserShoot()
     {
         float time = 0;
+        laserSpeed = finalLaserSpeed;
         while (time < initialLaserShootDelay)
         {
             time += Time.deltaTime;
             laserMaterial.SetFloat("_FadeAmount", Mathf.Lerp(laserInbetweenFade, 0, time / initialLaserShootDelay));
+
+            for (int i = 0; i < laserCount; i++)
+            {
+                lasers[i].SetLaserScale(Mathf.Lerp(.8f, 1, time / initialLaserShootDelay));
+            }
+
+            // laserMaterial.SetFloat("_ZoomUvAmount", Mathf.Lerp(1.2f, 1, time / initialLaserShootDelay));
             yield return null;
         }
 
@@ -160,6 +197,10 @@ public class LaserParent : MonoBehaviour
             yield return null;
         }
         laserMaterial.SetFloat("_FadeAmount", 1);
+        for (int i = 0; i < laserCount; i++)
+        {
+            lasers[i].StopParticles();
+        }
 
 
 

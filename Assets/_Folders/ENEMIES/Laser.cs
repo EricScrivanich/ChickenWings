@@ -10,6 +10,13 @@ public class Laser : MonoBehaviour
     [SerializeField] private float nothing;
     private bool useParticles = true;
 
+    private LaserParent laserParent;
+
+
+
+
+
+
 
     private bool shooting;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -22,6 +29,11 @@ public class Laser : MonoBehaviour
         // laserCollider.offset = new Vector2(laserCollider.offset.x, 0);
         // laserGroundHit.gameObject.SetActive(false);
 
+    }
+
+    public void SetLaserParent(LaserParent parent)
+    {
+        laserParent = parent;
     }
     private void Awake()
     {
@@ -64,20 +76,29 @@ public class Laser : MonoBehaviour
         {
             // laserSprite.gameObject.SetActive(false);
             HandleLaserCollider(false);
-            useParticles = false;
+
             shooting = false;
             if (laserGroundHit != null)
             {
+                laserGroundHit.GetComponent<LaserParticleScript>().StopParicles();
 
-                particlePool.ReturnPooledObject(laserGroundHit.gameObject);
-                laserGroundHit = null;
             }
         }
 
     }
 
-    public void StopShooting()
+    public void StopParticles()
     {
+        useParticles = false;
+        if (laserGroundHit != null)
+        {
+
+
+            particlePool.ReturnPooledObject(laserGroundHit.gameObject);
+            laserGroundHit = null;
+
+
+        }
 
     }
 
@@ -88,7 +109,11 @@ public class Laser : MonoBehaviour
 
     }
 
+    public void SetLaserScale(float scale)
+    {
+        laserSprite.transform.localScale = new Vector3(scale, 1, 1);
 
+    }
 
     public void SetLaserGroundHit()
     {
@@ -109,6 +134,7 @@ public class Laser : MonoBehaviour
         {
             if (laserGroundHit != null)
             {
+                
                 particlePool.ReturnPooledObject(laserGroundHit.gameObject);
                 laserGroundHit = null;
             }
@@ -124,6 +150,8 @@ public class Laser : MonoBehaviour
         {
             if (laserGroundHit != null)
             {
+                
+
                 particlePool.ReturnPooledObject(laserGroundHit.gameObject);
                 laserGroundHit = null;
             }
@@ -140,6 +168,7 @@ public class Laser : MonoBehaviour
 
             laserGroundHit = particlePool.GetPooledObject().transform;
             laserGroundHit.gameObject.SetActive(true);
+            laserGroundHit.GetComponent<LaserParticleScript>().SetLaserFadeAmount(laserParent.currentLaserFadeAmount, laserParent.currentTimeLeft);
 
         }
 

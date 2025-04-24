@@ -11113,10 +11113,10 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
-  m_Size: {x: 0.62, y: 30}
+  m_Size: {x: 0.62, y: 1.28}
   m_AdaptiveModeThreshold: 0.768
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 2
   m_SpriteSortPoint: 0
 --- !u!61 &382979354
@@ -11158,7 +11158,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 1}
     oldSize: {x: 0.62, y: 1.28}
-    newSize: {x: 0.62, y: 30}
+    newSize: {x: 0.62, y: 1.28}
     adaptiveTilingThreshold: 0.768
     drawMode: 2
     adaptiveTiling: 0
@@ -19275,7 +19275,7 @@ Transform:
   m_GameObject: {fileID: 824763957}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.72, y: 2.19, z: 0}
+  m_LocalPosition: {x: 0.33, y: 0.66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19359,7 +19359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1662f430b40844808c350cc1c1b45cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 20
+  rotationSpeed: 40
   laser: {fileID: 824763963}
   startRotation: 5.91
   directionArrowParent: {fileID: 346644916}
@@ -19368,17 +19368,11 @@ MonoBehaviour:
   - {fileID: 1834891151}
   - {fileID: 725289671}
   positionList:
-  - {x: -2, y: 0}
-  - {x: 2, y: 1}
-  - {x: -3, y: 2}
+  - {x: 0, y: 0}
   positionTimeList:
-  - 3
-  - 3
-  - 3
+  - 0.5
   positionDelayList:
-  - 1.5
-  - 2
-  - 4
+  - 0
   fadeArrowDur: 0.4
 --- !u!114 &824763963
 MonoBehaviour:
@@ -19399,12 +19393,16 @@ MonoBehaviour:
   timerSprite: {fileID: 1051244946}
   baseLaserMaterial: {fileID: 2100000, guid: 18307f2953be84387a641a057c448fb7, type: 2}
   laserLength: 30
-  laserSpeed: 7
+  initialLaserSpeed: 3.5
+  finalLaserSpeed: 6.5
   zeroRotation: {fileID: 1051244945}
-  shootDuration: 5
-  cooldownDuration: 3
-  initialLaserShootDelay: 0.2
-  laserInbetweenFade: 0.6
+  shootDuration: 3
+  cooldownDuration: 2
+  initialLaserShootDelay: 0.1
+  laserStartFade: 0.75
+  laserInbetweenFade: 0.5
+  currentLaserFadeAmount: 1
+  currentTimeLeft: 0
 --- !u!1 &849700716
 GameObject:
   m_ObjectHideFlags: 0
@@ -23084,12 +23082,12 @@ SpriteRenderer:
   m_SortingLayerID: 1283433495
   m_SortingLayer: 7
   m_SortingOrder: -5
-  m_Sprite: {fileID: 169555814077898189, guid: e121e8c8fcd03409d9091e54cfe09120, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e121e8c8fcd03409d9091e54cfe09120, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
-  m_Size: {x: 0.62, y: 30}
+  m_Size: {x: 0.64, y: 30}
   m_AdaptiveModeThreshold: 0.768
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -23148,8 +23146,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 1}
-    oldSize: {x: 0.62, y: 1.28}
-    newSize: {x: 0.62, y: 30}
+    oldSize: {x: 0.64, y: 1.28}
+    newSize: {x: 0.64, y: 30}
     adaptiveTilingThreshold: 0.768
     drawMode: 2
     adaptiveTiling: 0
@@ -24867,12 +24865,16 @@ MonoBehaviour:
   timerSprite: {fileID: 0}
   baseLaserMaterial: {fileID: 2100000, guid: 18307f2953be84387a641a057c448fb7, type: 2}
   laserLength: 10
-  laserSpeed: 2
+  initialLaserSpeed: 4
+  finalLaserSpeed: 6
   zeroRotation: {fileID: 0}
   shootDuration: 0
   cooldownDuration: 0
   initialLaserShootDelay: 0
+  laserStartFade: 0
   laserInbetweenFade: 0
+  currentLaserFadeAmount: 1
+  currentTimeLeft: 0
 --- !u!114 &2103400830
 MonoBehaviour:
   m_ObjectHideFlags: 0
