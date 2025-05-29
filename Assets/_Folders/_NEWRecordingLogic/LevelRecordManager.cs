@@ -24,6 +24,9 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     [SerializeField] private GameObject ViewObject;
 
     [SerializeField] private TextMeshProUGUI playTimeText;
+    [SerializeField] private Image PlayOrPauseImage;
+    [SerializeField] private Sprite PlayImage;
+    [SerializeField] private Sprite PauseImage;
 
     public LevelCreatorColors colorSO;
 
@@ -73,6 +76,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static Action PressTimerBar;
     private GameObject objectToAdd;
 
+    private CanvasGroup editorCanvasGroup;
+
 
 
 
@@ -103,6 +108,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     [SerializeField] private GameObject parameterUI;
     [SerializeField] private GameObject folderUI;
+
+    public bool editingPostionerObject = false;
+
+    public PositionerObject currentSelectedPostionerObject;
+    public int currentSelectedPostionerObjectIndex;
 
     public static bool ShowLines { get; private set; }
     public static bool ShowSpeeds { get; private set; }
@@ -350,6 +360,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             Destroy(this);
         }
+        Time.timeScale = 0;
 
         currentSelectedObject = null;
 
@@ -401,6 +412,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         Debug.LogError("starting stats isL " + levelData.startingStats.name);
         ViewObject.SetActive(true);
+        editorCanvasGroup = parameterUI.GetComponent<CanvasGroup>();
+        // parameterUI.SetActive(false);
 
 
     }
@@ -409,6 +422,26 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
         lastClickedPos = Camera.main.ScreenToWorldPoint(pos);
 
+        if (editingPostionerObject)
+        {
+            var pObj = GetPositionerObjectFromTouchPosition(lastClickedPos);
+
+            if (pObj != null || (currentSelectedPostionerObject != null && arrowPressedType == 3) || (currentSelectedPostionerObject != null && arrowPressedType == 4))
+            {
+                currentSelectedObject.SetIsSelected(false);
+                if (pObj != null)
+                    currentSelectedPostionerObject = pObj;
+                currentSelectedPostionerObject.Press(arrowPressedType);
+
+                lastObjPos = currentSelectedPostionerObject.transform.position;
+                screenClicked = true;
+                objectClicked = true;
+                return;
+
+            }
+
+        }
+
         var obj = GetObjectFromTouchPosition(lastClickedPos);
 
         screenClicked = true;
@@ -416,6 +449,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         if (obj != null)
         {
+            currentSelectedPostionerObject = null;
             if (!parameterUI.activeInHierarchy && ShowParameters)
             {
                 parameterUI.SetActive(true);
@@ -454,11 +488,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         arrowPressedType = 0;
         if (currentSelectedObject != null)
             currentSelectedObject.HandleClick(false, 0);
+        if (currentSelectedPostionerObject != null)
+            currentSelectedPostionerObject.ReleaseClick();
 
         if (holdingObject)
         {
             holdingObject = false;
-            ValueEditorManager.instance.FadeGroup(false);
+            FadeEditorCanvasGroup(false);
         }
 
     }
@@ -473,6 +509,23 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         if (isPlayingAtNormalTime && b)
             PlayNormalSpeed();
     }
+
+    private void FadeEditorCanvasGroup(bool fade)
+    {
+        if (fade)
+        {
+            editorCanvasGroup.alpha = .3f;
+            editorCanvasGroup.blocksRaycasts = false;
+        }
+        else
+        {
+            editorCanvasGroup.alpha = 1;
+            editorCanvasGroup.blocksRaycasts = true;
+        }
+
+    }
+
+
 
     public void UnactivateSelectedObject()
     {
@@ -512,22 +565,28 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             if (!holdingObject)
             {
                 holdingObject = true;
-                ValueEditorManager.instance.FadeGroup(true);
+                FadeEditorCanvasGroup(true);
             }
             Vector2 moveAmount = lastClickedPos - pos;
 
             Vector2 newPos = lastObjPos - moveAmount;
 
-            if (arrowPressedType == 1)
+            if (arrowPressedType == 1 || arrowPressedType == 3)
                 newPos = new Vector2(newPos.x, lastObjPos.y);
-            else if (arrowPressedType == 2)
+            else if (arrowPressedType == 2 || arrowPressedType == 4)
                 newPos = new Vector2(lastObjPos.x, newPos.y);
             // float x = Mathf.Round(newPos.x * 100) / 100;
             // posXText.text = x.ToString();
             // float y = Mathf.Round(newPos.y * 100) / 100;
             // posYText.text = y.ToString();
             // newPos = new Vector2(x, y);
-            currentSelectedObject.UpdateBasePosition(ReturnRoundedPosition(newPos));
+
+            if (currentSelectedPostionerObject != null)
+            {
+                DynamicValueAdder.instance.EditPositionerObject(ReturnRoundedPosition(newPos));
+            }
+            else if (currentSelectedObject != null)
+                currentSelectedObject.UpdateBasePosition(ReturnRoundedPosition(newPos));
 
 
         }
@@ -539,6 +598,96 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             newX = Mathf.Clamp(newX, -30, 30);
             Camera.main.transform.position = new Vector3(newX, Camera.main.transform.position.y, Camera.main.transform.position.z);
         }
+    }
+
+    public PositionerObject GetPositionerObjectFromTouchPosition(Vector2 worldPoint)
+    {
+        if (isPlayModeView) return null;
+
+
+        RaycastHit2D[] hits = Physics2D.RaycastAll(worldPoint, Vector2.zero);
+        PositionerObject obj = null;
+
+
+        bool arrowFound = false;
+
+        if (hits.Length == 0)
+        {
+            Debug.Log("NO OBJECTS FOUND");
+            return null;
+        }
+
+
+        foreach (var hit in hits)
+        {
+            if (hit.collider.CompareTag("Arrow"))
+            {
+                Debug.Log("Touched Arrow");
+
+
+                if (hit.collider.name == "X_P")
+                {
+                    arrowPressedType = 3;
+                    arrowFound = true;
+                    return null;
+
+                }
+
+                else if (hit.collider.name == "Y_P")
+                {
+                    arrowFound = true;
+                    arrowPressedType = 4;
+                    return null;
+                }
+
+
+
+                break; // Prioritize Arrow and exit loop
+            }
+        }
+
+        if (!arrowFound)
+        {
+
+            foreach (var hit in hits)
+            {
+                Debug.Log("Touched: " + hit.collider.name);
+                if (hit.collider.CompareTag("RecordableObject"))
+                {
+
+                    if (hit.collider.GetComponent<PositionerObject>() != null)
+                    {
+                        var p = hit.collider.GetComponent<PositionerObject>();
+                        int pressIndex = p.ReturnIndex();
+                        if (pressIndex != currentSelectedPostionerObjectIndex)
+                        {
+                            obj = p;
+                            // currentSelectedPostionerObjectIndex = pressIndex;
+                            // DynamicValueAdder.instance.SetCurrentSelectedValue(pressIndex);
+                        }
+                        else
+                        {
+                            return p;
+                        }
+
+
+
+                    }
+
+                }
+
+            }
+            if (obj != null)
+            {
+                currentSelectedPostionerObjectIndex = obj.ReturnIndex();
+                DynamicValueAdder.instance.SetCurrentSelectedValue(obj.ReturnIndex());
+                return obj;
+            }
+
+        }
+
+        return null;
+
     }
     private RecordableObjectPlacer GetObjectFromTouchPosition(Vector2 worldPoint)
     {
@@ -602,10 +751,10 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     private Vector2 ReturnRoundedPosition(Vector2 pos)
     {
-        float x = Mathf.Round(pos.x / 0.1f) * 0.1f;
+        float x = Mathf.Round(pos.x / 0.2f) * 0.2f;
         posXText.text = x.ToString("0.0"); // Keep two decimal places
 
-        float y = Mathf.Round(pos.y / 0.1f) * 0.1f;
+        float y = Mathf.Round(pos.y / 0.2f) * 0.2f;
         posYText.text = y.ToString("0.0");
         return new Vector2(x, y);
     }
@@ -622,11 +771,12 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         AudioManager.instance.LoadVolume(1, 0);
         HandleReleaseClick();
         CustomTimeSlider.instance.SetVariables(CurrentTimeStep, currentSavedMinIndex, currentSavedMaxIndex);
+        UpdateTime(CurrentTimeStep, false);
 
 
         Time.timeScale = 0;
         cameraY = Camera.main.transform.position.y;
-
+        currentTime = CurrentTimeStep * TimePerStep;
 
         float totalSeconds = currentTime / FrameRateManager.BaseTimeScale;
 
@@ -675,11 +825,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
     public void SaveAsset()
     {
-        // LevelData savedData = ScriptableObject.CreateInstance<LevelData>();
-        // savedData.levelName = LevelName;
-        // savedData.levelWorldAndNumber = levelWorldAndNumber;
 
-        // LevelDataConverter.instance.ConvertDataToArrays(RecordedObjects, savedData);
         SortRecordedObjectsBySpawnTime();
 
         ushort lastTimeStep = 0;
@@ -935,6 +1081,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             Debug.Log("Starting normal speed");
             isPlayingAtNormalTime = true;
             currentTime = CurrentTimeStep * TimePerStep;
+            PlayOrPauseImage.sprite = PauseImage;
             NormalTimeCor = StartCoroutine(PlayAtNormalTime());
 
         }
@@ -944,6 +1091,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
             if (NormalTimeCor != null)
             {
+                PlayOrPauseImage.sprite = PlayImage;
                 isPlayingAtNormalTime = false;
 
                 StopCoroutine(NormalTimeCor);
@@ -1016,6 +1164,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             {
                 CurrentTimeStep = (ushort)roundedTimeStep;
                 CustomTimeSlider.instance.UpdateMainHandlePosition(CurrentTimeStep);
+                CustomTimeSlider.instance.SetMainHandlePosition(CurrentTimeStep);
 
                 minuteHand.eulerAngles = new Vector3(0, 0, -CurrentTimeStep);
                 hourHand.eulerAngles = new Vector3(0, 0, -CurrentTimeStep / 12);
@@ -1069,12 +1218,14 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             CurrentTimeStep = val;
             LevelRecordManager.SetGlobalTime?.Invoke(val, 0);
             playTimeText.text = "Start Time: " + FormatTimerText(CurrentPlayTimeStep);
+            CustomTimeSlider.instance.SetMainHandlePosition(CurrentTimeStep);
             CheckAllObjectsForNewTimeStep();
             return;
         }
         else
         {
             CurrentTimeStep = val;
+            CustomTimeSlider.instance.SetMainHandlePosition(CurrentTimeStep);
         }
 
         // Debug.Log("Updated time step to: " + val);
@@ -1213,6 +1364,18 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         // Format time as MM:SS.DD
         return $"{minutes:00}:{seconds:00}.{decimals:00}";
+    }
+
+    public string FormatVectorText(Vector2 vec)
+    {
+        float x = Mathf.Round(vec.x * 100) / 100;
+        float y = Mathf.Round(vec.y * 100) / 100;
+        return "X: " + x.ToString("0.0") + " Y: " + y.ToString("0.0");
+    }
+
+    public float ConvertLevelTimeToRealTime(float levelTime)
+    {
+        return levelTime / FrameRateManager.BaseTimeScale;
     }
 
 

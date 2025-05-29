@@ -7,6 +7,8 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     [SerializeField] private LevelCreatorColors colorSO;
     [SerializeField] private Vector2Int dataID;
 
+    [SerializeField] private bool isListPanel = false;
+
     private int typeIndex;
     private bool isSelected;
 
@@ -25,6 +27,9 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     private Vector2 pointerStartPos;
     private float initialSliderValue;
 
+    [SerializeField] private Vector3 setMinMaxDef;
+
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -35,18 +40,22 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         fillImage = GetComponent<Image>();
         fillImage.color = colorSO.SelctedUIColor;
     }
+
+
     private void OnEnable()
     {
 
 
 
         fillImage.enabled = false;
+        ValueEditorManager.instance.OnSetSelectedType += SetIfSelected;
     }
 
 
 
     private void OnDisable()
     {
+        ValueEditorManager.instance.OnSetSelectedType -= SetIfSelected;
 
 
     }
@@ -56,6 +65,17 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     }
     private void SetDataFromFloatSlider(float v)
     {
+        if (Type == "AddedValue")
+        {
+            v = Mathf.RoundToInt(v);
+            title.text = "Added Rotation: " + v.ToString();
+            DynamicValueAdder.instance.EditFloat(-v);
+
+            SetMainSliderText();
+
+            return;
+        }
+
 
 
 
@@ -138,10 +158,20 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             title.text = Type + ": " + v.ToString();
             // float m = Mathf.Abs(0 - v);
             // v = Mathf.Abs(v);
-            SetValueBasedOnTypeIndex(v);
+            SetValueBasedOnTypeIndex(-v);
 
 
         }
+        // else if (Type == "Starting Rotation")
+        // {
+        //     v = Mathf.RoundToInt(v);
+        //     title.text = Type + ": " + v.ToString();
+        //     // float m = Mathf.Abs(0 - v);
+        //     // v = Mathf.Abs(v);
+        //     SetValueBasedOnTypeIndex(-v);
+
+
+        // }
 
         else if (Type == "Drop Offset")
         {
@@ -161,6 +191,15 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             recordedObj.UpdateObjectData();
             return;
 
+        }
+        else if (Type == "Laser Spacing")
+        {
+            v = Mathf.Round(v * 100) / 100;
+            title.text = Type + ": " + (v * 100).ToString() + "%";
+            SetValueBasedOnTypeIndex(v);
+            SetMainSliderText();
+            recordedObj.UpdateObjectData();
+            return;
         }
 
 
@@ -209,12 +248,19 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         isSelected = true;
         ValueEditorManager.instance.OnPressEditor(true);
         Debug.Log("OnPress sldier");
+        ValueEditorManager.instance.OnSetSelectedType?.Invoke(Type);
 
+        if (isListPanel)
+        {
+            // SetValueForListSlider(DynamicValueAdder.instance.ReturnFloatValue(), true);
 
-        SetDataForFloatSlider(this.Type, true);
+        }
+        else
+            SetDataForFloatSlider(this.Type, true);
+
         ValueEditorManager.instance.ShowSlider(true);
 
-        ValueEditorManager.instance.SetSelectedType(Type);
+
 
         fillImage.enabled = true;
 
@@ -242,6 +288,29 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     }
 
+    public void SetValueForListSlider(float val, bool showVal)
+    {
+        ValueEditorManager.instance.valueSliderHorizontal.onValueChanged.RemoveAllListeners();
+
+        SetSliderRange(setMinMaxDef);
+        Type = "AddedValue";
+        Debug.LogError("SetValueForListSlider: " + val);
+        val = -val;
+
+
+        if (showVal)
+        {
+            SetDataFromFloatSlider(val);
+            ValueEditorManager.instance.valueSliderHorizontal.value = val;
+            ValueEditorManager.instance.valueSliderHorizontal.onValueChanged.AddListener(this.SetDataFromFloatSlider);
+
+        }
+        else
+        {
+            title.text = "Added Rotation: 0";
+        }
+    }
+
 
 
     public void SetDataForFloatSlider(string type, bool setSlider)
@@ -249,8 +318,12 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
 
 
+
         ValueEditorManager.instance.valueSliderHorizontal.onValueChanged.RemoveAllListeners();
         Type = type;
+
+
+
 
         // title.text = Type + ": " + val.ToString();
 
@@ -262,6 +335,8 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
 
         SetSliderRange(recordedObj.FloatValues[typeIndex]);
+
+
 
         float v = 0;
 
@@ -316,7 +391,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
         //     v = recordedObj.Data.timeInterval;
         // }
-        else if (Type == "Rotation")
+        else if (Type == "Rotation" || Type == "Start Rotation")
         {
             // if (setSlider) SetSliderRange(recordedObj.TimeIntervalValues);
             v = -v;
@@ -379,6 +454,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
             pointerStartPos = eventData.position;
             startValue = ValueEditorManager.instance.valueSliderHorizontal.value;
+            Debug.LogError("Start Value: " + startValue);
             minVal = ValueEditorManager.instance.valueSliderHorizontal.minValue;
             maxVal = ValueEditorManager.instance.valueSliderHorizontal.maxValue;
             valueStep = Mathf.Abs(Mathf.Lerp(minVal, maxVal, .01f) - Mathf.Lerp(minVal, maxVal, 0));

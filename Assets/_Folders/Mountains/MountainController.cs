@@ -71,7 +71,7 @@ public class MountainController : MonoBehaviour
     void Update()
     {
 
-        targetCamera.transform.Translate(Vector2.right * speed * Time.deltaTime);
+        targetCamera.transform.Translate(Vector2.right * speed * .75f * Time.deltaTime);
         if (targetCamera.transform.position.x > 292 && !hasFinished)
         {
             ChangeSpeedFinished(0, 1.5f);

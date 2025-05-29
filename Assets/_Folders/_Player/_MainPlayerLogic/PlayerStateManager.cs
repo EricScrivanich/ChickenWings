@@ -297,6 +297,7 @@ public class PlayerStateManager : MonoBehaviour
     {
 
 
+
         if (mutePlayerAudio)
             FrameRateManager.TargetTimeScale = .95f;
         else
@@ -807,6 +808,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public void AdjustForce(Vector2 force)
     {
+        rb.linearVelocity = force;
+        ID.globalEvents.OnPlayerVelocityChange?.Invoke(force, rb.gravityScale);
 
         // currentForce = xForce + ID.constantPlayerForce;
         if (!usingConstantForce)

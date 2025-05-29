@@ -148,7 +148,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""SwitchAmmoRight"",
                     ""type"": ""Button"",
                     ""id"": ""c40449bd-286c-47ed-a608-ea7c16437bc2"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -494,7 +494,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""bf7b388c-28cc-4057-87aa-fadfcf6c81c8"",
-                    ""path"": ""<Keyboard>/c"",
+                    ""path"": ""<Keyboard>/shift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard"",

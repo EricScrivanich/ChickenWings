@@ -133,4 +133,68 @@ public readonly struct DataStructFloatFive
         this.float4 = float4;
         this.float5 = float5;
     }
+
+
+
+}
+
+[System.Serializable]
+public class RecordedObjectPositionerDataSave
+{
+    public short ID;
+
+    public ushort type; // 2 bytes
+    public Vector3 startPosAndRot;
+    public float savedTimePerStep;
+
+
+    
+    public Vector2[] positions;
+    public float[] values;
+
+    public ushort[] sizeByType;
+
+    public ushort[] startingSteps;
+    public ushort[] endingSteps;
+    public ushort staringSpawnStep;
+    public ushort finalSpawnStep;
+    private int currentStepIndex;
+
+    private int currentFloatIndex;
+
+    public Vector2[] ReturnIntervalAndDuration()
+    {
+        Vector2[] intervalsAndDurations = new Vector2[startingSteps.Length];
+
+        for (int i = 1; i < startingSteps.Length; i++)
+        {
+            float interval = (endingSteps[i - 1] - startingSteps[i]) * -savedTimePerStep;
+            float duration = (finalSpawnStep - startingSteps[i]) * savedTimePerStep;
+            intervalsAndDurations[i].x = interval;
+            intervalsAndDurations[i].y = duration;
+        }
+
+        return intervalsAndDurations;
+    
+
+    }
+
+    public RecordedObjectPositionerDataSave(short id, ushort typ,ushort[] sizesByType, Vector3 posRot, Vector2[] positions, float[] values, ushort[] startingSteps, ushort[] endingSteps, ushort startStep, ushort finalSpawnStep)
+    {
+        this.ID = id;
+        this.type = typ;
+        this.savedTimePerStep = LevelRecordManager.TimePerStep;
+        this.sizeByType = sizesByType;
+        this.startPosAndRot = posRot; // Default value, can be set later
+        
+        this.positions = positions;
+        this.values = values;
+        this.startingSteps = startingSteps;
+        this.endingSteps = endingSteps;
+        this.staringSpawnStep = startStep;
+        this.finalSpawnStep = finalSpawnStep;
+    }
+
+
+
 }

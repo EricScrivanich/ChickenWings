@@ -3,9 +3,6 @@ using UnityEngine;
 public class LevelDataSave
 {
     public string levelName;
-
-    
-
     public short[] idList;
     public ushort[] spawnSteps;
     public ushort finalSpawnStep;
@@ -17,9 +14,13 @@ public class LevelDataSave
     public float[] floatList;
     public ushort[] poolSizes;
 
+   
+
+
     public short[] startingAmmos;
     public short StartingLives;
 
+    public RecordedObjectPositionerDataSave[] postionerData = null;
 
     public LevelDataSave(string levelName, short[] idList, ushort[] spawnSteps, ushort[] typeList, ushort[] dataTypeList, ushort finalStep, Vector2[] posList, float[] floats, ushort[] plSizes, short[] ammos, short lives)
     {
@@ -34,6 +35,10 @@ public class LevelDataSave
         this.poolSizes = plSizes;
         this.startingAmmos = ammos;
         this.StartingLives = lives;
+    }
+    public void SetPositionerData(RecordedObjectPositionerDataSave[] data)
+    {
+        this.postionerData = data;
     }
 
 

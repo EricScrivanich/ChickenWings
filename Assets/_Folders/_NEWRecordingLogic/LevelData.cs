@@ -43,6 +43,7 @@ public class LevelData : ScriptableObject
     private DataStructFloatThree[] dataStructFloatThree;
     private DataStructFloatFour[] dataStructFloatFour;
     private DataStructFloatFive[] dataStructFloatFive;
+    public RecordedObjectPositionerDataSave[] postionerData = null;
 
 
     [SerializeField] private RecordableObjectPool[] pools;
@@ -121,10 +122,10 @@ public class LevelData : ScriptableObject
         dataStructFloatFour = new DataStructFloatFour[floatSizes[3]];
         dataStructFloatFive = new DataStructFloatFive[floatSizes[4]];
 
-        foreach (int n in floatSizes)
-        {
+        // foreach (int n in floatSizes)
+        // {
 
-        }
+        // }
 
         int floatListIndex = 0;
 

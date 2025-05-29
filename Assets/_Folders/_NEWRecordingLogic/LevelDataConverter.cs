@@ -133,14 +133,21 @@ public class LevelDataConverter : MonoBehaviour
         List<Vector2> posList = new List<Vector2>();
         List<float> floatList = new List<float>();
         List<ushort> dataTypes = new List<ushort>();
+        List<RecordedObjectPositionerDataSave> positionerData = new List<RecordedObjectPositionerDataSave>();
 
 
         for (int i = 0; i < obj.Count; i++)
         {
             idList.Add(obj[i].Data.ID);
             spawnedStepList.Add(obj[i].Data.spawnedStep);
-            posList.Add(obj[i].Data.startPos);
+
+            if (obj[i].IsPositionerObject())
+            {
+                positionerData.Add(obj[i].ReturnPositionerDataSave());
+
+            }
             typeList.Add(obj[i].Data.type);
+            posList.Add(obj[i].Data.startPos);
             dataTypes.Add(obj[i].DataType);
             int dataType = obj[i].DataType;
             if (dataType <= 5)
@@ -184,6 +191,10 @@ public class LevelDataConverter : MonoBehaviour
         }
 
         LevelDataSave save = new LevelDataSave(title, idList.ToArray(), spawnedStepList.ToArray(), typeList.ToArray(), dataTypes.ToArray(), finalSpawnStep, posList.ToArray(), floatList.ToArray(), poolData, ammos, lives);
+        if (positionerData.Count > 0)
+            save.SetPositionerData(positionerData.ToArray());
+
+
         string json = JsonUtility.ToJson(save, true);
         File.WriteAllText(savePath, json);
         Debug.Log("Level saved to: " + savePath);

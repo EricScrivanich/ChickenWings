@@ -24,12 +24,14 @@ public class CustomTimeSlider : MonoBehaviour
 
     [Header("Time Control")]
     private int absoluteMax;
-    [SerializeField] private int minRange = 0;
-    [SerializeField] private int maxRange = 80;
-    [SerializeField] private int currentIndex = 0;
+    private int minRange = 0;
+    private int maxRange = 80;
+    private int currentIndex = 0;
     private int currentMinIndex = 0;
     private int currentMaxIndex = 80;
     private int currentObjectIndex = 0;
+
+    private int currentTweenStep;
 
     [Header("UI References")]
     public RectTransform mainHandle;
@@ -53,9 +55,19 @@ public class CustomTimeSlider : MonoBehaviour
     public RectTransform sliderTrack;
     public RectTransform lineStepsParent;
 
+    [Header("Tween Objects")]
+    [SerializeField] private RectTransform selectedTweenParent;
+    [SerializeField] private RectTransform nonSelectedTweenParent;
+    [SerializeField] private GameObject startTweenObject;
+    [SerializeField] private GameObject endTweenObject;
+
+    private List<SliderHandle> startTweenHandles = new List<SliderHandle>();
+    private List<SliderHandle> endTweenHandles = new List<SliderHandle>();
+
     private float trackWidth;
 
     private bool isTimeEditorView = false;
+    private bool isTempTimeEditorView = false;
     private bool isPlayView = false;
 
     private int lastSavedMainValue;
@@ -64,10 +76,16 @@ public class CustomTimeSlider : MonoBehaviour
     private int lastSavedMaxValue;
     private int lastSavedObjectValue;
 
+    private int lastSavedTweenValue;
+
     public static CustomTimeSlider instance;
     [SerializeField] private Image objectSliderImage;
 
     public Action<bool> OnEditObjectTime;
+
+    public int currentTweenIndex = 0;
+
+    public bool usingListView = false;
     private void Awake()
     {
         if (instance == null)
@@ -78,12 +96,6 @@ public class CustomTimeSlider : MonoBehaviour
         {
             Destroy(this);
         }
-
-
-    }
-
-    private void Start()
-    {
         canvas = GetComponentInParent<Canvas>();
         objectHandle.gameObject.SetActive(false);
         startTimeHandle.gameObject.SetActive(false);
@@ -101,6 +113,12 @@ public class CustomTimeSlider : MonoBehaviour
         LevelRecordManager.OnShowObjectTime += ShowSelectedObject;
         UpdateHandlePositions();
         UpdateTexts();
+
+    }
+
+    private void Start()
+    {
+
     }
 
     public void SetVariables(int main, int min, int max)
@@ -108,6 +126,7 @@ public class CustomTimeSlider : MonoBehaviour
         currentIndex = main;
         currentMinIndex = min;
         currentMaxIndex = max;
+
 
 
     }
@@ -167,6 +186,7 @@ public class CustomTimeSlider : MonoBehaviour
     public void TempTimeEditorView(bool show)
     {
         if (isTimeEditorView) return;
+        isTempTimeEditorView = show;
         if (show)
         {
             mainHandle.localScale = Vector3.one * .85f;
@@ -182,12 +202,14 @@ public class CustomTimeSlider : MonoBehaviour
             objectHandle.gameObject.SetActive(true);
             OrganizeTimeSteps();
             SetAllHandles();
+            SetMainHandlePosition(currentIndex);
+
         }
         else
         {
             mainHandle.localScale = Vector3.one;
 
-            Debug.Log("Normal View");
+
             minRange = currentMinIndex;
             maxRange = currentMaxIndex;
 
@@ -200,6 +222,10 @@ public class CustomTimeSlider : MonoBehaviour
             objectHandle.gameObject.SetActive(false);
             OrganizeTimeSteps();
             SetShownHandle();
+            SetTweenHandlePosition();
+            SetMainHandlePosition(currentIndex);
+
+
 
         }
 
@@ -224,9 +250,13 @@ public class CustomTimeSlider : MonoBehaviour
         minHandle.gameObject.SetActive(true);
         maxHandle.gameObject.SetActive(true);
         OrganizeTimeSteps();
+        SetMainHandlePosition(currentIndex);
+
         if (LevelRecordManager.instance.currentSelectedObject != null)
             objectHandle.gameObject.SetActive(true);
         SetAllHandles();
+
+
     }
 
     public void NormalView()
@@ -238,7 +268,7 @@ public class CustomTimeSlider : MonoBehaviour
         Camera.main.transform.DOMoveY(-2.26f, .8f).SetEase(Ease.OutCubic).SetUpdate(true);
         mainHandle.localScale = Vector3.one;
 
-        Debug.Log("Normal View");
+     
         minRange = currentMinIndex;
         maxRange = currentMaxIndex;
 
@@ -251,6 +281,9 @@ public class CustomTimeSlider : MonoBehaviour
         objectHandle.gameObject.SetActive(false);
         OrganizeTimeSteps();
         SetShownHandle();
+        SetMainHandlePosition(currentIndex);
+        SetTweenHandlePosition();
+
     }
 
     public void PlayView()
@@ -277,7 +310,10 @@ public class CustomTimeSlider : MonoBehaviour
         pixelsPerStep = (shownLength / (maxRange - minRange) * canvas.scaleFactor);
         sliderTrack.sizeDelta = new Vector2(fullLength, sliderTrack.sizeDelta.y);
         OrganizeTimeSteps();
+        SetMainHandlePosition(currentIndex);
+
         SetAllHandles();
+
     }
 
     public void ExitPlayView()
@@ -307,70 +343,7 @@ public class CustomTimeSlider : MonoBehaviour
 
     public bool ChangingObjectTime { get; private set; } = false;
     public bool OverObjectTime { get; private set; } = false;
-    private void OnHandlePressed(SliderHandle.HandleType type, bool pressed)
-    {
-        LevelRecordManager.instance.SetHoldingHandle(pressed);
-        lastStepChange = 0;
 
-
-        if (pressed && type == SliderHandle.HandleType.Time)
-        {
-
-            didDragOnObjectTimeDisplay = false;
-        }
-        else if (type == SliderHandle.HandleType.Time)
-        {
-            if (!didDragOnObjectTimeDisplay && !LevelRecordManager.ShowTime)
-            {
-                LevelRecordManager.instance.SetStaticViewParameter(HideItemUI.Type.Time, true);
-            }
-            else
-            {
-                didDragOnObjectTimeDisplay = false;
-                TempTimeEditorView(false);
-            }
-
-        }
-        else if (didDragOnObjectTimeDisplay)
-        {
-            TempTimeEditorView(false);
-
-        }
-        switch (type)
-        {
-            case SliderHandle.HandleType.Main:
-            case SliderHandle.HandleType.StartTime:
-                lastSavedMainValue = currentIndex;
-                break;
-
-            case SliderHandle.HandleType.Min:
-                lastSavedMinValue = currentMinIndex;
-                if (pressed) minText.gameObject.SetActive(true);
-                else minText.gameObject.SetActive(false);
-                break;
-
-            case SliderHandle.HandleType.Max:
-                lastSavedMaxValue = currentMaxIndex;
-                if (pressed) maxText.gameObject.SetActive(true);
-                else maxText.gameObject.SetActive(false);
-                break;
-
-            case SliderHandle.HandleType.AbsoluteMax:
-                break;
-            case SliderHandle.HandleType.Object:
-            case SliderHandle.HandleType.Time:
-                LevelRecordManager.instance.DoingTimeEdit(pressed);
-                ChangingObjectTime = pressed;
-                OverObjectTime = false;
-                lastSavedObjectValue = currentObjectIndex;
-                lastSavedMainValue = currentIndex;
-                objSpawnText.gameObject.SetActive(pressed);
-                OnEditObjectTime?.Invoke(pressed);
-                break;
-        }
-
-        UpdateTexts();
-    }
 
     // public void RetractTime(bool retract)
     // {
@@ -439,6 +412,7 @@ public class CustomTimeSlider : MonoBehaviour
 
     }
 
+
     public void NextTimeStep(bool forward)
     {
         if (timeStepList.Count > 0 && timeStepList[timeStepList.Count - 1] < currentIndex)
@@ -491,32 +465,189 @@ public class CustomTimeSlider : MonoBehaviour
 
     }
 
+    public void OnSelectTweenIndex(int index)
+    {
+        for (int i = 1; i < startTweenHandles.Count; i++)
+        {
+            if (i == index)
+            {
+                startTweenHandles[i].SetTweenHandle(true);
+                endTweenHandles[i].SetTweenHandle(true);
+                startTweenHandles[i].GetComponent<RectTransform>().SetParent(selectedTweenParent);
+                endTweenHandles[i].GetComponent<RectTransform>().SetParent(selectedTweenParent);
+
+            }
+            else
+            {
+                startTweenHandles[i].SetTweenHandle(false);
+                endTweenHandles[i].SetTweenHandle(false);
+                startTweenHandles[i].GetComponent<RectTransform>().SetParent(nonSelectedTweenParent);
+                endTweenHandles[i].GetComponent<RectTransform>().SetParent(nonSelectedTweenParent);
+            }
+
+        }
+
+
+
+    }
+
+    public void OnPressTweenTime(bool pressed, bool isHandle, int value)
+    {
+        lastSavedTweenValue = value;
+        lastSavedMainValue = currentIndex;
+        if (pressed && !isHandle)
+        {
+            didDragOnObjectTimeDisplay = false;
+        }
+        else if (!isHandle)
+        {
+            if (!didDragOnObjectTimeDisplay && !LevelRecordManager.ShowTime)
+            {
+                LevelRecordManager.instance.SetStaticViewParameter(HideItemUI.Type.Time, true);
+            }
+            else
+            {
+                didDragOnObjectTimeDisplay = false;
+                TempTimeEditorView(false);
+            }
+
+        }
+        else if (didDragOnObjectTimeDisplay)
+        {
+            TempTimeEditorView(false);
+
+        }
+
+
+
+    }
+
+    public void OnDragTweenTime(float deltaX, bool isNotHandle)
+    {
+        int stepChange = Mathf.RoundToInt(deltaX / pixelsPerStep);
+        if (stepChange == lastStepChange) return;
+        lastStepChange = stepChange;
+
+
+
+        int tweenIndex = lastSavedTweenValue + stepChange;
+
+        if (isNotHandle && !didDragOnObjectTimeDisplay)
+        {
+            didDragOnObjectTimeDisplay = true;
+            TempTimeEditorView(true);
+        }
+
+
+
+
+
+        if (DynamicValueAdder.instance.SetNewTimeStep((ushort)tweenIndex))
+        {
+            currentTweenStep = tweenIndex;
+            currentIndex = Mathf.Clamp(lastSavedMainValue + stepChange, minRange, maxRange);
+
+        }
+        else return;
+
+
+        GameObject r = null;
+        if (currentTweenIndex > 0)
+        {
+
+            r = startTweenHandles[currentTweenIndex].gameObject;
+            startTweenHandles[currentTweenIndex].SetTweenStep(currentTweenStep);
+        }
+
+        else
+        {
+            r = endTweenHandles[Mathf.Abs(currentTweenIndex)].gameObject;
+            endTweenHandles[Mathf.Abs(currentTweenIndex)].SetTweenStep(currentTweenStep);
+
+        }
+
+        LevelRecordManager.instance.UpdateTime((ushort)currentIndex);
+
+        SetHandlePos(r, currentTweenStep);
+        UpdateHandlePositions();
+
+        UpdateTexts();
+
+
+
+
+    }
+    private void OnHandlePressed(SliderHandle.HandleType type, bool pressed)
+    {
+        LevelRecordManager.instance.SetHoldingHandle(pressed);
+        lastStepChange = 0;
+
+
+        if (pressed && type == SliderHandle.HandleType.Time)
+        {
+
+            didDragOnObjectTimeDisplay = false;
+        }
+        else if (type == SliderHandle.HandleType.Time)
+        {
+            if (!didDragOnObjectTimeDisplay && !LevelRecordManager.ShowTime)
+            {
+                LevelRecordManager.instance.SetStaticViewParameter(HideItemUI.Type.Time, true);
+            }
+            else
+            {
+                didDragOnObjectTimeDisplay = false;
+                TempTimeEditorView(false);
+            }
+
+        }
+        else if (didDragOnObjectTimeDisplay)
+        {
+            TempTimeEditorView(false);
+
+        }
+        switch (type)
+        {
+            case SliderHandle.HandleType.Main:
+            case SliderHandle.HandleType.StartTime:
+                lastSavedMainValue = currentIndex;
+                break;
+
+            case SliderHandle.HandleType.Min:
+                lastSavedMinValue = currentMinIndex;
+                if (pressed) minText.gameObject.SetActive(true);
+                else minText.gameObject.SetActive(false);
+                break;
+
+            case SliderHandle.HandleType.Max:
+                lastSavedMaxValue = currentMaxIndex;
+                if (pressed) maxText.gameObject.SetActive(true);
+                else maxText.gameObject.SetActive(false);
+                break;
+
+            case SliderHandle.HandleType.AbsoluteMax:
+                break;
+            case SliderHandle.HandleType.Object:
+            case SliderHandle.HandleType.Time:
+                LevelRecordManager.instance.DoingTimeEdit(pressed);
+                ChangingObjectTime = pressed;
+                OverObjectTime = false;
+                lastSavedObjectValue = currentObjectIndex;
+                lastSavedMainValue = currentIndex;
+                objSpawnText.gameObject.SetActive(pressed);
+                OnEditObjectTime?.Invoke(pressed);
+                break;
+        }
+
+        UpdateTexts();
+    }
 
     private void OnHandleDragged(SliderHandle.HandleType type, float deltaX)
     {
 
         int stepChange = Mathf.RoundToInt(deltaX / pixelsPerStep);
-
-
-
         if (stepChange == lastStepChange) return;
-        // else if (stepChange - lastStepChange > 1)
-        // {
-        //     stepChange = lastStepChange + 1;
-        // }
-        // else if (stepChange - lastStepChange < -1)
-        // {
-        //     stepChange = lastStepChange - 1;
-        // }
-
-
-
         lastStepChange = stepChange;
-
-
-
-        // Debug.Log("DeltaX: " + deltaX + " StepChange: " + stepChange + "Type: " + type);
-        // valueStep = Mathf.Abs(Mathf.Lerp(minRange, maxRange, .01f) - Mathf.Lerp(minRange, maxRange, 0));
 
         switch (type)
         {
@@ -581,9 +712,6 @@ public class CustomTimeSlider : MonoBehaviour
         }
 
 
-
-
-
         UpdateHandlePositions();
         UpdateTexts();
     }
@@ -646,7 +774,7 @@ public class CustomTimeSlider : MonoBehaviour
     private void SetShownHandle()
     {
 
-        mainHandle.localPosition = new Vector2(GetSliderX(currentIndex), mainHandle.localPosition.y);
+        // mainHandle.localPosition = new Vector2(GetSliderX(currentIndex), mainHandle.localPosition.y);
         objectHandle.localPosition = new Vector2(GetSliderX(currentObjectIndex), objectHandle.localPosition.y);
 
         // float x = offset
@@ -656,20 +784,31 @@ public class CustomTimeSlider : MonoBehaviour
     {
         currentIndex = i;
         UpdateHandlePositions();
+        // SetTweenHandlePosition();
+
 
     }
-
+    public void SetMainHandlePosition(int i)
+    {
+        currentIndex = i;
+        mainHandle.localPosition = new Vector2(GetSliderX(currentIndex), mainHandle.localPosition.y);
+        UpdateTexts();
+    }
     private void SetAllHandles()
     {
-        mainHandle.localPosition = new Vector2(GetSliderX(currentIndex), mainHandle.localPosition.y);
+        // mainHandle.localPosition = new Vector2(GetSliderX(currentIndex), mainHandle.localPosition.y);
         startTimeHandle.localPosition = new Vector2(GetSliderX(currentIndex), startTimeHandle.localPosition.y);
         minHandle.localPosition = new Vector2(GetSliderX(currentMinIndex), minHandle.localPosition.y);
         maxHandle.localPosition = new Vector2(GetSliderX(currentMaxIndex), maxHandle.localPosition.y);
         objectHandle.localPosition = new Vector2(GetSliderX(currentObjectIndex), objectHandle.localPosition.y);
+        SetTweenHandlePosition();
+
 
 
 
     }
+
+
 
     private float GetSliderX(int index)
     {
@@ -681,14 +820,124 @@ public class CustomTimeSlider : MonoBehaviour
 
     }
 
-
-    private void SetHandlePos(RectTransform handle, int index)
+    public void CreateTweenHandles(RecordedDataStructTweensDynamic data)
     {
-        float normalized = (float)index / absoluteMax;
-        float x = normalized * trackWidth;
+        // startTweenHandles.Clear();
+        // endTweenHandles.Clear();
 
-        Vector2 pos = handle.anchoredPosition;
-        handle.anchoredPosition = new Vector2(x, pos.y);
+        for (int i = 0; i < data.startingSteps.Count; i++)
+        {
+            SliderHandle handleStart;
+            SliderHandle handleEnd;
+
+            if (i < startTweenHandles.Count)
+            {
+                handleStart = startTweenHandles[i];
+
+                handleEnd = endTweenHandles[i];
+
+            }
+            else
+            {
+                var obj = Instantiate(startTweenObject, transform);
+                obj.GetComponent<RectTransform>().localPosition = new Vector2(0, -92);
+
+                handleStart = obj.GetComponent<SliderHandle>();
+                startTweenHandles.Add(handleStart);
+
+                var obj2 = Instantiate(endTweenObject, transform);
+                obj2.GetComponent<RectTransform>().localPosition = new Vector2(0, -92);
+                handleEnd = obj2.GetComponent<SliderHandle>();
+                endTweenHandles.Add(handleEnd);
+
+
+            }
+
+            handleStart.SetTweenIndex(i);
+            handleEnd.SetTweenIndex(i);
+            handleStart.SetTweenStep(data.startingSteps[i]);
+            handleEnd.SetTweenStep(data.endingSteps[i]);
+
+            handleStart.gameObject.SetActive(false);
+            handleEnd.gameObject.SetActive(false);
+
+            // SetHandlePos(handleStart.gameObject, data.startingSteps[i]);
+            // SetHandlePos(handleEnd.gameObject, data.endingSteps[i]);
+
+        }
+        if (startTweenHandles.Count > data.startingSteps.Count)
+        {
+            for (int i = startTweenHandles.Count - 1; i >= data.startingSteps.Count; i--)
+            {
+                Destroy(startTweenHandles[i].gameObject);
+                startTweenHandles.RemoveAt(i);
+            }
+            for (int i = endTweenHandles.Count - 1; i >= data.endingSteps.Count; i--)
+            {
+                Destroy(endTweenHandles[i].gameObject);
+                endTweenHandles.RemoveAt(i);
+            }
+        }
+
+        SetTweenHandlePosition();
+
+    }
+
+    public void DeactivateTweenHandles()
+    {
+        usingListView = false;
+        foreach (var i in startTweenHandles)
+        {
+            i.gameObject.SetActive(false);
+        }
+        foreach (var i in endTweenHandles)
+        {
+            i.gameObject.SetActive(false);
+        }
+    }
+
+
+    public void SetTweenHandlePosition(int change = 0)
+    {
+        if (startTweenHandles.Count <= 1) return;
+        if ((isTimeEditorView || isTempTimeEditorView) && usingListView)
+        {
+            foreach (var i in startTweenHandles)
+            {
+                SetHandlePos(i.gameObject, i.GetStep());
+                i.gameObject.SetActive(true);
+            }
+
+            foreach (var i in endTweenHandles)
+            {
+                SetHandlePos(i.gameObject, i.GetStep());
+                i.gameObject.SetActive(true);
+            }
+        }
+        else if (startTweenHandles[startTweenHandles.Count - 1].gameObject.activeInHierarchy)
+        {
+            foreach (var i in startTweenHandles)
+            {
+                i.gameObject.SetActive(false);
+            }
+
+            foreach (var i in endTweenHandles)
+            {
+                i.gameObject.SetActive(false);
+            }
+        }
+        startTweenHandles[0].gameObject.SetActive(false);
+        endTweenHandles[0].gameObject.SetActive(false);
+
+
+    }
+
+    private void SetHandlePos(GameObject obj, int index)
+    {
+
+        float x = GetSliderX(index);
+      
+        obj.transform.localPosition = new Vector2(x, obj.transform.localPosition.y);
     }
 
     private void UpdateTexts()

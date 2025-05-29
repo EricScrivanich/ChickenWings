@@ -7,6 +7,8 @@ public class RecordableObjectPlacer : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
 
+
+
     [SerializeField] private SpriteRenderer[] iconSprites;
 
     [SerializeField] private GameObject baseIcon;
@@ -63,16 +65,12 @@ public class RecordableObjectPlacer : MonoBehaviour
         Blade_Speed,
         Start_Rotation,
         Fart_Length,
-        Frequency
+        Frequency,
+        Laser_Spacing
+
 
     }
 
-    [Header("Ranges and Default Values")]
-    [field: SerializeField] public Vector3 SpeedValues { get; private set; }
-    [field: SerializeField] public Vector3 SizeValues { get; private set; }
-    [field: SerializeField] public Vector3 MagnitideValues { get; private set; }
-    [field: SerializeField] public Vector3 TimeIntervalValues { get; private set; }
-    [field: SerializeField] public Vector3 DelayOrPhaseOffsetValues { get; private set; }
 
 
 
@@ -118,12 +116,37 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         Grounded,
         CenterOnly,
-        AI
+        AI,
+        Position
+
     }
 
     [SerializeField] private PostionType _pType;
 
     [SerializeField] private SpriteRenderer[] sprites;
+
+    [Header("Set Potisition Object Settings")]
+    [SerializeField] private bool setPositionObject = false;
+    public RecordedDataStructTweensDynamic positionData { get; private set; }
+    public RecordedDataStructTweensDynamic rotationData { get; private set; }
+    public RecordedDataStructTweensDynamic timerData { get; private set; }
+    private Ease[] eases = new Ease[] { Ease.Linear, Ease.InSine, Ease.OutSine, Ease.InOutSine };
+
+    private List<float> startingTimes = new List<float>();
+    private List<float> endingTimes = new List<float>();
+
+    public enum PositionerType
+
+    {
+        Positions,
+        Rotations,
+        Timers
+
+    }
+    private ObjectPositioner objectPositioner;
+    public PositionerType[] positionerTypes;
+
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -156,6 +179,29 @@ public class RecordableObjectPlacer : MonoBehaviour
     {
         spawnedTimeStep = (ushort)step;
         Data.spawnedStep = spawnedTimeStep;
+
+        if (_pType == PostionType.Position)
+        {
+            if (positionData != null)
+            {
+                positionData.AdjustBaseTimeStep(spawnedTimeStep);
+            }
+            if (rotationData != null)
+            {
+                rotationData.AdjustBaseTimeStep(spawnedTimeStep);
+            }
+            if (timerData != null)
+            {
+                timerData.AdjustBaseTimeStep(spawnedTimeStep);
+            }
+
+            CustomTimeSlider.instance.CreateTweenHandles(DynamicValueAdder.instance.data);
+            // if (timerData != null)
+            // {
+            //     timerData.UpdateTimeStep(spawnedTimeStep);
+            // }
+        }
+
         // UpdateObjectData();
         ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep);
 
@@ -207,7 +253,10 @@ public class RecordableObjectPlacer : MonoBehaviour
         }
 
 
-
+        if (_pType == PostionType.Position)
+        {
+            objectPositioner = prefab.GetComponent<ObjectPositioner>();
+        }
 
 
         foreach (var s in selectedOutlines)
@@ -222,6 +271,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     public void CreateNew(int typeOvveride)
     {
+
 
         ushort type = (ushort)TypeValues.z;
 
@@ -240,6 +290,34 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
         Data = new RecordedDataStructDynamic(ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0);
+
+        if (_pType == PostionType.Position)
+        {
+            for (int i = 0; i < positionerTypes.Length; i++)
+            {
+                switch (positionerTypes[i])
+                {
+                    case PositionerType.Positions:
+                        positionData = new RecordedDataStructTweensDynamic(ID, 0);
+
+
+                        break;
+                    case PositionerType.Rotations:
+                        rotationData = new RecordedDataStructTweensDynamic(ID, 1);
+
+                        break;
+                    case PositionerType.Timers:
+                        timerData = new RecordedDataStructTweensDynamic(ID, 2);
+                        break;
+
+                }
+            }
+
+            return;
+
+        }
+
+
 
         if (floatOneIsSpeed) speed = floatValues[0];
         else speed = 0;
@@ -293,6 +371,8 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     }
 
+
+
     public void LoadAssetFromSave(RecordedDataStructDynamic data)
     {
 
@@ -333,7 +413,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     public void SetActiveFromList()
     {
-        Debug.Log("Setting active from list");
+
         gameObject.SetActive(true);
         UpdateObjectData();
     }
@@ -396,19 +476,32 @@ public class RecordableObjectPlacer : MonoBehaviour
         SetIsSelected(true);
 
 
-
+        ValueEditorManager.instance.ResetRectList();
 
         for (int i = 0; i < editedData.Length; i++)
         {
 
             int index = i;
 
+
+
             if (i == editedData.Length - 1) ValueEditorManager.instance.SendFloatValues(FormatEnumName(editedData[i]), index, true);
 
             else ValueEditorManager.instance.SendFloatValues(FormatEnumName(editedData[i]), index, false);
 
         }
+
         ValueEditorManager.instance.SendTypeValues(typeTitle, typeOptions);
+        if (positionerTypes != null && positionerTypes.Length > 0)
+            for (int i = 0; i < positionerTypes.Length; i++)
+            {
+                ValueEditorManager.instance.SendPositionerValues(positionerTypes[i].ToString(), i, positionerTypes.Length - 1 == i);
+            }
+
+
+
+
+        ValueEditorManager.instance.OrderRectList(Title);
 
     }
     public void SetIsSelected(bool selected)
@@ -539,10 +632,11 @@ public class RecordableObjectPlacer : MonoBehaviour
     public void UpdateBasePosition(Vector2 pos)
     {
         // if (Title == "Windmill") obj.ApplyCustomizedData(Data);
-        Debug.Log("Updating base position");
+
 
         if (_pType == PostionType.Grounded)
         {
+            if (pos.x < BoundariesManager.leftViewBoundary) return;
             transform.position = new Vector2(pos.x, BoundariesManager.GroundPosition + minMaxY.x);
             Data.startPos = transform.position;
 
@@ -567,6 +661,17 @@ public class RecordableObjectPlacer : MonoBehaviour
             UpdateObjectData();
 
             return;
+        }
+        else if (_pType == PostionType.Position)
+        {
+            if (positionData != null)
+            {
+                Data.startPos = pos;
+                positionData.positions[0] = pos;
+            }
+            transform.position = pos;
+            return;
+
         }
 
         transform.position = pos;
@@ -602,6 +707,18 @@ public class RecordableObjectPlacer : MonoBehaviour
         if ((Data.ID == 0 || Data.ID == 2) && isScale)
         {
             prefab.GetComponent<ScaleAdjuster>().SetScales();
+        }
+
+        if (_pType == PostionType.Position)
+        {
+
+            if (Title == "Laser")
+            {
+                rotationData.values[0] = Data.float1;
+            }
+
+
+
         }
 
 
@@ -661,7 +778,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         if (realTime == 0 && timeStep < spawnedTimeStep)
         {
-            Debug.LogError("Time step is less than spawned time step");
+
 
             gameObject.SetActive(false);
             return;
@@ -673,6 +790,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
         float t;
+
         if (realTime != 0)
         {
             if (rbActive)
@@ -720,7 +838,7 @@ public class RecordableObjectPlacer : MonoBehaviour
             }
             if (!rbActive)
             {
-                Debug.Log("Enabling rb with real time: " + realTime);
+
 
                 rb.simulated = true;
                 if (timeStamps != null)
@@ -734,6 +852,197 @@ public class RecordableObjectPlacer : MonoBehaviour
             }
             t = timeStep * LevelRecordManager.TimePerStep;
         }
+
+        if (_pType == PostionType.Position)
+        {
+            float calculatedStep;
+            if (realTime != 0)
+            {
+                calculatedStep = realTime / LevelRecordManager.TimePerStep;
+            }
+            else
+            {
+                calculatedStep = timeStep;
+            }
+
+
+
+
+
+
+
+            float elapsedLifetime = t - (spawnedTimeStep * LevelRecordManager.TimePerStep);
+
+            for (int i = 0; i < positionerTypes.Length; i++)
+            {
+
+
+                switch (positionerTypes[i])
+                {
+                    case PositionerType.Positions:
+                        if (positionData.startingSteps == null || positionData.startingSteps.Count <= 1)
+                        {
+
+                            continue;
+                        }
+
+
+                        for (int j = 1; j < positionData.startingSteps.Count; j++)
+                        {
+                            if (calculatedStep >= positionData.startingSteps[j] && calculatedStep < positionData.endingSteps[j])
+                            {
+
+                                float startTime = positionData.startingSteps[j] * LevelRecordManager.TimePerStep;
+                                float endTime = positionData.endingSteps[j] * LevelRecordManager.TimePerStep;
+                                float totalDuration = endTime - startTime;
+
+                                float currentTime = calculatedStep * LevelRecordManager.TimePerStep;
+                                float timeIntoTween = currentTime - startTime;
+
+                                float percent = Mathf.Clamp01(timeIntoTween / totalDuration);
+                                Vector2 val = DOVirtual.EasedValue(positionData.positions[j - 1], positionData.positions[j], percent, eases[positionData.easeTypes[j]]);
+                                prefab.transform.position = val;
+                                break;
+
+
+                            }
+                            else if (calculatedStep >= positionData.endingSteps[j] && (j == positionData.endingSteps.Count - 1 || calculatedStep < positionData.startingSteps[j + 1]))
+                            {
+
+                                prefab.transform.position = positionData.positions[j];
+                                break;
+                            }
+                        }
+                        break;
+                    case PositionerType.Rotations:
+                        if (rotationData.startingSteps == null)
+                        {
+
+                            continue;
+
+                        }
+                        else if (rotationData.startingSteps.Count <= 1)
+                        {
+                            prefab.transform.eulerAngles = new Vector3(0, 0, rotationData.values[0]);
+                            continue;
+                        }
+
+
+                        for (int j = 1; j < rotationData.startingSteps.Count; j++)
+                        {
+
+                            if (calculatedStep >= rotationData.startingSteps[j] && calculatedStep < rotationData.endingSteps[j])
+                            {
+                                // please debug log the values
+
+                                float startTime = rotationData.startingSteps[j] * LevelRecordManager.TimePerStep;
+                                float endTime = rotationData.endingSteps[j] * LevelRecordManager.TimePerStep;
+                                float totalDuration = endTime - startTime;
+
+                                float currentTime = calculatedStep * LevelRecordManager.TimePerStep;
+                                float timeIntoTween = currentTime - startTime;
+
+                                float percent = Mathf.Clamp01(timeIntoTween / totalDuration);
+                                // int flipIntitial = 1;
+                                // int flipFinal = 1;
+
+                                // if (rotationData.other[j - 1] == 0) flipIntitial = -1;
+                                // if (rotationData.other[j] == 0) flipFinal = -1;
+                                // float initialRot = rotationData.values[j - 1] * flipIntitial;
+                                // float finalRot = rotationData.values[j] * flipFinal;
+
+
+
+
+                                // float percent = ((calculatedStep * LevelRecordManager.TimePerStep) - elapsedLifetime) / (((rotationData.endingSteps[j] * LevelRecordManager.TimePerStep) - (rotationData.startingSteps[j] * LevelRecordManager.TimePerStep)) - elapsedLifetime);
+
+                                float val = DOVirtual.EasedValue(rotationData.values[j - 1], rotationData.values[j], percent, eases[rotationData.easeTypes[j]]);
+                                prefab.transform.eulerAngles = new Vector3(0, 0, val);
+
+                                break;
+
+
+                            }
+                            else if (calculatedStep >= rotationData.endingSteps[j] && (j == rotationData.endingSteps.Count - 1 || calculatedStep < rotationData.startingSteps[j + 1]))
+                            {
+
+                                // int flipFinal = 1;
+
+
+                                // if (rotationData.other[j] == 0) flipFinal = -1;
+
+                                // float finalRot = 
+                                prefab.transform.eulerAngles = new Vector3(0, 0, rotationData.values[j]);
+                                break;
+                            }
+
+                        }
+                        break;
+
+                    case PositionerType.Timers:
+                        if (timerData.startingSteps == null)
+                        {
+
+                            continue;
+
+                        }
+                        else if (timerData.startingSteps.Count <= 1)
+                        {
+                            objectPositioner.SetPercentForLaserShooting(0);
+                            continue;
+                        }
+
+
+                        for (int j = 1; j < timerData.startingSteps.Count; j++)
+                        {
+
+                            if (calculatedStep >= timerData.startingSteps[j] && calculatedStep < timerData.endingSteps[j])
+                            {
+                                float startTime = timerData.startingSteps[j] * LevelRecordManager.TimePerStep;
+                                float endTime = timerData.endingSteps[j] * LevelRecordManager.TimePerStep;
+                                float totalDuration = endTime - startTime;
+
+                                float currentTime = calculatedStep * LevelRecordManager.TimePerStep;
+                                float timeIntoTween = currentTime - startTime;
+
+                                if (timeIntoTween < LevelRecordManager.instance.ConvertLevelTimeToRealTime(LaserParent.cooldownDuration))
+                                {
+                                    float warnUpPercent = Mathf.Clamp01(timeIntoTween / LevelRecordManager.instance.ConvertLevelTimeToRealTime(LaserParent.cooldownDuration));
+                                    objectPositioner.SetPercentForLaserShooting(warnUpPercent);
+                                }
+                                else
+                                {
+                                    float percent = -Mathf.Lerp(1, 0, Mathf.Clamp01((timeIntoTween - LevelRecordManager.instance.ConvertLevelTimeToRealTime(LaserParent.cooldownDuration)) / (totalDuration - LevelRecordManager.instance.ConvertLevelTimeToRealTime(LaserParent.cooldownDuration))));
+                                    objectPositioner.SetPercentForLaserShooting(percent);
+                                }
+                                break;
+                            }
+
+                            else if (calculatedStep >= timerData.endingSteps[j] && (j == timerData.endingSteps.Count - 1 || calculatedStep < timerData.startingSteps[j + 1]))
+                            {
+
+                                objectPositioner.SetPercentForLaserShooting(0);
+                                break;
+                            }
+                            else
+                            {
+                                objectPositioner.SetPercentForLaserShooting(0);
+                            }
+
+                        }
+                        break;
+
+                }
+
+
+            }
+
+            return;
+        }
+
+
+
+
         // if (timeStep > unspawnedTimeStep || timeStep < spawnedTimeStep)
         // {
         //     gameObject.SetActive(false);
@@ -835,6 +1144,12 @@ public class RecordableObjectPlacer : MonoBehaviour
         // }
 
     }
+
+    #region ObjectPostionerTypeFunctions
+
+
+
+    #endregion
 
     private void SetLineColor(Color col)
     {
@@ -956,6 +1271,77 @@ public class RecordableObjectPlacer : MonoBehaviour
                 break;
             }
         }
+
+
+    }
+    public bool IsPositionerObject()
+    {
+        return _pType == PostionType.Position;
+    }
+
+    public RecordedObjectPositionerDataSave ReturnPositionerDataSave()
+    {
+
+        List<ushort> sizeByType = new List<ushort>();
+        List<ushort> startSteps = new List<ushort>();
+        List<ushort> endSteps = new List<ushort>();
+        List<ushort> eases = new List<ushort>();
+        List<Vector2> positions = new List<Vector2>();
+        List<float> values = new List<float>();
+        ushort[] sizesByTypes = new ushort[3];
+
+        float startRot = 0;
+
+        if (Title == "Laser")
+        {
+            startRot = -Data.float1;
+        }
+
+        for (int i = 0; i < positionerTypes.Length; i++)
+        {
+            switch (positionerTypes[i])
+            {
+                case PositionerType.Positions:
+
+                    for (int j = 1; j < positionData.startingSteps.Count; j++)
+                    {
+                        startSteps.Add(positionData.startingSteps[j]);
+                        endSteps.Add(positionData.endingSteps[j]);
+                        eases.Add(positionData.easeTypes[j]);
+                        positions.Add(positionData.positions[j]);
+
+                    }
+                    sizesByTypes[0] = (ushort)(positionData.startingSteps.Count - 1);
+
+
+                    break;
+                case PositionerType.Rotations:
+                    for (int j = 1; j < rotationData.startingSteps.Count; j++)
+                    {
+                        startSteps.Add(rotationData.startingSteps[j]);
+                        endSteps.Add(rotationData.endingSteps[j]);
+                        eases.Add(rotationData.easeTypes[j]);
+                        values.Add(rotationData.values[j]);
+                    }
+                    sizesByTypes[1] = (ushort)(rotationData.startingSteps.Count - 1);
+
+                    break;
+                case PositionerType.Timers:
+                    for (int j = 1; j < timerData.startingSteps.Count; j++)
+                    {
+                        startSteps.Add(timerData.startingSteps[j]);
+                        endSteps.Add(timerData.endingSteps[j]);
+                        // eases.Add(timerData.easeTypes[j]);
+                        // values.Add(timerData.values[j]);
+                    }
+                    sizeByType[2] = (ushort)(timerData.startingSteps.Count - 1);
+                    break;
+
+            }
+        }
+
+        return new RecordedObjectPositionerDataSave((short)ID, Data.type, sizesByTypes, new Vector3(Data.startPos.x, Data.startPos.y, startRot), positions.ToArray(), values.ToArray(), startSteps.ToArray(), endSteps.ToArray(), Data.spawnedStep, 0);
+
 
 
     }

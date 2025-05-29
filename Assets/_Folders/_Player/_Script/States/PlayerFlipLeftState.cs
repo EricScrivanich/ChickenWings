@@ -7,7 +7,7 @@ using DG.Tweening;
 
 public class PlayerFlipLeftState : PlayerBaseState
 {
-    private Sequence sequence;
+    private Sequence flipLeftSeq;
 
     private RectTransform flipImage;
     private Vector3 flipImageTargetRotation = new Vector3(0, 0, 45);
@@ -143,28 +143,22 @@ public class PlayerFlipLeftState : PlayerBaseState
     }
     private void TweenAngVel(float dur, float start)
     {
-
         angVelSequence = DOTween.Sequence();
-
-        // angVelSequence.Append(DOTween.To(() => 0, x => angVel = x, angForce, dur)
-        //    .SetEase(Ease.InSine));
         angVelSequence.Append(DOTween.To(() => start, x => angVel = x, angForce, dur));
+        // <-- Added this
         angVelSequence.Play().OnComplete(() => tweeningAng = false);
-
     }
     private void Tween()
     {
-        if (sequence != null && sequence.IsPlaying())
-            sequence.Kill();
+        if (flipLeftSeq != null && flipLeftSeq.IsPlaying())
+            flipLeftSeq.Kill();
 
-        sequence = DOTween.Sequence();
+        flipLeftSeq = DOTween.Sequence();
+        // <-- Added this
 
-        sequence.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime)).SetEase(Ease.InSine);
-        sequence.Join(flipImage.DOScale(1.2f, .35f));
-
-        // sequence.Join(flipImage.DOScale(flipImageTargetScale * 1.1f, .6f)).SetEase(Ease.InSine);
-        sequence.Play();
-
+        flipLeftSeq.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime).SetEase(Ease.InSine))
+                .Join(flipImage.DOScale(1.2f, .35f));
+        flipLeftSeq.Play();
     }
 
     public override void ExitState(PlayerStateManager player)
@@ -278,20 +272,21 @@ public class PlayerFlipLeftState : PlayerBaseState
 
     private void SwingJumpImage()
     {
-        if (sequence != null && sequence.IsPlaying())
+        if (flipLeftSeq != null && flipLeftSeq.IsPlaying())
         {
-            sequence.Kill();
+            flipLeftSeq.Kill();
         }
 
-        sequence = DOTween.Sequence();
+        flipLeftSeq = DOTween.Sequence();
+         // <-- Added this
+
         flipImage.DOScale(1, .2f);
         foreach (var rotation in rotations)
         {
-            sequence.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
-
+            flipLeftSeq.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
         }
 
-        sequence.Play();
+        flipLeftSeq.Play();
     }
     public void CachVariables(Vector2 jf, Vector2 afv, Vector2 afdv, float at, float adt)
     {

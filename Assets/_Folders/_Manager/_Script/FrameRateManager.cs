@@ -24,7 +24,7 @@ public class FrameRateManager : MonoBehaviour
     }
     void OnDestroy()
     {
-        Time.timeScale = BaseTimeScale;
+        // Time.timeScale = BaseTimeScale;
 
     }
 

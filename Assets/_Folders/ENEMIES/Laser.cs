@@ -23,6 +23,12 @@ public class Laser : MonoBehaviour
     void Start()
     {
 
+
+        if (Time.timeScale == 0)
+        {
+            useParticles = false;
+            return;
+        }
         SetLaserGroundHit();
         // SetLaserLength();
         // laserCollider.size = new Vector2(laserCollider.size.x, 0);
@@ -134,7 +140,7 @@ public class Laser : MonoBehaviour
         {
             if (laserGroundHit != null)
             {
-                
+
                 particlePool.ReturnPooledObject(laserGroundHit.gameObject);
                 laserGroundHit = null;
             }
@@ -150,7 +156,7 @@ public class Laser : MonoBehaviour
         {
             if (laserGroundHit != null)
             {
-                
+
 
                 particlePool.ReturnPooledObject(laserGroundHit.gameObject);
                 laserGroundHit = null;
@@ -183,12 +189,7 @@ public class Laser : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Time.timeScale == 0)
-        {
-            Debug.LogError("TimeScale is 0");
 
-
-        }
 
 
 

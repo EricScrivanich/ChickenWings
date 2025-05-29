@@ -6,7 +6,7 @@ using DG.Tweening;
 
 public class PlayerFlipRightState : PlayerBaseState
 {
-    private Sequence sequence;
+    private Sequence flipRightSeq;
     private RectTransform flipImage;
     private Sequence angVelSequence;
 
@@ -151,26 +151,23 @@ public class PlayerFlipRightState : PlayerBaseState
 
     private void Tween()
     {
-        if (sequence != null && sequence.IsPlaying())
-            sequence.Kill();
+        if (flipRightSeq != null && flipRightSeq.IsPlaying())
+            flipRightSeq.Kill();
 
-        sequence = DOTween.Sequence();
+        flipRightSeq = DOTween.Sequence();
+        // <-- Added this
 
-        sequence.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime)).SetEase(Ease.InSine);
-        sequence.Join(flipImage.DOScale(1.2f, .35f));
-        sequence.Play();
-
+        flipRightSeq.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime).SetEase(Ease.InSine))
+                .Join(flipImage.DOScale(1.2f, .35f));
+        flipRightSeq.Play();
     }
 
     private void TweenAngVel(float dur, float start)
     {
         angVelSequence = DOTween.Sequence();
-
-        // angVelSequence.Append(DOTween.To(() => 0, x => angVel = x, angForce, dur)
-        //    .SetEase(Ease.InSine));
         angVelSequence.Append(DOTween.To(() => start, x => angVel = x, angForce, dur));
+        // <-- Added this
         angVelSequence.Play().OnComplete(() => tweeningAng = false);
-
     }
 
     private void SetVariables()
@@ -269,22 +266,21 @@ public class PlayerFlipRightState : PlayerBaseState
 
     private void SwingJumpImage()
     {
-        if (sequence != null && sequence.IsPlaying())
+        if (flipRightSeq != null && flipRightSeq.IsPlaying())
         {
-            sequence.Kill();
+            flipRightSeq.Kill();
         }
 
-        sequence = DOTween.Sequence();
+        flipRightSeq = DOTween.Sequence();
+        // <-- Added this
 
         flipImage.DOScale(1, .2f);
-
         foreach (var rotation in rotations)
         {
-            sequence.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
-
+            flipRightSeq.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
         }
 
-        sequence.Play();
+        flipRightSeq.Play();
     }
 
     public void CachVariables(Vector2 jf, Vector2 afv, Vector2 afdv, float at, float adt)

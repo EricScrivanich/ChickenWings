@@ -217,6 +217,7 @@ public class AmmoStateManager : MonoBehaviour
             scopeOnZeroState = false;
             // currentDisplayedAmmoText.color = Color.white;
             ammoDisplayTexts[currentEggImageIndex].color = Color.white;
+            ammoEggImages[currentEggImageIndex].color = Color.white;
             scopeFill.color = colorSO.normalButtonColor;
             // ringFill.color = colorSO.normalButtonColor;
         }
@@ -719,6 +720,8 @@ public class AmmoStateManager : MonoBehaviour
 
     private void FlashAmmoText(TextMeshProUGUI t)
     {
+        if (flashTextRedSeq != null && flashTextRedSeq.IsPlaying())
+            flashTextRedSeq.Kill();
         flashTextRedSeq = DOTween.Sequence();
         flashTextRedSeq.Append(t.DOColor(colorSO.disabledButtonColorFull, .2f).From(colorSO.normalButtonColorFull));
         flashTextRedSeq.Append(t.DOColor(Color.white, .2f));

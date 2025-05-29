@@ -88,6 +88,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip flyOver;
     [SerializeField] private AudioClip bombLaunch;
     [SerializeField] private AudioClip windMill;
+    [SerializeField] private AudioClip laserChargeUpSound;
 
     [Header("UI")]
     [SerializeField] private AudioClip chamberClick;
@@ -106,6 +107,7 @@ public class AudioManager : MonoBehaviour
 
 
     [Header("Volumes")]
+    [SerializeField] private float laserChargeUpVolume;
     [SerializeField] private float uziGunShotVolume;
 
     [SerializeField] private float parryStartVolume;
@@ -256,6 +258,11 @@ public class AudioManager : MonoBehaviour
         else
             chickenSource.PlayOneShot(normalScythe, normalScytheVolume);
 
+    }
+
+    public void PlayLaserChargeUpSound()
+    {
+        audioSource.PlayOneShot(laserChargeUpSound, laserChargeUpVolume);
     }
     public void SlowMotionPitch(bool isSlow)
     {

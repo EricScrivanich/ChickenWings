@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class PlusMinusUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
@@ -18,9 +19,18 @@ public class PlusMinusUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private StartingStatEditor startingStatEditor;
 
+    public Action<int> ChangeValue;
+
 
     private void Awake()
     {
+
+        if (GetComponent<Image>() == null)
+        {
+            Debug.LogError("Image component not found on this GameObject.");
+            return;
+        }
+
         fillImage = GetComponent<Image>();
         fillImage.color = colorSO.MainUIColor;
     }
@@ -45,7 +55,10 @@ public class PlusMinusUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (unselecatable) return;
         transform.localScale = Vector3.one * pressScale;
         fillImage.color = colorSO.SelctedUIColor;
-        startingStatEditor.OnEdit(amount);
+        if (startingStatEditor != null)
+            startingStatEditor.OnEdit(amount);
+        else
+            ChangeValue?.Invoke(amount);
 
     }
 

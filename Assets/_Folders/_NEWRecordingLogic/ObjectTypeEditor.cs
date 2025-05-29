@@ -13,26 +13,89 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
     private Image fillImage;
     private bool isSelected;
 
+
+
+    private bool openListButton = false;
+
+    private bool isListPanel = false;
+
     private void Awake()
     {
         fillImage = GetComponent<Image>();
+
     }
     private void OnEnable()
     {
         fillImage.enabled = false;
+        fillImage.color = LevelRecordManager.instance.colorSO.SelctedUIColor;
+        ValueEditorManager.instance.OnSetSelectedType += SetIfSelected;
+
+        if (openListButton)
+        {
+            int amount = 0;
+
+            switch (Type)
+            {
+                case "Rotations":
+                    amount = LevelRecordManager.instance.currentSelectedObject.rotationData.values.Count;
+                    break;
+                case "Positions":
+                    amount = LevelRecordManager.instance.currentSelectedObject.positionData.values.Count;
+                    break;
+                case "Timers":
+                    amount = LevelRecordManager.instance.currentSelectedObject.timerData.values.Count;
+                    if (LevelRecordManager.instance.currentSelectedObject.Title == "Laser")
+                    {
+                        text.text = "Shooting Durations" + " (" + (amount - 1) + ")";
+                        return;
+                    }
+
+                    break;
+            }
+
+            text.text = Type + " (" + (amount - 1) + ")";
+        }
+
+
+    }
+    private void OnDisable()
+    {
+        ValueEditorManager.instance.OnSetSelectedType -= SetIfSelected;
+
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void SetData(string type, string[] s)
+    public void SetData(string type, string[] s, int setIndex = -1)
     {
         Type = type;
+
+
+        if (s == null || s.Length <= 0)
+        {
+            openListButton = true;
+
+
+            return;
+        }
+
         typesByIndex = s;
-        currentType = LevelRecordManager.instance.currentSelectedObject.Data.type;
+        if (setIndex == -1)
+        {
+            currentType = LevelRecordManager.instance.currentSelectedObject.Data.type;
+            isListPanel = false;
+        }
+        else
+        {
+            currentType = (ushort)setIndex;
+            isListPanel = true;
+        }
+
         text.text = typesByIndex[currentType];
     }
 
     public void ClickArrow(bool right)
     {
+        if (openListButton) return;
         if (!isSelected) OnPress();
         int addedIndex = 1;
 
@@ -48,10 +111,18 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
         ushort val = (ushort)nextIndex;
         currentType = val;
 
+        if (isListPanel)
+        {
+            DynamicValueAdder.instance.EditTypeValue(Type, currentType);
+
+        }
+        else
+        {
+            LevelRecordManager.instance.currentSelectedObject.Data.type = val;
+            LevelRecordManager.instance.currentSelectedObject.UpdateObjectData();
+        }
 
 
-        LevelRecordManager.instance.currentSelectedObject.Data.type = val;
-        LevelRecordManager.instance.currentSelectedObject.UpdateObjectData();
         text.text = typesByIndex[val];
     }
 
@@ -75,7 +146,14 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
 
         ValueEditorManager.instance.ShowSlider(false);
 
-        ValueEditorManager.instance.SetSelectedType(Type);
+        ValueEditorManager.instance.OnSetSelectedType?.Invoke(Type);
+
+        if (openListButton)
+        {
+            ValueEditorManager.instance.ShowListPanel(Type);
+
+            return;
+        }
 
         fillImage.enabled = true;
 

@@ -9,7 +9,7 @@ public class ShotgunBlast : MonoBehaviour
     [SerializeField] private float forceAmount;
     [SerializeField] private int xForceMultiplier;
     private Rigidbody2D rb;
-    private Sequence sequence;
+    private Sequence shotgunBlastSeq;
 
     private Color startColor = new Color(1, 1, 1, 1);
     private Color endColor = new Color(.4f, .35f, .35f, 0f);
@@ -31,6 +31,8 @@ public class ShotgunBlast : MonoBehaviour
     private int id;
     private SpriteRenderer sr;
 
+    
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -45,7 +47,7 @@ public class ShotgunBlast : MonoBehaviour
         id = iD;
 
     }
-   
+
     private void OnEnable()
     {
         col.enabled = true;
@@ -54,7 +56,7 @@ public class ShotgunBlast : MonoBehaviour
         time = 0;
         sr.sprite = img[0];
         Vector2 force = transform.right * forceAmount;
-hasBeenBlocked = false;
+        hasBeenBlocked = false;
 
         float xVelRatio = force.x / forceAmount;
         float addedX = 0;
@@ -118,7 +120,11 @@ hasBeenBlocked = false;
         // }
 
         // Create a new sequence
-        sequence = DOTween.Sequence();
+        if (shotgunBlastSeq != null && shotgunBlastSeq.IsActive())
+        {
+            shotgunBlastSeq.Kill();
+        }
+        shotgunBlastSeq = DOTween.Sequence();
 
         // Iterate over the scales, opacities, and scaleDelays arrays
         for (int i = 0; i < scales.Length; i++)
@@ -126,25 +132,25 @@ hasBeenBlocked = false;
 
             if (i == scales.Length - 1)
             {
-                sequence.AppendCallback(() => Invoke("DisableCollider", .15f));
-                sequence.Append(transform.DOScale(scales[i], scaleDelays[i]).SetEase(Ease.OutSine));
-                sequence.Join(sr.DOColor(endColor, scaleDelays[i]).SetEase(Ease.OutSine));
+                shotgunBlastSeq.AppendCallback(() => Invoke("DisableCollider", .15f));
+                shotgunBlastSeq.Append(transform.DOScale(scales[i], scaleDelays[i]).SetEase(Ease.OutSine));
+                shotgunBlastSeq.Join(sr.DOColor(endColor, scaleDelays[i]).SetEase(Ease.OutSine));
             }
             else
             {
-                sequence.Append(transform.DOScale(scales[i], scaleDelays[i]));
-                sequence.Join(sr.DOFade(opacities[i], scaleDelays[i]));
+                shotgunBlastSeq.Append(transform.DOScale(scales[i], scaleDelays[i]));
+                shotgunBlastSeq.Join(sr.DOFade(opacities[i], scaleDelays[i]));
 
             }
 
         }
 
-        sequence.Play().OnComplete(() => gameObject.SetActive(false));
+        shotgunBlastSeq.Play().OnComplete(() => gameObject.SetActive(false));
 
         // Once the sequence is complete, mark the animation as finished
         // sequence.OnComplete(() => gameObject.SetActive(false));
     }
-private bool hasBeenBlocked;
+    private bool hasBeenBlocked;
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.gameObject.CompareTag("Block"))
