@@ -10,8 +10,9 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
     private Rigidbody2D rb;
     private float currentRotation;
     [SerializeField] private float rotationSpeed = 1f;
-    private LaserParent laser;
+    private IPositionerObject addedComponent;
     [SerializeField] private float startRotation;
+    private Ease[] eases = new Ease[] { Ease.Linear, Ease.InSine, Ease.OutSine, Ease.InOutSine };
 
     public enum ObjectType
     {
@@ -28,13 +29,15 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
 
     [Header("Posioning Settings")]
-    [SerializeField] private Vector2[] positionList;
-    [SerializeField] private float[] positionTimeList;
-    [SerializeField] private float[] positionDelayList;
+    private Vector2[] positionList;
+    private float[] positionTimeList;
+    private float[] positionDelayList;
+    private ushort[] positionEases;
 
-    [SerializeField] private int[] rotationList;
-    [SerializeField] private float[] rotationTimeList;
-    [SerializeField] private float[] rotationDelayList;
+    private float[] rotationList;
+    private float[] rotationTimeList;
+    private float[] rotationDelayList;
+    private ushort[] rotationEases;
 
 
 
@@ -64,29 +67,18 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        laser = GetComponent<LaserParent>();
+        addedComponent = GetComponent<IPositionerObject>();
 
     }
     void Start()
     {
 
 
-        transform.rotation = Quaternion.Euler(0, 0, startRotation);
+        // transform.rotation = Quaternion.Euler(0, 0, startRotation);
 
 
 
-        if (directionArrows != null && directionArrows.Length > 0)
-        {
-            foreach (var s in directionArrows)
-            {
-                s.DOFade(0, 0);
-            }
 
-            directionArrowParent.gameObject.SetActive(false);
-        }
-
-        DoMoveSequence();
-        DoRotateSequence();
 
 
     }
@@ -105,11 +97,12 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
         {
             int index = i; // capture local index for closure
 
-            RotationSeq.Append(rb.DORotate(rotationList[index], rotationTimeList[index]).SetEase(Ease.Linear));
-
-
-
             RotationSeq.AppendInterval(rotationDelayList[index]);
+            RotationSeq.Append(rb.DORotate(rotationList[index], rotationTimeList[index]).SetEase(eases[rotationEases[index]]));
+
+
+
+
 
 
         }
@@ -136,15 +129,16 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
         for (int i = 0; i < positionList.Length; i++)
         {
             int index = i; // capture local index for closure
-
-            MoveSeq.Append(rb.DOMove(positionList[index], positionTimeList[index])
-                .SetEase(testPathEase)
-                .OnComplete(() => StopArrows()));
-            Debug.Log("rotation at time is" + MoveSeq.PathGetPoint(testPathTime));
-
             MoveSeq.AppendInterval(positionDelayList[index]);
 
             MoveSeq.AppendCallback(() => DoHandleArrows(index + 1));
+
+            MoveSeq.Append(rb.DOMove(positionList[index], positionTimeList[index])
+                .SetEase(eases[positionEases[index]])
+                .OnComplete(() => StopArrows()));
+
+
+
         }
 
 
@@ -195,9 +189,9 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
     // Update is called once per frame
     private void FixedUpdate()
     {
-        if (laser != null && (rotationSpeed != 0 || moving))
+        if (addedComponent != null && (rotationSpeed != 0 || moving))
         {
-            laser.UpdateLaserPostions();
+            addedComponent.DoUpdateTransform();
         }
 
         // if (rotationSpeed == 0) return;
@@ -235,21 +229,45 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
-        laser.SetLaserAmount(data.type + 1, data.float2);
+        addedComponent.SetData((ushort)(data.type + 1), data.float2);
 
 
+
+    }
+
+    public void ApplyPositonerData(RecordedObjectPositionerDataSave data)
+    {
+        transform.SetPositionAndRotation(data.startPos, Quaternion.Euler(0, 0, data.startRot));
+        data.ReturnIntervalAndDuration(0, out positionDelayList, out positionTimeList, out positionEases);
+        positionList = data.positions;
+        data.ReturnIntervalAndDuration(1, out rotationDelayList, out rotationTimeList, out rotationEases);
+        rotationList = data.values;
+        float[] interval2;
+        float[] duration2;
+        ushort[] nullEases;
+        data.ReturnIntervalAndDuration(2, out interval2, out duration2, out nullEases);
+        gameObject.SetActive(true);
+        if (directionArrows != null && directionArrows.Length > 0)
+        {
+            foreach (var s in directionArrows)
+            {
+                s.DOFade(0, 0);
+            }
+
+            directionArrowParent.gameObject.SetActive(false);
+        }
+
+        DoMoveSequence();
+        DoRotateSequence();
+        addedComponent.SetData(data.type, data.perecnt, interval2, duration2);
 
     }
 
     public void SetPercentForLaserShooting(float percent)
     {
-        laser.SetLaserPercentForRecording(percent);
+        addedComponent.SetPercent(percent);
     }
 
-    public void ApplyTransformData(Vector2 pos, float rot)
-    {
-
-    }
 
     public bool ShowLine()
     {
@@ -268,7 +286,7 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
     public float ReturnPhaseOffset(float x)
     {
-        laser.SetLaserPercentForRecording(x);
+
         return 0;
     }
 }

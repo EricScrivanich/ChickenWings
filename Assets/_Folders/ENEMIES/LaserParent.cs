@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class LaserParent : MonoBehaviour
+public class LaserParent : MonoBehaviour, IPositionerObject
 {
 
 
@@ -9,7 +9,8 @@ public class LaserParent : MonoBehaviour
     [SerializeField] private Laser laserPrefab;
     [SerializeField] private float laserDistance;
 
-    [SerializeField] private float[] laserShootingDurations;
+    private float[] laserShootingDurations;
+    private float[] laserShootingIntervals;
 
     private ushort colorSwitchTypeForRecording = 0;
     private int currentLaserShootingIndex = 0;
@@ -69,11 +70,11 @@ public class LaserParent : MonoBehaviour
 
 
         timerSprite.material = timerMaterial;
-        SetLaserAmount(laserCount, laserDistance);
+        // SetLaserAmount(laserCount, laserDistance);
 
         laserSpeed = finalLaserSpeed;
 
-        StartCoroutine(LaserShoot());
+        // StartCoroutine(LaserShoot());
 
 
     }
@@ -84,48 +85,9 @@ public class LaserParent : MonoBehaviour
 
     }
 
-    public void SetLaserPercentForRecording(float percent)
-    {
-        if (percent == 0 && colorSwitchTypeForRecording != 1)
-        {
-            colorSwitchTypeForRecording = 1;
-            laserMaterial.SetFloat("_FadeAmount", 0);
-            laserMaterial.SetColor("_Color", Color.white * .5f);
-        }
-
-        else if (percent > 0)
-        {
-            if (colorSwitchTypeForRecording != 2)
-            {
-                colorSwitchTypeForRecording = 2;
-                laserMaterial.SetColor("_Color", Color.white * .9f);
-            }
-            timerMaterial.SetFloat("_RadialClip", Mathf.Lerp(360, 0, percent));
-            laserMaterial.SetFloat("_FadeAmount", Mathf.Lerp(laserStartFade - .1f, laserInbetweenFade, percent));
-        }
-        else if (percent < 0)
-        {
-            if (colorSwitchTypeForRecording != 3)
-            {
-                laserMaterial.SetFloat("_FadeAmount", 0);
-                colorSwitchTypeForRecording = 3;
-                laserMaterial.SetColor("_Color", Color.white);
-            }
-            timerMaterial.SetFloat("_RadialClip", Mathf.Lerp(360, 0, -percent));
-
-        }
 
 
-
-
-
-
-
-
-
-    }
-
-    public void SetLaserAmount(int amount, float space = 1, bool isLevelCreator = false)
+    public void SetLaserAmount(int amount, float space = 1)
     {
         if (space == 0) space = 1;
 
@@ -192,6 +154,11 @@ public class LaserParent : MonoBehaviour
     private IEnumerator LaserCooldown()
     {
 
+        float interval = 0;
+        if (laserShootingDurations != null && currentLaserShootingIndex < laserShootingDurations.Length)
+            interval = laserShootingIntervals[currentLaserShootingIndex];
+
+        yield return new WaitForSeconds(interval);
 
         float time = 0;
 
@@ -315,6 +282,61 @@ public class LaserParent : MonoBehaviour
         StartCoroutine(LaserCooldown());
 
 
+    }
+
+    public void SetData(ushort type, float f, float[] intervals = null, float[] times = null)
+    {
+        Debug.Log("Setting data for laser parent: " + type + " " + f);
+        SetLaserAmount((int)type, f);
+
+        if (times != null)
+        {
+            laserShootingIntervals = intervals;
+            laserShootingDurations = times;
+            StartCoroutine(LaserCooldown());
+        }
+
+    }
+
+    public void SetPercent(float percent)
+    {
+        if (percent == 0 && colorSwitchTypeForRecording != 1)
+        {
+            colorSwitchTypeForRecording = 1;
+            laserMaterial.SetFloat("_FadeAmount", 0);
+            laserMaterial.SetColor("_Color", Color.white * .5f);
+        }
+
+        else if (percent > 0)
+        {
+            if (colorSwitchTypeForRecording != 2)
+            {
+                colorSwitchTypeForRecording = 2;
+                laserMaterial.SetColor("_Color", Color.white * .9f);
+            }
+            timerMaterial.SetFloat("_RadialClip", Mathf.Lerp(360, 0, percent));
+            laserMaterial.SetFloat("_FadeAmount", Mathf.Lerp(laserStartFade - .1f, laserInbetweenFade, percent));
+        }
+        else if (percent < 0)
+        {
+            if (colorSwitchTypeForRecording != 3)
+            {
+                laserMaterial.SetFloat("_FadeAmount", 0);
+                colorSwitchTypeForRecording = 3;
+                laserMaterial.SetColor("_Color", Color.white);
+            }
+            timerMaterial.SetFloat("_RadialClip", Mathf.Lerp(360, 0, -percent));
+
+        }
+
+    }
+
+    public void DoUpdateTransform()
+    {
+        for (int i = 0; i < laserCount; i++)
+        {
+            lasers[i].SetLaserGroundHit();
+        }
     }
 
     // Update is called once per frame

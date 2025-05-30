@@ -144,51 +144,93 @@ public class RecordedObjectPositionerDataSave
     public short ID;
 
     public ushort type; // 2 bytes
-    public Vector3 startPosAndRot;
+    public Vector2 startPos;
+    public float startRot;
+
+
     public float savedTimePerStep;
 
-
-    
+    public ushort[] sizeByType;
+    public float perecnt;
     public Vector2[] positions;
     public float[] values;
 
-    public ushort[] sizeByType;
+
 
     public ushort[] startingSteps;
     public ushort[] endingSteps;
+    public ushort[] easeTypes;
     public ushort staringSpawnStep;
     public ushort finalSpawnStep;
     private int currentStepIndex;
 
     private int currentFloatIndex;
 
-    public Vector2[] ReturnIntervalAndDuration()
+    public void ReturnIntervalAndDuration(ushort t, out float[] intervals, out float[] durations, out ushort[] eases)
     {
-        Vector2[] intervalsAndDurations = new Vector2[startingSteps.Length];
+        int length = sizeByType[t];
+        int current = 0;
+        for (int i = 0; i < t; i++) current += sizeByType[i];
+        intervals = new float[length];
+        durations = new float[length];
 
-        for (int i = 1; i < startingSteps.Length; i++)
+        if (t == 2)
+            eases = new ushort[0];
+        else
+            eases = new ushort[length];
+        for (int i = current; i < current + length; i++)
         {
-            float interval = (endingSteps[i - 1] - startingSteps[i]) * -savedTimePerStep;
+            float interval = 0;
+            if (i == current)
+                interval = (staringSpawnStep - startingSteps[i]) * -savedTimePerStep;
+            else
+                interval = (endingSteps[i - 1] - startingSteps[i]) * -savedTimePerStep;
             float duration = (finalSpawnStep - startingSteps[i]) * savedTimePerStep;
-            intervalsAndDurations[i].x = interval;
-            intervalsAndDurations[i].y = duration;
+            intervals[i] = interval;
+            durations[i] = duration;
+            if (t < 2)
+                eases[i] = easeTypes[i];
         }
-
-        return intervalsAndDurations;
-    
 
     }
 
-    public RecordedObjectPositionerDataSave(short id, ushort typ,ushort[] sizesByType, Vector3 posRot, Vector2[] positions, float[] values, ushort[] startingSteps, ushort[] endingSteps, ushort startStep, ushort finalSpawnStep)
+    public void SetDataForRecording(RecordedDataStructTweensDynamic data)
+    {
+        int t = data.type;
+        int length = sizeByType[t];
+        int current = 0;
+        for (int i = 0; i < t; i++) current += sizeByType[i];
+        for (int i = current; i < current + length; i++)
+        {
+            data.startingSteps.Add(startingSteps[i]);
+            data.endingSteps.Add(endingSteps[i]);
+
+            if (t == 2) data.easeTypes.Add(0);
+            else data.easeTypes.Add(easeTypes[i]);
+
+        }
+
+        if (t == 0) data.positions.AddRange(positions);
+        else if (t == 1) data.values.AddRange(values);
+
+
+
+    }
+
+
+
+    public RecordedObjectPositionerDataSave(short id, ushort typ, ushort[] sizesByType, float p, Vector3 posRot, Vector2[] positions, float[] values, ushort[] eases, ushort[] startingSteps, ushort[] endingSteps, ushort startStep, ushort finalSpawnStep)
     {
         this.ID = id;
         this.type = typ;
         this.savedTimePerStep = LevelRecordManager.TimePerStep;
         this.sizeByType = sizesByType;
-        this.startPosAndRot = posRot; // Default value, can be set later
-        
+        this.perecnt = p;
+        this.startPos = new Vector2(posRot.x, posRot.y); // Default value, can be set later
+        this.startRot = posRot.z; // Default value, can be set later
         this.positions = positions;
         this.values = values;
+        this.easeTypes = eases;
         this.startingSteps = startingSteps;
         this.endingSteps = endingSteps;
         this.staringSpawnStep = startStep;

@@ -30,6 +30,7 @@ public class LevelDataConverter : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(this.gameObject);
         LevelRecordManager.ResetStaticParameters();
+
         // DeleteAllLevelsAndClearDirectories();
 
 
@@ -132,25 +133,32 @@ public class LevelDataConverter : MonoBehaviour
         List<ushort> typeList = new List<ushort>();
         List<Vector2> posList = new List<Vector2>();
         List<float> floatList = new List<float>();
-        List<ushort> dataTypes = new List<ushort>();
+        List<short> dataTypes = new List<short>();
         List<RecordedObjectPositionerDataSave> positionerData = new List<RecordedObjectPositionerDataSave>();
-
+        Debug.LogError("Converting To Json");
 
         for (int i = 0; i < obj.Count; i++)
         {
             idList.Add(obj[i].Data.ID);
             spawnedStepList.Add(obj[i].Data.spawnedStep);
+            dataTypes.Add(obj[i].DataType);
 
             if (obj[i].IsPositionerObject())
             {
+                Debug.LogError("Positioner Object Found: " + obj[i].Data.ID);
                 positionerData.Add(obj[i].ReturnPositionerDataSave());
 
+
             }
-            typeList.Add(obj[i].Data.type);
-            posList.Add(obj[i].Data.startPos);
-            dataTypes.Add(obj[i].DataType);
+            else
+            {
+                typeList.Add(obj[i].Data.type);
+                posList.Add(obj[i].Data.startPos);
+            }
+
+
             int dataType = obj[i].DataType;
-            if (dataType <= 5)
+            if (dataType >= 0 && dataType <= 5)
             {
                 float[] values = new float[dataType];
                 for (int j = 0; j < dataType; j++)
@@ -245,7 +253,7 @@ public class LevelDataConverter : MonoBehaviour
             float[] values = new float[5];
             int type = data.dataTypes[i];
             Debug.Log("Loading Data Type: " + type);
-            if (type <= 5)
+            if (type <= 5 && type >= 0)
             {
                 for (int j = 0; j < type; j++)
                 {
@@ -253,6 +261,10 @@ public class LevelDataConverter : MonoBehaviour
                     floatIndex++;
                 }
                 l.Add(new RecordedDataStructDynamic(data.idList[i], data.typeList[i], data.posList[i], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0));
+            }
+            else if (type < 0)
+            {
+
             }
 
 

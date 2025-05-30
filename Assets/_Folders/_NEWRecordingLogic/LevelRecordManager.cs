@@ -865,6 +865,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
             for (int o = 0; o < activeObjects.Count; o++)
             {
+                Debug.Log("Checking object: " + activeObjects[o].name + " with ID: " + activeObjects[o].ID + " and pool size: " + poolSizes.Length);
                 if (!activeObjects[o].CheckForPoolSizes(s)) activeObjects[o] = null;
 
                 else poolSizeCompare[activeObjects[o].ID]++;

@@ -17,6 +17,8 @@ public struct RecordedDataStructDynamic
     public float float4;
     public float float5;
 
+    public RecordedObjectPositionerDataSave positionerData;
+
 
 
 
@@ -31,6 +33,7 @@ public struct RecordedDataStructDynamic
         this.float3 = f3;
         this.float4 = f4;
         this.float5 = f5;
+        positionerData = null;
 
         this.spawnedStep = spawnStep;
         this.unspawnedStep = unspawnStep;
@@ -135,7 +138,7 @@ public class RecordedDataStructTweensDynamic
 
     }
 
-    public RecordedDataStructTweensDynamic(short id, ushort typ)
+    public RecordedDataStructTweensDynamic(short id, ushort typ, ushort step)
     {
         this.ID = id;
         this.type = typ;
@@ -149,9 +152,9 @@ public class RecordedDataStructTweensDynamic
         this.values = new List<float>();
         values.Add(0);
         this.startingSteps = new List<ushort>();
-        this.startingSteps.Add(LevelRecordManager.CurrentTimeStep);
+        this.startingSteps.Add(step);
         this.endingSteps = new List<ushort>();
-        this.endingSteps.Add(LevelRecordManager.CurrentTimeStep);
+        this.endingSteps.Add(step);
         // this.other = new List<ushort>();
         // this.other.Add(0);
 

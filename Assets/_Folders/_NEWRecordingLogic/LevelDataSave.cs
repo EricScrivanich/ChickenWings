@@ -9,7 +9,7 @@ public class LevelDataSave
     public ushort[] typeList;
 
     public Vector2[] posList;
-    public ushort[] dataTypes;
+    public short[] dataTypes;
 
     public float[] floatList;
     public ushort[] poolSizes;
@@ -22,7 +22,7 @@ public class LevelDataSave
 
     public RecordedObjectPositionerDataSave[] postionerData = null;
 
-    public LevelDataSave(string levelName, short[] idList, ushort[] spawnSteps, ushort[] typeList, ushort[] dataTypeList, ushort finalStep, Vector2[] posList, float[] floats, ushort[] plSizes, short[] ammos, short lives)
+    public LevelDataSave(string levelName, short[] idList, ushort[] spawnSteps, ushort[] typeList, short[] dataTypeList, ushort finalStep, Vector2[] posList, float[] floats, ushort[] plSizes, short[] ammos, short lives)
     {
         this.levelName = levelName;
         this.idList = idList;

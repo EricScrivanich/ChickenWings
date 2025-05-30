@@ -12,17 +12,12 @@ public class LevelData : ScriptableObject
     public ushort[] spawnSteps;
     public ushort finalSpawnStep;
     public short[] idList;
-    public ushort[] dataTypes;
+    public short[] dataTypes;
 
     public Vector2[] posList;
     public float[] floatList;
-    public float[] speedList;
-    public float[] scaleList;
-    public float[] magList;
-    public float[] timeList;
-    public float[] delayList;
     public ushort[] typeList;
-    private int spawnSize;
+
 
     public ushort[] poolSizes;
 
@@ -44,6 +39,7 @@ public class LevelData : ScriptableObject
     private DataStructFloatFour[] dataStructFloatFour;
     private DataStructFloatFive[] dataStructFloatFive;
     public RecordedObjectPositionerDataSave[] postionerData = null;
+    private int currentPositionerObjectIndex = 0;
 
 
     [SerializeField] private RecordableObjectPool[] pools;
@@ -67,6 +63,7 @@ public class LevelData : ScriptableObject
 
         // Find the first index in spawnSteps where the step is >= startingStep.
         currentSpawnIndex = 0;
+        currentPositionerObjectIndex = 0;
         for (ushort i = 0; i < spawnSteps.Length; i++)
         {
             if (spawnSteps[i] >= startingStep)
@@ -110,7 +107,7 @@ public class LevelData : ScriptableObject
         int[] floatSizes = new int[5];
         for (int i = 0; i < dataTypes.Length; i++)
         {
-            if (dataTypes[i] <= floatSizes.Length)
+            if (dataTypes[i] <= floatSizes.Length && dataTypes[i] >= 0)
                 floatSizes[dataTypes[i] - 1]++;
             else
                 Debug.LogError("Data Type: " + dataTypes[i] + " is not valid. Please check the data type.");
@@ -186,7 +183,7 @@ public class LevelData : ScriptableObject
             spawnSteps = new ushort[0];
             idList = new short[0];
             posList = new Vector2[0];
-            dataTypes = new ushort[0];
+            dataTypes = new short[0];
             floatList = new float[0];
             startingStats.startingAmmos = new short[5];
             startingStats.startingAmmos[0] = 3;
@@ -213,6 +210,12 @@ public class LevelData : ScriptableObject
         // delayList = lds.delayList;
         typeList = lds.typeList;
         poolSizes = lds.poolSizes;
+        if (lds.postionerData != null)
+        {
+            Debug.LogError("Postioner Data is not null with length: " + lds.postionerData.Length);
+            postionerData = lds.postionerData;
+        }
+
         if (lds.startingAmmos == null || lds.startingAmmos.Length <= 0)
         {
             startingStats.startingAmmos = new short[5];
@@ -265,6 +268,13 @@ public class LevelData : ScriptableObject
                             break;
 
                     }
+
+                    if (dataTypes[i] < 0)
+                    {
+                        pools[idList[i]].SpawnPositionerData(postionerData[currentPositionerObjectIndex]);
+                        currentPositionerObjectIndex++;
+                    }
+
 
                     dataTypeIndexes[dataTypes[i] - 1]++;
                 }

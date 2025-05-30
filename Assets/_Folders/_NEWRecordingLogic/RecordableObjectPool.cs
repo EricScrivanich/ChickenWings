@@ -8,23 +8,44 @@ public class RecordableObjectPool : ScriptableObject
     [SerializeField] private GameObject prefab;
 
     private IRecordableObject[] pool;
+    private ObjectPositioner[] positionerPool;
     private int currentIndex;
     public int poolSize;
 
     public void CreatePool(int size)
     {
         currentIndex = 0;
-        pool = new IRecordableObject[size];
-        poolSize = size;
-        for (int i = 0; i < size; i++)
+
+        if (prefab.GetComponent<ObjectPositioner>() != null)
         {
-            var go = Instantiate(prefab);
-            Debug.Log("Creating pool object: " + go.name);
+            positionerPool = new ObjectPositioner[size];
+            poolSize = size;
+            for (int i = 0; i < size; i++)
+            {
+                var go = Instantiate(prefab);
+                Debug.Log("Creating pool object: " + go.name);
 
+                positionerPool[i] = go.GetComponent<ObjectPositioner>();
+                go.SetActive(false);
+            }
 
-            pool[i] = go.GetComponent<IRecordableObject>();
-            go.SetActive(false);
         }
+
+        else
+        {
+            pool = new IRecordableObject[size];
+            poolSize = size;
+            for (int i = 0; i < size; i++)
+            {
+                var go = Instantiate(prefab);
+                Debug.Log("Creating pool object: " + go.name);
+
+
+                pool[i] = go.GetComponent<IRecordableObject>();
+                go.SetActive(false);
+            }
+        }
+
     }
 
     // public void SpawnItem(RecordedDataStruct data)
@@ -41,7 +62,26 @@ public class RecordableObjectPool : ScriptableObject
     //         currentIndex = 0;
     //     }
     // }
+    public void SpawnPositionerData(RecordedObjectPositionerDataSave data)
+    {
+        if (positionerPool == null || positionerPool.Length == 0)
+        {
 
+            return;
+        }
+        if (positionerPool[currentIndex] == null)
+        {
+            Debug.LogError("positionerPool is empty");
+            return;
+        }
+        positionerPool[currentIndex].ApplyPositonerData(data);
+        currentIndex++;
+
+        if (currentIndex >= positionerPool.Length)
+        {
+            currentIndex = 0;
+        }
+    }
     public void SpawnFloatOne(DataStructFloatOne data)
     {
         if (pool == null || pool.Length == 0)

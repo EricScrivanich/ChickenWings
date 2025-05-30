@@ -26,7 +26,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     [field: SerializeField] public short ID { get; private set; }
-    [field: SerializeField] public ushort DataType { get; private set; }
+    [field: SerializeField] public short DataType { get; private set; }
     [field: SerializeField] public Vector3Int TypeValues { get; private set; }
 
     public EditableData[] editedData;
@@ -298,22 +298,22 @@ public class RecordableObjectPlacer : MonoBehaviour
                 switch (positionerTypes[i])
                 {
                     case PositionerType.Positions:
-                        positionData = new RecordedDataStructTweensDynamic(ID, 0);
+                        positionData = new RecordedDataStructTweensDynamic(ID, 0, LevelRecordManager.CurrentTimeStep);
 
 
                         break;
                     case PositionerType.Rotations:
-                        rotationData = new RecordedDataStructTweensDynamic(ID, 1);
+                        rotationData = new RecordedDataStructTweensDynamic(ID, 1, LevelRecordManager.CurrentTimeStep);
 
                         break;
                     case PositionerType.Timers:
-                        timerData = new RecordedDataStructTweensDynamic(ID, 2);
+                        timerData = new RecordedDataStructTweensDynamic(ID, 2, LevelRecordManager.CurrentTimeStep);
                         break;
 
                 }
             }
 
-            return;
+
 
         }
 
@@ -393,6 +393,31 @@ public class RecordableObjectPlacer : MonoBehaviour
                 s.color = colorSO.RingColors[Data.type];
             }
 
+        }
+        if (_pType == PostionType.Position)
+        {
+            for (int i = 0; i < positionerTypes.Length; i++)
+            {
+                switch (positionerTypes[i])
+                {
+                    case PositionerType.Positions:
+                        positionData = new RecordedDataStructTweensDynamic(ID, 0, data.spawnedStep);
+                        data.positionerData.SetDataForRecording(positionData);
+
+
+                        break;
+                    case PositionerType.Rotations:
+                        rotationData = new RecordedDataStructTweensDynamic(ID, 1, data.spawnedStep);
+                        data.positionerData.SetDataForRecording(rotationData);
+
+                        break;
+                    case PositionerType.Timers:
+                        timerData = new RecordedDataStructTweensDynamic(ID, 2, data.spawnedStep);
+                        data.positionerData.SetDataForRecording(timerData);
+                        break;
+
+                }
+            }
         }
         UpdateBasePosition(Data.startPos);
 
@@ -1291,10 +1316,12 @@ public class RecordableObjectPlacer : MonoBehaviour
         ushort[] sizesByTypes = new ushort[3];
 
         float startRot = 0;
+        float percent = 0;
 
         if (Title == "Laser")
         {
             startRot = -Data.float1;
+            percent = Data.float2;
         }
 
         for (int i = 0; i < positionerTypes.Length; i++)
@@ -1334,13 +1361,15 @@ public class RecordableObjectPlacer : MonoBehaviour
                         // eases.Add(timerData.easeTypes[j]);
                         // values.Add(timerData.values[j]);
                     }
-                    sizeByType[2] = (ushort)(timerData.startingSteps.Count - 1);
+
+
+                    sizesByTypes[2] = (ushort)(timerData.startingSteps.Count - 1);
                     break;
 
             }
         }
 
-        return new RecordedObjectPositionerDataSave((short)ID, Data.type, sizesByTypes, new Vector3(Data.startPos.x, Data.startPos.y, startRot), positions.ToArray(), values.ToArray(), startSteps.ToArray(), endSteps.ToArray(), Data.spawnedStep, 0);
+        return new RecordedObjectPositionerDataSave((short)ID, Data.type, sizesByTypes, percent, new Vector3(Data.startPos.x, Data.startPos.y, startRot), positions.ToArray(), values.ToArray(), eases.ToArray(), startSteps.ToArray(), endSteps.ToArray(), Data.spawnedStep, 0);
 
 
 
