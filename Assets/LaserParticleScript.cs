@@ -46,6 +46,7 @@ public class LaserParticleScript : MonoBehaviour
 
     public void SetLaserFadeAmount(float amount, float timeLeft)
     {
+        Debug.LogError("SetLaserFadeAmount: " + amount + " " + timeLeft);
         if (amount == 1)
         {
             ignoreSound = false;

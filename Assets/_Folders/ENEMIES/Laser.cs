@@ -29,7 +29,7 @@ public class Laser : MonoBehaviour
             useParticles = false;
             return;
         }
-        SetLaserGroundHit();
+        // SetLaserGroundHit();
         // SetLaserLength();
         // laserCollider.size = new Vector2(laserCollider.size.x, 0);
         // laserCollider.offset = new Vector2(laserCollider.offset.x, 0);
@@ -67,6 +67,10 @@ public class Laser : MonoBehaviour
     {
         laserCollider.enabled = isActive;
 
+    }
+    private void OnEnable()
+    {
+        laserCollider.enabled = false;
     }
 
     public void HandleShooting(bool isShooting)
@@ -185,13 +189,4 @@ public class Laser : MonoBehaviour
     }
 
 
-
-    // Update is called once per frame
-    void Update()
-    {
-
-
-
-
-    }
 }

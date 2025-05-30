@@ -54,6 +54,13 @@ public class DynamicValueEditor : MonoBehaviour, IPointerDownHandler
 
     }
 
+    public void EditTimeFromSpawnTime()
+    {
+        startTimeText.text = LevelRecordManager.instance.FormatTimerText(parent.data.startingSteps[index]);
+        endTimeText.text = LevelRecordManager.instance.FormatTimerText(parent.data.endingSteps[index]);
+        EditTimer();
+    }
+
     public void EditTime(ushort time, bool start)
     {
         if (start)
@@ -113,8 +120,12 @@ public class DynamicValueEditor : MonoBehaviour, IPointerDownHandler
 
     public void EditTimer()
     {
-        float val = (parent.data.endingSteps[index] - parent.data.startingSteps[index]) * LevelRecordManager.instance.ConvertLevelTimeToRealTime(LevelRecordManager.TimePerStep);
-        valueText.text = val.ToString("F1") + " s";
+        if (type == "Timers")
+        {
+            float val = (parent.data.endingSteps[index] - parent.data.startingSteps[index]) * LevelRecordManager.instance.ConvertLevelTimeToRealTime(LevelRecordManager.TimePerStep);
+            valueText.text = val.ToString("F1") + " s";
+        }
+
     }
 
     public void SetSelected()

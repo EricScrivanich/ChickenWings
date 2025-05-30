@@ -251,6 +251,16 @@ public class DynamicValueAdder : MonoBehaviour
 
     }
 
+    public void UpdateSpawnTimeData()
+    {
+        SetTimerTexts(currentSelectedValue);
+        if (currentSelectedValue > 0)
+        {
+            dynamicValueEditors[currentSelectedValue].EditTimeFromSpawnTime();
+        }
+
+    }
+
     public void StartTimeStepEdit(bool start, bool handle)
     {
         editingStartTime = start;

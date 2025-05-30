@@ -240,6 +240,7 @@ public class LevelDataConverter : MonoBehaviour
     {
 
         int floatIndex = 0;
+        int positionerIndex = 0;
 
         var l = new List<RecordedDataStructDynamic>();
         if (data.idList == null || data.idList.Length == 0)
@@ -264,6 +265,9 @@ public class LevelDataConverter : MonoBehaviour
             }
             else if (type < 0)
             {
+                var d = new RecordedDataStructDynamic(data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0);
+                d.positionerData = data.postionerData[positionerIndex];
+                l.Add(d);
 
             }
 

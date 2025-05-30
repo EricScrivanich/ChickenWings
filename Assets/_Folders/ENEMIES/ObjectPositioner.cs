@@ -120,15 +120,17 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
     private void DoMoveSequence()
     {
         if (positionList == null || positionList.Length <= 0) return;
-        moving = true;
+
         MoveSeq = DOTween.Sequence();
 
         currentPostionIndex = -1; // reset so it starts clean
-        DoHandleArrows(0); // show the first arrow right away
+        // DoHandleArrows(0); // show the first arrow right away
 
         for (int i = 0; i < positionList.Length; i++)
         {
             int index = i; // capture local index for closure
+
+            Debug.Log("Adding move sequence for index: " + index + " with position: " + positionList[index] + " and time: " + positionTimeList[index] + " and delay: " + positionDelayList[index] + " and ease: " + eases[positionEases[index]]);
             MoveSeq.AppendInterval(positionDelayList[index]);
 
             MoveSeq.AppendCallback(() => DoHandleArrows(index + 1));
@@ -143,14 +145,14 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
 
 
-        MoveSeq.Play().SetUpdate(UpdateType.Fixed).OnComplete(() => moving = false);
+        MoveSeq.Play().SetUpdate(UpdateType.Fixed);
     }
 
     private void DoHandleArrows(int arrowIndex)
     {
         if (arrowIndex >= positionList.Length) return;
 
-
+        moving = true;
         currentPostionIndex = arrowIndex;
 
         if (directionArrowParent != null)
@@ -176,6 +178,7 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
     }
     private void StopArrows()
     {
+        moving = false;
         if (ArrowSeq != null && ArrowSeq.IsPlaying()) ArrowSeq.Kill();
         foreach (var s in directionArrows)
         {
@@ -229,7 +232,7 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
-        addedComponent.SetData((ushort)(data.type + 1), data.float2);
+        addedComponent.SetData(data.type + 1, data.float2);
 
 
 
@@ -238,6 +241,7 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
     public void ApplyPositonerData(RecordedObjectPositionerDataSave data)
     {
         transform.SetPositionAndRotation(data.startPos, Quaternion.Euler(0, 0, data.startRot));
+        Debug.LogError("Saved Time Per Step is: " + data.savedTimePerStep);
         data.ReturnIntervalAndDuration(0, out positionDelayList, out positionTimeList, out positionEases);
         positionList = data.positions;
         data.ReturnIntervalAndDuration(1, out rotationDelayList, out rotationTimeList, out rotationEases);
@@ -259,7 +263,7 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
         DoMoveSequence();
         DoRotateSequence();
-        addedComponent.SetData(data.type, data.perecnt, interval2, duration2);
+        addedComponent.SetData(data.type + 1, data.perecnt, interval2, duration2);
 
     }
 

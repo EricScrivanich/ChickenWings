@@ -162,9 +162,6 @@ public class RecordedObjectPositionerDataSave
     public ushort[] easeTypes;
     public ushort staringSpawnStep;
     public ushort finalSpawnStep;
-    private int currentStepIndex;
-
-    private int currentFloatIndex;
 
     public void ReturnIntervalAndDuration(ushort t, out float[] intervals, out float[] durations, out ushort[] eases)
     {
@@ -173,6 +170,7 @@ public class RecordedObjectPositionerDataSave
         for (int i = 0; i < t; i++) current += sizeByType[i];
         intervals = new float[length];
         durations = new float[length];
+        Debug.LogError("Length of intervals and durations is: " + length + " for type: " + t + " and current: " + current);
 
         if (t == 2)
             eases = new ushort[0];
@@ -185,11 +183,12 @@ public class RecordedObjectPositionerDataSave
                 interval = (staringSpawnStep - startingSteps[i]) * -savedTimePerStep;
             else
                 interval = (endingSteps[i - 1] - startingSteps[i]) * -savedTimePerStep;
-            float duration = (finalSpawnStep - startingSteps[i]) * savedTimePerStep;
-            intervals[i] = interval;
-            durations[i] = duration;
+            float duration = (endingSteps[i] - startingSteps[i]) * savedTimePerStep;
+            intervals[i - current] = interval;
+            durations[i - current] = duration;
+            Debug.LogError("Interval for type: " + t + " at index: " + i + " is: " + interval + " and duration is: " + duration);
             if (t < 2)
-                eases[i] = easeTypes[i];
+                eases[i - current] = easeTypes[i];
         }
 
     }
@@ -210,7 +209,13 @@ public class RecordedObjectPositionerDataSave
 
         }
 
-        if (t == 0) data.positions.AddRange(positions);
+        if (t == 0)
+        {
+            foreach (var p in positions)
+            {
+                data.positions.Add(p);
+            }
+        }
         else if (t == 1) data.values.AddRange(values);
 
 
@@ -225,6 +230,10 @@ public class RecordedObjectPositionerDataSave
         this.type = typ;
         this.savedTimePerStep = LevelRecordManager.TimePerStep;
         this.sizeByType = sizesByType;
+        for (int i = 0; i < sizesByType.Length; i++)
+        {
+            Debug.LogError("Size by type of type:" + i + " is: " + sizesByType[i]);
+        }
         this.perecnt = p;
         this.startPos = new Vector2(posRot.x, posRot.y); // Default value, can be set later
         this.startRot = posRot.z; // Default value, can be set later

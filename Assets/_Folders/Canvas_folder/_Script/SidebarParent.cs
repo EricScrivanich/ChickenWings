@@ -104,7 +104,7 @@ public class SidebarParent : MonoBehaviour
             // Calculate position for each ammo rect
             positions[i] = new Vector2(basePosition - ((eggTypes.Length - 1 - i) * addedWidthPerAmmo), baseYPosition);
 
-            Debug.LogError("Positions of: " + i + " is: " + positions[i]);
+            // Debug.LogError("Positions of: " + i + " is: " + positions[i]);
 
             // Instantiate the sidebar ammo prefab and initialize it
             GameObject ammoObject = Instantiate(sidebarAmmoPrefab, parentMask);

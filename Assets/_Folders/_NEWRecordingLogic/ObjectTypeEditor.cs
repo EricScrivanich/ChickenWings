@@ -37,13 +37,13 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
             switch (Type)
             {
                 case "Rotations":
-                    amount = LevelRecordManager.instance.currentSelectedObject.rotationData.values.Count;
+                    amount = LevelRecordManager.instance.currentSelectedObject.rotationData.startingSteps.Count;
                     break;
                 case "Positions":
-                    amount = LevelRecordManager.instance.currentSelectedObject.positionData.values.Count;
+                    amount = LevelRecordManager.instance.currentSelectedObject.positionData.startingSteps.Count;
                     break;
                 case "Timers":
-                    amount = LevelRecordManager.instance.currentSelectedObject.timerData.values.Count;
+                    amount = LevelRecordManager.instance.currentSelectedObject.timerData.startingSteps.Count;
                     if (LevelRecordManager.instance.currentSelectedObject.Title == "Laser")
                     {
                         text.text = "Shooting Durations" + " (" + (amount - 1) + ")";

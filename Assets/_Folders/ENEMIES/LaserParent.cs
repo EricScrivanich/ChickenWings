@@ -5,9 +5,9 @@ public class LaserParent : MonoBehaviour, IPositionerObject
 {
 
 
-    [SerializeField] private int laserCount;
+    private int laserCount;
     [SerializeField] private Laser laserPrefab;
-    [SerializeField] private float laserDistance;
+    private float laserDistance;
 
     private float[] laserShootingDurations;
     private float[] laserShootingIntervals;
@@ -18,7 +18,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     private bool stopUpdate = false;
 
 
-
+    private Color laserCooldownColor = new Color(.85f, .85f, .85f, .8f);
     private Laser[] lasers;
 
     private AudioSource audioSource;
@@ -33,8 +33,8 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     private Material laserMaterial;
     [SerializeField] private float laserLength;
     private float laserSpeed;
-    [SerializeField] private float initialLaserSpeed = 4f;
-    [SerializeField] private float finalLaserSpeed = 6f;
+    private float initialLaserSpeed = 4f;
+    private float finalLaserSpeed = 6.5f;
     [SerializeField] private Transform zeroRotation;
     private float currentLaserOffset = 0;
 
@@ -55,7 +55,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+
 
         if (Time.timeScale == 0)
         {
@@ -63,16 +63,16 @@ public class LaserParent : MonoBehaviour, IPositionerObject
             stopUpdate = true;
             return;
         }
-        audioSource.volume = laserShootingVolume;
+        // audioSource.volume = laserShootingVolume;
 
 
 
 
 
-        timerSprite.material = timerMaterial;
+
         // SetLaserAmount(laserCount, laserDistance);
 
-        laserSpeed = finalLaserSpeed;
+
 
         // StartCoroutine(LaserShoot());
 
@@ -80,9 +80,18 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     }
     void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         laserMaterial = new Material(baseLaserMaterial);
         timerMaterial = new Material(timerBaseMaterial);
+        timerSprite.material = timerMaterial;
+        laserSpeed = finalLaserSpeed;
 
+    }
+
+    private void OnEnable()
+    {
+        currentLaserFadeAmount = 0;
+        currentTimeLeft = cooldownDuration;
     }
 
 
@@ -103,6 +112,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         }
 
         lasers = new Laser[amount];
+        laserCount = amount;
 
         lasers[0] = laserPrefab;
         lasers[0].SetLaserMaterial(laserMaterial);
@@ -157,7 +167,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         float interval = 0;
         if (laserShootingDurations != null && currentLaserShootingIndex < laserShootingDurations.Length)
             interval = laserShootingIntervals[currentLaserShootingIndex];
-
+        laserMaterial.SetColor("_Color", laserCooldownColor);
         yield return new WaitForSeconds(interval);
 
         float time = 0;
@@ -188,7 +198,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
 
             for (int i = 0; i < laserCount; i++)
             {
-                lasers[i].SetLaserScale(Mathf.Lerp(.3f, .8f, time / cooldownDuration));
+                lasers[i].SetLaserScale(Mathf.Lerp(.3f, .7f, time / cooldownDuration));
             }
             // laserMaterial.SetFloat("_ZoomUvAmount", Mathf.Lerp(1.5f, 1.2f, time / cooldownDuration));
 
@@ -228,15 +238,22 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         {
             time += Time.deltaTime;
             laserMaterial.SetFloat("_FadeAmount", Mathf.Lerp(laserInbetweenFade, 0, time / initialLaserShootDelay));
+            Color c = Color.Lerp(laserCooldownColor, Color.white, time / initialLaserShootDelay);
+            laserMaterial.SetColor("_Color", c);
 
             for (int i = 0; i < laserCount; i++)
             {
-                lasers[i].SetLaserScale(Mathf.Lerp(.8f, 1, time / initialLaserShootDelay));
+                lasers[i].SetLaserScale(Mathf.Lerp(.7f, .9f, time / initialLaserShootDelay));
             }
 
             // laserMaterial.SetFloat("_ZoomUvAmount", Mathf.Lerp(1.2f, 1, time / initialLaserShootDelay));
             yield return null;
         }
+        for (int i = 0; i < laserCount; i++)
+        {
+            lasers[i].SetLaserScale(1);
+        }
+        laserMaterial.SetColor("_Color", Color.white);
 
         for (int i = 0; i < laserCount; i++)
         {
@@ -284,10 +301,10 @@ public class LaserParent : MonoBehaviour, IPositionerObject
 
     }
 
-    public void SetData(ushort type, float f, float[] intervals = null, float[] times = null)
+    public void SetData(int type, float f, float[] intervals = null, float[] times = null)
     {
         Debug.Log("Setting data for laser parent: " + type + " " + f);
-        SetLaserAmount((int)type, f);
+        SetLaserAmount(type, f);
 
         if (times != null)
         {

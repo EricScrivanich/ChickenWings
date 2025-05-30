@@ -196,6 +196,7 @@ public class RecordableObjectPlacer : MonoBehaviour
             }
 
             CustomTimeSlider.instance.CreateTweenHandles(DynamicValueAdder.instance.data);
+            DynamicValueAdder.instance.UpdateSpawnTimeData();
             // if (timerData != null)
             // {
             //     timerData.UpdateTimeStep(spawnedTimeStep);
@@ -396,6 +397,14 @@ public class RecordableObjectPlacer : MonoBehaviour
         }
         if (_pType == PostionType.Position)
         {
+            if (Title == "Laser")
+            {
+                Debug.Log("Loading Laser Data");
+                Data.type = data.positionerData.type;
+                Data.startPos = data.positionerData.startPos;
+                Data.float1 = data.positionerData.startRot;
+                Data.float2 = data.positionerData.perecnt;
+            }
             for (int i = 0; i < positionerTypes.Length; i++)
             {
                 switch (positionerTypes[i])
@@ -403,6 +412,8 @@ public class RecordableObjectPlacer : MonoBehaviour
                     case PositionerType.Positions:
                         positionData = new RecordedDataStructTweensDynamic(ID, 0, data.spawnedStep);
                         data.positionerData.SetDataForRecording(positionData);
+
+                        Debug.Log("added postioner data: " + positionData.startingSteps.Count);
 
 
                         break;

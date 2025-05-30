@@ -692,24 +692,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1662f430b40844808c350cc1c1b45cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testPathTime: 1
+  testPathEase: 0
   rotationSpeed: 40
-  laser: {fileID: 4792587693866604393}
   startRotation: 0
+  objectType: 0
   directionArrowParent: {fileID: 3810981203450668175}
   directionArrows:
   - {fileID: 3486696377496984763}
   - {fileID: 5068603939486090227}
   - {fileID: 2289691533059206260}
-  positionList: []
-  positionTimeList:
-  - 0.5
-  - 0.5
-  positionDelayList:
-  - 0
-  - 2
-  rotationList: 
-  rotationTimeList: []
-  rotationDelayList: []
   fadeArrowDur: 0.4
 --- !u!114 &4792587693866604393
 MonoBehaviour:
@@ -723,10 +715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b06b0b4ead004c0f865b3fa364432bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  laserCount: 2
   laserPrefab: {fileID: 4064841594555435941}
-  laserDistance: 1
-  laserShootingDurations: []
   laserChargeUpSound: {fileID: 8300000, guid: 396d49cb93c5c4cd2a0c967242dac55f, type: 3}
   laserChargeUpVolume: 0.7
   timerBaseMaterial: {fileID: 2100000, guid: df8584338221e4718a070e0640deafb7, type: 2}
@@ -737,7 +726,6 @@ MonoBehaviour:
   finalLaserSpeed: 6.5
   zeroRotation: {fileID: 3704833873855178425}
   shootDuration: 20
-  cooldownDuration: 2.9
   initialLaserShootDelay: 0.1
   laserStartFade: 0.75
   laserInbetweenFade: 0.5
@@ -756,7 +744,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 8812cbf9a56ef4013b83742ec088edf7, type: 3}
   m_Resource: {fileID: 8300000, guid: 8812cbf9a56ef4013b83742ec088edf7, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.45
+  m_Volume: 0
   m_Pitch: 1
   Loop: 1
   Mute: 0
