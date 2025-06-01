@@ -241,6 +241,7 @@ public class LevelDataConverter : MonoBehaviour
 
         int floatIndex = 0;
         int positionerIndex = 0;
+        int subrtactIndex = 0;
 
         var l = new List<RecordedDataStructDynamic>();
         if (data.idList == null || data.idList.Length == 0)
@@ -261,12 +262,13 @@ public class LevelDataConverter : MonoBehaviour
                     values[j] = data.floatList[floatIndex];
                     floatIndex++;
                 }
-                l.Add(new RecordedDataStructDynamic(data.idList[i], data.typeList[i], data.posList[i], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0));
+                l.Add(new RecordedDataStructDynamic(data.idList[i], data.typeList[i - subrtactIndex], data.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0));
             }
             else if (type < 0)
             {
                 var d = new RecordedDataStructDynamic(data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0);
                 d.positionerData = data.postionerData[positionerIndex];
+                subrtactIndex++;
                 l.Add(d);
 
             }

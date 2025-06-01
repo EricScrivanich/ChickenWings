@@ -10,6 +10,11 @@ public class LaserParticleScript : MonoBehaviour
     private float endBlurAlpha = .95f;
     private float minVolume = 0;
     private float maxVolume = .3f;
+    private float midVolume = .15f;
+
+
+    private float baseMaxVolume = .3f;
+    private float baseMidVolume = .3f;
 
     private SpriteRenderer blurSprite;
     private AudioSource audioSource;
@@ -29,6 +34,13 @@ public class LaserParticleScript : MonoBehaviour
         particleColor = laserParticle.main.startColor.color;
         startParticleColor = new Color(particleColor.r, particleColor.g, particleColor.b, 0);
 
+    }
+
+    private void Start()
+    {
+        maxVolume = baseMaxVolume * AudioManager.instance.SfxVolume;
+        maxVolume = baseMaxVolume * AudioManager.instance.SfxVolume;
+        audioSource.volume = 0;
     }
 
     private void ChangeVolume()
@@ -68,16 +80,26 @@ public class LaserParticleScript : MonoBehaviour
         }
 
     }
+
+    public void ChangeAudioPitch(float pitch)
+    {
+
+        audioSource.pitch = pitch;
+    }
     private void OnEnable()
     {
-        audioSource.volume = 0;
+
         Ticker.OnTickAction015 += ChangeVolume;
+        AudioManager.instance.OnSetAudioPitch += ChangeAudioPitch;
+        audioSource.pitch = AudioManager.instance.SfxPitch;
+        audioSource.volume = 0;
 
     }
 
     private void OnDisable()
     {
         Ticker.OnTickAction015 -= ChangeVolume;
+        AudioManager.instance.OnSetAudioPitch -= ChangeAudioPitch;
     }
     public IEnumerator LaserParticleCoroutine(float amount, float timeLeft)
     {
@@ -102,7 +124,7 @@ public class LaserParticleScript : MonoBehaviour
         {
             t += Time.deltaTime;
             currentAmount = Mathf.Lerp(amount, 1, t / timeLeft);
-            maxVolume = Mathf.Lerp(0, .15f, t / timeLeft);
+            maxVolume = Mathf.Lerp(0, midVolume, t / timeLeft);
 
             // if (amount < .3f) yield return null;
 
@@ -120,7 +142,7 @@ public class LaserParticleScript : MonoBehaviour
 
 
         main.maxParticles = 50;
-        maxVolume = .3f;
+        maxVolume = baseMaxVolume * AudioManager.instance.SfxVolume;
     }
 
     public void StopParicles()
@@ -130,6 +152,7 @@ public class LaserParticleScript : MonoBehaviour
         // blurSprite.DOFade(0, .3f).OnComplete(() => gameObject.SetActive(false));
         blurSprite.DOFade(0, .3f);
         maxVolume = 0;
+        audioSource.volume = 0;
 
 
 

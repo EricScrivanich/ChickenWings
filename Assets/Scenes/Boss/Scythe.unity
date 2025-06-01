@@ -17812,18 +17812,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b06b0b4ead004c0f865b3fa364432bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  laserCount: 2
   laserPrefab: {fileID: 643507148}
-  laserDistance: 1
-  laserShootingDurations: []
-  laserChargeUpSound: {fileID: 0}
-  laserChargeUpVolume: 0.7
+  laserAudioSource: {fileID: 0}
+  laserBlastAudioClip: {fileID: 0}
+  laserBlastAudioClipVolume: 0
+  laserChargeAudioSource: {fileID: 0}
   timerBaseMaterial: {fileID: 0}
   timerSprite: {fileID: 0}
   baseLaserMaterial: {fileID: 2100000, guid: 18307f2953be84387a641a057c448fb7, type: 2}
   laserLength: 10
-  initialLaserSpeed: 4
-  finalLaserSpeed: 6
   zeroRotation: {fileID: 0}
   shootDuration: 0
   initialLaserShootDelay: 0
@@ -17853,12 +17850,6 @@ MonoBehaviour:
   - {fileID: 1489876976}
   - {fileID: 1180508102}
   - {fileID: 815409712}
-  positionList: []
-  positionTimeList: []
-  positionDelayList: []
-  rotationList: 
-  rotationTimeList: []
-  rotationDelayList: []
   fadeArrowDur: 0.4
 --- !u!50 &2103400831
 Rigidbody2D:
@@ -19177,6 +19168,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 990626004002546152, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1723060174410106337, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2264390680421528479, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 2264390680421528479, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 93
+      objectReference: {fileID: 0}
     - target: {fileID: 3222486909674329710, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: 'moveRects.Array.data[2]'
       value: 
@@ -19184,6 +19191,10 @@ PrefabInstance:
     - target: {fileID: 3222486909674329710, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: 'moveRectsLeftSide.Array.data[3]'
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3809595851794760022, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4718918521780320147, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

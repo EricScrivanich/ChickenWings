@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,18 +7,24 @@ public class AudioManager : MonoBehaviour
 {
 
 
-    public float musicPitch;
-    public float sfxPitch;
+
+
+
+    public float SfxVolume { get; private set; } = 1f;
     private float currentWindmillPitch;
-    public float newPitchSlow = 1;
+    public float SfxPitch { get; private set; } = 1f; // Default value for newPitchSlow
     public static AudioManager instance;
     private float globalAudioSourcePitch;
 
+    public System.Action<float> OnSetAudioPitch;
+
+
+
     [Header("Audio Sources")]
+    [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioSource chickenSource;
     [SerializeField] private AudioSource nonSlowSource;
-    [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource ringPassSource;
     [SerializeField] private AudioSource pigAudioSource;
     [SerializeField] private AudioSource windMillAudioSource;
@@ -88,7 +95,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip flyOver;
     [SerializeField] private AudioClip bombLaunch;
     [SerializeField] private AudioClip windMill;
-    [SerializeField] private AudioClip laserChargeUpSound;
+
 
     [Header("UI")]
     [SerializeField] private AudioClip chamberClick;
@@ -107,7 +114,7 @@ public class AudioManager : MonoBehaviour
 
 
     [Header("Volumes")]
-    [SerializeField] private float laserChargeUpVolume;
+
     [SerializeField] private float uziGunShotVolume;
 
     [SerializeField] private float parryStartVolume;
@@ -168,19 +175,38 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float shotgunReloadVolume;
 
 
+
+
+
+
     private bool canPlayJetPackNoise = true;
     private bool canPlayWindmillNoise = true;
     private bool canPlayBombNoise = true;
-    private float jetPackNoiseTime;
-    private float windmillNoiseTime;
-    private float bombNoiseTime;
-    private readonly float minJetPackNoiseDelay = .15f;
-    private readonly float minWindmillNoiseDelay = .25f;
-    private readonly float minBombNoiseDelay = .15f;
+
+
+    private WaitForSeconds minJetPackAndBombWait = new WaitForSeconds(.15f);
+    private WaitForSeconds minWindmillWait = new WaitForSeconds(.25f);
 
 
 
+    public void LoadVolume(float musicVol, float sfxVolume, bool mutePlayerInputVolume = false)
+    {
 
+        musicSource.volume = musicVol;
+        audioSource.volume = sfxVolume;
+        this.SfxVolume = sfxVolume; // Update the sfxVolume field
+        nonSlowSource.volume = sfxVolume;
+        ringPassSource.volume = sfxVolume;
+        pigAudioSource.volume = sfxVolume;
+        windMillAudioSource.volume = sfxVolume;
+
+        if (!mutePlayerInputVolume)
+            chickenSource.volume = sfxVolume;
+        else
+            chickenSource.volume = 0;
+
+
+    }
 
     private void Awake()
     {
@@ -195,6 +221,9 @@ public class AudioManager : MonoBehaviour
         }
         DontDestroyOnLoad(this.gameObject);
 
+        musicSource.ignoreListenerPause = true;
+        nonSlowSource.ignoreListenerPause = true;
+
         // BoundariesManager.isDay = false;
 
         // Don't destroy AudioManager on scene change.
@@ -207,50 +236,32 @@ public class AudioManager : MonoBehaviour
         PlayMusic();
     }
 
-
-    void Update()
+    private IEnumerator JetPackNoiseWait()
     {
+        if (canPlayJetPackNoise) yield break;
+        yield return minJetPackAndBombWait;
+        canPlayJetPackNoise = true;
 
-        if (!canPlayJetPackNoise)
-        {
-            jetPackNoiseTime += Time.deltaTime;
-
-            if (jetPackNoiseTime > minJetPackNoiseDelay)
-            {
-                canPlayJetPackNoise = true;
-                jetPackNoiseTime = 0;
-
-            }
-
-        }
-
-        if (!canPlayWindmillNoise)
-        {
-            windmillNoiseTime += Time.deltaTime;
-
-            if (windmillNoiseTime > minWindmillNoiseDelay)
-            {
-                canPlayWindmillNoise = true;
-                windmillNoiseTime = 0;
-
-            }
-
-        }
-
-        if (!canPlayBombNoise)
-        {
-            bombNoiseTime += Time.deltaTime;
-
-            if (bombNoiseTime > minBombNoiseDelay)
-            {
-                canPlayBombNoise = true;
-                bombNoiseTime = 0;
-
-            }
-
-        }
 
     }
+    private IEnumerator BombNoiseWait()
+    {
+        if (canPlayBombNoise) yield break;
+        yield return minJetPackAndBombWait;
+        canPlayBombNoise = true;
+
+
+    }
+
+    private IEnumerator WindmillNoiseWait()
+    {
+        if (canPlayWindmillNoise) yield break;
+        yield return minWindmillWait;
+        canPlayWindmillNoise = true;
+
+
+    }
+
     public void PlayScytheHitNoise(bool isPerfect)
     {
         if (isPerfect)
@@ -260,51 +271,15 @@ public class AudioManager : MonoBehaviour
 
     }
 
-    public void PlayLaserChargeUpSound()
-    {
-        audioSource.PlayOneShot(laserChargeUpSound, laserChargeUpVolume);
-    }
-    public void SlowMotionPitch(bool isSlow)
-    {
-        if (isSlow)
-        {
-            musicSource.pitch = musicPitch;
-            audioSource.pitch = sfxPitch;
-            audioSource.bypassEffects = false;
 
-        }
-        else
-        {
-            musicSource.pitch = 1;
-            audioSource.pitch = 1;
-            audioSource.bypassEffects = true;
 
-        }
-
-    }
     public void PlayParryNoise(bool hit)
     {
         if (hit)
             chickenSource.PlayOneShot(parryHit, parryHitVolume);
         else chickenSource.PlayOneShot(parryStart, parryStartVolume);
     }
-    public void LoadVolume(float musicVol, float sfxVolume, bool mutePlayerInputVolume = false)
-    {
 
-        musicSource.volume = musicVol;
-        audioSource.volume = sfxVolume;
-        nonSlowSource.volume = sfxVolume;
-        ringPassSource.volume = sfxVolume;
-        pigAudioSource.volume = sfxVolume;
-        windMillAudioSource.volume = sfxVolume;
-
-        if (!mutePlayerInputVolume)
-            chickenSource.volume = sfxVolume;
-        else
-            chickenSource.volume = 0;
-
-
-    }
 
     public void PlayParrySound()
     {
@@ -344,7 +319,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayButtonClickSound()
     {
-        audioSource.PlayOneShot(buttonClickSound, buttonClickVolume);
+        nonSlowSource.PlayOneShot(buttonClickSound, buttonClickVolume);
     }
 
     public void ChangeWindMillPitch(float change)
@@ -358,6 +333,7 @@ public class AudioManager : MonoBehaviour
         {
             windMillAudioSource.PlayOneShot(windMill, windMillVolume);
             canPlayWindmillNoise = false;
+            StartCoroutine(WindmillNoiseWait());
 
         }
 
@@ -432,8 +408,9 @@ public class AudioManager : MonoBehaviour
         newPitch += 1 - FrameRateManager.TargetTimeScale;
         pigAudioSource.pitch = newPitch;
         audioSource.pitch = newPitch;
-        newPitchSlow = newPitch;
+        SfxPitch = newPitch;
         chickenSource.pitch = newPitch;
+        OnSetAudioPitch?.Invoke(newPitch);
 
         windMillAudioSource.pitch = currentWindmillPitch * newPitch;
     }
@@ -441,7 +418,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayRingPassSound(int order)
     {
-        ringPassSource.pitch = Mathf.Pow(2, (order - 1) / 12.0f) * newPitchSlow;
+        ringPassSource.pitch = Mathf.Pow(2, (order - 1) / 12.0f) * SfxPitch;
         ringPassSource.PlayOneShot(ringPassSound, ringPassVolume);
 
     }
@@ -524,6 +501,7 @@ public class AudioManager : MonoBehaviour
 
         pigAudioSource.PlayOneShot(pigJetPack, pigJetPackVolume);
         canPlayJetPackNoise = false;
+        StartCoroutine(JetPackNoiseWait());
 
     }
 
@@ -560,6 +538,7 @@ public class AudioManager : MonoBehaviour
         {
             audioSource.PlayOneShot(bombExplosionSound, bombExplosionVolume);
             canPlayBombNoise = false;
+            StartCoroutine(BombNoiseWait());
         }
 
 
@@ -648,16 +627,19 @@ public class AudioManager : MonoBehaviour
     {
         if (isPaused)
         {
-
+            AudioListener.pause = true;
+            nonSlowSource.Pause();
             musicSource.Pause();
             ringPassSource.Pause();
             audioSource.Pause();
         }
         else
         {
+            AudioListener.pause = false;
             musicSource.UnPause();
             ringPassSource.UnPause();
             audioSource.UnPause();
+            nonSlowSource.UnPause();
 
         }
     }

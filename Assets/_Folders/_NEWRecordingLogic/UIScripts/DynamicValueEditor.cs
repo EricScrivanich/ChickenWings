@@ -88,7 +88,7 @@ public class DynamicValueEditor : MonoBehaviour, IPointerDownHandler
         var data = parent.data;
         if (isNew)
         {
-            data.AddDuplicateItems();
+            data.AddDuplicateItems(t);
         }
         type = t;
 
@@ -133,8 +133,10 @@ public class DynamicValueEditor : MonoBehaviour, IPointerDownHandler
         if (index == 0) return;
         imageFill.color = colorSO.SelctedUIColor;
 
-
-        LevelRecordManager.instance.UpdateTime(parent.data.startingSteps[index]);
+        if (type == "Rotations")
+            LevelRecordManager.instance.UpdateTime(parent.data.endingSteps[index]);
+        else
+            LevelRecordManager.instance.UpdateTime(parent.data.startingSteps[index]);
     }
 
     public void SetUnselected()

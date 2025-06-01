@@ -103,24 +103,40 @@ public class RecordedDataStructTweensDynamic
 
     public void RemoveAt(int index)
     {
-        easeTypes.RemoveAt(index);
-        positions.RemoveAt(index);
+        if (easeTypes.Count > index)
+            easeTypes.RemoveAt(index);
+
+        if (positions.Count > index)
+            positions.RemoveAt(index);
         // other.RemoveAt(index);
         // delayValues.RemoveAt(index);
-        values.RemoveAt(index);
+        if (values.Count > index)
+            values.RemoveAt(index);
+
         startingSteps.RemoveAt(index);
         endingSteps.RemoveAt(index);
     }
 
-    public void AddDuplicateItems()
+    public void AddDuplicateItems(string t)
     {
         easeTypes.Add(easeTypes[easeTypes.Count - 1]);
         positions.Add(positions[positions.Count - 1]);
         // other.Add(other[other.Count - 1]);
 
         values.Add(values[values.Count - 1]);
-        startingSteps.Add(endingSteps[endingSteps.Count - 1]);
-        endingSteps.Add((ushort)(endingSteps[endingSteps.Count - 1] + 20));
+        if (t == "Timers" && startingSteps.Count > 1)
+        {
+            int newStartStep = endingSteps[endingSteps.Count - 1] + (startingSteps[startingSteps.Count - 1] - endingSteps[endingSteps.Count - 2]);
+            int newEndStep = newStartStep + (endingSteps[endingSteps.Count - 1] - startingSteps[startingSteps.Count - 1]);
+            startingSteps.Add((ushort)newStartStep);
+            endingSteps.Add((ushort)newEndStep);
+        }
+        else
+        {
+            startingSteps.Add(endingSteps[endingSteps.Count - 1]);
+            endingSteps.Add((ushort)(endingSteps[endingSteps.Count - 1] + 20));
+        }
+
     }
 
     public void AdjustBaseTimeStep(int timeStep)

@@ -137,6 +137,7 @@ public class DynamicValueAdder : MonoBehaviour
         this.data = data;
         dynamicValueEditors.Clear();
         dynamicValueEditors.Add(editorPrefab);
+        currentSelectedValue = -1;
         Type = type;
         AllowEdits(false);
         switch (type)
@@ -301,39 +302,16 @@ public class DynamicValueAdder : MonoBehaviour
 
             case DynamicValueType.Timers:
 
-                // if (currentSelectedValue == 1)
-                // {
-                //     if (start)
-                //     {
-                //         minStep = data.endingSteps[currentSelectedValue - 1];
-                //         maxStep = data.endingSteps[currentSelectedValue] - 1;
-                //         currentStep = data.startingSteps[currentSelectedValue];
 
-
-
-                //     }
-                //     else
-                //     {
-                //         minStep = data.startingSteps[currentSelectedValue] + 1;
-                //         if (currentSelectedValue + 1 >= data.startingSteps.Count)
-                //             maxStep = LevelRecordManager.instance.finalSpawnStep - 1;
-                //         else
-                //             maxStep = data.startingSteps[currentSelectedValue + 1];
-
-                //         currentStep = data.endingSteps[currentSelectedValue];
-                //     }
-                //     return;
-
-                // }
                 if (start)
                 {
                     minStep = data.endingSteps[currentSelectedValue - 1];
-                    maxStep = data.endingSteps[currentSelectedValue] - 1 - Mathf.RoundToInt(LevelRecordManager.instance.ConvertLevelTimeToRealTime(LaserParent.cooldownDuration) / LevelRecordManager.TimePerStep);
+                    maxStep = data.endingSteps[currentSelectedValue] - 1 - Mathf.RoundToInt(LaserParent.cooldownDuration / LevelRecordManager.TimePerStep);
                     currentStep = data.startingSteps[currentSelectedValue];
                 }
                 else
                 {
-                    minStep = data.startingSteps[currentSelectedValue] + 1 + Mathf.RoundToInt(LevelRecordManager.instance.ConvertLevelTimeToRealTime(LaserParent.cooldownDuration) / LevelRecordManager.TimePerStep);
+                    minStep = data.startingSteps[currentSelectedValue] + 1 + Mathf.RoundToInt(LaserParent.cooldownDuration / LevelRecordManager.TimePerStep);
                     if (currentSelectedValue + 1 >= data.startingSteps.Count)
                         maxStep = LevelRecordManager.instance.finalSpawnStep - 1;
                     else
@@ -353,10 +331,12 @@ public class DynamicValueAdder : MonoBehaviour
     public bool SetNewTimeStep(ushort newStep)
     {
 
-        if (newStep < minStep || newStep >= maxStep)
+        if (newStep < minStep || newStep > maxStep)
         {
+
             return false;
         }
+
 
         if (editingStartTime)
         {
@@ -518,10 +498,10 @@ public class DynamicValueAdder : MonoBehaviour
         }
     }
 
-    public void SetCurrentSelectedValue(int index)
+    public void SetCurrentSelectedValue(int index, bool skipUnselect = false)
     {
 
-        if (currentSelectedValue != index && currentSelectedValue >= 0)
+        if (currentSelectedValue != index && currentSelectedValue >= 0 && !skipUnselect)
             dynamicValueEditors[currentSelectedValue].SetUnselected();
         if (currentSelectedValue == index) return;
         currentSelectedValue = index;
@@ -612,7 +592,17 @@ public class DynamicValueAdder : MonoBehaviour
 
         var editor = dynamicValueEditors[index];
         dynamicValueEditors.Remove(editor);
+        Destroy(editor.gameObject);
         data.RemoveAt(index);
+        currentSelectedValue = -1;
+        for (int i = 0; i < positionerObjects.Count; i++)
+        {
+            positionerObjects[i].gameObject.SetActive(false);
+        }
+        for (int i = 1; i < dynamicValueEditors.Count; i++)
+        {
+            Destroy(dynamicValueEditors[i].gameObject);
+        }
         Activate(titleText.text, data);
 
     }

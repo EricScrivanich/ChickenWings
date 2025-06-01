@@ -56,7 +56,7 @@ public class PauseMenuButton : MonoBehaviour
 
         PauseMenuButton.OnPauseGame?.Invoke(true);
 
-
+        AudioListener.pause = true;
         PauseMenu.SetActive(true);
         pmm.InstantPause();
 
@@ -70,6 +70,7 @@ public class PauseMenuButton : MonoBehaviour
         // if (Time.timeScale < FrameRateManager.TargetTimeScale || gameOver) return;
         if (!isPaused && Time.timeScale != 0 && !gameOver)
         {
+            AudioListener.pause = true;
             isPaused = true;
             PauseMenuButton.OnPauseGame?.Invoke(true);
 
@@ -95,6 +96,7 @@ public class PauseMenuButton : MonoBehaviour
         }
         else
         {
+
 
             isPaused = false;
             pmm.RetractOnly();
@@ -140,15 +142,17 @@ public class PauseMenuButton : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(delay);
 
-
+        AudioListener.pause = false;
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
             Time.timeScale = Mathf.Lerp(start, targetTimeScale, elapsed / duration);
+            AudioManager.instance.SlowAudioPitch(Time.timeScale);
             yield return null;
         }
 
         Time.timeScale = targetTimeScale;
+        AudioManager.instance.SlowAudioPitch(targetTimeScale);
 
     }
 }

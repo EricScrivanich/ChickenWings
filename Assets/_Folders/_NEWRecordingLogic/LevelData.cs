@@ -125,6 +125,7 @@ public class LevelData : ScriptableObject
         // }
 
         int floatListIndex = 0;
+        int subrtactIndex = 0;
 
         int float1Index = 0;
         int float2Index = 0;
@@ -133,35 +134,43 @@ public class LevelData : ScriptableObject
         int float5Index = 0;
         for (int i = 0; i < dataTypes.Length; i++)
         {
+
+            if (dataTypes[i] < 0)
+            {
+                // This is a positioner object
+                subrtactIndex++;
+                continue;
+            }
             switch (dataTypes[i])
             {
                 case 1:
-                    dataStructFloatOne[float1Index] = new DataStructFloatOne(idList[i], typeList[i], posList[i], floatList[floatListIndex]);
+                    dataStructFloatOne[float1Index] = new DataStructFloatOne(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex]);
                     float1Index++;
                     floatListIndex++;
                     break;
                 case 2:
-                    dataStructFloatTwo[float2Index] = new DataStructFloatTwo(idList[i], typeList[i], posList[i], floatList[floatListIndex], floatList[floatListIndex + 1]);
+                    dataStructFloatTwo[float2Index] = new DataStructFloatTwo(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1]);
                     float2Index++;
                     floatListIndex += 2;
                     break;
                 case 3:
-                    dataStructFloatThree[float3Index] = new DataStructFloatThree(idList[i], typeList[i], posList[i], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2]);
+                    dataStructFloatThree[float3Index] = new DataStructFloatThree(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2]);
                     float3Index++;
                     floatListIndex += 3;
                     break;
                 case 4:
-                    dataStructFloatFour[float4Index] = new DataStructFloatFour(idList[i], typeList[i], posList[i], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2], floatList[floatListIndex + 3]);
+                    dataStructFloatFour[float4Index] = new DataStructFloatFour(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2], floatList[floatListIndex + 3]);
                     float4Index++;
                     floatListIndex += 4;
                     break;
                 case 5:
-                    dataStructFloatFive[float5Index] = new DataStructFloatFive(idList[i], typeList[i], posList[i], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2], floatList[floatListIndex + 3], floatList[floatListIndex + 4]);
+                    dataStructFloatFive[float5Index] = new DataStructFloatFive(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2], floatList[floatListIndex + 3], floatList[floatListIndex + 4]);
                     float5Index++;
                     floatListIndex += 5;
                     break;
 
             }
+
         }
 
 
@@ -249,6 +258,12 @@ public class LevelData : ScriptableObject
 
                 if (idList[i] >= 0)
                 {
+                    if (dataTypes[i] < 0)
+                    {
+                        pools[idList[i]].SpawnPositionerData(postionerData[currentPositionerObjectIndex]);
+                        currentPositionerObjectIndex++;
+                        continue;
+                    }
                     switch (dataTypes[i])
                     {
                         case 1:
@@ -269,11 +284,7 @@ public class LevelData : ScriptableObject
 
                     }
 
-                    if (dataTypes[i] < 0)
-                    {
-                        pools[idList[i]].SpawnPositionerData(postionerData[currentPositionerObjectIndex]);
-                        currentPositionerObjectIndex++;
-                    }
+
 
 
                     dataTypeIndexes[dataTypes[i] - 1]++;

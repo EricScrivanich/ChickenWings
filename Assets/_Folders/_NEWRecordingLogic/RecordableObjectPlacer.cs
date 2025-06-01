@@ -1331,7 +1331,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         if (Title == "Laser")
         {
-            startRot = -Data.float1;
+            startRot = Data.float1;
             percent = Data.float2;
         }
 

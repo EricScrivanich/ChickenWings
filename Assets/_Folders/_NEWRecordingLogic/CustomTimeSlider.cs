@@ -268,7 +268,7 @@ public class CustomTimeSlider : MonoBehaviour
         Camera.main.transform.DOMoveY(-2.26f, .8f).SetEase(Ease.OutCubic).SetUpdate(true);
         mainHandle.localScale = Vector3.one;
 
-     
+
         minRange = currentMinIndex;
         maxRange = currentMaxIndex;
 
@@ -521,12 +521,12 @@ public class CustomTimeSlider : MonoBehaviour
 
 
     }
-
+    private bool hasCheckedOtherSteps = false;
     public void OnDragTweenTime(float deltaX, bool isNotHandle)
     {
         int stepChange = Mathf.RoundToInt(deltaX / pixelsPerStep);
         if (stepChange == lastStepChange) return;
-        lastStepChange = stepChange;
+
 
 
 
@@ -546,8 +546,39 @@ public class CustomTimeSlider : MonoBehaviour
         {
             currentTweenStep = tweenIndex;
             currentIndex = Mathf.Clamp(lastSavedMainValue + stepChange, minRange, maxRange);
+            lastStepChange = stepChange;
+            hasCheckedOtherSteps = false;
 
         }
+        else if (!hasCheckedOtherSteps)
+        {
+            int added = 1;
+            bool doReturn = true;
+
+            if (stepChange > 0) added = -1;
+
+            for (int i = 1; i < 50; i++)
+            {
+                tweenIndex += added;
+
+                if (DynamicValueAdder.instance.SetNewTimeStep((ushort)tweenIndex))
+                {
+                    stepChange += (i * added);
+                    lastStepChange = stepChange;
+                    currentTweenStep = tweenIndex;
+                    currentIndex = Mathf.Clamp(lastSavedMainValue + stepChange, minRange, maxRange);
+
+                    hasCheckedOtherSteps = true;
+                    doReturn = false;
+                    break;
+                }
+
+            }
+            if (doReturn) return;
+
+
+        }
+
         else return;
 
 
@@ -936,7 +967,7 @@ public class CustomTimeSlider : MonoBehaviour
     {
 
         float x = GetSliderX(index);
-      
+
         obj.transform.localPosition = new Vector2(x, obj.transform.localPosition.y);
     }
 
