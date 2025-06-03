@@ -808,7 +808,7 @@ public class PlayerStateManager : MonoBehaviour
 
     public void AdjustForce(Vector2 force)
     {
-        rb.linearVelocity = force;
+
         ID.globalEvents.OnPlayerVelocityChange?.Invoke(force, rb.gravityScale);
 
         // currentForce = xForce + ID.constantPlayerForce;
@@ -822,7 +822,16 @@ public class PlayerStateManager : MonoBehaviour
 
 
         else
-            rb.linearVelocity = new Vector2(force.x + ID.constantPlayerForce, force.y);
+        {
+            float f = .4f;
+            if (rb.linearVelocityX * force.x < 0)
+                f = .1f;
+            Debug.Log("Current Force: " + rb.linearVelocity);
+            float x = (rb.linearVelocityX * f) + force.x;
+            rb.linearVelocity = new Vector2(x, force.y);
+            Debug.Log("Adjusted Force: " + rb.linearVelocity);
+        }
+        // rb.linearVelocity = new Vector2(force.x + ID.constantPlayerForce, force.y);
 
 
     }

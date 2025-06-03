@@ -34,6 +34,17 @@ public class LaserParticleScript : MonoBehaviour
         particleColor = laserParticle.main.startColor.color;
         startParticleColor = new Color(particleColor.r, particleColor.g, particleColor.b, 0);
 
+        var main = laserParticle.main;
+        main.maxParticles = 0;
+
+
+        // main.simulationSpeed = startSpeed;
+
+
+        var color = blurSprite.color;
+        color.a = 0;
+        blurSprite.color = color;
+
     }
 
     private void Start()

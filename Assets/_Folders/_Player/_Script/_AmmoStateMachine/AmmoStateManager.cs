@@ -89,7 +89,7 @@ public class AmmoStateManager : MonoBehaviour
 
 
     [Header("Cage")]
-    [SerializeField] private Image cageImage;
+    private Image cageImage;
     [SerializeField] private float cageInDuration;
     [SerializeField] private float cageOutDuration;
     [SerializeField] private float scaleChange;
@@ -136,6 +136,12 @@ public class AmmoStateManager : MonoBehaviour
         ammoDisplayTexts[1].gameObject.SetActive(false);
         ammoEggImages[1].gameObject.SetActive(false);
 
+        if (cage != null)
+        {
+            cageImage = cage.GetComponent<Image>();
+            cage.gameObject.SetActive(false);
+        }
+
 
         if (scythePowerGroup != null)
         {
@@ -151,7 +157,7 @@ public class AmmoStateManager : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
 
-
+        // EquipCage(true);
 
 
 
@@ -803,14 +809,14 @@ public class AmmoStateManager : MonoBehaviour
 
     private void SetRaycasts(bool raycast, int type)
     {
-        if (type == -2)
-        {
-            cageImage.raycastTarget = !raycast;
-        }
-        foreach (var r in normalRaycasts)
-        {
-            r.raycastTarget = raycast;
-        }
+        // if (type == -2)
+        // {
+        //     cageImage.raycastTarget = !raycast;
+        // }
+        // foreach (var r in normalRaycasts)
+        // {
+        //     r.raycastTarget = raycast;
+        // }
     }
 
 
@@ -824,11 +830,12 @@ public class AmmoStateManager : MonoBehaviour
 
         ResetScope(true);
 
-        if (hidingButton)
+        // if (hidingButton)
 
-            if (cageSeq != null && cageSeq.IsPlaying())
-                cageSeq.Kill();
-
+        //     if (cageSeq != null && cageSeq.IsPlaying())
+        //         cageSeq.Kill();
+        if (cageSeq != null && cageSeq.IsPlaying())
+            cageSeq.Kill();
         cageSeq = DOTween.Sequence();
         if (equiped)
         {

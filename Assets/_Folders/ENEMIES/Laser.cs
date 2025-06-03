@@ -44,6 +44,7 @@ public class Laser : MonoBehaviour
     private void Awake()
     {
         laserCollider = laserSprite.gameObject.GetComponent<BoxCollider2D>();
+        StopParticles();
     }
 
     // private void OnValidate()

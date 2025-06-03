@@ -75,6 +75,7 @@ public class SidebarParent : MonoBehaviour
     }
     public void Initialize(int[] eggTypes, int startEgg)
     {
+        Debug.Log("Initializing SidebarParent with egg types: " + string.Join(", ", eggTypes));
         mainRect = GetComponent<RectTransform>();
         mainImage = GetComponent<Image>();
         button = GetComponent<Button>();
@@ -143,13 +144,15 @@ public class SidebarParent : MonoBehaviour
     {
         if (collected)
         {
-            button.enabled = false;
-            seq.Join(mainRect.DOLocalMove(cageEquippedPosition, dur));
-            seq.Join(mainRect.DOScale(1, dur));
+            if (button != null)
+                button.enabled = false;
+            // seq.Join(mainRect.DOLocalMove(cageEquippedPosition, dur));
+            // seq.Join(mainRect.DOScale(1, dur));
         }
         else
         {
-            button.enabled = true;
+            if (button != null)
+                button.enabled = true;
 
             ShowOrHide(fromHidden, seq);
         }

@@ -18,13 +18,14 @@ public class RotationScirpt : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-    
-        
+
+
     }
 
-    private void FixedUpdate() {
+    private void FixedUpdate()
+    {
         currentRotation += rotationSpeed * Time.fixedDeltaTime;
-        Debug.Log(transform.rotation.eulerAngles.z);
+
         rb.MoveRotation(currentRotation);
     }
 }

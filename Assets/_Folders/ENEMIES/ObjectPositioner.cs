@@ -62,6 +62,8 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
 
 
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private void Awake()
@@ -69,11 +71,12 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
         rb = GetComponent<Rigidbody2D>();
         addedComponent = GetComponent<IPositionerObject>();
 
+
     }
     void Start()
     {
 
-
+        // directionArrowParent.gameObject.SetActive(false);
         // transform.rotation = Quaternion.Euler(0, 0, startRotation);
 
 
@@ -133,7 +136,7 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
             Debug.Log("Adding move sequence for index: " + index + " with position: " + positionList[index] + " and time: " + positionTimeList[index] + " and delay: " + positionDelayList[index] + " and ease: " + eases[positionEases[index]]);
             MoveSeq.AppendInterval(positionDelayList[index]);
 
-            MoveSeq.AppendCallback(() => DoHandleArrows(index + 1));
+            MoveSeq.AppendCallback(() => DoHandleArrows(index));
 
             MoveSeq.Append(rb.DOMove(positionList[index], positionTimeList[index])
                 .SetEase(eases[positionEases[index]])
@@ -147,7 +150,7 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
         MoveSeq.Play().SetUpdate(UpdateType.Fixed);
     }
-
+    int arrowIndex = 0;
     private void DoHandleArrows(int arrowIndex)
     {
         if (arrowIndex >= positionList.Length) return;
@@ -165,6 +168,8 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
             float zRot = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             directionArrowParent.eulerAngles = new Vector3(0, 0, zRot + 90);
             directionArrowParent.gameObject.SetActive(true);
+            Debug.LogError("Showing arrows for index: " + arrowIndex + " with direction: " + direction + " and rotation: " + zRot);
+
 
             ArrowSeq = DOTween.Sequence();
             ArrowSeq.Append(directionArrows[2].DOFade(0, fadeArrowDur));

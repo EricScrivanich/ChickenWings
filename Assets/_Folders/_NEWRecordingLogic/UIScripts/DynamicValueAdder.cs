@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class DynamicValueAdder : MonoBehaviour
 {
@@ -16,12 +17,25 @@ public class DynamicValueAdder : MonoBehaviour
 
     private int currentIntValue = 0;
 
+    [Header("Scroll Settings")]
+    [SerializeField] private RectTransform upperListLayoutGroup;
+    [SerializeField] private Button scrollDownButton;
+    [SerializeField] private Button scrollUpButton;
+    [SerializeField] private float baseValuePanelHeight = -15;
+    [SerializeField] private float additionalAddedSize;
+    private float heightPerValueEditor;
+    private int numberOfValues = 0;
+    private int amountOfValuesByType;
+    private int currentScrollValue;
+    private Sequence scrollSequence;
+
+
     [SerializeField] private RectTransform upperListPanel;
     [SerializeField] private RectTransform lowerListPanel;
 
-    [SerializeField] private Vector2 laserRotationUpperSizeLowerY;
-    [SerializeField] private Vector2 laserPositionUpperSizeLowerY;
-    [SerializeField] private Vector2 laserShootingUpperSizeLowerY;
+    [SerializeField] private int laserRotationEditorSize;
+    [SerializeField] private int laserPositionEditorSize;
+    [SerializeField] private int laserShootingEditorSize;
 
     [SerializeField] private GameObject positionerObjectPrefab;
 
@@ -58,6 +72,8 @@ public class DynamicValueAdder : MonoBehaviour
 
     private bool editingStartTime = true;
 
+
+
     public enum DynamicValueType
     {
         Rotations,
@@ -85,6 +101,10 @@ public class DynamicValueAdder : MonoBehaviour
             Destroy(this);
         }
 
+        upperListLayoutGroup.anchoredPosition = new Vector2(upperListPanel.anchoredPosition.x, baseValuePanelHeight);
+        heightPerValueEditor = editorPrefab.GetComponent<RectTransform>().sizeDelta.y + upperListLayoutGroup.GetComponent<VerticalLayoutGroup>().spacing;
+
+
     }
 
     void Start()
@@ -96,6 +116,77 @@ public class DynamicValueAdder : MonoBehaviour
         {
             u.ChangeValue += EditInt;
         }
+    }
+
+    public void Scroll(bool down)
+    {
+        if (down)
+        {
+            currentScrollValue++;
+            scrollUpButton.interactable = true;
+
+            if (currentScrollValue >= numberOfValues) scrollDownButton.interactable = false;
+
+        }
+        else
+        {
+            currentScrollValue--;
+            scrollDownButton.interactable = true;
+
+            if (currentScrollValue <= amountOfValuesByType) scrollUpButton.interactable = false;
+        }
+
+        if (scrollSequence != null && scrollSequence.IsPlaying())
+        {
+            scrollSequence.Kill();
+        }
+        scrollSequence = DOTween.Sequence();
+
+        float y = ((currentScrollValue - amountOfValuesByType) * heightPerValueEditor) + baseValuePanelHeight;
+        scrollSequence.Append(upperListLayoutGroup.DOAnchorPosY(y, 0.3f));
+        scrollSequence.Play().SetUpdate(true);
+
+    }
+
+    private void ScrollToEnd()
+    {
+
+        currentScrollValue = numberOfValues;
+        if (currentScrollValue > amountOfValuesByType)
+        {
+            if (scrollSequence != null && scrollSequence.IsPlaying())
+            {
+                scrollSequence.Kill();
+            }
+            scrollSequence = DOTween.Sequence();
+
+            float y = ((currentScrollValue - amountOfValuesByType) * heightPerValueEditor) + baseValuePanelHeight;
+            scrollSequence.Append(upperListLayoutGroup.DOAnchorPosY(y, 0.4f));
+            scrollSequence.Play().SetUpdate(true);
+
+            // upperListLayoutGroup.anchoredPosition = new Vector2(upperListLayoutGroup.anchoredPosition.x, y);
+            scrollDownButton.interactable = false;
+            scrollUpButton.interactable = true;
+        }
+        else
+        {
+            upperListLayoutGroup.anchoredPosition = new Vector2(upperListLayoutGroup.anchoredPosition.x, baseValuePanelHeight);
+            scrollDownButton.interactable = false;
+            scrollUpButton.interactable = false;
+        }
+
+
+
+    }
+
+    public void CheckForScroll()
+    {
+        if (numberOfValues > amountOfValuesByType)
+        {
+            Scroll(true);
+
+        }
+
     }
 
     private void AllowEdits(bool allow)
@@ -117,9 +208,10 @@ public class DynamicValueAdder : MonoBehaviour
     }
 
 
-    public void SetUpperSizeLowerY(Vector2 size)
+    public void SetUpperEditorSize(int size)
     {
-        upperListPanel.sizeDelta = new Vector2(upperListPanel.sizeDelta.x, size.x);
+
+        upperListPanel.sizeDelta = new Vector2(upperListPanel.sizeDelta.x, (size * heightPerValueEditor) + additionalAddedSize);
         // lowerListPanel.anchoredPosition = new Vector2(lowerListPanel.anchoredPosition.x, size.y);
     }
 
@@ -155,7 +247,8 @@ public class DynamicValueAdder : MonoBehaviour
                 plusMinusText.text = "Rotations: 0";
                 Debug.LogError("Setting type to rotations");
                 floatEditor.SetValueForListSlider(0, false);
-                SetUpperSizeLowerY(laserRotationUpperSizeLowerY);
+                amountOfValuesByType = 4;
+                // SetUpperEditorSize(laserRotationEditorSize);
                 break;
             case "Positions":
                 this.type = DynamicValueType.Positions;
@@ -165,10 +258,11 @@ public class DynamicValueAdder : MonoBehaviour
                 typeEditors[0].SetData("Ease", easeTypeString, data.easeTypes[0]);
 
                 typeEditors[1].gameObject.SetActive(false);
+                amountOfValuesByType = 6;
                 isPostion = true;
 
                 CreatePostionerObjects();
-                SetUpperSizeLowerY(laserPositionUpperSizeLowerY);
+                // SetUpperEditorSize(laserPositionEditorSize);
 
                 LevelRecordManager.instance.editingPostionerObject = true;
 
@@ -184,17 +278,23 @@ public class DynamicValueAdder : MonoBehaviour
 
                 typeEditors[1].gameObject.SetActive(false);
                 isPostion = false;
-                SetUpperSizeLowerY(laserShootingUpperSizeLowerY);
+                amountOfValuesByType = 7;
+
+                // SetUpperEditorSize(laserShootingEditorSize);
 
                 break;
 
         }
+        numberOfValues = data.startingSteps.Count - 1;
+        SetUpperEditorSize(amountOfValuesByType);
+
         for (int i = 1; i < data.startingSteps.Count; i++)
         {
             AddDynamicValue(false);
 
 
         }
+        ScrollToEnd();
         Debug.Log("Activaing List: " + type);
         CustomTimeSlider.instance.usingListView = true;
         CustomTimeSlider.instance.CreateTweenHandles(data);
@@ -469,6 +569,10 @@ public class DynamicValueAdder : MonoBehaviour
 
     public void Deactivate()
     {
+        if (scrollSequence != null && scrollSequence.IsPlaying())
+        {
+            scrollSequence.Kill();
+        }
 
         for (int i = 1; i < dynamicValueEditors.Count; i++)
         {
@@ -492,6 +596,10 @@ public class DynamicValueAdder : MonoBehaviour
     // Update is called once per frame
     private void OnDestroy()
     {
+        if (scrollSequence != null && scrollSequence.IsPlaying())
+        {
+            scrollSequence.Kill();
+        }
         foreach (var u in plusMinusUI)
         {
             u.ChangeValue -= EditInt;
@@ -646,8 +754,9 @@ public class DynamicValueAdder : MonoBehaviour
                     break;
 
             }
-
+            numberOfValues++;
             editor.GetComponent<DynamicValueEditor>().OnPress();
+            ScrollToEnd();
         }
         else
         {

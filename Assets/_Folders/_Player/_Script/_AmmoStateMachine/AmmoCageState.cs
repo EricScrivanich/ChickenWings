@@ -6,7 +6,7 @@ public class AmmoCageState : AmmoBaseState
     {
         // player.ID.UiEvents.OnShowCage?.Invoke(true);
         // player.ID.canPressEggButton = true;
-        player.ID.UiEvents.OnSwitchDisplayedWeapon(-2, 0, 0);
+        player.ID.UiEvents.OnSwitchDisplayedWeapon?.Invoke(-2, 0, 0);
 
 
 

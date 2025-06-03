@@ -518,7 +518,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         controls.Movement.DropEgg.performed += ctx =>
         {
-            if (ButtonsEnabled && !eggButtonHidden )
+            if (ButtonsEnabled && !eggButtonHidden)
             {
                 if (!trackingInputs)
                     ID.events.OnPressAmmo?.Invoke(true);
@@ -550,7 +550,7 @@ public class SpecialStateInputSystem : MonoBehaviour
          //  if (!eggButtonHidden)
          //      ID.globalEvents.OnSwitchAmmo?.Invoke(false);
          if (ID.canPressEggButton)
-             ID.UiEvents.OnSwitchWeapon?.Invoke(1,-1);
+             ID.UiEvents.OnSwitchWeapon?.Invoke(1, -1);
 
      };
 
@@ -622,8 +622,8 @@ public class SpecialStateInputSystem : MonoBehaviour
             dropCooldownOUT = GameObject.Find("DropCooldownOUT").GetComponent<Image>();
             originalDropY = dropIcon.anchoredPosition.y;
             dropCooldownIN.color = ColorSO.disabledButtonColorFull;
-            dropCooldownIN.DOFade(0, 0);
-            dropCooldownOUT.DOFade(0, 0);
+            dropCooldownIN.color *= Color.clear;
+            dropCooldownOUT.color *= Color.clear;
             canDrop = true;
             usingDrop = true;
 

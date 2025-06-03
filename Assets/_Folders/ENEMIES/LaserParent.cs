@@ -180,6 +180,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         if (currentLaserOffset > laserLength)
         {
             currentLaserOffset = 0;
+            
         }
         zeroRotation.eulerAngles = Vector3.zero;
 

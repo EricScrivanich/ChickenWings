@@ -88,7 +88,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
         if (isAttached)
         {
-            Debug.Log("Attatched: rotating to target is" + rotatingToTarget);
+
 
             if (rotatingToTarget)
             {

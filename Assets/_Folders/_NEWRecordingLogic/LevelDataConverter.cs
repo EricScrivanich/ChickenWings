@@ -269,6 +269,7 @@ public class LevelDataConverter : MonoBehaviour
                 var d = new RecordedDataStructDynamic(data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0);
                 d.positionerData = data.postionerData[positionerIndex];
                 subrtactIndex++;
+                positionerIndex++;
                 l.Add(d);
 
             }

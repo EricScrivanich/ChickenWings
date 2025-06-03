@@ -12,7 +12,7 @@ public class AmmoBoomerangState : AmmoBaseState
     {
 
 
-        player.ID.UiEvents.OnSwitchDisplayedWeapon(2, 1, direction);
+        player.ID.UiEvents.OnSwitchDisplayedWeapon?.Invoke(2, 1, direction);
         player.ID.globalEvents.EquipItem?.Invoke(2, true);
         // player.ID.UiEvents.OnEquipCage?.Invoke(true);
 
