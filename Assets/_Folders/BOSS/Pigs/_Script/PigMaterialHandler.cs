@@ -12,7 +12,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     // [SerializeField] private SpriteRenderer headSprite;
     [SerializeField] private GameObject enableObjectOnDeath;
     [SerializeField] private GameObject disableObjectOnDeath;
-   
+    [SerializeField] private bool ignoreBoundaries = false;
+
 
     [SerializeField] private int health = 1;
     [SerializeField] private float totalDamageTime;
@@ -102,7 +103,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     private void OnEnable()
     {
-        if (pigType != 7)
+        if (!ignoreBoundaries)
             Ticker.OnTickAction015 += Tick;
 
 
@@ -158,7 +159,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
 
     private void OnDisable()
     {
-        if (pigType != 7)
+        if (!ignoreBoundaries)
             Ticker.OnTickAction015 -= Tick;
 
     }

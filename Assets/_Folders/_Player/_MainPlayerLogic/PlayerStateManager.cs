@@ -835,7 +835,10 @@ public class PlayerStateManager : MonoBehaviour
 
 
     }
-
+    private void OnDestroy()
+    {
+        DG.Tweening.DOTween.KillAll();
+    }
     void Update()
     {
 

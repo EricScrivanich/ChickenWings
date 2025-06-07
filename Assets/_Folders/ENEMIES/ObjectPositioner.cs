@@ -162,7 +162,10 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
         {
             if (ArrowSeq != null && ArrowSeq.IsPlaying()) ArrowSeq.Kill();
 
+
+
             Vector2 direction = positionList[arrowIndex] - (Vector2)transform.position;
+            if (direction == Vector2.zero) return;
             direction.Normalize();
 
             float zRot = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;

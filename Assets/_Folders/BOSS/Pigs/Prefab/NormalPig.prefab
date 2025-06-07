@@ -323,6 +323,7 @@ GameObject:
   - component: {fileID: 66901339332722841}
   - component: {fileID: 2454187349646226091}
   - component: {fileID: 1276336251284769455}
+  - component: {fileID: 1150189937380638715}
   m_Layer: 11
   m_Name: NormalPig
   m_TagString: Plane
@@ -411,15 +412,6 @@ MonoBehaviour:
   id: 0
   headSprite: {fileID: 5088269677243982766}
   pigID: {fileID: 11400000, guid: 17130485a260242c7a0735ef26237f14, type: 2}
-  frontLegs: {fileID: 2752491233751144196}
-  backLegs: {fileID: 6840480931914924450}
-  wings: {fileID: 642074383968923899}
-  tail: {fileID: 3834485154131804242}
-  body: {fileID: 357748487732977913}
-  frontLegsPosition: {fileID: 0}
-  backLegsPosition: {fileID: 6813974260692759026}
-  wingsPosition: {fileID: 4438767337380101504}
-  tailPosition: {fileID: 5731793649703512238}
   addYForce: 2.5
   belowAmount: 0.2
   testobj: {fileID: 0}
@@ -439,6 +431,7 @@ MonoBehaviour:
   testWaitTime: 0
   phaseOffset: 0
   magPercent: 0.2
+  useDynamicMag: 0
   magDiff: 0.05
 --- !u!114 &66901339332722841
 MonoBehaviour:
@@ -455,6 +448,7 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   enableObjectOnDeath: {fileID: 6452491286330985697}
   disableObjectOnDeath: {fileID: 4871202833462675386}
+  ignoreBoundaries: 0
   health: 1
   totalDamageTime: 0
   pigType: 0
@@ -514,6 +508,22 @@ MonoBehaviour:
   bodyMaxScaleX: 1.1
   minScale: 0.82
   maxScale: 1.15
+--- !u!114 &1150189937380638715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2425336107443998327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902ed7f2b6a6a42399b0035a6c04d752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.29585722, y: -0.68552285}
+  transformInsteadOfOffset: {fileID: 0}
+  useTransformInsteadOfOffset: 0
+  showGizmo: 1
 --- !u!1 &2927166378316838539
 GameObject:
   m_ObjectHideFlags: 0

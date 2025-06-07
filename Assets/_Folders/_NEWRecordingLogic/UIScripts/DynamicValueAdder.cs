@@ -87,6 +87,9 @@ public class DynamicValueAdder : MonoBehaviour
     private int currentSelectedValue = -1;
 
     [SerializeField] private ObjectTypeEditor[] typeEditors;
+    [SerializeField] private GameObject positionCordinatesObject;
+    [SerializeField] private TextMeshProUGUI positionCordinatesX;
+    [SerializeField] private TextMeshProUGUI positionCordinatesY;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
 
@@ -247,6 +250,8 @@ public class DynamicValueAdder : MonoBehaviour
                 plusMinusText.text = "Rotations: 0";
                 Debug.LogError("Setting type to rotations");
                 floatEditor.SetValueForListSlider(0, false);
+                positionCordinatesObject.SetActive(false);
+
                 amountOfValuesByType = 4;
                 // SetUpperEditorSize(laserRotationEditorSize);
                 break;
@@ -256,9 +261,11 @@ public class DynamicValueAdder : MonoBehaviour
                 floatEditor.gameObject.SetActive(false);
                 typeEditors[0].gameObject.SetActive(true);
                 typeEditors[0].SetData("Ease", easeTypeString, data.easeTypes[0]);
+                positionCordinatesObject.SetActive(true);
+
 
                 typeEditors[1].gameObject.SetActive(false);
-                amountOfValuesByType = 6;
+                amountOfValuesByType = 5;
                 isPostion = true;
 
                 CreatePostionerObjects();
@@ -274,6 +281,7 @@ public class DynamicValueAdder : MonoBehaviour
                 plusMinusObject.SetActive(false);
                 floatEditor.gameObject.SetActive(false);
                 typeEditors[0].gameObject.SetActive(false);
+                positionCordinatesObject.SetActive(false);
 
 
                 typeEditors[1].gameObject.SetActive(false);
@@ -354,9 +362,10 @@ public class DynamicValueAdder : MonoBehaviour
 
     public void UpdateSpawnTimeData()
     {
-        SetTimerTexts(currentSelectedValue);
+
         if (currentSelectedValue > 0)
         {
+            SetTimerTexts(currentSelectedValue);
             dynamicValueEditors[currentSelectedValue].EditTimeFromSpawnTime();
         }
 
@@ -447,13 +456,13 @@ public class DynamicValueAdder : MonoBehaviour
 
             data.endingSteps[currentSelectedValue] = newStep;
         }
-
-        SetTimerTexts(currentSelectedValue);
-        dynamicValueEditors[currentSelectedValue].EditTime(newStep, editingStartTime);
-        if (type == DynamicValueType.Timers)
+        if (currentSelectedValue >= 0)
         {
-
+            SetTimerTexts(currentSelectedValue);
+            dynamicValueEditors[currentSelectedValue].EditTime(newStep, editingStartTime);
         }
+
+
         return true;
 
 
@@ -501,6 +510,8 @@ public class DynamicValueAdder : MonoBehaviour
 
         data.positions[currentSelectedValue] = pos;
         dynamicValueEditors[currentSelectedValue].EditPostionText(pos);
+        positionCordinatesX.text = pos.x.ToString("F1");
+        positionCordinatesY.text = pos.y.ToString("F1");
     }
 
 
@@ -667,6 +678,9 @@ public class DynamicValueAdder : MonoBehaviour
                 typeEditors[0].SetData("Ease", easeTypeString, data.easeTypes[index]);
                 LevelRecordManager.instance.currentSelectedPostionerObjectIndex = index;
                 LevelRecordManager.instance.currentSelectedPostionerObject = positionerObjects[index];
+
+                positionCordinatesX.text = data.positions[currentSelectedValue].x.ToString("F1");
+                positionCordinatesY.text = data.positions[currentSelectedValue].y.ToString("F1");
 
 
 

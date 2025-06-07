@@ -42,17 +42,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
 
     }
 
-    private void OnValidate()
-    {
-        // _sineMagnitude = pigID.ReturnMag(xSpeed, magPercent);
-        // _sineFrequency = pigID.ReturnFreq(xSpeed, magPercent);
 
-        pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
-        minSineMagnitude = _sineMagnitude - magDiff;
-        maxSineMagnitude = _sineMagnitude + magDiff;
-
-        // _sineFrequency = (2 * Mathf.PI) / desiredOscillationTime;
-    }
 
     private void OnEnable()
     {
@@ -201,7 +191,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         return x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
     }
 
-    
+
 
     public void ApplyFloatOneData(DataStructFloatOne data)
     {
@@ -214,6 +204,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
     public void ApplyFloatThreeData(DataStructFloatThree data)
     {
         transform.position = data.startPos;
+
         _position = data.startPos;
         speed = data.float1;
         magPercent = data.float2;
@@ -225,6 +216,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         minSineMagnitude = _sineMagnitude - magDiff;
         maxSineMagnitude = _sineMagnitude + magDiff;
 
+        startX = ReturnPhaseOffset(data.startPos.x);
         gameObject.SetActive(true);
 
     }

@@ -530,7 +530,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public void UnactivateSelectedObject()
     {
         if (currentSelectedObject == null) return;
+
         currentSelectedObject.SetIsSelected(false);
+        if (currentSelectedPostionerObject != null)
+        {
+            ValueEditorManager.instance.ShowMainPanel();
+            currentSelectedPostionerObject = null;
+        }
         CustomTimeSlider.instance.UnselectObject();
         parameterUI.SetActive(false);
         currentSelectedObject = null;

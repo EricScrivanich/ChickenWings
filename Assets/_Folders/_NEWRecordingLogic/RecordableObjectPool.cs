@@ -7,6 +7,9 @@ public class RecordableObjectPool : ScriptableObject
 {
     [SerializeField] private GameObject prefab;
 
+    [SerializeField] private IRecordableObject[] objectVarients;
+    [SerializeField] private bool useObjectVarients = false;
+
     private IRecordableObject[] pool;
     private ObjectPositioner[] positionerPool;
     private int currentIndex;

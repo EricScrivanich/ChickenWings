@@ -163,11 +163,11 @@ GameObject:
   - component: {fileID: 4597176969777714755}
   - component: {fileID: 5214194841947876107}
   - component: {fileID: 8307723322716086652}
-  - component: {fileID: 3034400428319084327}
   - component: {fileID: 8078432716987197247}
   - component: {fileID: 9071971644403060489}
   - component: {fileID: 4566398486755033201}
   - component: {fileID: 1454797229240272919}
+  - component: {fileID: 3034400428319084327}
   - component: {fileID: 204787633576324263}
   m_Layer: 29
   m_Name: ChickAndCage_1
@@ -275,36 +275,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
---- !u!114 &3034400428319084327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3811209715142003196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e81b0639ce6f246d1b5acba51e8e7905, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  chicPos: {fileID: 9010200190996892846}
-  collectableColl: {fileID: 1413085187900798086}
-  chicRb: {fileID: 5291578680693281265}
-  isAttached: 1
-  targetAngle: 0
-  rotationSpeed: 300
-  rotationSpeedFree: 120
-  freeRotationDamping: 5
-  enableFreeRotation: 1
-  maxDownSpeed: -4.8
-  maxUpSpeed: 15
-  maxLeftSpeed: -10
-  maxRightSpeed: 7
-  forceFromPlayerRatio: 1.2
-  addedYForceOnRelease: 4
-  releaseCooldown: 0.5
-  releaseCooldownVar: 0
 --- !u!61 &8078432716987197247
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -489,6 +459,42 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.38, y: 0.088389516}
   m_EdgeRadius: 0
+--- !u!114 &3034400428319084327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3811209715142003196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e81b0639ce6f246d1b5acba51e8e7905, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPos: {fileID: 0}
+  chicPos: {fileID: 9010200190996892846}
+  player: {fileID: 0}
+  attatchedToObject: 0
+  attatchedObject: {fileID: 0}
+  rotationSpeedAttached: 300
+  collectableColl: {fileID: 1413085187900798086}
+  chicRb: {fileID: 5291578680693281265}
+  isAttached: 1
+  targetAngle: 0
+  rotationSpeed: 300
+  rotationSpeedFree: 120
+  freeRotationBaseSpeed: 50
+  freeRotationMaxSpeed: 200
+  freeRotationAccelerationStep: 10
+  enableFreeRotation: 1
+  maxDownSpeed: -4.8
+  maxUpSpeed: 15
+  maxLeftSpeed: -10
+  maxRightSpeed: 7
+  forceFromPlayerRatio: 1.2
+  addedYForceOnRelease: 4
+  releaseCooldown: 0.5
+  releaseCooldownVar: 0
 --- !u!114 &204787633576324263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -509,6 +515,7 @@ MonoBehaviour:
   addRightForce: {x: 10, y: 5}
   addDownForce: {x: 0, y: -0.5}
   addLeftForce: {x: -10, y: 5}
+  isActive: 0
   maxDownSpeed: -4.8
   maxUpSpeed: 15
   maxLeftSpeed: -10

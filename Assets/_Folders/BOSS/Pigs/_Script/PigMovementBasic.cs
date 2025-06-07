@@ -235,10 +235,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
 
 
-    public float ReturnPhaseOffset(float x)
-    {
-        return x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
-    }
+
 
     private void OnDrawGizmos()
     {
@@ -391,6 +388,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
         transform.position = data.startPos;
         _position = data.startPos;
 
+
         xSpeed = data.float1;
         transform.localScale = Vector3.one * (data.float2 * pigID.baseScale);
         if (xSpeed < 0) transform.localScale = Vector3.Scale(transform.localScale, BoundariesManager.FlippedXScale);
@@ -399,7 +397,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
 
         pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
-
+        startX = 0;
         gameObject.SetActive(true);
 
 
@@ -413,6 +411,8 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
         xSpeed = data.float1;
         transform.position = data.startPos;
+
+
         _position = data.startPos;
 
         transform.localScale = Vector3.one * (data.float2 * pigID.baseScale);
@@ -424,9 +424,15 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
         pigID.ReturnSineWaveLogic(xSpeed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         minSineMagnitude = _sineMagnitude - magDiff;
         maxSineMagnitude = _sineMagnitude + magDiff;
-        startX = transform.position.x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
+        startX = ReturnPhaseOffset(data.startPos.x);
         gameObject.SetActive(true);
 
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        if (!useDynamicMag) return 0;
+        return x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
     }
     public void ApplyFloatFiveData(DataStructFloatFive data)
     {

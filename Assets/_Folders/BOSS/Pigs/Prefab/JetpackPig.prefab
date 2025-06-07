@@ -29,7 +29,8 @@ Transform:
   m_LocalPosition: {x: -0.25600004, y: -0.426, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2751193944643108337}
   m_Father: {fileID: 8994852670157186497}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8552636622228708367
@@ -174,6 +175,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1872030248906674007
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2751193944643108337}
+  m_Layer: 11
+  m_Name: CageAttach
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2751193944643108337
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1872030248906674007}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.161, y: -0.179, z: 0}
+  m_LocalScale: {x: 0.9505148, y: 1.0319575, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4981500224990146087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3943573277371420589
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,6 +513,7 @@ GameObject:
   - component: {fileID: 4435639612076056519}
   - component: {fileID: 8114966415048519506}
   - component: {fileID: 7242554576543695591}
+  - component: {fileID: 4918108858699292356}
   m_Layer: 11
   m_Name: JetpackPig
   m_TagString: Plane
@@ -648,6 +681,7 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   enableObjectOnDeath: {fileID: 0}
   disableObjectOnDeath: {fileID: 0}
+  ignoreBoundaries: 0
   health: 1
   totalDamageTime: 0
   pigType: 1
@@ -665,6 +699,22 @@ MonoBehaviour:
   - {fileID: 5607506319477832825}
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+--- !u!114 &4918108858699292356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554680807245287772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902ed7f2b6a6a42399b0035a6c04d752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -0.09482288, y: -0.4918933}
+  transformInsteadOfOffset: {fileID: 2751193944643108337}
+  useTransformInsteadOfOffset: 0
+  showGizmo: 1
 --- !u!1 &8888429728512582436
 GameObject:
   m_ObjectHideFlags: 0

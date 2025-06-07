@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
+
 
 public class ButtonManager : MonoBehaviour
 {
@@ -207,19 +207,63 @@ public class ButtonManager : MonoBehaviour
 
     }
 
-    public void PlayerDamgedTween(bool isDead)
+    // public void PlayerDamgedTween(bool isDead)
+    // {
+    //     if (!isDead)
+    //     {
+    //         StartCoroutine(DoLinesTween());
+    //     }
+    //     else
+    //     {
+    //         foreach (var line in outlines)
+    //         {
+    //             line.DOColor(colorSO.damagedOutlineColor, .25f);
+    //         }
+
+    //     }
+    // }
+    private WaitForSeconds wait = new WaitForSeconds(.05f);
+    private IEnumerator DoFrozen()
     {
-        if (!isDead)
+        float t = 0;
+
+        while (t < .3f)
         {
-            StartCoroutine(DoLinesTween());
-        }
-        else
-        {
+            t += .05f;
+            Color outlineCol = Color.Lerp(colorSO.OutLineColor, colorSO.frozenOutlineColor, t / .3f);
+            Color fillCol = Color.Lerp(colorSO.normalButtonColor, colorSO.frozenFillColor, t / .3f);
             foreach (var line in outlines)
             {
-                line.DOColor(colorSO.damagedOutlineColor, .25f);
+                line.color = outlineCol;
             }
+            foreach (var fill in fills)
+            {
+                fill.color = fillCol;
+            }
+            yield return wait;
+        }
 
+
+    }
+
+    private IEnumerator UndoFrozen()
+    {
+        float t = 0;
+
+        while (t < .25f)
+        {
+            t += .05f;
+            Color outlineCol = Color.Lerp(colorSO.frozenOutlineColor, colorSO.OutLineColor, t / .25f);
+            Color fillCol = Color.Lerp(colorSO.frozenFillColor, colorSO.normalButtonColor, t / .25f);
+            foreach (var line in outlines)
+            {
+                line.color = outlineCol;
+            }
+            foreach (var fill in fills)
+            {
+                fill.color = fillCol;
+            }
+            yield return wait;
         }
     }
 
@@ -227,47 +271,49 @@ public class ButtonManager : MonoBehaviour
     {
         if (isFrozen)
         {
-            foreach (var line in outlines)
-            {
-                line.DOColor(colorSO.frozenOutlineColor, .3f).SetEase(Ease.InSine);
-            }
-            foreach (var fill in fills)
-            {
-                fill.DOColor(colorSO.frozenFillColor, .3f).SetEase(Ease.InSine);
-            }
+            StartCoroutine(DoFrozen());
+            // foreach (var line in outlines)
+            // {
+            //     line.DOColor(colorSO.frozenOutlineColor, .3f).SetEase(Ease.InSine);
+            // }
+            // foreach (var fill in fills)
+            // {
+            //     fill.DOColor(colorSO.frozenFillColor, .3f).SetEase(Ease.InSine);
+            // }
         }
 
         else
         {
-            foreach (var line in outlines)
-            {
-                line.DOColor(colorSO.OutLineColor, .25f).SetEase(Ease.OutSine);
-            }
-            foreach (var fill in fills)
-            {
-                fill.DOColor(colorSO.normalButtonColor, .25f).SetEase(Ease.OutSine);
-            }
+            StartCoroutine(UndoFrozen());
+            // foreach (var line in outlines)
+            // {
+            //     line.DOColor(colorSO.OutLineColor, .25f).SetEase(Ease.OutSine);
+            // }
+            // foreach (var fill in fills)
+            // {
+            //     fill.DOColor(colorSO.normalButtonColor, .25f).SetEase(Ease.OutSine);
+            // }
         }
 
     }
 
 
 
-    private IEnumerator DoLinesTween()
-    {
-        foreach (var line in outlines)
-        {
-            line.DOColor(colorSO.damagedOutlineColor, .15f);
-        }
+    // private IEnumerator DoLinesTween()
+    // {
+    //     foreach (var line in outlines)
+    //     {
+    //         line.DOColor(colorSO.damagedOutlineColor, .15f);
+    //     }
 
-        yield return new WaitForSeconds(.25f);
-        foreach (var line in outlines)
-        {
-            line.DOColor(colorSO.OutLineColor, .15f);
-        }
+    //     yield return new WaitForSeconds(.25f);
+    //     foreach (var line in outlines)
+    //     {
+    //         line.DOColor(colorSO.OutLineColor, .15f);
+    //     }
 
 
-    }
+    // }
 
     private void OnEnable()
     {

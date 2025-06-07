@@ -33,6 +33,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
     [SerializeField] private float xDistanceFromZone;
 
     private Sequence droppingTweenSeq;
+    private Sequence movePlaneSeq;
 
     private Vector3 rotateMidTarget = new Vector3(0, 0, 7);
 
@@ -275,16 +276,17 @@ public class DropBomb : MonoBehaviour, IRecordableObject
 
         if (enter)
         {
-            Debug.LogError("Enter Tween started");
+
             transform.eulerAngles = new Vector3(0, 0, StartRot * sideSwitchInteger);
             Vector3 endRot = new Vector3(0, 0, 0);
             transform.position = new Vector2(xDropPosition + (xDistanceFromZone * sideSwitchInteger), StartY);
 
+            movePlaneSeq = DOTween.Sequence();
+            movePlaneSeq.Append(transform.DOLocalMoveY(EndY, entraceDuration).SetEase(Ease.OutBack));
+            movePlaneSeq.Join(transform.DORotate(endRot, entraceDuration));
+            movePlaneSeq.Play();
 
 
-            transform.DOLocalMoveY(EndY, entraceDuration).SetEase(Ease.OutBack);
-            // transform.DORotate(endRot, entraceDuration).OnComplete(() => TweenWhileDropping(true));
-            transform.DORotate(endRot, entraceDuration);
         }
     }
 
@@ -347,9 +349,22 @@ public class DropBomb : MonoBehaviour, IRecordableObject
     {
         Debug.Log("Bomber disabled");
 
-        if (hasSpawned && !ignoreAll)
-            Stop();
+        StopAllCoroutines();
         if (ignoreAll && dropZone != null) dropZone.gameObject.SetActive(false);
+
+        if (droppingTweenSeq != null && droppingTweenSeq.IsPlaying())
+            droppingTweenSeq.Kill();
+        if (movePlaneSeq != null && movePlaneSeq.IsPlaying())
+            movePlaneSeq.Kill();
+
+    }
+
+    private void OnDestroy()
+    {
+        if (droppingTweenSeq != null && droppingTweenSeq.IsPlaying())
+            droppingTweenSeq.Kill();
+        if (movePlaneSeq != null && movePlaneSeq.IsPlaying())
+            movePlaneSeq.Kill();
     }
 
     public void Stop()
@@ -362,25 +377,19 @@ public class DropBomb : MonoBehaviour, IRecordableObject
             hasFadedDropZone = true;
             dropZone.FadeOut();
         }
-        DOTween.Kill(this);
+
         StopAllCoroutines();
     }
 
 
     private void OnEnable()
     {
-        Debug.Log("Bomber enabled");
         if (ignoreAll) return;
-
-        // }
-
-
-
-
 
     }
     private void OnSpawned()
     {
+
         enteredZone = false;
         hasFadedDropZone = false;
 
@@ -405,8 +414,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         speed = speedStart;
         transform.position = new Vector2(planeStartX, StartY + 1);
 
-        // if (hasInitialized)
-        // {
+
         if (dropAreaScaleMultiplier == 0) dropAreaScaleMultiplier = 1;
 
         dropZone.Initilaize(xDropPosition, dropAreaScaleMultiplier * sideSwitchInteger, planeStartX, sideSwitchInteger);
@@ -422,6 +430,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
 
     private IEnumerator BomberStart()
     {
+
         AudioManager.instance.PlayAirRaidSiren();
 
         yield return wait1;
@@ -467,8 +476,12 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         hasFadedDropZone = true;
         dropZone.FadeOut();
 
-        transform.DOLocalMoveY(StartY, exitDuration).SetEase(Ease.InBack);
-        transform.DORotate(endRot, exitDuration).OnComplete(() => gameObject.SetActive(false));
+        movePlaneSeq = DOTween.Sequence();
+        movePlaneSeq.Append(transform.DOLocalMoveY(StartY, exitDuration).SetEase(Ease.InBack));
+        movePlaneSeq.Join(transform.DORotate(endRot, exitDuration).OnComplete(() => gameObject.SetActive(false)));
+        movePlaneSeq.Play();
+
+
 
     }
 
@@ -495,25 +508,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         }
     }
 
-    public void ApplyRecordedData(RecordedDataStruct data)
-    {
-        ignoreAll = false;
-        xDropPosition = data.startPos.x;
-        dropAreaScaleMultiplier = data.scale;
-        if (data.type == 0)
-        {
 
-            speedTarget = 8;
-        }
-        else
-        {
-
-            speedTarget = -7;
-
-        }
-        gameObject.SetActive(true);
-
-    }
     public void ApplyFloatOneData(DataStructFloatOne data)
     {
         ignoreAll = false;

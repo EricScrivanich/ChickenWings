@@ -7,6 +7,7 @@ public class DropZone : MonoBehaviour
 {
     private Sequence flashSeq;
     private Sequence arrowsSeq;
+    private Sequence warningSeq;
     private SpriteRenderer sr;
     [SerializeField] private SpriteRenderer arrows;
     private int flipDirectionInt;
@@ -136,6 +137,26 @@ public class DropZone : MonoBehaviour
 
     }
 
+    void OnDisable()
+    {
+        if (flashSeq != null && flashSeq.IsPlaying())
+            flashSeq.Kill();
+        if (arrowsSeq != null && arrowsSeq.IsPlaying())
+            arrowsSeq.Kill();
+        if (warningSeq != null && warningSeq.IsPlaying())
+            warningSeq.Kill();
+
+
+
+    }
+
+    private void OnDestroy()
+    {
+        sr.DOKill();
+        arrows.DOKill();
+
+    }
+
     private void DoArrowSeq()
     {
 
@@ -144,14 +165,13 @@ public class DropZone : MonoBehaviour
         arrowsSeq.Append(arrows.DOColor(arrowColor1, .7f).SetEase(Ease.OutSine));
         arrowsSeq.AppendInterval(.3f);
 
-
         arrowsSeq.Play();
 
     }
 
     private void WarningTween()
     {
-        var warningSeq = DOTween.Sequence();
+        warningSeq = DOTween.Sequence();
 
         warningSeq.Append(warningSprites[1].transform.DOLocalMoveY(1.15f, .4f).From(.95f));
         warningSeq.Join(warningSprites[2].transform.DOLocalMoveX(-.15f * flipDirectionInt, .4f).From(0));
@@ -164,9 +184,11 @@ public class DropZone : MonoBehaviour
 
     private void FadeOutWarning()
     {
-        foreach (var s in warningSprites)
+        warningSeq = DOTween.Sequence();
+        warningSeq.Join(warningSprites[0].DOFade(0, .35f));
+        for (int i = 1; i < warningSprites.Length; i++)
         {
-            s.DOFade(0, .35f);
+            warningSeq.Join(warningSprites[i].DOFade(0, .35f));
         }
 
     }
