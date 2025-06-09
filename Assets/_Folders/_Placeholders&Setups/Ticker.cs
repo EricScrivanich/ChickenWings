@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Ticker : MonoBehaviour
 {
@@ -14,6 +15,12 @@ public class Ticker : MonoBehaviour
     private float tickerTime015 = 0;
 
     public static event TickAction015 OnTickAction015;
+    public static Action<Vector2> OnSendPlayerPosition;
+    private Transform playerTransform;
+
+    private void Start() {
+        playerTransform = GameObject.Find("Player").GetComponent<Transform>();
+    }
 
     // Start is called before the first frame update
 
@@ -29,6 +36,7 @@ public class Ticker : MonoBehaviour
             tickerTime015 = 0;
 
             OnTickAction015?.Invoke();
+            // OnSendPlayerPosition?.Invoke(playerTransform.position);
         }
 
 
