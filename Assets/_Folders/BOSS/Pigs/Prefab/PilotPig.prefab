@@ -672,6 +672,7 @@ GameObject:
   - component: {fileID: -8150473846529898941}
   - component: {fileID: 7455814697594661551}
   - component: {fileID: -4034670026731776184}
+  - component: {fileID: 7947249260934088670}
   m_Layer: 11
   m_Name: PilotPig
   m_TagString: Plane
@@ -704,7 +705,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7067416515346818908}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -856,6 +857,7 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   enableObjectOnDeath: {fileID: 0}
   disableObjectOnDeath: {fileID: 0}
+  ignoreBoundaries: 0
   health: 1
   totalDamageTime: 0
   pigType: 4
@@ -875,6 +877,24 @@ MonoBehaviour:
   - {fileID: 196232078045999114}
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+--- !u!114 &7947249260934088670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7067416515346818908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902ed7f2b6a6a42399b0035a6c04d752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.13347244, y: -0.5920114}
+  <transformInsteadOfOffset>k__BackingField: {fileID: 5730681176496688200}
+  useAdditionalTransform: 0
+  showGizmo: 1
+  <useRotation>k__BackingField: 0
+  rotationOffset: 0
 --- !u!1 &7531350597852955848
 GameObject:
   m_ObjectHideFlags: 0

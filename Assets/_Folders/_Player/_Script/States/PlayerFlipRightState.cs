@@ -263,6 +263,20 @@ public class PlayerFlipRightState : PlayerBaseState
         }
 
     }
+    public void StopTweens()
+    {
+        if (flipRightSeq != null && flipRightSeq.IsPlaying())
+        {
+            flipRightSeq.Kill();
+        }
+
+        if (angVelSequence != null && angVelSequence.IsPlaying())
+        {
+            angVelSequence.Kill();
+        }
+        hasFinishedEndOfTweenLogic = true;
+        tweeningAng = false;
+    }
 
     private void SwingJumpImage()
     {

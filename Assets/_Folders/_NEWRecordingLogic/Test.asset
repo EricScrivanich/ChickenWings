@@ -16,32 +16,25 @@ MonoBehaviour:
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   levelName: pug
   levelWorldAndNumber: none
-  spawnSteps: 10001000
-  finalSpawnStep: 150
-  idList: 07000700
-  dataTypes: 01000100
+  spawnSteps: 00000d000d00
+  finalSpawnStep: 275
+  idList: 000000000000
+  dataTypes: 020002000200
   posList:
-  - {x: 14.5, y: 0.3}
-  - {x: 20.1, y: -0.3}
+  - {x: 14.6, y: 2.2}
+  - {x: 16.2, y: 3.2}
+  - {x: 18.2, y: -0.6}
   floatList:
+  - 5.5
   - 1
+  - 5.5
   - 1
-  speedList:
-  - 5
-  - 5
-  - 2.5
-  scaleList:
+  - 5.5
   - 1
-  - 1
-  - 1
-  magList:
-  - 0
-  timeList:
-  - 0
-  - 0
-  delayList: []
-  typeList: 00000000
-  poolSizes: 00000000000000000000000000000200000000000000000000000000000000000000
+  typeList: 000000000000
+  poolSizes: 030000000000000000000000000000000000000000000000000000000000000000000000
+  cageAttachments: 0000
+  postionerData: []
   pools:
   - {fileID: 11400000, guid: 0461886c934bd442999a531155ff5379, type: 2}
   - {fileID: 11400000, guid: a9102e7f58fd14d1fa83819e381d14cf, type: 2}
@@ -61,4 +54,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7863b10b62ec247f5b11ac1970745efe, type: 2}
   - {fileID: 11400000, guid: 9934d23756f9f4ae1b85372cf0db1d9d, type: 2}
   - {fileID: 11400000, guid: c7560ac9c050345918fc6df251b9f814, type: 2}
+  cageObject: {fileID: 3811209715142003196, guid: 74747dccf64244732ac400c98cc88850, type: 3}
   ringPool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}

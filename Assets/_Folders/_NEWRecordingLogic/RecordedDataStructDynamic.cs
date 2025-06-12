@@ -17,13 +17,15 @@ public struct RecordedDataStructDynamic
     public float float4;
     public float float5;
 
+    public bool hasCageAttachment;
+
     public RecordedObjectPositionerDataSave positionerData;
 
 
 
 
 
-    public RecordedDataStructDynamic(short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep)
+    public RecordedDataStructDynamic(short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, bool hasCage = false)
     {
         this.ID = id;
         this.type = typ;
@@ -33,10 +35,12 @@ public struct RecordedDataStructDynamic
         this.float3 = f3;
         this.float4 = f4;
         this.float5 = f5;
+       
         positionerData = null;
 
         this.spawnedStep = spawnStep;
         this.unspawnedStep = unspawnStep;
+        this.hasCageAttachment = hasCage;
 
     }
 }

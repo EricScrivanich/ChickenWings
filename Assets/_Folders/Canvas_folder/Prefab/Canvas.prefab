@@ -529,7 +529,6 @@ GameObject:
   - component: {fileID: 2264390680421528479}
   - component: {fileID: 7907105278757309285}
   - component: {fileID: 558043570877246664}
-  - component: {fileID: 8911931584805412796}
   m_Layer: 5
   m_Name: Cage
   m_TagString: Untagged
@@ -546,15 +545,15 @@ RectTransform:
   m_GameObject: {fileID: 990626004002546152}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.73563, y: 0.73563, z: 0.73563}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6624661900190361452}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3, y: -2}
-  m_SizeDelta: {x: 241.6, y: 500.2625}
+  m_AnchoredPosition: {x: -1, y: -5}
+  m_SizeDelta: {x: 209.5, y: 237.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7907105278757309285
 CanvasRenderer:
@@ -578,7 +577,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 70, y: 0, z: 60, w: -15}
   m_Maskable: 0
   m_OnCullStateChanged:
@@ -594,19 +593,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8911931584805412796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 990626004002546152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ControlPath: <Gamepad>/buttonWest
 --- !u!1 &1227172273405429693
 GameObject:
   m_ObjectHideFlags: 0
@@ -5243,7 +5229,7 @@ MonoBehaviour:
   - {fileID: 7768393144365291526}
   - {fileID: 3826330539468334513}
   moveAmountForAmmoText: 120
-  cage: {fileID: 0}
+  cage: {fileID: 558043570877246664}
   rotateAmountForEggImage: 120
   rotateDurationForEggImage: 0.42
   colorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
@@ -5253,12 +5239,12 @@ MonoBehaviour:
   pressScale: 1.1
   pressDuration: 0.2
   releaseDuration: 0.15
-  cageInDuration: 0
-  cageOutDuration: 0
-  scaleChange: 0
-  totalMoveY: 0
-  cageStartScale: 0
-  cageStartY: 0
+  cageInDuration: 0.4
+  cageOutDuration: 0.4
+  scaleChange: 0.9
+  totalMoveY: 10
+  cageStartScale: 1.2
+  cageStartY: 100
   cageEndY: 0
 --- !u!82 &8572587122322243787
 AudioSource:

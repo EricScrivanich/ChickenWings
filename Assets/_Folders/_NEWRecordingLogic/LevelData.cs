@@ -20,6 +20,10 @@ public class LevelData : ScriptableObject
 
 
     public ushort[] poolSizes;
+    public ushort[] cageAttachments;
+
+    private int currentCageIndex = 0;
+
 
     private ushort currentSpawnStep = 0;
     private ushort currentSpawnIndex;
@@ -43,8 +47,12 @@ public class LevelData : ScriptableObject
 
 
     [SerializeField] private RecordableObjectPool[] pools;
+    [SerializeField] private GameObject cageObject;
 
     [SerializeField] private RingPool ringPool;
+
+    private bool checkForCage = false;
+
 
 
     public void InitializeData(SpawnStateManager s, ushort startingStep)
@@ -60,10 +68,21 @@ public class LevelData : ScriptableObject
 
         // Set currentSpawnStep to the specified starting step.
         currentSpawnStep = startingStep;
+        currentCageIndex = 0;
 
         // Find the first index in spawnSteps where the step is >= startingStep.
         currentSpawnIndex = 0;
         currentPositionerObjectIndex = 0;
+
+        if (cageAttachments == null || cageAttachments.Length <= 0)
+        {
+            checkForCage = false;
+        }
+        else
+        {
+            checkForCage = true;
+
+        }
         for (ushort i = 0; i < spawnSteps.Length; i++)
         {
             if (spawnSteps[i] >= startingStep)
@@ -71,9 +90,28 @@ public class LevelData : ScriptableObject
                 currentSpawnIndex = i;
                 break;
             }
+            if (checkForCage && i == cageAttachments[currentCageIndex])
+            {
+                currentCageIndex++;
+
+                if (currentCageIndex >= cageAttachments.Length)
+                {
+                    checkForCage = false; // No more cages to spawn
+                }
+            }
+
             if (idList[i] >= 0)
             {
                 dataTypeIndexes[dataTypes[i] - 1]++;
+
+                if (dataTypes[i] < 0)
+                {
+
+                    currentPositionerObjectIndex++;
+
+                }
+
+
             }
             else if (idList[i] < 0)
             {
@@ -209,6 +247,7 @@ public class LevelData : ScriptableObject
         finalSpawnStep = lds.finalSpawnStep;
         floatList = lds.floatList;
         idList = lds.idList;
+        cageAttachments = lds.cageAttachments;
 
         posList = lds.posList;
         dataTypes = lds.dataTypes;
@@ -244,6 +283,8 @@ public class LevelData : ScriptableObject
 
     }
 
+
+
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
@@ -255,7 +296,7 @@ public class LevelData : ScriptableObject
                 // Debug.LogError("Spawning Object: ID: " + Data[i].ID + " Pos: " + Data[i].startPos + " Speed: " + Data[i].speed + " Scale: " + Data[i].scale + " Mag: " + Data[i].magPercent + " Time: " + Data[i].timeInterval + " Delay: " + Data[i].delayInterval + " Type: " + Data[i].type);
                 // spawner.SpawnObject(Data[i]);
 
-
+                bool spawnCage = false;
                 if (idList[i] >= 0)
                 {
                     if (dataTypes[i] < 0)
@@ -264,6 +305,8 @@ public class LevelData : ScriptableObject
                         currentPositionerObjectIndex++;
                         continue;
                     }
+
+
                     switch (dataTypes[i])
                     {
                         case 1:
@@ -282,6 +325,21 @@ public class LevelData : ScriptableObject
                             pools[idList[i]].SpawnFloatFive(dataStructFloatFive[dataTypeIndexes[4]]);
                             break;
 
+                    }
+
+                    if (checkForCage && i == cageAttachments[currentCageIndex])
+                    {
+                        // Spawn a cage object
+                        var attachedObject = pools[idList[i]].GetCageAttachment();
+                        var cage = Instantiate(cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
+                        // cage.gameObject.SetActive(false);
+                        cage.GetComponent<CustomHingeJoint2D>().SetAttatchedObject(attachedObject);
+                        currentCageIndex++;
+
+                        if (currentCageIndex >= cageAttachments.Length)
+                        {
+                            checkForCage = false; // No more cages to spawn
+                        }
                     }
 
 

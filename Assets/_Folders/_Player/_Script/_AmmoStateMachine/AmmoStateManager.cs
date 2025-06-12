@@ -9,7 +9,6 @@ public class AmmoStateManager : MonoBehaviour
     [SerializeField] private Color zeroAmmoEggImageColor;
     private AudioSource audioSource;
 
-    private Sequence scytheBarSeq;
     private float basePowerWidth;
     private float powerHeight;
     [SerializeField] private RectTransform scythePowerFill;
@@ -72,6 +71,10 @@ public class AmmoStateManager : MonoBehaviour
     private Sequence chainGroupFadeSeq;
     private Sequence rotateSidebarSeq;
     private Sequence sideButtonSeq;
+
+    private Sequence cageSeq;
+    private Sequence scytheBarSeq;
+
     // private Sequence otherButtonColorSeq;
 
     private Sequence directionArrowFadeSeq;
@@ -98,7 +101,7 @@ public class AmmoStateManager : MonoBehaviour
     [SerializeField] private float cageStartScale;
     [SerializeField] private int cageStartY;
     [SerializeField] private int cageEndY;
-    private Sequence cageSeq;
+
     private float originalYPos;
     private int addedYOnPress = 35;
 
@@ -832,8 +835,7 @@ public class AmmoStateManager : MonoBehaviour
 
         // if (hidingButton)
 
-        //     if (cageSeq != null && cageSeq.IsPlaying())
-        //         cageSeq.Kill();
+
         if (cageSeq != null && cageSeq.IsPlaying())
             cageSeq.Kill();
         cageSeq = DOTween.Sequence();
@@ -922,6 +924,24 @@ public class AmmoStateManager : MonoBehaviour
         player.UiEvents.ChangeScythePowerPitch -= ChangeScythePowerPitch;
 
 
+        if (rotateSeq != null && rotateSeq.IsPlaying())
+            rotateSeq.Kill();
+        if (pressSeq != null && pressSeq.IsPlaying())
+            pressSeq.Kill();
+        if (flashRedSeq != null && flashRedSeq.IsPlaying())
+            flashRedSeq.Kill();
+        if (flashTextRedSeq != null && flashTextRedSeq.IsPlaying())
+            flashTextRedSeq.Kill();
+        if (chainGroupFadeSeq != null && chainGroupFadeSeq.IsPlaying())
+            chainGroupFadeSeq.Kill();
+        if (rotateSidebarSeq != null && rotateSidebarSeq.IsPlaying())
+            rotateSidebarSeq.Kill();
+        if (sideButtonSeq != null && sideButtonSeq.IsPlaying())
+            sideButtonSeq.Kill();
+        if (cageSeq != null && cageSeq.IsPlaying())
+            cageSeq.Kill();
+        if (scytheBarSeq != null && scytheBarSeq.IsPlaying())
+            scytheBarSeq.Kill();
 
 
 

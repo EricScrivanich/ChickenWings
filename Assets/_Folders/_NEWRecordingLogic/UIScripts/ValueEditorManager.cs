@@ -14,6 +14,7 @@ public class ValueEditorManager : MonoBehaviour
 
     [SerializeField] private GameObject mainPanel;
     [SerializeField] private GameObject listPanel;
+    [SerializeField] private GameObject cagePanel;
 
     [SerializeField] private int baseHeight;
     [SerializeField] private int addedHeightPerSection;
@@ -35,6 +36,7 @@ public class ValueEditorManager : MonoBehaviour
     [SerializeField] private RectTransform sliderFolderHiddenPosition;
     private bool usingListEditors = false;
     private bool isShowingList = false;
+    private bool isShowingCage = false;
 
     private int lastUsedFloatIndex;
     public Action<string> OnSetSelectedType;
@@ -115,7 +117,7 @@ public class ValueEditorManager : MonoBehaviour
     }
     public void SendFloatValues(string type, int index, bool final)
     {
-        if (isShowingList)
+        if (isShowingList || isShowingCage)
         {
             ShowMainPanel();
         }
@@ -242,13 +244,39 @@ public class ValueEditorManager : MonoBehaviour
 
     public void ShowMainPanel()
     {
+        cagePanel.SetActive(false);
+
         mainPanel.SetActive(true);
-        listPanel.GetComponent<DynamicValueAdder>().Deactivate();
+        if (isShowingList)
+            listPanel.GetComponent<DynamicValueAdder>().Deactivate();
+
         isShowingList = false;
+        isShowingCage = false;
+    }
+
+    public void ShowCagePanel(bool show)
+    {
+        if (!show)
+        {
+            cagePanel.SetActive(false);
+            // isShowingCage = false;
+            return;
+        }
+        if (isShowingList)
+            listPanel.GetComponent<DynamicValueAdder>().Deactivate();
+        else
+            mainPanel.SetActive(false);
+
+        cagePanel.SetActive(true);
+
+        isShowingList = false;
+        isShowingCage = true;
+
     }
     public void ShowListPanel(string type)
     {
         mainPanel.SetActive(false);
+        cagePanel.SetActive(false);
         RecordedDataStructTweensDynamic d = null;
         switch (type)
         {
@@ -264,6 +292,7 @@ public class ValueEditorManager : MonoBehaviour
         }
         listPanel.GetComponent<DynamicValueAdder>().Activate(type, d);
         isShowingList = true;
+        isShowingCage = false;
         // listPanel.SetActive(true);
     }
 

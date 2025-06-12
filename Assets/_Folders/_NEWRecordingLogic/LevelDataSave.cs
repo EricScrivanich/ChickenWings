@@ -13,6 +13,7 @@ public class LevelDataSave
 
     public float[] floatList;
     public ushort[] poolSizes;
+    public ushort[] cageAttachments;
 
    
 
@@ -35,11 +36,29 @@ public class LevelDataSave
         this.poolSizes = plSizes;
         this.startingAmmos = ammos;
         this.StartingLives = lives;
+        this.cageAttachments = null;
+        this.postionerData = null;
+
     }
     public void SetPositionerData(RecordedObjectPositionerDataSave[] data)
     {
+        if (data == null || data.Length == 0)
+        {
+            Debug.LogError("Positioner data is null or empty, not setting it.");
+            return;
+        }
         this.postionerData = data;
     }
+    public void SetCageAttachments(ushort[] cageAttachments)
+    {
+        if (cageAttachments == null || cageAttachments.Length == 0)
+        {
+            Debug.LogError("Cage attachments data is null or empty, not setting it.");
+            return;
+        }
+        this.cageAttachments = cageAttachments;
+    }
+
 
 
 }

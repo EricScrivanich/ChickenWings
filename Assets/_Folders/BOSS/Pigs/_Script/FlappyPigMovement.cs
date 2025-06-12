@@ -352,7 +352,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable, IRecordableObject
             rotTarget *= -1;
 
 
-        sprite.eulerAngles = new Vector3(0, 0, rotTarget);
+        sprite.eulerAngles = Vector3.forward * rotTarget;
 
         Vector2 direction = playerTarget.position - pupilStartPositions.position; // Calculate the direction to the player
 
@@ -459,7 +459,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable, IRecordableObject
     }
     private void UpdateTargetPosition(Vector2 playerVelocity, float playerGravityScale)
     {
-        if (!isTargetReached) return;
+        if (!isTargetReached || playerTarget == null) return;
 
         if (!hasFullyEntered)
         {
@@ -599,7 +599,7 @@ public class FlappyPigMovement : MonoBehaviour, IEggable, IRecordableObject
 
     }
 
-    
+
     public void ApplyFloatOneData(DataStructFloatOne data)
     {
         transform.position = data.startPos;

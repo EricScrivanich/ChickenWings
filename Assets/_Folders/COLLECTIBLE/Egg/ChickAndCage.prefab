@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.037999995, y: -0.9980001, z: 0}
-  m_LocalScale: {x: 0.45, y: 0.45, z: 0.45}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 4597176969777714755}
@@ -57,7 +57,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -150,8 +150,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.054823928, y: 0}
-  m_Radius: 0.560526
+  m_Offset: {x: 0.02, y: 0}
+  m_Radius: 0.83
 --- !u!1 &3811209715142003196
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 3034400428319084327}
   - component: {fileID: 204787633576324263}
   m_Layer: 29
-  m_Name: ChickAndCage_1
+  m_Name: ChickAndCage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -216,7 +216,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -256,14 +256,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3811209715142003196}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1.3
-  m_LinearDamping: 0.15
+  m_LinearDamping: 0.25
   m_AngularDamping: 0
-  m_GravityScale: 0.47
+  m_GravityScale: 0.6
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -271,7 +271,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
@@ -355,7 +355,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.013160646, y: -0.22583324}
+  m_Offset: {x: 0.013160795, y: -0.2570098}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5000001, y: 0.9141143}
@@ -365,7 +365,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.2740959, y: 0.11382395}
+  m_Size: {x: 1.3295212, y: 0.17617714}
   m_EdgeRadius: 0
 --- !u!61 &4566398486755033201
 BoxCollider2D:
@@ -447,7 +447,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.00000017881393, y: -1.6961339}
+  m_Offset: {x: -0.00000017881393, y: -1.6545652}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5000001, y: 0.9141143}
@@ -457,7 +457,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.38, y: 0.088389516}
+  m_Size: {x: 1.38, y: 0.17152667}
   m_EdgeRadius: 0
 --- !u!114 &3034400428319084327
 MonoBehaviour:
@@ -473,28 +473,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPos: {fileID: 0}
   chicPos: {fileID: 9010200190996892846}
-  player: {fileID: 0}
-  attatchedToObject: 0
+  player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  attatchedToObject: 1
   attatchedObject: {fileID: 0}
-  rotationSpeedAttached: 300
+  rotationSpeedAttached: 90
   collectableColl: {fileID: 1413085187900798086}
   chicRb: {fileID: 5291578680693281265}
-  isAttached: 1
+  isAttached: 0
   targetAngle: 0
   rotationSpeed: 300
   rotationSpeedFree: 120
-  freeRotationBaseSpeed: 50
+  freeRotationBaseSpeed: 90
   freeRotationMaxSpeed: 200
-  freeRotationAccelerationStep: 10
+  freeRotationAccelerationStep: 140
   enableFreeRotation: 1
   maxDownSpeed: -4.8
   maxUpSpeed: 15
   maxLeftSpeed: -10
   maxRightSpeed: 7
-  forceFromPlayerRatio: 1.2
-  addedYForceOnRelease: 4
+  forceFromPlayerRatio: 1
+  addedYForceOnRelease: 4.2
   releaseCooldown: 0.5
   releaseCooldownVar: 0
+  sineFreq: 15
+  sineAmp: 3
 --- !u!114 &204787633576324263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -513,13 +515,13 @@ MonoBehaviour:
   slowDownFallBoundary: -0.5
   slowDownFallMultiplier: 0.6
   addRightForce: {x: 10, y: 5}
-  addDownForce: {x: 0, y: -0.5}
+  addDownForce: {x: 0, y: -1}
   addLeftForce: {x: -10, y: 5}
   isActive: 0
-  maxDownSpeed: -4.8
+  maxDownSpeed: -8
   maxUpSpeed: 15
-  maxLeftSpeed: -10
-  maxRightSpeed: 7
+  maxLeftSpeed: -8
+  maxRightSpeed: 8
 --- !u!1 &6734203989783916511
 GameObject:
   m_ObjectHideFlags: 0

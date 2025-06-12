@@ -13,6 +13,7 @@ public interface IRecordableObject
     void ApplyFloatFiveData(DataStructFloatFive data);
     void ApplyCustomizedData(RecordedDataStructDynamic data);
 
+    // GameObject GetObject();
     bool ShowLine();
 
     float TimeAtCreateObject(int index);

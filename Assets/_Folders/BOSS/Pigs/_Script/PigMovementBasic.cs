@@ -33,7 +33,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
     [SerializeField] private float belowAmount;
     private bool justJumped;
 
-
+    public readonly int FlapTrigger = Animator.StringToHash("Flap");
 
     [SerializeField] private GameObject testobj;
 
@@ -119,8 +119,8 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
     {
         anim = GetComponent<Animator>();
 
-        if (headSprite != null)
-            headSprite.sprite = pigID.ReturnStartingHead();
+        // if (headSprite != null)
+        //     headSprite.sprite = pigID.ReturnStartingHead();
 
     }
 
@@ -196,27 +196,27 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
     //     // }
     // }
 
-    private void GlideDown()
-    {
-        downGlide = true;
-        anim.SetBool("DownGlideBool", true);
-        anim.SetTrigger("GoDownTrigger");
+    // private void GlideDown()
+    // {
+    //     downGlide = true;
+    //     anim.SetBool("DownGlideBool", true);
+    //     anim.SetTrigger("GoDownTrigger");
 
-    }
-    private void GlideUp()
-    {
-        upGlide = true;
-        anim.SetBool("UpGlideBool", true);
-        anim.SetTrigger("GoUp");
+    // }
+    // private void GlideUp()
+    // {
+    //     upGlide = true;
+    //     anim.SetBool("UpGlideBool", true);
+    //     anim.SetTrigger("GoUp");
 
 
-    }
-    // Update is called once per frame
+    // }
+    // // Update is called once per frame
 
-    void ChangeJustJumped()
-    {
-        justJumped = false;
-    }
+    // void ChangeJustJumped()
+    // {
+    //     justJumped = false;
+    // }
 
 
 
@@ -295,11 +295,12 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
             dynamicMagnitude = Mathf.Lerp(maxSineMagnitude, minSineMagnitude, period);
         // Apply movement with dynamic sine magnitude
         rb.MovePosition(_position + Vector2.up * period * dynamicMagnitude);
+       
 
         // Trigger flap animation at the bottom of the sine wave
         if (!hasFlapped && period < flapAnimStart)
         {
-            anim.SetTrigger("Flap");
+            anim.SetTrigger(FlapTrigger);
             hasFlapped = true;
         }
         if (hasFlapped && period > flapAnimStart)

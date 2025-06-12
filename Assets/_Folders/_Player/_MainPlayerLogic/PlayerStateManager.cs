@@ -837,6 +837,7 @@ public class PlayerStateManager : MonoBehaviour
     }
     private void OnDestroy()
     {
+
         DG.Tweening.DOTween.KillAll();
     }
     void Update()
@@ -2541,6 +2542,8 @@ public class PlayerStateManager : MonoBehaviour
 
         if (ID.playerStartingStats != null) ID.playerStartingStats = null;
 
+        FlipLeftState.StopTweens();
+        FlipRightState.StopTweens();
         ID.events.OnSetScythePos -= SetScythePosition;
         ID.events.OnReleaseStick -= HandleReleaseStick;
 

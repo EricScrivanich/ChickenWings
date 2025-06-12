@@ -24,18 +24,23 @@ public class CageAttatchmentEditor : Editor
 
         if (!obj.showGizmo) return;
 
-        Vector3 worldPos = obj.transform.position + (Vector3)obj.offset;
+        Vector3 origin = obj.useAdditionalTransform && obj.transformInsteadOfOffset != null
+            ? obj.transformInsteadOfOffset.position
+            : obj.transform.position;
+
+        Vector3 worldPos = origin + (Vector3)obj.offset;
 
         EditorGUI.BeginChangeCheck();
         Vector3 newWorldPos = Handles.PositionHandle(worldPos, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(obj, "Move Offset Handle");
-            obj.offset = newWorldPos - obj.transform.position;
+            obj.offset = newWorldPos - origin;
+            EditorUtility.SetDirty(obj);
         }
 
         Handles.color = Color.green;
-        Handles.DrawDottedLine(obj.transform.position, worldPos, 3f);
+        Handles.DrawDottedLine(origin, worldPos, 3f);
         Handles.Label(worldPos, $"Offset: {obj.offset}");
     }
 }

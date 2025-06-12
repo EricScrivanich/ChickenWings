@@ -1341,7 +1341,7 @@ public class StateInputSystem : MonoBehaviour
     private void OnDisable()
     {
         StopAllCoroutines();
-        DOTween.Kill(this);
+        // DOTween.Kill(this);
         controls.Movement.Disable();
         ID.globalEvents.OnHideEggButton -= HideEggButton;
         ID.events.TwoFingerCenterTouch -= TwoFingerTouch;
@@ -1364,6 +1364,31 @@ public class StateInputSystem : MonoBehaviour
         // player.globalEvents.CanDashSlash -= HandleDashSlashButton;
         if (manaUsed)
             ID.globalEvents.OnGetMana -= GatherMana;
+
+
+
+
+        DOTween.Kill(dropIcon);
+        DOTween.Kill(dashIcon);
+        DOTween.Kill(dropCooldownIN);
+        DOTween.Kill(dropCooldownOUT);
+        DOTween.Kill(dashImageMana);
+        DOTween.Kill(dashCooldownIN);
+        DOTween.Kill(dashCooldownGroup);
+        DOTween.Kill(dashImage);
+        DOTween.Kill(DropButton);
+        if (flashSequence != null && flashSequence.IsActive())
+        {
+            flashSequence.Kill();
+        }
+        if (dashIconSequence != null && dashIconSequence.IsActive())
+        {
+            dashIconSequence.Kill();
+        }
+
+
+
+
 
     }
 }

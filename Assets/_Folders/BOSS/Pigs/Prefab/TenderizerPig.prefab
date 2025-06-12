@@ -698,6 +698,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &3476319153765712578
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5040688864319920172}
+  m_Layer: 11
+  m_Name: CageAttach
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5040688864319920172
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3476319153765712578}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0.4967199, w: 0.86791086}
+  m_LocalPosition: {x: -0.78, y: 3.03, z: 0}
+  m_LocalScale: {x: 0.9520276, y: 0.9285522, z: 1.0783997}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5208108159602652117}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -26.471}
 --- !u!1 &3920678880414528638
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +832,7 @@ GameObject:
   - component: {fileID: 1277107987063809660}
   - component: {fileID: 5478993533122252602}
   - component: {fileID: 7577326095344756254}
+  - component: {fileID: 675418265504025232}
   m_Layer: 11
   m_Name: TenderizerPig
   m_TagString: Plane
@@ -1001,6 +1033,7 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   enableObjectOnDeath: {fileID: 2172210907734772808}
   disableObjectOnDeath: {fileID: 5714027656495678414}
+  ignoreBoundaries: 0
   health: 1
   totalDamageTime: 0
   pigType: 3
@@ -1038,6 +1071,24 @@ SortingGroup:
   m_SortingLayer: 4
   m_SortingOrder: -2
   m_SortAtRoot: 0
+--- !u!114 &675418265504025232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5053118216464345145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902ed7f2b6a6a42399b0035a6c04d752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  <transformInsteadOfOffset>k__BackingField: {fileID: 5040688864319920172}
+  useAdditionalTransform: 1
+  showGizmo: 1
+  <useRotation>k__BackingField: 0
+  rotationOffset: 0
 --- !u!1 &5611007544856240974
 GameObject:
   m_ObjectHideFlags: 0
@@ -1364,7 +1415,8 @@ Transform:
   m_LocalPosition: {x: -0.1737, y: -0.1097, z: 0}
   m_LocalScale: {x: 0.8111093, y: 0.7705538, z: 0.8111093}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5040688864319920172}
   m_Father: {fileID: 3211451519360721835}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 33.095}
 --- !u!212 &7212124968288278936

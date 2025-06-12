@@ -9,6 +9,7 @@ public class LevelCreatorColors : ScriptableObject
     public Vector3 arrowNormalScale;
     public Vector3 arrowSelectedScale;
     public Color SelectedPigOutlineColor;
+    public Color CanAttachCageOutlineColor;
 
     public Color SelectedLineColor;
     public Color NormalLineColor;

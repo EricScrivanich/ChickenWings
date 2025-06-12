@@ -69,7 +69,6 @@ public class RecordableObjectPool : ScriptableObject
     {
         if (positionerPool == null || positionerPool.Length == 0)
         {
-
             return;
         }
         if (positionerPool[currentIndex] == null)
@@ -85,7 +84,55 @@ public class RecordableObjectPool : ScriptableObject
             currentIndex = 0;
         }
     }
-    public void SpawnFloatOne(DataStructFloatOne data)
+
+    public CageAttatchment GetCageAttachment()
+    {
+        int index = currentIndex - 1;
+        if (index < 0) index = pool.Length - 1; // Wrap around if index is negative
+        if (pool != null && pool.Length > 0)
+        {
+
+            GameObject obj = (pool[index] as MonoBehaviour)?.gameObject;
+            if (obj.GetComponent<CageAttatchment>() != null)
+            {
+                return obj.GetComponent<CageAttatchment>();
+            }
+            else if (obj.GetComponentInChildren<CageAttatchment>() != null)
+            {
+                return obj.GetComponentInChildren<CageAttatchment>();
+            }
+            else
+            {
+                Debug.LogError("CageAttatchment component not found on " + obj.name);
+                return null;
+            }
+        }
+        else if (positionerPool != null && positionerPool.Length > 0)
+        {
+            GameObject obj = positionerPool[index].gameObject;
+            if (obj.GetComponent<CageAttatchment>() != null)
+            {
+                return obj.GetComponent<CageAttatchment>();
+            }
+            else if (obj.GetComponentInChildren<CageAttatchment>() != null)
+            {
+                return obj.GetComponentInChildren<CageAttatchment>();
+            }
+            else
+            {
+                Debug.LogError("CageAttatchment component not found on " + obj.name);
+                return null;
+            }
+        }
+
+        else
+        {
+            Debug.LogError("positionerPool is null or empty");
+            return null;
+        }
+
+    }
+    public void SpawnFloatOne(DataStructFloatOne data, bool addCage = false)
     {
         if (pool == null || pool.Length == 0)
         {
@@ -98,6 +145,7 @@ public class RecordableObjectPool : ScriptableObject
             return;
         }
         pool[currentIndex].ApplyFloatOneData(data);
+
         currentIndex++;
         if (currentIndex >= pool.Length)
         {

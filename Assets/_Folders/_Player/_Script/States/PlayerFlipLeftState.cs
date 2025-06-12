@@ -143,6 +143,10 @@ public class PlayerFlipLeftState : PlayerBaseState
     }
     private void TweenAngVel(float dur, float start)
     {
+        if (angVelSequence != null && angVelSequence.IsPlaying())
+        {
+            angVelSequence.Kill();
+        }
         angVelSequence = DOTween.Sequence();
         angVelSequence.Append(DOTween.To(() => start, x => angVel = x, angForce, dur));
         // <-- Added this
@@ -159,6 +163,22 @@ public class PlayerFlipLeftState : PlayerBaseState
         flipLeftSeq.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime).SetEase(Ease.InSine))
                 .Join(flipImage.DOScale(1.2f, .35f));
         flipLeftSeq.Play();
+    }
+
+    public void StopTweens()
+    {
+        if (flipLeftSeq != null && flipLeftSeq.IsPlaying())
+        {
+            flipLeftSeq.Kill();
+        }
+
+        if (angVelSequence != null && angVelSequence.IsPlaying())
+        {
+            angVelSequence.Kill();
+        }
+        hasFinishedEndOfTweenLogic = true;
+        tweeningAng = false;
+        hasFadedJumpAir = true;
     }
 
     public override void ExitState(PlayerStateManager player)
@@ -278,7 +298,7 @@ public class PlayerFlipLeftState : PlayerBaseState
         }
 
         flipLeftSeq = DOTween.Sequence();
-         // <-- Added this
+        // <-- Added this
 
         flipImage.DOScale(1, .2f);
         foreach (var rotation in rotations)

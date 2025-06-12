@@ -32,6 +32,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public RecordableObjectPlacer[] recordableObjectsByID;
     public RecordableObjectPlacer[] recordableObjectsWithNegtiveID;
+    public GameObject[] specialAddedObjects;
 
     [SerializeField] private TextMeshProUGUI posXText;
     [SerializeField] private TextMeshProUGUI posYText;
@@ -71,6 +72,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static Action<ushort, float> SetGlobalTime;
 
     public static Action<int> OnShowObjectTime;
+    public static Action<int, bool> OnSendSpecialDataToActiveObjects;
 
 
     public static Action PressTimerBar;
@@ -449,6 +451,18 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         if (obj != null)
         {
+            if (readyToPressForCage)
+            {
+                if (obj.canAttachCage)
+                {
+                    obj.SetCageAttachment(true);
+                    SetCageReady(false);
+                    UpdateTime(CurrentTimeStep, false);
+
+                }
+
+                return;
+            }
             currentSelectedPostionerObject = null;
             if (!parameterUI.activeInHierarchy && ShowParameters)
             {
@@ -714,9 +728,17 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         foreach (var hit in hits)
         {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Cage"))
+            {
+                Debug.Log("Touched Cage");
+                currentCageObject = hit.collider.gameObject.GetComponent<ChicAndCageRecordable>();
+                SetCageReady(true);
+                return null; // Skip objects on the Ignore Raycast layer
+            }
+
             if (hit.collider.CompareTag("Arrow"))
             {
-                Debug.Log("Touched Arrow");
+
                 obj = FindRecordableParent(hit.collider.transform);
 
                 if (hit.collider.name == "X")
@@ -753,8 +775,60 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         return obj;
     }
+    #region CageLogic
+
+    private ChicAndCageRecordable currentCageObject;
 
 
+    private bool readyToPressForCage = false;
+
+    public void DeleteCageObject()
+    {
+        if (currentCageObject != null)
+        {
+            currentCageObject.RemoveSelf();
+            currentCageObject = null;
+            UpdateTime(CurrentTimeStep, false);
+        }
+        SetCageReady(false);
+    }
+    public void SetCageReady(bool ready)
+    {
+
+        if (ready)
+        {
+            if (currentCageObject != null)
+            {
+                currentCageObject.SetSelected(true);
+            }
+            readyToPressForCage = true;
+            if (currentSelectedObject != null)
+            {
+                currentSelectedObject.SetIsSelected(false);
+            }
+            OnSendSpecialDataToActiveObjects?.Invoke(0, true);
+        }
+        else
+        {
+            if (currentCageObject != null)
+            {
+                currentCageObject.SetSelected(false);
+                currentCageObject = null;
+            }
+            readyToPressForCage = false;
+
+            OnSendSpecialDataToActiveObjects?.Invoke(0, false);
+        }
+        ValueEditorManager.instance.ShowCagePanel(ready);
+
+    }
+
+    public GameObject ReturnSpecialObject(int t)
+    {
+        return Instantiate(specialAddedObjects[t]);
+    }
+
+    #endregion
     private Vector2 ReturnRoundedPosition(Vector2 pos)
     {
         float x = Mathf.Round(pos.x / 0.2f) * 0.2f;
@@ -767,6 +841,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     private int typeOvveride = -1;
     public void SetObjectToBeAdded(GameObject obj, int overrideType)
     {
+        if (readyToPressForCage) SetCageReady(false);
         objectToAdd = obj;
         goingToAddObject = true;
         typeOvveride = overrideType;
@@ -1190,10 +1265,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
 
     // Update is called once per frame
-    void Update()
-    {
 
-    }
 
     public void UpdateObjectTime(int val)
     {

@@ -25,12 +25,13 @@ public class Windmill : MonoBehaviour, IRecordableObject
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         joint = GetComponent<HingeJoint2D>();
+        hasSpawned = true;
 
     }
 
     private void Start()
     {
-        hasSpawned = true;
+
     }
     private void OnEnable()
     {
@@ -92,21 +93,7 @@ public class Windmill : MonoBehaviour, IRecordableObject
         }
     }
 
-    public void ApplyRecordedData(RecordedDataStruct data)
-    {
-        transform.position = data.startPos;
-        bladeSpeed = data.speed;
-        if (data.type == 0) bladeSpeed *= -1;
-        startRot = Mathf.RoundToInt(data.delayInterval);
-        Vector3 scale = new Vector3(1, data.scale, 1);
-        foreach (Transform child in fanRb.gameObject.transform)
-        {
-            child.localScale = scale;
-        }
 
-        AdjustHeightToGround();
-        gameObject.SetActive(true);
-    }
     public void ApplyFloatOneData(DataStructFloatOne data)
     {
 

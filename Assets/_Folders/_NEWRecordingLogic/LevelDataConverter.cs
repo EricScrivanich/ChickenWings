@@ -134,6 +134,7 @@ public class LevelDataConverter : MonoBehaviour
         List<Vector2> posList = new List<Vector2>();
         List<float> floatList = new List<float>();
         List<short> dataTypes = new List<short>();
+        List<ushort> cageAttachments = new List<ushort>();
         List<RecordedObjectPositionerDataSave> positionerData = new List<RecordedObjectPositionerDataSave>();
         Debug.LogError("Converting To Json");
 
@@ -142,6 +143,11 @@ public class LevelDataConverter : MonoBehaviour
             idList.Add(obj[i].Data.ID);
             spawnedStepList.Add(obj[i].Data.spawnedStep);
             dataTypes.Add(obj[i].DataType);
+
+            if (obj[i].Data.hasCageAttachment)
+            {
+                cageAttachments.Add((ushort)i);
+            }
 
             if (obj[i].IsPositionerObject())
             {
@@ -199,8 +205,9 @@ public class LevelDataConverter : MonoBehaviour
         }
 
         LevelDataSave save = new LevelDataSave(title, idList.ToArray(), spawnedStepList.ToArray(), typeList.ToArray(), dataTypes.ToArray(), finalSpawnStep, posList.ToArray(), floatList.ToArray(), poolData, ammos, lives);
-        if (positionerData.Count > 0)
-            save.SetPositionerData(positionerData.ToArray());
+
+        save.SetPositionerData(positionerData.ToArray());
+        save.SetCageAttachments(cageAttachments.ToArray());
 
 
         string json = JsonUtility.ToJson(save, true);
@@ -243,6 +250,17 @@ public class LevelDataConverter : MonoBehaviour
         int positionerIndex = 0;
         int subrtactIndex = 0;
 
+
+        int currentCageIndex = 0;
+
+        bool checkCageAttachments = false;
+
+        if (data.cageAttachments != null && data.cageAttachments.Length > 0)
+        {
+            checkCageAttachments = true;
+        }
+
+
         var l = new List<RecordedDataStructDynamic>();
         if (data.idList == null || data.idList.Length == 0)
         {
@@ -252,6 +270,20 @@ public class LevelDataConverter : MonoBehaviour
 
         for (int i = 0; i < data.idList.Length; i++)
         {
+            bool hasCageAttachment = false;
+
+            if (checkCageAttachments && i == data.cageAttachments[currentCageIndex])
+            {
+                hasCageAttachment = true;
+                currentCageIndex++;
+
+                if (currentCageIndex >= data.cageAttachments.Length)
+                {
+                    checkCageAttachments = false; // No more cage attachments to check
+                }
+
+            }
+
             float[] values = new float[5];
             int type = data.dataTypes[i];
             Debug.Log("Loading Data Type: " + type);
@@ -262,11 +294,11 @@ public class LevelDataConverter : MonoBehaviour
                     values[j] = data.floatList[floatIndex];
                     floatIndex++;
                 }
-                l.Add(new RecordedDataStructDynamic(data.idList[i], data.typeList[i - subrtactIndex], data.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0));
+                l.Add(new RecordedDataStructDynamic(data.idList[i], data.typeList[i - subrtactIndex], data.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, hasCageAttachment));
             }
             else if (type < 0)
             {
-                var d = new RecordedDataStructDynamic(data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0);
+                var d = new RecordedDataStructDynamic(data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, hasCageAttachment);
                 d.positionerData = data.postionerData[positionerIndex];
                 subrtactIndex++;
                 positionerIndex++;

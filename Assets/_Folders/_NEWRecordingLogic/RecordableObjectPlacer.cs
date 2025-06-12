@@ -120,8 +120,12 @@ public class RecordableObjectPlacer : MonoBehaviour
         Position
 
     }
+    private Transform cage;
+    private CageAttatchment cageAttatchment;
 
     [SerializeField] private PostionType _pType;
+
+    [field: SerializeField] public bool canAttachCage { get; private set; } = true;
 
     [SerializeField] private SpriteRenderer[] sprites;
 
@@ -149,6 +153,8 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -164,7 +170,14 @@ public class RecordableObjectPlacer : MonoBehaviour
             xArrow.gameObject.SetActive(false);
             yArrow.gameObject.SetActive(false);
         }
-
+        if (Title != "Bomber")
+        {
+            MonoBehaviour mb = obj as MonoBehaviour;
+            if (mb != null)
+            {
+                mb.enabled = false;
+            }
+        }
 
 
 
@@ -555,7 +568,9 @@ public class RecordableObjectPlacer : MonoBehaviour
             ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep);
             foreach (var s in selectedOutlines)
             {
+                s.color = colorSO.SelectedPigOutlineColor;
                 s.enabled = true;
+
             }
             xArrow.gameObject.SetActive(true);
             if (_pType != PostionType.Grounded || _pType != PostionType.CenterOnly)
@@ -617,10 +632,66 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     }
 
+    private void CheckSpecialData(int t, bool b)
+    {
+        switch (t)
+        {
+            case 0:
+                if (b)
+                {
+                    if (canAttachCage)
+                    {
+                        foreach (var s in selectedOutlines)
+                        {
+                            s.color = colorSO.CanAttachCageOutlineColor;
+                            s.enabled = true;
+                        }
+
+                    }
+                }
+                else
+                {
+                    if (canAttachCage)
+                        foreach (var s in selectedOutlines)
+                        {
+                            s.enabled = false;
+                        }
+                }
+                break;
+
+        }
+
+    }
+
+    public void SetCageAttachment(bool attach)
+    {
+        Data.hasCageAttachment = attach;
+
+        if (!attach)
+        {
+            if (cage != null)
+            {
+                Debug.Log("Deleting Cage");
+
+                Destroy(cage.gameObject);
+                cage = null;
+            }
+            if (cageAttatchment != null)
+            {
+                cageAttatchment = null;
+
+            }
+        }
+
+    }
+
+
+
     private void OnEnable()
     {
         LevelRecordManager.SetGlobalTime += UpdateObjectPosition;
         LevelRecordManager.CheckViewParameters += ChangeViewParameters;
+        LevelRecordManager.OnSendSpecialDataToActiveObjects += CheckSpecialData;
 
         iconSprites[1].gameObject.SetActive(true);
 
@@ -633,6 +704,8 @@ public class RecordableObjectPlacer : MonoBehaviour
     {
         LevelRecordManager.SetGlobalTime -= UpdateObjectPosition;
         LevelRecordManager.CheckViewParameters -= ChangeViewParameters;
+        LevelRecordManager.OnSendSpecialDataToActiveObjects -= CheckSpecialData;
+
 
         if (isSelected && LevelRecordManager.instance != null) LevelRecordManager.instance.UnactivateSelectedObject();
 
@@ -649,6 +722,12 @@ public class RecordableObjectPlacer : MonoBehaviour
 
             }
             projectileLines = new List<GameObject>();
+        }
+
+        if (Data.hasCageAttachment && cage != null)
+        {
+            cage.gameObject.SetActive(false);
+
         }
 
     }
@@ -1072,7 +1151,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
             }
-
+            SetCagePosition();
             return;
         }
 
@@ -1152,12 +1231,15 @@ public class RecordableObjectPlacer : MonoBehaviour
 
             gameObject.SetActive(false);
             return;
+
         }
 
 
 
 
         prefab.transform.position = p;
+        SetCagePosition();
+
 
 
         if (Title == "Bomber")
@@ -1186,6 +1268,47 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     #endregion
+
+    private void SetCagePosition()
+    {
+        if (!Data.hasCageAttachment)
+        {
+
+
+            return;
+
+
+        }
+        if (cage == null)
+        {
+            cage = LevelRecordManager.instance.ReturnSpecialObject(0).GetComponent<Transform>();
+            cage.GetComponent<ChicAndCageRecordable>().SetData(this);
+        }
+        if (cageAttatchment == null)
+        {
+            if (prefab.GetComponent<CageAttatchment>() == null)
+            {
+                if (prefab.GetComponentInChildren<CageAttatchment>() != null)
+                {
+                    cageAttatchment = prefab.GetComponentInChildren<CageAttatchment>();
+                }
+                else
+                {
+                    Debug.LogError("No Cage Attatchment found on prefab: " + prefab.name);
+                    return;
+                }
+            }
+            else
+                cageAttatchment = prefab.GetComponent<CageAttatchment>();
+        }
+        if (!cage.gameObject.activeInHierarchy) cage.gameObject.SetActive(true);
+
+        cage.position = cageAttatchment.ReturnPosition();
+
+
+
+
+    }
 
     private void SetLineColor(Color col)
     {

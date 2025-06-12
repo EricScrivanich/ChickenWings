@@ -291,6 +291,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8906148939765682646}
   - {fileID: 3432859494227277318}
   - {fileID: 6374316534684818186}
   - {fileID: 8061468616221099117}
@@ -354,6 +355,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &6583321411538011363
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8906148939765682646}
+  m_Layer: 11
+  m_Name: CageAttach
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8906148939765682646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6583321411538011363}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.686, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6540167693371364994}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6711628627255700491
 GameObject:
   m_ObjectHideFlags: 0
@@ -719,6 +751,7 @@ GameObject:
   - component: {fileID: 3758173028719529025}
   - component: {fileID: 5610749597598762230}
   - component: {fileID: 4092617737200175086}
+  - component: {fileID: 2472660283296253147}
   m_Layer: 26
   m_Name: FlappyPig
   m_TagString: Plane
@@ -807,7 +840,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 393216
+    m_Bits: 537264128
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -941,3 +974,21 @@ SortingGroup:
   m_SortingLayer: 4
   m_SortingOrder: 5
   m_SortAtRoot: 0
+--- !u!114 &2472660283296253147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8989442647894383715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902ed7f2b6a6a42399b0035a6c04d752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  <transformInsteadOfOffset>k__BackingField: {fileID: 8906148939765682646}
+  useAdditionalTransform: 1
+  showGizmo: 1
+  <useRotation>k__BackingField: 0
+  rotationOffset: 0

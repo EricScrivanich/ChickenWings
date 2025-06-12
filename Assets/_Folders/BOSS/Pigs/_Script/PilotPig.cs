@@ -50,6 +50,9 @@ public class PilotPig : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+
+
+        rb.bodyType = RigidbodyType2D.Dynamic;
     }
 
     private void FixedUpdate()
