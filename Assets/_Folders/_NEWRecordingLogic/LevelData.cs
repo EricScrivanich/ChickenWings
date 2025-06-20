@@ -55,7 +55,7 @@ public class LevelData : ScriptableObject
 
 
 
-    public void InitializeData(SpawnStateManager s, ushort startingStep)
+    public void InitializeData(SpawnStateManager s, ushort startingStep, int preloadIndex = -1)
     {
         spawner = s;
         ringPool.Initialize(s);
@@ -67,7 +67,10 @@ public class LevelData : ScriptableObject
         dataTypeIndexes = new int[5];
 
         // Set currentSpawnStep to the specified starting step.
+        if (preloadIndex >= 0) startingStep = (ushort)preloadIndex;
+        Debug.LogError("Starting Step: " + startingStep + " preloadIndex: " + preloadIndex);
         currentSpawnStep = startingStep;
+
         currentCageIndex = 0;
 
         // Find the first index in spawnSteps where the step is >= startingStep.
@@ -290,20 +293,38 @@ public class LevelData : ScriptableObject
         currentSpawnStep = ss;
         if (ss == nextSpawnStep)
         {
+            Debug.LogError("Next Spawn Step: " + ss + " is the same as current spawn step: " + currentSpawnStep + ". Spawning objects now.");
 
             for (ushort i = currentSpawnIndex; i < nextSpawnIndex; i++)
             {
                 // Debug.LogError("Spawning Object: ID: " + Data[i].ID + " Pos: " + Data[i].startPos + " Speed: " + Data[i].speed + " Scale: " + Data[i].scale + " Mag: " + Data[i].magPercent + " Time: " + Data[i].timeInterval + " Delay: " + Data[i].delayInterval + " Type: " + Data[i].type);
                 // spawner.SpawnObject(Data[i]);
 
-                bool spawnCage = false;
+
                 if (idList[i] >= 0)
                 {
                     if (dataTypes[i] < 0)
                     {
                         pools[idList[i]].SpawnPositionerData(postionerData[currentPositionerObjectIndex]);
                         currentPositionerObjectIndex++;
-                        continue;
+                        if (checkForCage && i == cageAttachments[currentCageIndex])
+                        {
+                            // Spawn a cage object
+                            Debug.LogError("Spawning Cage for ID: " + idList[i] + " at index: " + currentCageIndex);
+                            var attachedObject = pools[idList[i]].GetCageAttachment();
+                            var cage = Instantiate(cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
+                            // cage.gameObject.SetActive(false);
+                            cage.GetComponent<CustomHingeJoint2D>().SetAttatchedObject(attachedObject);
+                            currentCageIndex++;
+
+                            if (currentCageIndex >= cageAttachments.Length)
+                            {
+                                checkForCage = false; // No more cages to spawn
+                            }
+                        }
+
+                        continue; // Skip to the next iteration for positioner objects
+
                     }
 
 
@@ -330,6 +351,7 @@ public class LevelData : ScriptableObject
                     if (checkForCage && i == cageAttachments[currentCageIndex])
                     {
                         // Spawn a cage object
+                        Debug.LogError("Spawning Cage for ID: " + idList[i] + " at index: " + currentCageIndex);
                         var attachedObject = pools[idList[i]].GetCageAttachment();
                         var cage = Instantiate(cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
                         // cage.gameObject.SetActive(false);

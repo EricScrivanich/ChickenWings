@@ -42,7 +42,7 @@ public class ColliderEnemy : MonoBehaviour
     // Start is called before the first frame update
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("collide solid");
+        
 
         if (collision.gameObject.CompareTag("Floor")) //&& floorCollision
         {
@@ -56,6 +56,7 @@ public class ColliderEnemy : MonoBehaviour
         {
             ID.events.OnWater?.Invoke(true);
         }
+        ID.events.OnCollision?.Invoke();
     }
 
     private void OnCollisionExit2D(Collision2D collision)

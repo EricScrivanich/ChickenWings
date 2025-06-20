@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class BarnMovement : MonoBehaviour
+using DG.Tweening;
+public class BarnMovement : MonoBehaviour, IRecordableObject
 {
     private int barnType;
     public BarnID ID;
@@ -11,6 +11,7 @@ public class BarnMovement : MonoBehaviour
     [SerializeField] private SpriteRenderer smallHay;
     private BoxCollider2D coll;
     private int speed;
+    
 
     private float fullSize = 4.7f;
     private float middleSize = 3.85f;
@@ -31,9 +32,11 @@ public class BarnMovement : MonoBehaviour
         coll = GetComponent<BoxCollider2D>();
 
     }
-    public void Initilaize(int barnTypeVar)
+
+
+    public void Initialize(int barnTypeVar)
     {
-        Debug.Log("Barn Index IS: " + barnTypeVar);
+
         switch (barnTypeVar)
         {
 
@@ -43,6 +46,7 @@ public class BarnMovement : MonoBehaviour
 
                 leftSide.sprite = ID.barnSide;
                 rightSide.sprite = ID.barnSide;
+
 
                 SetCollider(noOffset, bigCollSize);
                 smallHay.sprite = ID.GetRandomSmallHay();
@@ -103,7 +107,14 @@ public class BarnMovement : MonoBehaviour
                 break;
 
         }
+
+
         this.gameObject.SetActive(true);
+
+    }
+
+    public void CollectChicAnimation(Transform chic)
+    {
 
     }
 
@@ -125,5 +136,82 @@ public class BarnMovement : MonoBehaviour
             gameObject.SetActive(false);
         }
 
+    }
+
+    public void ApplyFloatOneData(DataStructFloatOne data)
+    {
+        transform.position = data.startPos;
+        Initialize((int)data.type);
+    }
+
+    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ApplyFloatThreeData(DataStructFloatThree data)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ApplyFloatFourData(DataStructFloatFour data)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ApplyFloatFiveData(DataStructFloatFive data)
+    {
+        throw new System.NotImplementedException();
+    }
+    private int lastDataType;
+
+    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+    {
+        if (lastDataType == data.type) return;
+        lastDataType = data.type;
+        switch (data.type)
+        {
+            case 1:
+                leftSide.gameObject.SetActive(true);
+                rightSide.gameObject.SetActive(true);
+                break;
+            case 2:
+                leftSide.gameObject.SetActive(true);
+                rightSide.gameObject.SetActive(false);
+
+                break;
+            case 3:
+                leftSide.gameObject.SetActive(false);
+                rightSide.gameObject.SetActive(true);
+
+                break;
+            case 4:
+                leftSide.gameObject.SetActive(false);
+                rightSide.gameObject.SetActive(false);
+
+                break;
+        }
+
+
+    }
+
+    public bool ShowLine()
+    {
+        return false;
+    }
+
+    public float TimeAtCreateObject(int index)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
+    {
+        return new Vector2(currPos.x - (BoundariesManager.GroundSpeed * time), transform.position.y);
+    }
+
+    public float ReturnPhaseOffset(float x)
+    {
+        return 0;
     }
 }

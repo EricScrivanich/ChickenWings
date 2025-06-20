@@ -85,5 +85,7 @@ public struct GlobalPlayerEvents
     public Action<Vector2, float> ThrowItem;
     public Action<int, bool> EquipItem;
 
+    public Action KillPlayer;
+
 
 }

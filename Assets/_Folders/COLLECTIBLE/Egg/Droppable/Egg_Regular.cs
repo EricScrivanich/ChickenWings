@@ -89,19 +89,23 @@ public class Egg_Regular : MonoBehaviour
     //     yield return new WaitForSeconds(.1f);
     //     gameObject.SetActive(false);
     // }
-
-    private void OnCollisionEnter2D(Collision2D collider)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (hasHit) return;
-        else if (collider.gameObject.CompareTag("Barn"))
+        else if (other.CompareTag("Barn"))
         {
             hasHit = true;
             ID.AddScore(5);
             AudioManager.instance.PlayScoreSound();
+            gameObject.SetActive(false);
             // pool.Despawn(gameObject);
             // return;
 
         }
+    }
+    private void OnCollisionEnter2D(Collision2D collider)
+    {
+        if (hasHit) return;
 
 
         else if (collider.gameObject.CompareTag("Floor"))

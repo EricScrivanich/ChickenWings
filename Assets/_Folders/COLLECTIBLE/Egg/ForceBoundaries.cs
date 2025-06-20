@@ -11,11 +11,19 @@ public class ForceBoundaries : MonoBehaviour
     [SerializeField] private float slowDownFallBoundary = -1.5f;
     [SerializeField] private float slowDownFallMultiplier = 1.5f;
     private float addForceDownBoundary = 4.8f;
+    [SerializeField] private float addForceDownBoundaryOffset;
     private float originalMaxFallSpeed;
 
     [SerializeField] private Vector2 addRightForce = new Vector2(20, 10);
     [SerializeField] private Vector2 addDownForce = new Vector2(0, -6.1f);
     [SerializeField] private Vector2 addLeftForce = new Vector2(-20, 10);
+
+    [SerializeField] private float leftRightBoundaryOffset;
+
+
+
+
+
     private float topBoundary;
     private float leftBoundary;
     private float rightBoundary;
@@ -44,8 +52,8 @@ public class ForceBoundaries : MonoBehaviour
 
 
         topBoundary = 5.1f;
-        leftBoundary = BoundariesManager.leftPlayerBoundary;
-        rightBoundary = BoundariesManager.rightPlayerBoundary;
+        leftBoundary = BoundariesManager.leftPlayerBoundary + leftRightBoundaryOffset;
+        rightBoundary = BoundariesManager.rightPlayerBoundary - leftRightBoundaryOffset;
         CreateArrow(arrowPrefab);
 
         rb = GetComponent<Rigidbody2D>();
@@ -72,12 +80,23 @@ public class ForceBoundaries : MonoBehaviour
 
     }
 
+    void OnDisable()
+    {
+        if (arrow != null)
+        {
+            arrow.gameObject.SetActive(false);
+        }
+    }
+
     // public void SetStateManager(PlayerStateManager psm, float fallSpeed)
     // {
     //     stateManager = psm;
     //     originalMaxFallSpeed = fallSpeed;
     // }
-
+    private void OnEnable()
+    {
+        addForceDownBoundary = BoundariesManager.TopViewBoundary + addForceDownBoundaryOffset;
+    }
     private void FixedUpdate()
     {
         if (!isActive) return;
@@ -118,8 +137,8 @@ public class ForceBoundaries : MonoBehaviour
 
         else if (transform.position.y > addForceDownBoundary)
         {
-            if (rb.linearVelocity.y > -4.4f && rb.linearVelocity.y < 7.5f)
-                rb.AddForce(addDownForce);
+
+            rb.AddForce(addDownForce);
 
             if (!isTop && transform.position.y > topBoundary)
             {

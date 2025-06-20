@@ -243,6 +243,11 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         float fadeAmountEnd = .7f;
         bool hasExploded = false;
 
+        if (GetComponent<CageAttatchment>() != null)
+        {
+            GetComponent<CageAttatchment>().SetPigKilled();
+        }
+
         transform.DOScale(transform.localScale * 1.25f, .65f);
         while (elapsedTime < .15f)
         {

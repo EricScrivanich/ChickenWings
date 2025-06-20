@@ -119,6 +119,8 @@ public class DynamicValueAdder : MonoBehaviour
         {
             u.ChangeValue += EditInt;
         }
+
+        Deactivate();
     }
 
     public void Scroll(bool down)
@@ -554,7 +556,7 @@ public class DynamicValueAdder : MonoBehaviour
         }
         else if (type == DynamicValueType.Rotations)
         {
-            Debug.LogError("Returning float value: " + data.values[currentSelectedValue] % 360);
+
             return currentReturnedFloatValue;
 
         }
@@ -569,7 +571,7 @@ public class DynamicValueAdder : MonoBehaviour
 
     public void EditFloat(float change)
     {
-        Debug.LogError("Eding Rot value for some reason");
+
         currentAdditionalValue = change;
         currentReturnedFloatValue = change;
 

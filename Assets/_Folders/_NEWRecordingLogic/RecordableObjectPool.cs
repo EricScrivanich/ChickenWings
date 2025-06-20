@@ -88,10 +88,10 @@ public class RecordableObjectPool : ScriptableObject
     public CageAttatchment GetCageAttachment()
     {
         int index = currentIndex - 1;
-        if (index < 0) index = pool.Length - 1; // Wrap around if index is negative
+        // Wrap around if index is negative
         if (pool != null && pool.Length > 0)
         {
-
+            if (index < 0) index = pool.Length - 1;
             GameObject obj = (pool[index] as MonoBehaviour)?.gameObject;
             if (obj.GetComponent<CageAttatchment>() != null)
             {
@@ -109,6 +109,7 @@ public class RecordableObjectPool : ScriptableObject
         }
         else if (positionerPool != null && positionerPool.Length > 0)
         {
+            if (index < 0) index = positionerPool.Length - 1;
             GameObject obj = positionerPool[index].gameObject;
             if (obj.GetComponent<CageAttatchment>() != null)
             {

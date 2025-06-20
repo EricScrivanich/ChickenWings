@@ -538,9 +538,10 @@ GameObject:
   - component: {fileID: 4792587693866604393}
   - component: {fileID: 6079842093041450270}
   - component: {fileID: 814022260511045507}
-  m_Layer: 11
+  - component: {fileID: 4108608601797385319}
+  m_Layer: 4
   m_Name: LaserShooter
-  m_TagString: Plane
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -675,7 +676,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -926,6 +927,25 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4108608601797385319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4853563944674963801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902ed7f2b6a6a42399b0035a6c04d752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: -0.32516658}
+  <transformInsteadOfOffset>k__BackingField: {fileID: 3704833873855178425}
+  useAdditionalTransform: 1
+  showGizmo: 1
+  <useRotation>k__BackingField: 0
+  rotationOffset: 0
+  <adjustLerpSpeed>k__BackingField: 0
 --- !u!1 &5441750711970191117
 GameObject:
   m_ObjectHideFlags: 0

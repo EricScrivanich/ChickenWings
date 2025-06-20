@@ -172,61 +172,7 @@ public class GasPig : MonoBehaviour, IRecordableObject
             SmokeTrailPool.OnDisableGasTrail?.Invoke(id);
     }
 
-    public void ApplyRecordedData(RecordedDataStruct data)
-    {
-        // transform.position = data.startPos;
-        // if (!flying)
-        // {
-        //     speed = data.speed;
 
-        //     if (speed < BoundariesManager.GroundSpeed)
-        //     {
-        //         transform.localScale = Vector3.Scale(Vector3.one, BoundariesManager.FlippedXScale);
-        //     }
-        //     else transform.localScale = Vector3.one;
-
-
-
-        //     initialDelay = data.delayInterval * delay;
-        // }
-        // else
-        // {
-        //     speed = 8;
-
-
-        // }
-        // delay = data.timeInterval;
-
-        // gameObject.SetActive(true);
-        bool f = false;
-        if (!flying)
-        {
-            speed = data.speed;
-
-            if (speed < BoundariesManager.GroundSpeed)
-            {
-                transform.localScale = Vector3.Scale(Vector3.one * .9f, BoundariesManager.FlippedXScale);
-                f = true;
-            }
-            else transform.localScale = Vector3.one * .9f;
-
-
-
-            initialDelay = data.delayInterval * delay;
-        }
-        else
-        {
-            speed = 8;
-
-
-        }
-
-        transform.position = data.startPos;
-
-        // data.type
-        Initialize(speed, data.timeInterval, f, data.delayInterval);
-
-    }
     public void ApplyFloatOneData(DataStructFloatOne data)
     {
         transform.position = data.startPos;
@@ -319,11 +265,10 @@ public class GasPig : MonoBehaviour, IRecordableObject
                     p.x = BoundariesManager.leftBoundary;
 
                 }
-                else
-                {
-                    SetTiledSpritePosition(gasTexture, currPos.x, p.x, currPos.y);
 
-                }
+                SetTiledSpritePosition(gasTexture, currPos.x, p.x, currPos.y);
+
+
 
 
             }

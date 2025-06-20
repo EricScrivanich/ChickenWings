@@ -10,6 +10,12 @@ public class CageAttatchment : MonoBehaviour
     [field: SerializeField] public bool useRotation { get; private set; }
     [SerializeField] private short rotationOffset = 0;
 
+    [field: SerializeField] public float adjustLerpSpeed { get; private set; } = 0;
+
+    public bool pigKilled { get; private set; } = false;
+    public bool pigFinished { get; private set; } = false;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public Vector2 ReturnPosition()
@@ -22,14 +28,31 @@ public class CageAttatchment : MonoBehaviour
         return offset + (Vector2)transform.position;
     }
 
+    public void SetPigKilled()
+    {
+        pigKilled = true;
+    }
+
+    private void OnDisable()
+    {
+        pigFinished = true;
+       
+
+    }
+
     public void SetCageParent(Transform cage, out bool useManualOffset)
     {
+        pigFinished = false;
+        pigKilled = false;
 
         if (useAdditionalTransform)
         {
+
+            useManualOffset = true;
+
             // cage.SetParent(transformInsteadOfOffset);
             // cage.localPosition = offset;
-            useManualOffset = true;
+            // useManualOffset = false;
         }
         else
         {

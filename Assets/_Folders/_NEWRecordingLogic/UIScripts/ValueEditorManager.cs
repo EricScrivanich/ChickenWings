@@ -25,6 +25,8 @@ public class ValueEditorManager : MonoBehaviour
 
     public LevelDataEditors[] floatEditors { get; private set; }
 
+    private int floatEditorCount = 0;
+
     [field: SerializeField] public Slider valueSliderHorizontal { get; private set; }
     [field: SerializeField] public TextMeshProUGUI valueSliderText { get; private set; }
     [SerializeField] private ObjectTypeEditor typeEditor;
@@ -92,6 +94,57 @@ public class ValueEditorManager : MonoBehaviour
 
     }
 
+    public void SetNewFloatSize(int change)
+    {
+        int newSize = floatEditorCount + change;
+        lastUsedFloatIndex += change;
+
+        if (change < 0)
+        {
+            for (int i = newSize; i < floatEditors.Length; i++)
+            {
+                floatEditors[i].gameObject.SetActive(false);
+
+                if (activeRects.Contains(floatEditors[i].GetComponent<RectTransform>()))
+                {
+                    activeRects.Remove(floatEditors[i].GetComponent<RectTransform>());
+                }
+            }
+
+        }
+        else
+        {
+            for (int i = floatEditorCount; i < newSize; i++)
+            {
+                floatEditors[i].gameObject.SetActive(true);
+                activeRects.Add(floatEditors[i].GetComponent<RectTransform>());
+            }
+
+            if (typeEditor.gameObject.activeInHierarchy)
+            {
+                var r = typeEditor.GetComponent<RectTransform>();
+                for (int i = 0; i < activeRects.Count; i++)
+                {
+                    if (activeRects[i] == r)
+                    {
+                        activeRects.RemoveAt(i);
+                        break;
+                    }
+
+                }
+                activeRects.Add(r);
+
+
+            }
+
+        }
+
+        floatEditorCount += change;
+
+        OrderRectList();
+
+    }
+
     public void OrderRectList(string type = null)
     {
 
@@ -115,6 +168,14 @@ public class ValueEditorManager : MonoBehaviour
         }
         rect.sizeDelta = new Vector2(rect.sizeDelta.x, baseHeight + (addedHeightPerSection * (lastUsedFloatIndex)));
     }
+
+    public void DeactivateFloatEditors()
+    {
+        for (int i = 0; i < floatEditors.Length; i++)
+        {
+            floatEditors[i].gameObject.SetActive(false);
+        }
+    }
     public void SendFloatValues(string type, int index, bool final)
     {
         if (isShowingList || isShowingCage)
@@ -130,6 +191,7 @@ public class ValueEditorManager : MonoBehaviour
 
         if (final)
         {
+            floatEditorCount = index + 1;
 
             for (int i = index + 1; i < floatEditors.Length; i++)
             {

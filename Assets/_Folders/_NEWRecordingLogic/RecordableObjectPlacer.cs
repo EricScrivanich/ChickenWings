@@ -150,6 +150,8 @@ public class RecordableObjectPlacer : MonoBehaviour
     private ObjectPositioner objectPositioner;
     public PositionerType[] positionerTypes;
 
+    private int lastSavedType = 0;
+
 
 
 
@@ -304,6 +306,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
         Data = new RecordedDataStructDynamic(ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0);
+        lastSavedType = type;
 
         if (_pType == PostionType.Position)
         {
@@ -393,6 +396,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         Data = data;
         transform.position = data.startPos;
         spawnedTimeStep = data.spawnedStep;
+        lastSavedType = data.type;
         if (floatOneIsSpeed) speed = data.float1;
         else speed = 0;
 
@@ -408,6 +412,12 @@ public class RecordableObjectPlacer : MonoBehaviour
             }
 
         }
+        else if (Title == "Balloon" && Data.type == 1)
+        {
+            skipProjectileLines = true;
+
+        }
+
         if (_pType == PostionType.Position)
         {
             if (Title == "Laser")
@@ -520,27 +530,35 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     public void SetSelectedObject()
     {
+
+
         if (isSelected) return;
 
         SetIsSelected(true);
 
+        // else
+        //     return;
+
+
 
         ValueEditorManager.instance.ResetRectList();
 
-        for (int i = 0; i < editedData.Length; i++)
-        {
-
-            int index = i;
 
 
 
-            if (i == editedData.Length - 1) ValueEditorManager.instance.SendFloatValues(FormatEnumName(editedData[i]), index, true);
+        if (editedData != null && editedData.Length > 0)
 
-            else ValueEditorManager.instance.SendFloatValues(FormatEnumName(editedData[i]), index, false);
+            for (int i = 0; i < editedData.Length; i++)
+            {
+                int index = i;
+                if (i == editedData.Length - 1) ValueEditorManager.instance.SendFloatValues(FormatEnumName(editedData[i]), index, true);
+                else ValueEditorManager.instance.SendFloatValues(FormatEnumName(editedData[i]), index, false);
+            }
+        else ValueEditorManager.instance.DeactivateFloatEditors();
 
-        }
 
         ValueEditorManager.instance.SendTypeValues(typeTitle, typeOptions);
+
         if (positionerTypes != null && positionerTypes.Length > 0)
             for (int i = 0; i < positionerTypes.Length; i++)
             {
@@ -550,7 +568,14 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
+
         ValueEditorManager.instance.OrderRectList(Title);
+        if (Title == "Balloon" && Data.type == 1)
+        {
+
+            ValueEditorManager.instance.SetNewFloatSize(-2);
+
+        }
 
     }
     public void SetIsSelected(bool selected)
@@ -818,6 +843,32 @@ public class RecordableObjectPlacer : MonoBehaviour
     public void UpdateObjectData(bool isScale = false)
     {
         obj.ApplyCustomizedData(Data);
+
+
+        if (lastSavedType != Data.type && Title == "Balloon")
+        {
+            if (Data.type == 0)
+            {
+                skipProjectileLines = false;
+                ValueEditorManager.instance.SetNewFloatSize(2);
+            }
+            else if (Data.type == 1)
+            {
+                skipProjectileLines = true;
+                ValueEditorManager.instance.SetNewFloatSize(-2);
+
+
+            }
+
+
+            SetProjectileLines();
+
+            lastSavedType = Data.type;
+            return;
+        }
+        lastSavedType = Data.type;
+
+
 
         if ((Data.ID == 0 || Data.ID == 2) && isScale)
         {
@@ -1315,11 +1366,12 @@ public class RecordableObjectPlacer : MonoBehaviour
         line.startColor = col;
         line.endColor = col;
     }
+    private bool skipProjectileLines = false;
     private List<GameObject> projectileLines = new List<GameObject>();
     private void SetProjectileLines()
     {
 
-        if (isSelected && (ID == 10 || ID == 8))
+        if (isSelected && (ID == 10 || ID == 8) && !skipProjectileLines)
         {
             float offset = obj.ReturnPhaseOffset(transform.position.x);
             Vector2 pos = transform.position;
@@ -1506,6 +1558,12 @@ public class RecordableObjectPlacer : MonoBehaviour
         return new RecordedObjectPositionerDataSave((short)ID, Data.type, sizesByTypes, percent, new Vector3(Data.startPos.x, Data.startPos.y, startRot), positions.ToArray(), values.ToArray(), eases.ToArray(), startSteps.ToArray(), endSteps.ToArray(), Data.spawnedStep, 0);
 
 
+
+    }
+
+    private void CheckForPreloadTimeStep(int checkedStep)
+    {
+        
 
     }
 }

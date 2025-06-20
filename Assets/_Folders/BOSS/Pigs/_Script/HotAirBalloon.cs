@@ -105,6 +105,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
             gunRotationSpeed = gunRotationSpeedAiming;
 
 
+
         }
     }
 
@@ -242,12 +243,8 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
         sr.sprite = animData.sprites[currentSpriteIndex];
         rb.linearVelocity = new Vector2(speed, 0);
 
-        if (balloonType > 0)
-        {
-            Ticker.OnTickAction015 += SetGunRotationTarget;
-            anim.SetBool(ReverseTrigger, false);
-            isReversingGun = false;
-        }
+
+
 
 
 
@@ -413,25 +410,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
 
 
 
-    public void ApplyRecordedData(RecordedDataStruct data)
-    {
 
-        transform.position = data.startPos;
-        _position = data.startPos;
-        speed = data.speed;
-        magPercent = data.magPercent;
-        phaseOffset = data.delayInterval;
-        delay = data.timeInterval;
-        initialDelay = data.scale * delay;
-
-
-
-
-        pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
-        minSineMagnitude = _sineMagnitude - magDiff;
-        maxSineMagnitude = _sineMagnitude + magDiff;
-        gameObject.SetActive(true);
-    }
 
     public void ApplyFloatOneData(DataStructFloatOne data)
     {
@@ -465,8 +444,32 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         minSineMagnitude = _sineMagnitude - magDiff;
         maxSineMagnitude = _sineMagnitude + magDiff;
-        gameObject.SetActive(true);
+        balloonType = data.type;
 
+
+
+
+        gameObject.SetActive(true);
+        if (balloonType == 0)
+        {
+            anim.SetTrigger("SetBomb");
+
+        }
+        else if (balloonType == 1)
+        {
+            Debug.LogError("Set Turrent");
+            Ticker.OnTickAction015 += SetGunRotationTarget;
+            anim.SetBool(ReverseTrigger, false);
+            isReversingGun = false;
+            anim.SetTrigger("SetTurret");
+            anim.SetTrigger("Reset");
+            if (player == null)
+                player = GameObject.Find("Player").GetComponent<Transform>();
+
+            usingGun = true;
+            gunRotationSpeed = gunRotationSpeedAiming;
+            delay = .35f;
+        }
     }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
@@ -482,6 +485,20 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         minSineMagnitude = _sineMagnitude - magDiff;
         maxSineMagnitude = _sineMagnitude + magDiff;
+
+
+        if (data.type == 0 && gunTransform.gameObject.activeInHierarchy)
+        {
+            gunTransform.gameObject.SetActive(false);
+        }
+        else if (data.type == 1 && !gunTransform.gameObject.activeInHierarchy)
+        {
+            gunTransform.gameObject.SetActive(true);
+
+        }
+
+
+
     }
 
 

@@ -7,10 +7,17 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     public Transform playerPos; // Reference to the playerPos (to attach the object to)
     public Transform chicPos;
     public PlayerID player;
+    private SpriteRenderer sr;
+
+    [SerializeField] private ParticleSystem cageParticles;
+
+    [SerializeField] private PlayerParts deathParticles;
+
+    [SerializeField] private AnimationDataSO animDataSO;
 
     [SerializeField] private bool attatchedToObject;
     [SerializeField] private CageAttatchment attatchedObject;
-    public float rotationSpeedAttached = 300f; // Speed at which the object rotates to the target angle when attached
+    private float rotationSpeedAttached = 90f; // Speed at which the object rotates to the target angle when attached
 
 
     public BoxCollider2D collectableColl;
@@ -18,21 +25,18 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
     private static bool hasAttachment;
 
-    public Rigidbody2D chicRb;
-    public bool isAttached = false; // Determines if the object is attached to the playerPos
-    public float targetAngle = 0f; // Target angle for predefined rotation
-    public float rotationSpeed = 300f; // Speed at which the object rotates to the target angle
-    public float rotationSpeedFree = 100f; // Speed at which the object rotates to the target angle
+    [SerializeField] private Rigidbody2D chicRb;
+    private bool isAttached = false; // Determines if the object is attached to the playerPos
+    private float targetAngle = 0f; // Target angle for predefined rotation
+    private readonly float rotationSpeed = 300f; // Speed at which the object rotates to the target angle
+    private float rotationSpeedFree = 120f; // Speed at which the object rotates to the target angle
 
-    public float freeRotationBaseSpeed = 50f; // Base speed for free rotation
-    public float freeRotationMaxSpeed = 200f; // Maximum speed for free rotation
-    public float freeRotationAccelerationStep = 10f; //
+    private readonly float freeRotationBaseSpeed = 90f; // Base speed for free rotation
+    private readonly float freeRotationMaxSpeed = 200f; // Maximum speed for free rotation
+    private readonly float freeRotationAccelerationStep = 10f; //
 
-    public bool enableFreeRotation = true; // Allows free rotation after reaching the target angle
-    public float maxDownSpeed;
-    public float maxUpSpeed;
-    public float maxLeftSpeed;
-    public float maxRightSpeed;
+
+
     public float forceFromPlayerRatio;
     public float addedYForceOnRelease;
     public float releaseCooldown;
@@ -42,10 +46,8 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
     private bool justReleased;
 
-    private bool resetRotation;
-    private bool resetChic;
-    private int fixedFramesForRotation = 1;
-    private float currentTimeForFixedFrames = 0;
+
+
     private bool setPositionManually = false;
 
 
@@ -62,13 +64,23 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     // {
     //     chicRb.transform.parent = null;
     // }
+
+    void Awake()
+    {
+        sr = GetComponent<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
+    }
     void Start()
     {
+
         if (ignoreStart) return;
 
         if (attatchedToObject)
         {
             attatchedObject.SetCageParent(this.transform, out setPositionManually);
+            float s = attatchedObject.adjustLerpSpeed;
+            if (s > 0) rotationSpeedAttached = s;
+            else if (s == -1) ignoreLerp = true; // -1 means no lerp, just instant rotation
 
             if (setPositionManually)
             {
@@ -86,7 +98,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         }
 
         justSpawned = true;
-
+        chicRb.transform.parent = null;
         hasAttachment = false;
         if (isAttached)
         {
@@ -102,7 +114,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
         releaseCooldownVar = releaseCooldown;
         addedForceOnRelease = new Vector2(0, addedYForceOnRelease);
-        rb = GetComponent<Rigidbody2D>();
+
         playerRb = playerPos.gameObject.GetComponent<Rigidbody2D>();
         boundaries = GetComponent<ForceBoundaries>();
         boundaries.Activate(false);
@@ -117,10 +129,15 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         rb.bodyType = isAttached || attatchedToObject ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
     }
     private bool ignoreStart = false;
+    private bool ignoreLerp = false;
+    private bool justSpawnedInitial;
     public void SetAttatchedObject(CageAttatchment attatchedObject)
     {
         this.attatchedObject = attatchedObject;
         ignoreStart = true;
+        float s = attatchedObject.adjustLerpSpeed;
+        if (s > 0) rotationSpeedAttached = s;
+        else if (s == -1) ignoreLerp = true; // -1 means no lerp, just instant rotation
 
         if (playerPos == null)
         {
@@ -128,11 +145,13 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         }
         justSpawned = true;
 
-        rb = GetComponent<Rigidbody2D>();
+
         playerRb = playerPos.gameObject.GetComponent<Rigidbody2D>();
         boundaries = GetComponent<ForceBoundaries>();
         boundaries.Activate(false);
-
+        chicRb.transform.parent = null;
+        justSpawnedInitial = true;
+        ignoreCollisions = false;
         rb.bodyType = isAttached || attatchedToObject ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
 
         attatchedObject.SetCageParent(this.transform, out setPositionManually);
@@ -143,10 +162,14 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
             // transform.position = lastPosition;
             rb.MovePosition(lastPosition);
             chicRb.MovePosition(chicPos.position);
+            chicRb.angularVelocity = 0;
+            Debug.LogError("Set Attatched Object: " + attatchedObject.name + " to: " + gameObject.name + " with position: " + lastPosition);
         }
         else
         {
             lastPosition = transform.position;
+            chicRb.MovePosition(chicPos.position);
+            chicRb.angularVelocity = 0;
             // chicRb.MovePosition(chicPos.position);
         }
 
@@ -180,14 +203,13 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     [SerializeField] private float sineFreq;
     [SerializeField] private float sineAmp;
 
+
+
     private void AngleBasedOnAttatchedEnemyVelocity()
     {
         // fixedFramesForRotation++;
         // currentTimeForFixedFrames += Time.fixedDeltaTime;
-        // if (currentTimeForFixedFrames <= 1)
-        // {
-        //     return;
-        // }
+
 
         Vector2 newPos;
 
@@ -199,33 +221,47 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         else
             newPos = rb.position;
 
-        // Get the current position of the attached object
-        // Vector2 newPos = attatchedObject.ReturnPosition();
 
-        // Calculate manual velocity (based on change in position)
         Vector2 velocity = (newPos - lastPosition) / Time.fixedDeltaTime;
-        lastPosition = newPos; // Update last position for next frame
-        // Vector2 velocity = (newPos - lastPosition) / currentTimeForFixedFrames;
 
-        // Store current position for next frame
+        if (attatchedObject.pigKilled)
+        {
+            DetachFromObject(velocity);
+            return;
+        }
+        else if (attatchedObject.pigFinished)
+        {
+            Explode();
+            return;
+        }
 
-
-        // Move this object to the new position
-
-        // Debug.Log("Cage moved");
-        // return;
-        // if (attatchedObject.useRotation)
+        // if (fixedFramesForRotation <= 1)
         // {
-        //     rb.MoveRotation(attatchedObject.ReturnRotation());
-        //     if (justSpawned)
+        //     float s = rotationSpeedAttached * Time.fixedDeltaTime; // you should define this like in ApplyFreeRotation()
+        //     float a = Mathf.MoveTowardsAngle(rb.rotation, targetAngle, s);
+        //     if (velocity.y == 0)
         //     {
-        //         justSpawned = false;
-
-        //         chicRb.MovePosition(chicPos.position);
+        //         float added = Mathf.Sin(Time.time * sineFreq) * sineAmp; // Adjust the frequency and amplitude as needed
+        //         a += added;
+        //         // Debug.LogError("Adding sine to angle: " + added);
         //     }
-        //     return;
 
+
+        //     rb.MoveRotation(a);
+        //     return;
         // }
+        // currentTimeForFixedFrames = 0;
+
+        // fixedFramesForRotation = 0;
+        lastPosition = newPos;
+
+        if (justSpawnedInitial)
+        {
+            justSpawnedInitial = false;
+            return;
+        }
+
+
 
 
         // Early exit if there's no movement
@@ -233,13 +269,25 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
             return;
         float p = Mathf.InverseLerp(0, 9, Mathf.Abs(velocity.x));
         // Get angle based on velocity direction
-        float targetAngle = Mathf.Atan2(-velocity.x, velocity.y) * Mathf.Rad2Deg * p;
+        targetAngle = Mathf.Atan2(-velocity.x, velocity.y) * Mathf.Rad2Deg * p;
+
+
 
         if (justSpawned)
         {
             justSpawned = false;
+            chicRb.MovePositionAndRotation(chicPos.position, targetAngle);
+
             rb.MoveRotation(targetAngle);
-            chicRb.MovePosition(chicPos.position);
+            chicRb.angularVelocity = 0;
+            chicRb.linearVelocity = velocity * 1.5f;
+            return;
+        }
+
+        if (ignoreLerp)
+        {
+            rb.MoveRotation(targetAngle);
+            // chicRb.MovePosition(chicPos.position);
             return;
         }
         // if (velocity.y == 0)
@@ -269,7 +317,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     private void FixedUpdate()
     {
 
-
+        // Debug.LogError("Chic Velocity: " + chicRb.linearVelocity);
 
         if (isAttached)
         {
@@ -331,8 +379,52 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
 
     }
+    private bool ignoreCollisions = false;
+    private void Explode()
+    {
+        ignoreCollisions = true;
+        StartCoroutine(CageExplode());
+        cageParticles.Play();
+        AudioManager.instance.PlayCageDestroySound();
+
+    }
+
+    private WaitForSeconds animWait = new WaitForSeconds(0.06f);
+    private IEnumerator CageExplode(bool ignore = false)
+    {
+        if (!hitFloor)
+        {
+            sr.sprite = animDataSO.sprites[1];
+            yield return animWait;
+        }
+
+        if (!ignore)
+        {
+            Instantiate(deathParticles.FeatherParticle, chicRb.position, Quaternion.identity);
+            Instantiate(deathParticles.SmokeParticle, chicRb.position, Quaternion.identity);
+            player.KillPlayer();
+            chicRb.gameObject.SetActive(false);
+        }
+
+        transform.localScale = Vector3.one * 1.2f;
+
+        for (int i = 2; i < animDataSO.sprites.Length; i++)
+        {
+            sr.sprite = animDataSO.sprites[i];
+            yield return animWait;
+
+        }
+
+        gameObject.SetActive(false);
+
+
+
+
+    }
     public void AttachToPlayer()
     {
+        player.globalEvents.SetCageAngle += SetTargetAngle;
+        player.globalEvents.OnReleaseCage += DetachFromPlayer;
         player.events.OnCollectCage?.Invoke();
         hasAttachment = true;
 
@@ -350,12 +442,41 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         // Set to kinematic when attached
     }
 
+    private bool hitFloor = false;
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (ignoreCollisions) return;
+
 
         if (!other.CompareTag("Player"))
         {
+            if (other.CompareTag("Barn"))
+            {
+                StartCoroutine(CageExplode(true));
+                chicRb.simulated = false;
+                chicRb.transform.SetParent(other.transform);
+                chicRb.GetComponent<ChicTween>().DoBarnTween();
+                return;
+            }
+            else if (other.CompareTag("Floor"))
+            {
+                if (!isAttached && !attatchedToObject) //&& floorCollision
+                {
+                    if (hitFloor)
+                    {
+                        Explode();
+                        return;
+                    } // Prevent multiple triggers
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x * .5f, 11f);
+                    HitEffect();
+                    return;
+
+
+                }
+            }
+
             if (!attatchedToObject && !justReleasedFromObject)
             {
                 if (other.GetComponent<IExplodable>() != null)
@@ -363,7 +484,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
                     // Debug.LogError("Explodable Detected: " + other.name);
                     other.GetComponent<IExplodable>().Explode(false);
                 }
-                gameObject.SetActive(false);
+                Explode();
             }
 
 
@@ -378,7 +499,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
                 other.GetComponent<IExplodable>().Explode(false);
             }
 
-            gameObject.SetActive(false);
+            Explode();
 
         }
         else if (!justReleased && !isAttached && !hasAttachment)
@@ -399,35 +520,31 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
         }
 
-        // if (other.CompareTag("Player") && !justReleased && !isAttached && !hasAttachment)
-        // {
-        //     if (attatchedToObject)
-        //     {
-        //         justReleasedFromObject = true;
-        //         attatchedToObject = false;
-        //         StartCoroutine(CheckReleaseCage(true));
-        //         transform.SetParent(null);
-        //     }
-        //     isAttached = true;
-        //     AttachToPlayer();
 
 
-        //     collectableColl.enabled = false;
-        // }
-        // else if (other.CompareTag("Plane"))
-
-        // {
-        //     if (!attatchedToObject && !justReleasedFromObject)
-
-        //         gameObject.SetActive(false);
 
 
-        //     else if (other.gameObject == attatchedObject.gameObject || other.transform.parent.gameObject == attatchedObject.gameObject)
-        //         return;
+    }
+    private void HitEffect()
+    {
+        hitFloor = true;
+        sr.sprite = animDataSO.sprites[1];
+        cageParticles.Play();
+        AudioManager.instance.PlayCageHitSound();
+    }
+    public void DetachFromObject(Vector2 vel)
+    {
+        attatchedToObject = false;
+        justReleasedFromObject = true;
 
-        //     gameObject.SetActive(false);
-
-        // }
+        StartCoroutine(CheckReleaseCage(true));
+        transform.SetParent(null);
+        hasAttachment = false;
+        boundaries.Activate(true);
+        collectableColl.enabled = true;
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.linearVelocity = vel * forceFromPlayerRatio;
+        rb.AddForce(addedForceOnRelease, ForceMode2D.Impulse);
     }
 
     public void DetachFromPlayer()
@@ -438,13 +555,19 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         justReleased = true;
         StartCoroutine(CheckReleaseCage(false));
         isAttached = false;
-        resetRotation = true;
+
         collectableColl.enabled = true;
 
 
         rb.bodyType = RigidbodyType2D.Dynamic; // Set to dynamic when detached
         rb.linearVelocity = playerRb.linearVelocity * forceFromPlayerRatio;
         rb.AddForce(addedForceOnRelease, ForceMode2D.Impulse);
+
+        player.globalEvents.SetCageAngle -= SetTargetAngle;
+        player.globalEvents.OnReleaseCage -= DetachFromPlayer;
+
+
+
     }
 
     public void SetTargetAngle(int angle)
@@ -551,19 +674,26 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
 
     private bool justSpawned = true;
-    private void OnEnable()
-    {
-
-        player.globalEvents.SetCageAngle += SetTargetAngle;
-        player.globalEvents.OnReleaseCage += DetachFromPlayer;
+    // private void OnEnable()
+    // {
 
 
 
-    }
+
+
+    // }
     private void OnDisable()
     {
         player.globalEvents.SetCageAngle -= SetTargetAngle;
         player.globalEvents.OnReleaseCage -= DetachFromPlayer;
+
+        if (attatchedToObject && !setPositionManually)
+        {
+
+            // Instantiate(deathParticles.SmokeParticle, chicRb.position, Quaternion.identity);
+            player.KillPlayer();
+
+        }
 
     }
 

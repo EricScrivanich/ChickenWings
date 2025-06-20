@@ -599,7 +599,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db215764949cf44d8bd66b9c5b42a2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ignoreStartingState: 0
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  bounceOffGround: 0
+  invincibleMat: {fileID: 0}
+  invincibleTrail: {fileID: 0}
+  ScythePrefab: {fileID: 0}
+  parryPrefab: {fileID: 0}
+  cursorPrefab: {fileID: 0}
+  colorSO: {fileID: 0}
+  parry: {fileID: 0}
   feather: {fileID: 0}
   MovementData: {fileID: 11400000, guid: 5e84c2700182043b993652e8b000e496, type: 2}
   ammoManager: {fileID: 11400000, guid: 366d7951140784dbea2a6bb51d53160e, type: 2}
@@ -609,6 +618,7 @@ MonoBehaviour:
   pool: {fileID: 0}
   yForceMultiplier: 4
   yForceSubtractMultiplier: 2
+  shotgunRotationTarget: 0
   shotgunRotationSpeed: 5
   shotgunAimRotationSpeed: 2
   blastPoint: {fileID: 8805552720765947111}
@@ -642,6 +652,7 @@ MonoBehaviour:
   attackObject: {fileID: 3841359900090050893}
   bucketIsExploded: 0
   maxFallSpeed: -2
+  numberOfWeapons: 0
   holdingRightFlip: 0
   holdingLeftFlip: 0
   justFlippedRight: 0
@@ -658,6 +669,9 @@ MonoBehaviour:
   jumpHeld: 0
   isParachuting: 0
   isTryingToParachute: 0
+  shotgunEquipped: 0
+  movingJoystick: 0
+  usingScythePower: 0
 --- !u!114 &107412689077373414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -801,6 +815,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrowPrefab: {fileID: 556582436784589314, guid: fa20cd46945f74d07837495e6aa8ab83, type: 3}
+  dontSlowFall: 0
+  moveCameraPlayerYStart: 0
+  moveCameraPlayerYEnd: 0
+  cameraMaxZoom: 0
+  cameraMaxY: 0
+  cameraMoveSmoothSpeed: 2
+  cameraZoomSmoothSpeed: 2
 --- !u!1 &3520994022076439796
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,7 +1002,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  type: 0
   damageAmount: 1
+  raycastAngledCheckAmount: 0
+  origin: {fileID: 0}
+  raycastOffset: {x: 0, y: 0}
+  raycastDistance: 2
+  raycastAngle: 0
 --- !u!114 &4318456009083844307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3191,7 +3218,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  type: 0
   damageAmount: 1
+  raycastAngledCheckAmount: 0
+  origin: {fileID: 0}
+  raycastOffset: {x: 0, y: 0}
+  raycastDistance: 2
+  raycastAngle: 0
 --- !u!1001 &2218496116377838057
 PrefabInstance:
   m_ObjectHideFlags: 0

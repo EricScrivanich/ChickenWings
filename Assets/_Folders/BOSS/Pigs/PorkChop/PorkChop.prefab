@@ -911,8 +911,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1.5
-  m_LinearDamping: 0
+  m_Mass: 1.6
+  m_LinearDamping: 0.3
   m_AngularDamping: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -1048,6 +1048,7 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   enableObjectOnDeath: {fileID: 0}
   disableObjectOnDeath: {fileID: 0}
+  ignoreBoundaries: 0
   health: 6
   totalDamageTime: 1.1
   pigType: 7

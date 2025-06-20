@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class BackgroundController : MonoBehaviour
 {
-    [System.Serializable]
-    public class ParallaxLayer
-    {
-        public Transform transform1;
-        public Transform transform2;
-        public float speed;
-        public float startPosition1;
-        public float startPosition2;
-    }
+    // [System.Serializable]
+    // public class ParallaxLayer
+    // {
+    //     public Transform transform1;
+    //     public Transform transform2;
+    //     public float speed;
+    //     public float startPosition1;
+    //     public float startPosition2;
+    // }
 
     [SerializeField] private Transform topViewTransform;
 
@@ -20,17 +20,17 @@ public class BackgroundController : MonoBehaviour
     public List<GameObject> layers;
     public List<float> speeds;
     public List<float> MountainSpeeds;
-    public List<float> gradientBlends;
+    // public List<float> gradientBlends;
 
-    public float groundSpeed;
-    public float mountainSpeed;
+    // public float groundSpeed;
+    // public float mountainSpeed;
 
-    public ParallaxLayer skyLayer;
-    public ParallaxLayer mountainsLayer;
-    public ParallaxLayer groundLayer;
+    // public ParallaxLayer skyLayer;
+    // public ParallaxLayer mountainsLayer;
+    // public ParallaxLayer groundLayer;
 
-    private const float ResetPosition = -51f;
-    private const float Offset = 80f;
+    // private const float ResetPosition = -51f;
+    // private const float Offset = 80f;
     [SerializeField] private bool levelCreator = false;
 
 
@@ -41,7 +41,7 @@ public class BackgroundController : MonoBehaviour
 
     private void Awake()
     {
-        BoundariesManager.GroundPosition = layers[0].transform.position.y + .6f;
+        BoundariesManager.GroundPosition = layers[0].transform.position.y;
         BoundariesManager.TopViewBoundary = topViewTransform.position.y;
         layerMaterials = new Material[layers.Count];
         // Initialize arrays
@@ -91,6 +91,7 @@ public class BackgroundController : MonoBehaviour
     public void SetTextureOffsetsByTime(ushort gameStep, float realTime)
     {
         float gameTime = realTime;
+        Debug.Log("Time set: " + gameStep);
 
         if (realTime == 0) gameTime = gameStep * LevelRecordManager.TimePerStep;
         for (int i = 0; i < layerMaterials.Length; i++)
@@ -107,7 +108,11 @@ public class BackgroundController : MonoBehaviour
     private void OnEnable()
     {
         if (levelCreator)
+        {
             LevelRecordManager.SetGlobalTime += SetTextureOffsetsByTime;
+            Debug.Log("Subscrbed");
+        }
+
     }
     private void OnDisable()
     {

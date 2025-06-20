@@ -8,7 +8,7 @@ public class PlayerFlipRightState : PlayerBaseState
 {
     private Sequence flipRightSeq;
     private RectTransform flipImage;
-    private Sequence angVelSequence;
+    private Sequence angVelRightSequence;
 
     private Vector3 flipImageTargetRotation = new Vector3(0, 180, 45);
     Vector3[] rotations = new Vector3[]
@@ -164,10 +164,10 @@ public class PlayerFlipRightState : PlayerBaseState
 
     private void TweenAngVel(float dur, float start)
     {
-        angVelSequence = DOTween.Sequence();
-        angVelSequence.Append(DOTween.To(() => start, x => angVel = x, angForce, dur));
+        angVelRightSequence = DOTween.Sequence();
+        angVelRightSequence.Append(DOTween.To(() => start, x => angVel = x, angForce, dur));
         // <-- Added this
-        angVelSequence.Play().OnComplete(() => tweeningAng = false);
+        angVelRightSequence.Play().OnComplete(() => tweeningAng = false);
     }
 
     private void SetVariables()
@@ -182,8 +182,8 @@ public class PlayerFlipRightState : PlayerBaseState
     public override void ExitState(PlayerStateManager player)
     {
 
-        if (angVelSequence != null && angVelSequence.IsPlaying())
-            angVelSequence.Kill();
+        if (angVelRightSequence != null && angVelRightSequence.IsPlaying())
+            angVelRightSequence.Kill();
         if (!hasFadedJumpAir)
         {
 
@@ -270,9 +270,9 @@ public class PlayerFlipRightState : PlayerBaseState
             flipRightSeq.Kill();
         }
 
-        if (angVelSequence != null && angVelSequence.IsPlaying())
+        if (angVelRightSequence != null && angVelRightSequence.IsPlaying())
         {
-            angVelSequence.Kill();
+            angVelRightSequence.Kill();
         }
         hasFinishedEndOfTweenLogic = true;
         tweeningAng = false;

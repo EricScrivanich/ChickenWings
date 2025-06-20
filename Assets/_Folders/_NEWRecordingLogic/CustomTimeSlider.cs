@@ -111,8 +111,7 @@ public class CustomTimeSlider : MonoBehaviour
 
         AssignHandlers();
         LevelRecordManager.OnShowObjectTime += ShowSelectedObject;
-        UpdateHandlePositions();
-        UpdateTexts();
+
 
     }
 
@@ -126,6 +125,9 @@ public class CustomTimeSlider : MonoBehaviour
         currentIndex = main;
         currentMinIndex = min;
         currentMaxIndex = max;
+
+        UpdateHandlePositions();
+        UpdateTexts();
 
 
 
@@ -642,6 +644,8 @@ public class CustomTimeSlider : MonoBehaviour
             case SliderHandle.HandleType.Main:
             case SliderHandle.HandleType.StartTime:
                 lastSavedMainValue = currentIndex;
+
+                if (!pressed) LevelRecordManager.instance.PreloadPlayScene();
                 break;
 
             case SliderHandle.HandleType.Min:

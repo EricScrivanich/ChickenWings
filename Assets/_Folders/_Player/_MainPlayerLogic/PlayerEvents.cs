@@ -64,6 +64,7 @@ public struct PlayerEvents
     public Action QuickCenterRelease;
     public Action<Vector2> OnSetScythePos;
     public Action OnReleaseStick;
+    public Action OnCollision;
 
 
 }

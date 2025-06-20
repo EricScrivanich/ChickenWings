@@ -173,6 +173,8 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private LevelData levelData;
     private ushort currentSpawnStep;
 
+
+
     // Start is called before the first frame update
 
     private void Awake()
@@ -187,9 +189,77 @@ public class SpawnStateManager : MonoBehaviour
             transitionLogic.Reset();
             prevTransitonLogic = transitionLogic;
         }
-        if (isTestPlayer) currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
-        if (levelData != null)
+        if (isTestPlayer)
+        {
+            currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
+
+            // if (levelData != null)
+            //     levelData.InitializeData(this, currentSpawnStep);
+
+            // StartCoroutine(PreloadScene(0, 1, true));
+            // return;
+
+            if (LevelRecordManager.CurrentPlayTimeStep == LevelRecordManager.PreloadObjectsTimeStep)
+            {
+
+                if (levelData != null)
+                    levelData.InitializeData(this, currentSpawnStep);
+
+                StartCoroutine(PreloadScene(0, 1, true));
+                GetComponent<PreloadSpawner>().DestoryLoadingScreen();
+                return;
+            }
+            Time.timeScale = 0;
+
+            AudioManager.instance.PauseAllAudio(true);
+            int spedScale = 35;
+            float dur = ((currentSpawnStep - LevelRecordManager.PreloadObjectsTimeStep) * LevelRecordManager.TimePerStep) / spedScale;
+            if (levelData != null)
+                levelData.InitializeData(this, currentSpawnStep, LevelRecordManager.PreloadObjectsTimeStep);
+
+            // Camera.main.enabled = false;
+            StartCoroutine(PreloadScene(dur, spedScale));
+
+        }
+        else if (levelData != null)
             levelData.InitializeData(this, currentSpawnStep);
+    }
+
+    private IEnumerator PreloadScene(float time, int spedStep, bool skip = false)
+    {
+        yield return null;
+        yield return null;
+        yield return null;
+
+        if (skip)
+        {
+            GameObject.Find("Player").GetComponent<PlayerStateManager>().StartAfterPreload();
+            yield break;
+        }
+        enabled = false;
+        GetComponent<PreloadSpawner>().EnablePreloadSpawner(LevelRecordManager.PreloadObjectsTimeStep, LevelRecordManager.CurrentTimeStep, this);
+
+        Time.timeScale = spedStep;
+
+
+
+
+
+
+    }
+
+    public void FinishPreload()
+    {
+        Time.timeScale = 0f;
+
+        currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
+        // Camera.main.enabled = true;
+        // LevelRecordManager.PreloadedSceneReady = true;
+        // yield return new WaitUntil(() => LevelRecordManager.PlayPreloadedScene);
+        // LevelRecordManager.PlayPreloadedScene = false;
+        AudioManager.instance.PauseAllAudio(false);
+
+        GameObject.Find("Player").GetComponent<PlayerStateManager>().StartAfterPreload();
     }
     void Start()
     {
@@ -237,7 +307,7 @@ public class SpawnStateManager : MonoBehaviour
         else
         {
             LvlID.outputEvent.OnGetLevelTimeNew?.Invoke((levelData.finalSpawnStep + 3) * LevelRecordManager.TimePerStep, currentSpawnStep * LevelRecordManager.TimePerStep);
-            StartCoroutine(SpawnDataNew());
+            // StartCoroutine(SpawnDataNew());
         }
 
 
@@ -276,17 +346,58 @@ public class SpawnStateManager : MonoBehaviour
     }
     private WaitForSeconds wait = new WaitForSeconds(LevelRecordManager.TimePerStep);
 
+
     private IEnumerator SpawnDataNew()
     {
 
         while (true)
         {
             yield return wait;
+
             // Debug.Log("Spawning step: " + currentSpawnStep);
             levelData.NextSpawnStep(currentSpawnStep);
+            // Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
 
             currentSpawnStep++;
         }
+
+    }
+    private float waveTime = 0;
+    private float timeToWait = LevelRecordManager.TimePerStep;
+    private void Update()
+    {
+        waveTime += Time.deltaTime;
+        if (waveTime >= timeToWait)
+        {
+            levelData.NextSpawnStep(currentSpawnStep);
+            // Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
+
+            currentSpawnStep++;
+            waveTime = waveTime - timeToWait; // do this to keep it ver accurate
+
+            if (waveTime >= timeToWait)
+            {
+                levelData.NextSpawnStep(currentSpawnStep);
+                // Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
+
+                currentSpawnStep++;
+                waveTime = waveTime - timeToWait; // do this to keep it ver accurate
+
+
+                if (waveTime >= timeToWait)
+                {
+                    levelData.NextSpawnStep(currentSpawnStep);
+                    // Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
+
+                    currentSpawnStep++;
+                    waveTime = waveTime - timeToWait; // do this to keep it ver accurate
+                }
+            }
+
+
+        }
+
+
 
     }
 

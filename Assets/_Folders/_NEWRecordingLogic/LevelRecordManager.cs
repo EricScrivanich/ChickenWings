@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 // using UnityEditor;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 {
@@ -54,6 +55,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static readonly float TimePerStep = .18f;
     public static ushort CurrentTimeStep { get; private set; }
     public static ushort CurrentPlayTimeStep { get; private set; }
+    public static ushort PreloadObjectsTimeStep { get; private set; }
     public static int currentSavedMinIndex { get; private set; }
     public static int currentSavedMaxIndex { get; private set; }
 
@@ -74,11 +76,15 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static Action<int> OnShowObjectTime;
     public static Action<int, bool> OnSendSpecialDataToActiveObjects;
 
+    public static Action<int> CheckForPreloadTimeStep;
+
 
     public static Action PressTimerBar;
     private GameObject objectToAdd;
 
     private CanvasGroup editorCanvasGroup;
+    public static bool PreloadedSceneReady = false;
+    public static bool PlayPreloadedScene = false;
 
 
 
@@ -130,6 +136,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public bool MultiTouch { get; private set; } = false;
 
     public ushort finalSpawnStep { get; private set; } = 150;
+    private Coroutine preloadSceneCoroutine;
 
 
 
@@ -183,11 +190,43 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
     }
+    public void PreloadPlayScene()
+    {
+        PreloadedSceneReady = false;
+        SetPreloadTimeStep();
+        // if (preloadSceneCoroutine != null)
+        // {
+        //     StopCoroutine(preloadSceneCoroutine);
+        //     Scene scene = SceneManager.GetSceneByName("LevelPlayer");
 
+
+        // }
+        // preloadSceneCoroutine = StartCoroutine(PreloadScene());
+
+
+
+    }
+
+    private IEnumerator PreloadScene()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        Scene scene = SceneManager.GetSceneByName("LevelPlayer");
+
+        if (scene.isLoaded)
+        {
+            SceneManager.UnloadSceneAsync(scene);
+            yield return new WaitForEndOfFrame();
+        }
+        SceneManager.LoadSceneAsync("LevelPlayer", LoadSceneMode.Additive);
+
+
+    }
     public void EnterPlayTime(bool enter)
     {
         if (enter)
         {
+
             isPlayModeView = true;
             PressTimeBarWhilePlaying();
             PlayTimeObject.SetActive(true);
@@ -200,15 +239,25 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             showParamsTemp = ShowParameters;
             currentTimeStepTemp = CurrentTimeStep;
             CurrentPlayTimeStep = CurrentTimeStep;
+
             ShowLines = false;
             ShowParameters = false;
             UpdateTime(CurrentPlayTimeStep, true);
             CheckViewParameters?.Invoke();
 
 
+
         }
         else
         {
+            // if (preloadSceneCoroutine != null)
+            // {
+            //     StopCoroutine(preloadSceneCoroutine);
+            //     Scene scene = SceneManager.GetSceneByName("LevelPlayer");
+
+            //     if (scene.isLoaded)
+            //         SceneManager.UnloadSceneAsync(scene);
+            // }
             isPlayModeView = false;
 
             PlayTimeObject.SetActive(false);
@@ -900,6 +949,23 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         }
     }
+
+    private void SetPreloadTimeStep()
+    {
+        int start = CurrentTimeStep;
+        for (int i = 0; i < RecordedObjects.Count; i++)
+        {
+            if (RecordedObjects[i].gameObject.activeInHierarchy && RecordedObjects[i].spawnedTimeStep < start)
+            {
+                start = RecordedObjects[i].spawnedTimeStep;
+            }
+
+
+        }
+        PreloadObjectsTimeStep = (ushort)start;
+        Debug.Log("Preload time step set to: " + PreloadObjectsTimeStep + " with current time step: " + CurrentTimeStep);
+
+    }
     public Sprite GetIconImage()
     {
         return currentSelectedObject.GetIcon();
@@ -908,6 +974,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
 
         SortRecordedObjectsBySpawnTime();
+        PreloadPlayScene();
 
         ushort lastTimeStep = 0;
         int lastSpawnedIndex = 0;

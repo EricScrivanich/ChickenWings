@@ -5,6 +5,8 @@ using HellTap.PoolKit;
 public class PlayerStateManager : MonoBehaviour
 {
     [SerializeField] private bool ignoreStartingState;
+
+    [SerializeField] private bool isLevelTester = false;
     [Header("Scriptable Objects")]
 
     [ExposedScriptableObject]
@@ -300,7 +302,7 @@ public class PlayerStateManager : MonoBehaviour
 
         if (mutePlayerAudio)
             FrameRateManager.TargetTimeScale = .95f;
-        else
+        else if (!isLevelTester)
         {
             float newScale = PlayerPrefs.GetFloat("GameSpeed", 1);
             if (newScale < .85f)
@@ -406,6 +408,34 @@ public class PlayerStateManager : MonoBehaviour
 
     }
     // Start is called before the first frame update
+
+    public void StartAfterPreload()
+    {
+        float newScale = PlayerPrefs.GetFloat("GameSpeed", 1);
+        if (newScale < .85f)
+        {
+            FrameRateManager.under085 = true;
+            FrameRateManager.under1 = true;
+
+        }
+        else if (newScale < 1)
+        {
+            FrameRateManager.under085 = false;
+            FrameRateManager.under1 = true;
+        }
+        else
+        {
+            FrameRateManager.under085 = false;
+            FrameRateManager.under1 = false;
+        }
+
+
+        FrameRateManager.TargetTimeScale = FrameRateManager.BaseTimeScale * newScale;
+        Time.timeScale = FrameRateManager.TargetTimeScale;
+        rb.simulated = true;
+        currentState.EnterState(this);
+
+    }
     void Start()
     {
 
@@ -526,7 +556,14 @@ public class PlayerStateManager : MonoBehaviour
             currentState = StartingState;
 
         ID.events.EnableButtons(true);
-        currentState.EnterState(this);
+
+        if (!isLevelTester)
+            currentState.EnterState(this);
+        else
+        {
+            rb.simulated = false;
+            ChangeCollider(-1);
+        }
         // currentWeaponState = AmmoStateHidden;
 
         if (ammoManager != null)
@@ -769,6 +806,19 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
+    private void ImmediateRotation()
+    {
+        if (!ignoreRotation) return;
+        rb.angularVelocity = 0;
+
+        ignoreRotation = true;
+
+
+        rb.SetRotation(targetRotation);
+
+        AmmoStateShotgun.HitRotationTarget(this);
+    }
+
     public void TargetRotationLogic()
     {
 
@@ -814,6 +864,7 @@ public class PlayerStateManager : MonoBehaviour
         // currentForce = xForce + ID.constantPlayerForce;
         if (!usingConstantForce)
         {
+            // force.x += rb.linearVelocity.x * .25f;
             rb.linearVelocity = force;
             ID.globalEvents.OnPlayerVelocityChange?.Invoke(force, rb.gravityScale);
 
@@ -838,7 +889,7 @@ public class PlayerStateManager : MonoBehaviour
     private void OnDestroy()
     {
 
-        DG.Tweening.DOTween.KillAll();
+        // DG.Tweening.DOTween.KillAll();
     }
     void Update()
     {
@@ -2289,7 +2340,7 @@ public class PlayerStateManager : MonoBehaviour
     private void Die()
     {
 
-        ID.Lives = 0;
+        // ID.Lives = 0;
 
         ID.globalEvents.ShakeCamera?.Invoke(.6f, .2f);
         Cam.events.OnShakeCamera?.Invoke(.6f, .2f);
@@ -2530,6 +2581,8 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnScythePig += HandleStuckPig;
         ID.events.OnStuckScytheSwipe += HandleSwipeStuckPig;
         ID.events.OnReleaseCenter += HandleReleaseWeaponButton;
+        ID.globalEvents.KillPlayer += Die;
+        ID.events.OnCollision += ImmediateRotation;
 
         // ID.events.OnTrackParrySwipe += HandleShowSwipeTracker;
 
@@ -2542,8 +2595,8 @@ public class PlayerStateManager : MonoBehaviour
 
         if (ID.playerStartingStats != null) ID.playerStartingStats = null;
 
-        FlipLeftState.StopTweens();
-        FlipRightState.StopTweens();
+        // FlipLeftState.StopTweens();
+        // FlipRightState.StopTweens();
         ID.events.OnSetScythePos -= SetScythePosition;
         ID.events.OnReleaseStick -= HandleReleaseStick;
 
@@ -2605,6 +2658,10 @@ public class PlayerStateManager : MonoBehaviour
         ID.globalEvents.OnScythePig -= HandleStuckPig;
         ID.events.OnStuckScytheSwipe -= HandleSwipeStuckPig;
         ID.events.OnReleaseCenter -= HandleReleaseWeaponButton;
+        ID.globalEvents.KillPlayer -= Die;
+        ID.events.OnCollision -= ImmediateRotation;
+
+
 
 
         // ID.events.OnTrackParrySwipe -= HandleShowSwipeTracker;

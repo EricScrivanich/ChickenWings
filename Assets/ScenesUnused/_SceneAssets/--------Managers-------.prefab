@@ -230,6 +230,10 @@ PrefabInstance:
       value: 0.43
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: cageHitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ed4cc920b1fdb4a539c4e68503ad4561, type: 3}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: chamberClick
       value: 
       objectReference: {fileID: 8300000, guid: 4f11b2c3b5197499ebf1b29c99210f2f, type: 3}
@@ -261,6 +265,10 @@ PrefabInstance:
       propertyPath: blobExitSound
       value: 
       objectReference: {fileID: 8300000, guid: bbdcdf46bb3e94f22b9267a586221433, type: 3}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: cageHitVolume
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: chickenSource
       value: 
@@ -338,6 +346,10 @@ PrefabInstance:
       value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: chicHappyVolume
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: slowMotionEnter
       value: 
       objectReference: {fileID: 8300000, guid: 19f510ace8bc1466eb821adf00843385, type: 3}
@@ -357,6 +369,10 @@ PrefabInstance:
       propertyPath: buttonClickSound
       value: 
       objectReference: {fileID: 8300000, guid: cf78c3009339f406a81704e353c1df76, type: 3}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: cageDestroySound
+      value: 
+      objectReference: {fileID: 8300000, guid: 5ffc333a48d104008abb7f4b7b55b9ed, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: eggDropPopVolume
       value: 1.1
@@ -404,6 +420,10 @@ PrefabInstance:
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: buttonClickVolume
       value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: cageDestroyVolume
+      value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: chamberCockVolume
@@ -554,6 +574,10 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: chicHappySounds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: pigDeathVolumes.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -593,6 +617,14 @@ PrefabInstance:
       propertyPath: 'shotgunShells.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: 8f3b1c7addbc74a4a802953445f44c2c, type: 3}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: 'chicHappySounds.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: ea7594d215ace4502ac0491d36c2734e, type: 3}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: 'chicHappySounds.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 61cfac4bdc7624196b0f086de9ab95e2, type: 3}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: 'pigDeathVolumes.Array.data[0]'
       value: 0.5

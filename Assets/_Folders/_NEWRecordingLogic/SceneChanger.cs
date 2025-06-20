@@ -20,11 +20,13 @@ public class SceneChanger : MonoBehaviour
     public IEnumerator AwaitLoadScene(bool test)
     {
         LevelRecordManager.instance.SaveAsset();
-        yield return new WaitForSecondsRealtime(.15f);
+        yield return new WaitForSecondsRealtime(.1f);
         if (test)
         {
+            // yield return new WaitUntil(() => LevelRecordManager.PreloadedSceneReady);
             LevelRecordManager.instance.RestoreStaticParameters();
             SceneManager.LoadScene("LevelPlayer");
+            // LevelRecordManager.PlayPreloadedScene = true;
         }
         else
         {

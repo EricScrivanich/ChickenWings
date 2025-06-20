@@ -69,6 +69,7 @@ public class BarnAndEggSpawner : MonoBehaviour
 
 
     private Vector2 barnSpawnPos = new Vector2(14.5f, -5.17f);
+    BoundariesManager boundariesManager;
     private EggCollectableMovement[] eggCollectables;
     private int currentBarnIndex = 0;
     private BarnMovement[] barnScript = new BarnMovement[2];
@@ -316,7 +317,7 @@ public class BarnAndEggSpawner : MonoBehaviour
 
         script.transform.position = barnSpawnPos;
 
-        script.Initilaize(side);
+        script.Initialize(side);
         currentBarnIndex++;
 
     }

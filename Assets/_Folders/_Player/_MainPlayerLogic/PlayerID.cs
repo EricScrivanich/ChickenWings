@@ -349,6 +349,15 @@ public class PlayerID : ScriptableObject
         }
     }
 
+    public void KillPlayer()
+    {
+        // for (int i = 0; i < Lives; i++)
+        // {
+        //     Lives--;
+        // }
+        globalEvents.KillPlayer?.Invoke();
+    }
+
     public void AddScore(int amount)
     {
         Score += amount;

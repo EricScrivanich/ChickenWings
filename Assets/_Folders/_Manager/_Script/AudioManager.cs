@@ -55,6 +55,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip parryStart;
     [SerializeField] private AudioClip parryHit;
 
+    [SerializeField] private AudioClip cageHitSound;
+    [SerializeField] private AudioClip cageDestroySound;
+    [SerializeField] private AudioClip[] chicHappySounds;
+
 
 
 
@@ -114,6 +118,10 @@ public class AudioManager : MonoBehaviour
 
 
     [Header("Volumes")]
+
+    [SerializeField] private float chicHappyVolume;
+    [SerializeField] private float cageHitVolume;
+    [SerializeField] private float cageDestroyVolume;
 
     [SerializeField] private float uziGunShotVolume;
 
@@ -184,6 +192,7 @@ public class AudioManager : MonoBehaviour
     private bool canPlayBombNoise = true;
 
 
+
     private WaitForSeconds minJetPackAndBombWait = new WaitForSeconds(.15f);
     private WaitForSeconds minWindmillWait = new WaitForSeconds(.25f);
 
@@ -206,7 +215,10 @@ public class AudioManager : MonoBehaviour
             chickenSource.volume = 0;
 
 
+
     }
+
+
 
     private void Awake()
     {
@@ -286,6 +298,11 @@ public class AudioManager : MonoBehaviour
         chickenSource.PlayOneShot(parrySound, parryVolume);
     }
 
+    public void PlayChicHappySound(int i)
+    {
+        audioSource.PlayOneShot(chicHappySounds[i], chicHappyVolume);
+    }
+
     public void PlayBlobNoise(bool enter)
     {
         if (enter) audioSource.PlayOneShot(blobEnterSound, blobEnterVolume);
@@ -310,6 +327,15 @@ public class AudioManager : MonoBehaviour
         // audioSource.PlayOneShot(longFarts[rand], .4f);
         audioSource.PlayOneShot(longFart, longFartVolume);
 
+    }
+
+    public void PlayCageHitSound()
+    {
+        audioSource.PlayOneShot(cageHitSound, cageHitVolume);
+    }
+    public void PlayCageDestroySound()
+    {
+        chickenSource.PlayOneShot(cageDestroySound, cageDestroyVolume);
     }
 
     public void PlaySprayPaintSound()
@@ -623,6 +649,26 @@ public class AudioManager : MonoBehaviour
         audioSource.PlayOneShot(frozenSound, frozenVolume);
     }
 
+    public void PauseAllAudio(bool pause)
+    {
+        if (pause)
+        {
+            AudioListener.pause = true;
+            nonSlowSource.Pause();
+            ringPassSource.Pause();
+            audioSource.Pause();
+        }
+        else
+        {
+            AudioListener.pause = false;
+
+            ringPassSource.UnPause();
+            audioSource.UnPause();
+            nonSlowSource.UnPause();
+
+        }
+
+    }
     private void OnApplicationPause(bool isPaused)
     {
         if (isPaused)

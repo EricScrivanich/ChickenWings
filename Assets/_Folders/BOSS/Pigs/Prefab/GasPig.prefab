@@ -325,8 +325,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 14.66, y: -4.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.8, y: 0.78, z: 0.8}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6039584709980426216}
   - {fileID: 4039010708376785387}
@@ -455,6 +455,7 @@ MonoBehaviour:
   initialDelay: 0
   id: 0
   cloudSpawn: {fileID: 2891602274514134490}
+  gasTexture: {fileID: 0}
   flying: 0
 --- !u!114 &1997734468212161575
 MonoBehaviour:
@@ -471,6 +472,7 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   enableObjectOnDeath: {fileID: 0}
   disableObjectOnDeath: {fileID: 0}
+  ignoreBoundaries: 0
   health: 1
   totalDamageTime: 0
   pigType: 8
