@@ -205,27 +205,42 @@ public class SpawnStateManager : MonoBehaviour
                 if (levelData != null)
                     levelData.InitializeData(this, currentSpawnStep);
 
-                StartCoroutine(PreloadScene(0, 1, true));
+                StartCoroutine(PreloadScene(1, true));
                 GetComponent<PreloadSpawner>().DestoryLoadingScreen();
                 return;
             }
             Time.timeScale = 0;
 
             AudioManager.instance.PauseAllAudio(true);
+            float initialDur = (currentSpawnStep - LevelRecordManager.PreloadObjectsTimeStep) * LevelRecordManager.TimePerStep;
             int spedScale = 35;
-            float dur = ((currentSpawnStep - LevelRecordManager.PreloadObjectsTimeStep) * LevelRecordManager.TimePerStep) / spedScale;
+
+
+            if (initialDur < 10)
+            {
+                spedScale = 15;
+            }
+            else if (initialDur < 20)
+            {
+                spedScale = 25;
+            }
+            else if (initialDur < 30)
+            {
+                spedScale = 30;
+            }
+            // float loadDuration = initialDur / spedScale;
             if (levelData != null)
                 levelData.InitializeData(this, currentSpawnStep, LevelRecordManager.PreloadObjectsTimeStep);
 
             // Camera.main.enabled = false;
-            StartCoroutine(PreloadScene(dur, spedScale));
+            StartCoroutine(PreloadScene(spedScale));
 
         }
         else if (levelData != null)
             levelData.InitializeData(this, currentSpawnStep);
     }
 
-    private IEnumerator PreloadScene(float time, int spedStep, bool skip = false)
+    private IEnumerator PreloadScene(int spedStep, bool skip = false)
     {
         yield return null;
         yield return null;
@@ -248,7 +263,7 @@ public class SpawnStateManager : MonoBehaviour
 
     }
 
-    public void FinishPreload()
+    public void FinishPreload(float leftoverTime)
     {
         Time.timeScale = 0f;
 
@@ -258,7 +273,8 @@ public class SpawnStateManager : MonoBehaviour
         // yield return new WaitUntil(() => LevelRecordManager.PlayPreloadedScene);
         // LevelRecordManager.PlayPreloadedScene = false;
         AudioManager.instance.PauseAllAudio(false);
-
+        enabled = true;
+        waveTime = leftoverTime;
         GameObject.Find("Player").GetComponent<PlayerStateManager>().StartAfterPreload();
     }
     void Start()

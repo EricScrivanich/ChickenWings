@@ -229,7 +229,7 @@ public class LevelData : ScriptableObject
         if (lds == null)
         {
             Debug.LogError("LevelDataSave is null");
-            finalSpawnStep = 150;
+            finalSpawnStep = 300;
             spawnSteps = new ushort[0];
             idList = new short[0];
             posList = new Vector2[0];

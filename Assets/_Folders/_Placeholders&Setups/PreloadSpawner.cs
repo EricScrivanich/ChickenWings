@@ -50,6 +50,12 @@ public class PreloadSpawner : MonoBehaviour
 
 
             currentSpawnStep++;
+
+            if (currentSpawnStep >= finalSpawnStep)
+            {
+                Finish();
+                return;
+            }
             waveTime = waveTime - timeToWait; // do this to keep it ver accurate
 
             if (waveTime >= timeToWait)
@@ -139,6 +145,6 @@ public class PreloadSpawner : MonoBehaviour
     {
         enabled = false;
         loadingScreen.StopLoad();
-        spawnStateManager.FinishPreload();
+        spawnStateManager.FinishPreload(waveTime);
     }
 }

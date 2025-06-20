@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.91, y: 1.5691105, z: 0.952381}
+  m_LocalScale: {x: 1.24, y: 1.66, z: 0.952381}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3621552450550027963}
@@ -138,6 +138,10 @@ PrefabInstance:
     - target: {fileID: 4351014547753438834, guid: 6671afaf7b99244b0846e32d3e79bec6, type: 3}
       propertyPath: m_Name
       value: eggAmmo
+      objectReference: {fileID: 0}
+    - target: {fileID: 4351014547753438834, guid: 6671afaf7b99244b0846e32d3e79bec6, type: 3}
+      propertyPath: m_TagString
+      value: Plane
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.15, y: 1.5691105, z: 0.952381}
+  m_LocalScale: {x: 1.35, y: 1.66, z: 0.952381}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2165572831761916812}
@@ -98,6 +98,14 @@ PrefabInstance:
     - target: {fileID: 577746923484501905, guid: 3f5a211951aa14e89a66822cec2372ba, type: 3}
       propertyPath: m_Name
       value: eggAmmoShotgun Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 577746923484501905, guid: 3f5a211951aa14e89a66822cec2372ba, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 577746923484501905, guid: 3f5a211951aa14e89a66822cec2372ba, type: 3}
+      propertyPath: m_TagString
+      value: Plane
       objectReference: {fileID: 0}
     - target: {fileID: 1407012501500337161, guid: 3f5a211951aa14e89a66822cec2372ba, type: 3}
       propertyPath: m_LocalPosition.x

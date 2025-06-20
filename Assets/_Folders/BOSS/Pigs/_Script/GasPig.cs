@@ -41,6 +41,7 @@ public class GasPig : MonoBehaviour, IRecordableObject
         rb = GetComponent<Rigidbody2D>();
     }
 
+#if UNITY_EDITOR
     private void Start()
     {
         if (!initialized)
@@ -51,6 +52,8 @@ public class GasPig : MonoBehaviour, IRecordableObject
 
         }
     }
+
+#endif
 
 
     public void Initialize(float s, float d, bool f, float startDelay)
@@ -175,10 +178,13 @@ public class GasPig : MonoBehaviour, IRecordableObject
 
     public void ApplyFloatOneData(DataStructFloatOne data)
     {
+        initialized = true;
         transform.position = data.startPos;
         speed = 8;
         delay = data.float1;
         gameObject.SetActive(true);
+        anim.SetTrigger("FlyFart");
+
 
     }
     public void ApplyFloatTwoData(DataStructFloatTwo data)
@@ -187,6 +193,7 @@ public class GasPig : MonoBehaviour, IRecordableObject
     }
     public void ApplyFloatThreeData(DataStructFloatThree data)
     {
+        initialized = true;
         transform.position = data.startPos;
         speed = data.float1;
         delay = data.float2;
@@ -201,6 +208,8 @@ public class GasPig : MonoBehaviour, IRecordableObject
 
         initialDelay = data.float3 * delay;
         gameObject.SetActive(true);
+        anim.SetTrigger("Walk");
+        StartCoroutine(CloudRoutine());
 
 
     }

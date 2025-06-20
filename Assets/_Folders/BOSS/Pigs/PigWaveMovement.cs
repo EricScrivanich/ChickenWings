@@ -60,7 +60,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
             flyingDown = false;
             anim.SetTrigger("FlyUp");
         }
-        else
+        else if (anim != null)
         {
             flyingDown = true;
             anim.SetTrigger("FlyDown");

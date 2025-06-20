@@ -49,7 +49,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public LevelType levelType;
     public string LevelName;
     public string levelWorldAndNumber;
-    public ushort levelStepLength = 400;
+
 
     private InputController controls;
     public static readonly float TimePerStep = .18f;
@@ -151,7 +151,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         CurrentTimeStep = 0;
         CurrentPlayTimeStep = 0;
         currentSavedMinIndex = 0;
-        currentSavedMaxIndex = 100;
+        currentSavedMaxIndex = 225;
 
 
     }
@@ -900,8 +900,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
         AudioManager.instance.LoadVolume(1, 0);
         HandleReleaseClick();
-        CustomTimeSlider.instance.SetVariables(CurrentTimeStep, currentSavedMinIndex, currentSavedMaxIndex);
-        UpdateTime(CurrentTimeStep, false);
+
 
 
         Time.timeScale = 0;
@@ -920,6 +919,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         CheckAllObjectsForNewTimeStep();
         StartCoroutine(InvokeTimeAfterDelay());
         parameterUI.SetActive(false);
+        UpdateTime(CurrentTimeStep, false);
+
 
 
     }
@@ -984,7 +985,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
         List<RecordableObjectPlacer> activeObjects = new List<RecordableObjectPlacer>();
-        for (ushort s = 0; s < levelStepLength; s++)
+        for (ushort s = 0; s < finalSpawnStep; s++)
         {
             if (lastSpawnedIndex >= RecordedObjects.Count) break;
             bool addedMore = false;
@@ -1110,8 +1111,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         var data = LevelDataConverter.instance.ReturnDynamicData(levelData);
         finalSpawnStep = levelData.finalSpawnStep;
         if (finalSpawnStep < 50) finalSpawnStep = 50;
+        if (currentSavedMaxIndex > finalSpawnStep)
+        {
+            currentSavedMaxIndex = finalSpawnStep;
+        }
 
 
+        CustomTimeSlider.instance.SetVariables(CurrentTimeStep, currentSavedMinIndex, currentSavedMaxIndex);
         CustomTimeSlider.instance.SetMaxTime(finalSpawnStep);
 
         for (int i = 0; i < data.Count; i++)

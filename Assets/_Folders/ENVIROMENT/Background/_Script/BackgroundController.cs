@@ -91,7 +91,7 @@ public class BackgroundController : MonoBehaviour
     public void SetTextureOffsetsByTime(ushort gameStep, float realTime)
     {
         float gameTime = realTime;
-        Debug.Log("Time set: " + gameStep);
+
 
         if (realTime == 0) gameTime = gameStep * LevelRecordManager.TimePerStep;
         for (int i = 0; i < layerMaterials.Length; i++)
@@ -110,7 +110,7 @@ public class BackgroundController : MonoBehaviour
         if (levelCreator)
         {
             LevelRecordManager.SetGlobalTime += SetTextureOffsetsByTime;
-            Debug.Log("Subscrbed");
+
         }
 
     }

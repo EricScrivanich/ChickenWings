@@ -175,6 +175,7 @@ public class SmokeTrailPool : MonoBehaviour
     {
 
         gasSmokeTrails[id].Initialize(pos, speed);
+        if (pos.x < BoundariesManager.rightViewBoundary + 1.2f) pos.x = BoundariesManager.rightViewBoundary + 1.2f;
 
         gasParticleSystems[id].transform.position = new Vector2(pos.x, pos.y);
         player.NewGasParticles(pos.y, true);
