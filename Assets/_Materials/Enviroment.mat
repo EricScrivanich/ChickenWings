@@ -76,7 +76,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OverlayTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 9d2c7a8ece505b9448aaa5644d19c4b5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ShineMask:
@@ -95,7 +95,7 @@ Material:
     - _BillboardY: 0
     - _BlurHD: 0
     - _BlurIntensity: 1
-    - _Brightness: 0
+    - _Brightness: -0.27
     - _ChromAberrAlpha: 0.4
     - _ChromAberrAmount: 1
     - _ClipUvDown: 0.045
@@ -113,7 +113,7 @@ Material:
     - _ColorSwapBlueLuminosity: 0.5
     - _ColorSwapGreenLuminosity: 0.5
     - _ColorSwapRedLuminosity: 0.5
-    - _Contrast: 2.4
+    - _Contrast: 0.4
     - _CullingOption: 0
     - _DistortAmount: 0
     - _DistortTexXSpeed: 5
@@ -175,14 +175,14 @@ Material:
     - _MaxYUV: 1
     - _MinXUV: 0
     - _MinYUV: 0
-    - _MotionBlurAngle: 0.1
-    - _MotionBlurDist: 1.25
+    - _MotionBlurAngle: -0.32
+    - _MotionBlurDist: -0.77
     - _MyDstMode: 10
     - _MySrcMode: 5
     - _NegativeAmount: 1
     - _NormalStrength: 1
     - _OffsetUvX: 0
-    - _OffsetUvY: 0
+    - _OffsetUvY: 0.06
     - _OnlyInnerOutline: 0
     - _OnlyOutline: 0
     - _Outline8Directions: 0
@@ -199,14 +199,14 @@ Material:
     - _OutlineTexXSpeed: 10
     - _OutlineTexYSpeed: 0
     - _OutlineWidth: 0.004
-    - _OverlayBlend: 1
-    - _OverlayGlow: 1
-    - _OverlayTextureScrollXSpeed: 0.25
-    - _OverlayTextureScrollYSpeed: 0.25
+    - _OverlayBlend: 0.192
+    - _OverlayGlow: 0
+    - _OverlayTextureScrollXSpeed: 0
+    - _OverlayTextureScrollYSpeed: 0
     - _PinchUvAmount: 0
     - _PixelateSize: 32
-    - _PosterizeGamma: 0.75
-    - _PosterizeNumColors: 8
+    - _PosterizeGamma: 9.24
+    - _PosterizeNumColors: 38.8
     - _PosterizeOutline: 0
     - _RadialClip: 45
     - _RadialClip2: 0
@@ -216,9 +216,9 @@ Material:
     - _RotateUvAmount: 0
     - _RoundWaveSpeed: 2
     - _RoundWaveStrength: 0.7
-    - _ShadowAlpha: 0.5
-    - _ShadowX: 0.1
-    - _ShadowY: -0.05
+    - _ShadowAlpha: 0.096
+    - _ShadowX: 0.052
+    - _ShadowY: -0.031
     - _ShakeUvSpeed: 2.5
     - _ShakeUvX: 1.5
     - _ShakeUvY: 1
@@ -242,7 +242,7 @@ Material:
     - _WaveY: 0.5
     - _ZTestMode: 4
     - _ZWrite: 0
-    - _ZoomUvAmount: 0.87
+    - _ZoomUvAmount: 0.91
     m_Colors:
     - _AlphaOutlineColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
@@ -266,7 +266,7 @@ Material:
     - _HologramStripeColor: {r: 0, g: 1, b: 1, a: 1}
     - _InnerOutlineColor: {r: 1, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OverlayColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OverlayColor: {r: 0.13965277, g: 0.051886797, b: 0.20754719, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShineColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

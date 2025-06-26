@@ -152,7 +152,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float chamberClickVolume = 0.7f;
     [SerializeField] private float chamberCockVolume = 0.7f;
     [SerializeField] private float eggDropPopVolume = 0.7f;
-    [SerializeField] private float shotGunShellVolume = 0.7f;
+
 
     [SerializeField] private float cluckVolume = 0.7f;
     [SerializeField] private float flipVolume = 0.7f;
@@ -181,6 +181,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float slowMoVolume;
     [SerializeField] private float shotgunBlastVolume;
     [SerializeField] private float shotgunReloadVolume;
+    [SerializeField] private float shotGunShellVolume = 0.7f;
 
 
 
