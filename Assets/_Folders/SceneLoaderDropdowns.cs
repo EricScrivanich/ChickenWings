@@ -68,6 +68,8 @@ namespace KingdomOfNight
         public static void LoadBeachBall() { OpenScene("Assets/scenes/Main/BeachBall.unity"); }
         [MenuItem("Scenes/Main/FlappyFrenzy")]
         public static void LoadFlappyFrenzy() { OpenScene("Assets/scenes/Main/FlappyFrenzy.unity"); }
+        [MenuItem("Scenes/Main/LevelPicker")]
+        public static void LoadLevelPicker() { OpenScene("Assets/scenes/Main/LevelPicker.unity"); }
         [MenuItem("Scenes/Main/MainMenu")]
         public static void LoadMainMenu() { OpenScene("Assets/scenes/Main/MainMenu.unity"); }
         [MenuItem("Scenes/Main/TinyWingsTest")]

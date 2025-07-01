@@ -13,7 +13,9 @@ namespace PathCreation
         [Header("Appearance")]
         public float anchorSize = 10;
         public float controlSize = 7f;
-        
+
+        public float customPointSize = .2f;
+
         [Tooltip("Should the path still be drawn when behind objects in the scene?")]
         public bool visibleBehindObjects = true;
         [Tooltip("Should the path be drawn even when the path object is not selected?")]
@@ -28,6 +30,7 @@ namespace PathCreation
         public Color anchor = new Color(0.95f, 0.25f, 0.25f, 0.85f);
         public Color anchorHighlighted = new Color(1, 0.57f, 0.4f);
         public Color anchorSelected = Color.white;
+        public Color customPointColor;
 
         [Header("Control Colours")]
         public Color control = new Color(0.35f, 0.6f, 1, 0.85f);
@@ -47,11 +50,12 @@ namespace PathCreation
 
         [Header("Normals")]
         public Color normals = Color.yellow;
-        [Range(0,1)]
+        [Range(0, 1)]
         public float normalsLength = .1f;
 
 #if UNITY_EDITOR
-        public static GlobalDisplaySettings Load() {
+        public static GlobalDisplaySettings Load()
+        {
             string[] guids = UnityEditor.AssetDatabase.FindAssets("t:GlobalDisplaySettings");
             if (guids.Length == 0)
             {
