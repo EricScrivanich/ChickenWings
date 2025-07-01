@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ee21a2970f0248f9bdea51acd8ff20e, type: 3}
+  m_Name: PigIDBG
+  m_EditorClassIdentifier: 
+  NormalPigHeads:
+  - {fileID: -1022920008, guid: 1af192e27acf9402880246e18ccb7ae2, type: 3}
+  - {fileID: 102520853, guid: 1af192e27acf9402880246e18ccb7ae2, type: 3}
+  - {fileID: -954323398, guid: 1af192e27acf9402880246e18ccb7ae2, type: 3}
+  OnPigDeathFace:
+  - {fileID: 288033068, guid: 1af192e27acf9402880246e18ccb7ae2, type: 3}
+  - {fileID: 288033068, guid: 1af192e27acf9402880246e18ccb7ae2, type: 3}
+  - {fileID: 288033068, guid: 1af192e27acf9402880246e18ccb7ae2, type: 3}
+  setMagPercent: 0
+  IndexsPerValue: 
+  ObjectTitle: 
+  ParameterByOrder: []
+  parameterTitles: []
+  baseScale: 0.83
+  MinMaxSpeed: {x: 0.1, y: 2}
+  MinMaxAmp: {x: 0.15, y: 0.23}
+  MinMaxFreq: {x: 2.72, y: 3.74}
+  MinMaxMagDiff: {x: 0, y: 0}
+  maxHeightAtMinSpeed: 0.1
+  maxFreqAtMinMag: 0.2

@@ -360,9 +360,77 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 2734d605a0c8a42debe00b543a5876d3, type: 3}
     - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: colorFar.a
+      value: 0.4745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: colorFar.b
+      value: 0.77193844
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: colorFar.g
+      value: 0.77193844
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: colorFar.r
+      value: 0.7830189
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudPrefab
+      value: 
+      objectReference: {fileID: 4320994782377707176, guid: 86361d7609c034077ad3e324403f73ea, type: 3}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: colorClose.a
+      value: 0.7882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: colorClose.b
+      value: 0.9622642
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: colorClose.g
+      value: 0.9622642
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: colorClose.r
+      value: 0.9622642
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudYRange.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudYRange.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: topViewTransform
       value: 
       objectReference: {fileID: 4418432369732232261}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudCountRange.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudCountRange.y
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudScaleRange.x
+      value: 2.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudScaleRange.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudSpeedRange.x
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudSpeedRange.y
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: 'speeds.Array.data[0]'
       value: 5
@@ -379,6 +447,42 @@ PrefabInstance:
       propertyPath: 'speeds.Array.data[3]'
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: cloudSprites.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: 'cloudSprites.Array.data[0]'
+      value: 
+      objectReference: {fileID: 4300442194807345184, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: 'cloudSprites.Array.data[1]'
+      value: 
+      objectReference: {fileID: -5040580565352170820, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: 'cloudSprites.Array.data[2]'
+      value: 
+      objectReference: {fileID: 618131312241453210, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: 'cloudSprites.Array.data[3]'
+      value: 
+      objectReference: {fileID: 3174798112510930220, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: 'cloudSprites.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1751748196401987091, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: 'cloudSprites.Array.data[5]'
+      value: 
+      objectReference: {fileID: 1492866074176810018, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: 'cloudSprites.Array.data[6]'
+      value: 
+      objectReference: {fileID: 5423936643033455549, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+    - target: {fileID: 7619981963949029385, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: 'cloudSprites.Array.data[7]'
+      value: 
+      objectReference: {fileID: 7730908102624513028, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
     - target: {fileID: 8446411352949060254, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: m_Size.x
       value: 34.637016

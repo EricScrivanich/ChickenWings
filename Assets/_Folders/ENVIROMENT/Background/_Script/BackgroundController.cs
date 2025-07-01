@@ -17,6 +17,8 @@ public class BackgroundController : MonoBehaviour
     [SerializeField] private Transform topViewTransform;
 
 
+
+
     public List<GameObject> layers;
     public List<float> speeds;
     public List<float> MountainSpeeds;
@@ -36,6 +38,33 @@ public class BackgroundController : MonoBehaviour
 
     private Material[] layerMaterials;
     private float[] textureScrollSpeeds; // Speed in texture coordinate space
+
+
+    [Header("Cloud Settings")]
+    [SerializeField] private Sprite[] cloudSprites;
+    [SerializeField] private GameObject cloudPrefab;
+
+    [SerializeField] private Vector2Int cloudCountRange = new Vector2Int(4, 8);
+    [SerializeField] private Vector2 cloudSpeedRange = new Vector2(0.3f, 1.3f);
+    [SerializeField] private Vector2 cloudScaleRange = new Vector2(0.5f, 1.5f);
+    [SerializeField] private Color colorFar;
+    [SerializeField] private Color colorClose;
+
+    [SerializeField] private Vector2 cloudYRange;
+    [SerializeField] private Vector2 cloudXRange;
+
+    private Vector2 cloudSpawnInterval;
+    private float cloudSpawnTimer = 0f;
+    private bool spawningCloud;
+
+    private List<Transform> activeClouds = new List<Transform>();
+    private List<float> cloudSpeeds = new List<float>();
+
+    private SpriteRenderer[] clouds;
+
+    private int cloudCount;
+    private int cloudIndex = 0;
+
 
 
 
@@ -82,6 +111,64 @@ public class BackgroundController : MonoBehaviour
             // Set initial scroll speed
             layerMaterials[i].SetFloat("_TextureScrollXSpeed", textureSpeed);
         }
+        clouds = new SpriteRenderer[cloudCountRange.y];
+        for (int i = 0; i < cloudCountRange.y; i++)
+        {
+            // Set the initial texture offset to zero
+            var c = Instantiate(cloudPrefab, transform).GetComponent<SpriteRenderer>();
+            clouds[i] = c;
+            c.gameObject.SetActive(false);
+
+        }
+
+        cloudCount = Random.Range(cloudCountRange.x, cloudCountRange.y + 1);
+        for (int i = 0; i < cloudCount; i++)
+        {
+            // Randomly select a cloud sprite
+
+            float distance = Random.Range(0f, 1f);
+
+            // Set the sprite and initial properties
+            clouds[i].sprite = cloudSprites[Random.Range(0, cloudSprites.Length)];
+            clouds[i].color = Color.Lerp(colorClose, colorFar, distance);
+            float s = Mathf.Lerp(cloudScaleRange.x, cloudScaleRange.y, distance);
+            float n = Random.Range(0, 1);
+            int flip = n > 0.45f ? 1 : -1;
+
+            clouds[i].transform.localScale = new Vector3(s * flip + Random.Range(-.2f, .2f), s + Random.Range(-.2f, .2f), 1f);
+            activeClouds.Add(clouds[i].transform);
+
+            // Set initial position
+            Vector2 position = new Vector3(
+                Random.Range(BoundariesManager.leftBoundary + .4f, BoundariesManager.rightBoundary - .4f),
+                Random.Range(cloudYRange.x, cloudYRange.y)
+            );
+            activeClouds[i].position = position;
+
+            // Store the speed for this cloud
+            cloudSpeeds.Add(Mathf.Lerp(cloudSpeedRange.x, cloudSpeedRange.y, distance));
+            activeClouds[i].gameObject.SetActive(true);
+        }
+    }
+
+    void Update()
+    {
+        for (int i = 0; i < activeClouds.Count; i++)
+        {
+            // Move each cloud based on its speed
+            activeClouds[i].position += Vector3.left * cloudSpeeds[i] * Time.deltaTime;
+
+            // Check if the cloud has moved out of bounds
+            if (activeClouds[i].position.x < BoundariesManager.leftBoundary)
+            {
+                // Reset position to the right side
+                activeClouds[i].position = new Vector2(
+                    Random.Range(BoundariesManager.rightBoundary + .4f, BoundariesManager.rightBoundary + 1.4f),
+                    Random.Range(cloudYRange.x, cloudYRange.y)
+                );
+            }
+        }
+
     }
 
     /// <summary>
@@ -103,6 +190,11 @@ public class BackgroundController : MonoBehaviour
             // Set the offset directly instead of relying on continuous scrolling
             layerMaterials[i].SetTextureOffset("_MainTex", new Vector2(xOffset, 0));
         }
+    }
+
+    private void SpawnCloud()
+    {
+
     }
 
     private void OnEnable()

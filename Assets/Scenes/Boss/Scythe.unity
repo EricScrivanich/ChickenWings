@@ -17093,6 +17093,7 @@ MonoBehaviour:
     showNormals: 1
     showNormalsHelpInfo: 0
     tabIndex: 0
+    customPoints: []
   initialized: 1
 --- !u!212 &1872361353
 SpriteRenderer:
@@ -17992,6 +17993,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2179671936424261277, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3299547612893877592, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: shaderTypes
       value: 3
@@ -18066,7 +18071,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7764581127357185343, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0.75
+      value: 0.72
       objectReference: {fileID: 0}
     - target: {fileID: 7764581127357185343, guid: 5ea0dce037a0c43d6829f22782c1c241, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
