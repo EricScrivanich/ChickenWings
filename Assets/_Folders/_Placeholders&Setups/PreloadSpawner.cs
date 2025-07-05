@@ -6,7 +6,7 @@ public class PreloadSpawner : MonoBehaviour
     private float waveTime = 0;
     private float timeToWait = LevelRecordManager.TimePerStep;
 
-    [SerializeField] private LevelData levelData;
+    private LevelData levelData;
 
     private ushort currentSpawnStep;
     private ushort finalSpawnStep;
@@ -17,13 +17,13 @@ public class PreloadSpawner : MonoBehaviour
 
     private float total;
 
-    public void EnablePreloadSpawner(ushort current, ushort finalSpawnStep, SpawnStateManager s)
+    public void EnablePreloadSpawner(ushort current, ushort finalSpawnStep, SpawnStateManager s, LevelData ld)
     {
         this.finalSpawnStep = finalSpawnStep;
         this.currentSpawnStep = current;
         this.startingSpawnStep = current;
         this.spawnStateManager = s;
-
+        this.levelData = ld;
 
         waveTime = 0;
         enabled = true;

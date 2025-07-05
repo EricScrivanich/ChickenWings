@@ -343,10 +343,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e194d2cc3e68b4f0da0630e9371d4db8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicSource: {fileID: 4951571917034972469}
   audioSource: {fileID: 3477819981823733023}
   chickenSource: {fileID: 0}
   nonSlowSource: {fileID: 0}
-  musicSource: {fileID: 4951571917034972469}
   ringPassSource: {fileID: 2039888195929267459}
   pigAudioSource: {fileID: 0}
   windMillAudioSource: {fileID: 0}
@@ -378,6 +378,9 @@ MonoBehaviour:
   normalScythe: {fileID: 0}
   parryStart: {fileID: 0}
   parryHit: {fileID: 0}
+  cageHitSound: {fileID: 0}
+  cageDestroySound: {fileID: 0}
+  chicHappySounds: []
   eggDropPop: {fileID: 0}
   crack: {fileID: 8300000, guid: e5146415cf1ba493b9475b058f7f6924, type: 3}
   scoreSound: {fileID: 8300000, guid: 678c64c9b28384205ba6b72691e2b8f1, type: 3}
@@ -412,6 +415,9 @@ MonoBehaviour:
   sprayPaintSound: {fileID: 0}
   starWhooshSound: {fileID: 0}
   badgeSlapSound: {fileID: 0}
+  chicHappyVolume: 0
+  cageHitVolume: 0
+  cageDestroyVolume: 0
   uziGunShotVolume: 0
   parryStartVolume: 0
   parryHitVolume: 0
@@ -440,7 +446,6 @@ MonoBehaviour:
   chamberClickVolume: 0.7
   chamberCockVolume: 0.7
   eggDropPopVolume: 0.7
-  shotGunShellVolume: 0.7
   cluckVolume: 0.9
   flipVolume: 0.5
   deathSoundVolume: 0.5
@@ -465,6 +470,7 @@ MonoBehaviour:
   slowMoVolume: 0
   shotgunBlastVolume: 0
   shotgunReloadVolume: 0
+  shotGunShellVolume: 0.7
 --- !u!164 &3233758667693879064
 AudioReverbFilter:
   m_ObjectHideFlags: 0

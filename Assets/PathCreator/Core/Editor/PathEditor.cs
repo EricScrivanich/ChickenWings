@@ -312,7 +312,7 @@ namespace PathCreationEditor
 
                     float newValue = EditorGUILayout.Slider("Value", point.value, 0f, 1f);
                     float newDistance = EditorGUILayout.FloatField("Distance", point.distance);
-                    int layerChange = EditorGUILayout.IntField("Layer Change", point.layerChanges);
+                    Vector2Int layerChange = EditorGUILayout.Vector2IntField("Layer Change", point.layerChanges);
                     int newOrder = EditorGUILayout.IntField("Order", i);
 
                     EditorGUILayout.BeginHorizontal();

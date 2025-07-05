@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8ec5cdc658774fadb8730e2026d7251, type: 3}
+  m_Name: 01-01_The Flippin Chicken
+  m_EditorClassIdentifier: 
+  objData: {fileID: 11400000, guid: 39c7fc890c47e46058b8b922c162fb46, type: 2}
+  startingStats: {fileID: 11400000, guid: d10dd9036610a46658e0229299e97856, type: 2}
+  playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  LevelName: The Flippin Chicken
+  levelWorldAndNumber: {x: 1, y: 1, z: 0}
+  spawnSteps: 0b002200
+  finalSpawnStep: 225
+  idList: 03000000
+  dataTypes: 02000200
+  posList:
+  - {x: 8.2, y: 1}
+  - {x: 22.800001, y: -1.4}
+  floatList:
+  - 2.5
+  - 1
+  - 5.5
+  - 1
+  typeList: 00000000
+  poolSizes: 0100000000000100000000000000000000000000000000000000000000000000000000000000
+  cageAttachments: 
+  postionerData:
+  - ID: 17
+    type: 0
+    startPos: {x: -5.2000003, y: 4.2000003}
+    startRot: -0
+    savedTimePerStep: 0.18
+    sizeByType: 000000000000
+    perecnt: 1
+    positions: []
+    values: []
+    startingSteps: 
+    endingSteps: 
+    easeTypes: 
+    staringSpawnStep: 17
+    finalSpawnStep: 0

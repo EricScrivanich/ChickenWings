@@ -115,6 +115,11 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         releaseCooldownVar = releaseCooldown;
         addedForceOnRelease = new Vector2(0, addedYForceOnRelease);
 
+        if (playerPos == null)
+        {
+            playerPos = GameObject.Find("Player").GetComponent<Transform>();
+        }
+
         playerRb = playerPos.gameObject.GetComponent<Rigidbody2D>();
         boundaries = GetComponent<ForceBoundaries>();
         boundaries.Activate(false);

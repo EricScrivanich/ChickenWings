@@ -864,7 +864,13 @@ public class PlayerStateManager : MonoBehaviour
         // currentForce = xForce + ID.constantPlayerForce;
         if (!usingConstantForce)
         {
-            // force.x += rb.linearVelocity.x * .25f;
+            // float addedForce = 0;
+            // if (force.x * rb.linearVelocity.x > 0)
+            // {
+            //     addedForce = rb.linearVelocity.x * .4f;
+            // }
+            // force.x += addedForce;
+            // force.y += rb.linearVelocity.y * .1f;
             rb.linearVelocity = force;
             ID.globalEvents.OnPlayerVelocityChange?.Invoke(force, rb.gravityScale);
 

@@ -15,6 +15,11 @@ public class PigAwakeAnim : MonoBehaviour
     [SerializeField] private Transform pigTransform;
     [SerializeField] private float animationSpeed = 1;
 
+    [SerializeField] private Transform shadow;
+
+    [SerializeField] private Transform shadowEnd;
+    [SerializeField] private Vector2 shadowStartEndScale;
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -24,11 +29,17 @@ public class PigAwakeAnim : MonoBehaviour
 
 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(pigTransform.DOLocalMoveY(endLocalY, inTime).SetEase(inEase).From(startLocalY))
-        .JoinCallback(DoFlap)
+        sequence.Append(pigTransform.DOLocalMoveY(endLocalY, inTime).SetEase(inEase).From(startLocalY));
 
-                .Append(pigTransform.DOLocalMoveY(startLocalY, outTime).SetEase(outEase)).SetLoops(-1);
-        ;
+        sequence.JoinCallback(DoFlap);
+        sequence.Join(shadow.DOLocalMove(shadowEnd.localPosition, inTime).SetEase(inEase).From(Vector2.zero));
+        sequence.Join(shadow.DOScale(shadowStartEndScale.y, inTime).SetEase(inEase).From(shadowStartEndScale.x));
+
+        sequence.Append(pigTransform.DOLocalMoveY(startLocalY, outTime).SetEase(outEase));
+        sequence.Join(shadow.DOLocalMove(Vector2.zero, outTime).SetEase(outEase));
+        sequence.Join(shadow.DOScale(shadowStartEndScale.x, outTime).SetEase(outEase));
+        sequence.Play().SetLoops(-1);
+
 
 
     }

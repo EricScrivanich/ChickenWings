@@ -68,7 +68,7 @@ namespace PathCreation
             initialized = true;
         }
         private int currentLayer = 0;
-        public float GetCustomPointDistanceAtTime(float t)
+        public float GetCustomPointDistanceAtTime(float t, int direction = 1)
         {
 
 
@@ -91,7 +91,14 @@ namespace PathCreation
                 if (editorData.customPoints[i].value <= t && t <= editorData.customPoints[i + 1].value)
                 {
                     float p = Mathf.InverseLerp(editorData.customPoints[i].value, editorData.customPoints[i + 1].value, t);
-                    if (editorData.customPoints[i].layerChanges != 0) currentLayer = editorData.customPoints[i].layerChanges;
+                    if (editorData.customPoints[i].layerChanges != Vector2.zero && direction == 1)
+                    {
+                        currentLayer = editorData.customPoints[i].layerChanges.y;
+
+
+
+                    }
+                    else if (editorData.customPoints[i + 1].layerChanges != Vector2.zero && direction == -1) currentLayer = editorData.customPoints[i + 1].layerChanges.x;
                     return Mathf.Lerp(editorData.customPoints[i].distance, editorData.customPoints[i + 1].distance, p);
                 }
             }

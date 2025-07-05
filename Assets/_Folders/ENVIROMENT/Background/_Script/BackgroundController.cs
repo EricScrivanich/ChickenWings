@@ -111,6 +111,8 @@ public class BackgroundController : MonoBehaviour
             // Set initial scroll speed
             layerMaterials[i].SetFloat("_TextureScrollXSpeed", textureSpeed);
         }
+
+        if (levelCreator) return;
         clouds = new SpriteRenderer[cloudCountRange.y];
         for (int i = 0; i < cloudCountRange.y; i++)
         {
@@ -153,6 +155,8 @@ public class BackgroundController : MonoBehaviour
 
     void Update()
     {
+
+        if (levelCreator) return;
         for (int i = 0; i < activeClouds.Count; i++)
         {
             // Move each cloud based on its speed

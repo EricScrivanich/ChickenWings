@@ -267,7 +267,7 @@ public class CustomTimeSlider : MonoBehaviour
 
         DOTween.Kill(this);
         levelLengthObject.SetActive(false);
-        Camera.main.transform.DOMoveY(-2.26f, .8f).SetEase(Ease.OutCubic).SetUpdate(true);
+        Camera.main.transform.DOMoveY(-1.6f, .8f).SetEase(Ease.OutCubic).SetUpdate(true);
         mainHandle.localScale = Vector3.one;
 
 

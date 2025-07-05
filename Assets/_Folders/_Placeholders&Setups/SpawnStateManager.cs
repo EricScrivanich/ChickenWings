@@ -192,6 +192,7 @@ public class SpawnStateManager : MonoBehaviour
         if (isTestPlayer)
         {
             currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
+            levelData = LevelDataConverter.instance.ReturnLevelData();
 
             // if (levelData != null)
             //     levelData.InitializeData(this, currentSpawnStep);
@@ -202,6 +203,7 @@ public class SpawnStateManager : MonoBehaviour
             if (LevelRecordManager.CurrentPlayTimeStep == LevelRecordManager.PreloadObjectsTimeStep)
             {
 
+                if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
                 if (levelData != null)
                     levelData.InitializeData(this, currentSpawnStep);
 
@@ -230,14 +232,22 @@ public class SpawnStateManager : MonoBehaviour
             }
             // float loadDuration = initialDur / spedScale;
             if (levelData != null)
+            {
+                if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
                 levelData.InitializeData(this, currentSpawnStep, LevelRecordManager.PreloadObjectsTimeStep);
+            }
+
 
             // Camera.main.enabled = false;
             StartCoroutine(PreloadScene(spedScale));
 
         }
         else if (levelData != null)
+        {
+            if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
             levelData.InitializeData(this, currentSpawnStep);
+        }
+
     }
 
     private IEnumerator PreloadScene(int spedStep, bool skip = false)
@@ -252,7 +262,7 @@ public class SpawnStateManager : MonoBehaviour
             yield break;
         }
         enabled = false;
-        GetComponent<PreloadSpawner>().EnablePreloadSpawner(LevelRecordManager.PreloadObjectsTimeStep, LevelRecordManager.CurrentTimeStep, this);
+        GetComponent<PreloadSpawner>().EnablePreloadSpawner(LevelRecordManager.PreloadObjectsTimeStep, LevelRecordManager.CurrentTimeStep, this, levelData);
 
         Time.timeScale = spedStep;
 

@@ -4,11 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Level Data", menuName = "Setups/LevelData")]
 public class LevelData : ScriptableObject
 {
-
+    [SerializeField] private AllObjectData objData;
     public PlayerStartingStatsForLevels startingStats;
     public PlayerID playerID;
-    public string levelName;
-    public string levelWorldAndNumber;
+    public string LevelName;
+    public Vector3 levelWorldAndNumber;
     public ushort[] spawnSteps;
     public ushort finalSpawnStep;
     public short[] idList;
@@ -46,23 +46,22 @@ public class LevelData : ScriptableObject
     private int currentPositionerObjectIndex = 0;
 
 
-    [SerializeField] private RecordableObjectPool[] pools;
-    [SerializeField] private GameObject cageObject;
-
-    [SerializeField] private RingPool ringPool;
 
     private bool checkForCage = false;
 
 
-
+    public void LoadJsonToMemory()
+    {
+        LoadLevelSaveData(LevelDataConverter.instance.ConvertDataFromJson());
+    }
     public void InitializeData(SpawnStateManager s, ushort startingStep, int preloadIndex = -1)
     {
         spawner = s;
-        ringPool.Initialize(s);
+        objData.ringPool.Initialize(s);
 
 
         // Load your level save data first. This sets spawnSteps, idList, etc.
-        LoadLevelSaveData(LevelDataConverter.instance.ConvertDataFromJson());
+
         if (playerID != null) playerID.SetStartingStats(startingStats);
         dataTypeIndexes = new int[5];
 
@@ -135,12 +134,21 @@ public class LevelData : ScriptableObject
         // Create pools for each object type if needed.
         for (int i = 0; i < poolSizes.Length; i++)
         {
-            if (pools[i] != null && poolSizes[i] > 0)
-                pools[i].CreatePool(poolSizes[i]);
+            if (objData.pools[i] != null && poolSizes[i] > 0)
+                objData.pools[i].CreatePool(poolSizes[i]);
         }
 
         CreateDataStructs();
         GetSpawnSizeForNextTimeStep();
+    }
+
+    public void SetDefaults(AllObjectData objData, PlayerStartingStatsForLevels stats, PlayerID id)
+    {
+        this.objData = objData;
+        this.startingStats = stats;
+        this.playerID = id;
+
+
     }
 
     private void CreateDataStructs()
@@ -244,7 +252,8 @@ public class LevelData : ScriptableObject
 
             return;
         }
-        levelName = lds.levelName;
+        Debug.LogError("Loading Level Data: " + lds.levelName + " with " + lds.spawnSteps.Length + " spawn steps.");
+        LevelName = lds.levelName;
         // levelWorldAndNumber = lds.levelWorldAndNumber;
         spawnSteps = lds.spawnSteps;
         finalSpawnStep = lds.finalSpawnStep;
@@ -283,7 +292,7 @@ public class LevelData : ScriptableObject
             startingStats.StartingLives = lds.StartingLives;
 
 
-
+        Debug.LogError("Finished loading data for level: " + LevelName + " with " + spawnSteps.Length + " spawn steps and " + idList.Length + " objects.");
     }
 
 
@@ -305,14 +314,14 @@ public class LevelData : ScriptableObject
                 {
                     if (dataTypes[i] < 0)
                     {
-                        pools[idList[i]].SpawnPositionerData(postionerData[currentPositionerObjectIndex]);
+                        objData.pools[idList[i]].SpawnPositionerData(postionerData[currentPositionerObjectIndex]);
                         currentPositionerObjectIndex++;
                         if (checkForCage && i == cageAttachments[currentCageIndex])
                         {
                             // Spawn a cage object
                             Debug.LogError("Spawning Cage for ID: " + idList[i] + " at index: " + currentCageIndex);
-                            var attachedObject = pools[idList[i]].GetCageAttachment();
-                            var cage = Instantiate(cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
+                            var attachedObject = objData.pools[idList[i]].GetCageAttachment();
+                            var cage = Instantiate(objData.cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
                             // cage.gameObject.SetActive(false);
                             cage.GetComponent<CustomHingeJoint2D>().SetAttatchedObject(attachedObject);
                             currentCageIndex++;
@@ -331,19 +340,19 @@ public class LevelData : ScriptableObject
                     switch (dataTypes[i])
                     {
                         case 1:
-                            pools[idList[i]].SpawnFloatOne(dataStructFloatOne[dataTypeIndexes[0]]);
+                            objData.pools[idList[i]].SpawnFloatOne(dataStructFloatOne[dataTypeIndexes[0]]);
                             break;
                         case 2:
-                            pools[idList[i]].SpawnFloatTwo(dataStructFloatTwo[dataTypeIndexes[1]]);
+                            objData.pools[idList[i]].SpawnFloatTwo(dataStructFloatTwo[dataTypeIndexes[1]]);
                             break;
                         case 3:
-                            pools[idList[i]].SpawnFloatThree(dataStructFloatThree[dataTypeIndexes[2]]);
+                            objData.pools[idList[i]].SpawnFloatThree(dataStructFloatThree[dataTypeIndexes[2]]);
                             break;
                         case 4:
-                            pools[idList[i]].SpawnFloatFour(dataStructFloatFour[dataTypeIndexes[3]]);
+                            objData.pools[idList[i]].SpawnFloatFour(dataStructFloatFour[dataTypeIndexes[3]]);
                             break;
                         case 5:
-                            pools[idList[i]].SpawnFloatFive(dataStructFloatFive[dataTypeIndexes[4]]);
+                            objData.pools[idList[i]].SpawnFloatFive(dataStructFloatFive[dataTypeIndexes[4]]);
                             break;
 
                     }
@@ -352,8 +361,8 @@ public class LevelData : ScriptableObject
                     {
                         // Spawn a cage object
                         Debug.LogError("Spawning Cage for ID: " + idList[i] + " at index: " + currentCageIndex);
-                        var attachedObject = pools[idList[i]].GetCageAttachment();
-                        var cage = Instantiate(cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
+                        var attachedObject = objData.pools[idList[i]].GetCageAttachment();
+                        var cage = Instantiate(objData.cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
                         // cage.gameObject.SetActive(false);
                         cage.GetComponent<CustomHingeJoint2D>().SetAttatchedObject(attachedObject);
                         currentCageIndex++;
@@ -371,13 +380,13 @@ public class LevelData : ScriptableObject
                 }
                 else if (idList[i] == -2)
                 {
-                    ringPool.SpawnRingByData(dataStructFloatThree[dataTypeIndexes[2]]);
+                    objData.ringPool.SpawnRingByData(dataStructFloatThree[dataTypeIndexes[2]]);
                     dataTypeIndexes[2]++;
 
                 }
                 else if (idList[i] == -1)
                 {
-                    ringPool.SpawnBucketByData(dataStructFloatThree[dataTypeIndexes[2]]);
+                    objData.ringPool.SpawnBucketByData(dataStructFloatThree[dataTypeIndexes[2]]);
                     dataTypeIndexes[2]++;
                 }
 

@@ -6,6 +6,11 @@ public class LevelDataConverter : MonoBehaviour
 {
     public static LevelDataConverter instance;
     private UserCreatedLevels userCreatedLevels;
+
+    public LevelContainer Levels;
+
+    public static int currentLevelInstance { get; private set; } = -1;
+
     // private List<short> idList;
     // private List<ushort> spawnedStepList;
     // private List<Vector2> posList;
@@ -31,9 +36,68 @@ public class LevelDataConverter : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         LevelRecordManager.ResetStaticParameters();
 
-        // DeleteAllLevelsAndClearDirectories();
+
+#if UNITY_EDITOR
+        {
+            if (Levels.CheckNullItems())
+            {
+                UnityEditor.EditorUtility.SetDirty(Levels);
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
+            }
+        }
+#endif
 
 
+    }
+
+    public LevelData ReturnLevelData(int index = -1)
+    {
+
+        if (index == -1)
+        {
+            Debug.Log("Returning current level instance: " + currentLevelInstance);
+            if (currentLevelInstance == -1 || currentLevelInstance >= Levels.levels.Length)
+            {
+                Debug.LogWarning("Current level instance is not set or out of bounds. Returning null.");
+
+                return null;
+            }
+            return Levels.levels[currentLevelInstance];
+        }
+
+        else
+        {
+
+            return Levels.levels[index];
+        }
+
+    }
+
+    public void SetCurrentLevelInstance(Vector3 levelNumber)
+    {
+        if (levelNumber == Vector3.zero) currentLevelInstance = -1;
+        for (int i = 0; i < Levels.levels.Length; i++)
+        {
+            if (Levels.levels[i].levelWorldAndNumber == levelNumber)
+            {
+                currentLevelInstance = i;
+                Debug.Log("Current Level Instance set to: " + currentLevelInstance);
+                return;
+            }
+        }
+    }
+
+
+    public void AddLevel(LevelData level)
+    {
+#if UNITY_EDITOR
+        Debug.Log("Adding level: " + level.LevelName);
+        Levels.AddLevel(level);
+        UnityEditor.EditorUtility.SetDirty(Levels);
+        UnityEditor.AssetDatabase.SaveAssets();
+        UnityEditor.AssetDatabase.Refresh();
+#endif
     }
 
     public void DeleteUserCreatedLevelsFile()
@@ -125,9 +189,9 @@ public class LevelDataConverter : MonoBehaviour
         }
     }
 
-    public void ConvertDataToJson(List<RecordableObjectPlacer> obj, string title, int[] poolSizes, ushort finalSpawnStep, short[] ammos, short lives)
+    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, string title, int[] poolSizes, ushort finalSpawnStep, short[] ammos, short lives, LevelData editorData = null)
     {
-        string savePath = Path.Combine(GetSaveDirectory(), title + ".json");
+
         List<short> idList = new List<short>();
         List<ushort> spawnedStepList = new List<ushort>();
         List<ushort> typeList = new List<ushort>();
@@ -136,7 +200,7 @@ public class LevelDataConverter : MonoBehaviour
         List<short> dataTypes = new List<short>();
         List<ushort> cageAttachments = new List<ushort>();
         List<RecordedObjectPositionerDataSave> positionerData = new List<RecordedObjectPositionerDataSave>();
-        Debug.LogError("Converting To Json");
+
 
         for (int i = 0; i < obj.Count; i++)
         {
@@ -203,13 +267,26 @@ public class LevelDataConverter : MonoBehaviour
         {
             poolData[i] = (ushort)poolSizes[i];
         }
-
+        if (editorData != null) title = editorData.LevelName; // Use the editor data title if available
         LevelDataSave save = new LevelDataSave(title, idList.ToArray(), spawnedStepList.ToArray(), typeList.ToArray(), dataTypes.ToArray(), finalSpawnStep, posList.ToArray(), floatList.ToArray(), poolData, ammos, lives);
+
+
 
         save.SetPositionerData(positionerData.ToArray());
         save.SetCageAttachments(cageAttachments.ToArray());
+#if UNITY_EDITOR
+        if (editorData != null)
+        {
 
-
+            editorData.LoadLevelSaveData(save);
+            UnityEditor.EditorUtility.SetDirty(editorData);
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.Refresh();
+            return;
+        }
+#endif
+        Debug.LogError("Converting To Json");
+        string savePath = Path.Combine(GetSaveDirectory(), title + ".json");
         string json = JsonUtility.ToJson(save, true);
         File.WriteAllText(savePath, json);
         Debug.Log("Level saved to: " + savePath);

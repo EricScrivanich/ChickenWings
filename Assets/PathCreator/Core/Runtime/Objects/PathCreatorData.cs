@@ -161,7 +161,7 @@ namespace PathCreation
         {
             public float value;
             public float distance;
-            public int layerChanges;
+            public Vector2Int layerChanges;
         }
 
         public List<CustomPoint> customPoints = new List<CustomPoint>();

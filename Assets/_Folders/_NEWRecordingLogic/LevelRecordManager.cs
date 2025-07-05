@@ -15,12 +15,6 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
-    public enum LevelType
-    {
-        Main,
-        DownloadedCustom,
-        OwnerCustom
-    }
     [SerializeField] private GameObject PlayTimeObject;
     [SerializeField] private GameObject ViewObject;
 
@@ -46,9 +40,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     private int arrowPressedType = 0;
 
 
-    public LevelType levelType;
-    public string LevelName;
-    public string levelWorldAndNumber;
+
 
 
     private InputController controls;
@@ -76,17 +68,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static Action<int> OnShowObjectTime;
     public static Action<int, bool> OnSendSpecialDataToActiveObjects;
 
-    public static Action<int> CheckForPreloadTimeStep;
-
 
     public static Action PressTimerBar;
     private GameObject objectToAdd;
 
     private CanvasGroup editorCanvasGroup;
+    [SerializeField] private CanvasGroup timebarCanvasGroup;
     public static bool PreloadedSceneReady = false;
-    public static bool PlayPreloadedScene = false;
-
-
 
 
     private bool objectClicked = false;
@@ -102,7 +90,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     private Coroutine NormalTimeCor;
 
-    public LevelDataEditors[] floatSliders;
+
     private float cameraY;
 
 
@@ -120,7 +108,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public bool editingPostionerObject = false;
 
     public PositionerObject currentSelectedPostionerObject;
-    public int currentSelectedPostionerObjectIndex;
+    [HideInInspector] public int currentSelectedPostionerObjectIndex;
 
     public static bool ShowLines { get; private set; }
     public static bool ShowSpeeds { get; private set; }
@@ -136,7 +124,16 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public bool MultiTouch { get; private set; } = false;
 
     public ushort finalSpawnStep { get; private set; } = 150;
-    private Coroutine preloadSceneCoroutine;
+
+    [SerializeField] private TextMeshProUGUI LevelTitleText;
+
+
+    [SerializeField] private GameObject levelPicker;
+
+    [SerializeField] private GameObject openLevelPickerButton;
+
+
+
 
 
 
@@ -388,7 +385,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         //     }
         // }
     }
-
+    private bool ignoreAllClicks = false;
     public void DeleteAll()
     {
         for (int i = 0; i < RecordedObjects.Count; i++)
@@ -398,7 +395,40 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         RecordedObjects.Clear();
     }
 
+#if UNITY_EDITOR
+    public void OpenLevelPicker(bool open)
+    {
+        ignoreAllClicks = open;
+        if (open)
+        {
+            levelPicker.SetActive(true);
 
+        }
+        else if (dataLoaded)
+        {
+            levelPicker.SetActive(false);
+
+        }
+
+
+    }
+
+    public void LoadNewLevel(LevelData data)
+    {
+        OpenLevelPicker(false);
+        if (data != null)
+        {
+            LevelDataConverter.instance.SetCurrentLevelInstance(data.levelWorldAndNumber);
+            // reload the scene
+            ResetStaticParameters();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
+
+
+    }
+#endif
+    private bool isEditor = false;
     void Awake()
     {
 
@@ -418,8 +448,19 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         ShowFolders = true;
         ShowTime = false;
 
-        controls = new InputController();
+
         CreatePools();
+        controls = new InputController();
+        isEditor = false;
+
+#if UNITY_EDITOR
+        isEditor = true;
+#endif
+        if (!isEditor)
+        {
+            Destroy(openLevelPickerButton);
+            Destroy(levelPicker);
+        }
 
 
 
@@ -471,6 +512,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     private void HandleClickObject(Vector2 pos)
     {
+        if (ignoreAllClicks) return;
         lastClickedPos = Camera.main.ScreenToWorldPoint(pos);
 
         if (editingPostionerObject)
@@ -579,11 +621,15 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             editorCanvasGroup.alpha = .3f;
             editorCanvasGroup.blocksRaycasts = false;
+            timebarCanvasGroup.alpha = .2f;
+            timebarCanvasGroup.blocksRaycasts = false;
         }
         else
         {
             editorCanvasGroup.alpha = 1;
             editorCanvasGroup.blocksRaycasts = true;
+            timebarCanvasGroup.alpha = 1;
+            timebarCanvasGroup.blocksRaycasts = true;
         }
 
     }
@@ -971,6 +1017,89 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
         return currentSelectedObject.GetIcon();
     }
+
+
+    #region Loading and Saving
+    private bool dataLoaded = false;
+    public void LoadAssets()
+    {
+        RecordedObjects = new List<RecordableObjectPlacer>();
+        string addedTitleText = "";
+        if (isEditor)
+        {
+#if UNITY_EDITOR
+            if (LevelDataConverter.instance.ReturnLevelData() != null && LevelDataConverter.currentLevelInstance > 0)
+            {
+                levelData = LevelDataConverter.instance.ReturnLevelData();
+                dataLoaded = true;
+
+                OpenLevelPicker(false);
+                if (levelData.levelWorldAndNumber.z <= 0)
+                    addedTitleText = $"{levelData.levelWorldAndNumber.x:00}-{levelData.levelWorldAndNumber.y:00} ";
+                else
+                    addedTitleText = $"{levelData.levelWorldAndNumber.x:00}-{levelData.levelWorldAndNumber.y:00}-{levelData.levelWorldAndNumber.z:00} ";
+            }
+            else
+            {
+                dataLoaded = false;
+                OpenLevelPicker(true);
+            }
+#endif
+        }
+        // levelData = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Levels/" + levelType.ToString() + "/" + levelWorldAndNumber + LevelName + ".asset");
+        else
+        {
+            levelData = LevelDataConverter.instance.ReturnLevelData(0);
+
+            levelData.LoadData();
+        }
+
+
+
+        if (levelData == null)
+        {
+            Debug.Log("No level data found");
+            return;
+        }
+
+        LevelDataConverter.instance.SetCurrentLevelInstance(levelData.levelWorldAndNumber);
+
+        LevelTitleText.text = addedTitleText + levelData.LevelName;
+        var data = LevelDataConverter.instance.ReturnDynamicData(levelData);
+        finalSpawnStep = levelData.finalSpawnStep;
+        if (finalSpawnStep < 50) finalSpawnStep = 50;
+        if (currentSavedMaxIndex > finalSpawnStep)
+        {
+            currentSavedMaxIndex = finalSpawnStep;
+        }
+
+
+        CustomTimeSlider.instance.SetVariables(CurrentTimeStep, currentSavedMinIndex, currentSavedMaxIndex);
+        CustomTimeSlider.instance.SetMaxTime(finalSpawnStep);
+
+        for (int i = 0; i < data.Count; i++)
+        {
+            RecordableObjectPlacer obj;
+            if (data[i].ID < 0)
+            {
+                obj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(data[i].ID) - 1]);
+            }
+            else
+                obj = Instantiate(recordableObjectsByID[data[i].ID]);
+
+            if (obj == null)
+            {
+                Debug.Log("No object found");
+                return;
+            }
+            obj.LoadAssetFromSave(data[i]);
+            obj.SetIsSelected(false);
+            obj.gameObject.SetActive(false);
+            RecordedObjects.Add(obj);
+        }
+
+
+    }
     public void SaveAsset()
     {
 
@@ -1039,10 +1168,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
-        if (levelType == LevelType.Main)
+        if (isEditor)
         {
-            // AssetDatabase.CreateAsset(savedData, "Assets/Levels/" + levelType.ToString() + "/" + levelWorldAndNumber + LevelName + ".asset");
 
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, "", poolSizes, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives, levelData);
+            // Level data added at end to save it directly to scriptable object
 
         }
         else
@@ -1055,7 +1185,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             }
 
 
-            LevelDataConverter.instance.ConvertDataToJson(RecordedObjects, path, poolSizes, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives);
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, path, poolSizes, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives);
             Debug.Log("Saved with final spawn step: " + finalSpawnStep);
 
         }
@@ -1068,6 +1198,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         // AssetDatabase.Refresh();
 
     }
+
+    #endregion
     public static string LevelPath = "NAMEBU";
 
 
@@ -1093,56 +1225,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         finalSpawnStep = (ushort)newMax;
         CustomTimeSlider.instance.SetMaxTime(finalSpawnStep);
     }
-    public void LoadAssets()
-    {
-        RecordedObjects = new List<RecordableObjectPlacer>();
-        if (levelType == LevelType.Main) Debug.Log("Loading main level");
-        // levelData = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Levels/" + levelType.ToString() + "/" + levelWorldAndNumber + LevelName + ".asset");
-        else
-        {
-            levelData.LoadData();
-        }
 
-        if (levelData == null)
-        {
-            Debug.Log("No level data found");
-            return;
-        }
-        var data = LevelDataConverter.instance.ReturnDynamicData(levelData);
-        finalSpawnStep = levelData.finalSpawnStep;
-        if (finalSpawnStep < 50) finalSpawnStep = 50;
-        if (currentSavedMaxIndex > finalSpawnStep)
-        {
-            currentSavedMaxIndex = finalSpawnStep;
-        }
-
-
-        CustomTimeSlider.instance.SetVariables(CurrentTimeStep, currentSavedMinIndex, currentSavedMaxIndex);
-        CustomTimeSlider.instance.SetMaxTime(finalSpawnStep);
-
-        for (int i = 0; i < data.Count; i++)
-        {
-            RecordableObjectPlacer obj;
-            if (data[i].ID < 0)
-            {
-                obj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(data[i].ID) - 1]);
-            }
-            else
-                obj = Instantiate(recordableObjectsByID[data[i].ID]);
-
-            if (obj == null)
-            {
-                Debug.Log("No object found");
-                return;
-            }
-            obj.LoadAssetFromSave(data[i]);
-            obj.SetIsSelected(false);
-            obj.gameObject.SetActive(false);
-            RecordedObjects.Add(obj);
-        }
-
-
-    }
 
 
     // public LevelData GetLevelData()
