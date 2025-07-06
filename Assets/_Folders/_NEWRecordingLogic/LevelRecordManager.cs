@@ -153,6 +153,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     }
 
+   
+
     public void SetMinAndMax(int min, int max)
     {
         currentSavedMinIndex = min;
@@ -1051,7 +1053,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             levelData = LevelDataConverter.instance.ReturnLevelData(0);
 
-            levelData.LoadData();
+            levelData.LoadJsonToMemory();
         }
 
 
@@ -1587,6 +1589,18 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             ProjectileLines.Enqueue(obj);
         }
 
+    }
+
+    public void FadeTitleText(bool fade)
+    {
+        if (fade)
+        {
+            LevelTitleText.color = Color.white * .25f;
+        }
+        else
+        {
+            LevelTitleText.color = Color.white;
+        }
     }
 
     public string FormatTimerText(int step)

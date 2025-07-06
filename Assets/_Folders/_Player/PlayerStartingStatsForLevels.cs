@@ -30,6 +30,16 @@ public class PlayerStartingStatsForLevels : ScriptableObject
 
     public int[] AvailableAmmos;
 
+
+    public void SetData(short startingLives, short[] startingAmmos)
+    {
+        this.startingAmmos = startingAmmos;
+        this.StartingLives = startingLives;
+
+      
+
+    }
+
     public void Initialize()
     {
         numberOfWeapons = 0;

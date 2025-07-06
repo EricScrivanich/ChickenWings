@@ -8,6 +8,8 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
 
     [SerializeField] private Transform linePosition;
 
+    [SerializeField] private Vector3 level_World_Number_Special;
+
     public Vector2 ReturnLinePostion()
     {
         if (linePosition != null)

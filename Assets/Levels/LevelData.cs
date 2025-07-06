@@ -4,8 +4,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Level Data", menuName = "Setups/LevelData")]
 public class LevelData : ScriptableObject
 {
+    [Header("Difficulty overrides")]
+
+    [SerializeField] private short[] easyStartingAmmos;
+    [SerializeField] private short easyStartingLives;
+
+
+
     [SerializeField] private AllObjectData objData;
     public PlayerStartingStatsForLevels startingStats;
+
+
+
     public PlayerID playerID;
     public string LevelName;
     public Vector3 levelWorldAndNumber;
@@ -33,7 +43,8 @@ public class LevelData : ScriptableObject
     private int[] dataTypeIndexes;
 
     private SpawnStateManager spawner;
-
+    public short[] StartingAmmos { get; private set; }
+    public short StartingLives { get; private set; }
 
 
     private RecordedDataStruct[] Data;
@@ -54,7 +65,7 @@ public class LevelData : ScriptableObject
     {
         LoadLevelSaveData(LevelDataConverter.instance.ConvertDataFromJson());
     }
-    public void InitializeData(SpawnStateManager s, ushort startingStep, int preloadIndex = -1)
+    public void InitializeData(SpawnStateManager s, ushort startingStep, int preloadIndex = -1, int difficulty = 1)
     {
         spawner = s;
         objData.ringPool.Initialize(s);
@@ -62,7 +73,22 @@ public class LevelData : ScriptableObject
 
         // Load your level save data first. This sets spawnSteps, idList, etc.
 
-        if (playerID != null) playerID.SetStartingStats(startingStats);
+        if (playerID != null)
+        {
+            if (difficulty == 1)
+            {
+                // normal difficulty
+
+                startingStats.SetData(StartingLives, StartingAmmos);
+            }
+            else if (difficulty == 0)
+            {
+                // Normal or Hard difficulty, use default values
+                startingStats.SetData(easyStartingLives, easyStartingAmmos);
+            }
+
+            playerID.SetStartingStats(startingStats);
+        }
         dataTypeIndexes = new int[5];
 
         // Set currentSpawnStep to the specified starting step.
@@ -148,6 +174,17 @@ public class LevelData : ScriptableObject
         this.startingStats = stats;
         this.playerID = id;
 
+        finalSpawnStep = 300;
+        spawnSteps = new ushort[0];
+        idList = new short[0];
+        posList = new Vector2[0];
+        dataTypes = new short[0];
+        floatList = new float[0];
+        startingStats.startingAmmos = new short[5];
+        startingStats.startingAmmos[0] = 3;
+        startingStats.startingAmmos[1] = 3;
+        startingStats.StartingLives = 3;
+
 
     }
 
@@ -226,11 +263,7 @@ public class LevelData : ScriptableObject
     }
 
 
-    public void LoadData()
-    {
-        LoadLevelSaveData(LevelDataConverter.instance.ConvertDataFromJson());
 
-    }
 
     public void LoadLevelSaveData(LevelDataSave lds)
     {
@@ -243,10 +276,11 @@ public class LevelData : ScriptableObject
             posList = new Vector2[0];
             dataTypes = new short[0];
             floatList = new float[0];
-            startingStats.startingAmmos = new short[5];
-            startingStats.startingAmmos[0] = 3;
-            startingStats.startingAmmos[1] = 3;
-            startingStats.StartingLives = 3;
+            StartingAmmos = new short[5];
+            StartingAmmos[0] = 3;
+            StartingAmmos[1] = 3;
+            StartingLives = 3;
+            startingStats.SetData(StartingLives, StartingAmmos);
 
 
 
@@ -278,18 +312,24 @@ public class LevelData : ScriptableObject
 
         if (lds.startingAmmos == null || lds.startingAmmos.Length <= 0)
         {
+            StartingAmmos = new short[5];
+            StartingAmmos[0] = 3;
+            StartingAmmos[1] = 3;
+
             startingStats.startingAmmos = new short[5];
             startingStats.startingAmmos[0] = 3;
             startingStats.startingAmmos[1] = 3;
 
         }
         else
-            startingStats.startingAmmos = lds.startingAmmos;
+            StartingAmmos = lds.startingAmmos;
 
         if (lds.StartingLives <= 0)
-            startingStats.StartingLives = 3;
+            StartingLives = 3;
         else
-            startingStats.StartingLives = lds.StartingLives;
+            StartingLives = lds.StartingLives;
+
+        startingStats.SetData(StartingLives, StartingAmmos);
 
 
         Debug.LogError("Finished loading data for level: " + LevelName + " with " + spawnSteps.Length + " spawn steps and " + idList.Length + " objects.");

@@ -650,14 +650,34 @@ public class CustomTimeSlider : MonoBehaviour
 
             case SliderHandle.HandleType.Min:
                 lastSavedMinValue = currentMinIndex;
-                if (pressed) minText.gameObject.SetActive(true);
-                else minText.gameObject.SetActive(false);
+                if (pressed)
+                {
+                    minText.gameObject.SetActive(true);
+                    LevelRecordManager.instance.FadeTitleText(true);
+                }
+                else
+                {
+                    minText.gameObject.SetActive(false);
+                    LevelRecordManager.instance.FadeTitleText(false);
+                }
+
                 break;
 
             case SliderHandle.HandleType.Max:
                 lastSavedMaxValue = currentMaxIndex;
-                if (pressed) maxText.gameObject.SetActive(true);
-                else maxText.gameObject.SetActive(false);
+                if (pressed)
+                {
+                    maxText.gameObject.SetActive(true);
+                    LevelRecordManager.instance.FadeTitleText(true);
+                }
+
+                else
+                {
+                    maxText.gameObject.SetActive(false);
+                    LevelRecordManager.instance.FadeTitleText(false);
+                }
+
+
                 break;
 
             case SliderHandle.HandleType.AbsoluteMax:
@@ -671,6 +691,18 @@ public class CustomTimeSlider : MonoBehaviour
                 lastSavedMainValue = currentIndex;
                 objSpawnText.gameObject.SetActive(pressed);
                 OnEditObjectTime?.Invoke(pressed);
+
+                if (pressed)
+                {
+
+                    LevelRecordManager.instance.FadeTitleText(true);
+                }
+
+                else
+                {
+
+                    LevelRecordManager.instance.FadeTitleText(false);
+                }
                 break;
         }
 
