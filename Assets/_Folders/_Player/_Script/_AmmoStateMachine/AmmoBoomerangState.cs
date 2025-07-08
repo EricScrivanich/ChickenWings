@@ -56,6 +56,7 @@ public class AmmoBoomerangState : AmmoBaseState
 
     public override void CollectAmmo(PlayerStateManager player, int type)
     {
+        
 
     }
 

@@ -42,9 +42,11 @@ public class LevelData : ScriptableObject
     private ushort one = 1;
     private int[] dataTypeIndexes;
 
+    [SerializeField] private ushort[] checkPointSteps;
+
     private SpawnStateManager spawner;
-    public short[] StartingAmmos { get; private set; }
-    public short StartingLives { get; private set; }
+    public short[] StartingAmmos;
+    public short StartingLives;
 
 
     private RecordedDataStruct[] Data;
@@ -340,6 +342,10 @@ public class LevelData : ScriptableObject
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
+        if (ss == checkPointSteps[0])
+        {
+            objData.SpawnCheckPoint(false);
+        }
         if (ss == nextSpawnStep)
         {
             Debug.LogError("Next Spawn Step: " + ss + " is the same as current spawn step: " + currentSpawnStep + ". Spawning objects now.");

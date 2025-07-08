@@ -33,21 +33,17 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-
-
-
-    }
-
-    void Start()
-    {
         if (audioSource != null)
         {
             audioSource.volume = AudioManager.instance.SfxVolume * baseVolume;
 
         }
-        Initialize(testHasCollected);
+
+
 
     }
+
+   
 
     public void Initialize(bool hasCollected)
     {

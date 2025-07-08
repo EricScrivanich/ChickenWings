@@ -5,6 +5,7 @@ using UnityEngine;
 public class PilotPig : MonoBehaviour
 {
 
+    [SerializeField] private bool testNew = false;
     // public enum FlightMode
     // {
     //     GlideUp,
@@ -39,6 +40,8 @@ public class PilotPig : MonoBehaviour
     private Animator anim;
     public float xTrigger;
     private bool startMotion;
+    private Transform playerTransform;
+    [SerializeField] private float yForce;
 
 
     // Add a public variable to select the flight mode in the inspector
@@ -53,10 +56,59 @@ public class PilotPig : MonoBehaviour
 
 
         rb.bodyType = RigidbodyType2D.Dynamic;
+
+        if (testNew)
+        {
+            goUp = true;
+            goDown = false;
+            rb.gravityScale = 0;
+            playerTransform = GameObject.Find("Player").transform;
+
+
+
+        }
+
     }
 
     private void FixedUpdate()
     {
+        if (testNew)
+        {
+            if (goUp)
+            {
+                if (transform.position.y > playerTransform.position.y)
+                {
+                    goUp = false;
+                    anim.SetBool("GlidingUpBool", false);
+                    anim.SetBool("GlidingDownBool", true);
+                    anim.SetTrigger("GoDown");
+                    goDown = true;
+
+
+                }
+                else
+                    rb.AddForce(new Vector2(0, yForce));
+
+            }
+            if (goDown)
+            {
+                if (transform.position.y < playerTransform.position.y)
+                {
+                    goUp = true;
+                    anim.SetBool("GlidingUpBool", true);
+                    anim.SetBool("GlidingDownBool", false);
+                    anim.SetTrigger("GoUp");
+                    goDown = false;
+
+
+                }
+                else
+                    rb.AddForce(new Vector2(0, -yForce));
+            }
+
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, -maxYSpeed, maxYSpeed));
+            return;
+        }
 
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, maxYSpeedDown, maxYSpeedUp));
 
@@ -86,6 +138,11 @@ public class PilotPig : MonoBehaviour
 
     private void OnEnable()
     {
+        if (testNew)
+        {
+            rb.linearVelocity = new Vector2(initialSpeed, 0);
+            return;
+        }
         startMotion = false;
         // if (initialSpeed < 0)
         // {
@@ -162,6 +219,7 @@ public class PilotPig : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (testNew) return;
 
         if ((initialSpeed > 0 && transform.position.x < xTrigger && !startMotion) || (initialSpeed < 0 && transform.position.x > xTrigger && !startMotion))
         {
