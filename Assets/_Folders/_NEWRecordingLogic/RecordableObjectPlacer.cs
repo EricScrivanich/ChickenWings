@@ -89,7 +89,7 @@ public class RecordableObjectPlacer : MonoBehaviour
     public ushort spawnedTimeStep { get; private set; }
     public ushort unspawnedTimeStep { get; private set; }
 
-    private bool isSelected = false;
+    public bool isSelected { get; private set; } = false;
 
     private bool movingRight = false;
     public int speedChanger
@@ -190,7 +190,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     }
-    public void UpdateTimeStep(int step)
+    public void UpdateTimeStep(int step, bool multipleSelect = false)
     {
         spawnedTimeStep = (ushort)step;
         Data.spawnedStep = spawnedTimeStep;
@@ -219,6 +219,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         }
 
         // UpdateObjectData();
+
         ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep);
 
 
@@ -732,7 +733,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         LevelRecordManager.OnSendSpecialDataToActiveObjects -= CheckSpecialData;
 
 
-        if (isSelected && LevelRecordManager.instance != null) LevelRecordManager.instance.UnactivateSelectedObject();
+        if (isSelected) LevelRecordManager.instance.UnactivateSelectedObject();
 
         line.positionCount = 0;
 
@@ -769,11 +770,11 @@ public class RecordableObjectPlacer : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public void UpdateBasePosition(Vector2 pos)
+    public void UpdateBasePosition(Vector2 pos, bool usingOffset = false)
     {
         // if (Title == "Windmill") obj.ApplyCustomizedData(Data);
 
-
+        if (usingOffset) pos = LevelRecordManager.instance.ReturnRoundedPosition(Data.startPos - pos, true);
         if (_pType == PostionType.Grounded)
         {
             if (pos.x < BoundariesManager.leftViewBoundary) return;
@@ -942,7 +943,7 @@ public class RecordableObjectPlacer : MonoBehaviour
     private void UpdateObjectPosition(ushort timeStep, float realTime)
     {
 
-        if (realTime == 0 && timeStep < spawnedTimeStep)
+        if (realTime == 0 && timeStep < spawnedTimeStep && !(LevelRecordManager.instance.multipleObjectsSelected && isSelected))
         {
 
 
@@ -1278,10 +1279,13 @@ public class RecordableObjectPlacer : MonoBehaviour
             else
                 unspawnedTimeStep = timeStep;
 
+            if (!(LevelRecordManager.instance.multipleObjectsSelected && isSelected))
+            {
+                gameObject.SetActive(false);
+                return;
+            }
 
 
-            gameObject.SetActive(false);
-            return;
 
         }
 
@@ -1297,7 +1301,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         {
             offset = obj.ReturnPhaseOffset(p.x);
 
-            if (offset < 0)
+            if (offset < 0 && !(LevelRecordManager.instance.multipleObjectsSelected && isSelected))
             {
                 unspawnedTimeStep = LevelRecordManager.CurrentTimeStep;
                 gameObject.SetActive(false);
@@ -1563,7 +1567,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     private void CheckForPreloadTimeStep(int checkedStep)
     {
-        
+
 
     }
 }

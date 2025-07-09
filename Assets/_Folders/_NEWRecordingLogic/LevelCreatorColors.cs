@@ -6,6 +6,7 @@ public class LevelCreatorColors : ScriptableObject
 {
     public Color MainUIColor;
     public Color SelctedUIColor;
+    public Color UnSelctableUIColor;
     public Vector3 arrowNormalScale;
     public Vector3 arrowSelectedScale;
     public Color SelectedPigOutlineColor;
@@ -29,7 +30,7 @@ public class LevelCreatorColors : ScriptableObject
     public Color iconFillColor;
     public Color UnSelectableColor;
 
-    
+
 
 
 }

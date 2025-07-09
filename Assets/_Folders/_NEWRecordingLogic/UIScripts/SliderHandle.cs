@@ -5,7 +5,7 @@ using TMPro;
 
 public class SliderHandle : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
-    public enum HandleType { Main, Min, Max, AbsoluteMax, Object, Time, StartTime, StartTween, EndTween, TweenDisplay }
+    public enum HandleType { Main, Min, Max, AbsoluteMax, Object, Time, StartTime, StartTween, EndTween, TweenDisplay, MultipleObject }
 
     [SerializeField] private bool isStartTween;
     [SerializeField] private TextMeshProUGUI text;
@@ -46,7 +46,7 @@ public class SliderHandle : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             image.color = normalColor;
             image.rectTransform.localScale = Vector3.one;
         }
-        else if (type == HandleType.Object)
+        else if (type == HandleType.Object || type == HandleType.MultipleObject)
         {
             CustomTimeSlider.instance.OnEditObjectTime += EditObjectTime;
             foreach (var i in outline)

@@ -12,6 +12,7 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
     private ushort currentType;
     private Image fillImage;
     private bool isSelected;
+    private bool isUnknown = false;
 
 
 
@@ -65,9 +66,24 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void SetData(string type, string[] s, int setIndex = -1)
+    public void SetData(string type, string[] s, int setIndex = -1, bool unkown = false)
     {
         Type = type;
+
+        if (unkown)
+        {
+            isUnknown = true;
+            text.text = "?";
+            fillImage.color = LevelRecordManager.instance.colorSO.UnSelctableUIColor;
+            fillImage.enabled = true;
+            return;
+        }
+        else if (isUnknown)
+        {
+            fillImage.enabled = false;
+            fillImage.color = LevelRecordManager.instance.colorSO.SelctedUIColor;
+            isUnknown = false;
+        }
 
 
         if (s == null || s.Length <= 0)
@@ -95,6 +111,7 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
 
     public void ClickArrow(bool right)
     {
+        if (isUnknown) return;
         if (openListButton) return;
         if (!isSelected) OnPress();
         int addedIndex = 1;
@@ -118,8 +135,21 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
         }
         else
         {
-            LevelRecordManager.instance.currentSelectedObject.Data.type = val;
-            LevelRecordManager.instance.currentSelectedObject.UpdateObjectData();
+            if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+            {
+                foreach (var obj in LevelRecordManager.instance.MultipleSelectedObjects)
+                {
+                    obj.Data.type = val;
+                    obj.UpdateObjectData();
+                }
+            }
+            else
+            {
+                LevelRecordManager.instance.currentSelectedObject.Data.type = val;
+                LevelRecordManager.instance.currentSelectedObject.UpdateObjectData();
+            }
+
+
         }
 
 
@@ -128,6 +158,8 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
 
     public void SetIfSelected(string type)
     {
+
+        if (isUnknown) return;
 
         if (isSelected && Type != type)
         {
@@ -142,6 +174,7 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
     }
     public void OnPress()
     {
+        if (isUnknown) return;
         isSelected = true;
 
         ValueEditorManager.instance.ShowSlider(false);

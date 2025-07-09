@@ -350,6 +350,12 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         Debug.Log("Bomber disabled");
 
         StopAllCoroutines();
+
+        if (!hasFadedDropZone)
+        {
+            hasFadedDropZone = true;
+            dropZone.FadeOut();
+        }
         if (ignoreAll && dropZone != null) dropZone.gameObject.SetActive(false);
 
         if (droppingTweenSeq != null && droppingTweenSeq.IsPlaying())
@@ -357,14 +363,12 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         if (movePlaneSeq != null && movePlaneSeq.IsPlaying())
             movePlaneSeq.Kill();
 
+
     }
 
     private void OnDestroy()
     {
-        if (droppingTweenSeq != null && droppingTweenSeq.IsPlaying())
-            droppingTweenSeq.Kill();
-        if (movePlaneSeq != null && movePlaneSeq.IsPlaying())
-            movePlaneSeq.Kill();
+
     }
 
     public void Stop()

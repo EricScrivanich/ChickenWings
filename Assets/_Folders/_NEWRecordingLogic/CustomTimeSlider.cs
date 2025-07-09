@@ -30,6 +30,7 @@ public class CustomTimeSlider : MonoBehaviour
     private int currentMinIndex = 0;
     private int currentMaxIndex = 80;
     private int currentObjectIndex = 0;
+    private int currentMulipleObjectIndex = 0;
 
     private int currentTweenStep;
 
@@ -40,6 +41,7 @@ public class CustomTimeSlider : MonoBehaviour
     public RectTransform objectHandle;
     public RectTransform startTimeHandle;
     public RectTransform absMaxHandle;
+    public RectTransform multipleObjectHandle;
     public GameObject levelLengthObject;
 
     public SliderHandle objectTimeDisplay;
@@ -64,12 +66,15 @@ public class CustomTimeSlider : MonoBehaviour
     private List<SliderHandle> startTweenHandles = new List<SliderHandle>();
     private List<SliderHandle> endTweenHandles = new List<SliderHandle>();
 
+
+
     private float trackWidth;
 
     private bool isTimeEditorView = false;
     private bool isTempTimeEditorView = false;
     private bool isPlayView = false;
-
+    private Vector2Int multipleSelectMinMaxChange;
+    private int lastSavedAverageMultipleStep;
     private int lastSavedMainValue;
     private int savedMainValuePrePlayView;
     private int lastSavedMinValue;
@@ -162,6 +167,8 @@ public class CustomTimeSlider : MonoBehaviour
         maxHandle.GetComponent<SliderHandle>().OnPressed += OnHandlePressed;
         objectHandle.GetComponent<SliderHandle>().OnDragged += OnHandleDragged;
         objectHandle.GetComponent<SliderHandle>().OnPressed += OnHandlePressed;
+        multipleObjectHandle.GetComponent<SliderHandle>().OnDragged += OnHandleDragged;
+        multipleObjectHandle.GetComponent<SliderHandle>().OnPressed += OnHandlePressed;
         objectTimeDisplay.OnDragged += OnHandleDragged;
         objectTimeDisplay.OnPressed += OnHandlePressed;
         startTimeHandle.GetComponent<SliderHandle>().OnDragged += OnHandleDragged;
@@ -178,6 +185,8 @@ public class CustomTimeSlider : MonoBehaviour
         maxHandle.GetComponent<SliderHandle>().OnPressed -= OnHandlePressed;
         objectHandle.GetComponent<SliderHandle>().OnDragged -= OnHandleDragged;
         objectHandle.GetComponent<SliderHandle>().OnPressed -= OnHandlePressed;
+        multipleObjectHandle.GetComponent<SliderHandle>().OnDragged -= OnHandleDragged;
+        multipleObjectHandle.GetComponent<SliderHandle>().OnPressed -= OnHandlePressed;
         LevelRecordManager.OnShowObjectTime -= ShowSelectedObject;
         objectTimeDisplay.OnDragged -= OnHandleDragged;
         objectTimeDisplay.OnPressed -= OnHandlePressed;
@@ -201,7 +210,14 @@ public class CustomTimeSlider : MonoBehaviour
             pixelsPerStep = (fullLength / (maxRange - minRange) * canvas.scaleFactor);
             minHandle.gameObject.SetActive(true);
             maxHandle.gameObject.SetActive(true);
-            objectHandle.gameObject.SetActive(true);
+            if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+            {
+                multipleObjectHandle.gameObject.SetActive(true);
+                SendMultipleObjects();
+            }
+            else
+                objectHandle.gameObject.SetActive(true);
+
             OrganizeTimeSteps();
             SetAllHandles();
             SetMainHandlePosition(currentIndex);
@@ -222,6 +238,7 @@ public class CustomTimeSlider : MonoBehaviour
             minHandle.gameObject.SetActive(false);
             maxHandle.gameObject.SetActive(false);
             objectHandle.gameObject.SetActive(false);
+            multipleObjectHandle.gameObject.SetActive(false);
             OrganizeTimeSteps();
             SetShownHandle();
             SetTweenHandlePosition();
@@ -254,8 +271,15 @@ public class CustomTimeSlider : MonoBehaviour
         OrganizeTimeSteps();
         SetMainHandlePosition(currentIndex);
 
-        if (LevelRecordManager.instance.currentSelectedObject != null)
+        if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+        {
+            multipleObjectHandle.gameObject.SetActive(true);
+            SendMultipleObjects();
+        }
+
+        else if (LevelRecordManager.instance.currentSelectedObject != null)
             objectHandle.gameObject.SetActive(true);
+
         SetAllHandles();
 
 
@@ -281,6 +305,7 @@ public class CustomTimeSlider : MonoBehaviour
         minHandle.gameObject.SetActive(false);
         maxHandle.gameObject.SetActive(false);
         objectHandle.gameObject.SetActive(false);
+        multipleObjectHandle.gameObject.SetActive(false);
         OrganizeTimeSteps();
         SetShownHandle();
         SetMainHandlePosition(currentIndex);
@@ -304,6 +329,7 @@ public class CustomTimeSlider : MonoBehaviour
         levelLengthObject.SetActive(false);
         minHandle.gameObject.SetActive(false);
         maxHandle.gameObject.SetActive(false);
+        multipleObjectHandle.gameObject.SetActive(false);
         objectHandle.gameObject.SetActive(false);
         mainHandle.gameObject.SetActive(false);
         startTimeHandle.gameObject.SetActive(true);
@@ -684,6 +710,7 @@ public class CustomTimeSlider : MonoBehaviour
                 break;
             case SliderHandle.HandleType.Object:
             case SliderHandle.HandleType.Time:
+            case SliderHandle.HandleType.MultipleObject:
                 LevelRecordManager.instance.DoingTimeEdit(pressed);
                 ChangingObjectTime = pressed;
                 OverObjectTime = false;
@@ -694,13 +721,20 @@ public class CustomTimeSlider : MonoBehaviour
 
                 if (pressed)
                 {
+                    if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+                    {
+                        LevelRecordManager.instance.SetChangeMultipleObjectSpawnStep(true);
+                        SendMultipleObjects();
+                    }
+
 
                     LevelRecordManager.instance.FadeTitleText(true);
                 }
 
                 else
                 {
-
+                    if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+                        LevelRecordManager.instance.SetChangeMultipleObjectSpawnStep(false);
                     LevelRecordManager.instance.FadeTitleText(false);
                 }
                 break;
@@ -749,19 +783,70 @@ public class CustomTimeSlider : MonoBehaviour
 
 
                 break;
+            case SliderHandle.HandleType.MultipleObject:
+
+                currentMulipleObjectIndex = lastSavedAverageMultipleStep + stepChange;
+                if (currentMulipleObjectIndex < multipleSelectMinMaxChange.x)
+                {
+                    currentMulipleObjectIndex = multipleSelectMinMaxChange.x;
+                    return;
+
+
+                }
+                else if (currentMulipleObjectIndex > multipleSelectMinMaxChange.y)
+                {
+                    currentMulipleObjectIndex = multipleSelectMinMaxChange.y;
+                    return;
+                }
+                LevelRecordManager.instance.UpdateMultipleObjectsTime((lastSavedAverageMultipleStep - currentMulipleObjectIndex) * -1);
+
+
+                currentIndex = Mathf.Clamp(lastSavedMainValue + stepChange, minRange, maxRange);
+
+                LevelRecordManager.instance.UpdateTime((ushort)currentIndex);
+
+                break;
             case SliderHandle.HandleType.Time:
                 if (!didDragOnObjectTimeDisplay)
                 {
                     didDragOnObjectTimeDisplay = true;
                     TempTimeEditorView(true);
                 }
-                currentObjectIndex = Mathf.Clamp(lastSavedObjectValue + stepChange, minRange, maxRange);
 
-                currentIndex = Mathf.Clamp(lastSavedMainValue + stepChange, minRange, maxRange);
+                if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+                {
+                    currentMulipleObjectIndex = lastSavedAverageMultipleStep + stepChange;
+                    if (currentMulipleObjectIndex < multipleSelectMinMaxChange.x)
+                    {
+                        currentMulipleObjectIndex = multipleSelectMinMaxChange.x;
+                        return;
 
 
-                LevelRecordManager.instance.UpdateObjectTime(currentObjectIndex);
-                LevelRecordManager.instance.UpdateTime((ushort)currentIndex);
+                    }
+                    else if (currentMulipleObjectIndex > multipleSelectMinMaxChange.y)
+                    {
+                        currentMulipleObjectIndex = multipleSelectMinMaxChange.y;
+                        return;
+                    }
+                    LevelRecordManager.instance.UpdateMultipleObjectsTime((lastSavedAverageMultipleStep - currentMulipleObjectIndex) * -1);
+
+
+                    currentIndex = Mathf.Clamp(lastSavedMainValue + stepChange, minRange, maxRange);
+
+                    LevelRecordManager.instance.UpdateTime((ushort)currentIndex);
+
+                }
+                else
+                {
+                    currentObjectIndex = Mathf.Clamp(lastSavedObjectValue + stepChange, minRange, maxRange);
+
+                    currentIndex = Mathf.Clamp(lastSavedMainValue + stepChange, minRange, maxRange);
+
+
+                    LevelRecordManager.instance.UpdateObjectTime(currentObjectIndex);
+                    LevelRecordManager.instance.UpdateTime((ushort)currentIndex);
+                }
+
 
 
 
@@ -783,13 +868,78 @@ public class CustomTimeSlider : MonoBehaviour
         UpdateTexts();
     }
 
+    public void SendMultipleObjects()
+    {
+        if (!multipleObjectHandle.gameObject.activeInHierarchy && LevelRecordManager.ShowTime)
+        {
+            multipleObjectHandle.gameObject.SetActive(true);
+
+        }
+        lastSavedAverageMultipleStep = GetAverageStepForMultipleObjects();
+        currentMulipleObjectIndex = lastSavedAverageMultipleStep;
+
+        multipleObjectHandle.localPosition = new Vector2(GetSliderX(lastSavedAverageMultipleStep), multipleObjectHandle.localPosition.y);
+
+        if (objectHandle.gameObject.activeInHierarchy)
+        {
+            objectHandle.gameObject.SetActive(false);
+        }
+
+    }
+    public void ExitMultipleObjectSelection()
+    {
+        if (multipleObjectHandle != null)
+        {
+            multipleObjectHandle.gameObject.SetActive(false);
+        }
+        
+    }
+
+    private int GetAverageStepForMultipleObjects()
+    {
+        int stepTracker = 0;
+
+        int minS = LevelRecordManager.instance.finalSpawnStep;
+        int maxS = 0;
+
+
+        foreach (var obj in LevelRecordManager.instance.MultipleSelectedObjects)
+        {
+            int val = (int)obj.Data.spawnedStep;
+            if (val < minS) minS = val;
+            if (val > maxS) maxS = val;
+            stepTracker += val;
+
+        }
+
+
+
+        int averageStep = stepTracker / LevelRecordManager.instance.MultipleSelectedObjects.Count;
+
+        multipleSelectMinMaxChange.x = averageStep - minS;
+        multipleSelectMinMaxChange.y = LevelRecordManager.instance.finalSpawnStep - (maxS - averageStep);
+
+        Debug.Log("Average Step: " + averageStep + " Min: " + multipleSelectMinMaxChange.x + " Max: " + multipleSelectMinMaxChange.y);
+
+
+
+        return averageStep;
+    }
+
     private void ShowSelectedObject(int step)
     {
+        if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+        {
+            SendMultipleObjects();
+            return;
+        }
         if (!objectHandle.gameObject.activeInHierarchy && LevelRecordManager.ShowTime)
         {
             objectHandle.gameObject.SetActive(true);
 
         }
+
+        if (multipleObjectHandle.gameObject.activeInHierarchy) multipleObjectHandle.gameObject.SetActive(false);
         currentObjectIndex = step;
         objectHandle.localPosition = new Vector2(GetSliderX(step), objectHandle.localPosition.y);
         objectSliderImage.sprite = LevelRecordManager.instance.GetIconImage();
@@ -843,6 +993,7 @@ public class CustomTimeSlider : MonoBehaviour
 
         // mainHandle.localPosition = new Vector2(GetSliderX(currentIndex), mainHandle.localPosition.y);
         objectHandle.localPosition = new Vector2(GetSliderX(currentObjectIndex), objectHandle.localPosition.y);
+        multipleObjectHandle.localPosition = new Vector2(GetSliderX(currentMulipleObjectIndex), multipleObjectHandle.localPosition.y);
 
         // float x = offset
     }
@@ -868,6 +1019,7 @@ public class CustomTimeSlider : MonoBehaviour
         minHandle.localPosition = new Vector2(GetSliderX(currentMinIndex), minHandle.localPosition.y);
         maxHandle.localPosition = new Vector2(GetSliderX(currentMaxIndex), maxHandle.localPosition.y);
         objectHandle.localPosition = new Vector2(GetSliderX(currentObjectIndex), objectHandle.localPosition.y);
+        multipleObjectHandle.localPosition = new Vector2(GetSliderX(currentMulipleObjectIndex), multipleObjectHandle.localPosition.y);
         SetTweenHandlePosition();
 
 

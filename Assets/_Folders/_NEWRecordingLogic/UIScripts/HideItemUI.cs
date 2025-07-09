@@ -38,6 +38,12 @@ public class HideItemUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         // crossOut.DOFade(1, 0.5f);
         // isCrossedOut = true;
         if (type == Type.Speeds && !LevelRecordManager.ShowLines) return;
+        else if (type == Type.MultiTouch)
+        {
+            LevelRecordManager.instance.SetUsingMultipleSelect(!LevelRecordManager.instance.multipleObjectsSelected);
+           
+            return;
+        }
         LevelRecordManager.instance.SetStaticViewParameter(type, !isShown);
     }
 
@@ -116,7 +122,7 @@ public class HideItemUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 break;
 
             case Type.MultiTouch:
-                if (LevelRecordManager.instance.MultiTouch)
+                if (LevelRecordManager.instance.multipleObjectsSelected)
                 {
                     fillImage.color = colorSO.SelctedUIColor;
                     crossOut.enabled = false;

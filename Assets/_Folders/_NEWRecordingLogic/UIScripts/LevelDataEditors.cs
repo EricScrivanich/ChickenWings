@@ -13,6 +13,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     private bool isSelected;
 
     [SerializeField] private TextMeshProUGUI title;
+    private bool isUnkownValue = false;
     private Image fillImage;
 
     [SerializeField] private string Type;
@@ -98,10 +99,10 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             v = Mathf.Round(v * 100) / 100;
             title.text = Type + ": " + Mathf.RoundToInt(v * 100).ToString() + "%";
             SetMainSliderText();
-            SetValueBasedOnTypeIndex(v);
+            SetValueBasedOnTypeIndex(v, true);
 
 
-            recordedObj.UpdateObjectData(true);
+
             return;
 
         }
@@ -113,7 +114,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             title.text = Type + ": " + (v * 100).ToString() + "%";
             SetMainSliderText();
 
-            recordedObj.UpdateObjectData();
+
             return;
         }
 
@@ -124,7 +125,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             SetMainSliderText();
 
             SetValueBasedOnTypeIndex(v);
-            recordedObj.UpdateObjectData();
+
             return;
         }
 
@@ -137,7 +138,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
             title.text = Type + ": " + t.ToString();
             SetMainSliderText();
-            recordedObj.UpdateObjectData();
+
             return;
         }
         else if (Type == "Rotation")
@@ -148,7 +149,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             SetValueBasedOnTypeIndex(-v);
             title.text = Type + ": " + Mathf.Abs(-v - 90).ToString();
             SetMainSliderText();
-            recordedObj.UpdateObjectData();
+
             return;
 
         }
@@ -179,7 +180,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             title.text = Type + ": " + (v * 100).ToString() + "%";
             SetValueBasedOnTypeIndex(v);
             SetMainSliderText();
-            recordedObj.UpdateObjectData();
+
             return;
         }
         else if (Type == "Frequency")
@@ -188,7 +189,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             title.text = Type + ": " + (v * 100).ToString() + "%";
             SetValueBasedOnTypeIndex(v);
             SetMainSliderText();
-            recordedObj.UpdateObjectData();
+
             return;
 
         }
@@ -198,7 +199,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             title.text = Type + ": " + (v * 100).ToString() + "%";
             SetValueBasedOnTypeIndex(v);
             SetMainSliderText();
-            recordedObj.UpdateObjectData();
+
             return;
         }
 
@@ -206,7 +207,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         // valueText.text = v.ToString();
 
         SetMainSliderText();
-        recordedObj.UpdateObjectData();
+
 
     }
 
@@ -220,31 +221,63 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     }
 
-    public void SetValueBasedOnTypeIndex(float val)
+    public void SetValueBasedOnTypeIndex(float val, bool isScale = false)
     {
-        switch (typeIndex)
+        if (LevelRecordManager.instance.multipleObjectsSelected)
         {
-            case 0:
-                recordedObj.Data.float1 = val;
-                break;
-            case 1:
-                recordedObj.Data.float2 = val;
-                break;
-            case 2:
-                recordedObj.Data.float3 = val;
-                break;
-            case 3:
-                recordedObj.Data.float4 = val;
-                break;
-            case 4:
-                recordedObj.Data.float5 = val;
-                break;
+            foreach (var obj in LevelRecordManager.instance.MultipleSelectedObjects)
+            {
+                switch (typeIndex)
+                {
+                    case 0:
+
+                        obj.Data.float1 = val;
+                        break;
+                    case 1:
+                        obj.Data.float2 = val;
+                        break;
+                    case 2:
+                        obj.Data.float3 = val;
+                        break;
+                    case 3:
+                        obj.Data.float4 = val;
+                        break;
+                    case 4:
+                        obj.Data.float5 = val;
+                        break;
+
+                }
+                obj.UpdateObjectData(isScale);
+            }
+
 
         }
+        else
+            switch (typeIndex)
+            {
+                case 0:
+                    recordedObj.Data.float1 = val;
+                    break;
+                case 1:
+                    recordedObj.Data.float2 = val;
+                    break;
+                case 2:
+                    recordedObj.Data.float3 = val;
+                    break;
+                case 3:
+                    recordedObj.Data.float4 = val;
+                    break;
+                case 4:
+                    recordedObj.Data.float5 = val;
+                    break;
+
+            }
+        recordedObj.UpdateObjectData(isScale);
     }
 
     public void OnPress()
     {
+        if (isUnkownValue) return;
         isSelected = true;
         ValueEditorManager.instance.OnPressEditor(true);
         Debug.Log("OnPress sldier");
@@ -269,6 +302,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     public void SetIfSelected(string type)
     {
 
+        if (isUnkownValue) return;
 
 
         if (isSelected && Type != type)
@@ -290,6 +324,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     public void SetValueForListSlider(float val, bool showVal)
     {
+        if (isUnkownValue) return;
         ValueEditorManager.instance.valueSliderHorizontal.onValueChanged.RemoveAllListeners();
 
         SetSliderRange(setMinMaxDef);
@@ -313,7 +348,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
 
 
-    public void SetDataForFloatSlider(string type, bool setSlider)
+    public void SetDataForFloatSlider(string type, bool setSlider, bool unkownVal = false)
     {
 
 
@@ -322,16 +357,25 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         ValueEditorManager.instance.valueSliderHorizontal.onValueChanged.RemoveAllListeners();
         Type = type;
 
+        if (unkownVal)
+        {
+            title.text = Type + ": ?";
+            isUnkownValue = true;
+            fillImage.color = colorSO.UnSelctableUIColor;
+            fillImage.enabled = true;
+            return;
+        }
+        else
+        {
+            isUnkownValue = false;
+            fillImage.enabled = false;
+            fillImage.color = colorSO.SelctedUIColor;
+
+        }
 
 
 
-        // title.text = Type + ": " + val.ToString();
 
-
-
-
-        // slider.minValue = min;
-        // slider.maxValue = max;
 
 
         SetSliderRange(recordedObj.FloatValues[typeIndex]);
@@ -367,42 +411,15 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             v = Mathf.Abs(v);
 
         }
-        // else if (Type == "Size")
-        // {
-        //     if (setSlider) SetSliderRange(recordedObj.SizeValues);
 
-        //     v = recordedObj.Data.scale;
-        // }
-        // else if (Type == "Jump Height" || Type == "Glide Height")
-        // {
-        //     if (setSlider) SetSliderRange(recordedObj.MagnitideValues);
-        //     v = recordedObj.Data.magPercent;
-        // }
-        // else if (Type == "Jump Offset" || Type == "Fart Offset" | Type == "Glide Offset" || Type == "Start Rotation")
-        // {
-        //     if (setSlider) SetSliderRange(recordedObj.DelayOrPhaseOffsetValues);
-        //     v = recordedObj.Data.delayInterval;
 
-        // }
-
-        // else if (Type == "Drop Delay" || Type == "Fart Delay" || Type == "Fart Length" || Type == "Frequency")
-        // {
-        //     if (setSlider) SetSliderRange(recordedObj.TimeIntervalValues);
-
-        //     v = recordedObj.Data.timeInterval;
-        // }
         else if (Type == "Rotation" || Type == "Start Rotation")
         {
             // if (setSlider) SetSliderRange(recordedObj.TimeIntervalValues);
             v = -v;
 
         }
-        // else if (Type == "Drop Offset")
-        // {
-        //     if (setSlider) SetSliderRange(recordedObj.SizeValues);
 
-        //     v = recordedObj.Data.scale;
-        // }
         SetDataFromFloatSlider(v);
 
         if (setSlider)
@@ -444,6 +461,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
     private float valueStep;
     public void OnDrag(PointerEventData eventData)
     {
+        if (isUnkownValue) return;
 
         float deltaX = eventData.position.x - pointerStartPos.x;
 

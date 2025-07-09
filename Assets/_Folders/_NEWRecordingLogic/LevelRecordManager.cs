@@ -77,10 +77,15 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static bool PreloadedSceneReady = false;
 
 
+
+
     private bool objectClicked = false;
     private bool screenClicked = false;
 
     public RecordableObjectPlacer currentSelectedObject { get; private set; }
+
+    public bool multipleObjectsSelected { get; private set; } = false;
+    public bool multipleSelectedIDs { get; private set; } = false;
 
     public List<RecordableObjectPlacer> MultipleSelectedObjects = new List<RecordableObjectPlacer>();
 
@@ -153,7 +158,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     }
 
-   
+
 
     public void SetMinAndMax(int min, int max)
     {
@@ -374,6 +379,24 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public void DeleteObject()
     {
+        if (multipleObjectsSelected)
+        {
+            for (int i = 0; i < MultipleSelectedObjects.Count; i++)
+            {
+                if (MultipleSelectedObjects[i] != null)
+                {
+                    RecordedObjects.Remove(MultipleSelectedObjects[i]);
+                    MultipleSelectedObjects[i].DestroySelf();
+                }
+            }
+            MultipleSelectedObjects.Clear();
+            SetUsingMultipleSelect(false);
+            currentSelectedObject = null;
+            parameterUI.SetActive(false);
+            SortRecordedObjectsBySpawnTime();
+
+            return;
+        }
         RecordedObjects.Remove(currentSelectedObject);
         currentSelectedObject.DestroySelf();
         currentSelectedObject = null;
@@ -546,6 +569,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             if (readyToPressForCage)
             {
+                SetUsingMultipleSelect(false);
                 if (obj.canAttachCage)
                 {
                     obj.SetCageAttachment(true);
@@ -562,7 +586,26 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
                 parameterUI.SetActive(true);
 
             }
-            if (currentSelectedObject != null && currentSelectedObject != obj) currentSelectedObject.SetIsSelected(false);
+            if (multipleObjectsSelected)
+            {
+                if (!obj.isSelected) // If the object is already selected, do nothing
+                    MultipleSelectedObjects.Add(obj);
+
+
+                short id = MultipleSelectedObjects[0].ID;
+                bool sameID = true;
+                foreach (var o in MultipleSelectedObjects)
+                {
+                    if (o.ID != id)
+                    {
+                        sameID = false;
+                        break;
+                    }
+                }
+                multipleSelectedIDs = !sameID;
+            }
+            else if (currentSelectedObject != null && currentSelectedObject != obj) currentSelectedObject.SetIsSelected(false);
+
             currentSelectedObject = obj;
 
             obj.SetSelectedObject();
@@ -662,6 +705,10 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
                 parameterUI.SetActive(true);
 
             }
+            if (multipleObjectsSelected)
+            {
+                SetUsingMultipleSelect(false);
+            }
             if (currentSelectedObject != null) currentSelectedObject.SetIsSelected(false);
 
             currentSelectedObject = Instantiate(objectToAdd, pos, Quaternion.identity).GetComponent<RecordableObjectPlacer>();
@@ -685,6 +732,31 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
                 FadeEditorCanvasGroup(true);
             }
             Vector2 moveAmount = lastClickedPos - pos;
+
+            if (multipleObjectsSelected)
+            {
+
+                foreach (var o in MultipleSelectedObjects)
+                {
+
+                    if (arrowPressedType == 1 || arrowPressedType == 3)
+                        moveAmount = new Vector2(moveAmount.x, 0);
+                    else if (arrowPressedType == 2 || arrowPressedType == 4)
+                        moveAmount = new Vector2(0, moveAmount.y);
+
+                    // float x = Mathf.Round(newPos.x * 100) / 100;
+                    // posXText.text = x.ToString();
+                    // float y = Mathf.Round(newPos.y * 100) / 100;
+                    // posYText.text = y.ToString();
+                    // newPos = new Vector2(x, y);
+                    if (o != null)
+                        o.UpdateBasePosition(moveAmount, true);
+
+
+                }
+                lastClickedPos = pos;
+                return;
+            }
 
             Vector2 newPos = lastObjPos - moveAmount;
 
@@ -926,13 +998,23 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
 
     #endregion
-    private Vector2 ReturnRoundedPosition(Vector2 pos)
+    public Vector2 ReturnRoundedPosition(Vector2 pos, bool unkown = false)
     {
         float x = Mathf.Round(pos.x / 0.2f) * 0.2f;
-        posXText.text = x.ToString("0.0"); // Keep two decimal places
+        // Keep two decimal places
 
         float y = Mathf.Round(pos.y / 0.2f) * 0.2f;
-        posYText.text = y.ToString("0.0");
+        if (unkown)
+        {
+            posXText.text = "?";
+            posYText.text = "?";
+        }
+        else
+        {
+            posXText.text = x.ToString("0.0");
+            posYText.text = y.ToString("0.0");
+        }
+
         return new Vector2(x, y);
     }
     private int typeOvveride = -1;
@@ -1431,6 +1513,40 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             currentSelectedObject.UpdateTimeStep(val);
     }
 
+    public void UpdateMultipleObjectsTime(int change)
+    {
+        for (int i = 0; i < MultipleSelectedObjects.Count; i++)
+        {
+            if (MultipleSelectedObjects[i] != null)
+            {
+                MultipleSelectedObjects[i].UpdateTimeStep(change + spawnStepsPerObject[i], true);
+            }
+        }
+
+    }
+    private List<int> spawnStepsPerObject;
+    public void SetChangeMultipleObjectSpawnStep(bool pressed)
+    {
+        if (spawnStepsPerObject == null) spawnStepsPerObject = new List<int>();
+        if (pressed)
+        {
+
+            foreach (var o in MultipleSelectedObjects)
+            {
+                if (o != null)
+                {
+                    spawnStepsPerObject.Add(o.spawnedTimeStep);
+                }
+            }
+
+        }
+        else
+        {
+            spawnStepsPerObject.Clear();
+            spawnStepsPerObject = new List<int>();
+        }
+    }
+
     public void DoingTimeEdit(bool holding)
     {
         if (holding)
@@ -1601,6 +1717,42 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             LevelTitleText.color = Color.white;
         }
+    }
+    public void SetUsingMultipleSelect(bool isOn)
+    {
+        multipleObjectsSelected = isOn;
+
+        if (isOn)
+        {
+            if (currentSelectedObject != null)
+            {
+                MultipleSelectedObjects.Add(currentSelectedObject);
+            }
+
+        }
+        else
+        {
+            for (int i = 0; i < MultipleSelectedObjects.Count; i++)
+            {
+                if (MultipleSelectedObjects[i] != null)
+                {
+                    MultipleSelectedObjects[i].SetIsSelected(false);
+                }
+            }
+            MultipleSelectedObjects.Clear();
+            MultipleSelectedObjects = new List<RecordableObjectPlacer>();
+            currentSelectedObject = null;
+
+            CustomTimeSlider.instance.ExitMultipleObjectSelection();
+            if (spawnStepsPerObject != null)
+            {
+                spawnStepsPerObject.Clear();
+                spawnStepsPerObject = null;
+            }
+
+        }
+        CheckViewParameters?.Invoke();
+
     }
 
     public string FormatTimerText(int step)

@@ -166,7 +166,7 @@ public class ValueEditorManager : MonoBehaviour
             activeRects[i].anchoredPosition = new Vector2(activeRects[i].localPosition.x, (i * -addedHeightPerSection) - 60);
             Debug.Log("Position: " + ((i * -addedHeightPerSection) - addedHeightPerSection));
         }
-        rect.sizeDelta = new Vector2(rect.sizeDelta.x, baseHeight + (addedHeightPerSection * (lastUsedFloatIndex)));
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, baseHeight + (addedHeightPerSection * (activeRects.Count - 1)));
     }
 
     public void DeactivateFloatEditors()
@@ -176,6 +176,8 @@ public class ValueEditorManager : MonoBehaviour
             floatEditors[i].gameObject.SetActive(false);
         }
     }
+
+
     public void SendFloatValues(string type, int index, bool final)
     {
         if (isShowingList || isShowingCage)
@@ -183,11 +185,96 @@ public class ValueEditorManager : MonoBehaviour
             ShowMainPanel();
         }
 
+        int changeMaxLayout = 0;
+
+        if (LevelRecordManager.instance.multipleSelectedIDs)
+        {
+            floatEditors[index].gameObject.SetActive(false);
+
+        }
+
+        else if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+        {
+            var l = LevelRecordManager.instance.MultipleSelectedObjects;
+            int id = l[0].ID;
+            float checkVal = 0;
+            switch (index)
+            {
+                case 0:
+                    checkVal = l[0].Data.float1;
+                    break;
+                case 1:
+                    checkVal = l[0].Data.float2;
+                    break;
+                case 2:
+                    checkVal = l[0].Data.float3;
+                    break;
+                case 3:
+                    checkVal = l[0].Data.float4;
+                    break;
+                case 4:
+                    checkVal = l[0].Data.float5;
+                    break;
+
+            }
+            bool allSame = true;
+            foreach (var o in l)
+            {
+                switch (index)
+                {
+                    case 0:
+                        if (checkVal != o.Data.float1) allSame = false;
+                        break;
+                    case 1:
+                        if (checkVal != o.Data.float2) allSame = false;
+                        break;
+                    case 2:
+                        if (checkVal != o.Data.float3) allSame = false;
+                        break;
+                    case 3:
+                        if (checkVal != o.Data.float4) allSame = false;
+                        break;
+                    case 4:
+                        if (checkVal != o.Data.float5) allSame = false;
+                        break;
+
+
+                }
+                Debug.Log("Checking value for " + o.ID + " with type: " + type + " and index: " + index + " with value: " + checkVal);
+
+                if (!allSame) break;
+
+
+            }
+            if (allSame)
+            {
+
+                floatEditors[index].SetDataForFloatSlider(type, false);
+
+
+            }
+            else
+            {
+
+                floatEditors[index].SetDataForFloatSlider(type, false, true);
+
+            }
+
+            floatEditors[index].gameObject.SetActive(true);
+
+            activeRects.Add(floatEditors[index].GetComponent<RectTransform>());
+
+        }
+        else
+        {
+            floatEditors[index].gameObject.SetActive(true);
+            floatEditors[index].SetDataForFloatSlider(type, false);
+            activeRects.Add(floatEditors[index].GetComponent<RectTransform>());
+        }
+
 
         // if (!floatEditors[index].gameObject.activeInHierarchy) floatEditors[index].gameObject.SetActive(true);
-        floatEditors[index].gameObject.SetActive(true);
-        floatEditors[index].SetDataForFloatSlider(type, false);
-        activeRects.Add(floatEditors[index].GetComponent<RectTransform>());
+
 
         if (final)
         {
@@ -220,7 +307,13 @@ public class ValueEditorManager : MonoBehaviour
 
     public void UpdateSpawnTime(ushort time)
     {
-        timeText.text = "Spawn Time: " + LevelRecordManager.instance.FormatTimerText(time);
+        if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+        {
+            timeText.text = "Spawn Time: ?";
+
+        }
+        else
+            timeText.text = "Spawn Time: " + LevelRecordManager.instance.FormatTimerText(time);
     }
 
     public void OnPressEditor(bool pressed)
@@ -258,7 +351,41 @@ public class ValueEditorManager : MonoBehaviour
 
     public void SendTypeValues(string type, string[] s)
     {
-        if (s == null || s.Length <= 0) typeEditor.gameObject.SetActive(false);
+        if (s == null || s.Length <= 0 || LevelRecordManager.instance.multipleSelectedIDs) typeEditor.gameObject.SetActive(false);
+        else if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+        {
+            bool allSame = true;
+            ushort checkVal = LevelRecordManager.instance.MultipleSelectedObjects[0].Data.type;
+
+            foreach (var o in LevelRecordManager.instance.MultipleSelectedObjects)
+            {
+                if (o.Data.type != checkVal)
+                {
+                    allSame = false;
+                    break;
+                }
+
+            }
+
+            if (allSame)
+            {
+
+                typeEditor.SetData(type, s);
+
+            }
+            else
+            {
+
+                typeEditor.SetData(type, s);
+
+            }
+            typeEditor.gameObject.SetActive(true);
+
+            activeRects.Add(typeEditor.GetComponent<RectTransform>());
+            lastUsedFloatIndex += 1;
+
+        }
+
 
         else
         {
