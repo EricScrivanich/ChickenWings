@@ -19,13 +19,14 @@ MonoBehaviour:
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: The Flippin Chicken
   levelWorldAndNumber: {x: 1, y: 1, z: 0}
-  spawnSteps: 0a000f003e005a007a0099009900
+  spawnSteps: 0a000f002c003e005a007a0099009900
   finalSpawnStep: 300
-  idList: 00000000100003000b0004000400
-  dataTypes: 0200020005000200030003000300
+  idList: 000000000600100003000b0004000400
+  dataTypes: 02000200010005000200030003000300
   posList:
   - {x: 15, y: 1.4}
   - {x: 14.400001, y: -1.2}
+  - {x: -0.8, y: 0}
   - {x: 13.8, y: 2.2}
   - {x: 14.6, y: 1}
   - {x: 16.6, y: 2.2}
@@ -35,6 +36,7 @@ MonoBehaviour:
   - 5.5
   - 1
   - 5.5
+  - 1
   - 1
   - 5
   - 1
@@ -52,10 +54,24 @@ MonoBehaviour:
   - 4
   - 0.5
   - -0.88
-  typeList: 0000000000000000000000000000
-  poolSizes: 0200000000000100020000000000000000000000000001000000000000000000010000000000
+  typeList: 00000000000000000000000000000000
+  poolSizes: 0200000000000100020000000100000000000000000001000000000000000000010000000000
   cageAttachments: 
   checkPointSteps: 1e00
-  StartingAmmos: 05000200000000000000
+  StartingAmmos: 03000300000000000000
   StartingLives: 3
-  postionerData: []
+  postionerData:
+  - ID: 17
+    type: 0
+    startPos: {x: 2, y: 2.2}
+    startRot: -0
+    savedTimePerStep: 0.18
+    sizeByType: 000000000100
+    perecnt: 1
+    positions: []
+    values: []
+    startingSteps: 0000
+    endingSteps: 1400
+    easeTypes: 
+    staringSpawnStep: 0
+    finalSpawnStep: 0

@@ -274,7 +274,7 @@ public class DynamicValueAdder : MonoBehaviour
                 // SetUpperEditorSize(laserPositionEditorSize);
 
                 LevelRecordManager.instance.editingPostionerObject = true;
-                LevelRecordManager.instance.SetUsingMultipleSelect(false);
+                // LevelRecordManager.instance.SetUsingMultipleSelect(false);
 
 
                 break;

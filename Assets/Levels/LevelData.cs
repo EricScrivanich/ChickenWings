@@ -342,7 +342,7 @@ public class LevelData : ScriptableObject
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
-        if (ss == checkPointSteps[0])
+        if (checkPointSteps != null && checkPointSteps.Length > 0 && ss == checkPointSteps[0])
         {
             objData.SpawnCheckPoint(false);
         }

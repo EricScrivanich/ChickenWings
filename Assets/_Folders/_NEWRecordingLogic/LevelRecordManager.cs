@@ -13,7 +13,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 {
     public static LevelRecordManager instance;
 
-
+    [SerializeField] private bool testNonEditorMode = false;
 
     [SerializeField] private GameObject PlayTimeObject;
     [SerializeField] private GameObject ViewObject;
@@ -145,7 +145,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static void ResetStaticParameters()
     {
         ShowLines = true;
-        ShowSpeeds = true;
+        ShowSpeeds = false;
         ShowFolders = true;
         ShowParameters = true;
 
@@ -354,27 +354,58 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public void DuplicateObject()
     {
-        RecordableObjectPlacer obj = null;
-        if (currentSelectedObject != null) currentSelectedObject.SetIsSelected(false);
-        if (currentSelectedObject.Data.ID >= 0)
+
+
+        if (multipleObjectsSelected && MultipleSelectedObjects.Count > 0)
         {
-            obj = Instantiate(recordableObjectsByID[currentSelectedObject.ID]);
+            for (int i = 0; i < MultipleSelectedObjects.Count; i++)
+            {
+                var o = ReturnDuplicateObject(MultipleSelectedObjects[i]);
+                if (o != null)
+                {
+                    MultipleSelectedObjects[i].SetIsSelected(false);
+                    o.SetSelectedObject();
+                    MultipleSelectedObjects[i] = o;
+                }
+            }
+
+
+
         }
         else
         {
-            obj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(currentSelectedObject.ID) - 1]);
+            var obj = ReturnDuplicateObject(currentSelectedObject);
+            if (obj == null) return;
+            if (currentSelectedObject != null)
+            {
+                currentSelectedObject.SetIsSelected(false);
+            }
+            currentSelectedObject = obj;
+            obj.SetSelectedObject();
         }
 
 
+    }
 
-        RecordedDataStructDynamic copy = currentSelectedObject.Data;
-        obj.LoadAssetFromSave(copy);
+    private RecordableObjectPlacer ReturnDuplicateObject(RecordableObjectPlacer obj)
+    {
+        if (obj == null) return null;
+        RecordableObjectPlacer newObj = null;
+        if (obj.Data.ID >= 0)
+        {
+            newObj = Instantiate(recordableObjectsByID[obj.ID]);
+        }
+        else
+        {
+            newObj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(obj.ID) - 1]);
+        }
 
-        AddNewObjectToList(obj);
-        obj.UpdateBasePosition(new Vector2(currentSelectedObject.transform.position.x + currentSelectedObject.speedChanger, currentSelectedObject.transform.position.y));
-        currentSelectedObject = obj;
-        obj.SetSelectedObject();
+        RecordedDataStructDynamic copy = obj.Data;
+        newObj.LoadAssetFromSave(copy);
+        AddNewObjectToList(newObj);
+        newObj.UpdateBasePosition(new Vector2(obj.transform.position.x + obj.speedChanger, obj.transform.position.y));
 
+        return newObj;
     }
 
     public void DeleteObject()
@@ -480,6 +511,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 #if UNITY_EDITOR
         isEditor = true;
+
+        if (testNonEditorMode) isEditor = false;
 #endif
         if (!isEditor)
         {

@@ -324,6 +324,10 @@ public class ValueEditorManager : MonoBehaviour
 
     public void SendPositionerValues(string type, int index, bool final)
     {
+        if (LevelRecordManager.instance.multipleObjectsSelected)
+        {
+            return;
+        }
         usingListEditors = true;
         listEditors[index].SetData(type, null);
         listEditors[index].gameObject.SetActive(true);
@@ -464,6 +468,10 @@ public class ValueEditorManager : MonoBehaviour
     }
     public void ShowListPanel(string type)
     {
+        if (LevelRecordManager.instance.multipleObjectsSelected)
+        {
+            return;
+        }
         mainPanel.SetActive(false);
         cagePanel.SetActive(false);
         RecordedDataStructTweensDynamic d = null;
