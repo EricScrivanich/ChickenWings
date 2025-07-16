@@ -42,7 +42,7 @@ public class CustomTimeSlider : MonoBehaviour
     public RectTransform startTimeHandle;
     public RectTransform absMaxHandle;
     public RectTransform multipleObjectHandle;
-    public GameObject levelLengthObject;
+    // public GameObject levelLengthObject;
 
     public SliderHandle objectTimeDisplay;
 
@@ -142,7 +142,7 @@ public class CustomTimeSlider : MonoBehaviour
     {
         absoluteMax = max;
 
-        if (isTimeEditorView)
+        if (isPlayView)
         {
             maxRange = absoluteMax;
 
@@ -254,7 +254,7 @@ public class CustomTimeSlider : MonoBehaviour
     {
 
         isTimeEditorView = true;
-        levelLengthObject.SetActive(true);
+        // levelLengthObject.SetActive(true);
         // SetObjects();
         DOTween.Kill(this);
         Camera.main.transform.DOMoveY(4f, .8f).SetEase(Ease.OutCubic).SetUpdate(true);
@@ -290,7 +290,7 @@ public class CustomTimeSlider : MonoBehaviour
         isTimeEditorView = false;
 
         DOTween.Kill(this);
-        levelLengthObject.SetActive(false);
+        // levelLengthObject.SetActive(false);
         Camera.main.transform.DOMoveY(-1.6f, .8f).SetEase(Ease.OutCubic).SetUpdate(true);
         mainHandle.localScale = Vector3.one;
 
@@ -326,7 +326,7 @@ public class CustomTimeSlider : MonoBehaviour
         currentText.gameObject.SetActive(false);
         minRange = 0;
         maxRange = absoluteMax;
-        levelLengthObject.SetActive(false);
+        // levelLengthObject.SetActive(false);
         minHandle.gameObject.SetActive(false);
         maxHandle.gameObject.SetActive(false);
         multipleObjectHandle.gameObject.SetActive(false);
@@ -892,7 +892,7 @@ public class CustomTimeSlider : MonoBehaviour
         {
             multipleObjectHandle.gameObject.SetActive(false);
         }
-        
+
     }
 
     private int GetAverageStepForMultipleObjects()

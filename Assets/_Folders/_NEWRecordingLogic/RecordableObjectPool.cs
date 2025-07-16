@@ -7,6 +7,9 @@ public class RecordableObjectPool : ScriptableObject
 {
     [SerializeField] private GameObject prefab;
 
+    [SerializeField] private bool instantiateOnly = false;
+
+
     [SerializeField] private IRecordableObject[] objectVarients;
     [SerializeField] private bool useObjectVarients = false;
 
@@ -18,6 +21,11 @@ public class RecordableObjectPool : ScriptableObject
     public void CreatePool(int size)
     {
         currentIndex = 0;
+        if (instantiateOnly)
+        {
+
+            return;
+        }
 
         if (prefab.GetComponent<ObjectPositioner>() != null)
         {
@@ -85,6 +93,7 @@ public class RecordableObjectPool : ScriptableObject
         }
     }
 
+
     public CageAttatchment GetCageAttachment()
     {
         int index = currentIndex - 1;
@@ -131,6 +140,13 @@ public class RecordableObjectPool : ScriptableObject
             Debug.LogError("positionerPool is null or empty");
             return null;
         }
+
+    }
+    public void SpawnSimpleObject(DataStructSimple data)
+    {
+        var obj = Instantiate(prefab, data.startPos, Quaternion.identity);
+        obj.GetComponent<ISimpleRecordableObject>()?.ApplyTypeData(data.type);
+
 
     }
     public void SpawnFloatOne(DataStructFloatOne data, bool addCage = false)
@@ -209,5 +225,7 @@ public class RecordableObjectPool : ScriptableObject
             currentIndex = 0;
         }
     }
+
+
 
 }

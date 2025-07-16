@@ -388,6 +388,24 @@ public class AudioManager : MonoBehaviour
 
         chickenSource.PlayOneShot(boings[r], boingVolume);
     }
+    public void PlayBoingPogoSound(bool isBig)
+    {
+        if (isBig)
+        {
+            int r = Random.Range(0, boings.Length - 2);
+            audioSource.PlayOneShot(boings[0], boingVolume * 1.1f);
+
+        }
+        else
+        {
+            int r = Random.Range(3, boings.Length);
+            audioSource.PlayOneShot(boings[r], boingVolume * .7f);
+        }
+
+
+
+
+    }
 
     public void PlayFartSound()
     {
@@ -619,10 +637,16 @@ public class AudioManager : MonoBehaviour
         chickenSource.PlayOneShot(downJump, downJumpVolume);
     }
 
-    public void PlayBounceSound()
+    public void PlayBounceSound(bool isPogo = false)
     {
+        if (isPogo)
+        {
+            audioSource.PlayOneShot(bounce, bounceVolume * .8f);
+        }
         chickenSource.Stop();
         chickenSource.PlayOneShot(bounce, bounceVolume);
+
+
     }
 
     public void PlayDashSound()

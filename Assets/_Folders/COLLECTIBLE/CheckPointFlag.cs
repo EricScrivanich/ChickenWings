@@ -5,6 +5,7 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
 {
 
     private AudioSource audioSource;
+    public ushort spawnedTimeStep { get; private set; }
 
     [SerializeField] private AudioClip flagLiftSound;
     private float flagLiftVolume = .45f;
@@ -43,7 +44,7 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
 
     }
 
-   
+
 
     public void Initialize(bool hasCollected)
     {
@@ -123,6 +124,23 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
             audioSource.volume = Mathf.InverseLerp(BoundariesManager.leftBoundary, BoundariesManager.leftViewBoundary + 2f, transform.position.x) * AudioManager.instance.SfxVolume * baseVolume;
             if (transform.position.x < BoundariesManager.leftBoundary) gameObject.SetActive(false);
         }
+    }
+    public void SetSpawnedTimeStep(ushort timeStep)
+    {
+        spawnedTimeStep = timeStep;
+    }
+
+    public Vector2 GetPositionAtStep(float time)
+    {
+        float realSpawnedTime = spawnedTimeStep * LevelRecordManager.TimePerStep;
+
+        if (time < realSpawnedTime) return Vector2.zero;
+        Vector2 pos = new Vector2(BoundariesManager.rightBoundary - (BoundariesManager.GroundSpeed * (time - realSpawnedTime)), -.49f);
+        if (pos.x < BoundariesManager.leftBoundary)
+        {
+            return Vector2.zero;
+        }
+        return pos;
     }
 
     public void Collected()

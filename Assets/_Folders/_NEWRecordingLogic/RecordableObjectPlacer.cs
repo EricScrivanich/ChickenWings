@@ -6,8 +6,9 @@ using DG.Tweening;
 public class RecordableObjectPlacer : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
-
-
+    [Header("Pools, Pigs 0, AI 1, Buildings 2, Collectables 3, Positioners 4, Rings 5")]
+    [field: SerializeField] public short ObjectType { get; private set; }
+    [field: SerializeField] public short ID { get; private set; }
 
     [SerializeField] private SpriteRenderer[] iconSprites;
 
@@ -20,12 +21,11 @@ public class RecordableObjectPlacer : MonoBehaviour
     [SerializeField] private SpriteRenderer xArrow;
     [SerializeField] private SpriteRenderer yArrow;
     [SerializeField] private GameObject timeStampPrefab;
-    [SerializeField] private GameObject timeStampProjectilePrefab;
     [SerializeField] private bool useProjectile = false;
+    [SerializeField] private bool use2PointsOnlyOnLine = false;
     private Transform[] timeStamps;
 
 
-    [field: SerializeField] public short ID { get; private set; }
     [field: SerializeField] public short DataType { get; private set; }
     [field: SerializeField] public Vector3Int TypeValues { get; private set; }
 
@@ -149,8 +149,11 @@ public class RecordableObjectPlacer : MonoBehaviour
     }
     private ObjectPositioner objectPositioner;
     public PositionerType[] positionerTypes;
+    private bool showLine = false;
 
     private int lastSavedType = 0;
+
+    private bool isSimpleObject = false;
 
 
 
@@ -235,16 +238,39 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     void Awake()
     {
-        line = GetComponent<LineRenderer>();
-        obj = prefab.GetComponent<IRecordableObject>();
+        foreach (var s in selectedOutlines)
+        {
+            s.color = colorSO.SelectedPigOutlineColor;
+            s.enabled = false;
+        }
         rb = prefab.GetComponent<Rigidbody2D>();
+
+        iconSprites[1].color = colorSO.iconOutlineColor;
+        iconSprites[2].color = colorSO.iconFillColor;
+        if (DataType == 0)
+        {
+            isSimpleObject = true;
+            showLine = false;
+
+        }
+        else
+        {
+            obj = prefab.GetComponent<IRecordableObject>();
+            showLine = obj.ShowLine();
+        }
+        if (GetComponent<LineRenderer>() != null)
+            line = GetComponent<LineRenderer>();
+        else showLine = false;
+
+
+
         // if (Title == "Ring")
         // {
         //     sprite = prefab.GetComponent<SpriteRenderer>();
         // }
 
 
-        if (obj.ShowLine())
+        if (showLine)
         {
             timeStamps = new Transform[colorSO.timeStampColors.Length];
             for (int i = 0; i < colorSO.timeStampColors.Length; i++)
@@ -276,14 +302,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         }
 
 
-        foreach (var s in selectedOutlines)
-        {
-            s.color = colorSO.SelectedPigOutlineColor;
-            s.enabled = false;
-        }
 
-        iconSprites[1].color = colorSO.iconOutlineColor;
-        iconSprites[2].color = colorSO.iconFillColor;
     }
 
     public void CreateNew(int typeOvveride)
@@ -306,7 +325,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
-        Data = new RecordedDataStructDynamic(ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0);
+        Data = new RecordedDataStructDynamic(ObjectType, ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0);
         lastSavedType = type;
 
         if (_pType == PostionType.Position)
@@ -609,7 +628,9 @@ public class RecordableObjectPlacer : MonoBehaviour
         if (LevelRecordManager.CurrentTimeStep > spawnedTimeStep + 3)
             iconSprites[1].gameObject.SetActive(false);
 
-        if (!LevelRecordManager.ShowLines & obj.ShowLine())
+
+
+        if (!LevelRecordManager.ShowLines & showLine)
         {
             line.positionCount = 0;
             foreach (var s in timeStamps)
@@ -618,7 +639,7 @@ public class RecordableObjectPlacer : MonoBehaviour
             }
 
         }
-        else if (!LevelRecordManager.ShowSpeeds && obj.ShowLine())
+        else if (!LevelRecordManager.ShowSpeeds && showLine)
         {
             foreach (var s in timeStamps)
             {
@@ -734,8 +755,8 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
         if (isSelected) LevelRecordManager.instance.UnactivateSelectedObject();
-
-        line.positionCount = 0;
+        if (line != null)
+            line.positionCount = 0;
 
         if (projectileLines != null && projectileLines.Count > 0)
         {
@@ -843,6 +864,8 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     public void UpdateObjectData(bool isScale = false)
     {
+
+        if (isSimpleObject) return;
         obj.ApplyCustomizedData(Data);
 
 
@@ -871,7 +894,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
-        if ((Data.ID == 0 || Data.ID == 2) && isScale)
+        if (ObjectType == 0 && (Data.ID == 0 || Data.ID == 2) && isScale)
         {
             prefab.GetComponent<ScaleAdjuster>().SetScales();
         }
@@ -904,6 +927,7 @@ public class RecordableObjectPlacer : MonoBehaviour
     }
     public bool CheckForPoolSizes(ushort timeStep)
     {
+        if (isSimpleObject) return false;
         float t = timeStep * LevelRecordManager.TimePerStep;
         float offset = obj.ReturnPhaseOffset(transform.position.x);
         float addedX = 0;
@@ -942,6 +966,42 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     private void UpdateObjectPosition(ushort timeStep, float realTime)
     {
+        if (_pType == PostionType.AI || isSimpleObject)
+        {
+            if (timeStep < spawnedTimeStep)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+            float time = 0;
+            if (realTime != 0)
+            {
+                time = realTime;
+            }
+            else
+            {
+                time = timeStep * LevelRecordManager.TimePerStep;
+            }
+
+
+            if (time > ((spawnedTimeStep * LevelRecordManager.TimePerStep) + 8f))
+            {
+                if (timeStep == 0)
+                {
+
+                    unspawnedTimeStep = LevelRecordManager.CurrentTimeStep;
+
+                }
+                else
+                    unspawnedTimeStep = timeStep;
+
+                gameObject.SetActive(false);
+
+            }
+
+
+            return;
+        }
 
         if (realTime == 0 && timeStep < spawnedTimeStep && !(LevelRecordManager.instance.multipleObjectsSelected && isSelected))
         {
@@ -950,6 +1010,7 @@ public class RecordableObjectPlacer : MonoBehaviour
             gameObject.SetActive(false);
             return;
         }
+
 
 
         Vector2 pos = transform.position;
@@ -1219,7 +1280,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         var p = obj.PositionAtRelativeTime(calculatedTime, pos, offset);
         float ts = colorSO.TimeStampTimeSpacing;
 
-        if (obj.ShowLine() && ((LevelRecordManager.ShowLines && LevelRecordManager.ShowSpeeds) || isSelected))
+        if (showLine && ((LevelRecordManager.ShowLines && LevelRecordManager.ShowSpeeds) || isSelected))
         {
             for (int c = 0; c < timeStamps.Length; c++)
             {
@@ -1375,7 +1436,7 @@ public class RecordableObjectPlacer : MonoBehaviour
     private void SetProjectileLines()
     {
 
-        if (isSelected && (ID == 10 || ID == 8) && !skipProjectileLines)
+        if (isSelected && useProjectile && !skipProjectileLines)
         {
             float offset = obj.ReturnPhaseOffset(transform.position.x);
             Vector2 pos = transform.position;
@@ -1437,7 +1498,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     private void UpdateLineRenderer()
     {
-        if (!obj.ShowLine()) return;
+        if (!showLine) return;
 
         if (!LevelRecordManager.ShowLines && !isSelected)
         {
@@ -1460,7 +1521,7 @@ public class RecordableObjectPlacer : MonoBehaviour
                 line.positionCount++;
 
             line.SetPosition(i, p);
-            if (ID == 1)
+            if (use2PointsOnlyOnLine)
             {
                 line.positionCount = 2;
                 float x = BoundariesManager.leftBoundary;

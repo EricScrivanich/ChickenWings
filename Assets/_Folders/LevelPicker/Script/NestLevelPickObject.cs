@@ -2,9 +2,13 @@ using UnityEngine;
 using DG.Tweening;
 public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
 {
+    [field: SerializeField] public Vector3Int WorldNumber { get; private set; }
     [SerializeField] private int type;
     [SerializeField] private int pathIndex;
     [SerializeField] private int order;
+
+
+
 
     [SerializeField] private Transform linePosition;
     private Sequence arrowSequence;
@@ -32,6 +36,11 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     {
         return new Vector3Int(type, pathIndex, order);
     }
+    public Vector3Int ReturnWorldNumber()
+    {
+        return WorldNumber;
+    }
+
     private void Awake()
     {
         pigBlur.color = selectedColor;

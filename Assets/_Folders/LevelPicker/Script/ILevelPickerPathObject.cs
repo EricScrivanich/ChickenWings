@@ -6,6 +6,7 @@ public interface ILevelPickerPathObject
     Vector3Int Return_Type_PathIndex_Order();
 
     Vector2 ReturnLinePostion();
+    Vector3Int ReturnWorldNumber();
 
     void SetSelected(bool selected);
 }

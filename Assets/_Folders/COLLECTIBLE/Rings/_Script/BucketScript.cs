@@ -397,23 +397,7 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
 
     }
-    public void ApplyRecordedData(RecordedDataStruct data)
-    {
-        transform.position = data.startPos;
-        speed = data.speed;
-        int scaleFlip = 1;
-
-
-        if (speed < 0) scaleFlip = -1;
-        transform.localScale = new Vector3(data.scale * scaleFlip, data.scale, data.scale);
-
-
-
-        rb.rotation = data.timeInterval;
-
-        gameObject.SetActive(true);
-        // transform.ro
-    }
+    
     public float TimeAtCreateObject(int index)
     {
         return 0;
@@ -464,7 +448,7 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
     public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
     {
-        Debug.Log("PositionAtRelativeTime for bucket: " + time);
+       
         return new Vector2(currPos.x + (-speed * time), currPos.y);
     }
 

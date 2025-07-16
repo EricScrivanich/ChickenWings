@@ -9,14 +9,17 @@ public class LevelPickerManager : MonoBehaviour
     private InputController controls;
     [SerializeField] private PathCreator[] paths;
     [SerializeField] private PlayerLevelPickerPathFollwer playerPathFollower;
-
-    [SerializeField] private CanvasGroup[] levelPopups;
+    [SerializeField] private GameObject levelUiPopupPrefab;
+    private CanvasGroup[] levelPopups;
+    [SerializeField] private Transform levelPopupParent;
 
     [SerializeField] private float tweenScaleBack;
     [SerializeField] private float tweenDurBack;
     [SerializeField] private float tweenScaleFront;
     [SerializeField] private float tweenDurFront;
     [SerializeField] private RectTransform displayPopupPos;
+    private CanvasGroup currentPopup;
+    private CanvasGroup nextPopup;
 
 
 
@@ -31,14 +34,13 @@ public class LevelPickerManager : MonoBehaviour
     void Awake()
     {
         controls = new InputController();
-        foreach (var popup in levelPopups)
-        {
-            popup.alpha = 0;
-            popup.interactable = false;
+
+        levelUiPopupPrefab.gameObject.SetActive(false);
+        nextPopup = null;
+        currentPopup = null;
 
 
-            popup.gameObject.SetActive(false);
-        }
+
 
         controls.LevelCreator.CursorClick.performed += ctx =>
         {
@@ -103,7 +105,7 @@ public class LevelPickerManager : MonoBehaviour
 
             float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
             playerPathFollower.DoPathToPoint(paths[data.y], d);
-            DoLevelPopupSeq(true);
+            DoLevelPopupSeq(true, obj.ReturnWorldNumber());
 
 
 
@@ -125,62 +127,78 @@ public class LevelPickerManager : MonoBehaviour
 
     public void BackOut()
     {
-        DoLevelPopupSeq(false, true);
+        DoLevelPopupSeq(false, Vector3Int.zero, true);
     }
 
-    private void DoLevelPopupSeq(bool normalOrder, bool goBack = false)
+    private void DoLevelPopupSeq(bool normalOrder, Vector3Int worldNum, bool goBack = false)
     {
         if (popupSequence != null && popupSequence.IsActive())
         {
             popupSequence.Complete();
         }
         popupSequence = DOTween.Sequence();
-        int index = ReturnCurrentPopupIndex();
-        if (goBack)
-        {
-            index = prevPopupIndex;
-        }
 
-        levelPopups[index].gameObject.SetActive(true);
-        var r1 = levelPopups[index].GetComponent<RectTransform>();
+
+
+
 
         if (goBack)
         {
-            levelPopups[index].interactable = false;
+            var r1 = currentPopup.GetComponent<RectTransform>();
+            currentPopup.interactable = false;
             popupSequence.Append(r1.DOScale(tweenScaleBack, tweenDurBack).From(1));
             popupSequence.Join(r1.DOMove(Vector3.zero, tweenDurBack).From(displayPopupPos.position));
-            popupSequence.Join(levelPopups[index].DOFade(0, tweenDurBack));
-            popupSequence.Play();
+            popupSequence.Join(currentPopup.DOFade(0, tweenDurBack));
+            popupSequence.Play().OnComplete(() =>
+            {
+
+                if (currentPopup.gameObject != null)
+                    Destroy(currentPopup.gameObject);
+
+                currentPopup = null;
+
+
+
+            });
             return;
 
 
 
         }
+        LevelDataConverter.instance.SetCurrentLevelInstance(worldNum);
+        nextPopup = Instantiate(levelUiPopupPrefab, levelPopupParent).GetComponent<CanvasGroup>();
+        nextPopup.alpha = 0;
+        nextPopup.GetComponent<LevelPickerUIPopup>().ShowData(LevelDataConverter.instance.ReturnLevelData(), this);
+        nextPopup.gameObject.SetActive(true);
 
         if (normalOrder)
         {
-
+            var r1 = nextPopup.GetComponent<RectTransform>();
             popupSequence.Append(r1.DOScale(1, tweenDurBack).SetEase(Ease.OutBack).From(tweenScaleBack));
             popupSequence.Join(r1.DOMove(displayPopupPos.position, tweenDurBack).SetEase(Ease.OutBack).From(Vector3.zero));
-            popupSequence.Join(levelPopups[index].DOFade(1, tweenDurBack).From(.3f).SetEase(Ease.OutSine));
+            popupSequence.Join(nextPopup.DOFade(1, tweenDurBack).From(.3f).SetEase(Ease.OutSine));
 
-            if (levelPopups[prevPopupIndex].gameObject.activeInHierarchy)
+            if (currentPopup != null)
             {
-                var r2 = levelPopups[prevPopupIndex].GetComponent<RectTransform>();
-                levelPopups[prevPopupIndex].interactable = false;
+                var r2 = currentPopup.GetComponent<RectTransform>();
+                currentPopup.interactable = false;
                 popupSequence.Join(r2.DOScale(tweenScaleFront, tweenDurFront));
                 popupSequence.Join(r2.DOMove(Vector3.zero, tweenDurFront));
-                popupSequence.Join(levelPopups[prevPopupIndex].DOFade(0, tweenDurFront));
+                popupSequence.Join(currentPopup.DOFade(0, tweenDurFront));
 
             }
 
             popupSequence.Play().OnComplete(() =>
             {
-                levelPopups[index].interactable = true;
-                levelPopups[index].alpha = 1;
+                nextPopup.interactable = true;
+                nextPopup.alpha = 1;
+                if (currentPopup != null)
+                    Destroy(currentPopup.gameObject);
 
-                levelPopups[prevPopupIndex].gameObject.SetActive(false);
-                currentPopupIndex++;
+                currentPopup = nextPopup;
+                nextPopup = null;
+
+
 
             });
 
@@ -193,6 +211,7 @@ public class LevelPickerManager : MonoBehaviour
 
 
     }
+
 
 
     private ILevelPickerPathObject GetObjectFromTouchPosition(Vector2 worldPoint)
@@ -243,17 +262,17 @@ public class LevelPickerManager : MonoBehaviour
     }
 
 
-    private int prevPopupIndex = 1;
+    // private int prevPopupIndex = 1;
     // Update is called once per frame
-    private int ReturnCurrentPopupIndex()
-    {
-        if (currentPopupIndex < 0) currentPopupIndex = 1;
-        else if (currentPopupIndex >= levelPopups.Length) currentPopupIndex = 0;
+    // private int ReturnCurrentPopupIndex()
+    // {
+    //     if (currentPopupIndex < 0) currentPopupIndex = 1;
+    //     else if (currentPopupIndex >= levelPopups.Length) currentPopupIndex = 0;
 
 
-        if (currentPopupIndex == 0) prevPopupIndex = 1;
-        else prevPopupIndex = 0;
+    //     if (currentPopupIndex == 0) prevPopupIndex = 1;
+    //     else prevPopupIndex = 0;
 
-        return currentPopupIndex;
-    }
+    //     return currentPopupIndex;
+    // }
 }

@@ -189,9 +189,10 @@ public class LevelDataConverter : MonoBehaviour
         }
     }
 
-    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, string title, int[] poolSizes, ushort finalSpawnStep, short[] ammos, short lives, LevelData editorData = null)
+    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, string title, List<ushort[]> plSizes, ushort finalSpawnStep, short[] ammos, short lives, LevelData editorData = null)
     {
 
+        List<short> objectTypeList = new List<short>();
         List<short> idList = new List<short>();
         List<ushort> spawnedStepList = new List<ushort>();
         List<ushort> typeList = new List<ushort>();
@@ -204,6 +205,7 @@ public class LevelDataConverter : MonoBehaviour
 
         for (int i = 0; i < obj.Count; i++)
         {
+            objectTypeList.Add(obj[i].ObjectType);
             idList.Add(obj[i].Data.ID);
             spawnedStepList.Add(obj[i].Data.spawnedStep);
             dataTypes.Add(obj[i].DataType);
@@ -218,8 +220,8 @@ public class LevelDataConverter : MonoBehaviour
                 Debug.LogError("Positioner Object Found: " + obj[i].Data.ID);
                 positionerData.Add(obj[i].ReturnPositionerDataSave());
 
-
             }
+
             else
             {
                 typeList.Add(obj[i].Data.type);
@@ -228,7 +230,7 @@ public class LevelDataConverter : MonoBehaviour
 
 
             int dataType = obj[i].DataType;
-            if (dataType >= 0 && dataType <= 5)
+            if (dataType > 0 && dataType <= 5)
             {
                 float[] values = new float[dataType];
                 for (int j = 0; j < dataType; j++)
@@ -262,13 +264,13 @@ public class LevelDataConverter : MonoBehaviour
 
         }
 
-        ushort[] poolData = new ushort[poolSizes.Length];
-        for (int i = 0; i < poolSizes.Length; i++)
-        {
-            poolData[i] = (ushort)poolSizes[i];
-        }
+        // ushort[] poolData = new ushort[poolSizes.Length];
+        // for (int i = 0; i < poolSizes.Length; i++)
+        // {
+        //     poolData[i] = (ushort)poolSizes[i];
+        // }
         if (editorData != null) title = editorData.LevelName; // Use the editor data title if available
-        LevelDataSave save = new LevelDataSave(title, idList.ToArray(), spawnedStepList.ToArray(), typeList.ToArray(), dataTypes.ToArray(), finalSpawnStep, posList.ToArray(), floatList.ToArray(), poolData, ammos, lives);
+        LevelDataSave save = new LevelDataSave(title, objectTypeList.ToArray(), idList.ToArray(), spawnedStepList.ToArray(), typeList.ToArray(), dataTypes.ToArray(), finalSpawnStep, posList.ToArray(), floatList.ToArray(), plSizes, ammos, lives);
 
 
 
@@ -371,11 +373,11 @@ public class LevelDataConverter : MonoBehaviour
                     values[j] = data.floatList[floatIndex];
                     floatIndex++;
                 }
-                l.Add(new RecordedDataStructDynamic(data.idList[i], data.typeList[i - subrtactIndex], data.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, hasCageAttachment));
+                l.Add(new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], data.typeList[i - subrtactIndex], data.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, hasCageAttachment));
             }
             else if (type < 0)
             {
-                var d = new RecordedDataStructDynamic(data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, hasCageAttachment);
+                var d = new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, hasCageAttachment);
                 d.positionerData = data.postionerData[positionerIndex];
                 subrtactIndex++;
                 positionerIndex++;

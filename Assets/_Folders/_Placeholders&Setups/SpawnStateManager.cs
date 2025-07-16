@@ -192,6 +192,7 @@ public class SpawnStateManager : MonoBehaviour
         if (isTestPlayer)
         {
             currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
+            Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
             levelData = LevelDataConverter.instance.ReturnLevelData();
 
             // if (levelData != null)
@@ -1111,7 +1112,7 @@ public class SpawnStateManager : MonoBehaviour
 
     private void SpawnPools()
     {
-        ringPool.Initialize();
+        ringPool.Initialize(15, 3);
 
         silos = new SiloMovement[siloPoolSize];
 

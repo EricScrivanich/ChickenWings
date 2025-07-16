@@ -2,12 +2,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using System.Collections.Generic;
 public class LevelPickerUIPopup : MonoBehaviour
 {
     [SerializeField] private LevelData levelData;
     [field: SerializeField] public Sprite[] ammoImages { get; private set; }
 
     [SerializeField] private GameObject statDisplayPrefab;
+    [SerializeField] private RectTransform progressBar;
+    [SerializeField] private Image progressBarFill;
+
+    [SerializeField] private RectTransform flagImage;
+    private LevelPickerManager levelPickerManager;
 
 
 
@@ -31,7 +37,7 @@ public class LevelPickerUIPopup : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        ShowData(levelData);
+        // ShowData(levelData);
 
     }
     private void OnValidate()
@@ -61,7 +67,7 @@ public class LevelPickerUIPopup : MonoBehaviour
             moveStatSequence = DOTween.Sequence();
             moveStatSequence.Append(statDisplays[mainIndex].DOAnchorPos(mainStatDisplayPos.anchoredPosition, tweenDur));
             moveStatSequence.Join(statDisplays[mainIndex].DOScale(1, tweenDur));
-            
+
             for (int i = 0; i < amount; i++)
             {
                 if (i == mainIndex) continue;
@@ -90,12 +96,33 @@ public class LevelPickerUIPopup : MonoBehaviour
 
     }
 
-    public void ShowData(LevelData data)
+
+
+    public void ShowData(LevelData data, LevelPickerManager manager)
     {
+        if (manager != null)
+            levelPickerManager = manager;
+        this.levelData = data;
         levelNameText.text = data.LevelName;
+
         if (data.levelWorldAndNumber != Vector3Int.zero)
         {
             levelNumberText.text = $"{data.levelWorldAndNumber.x}-{data.levelWorldAndNumber.y}";
+            if (data.checkPointSteps != null && data.checkPointSteps.Length > 0)
+                for (int i = 0; i < data.checkPointSteps.Length; i++)
+                {
+                    if (i == 0) flagImage.localPosition = new Vector2(GetXOnProgressBar(GetPercent(data.checkPointSteps[i])), flagImage.localPosition.y);
+                    else
+                    {
+                        Instantiate(flagImage, flagImage.parent).localPosition = new Vector2(GetXOnProgressBar(GetPercent(data.checkPointSteps[i])), flagImage.localPosition.y);
+                    }
+
+
+                }
+            else
+                flagImage.gameObject.SetActive(false);
+
+
 
         }
         else
@@ -142,6 +169,27 @@ public class LevelPickerUIPopup : MonoBehaviour
 
 
 
+    }
+    public void ExitView()
+    {
+        if (levelPickerManager != null)
+        {
+            levelPickerManager.BackOut();
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    private float GetPercent(ushort step)
+    {
+        return (float)step / (float)levelData.finalSpawnStep;
+    }
+
+    private float GetXOnProgressBar(float percent)
+    {
+        return (progressBar.rect.width * percent) - progressBar.rect.width * .5f;
     }
 
     // Update is called once per frame

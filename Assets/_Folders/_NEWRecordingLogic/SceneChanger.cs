@@ -9,6 +9,7 @@ public class SceneChanger : MonoBehaviour
     {
         if (test)
         {
+            
             StartCoroutine(AwaitLoadScene(true));
         }
         else

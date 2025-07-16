@@ -14,6 +14,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     [SerializeField] private GameObject disableObjectOnDeath;
     [SerializeField] private bool ignoreBoundaries = false;
 
+    [SerializeField] private bool destroyOnDeath = false;
+
 
     [SerializeField] private int health = 1;
     [SerializeField] private float totalDamageTime;
@@ -291,13 +293,19 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         }
         player.globalEvents.OnKillPig?.Invoke(pigType);
         isStuck = false;
+        if (destroyOnDeath)
+        {
+            Destroy(instanceMaterial);
+            Destroy(gameObject);
 
-        gameObject.SetActive(false);
-        // Ensure the final values are set
-        // transform.localScale = new Vector3(endScale, endScale, endScale);
+        }
+        else
+        {
+            gameObject.SetActive(false);
 
+            Destroy(instanceMaterial);
 
-        Destroy(instanceMaterial);
+        }
 
 
     }

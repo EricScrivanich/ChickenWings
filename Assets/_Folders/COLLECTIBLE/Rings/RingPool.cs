@@ -41,8 +41,9 @@ public class RingPool : ScriptableObject
     public Coroutine goldFadeOut;
     public Coroutine purpleFadeOut;
     private SpawnStateManager spawnMan;
-    public void SpawnRingPool()
+    public void SpawnRingPool(ushort size = 15)
     {
+        ringAmount = size;
         ringPool = new RingMovement[ringAmount];
 
 
@@ -61,15 +62,16 @@ public class RingPool : ScriptableObject
             ringPool[i] = ringScript;
         }
     }
-    public void Initialize(SpawnStateManager sm = null)
+    public void Initialize(ushort ringSize, ushort bucketSize, SpawnStateManager sm = null)
     {
         if (sm != null)
         {
             spawnMan = sm;
         }
-        SpawnRingPool();
-        SpawnBallPool();
-        SpawnBucketPool();
+
+        SpawnRingPool(ringSize);
+        SpawnBallPool(bucketSize);
+        SpawnBucketPool(bucketSize);
         currentRingIndex = 0;
 
         foreach (var ring in RingType)
@@ -83,7 +85,7 @@ public class RingPool : ScriptableObject
         ResetAllMaterials();
     }
 
-    public void SpawnBallPool()
+    public void SpawnBallPool(ushort ballSize = 3)
     {
         ballPool = new List<BallMaterialMovement>();
         if (!parent)
@@ -91,7 +93,7 @@ public class RingPool : ScriptableObject
             parent = new GameObject(name).transform;
         }
 
-        while (ballPool.Count < 3)
+        while (ballPool.Count < ballSize)
         {
             // GameObject obj = Instantiate(prefab, parent);
             GameObject obj = Instantiate(ballPrefab, parent);
@@ -105,7 +107,7 @@ public class RingPool : ScriptableObject
     {
         if (ballPool == null || ballPool.Count == 0)
         {
-            SpawnBallPool();
+            SpawnBallPool(3);
             Debug.LogWarning($"{name} spawned mid-game. Consider spawning it at the start of the game");
         }
         foreach (BallMaterialMovement ballScript in ballPool)
@@ -185,7 +187,7 @@ public class RingPool : ScriptableObject
 
         }
     }
-    public void SpawnBucketPool()
+    public void SpawnBucketPool(ushort bucketSize = 3)
     {
 
         SonicWave = Instantiate(SonicWavePrefab);
@@ -205,6 +207,7 @@ public class RingPool : ScriptableObject
         {
             parent = new GameObject(name).transform;
         }
+        bucketAmount = bucketSize;
         while (bucketPool.Count < bucketAmount)
         {
             // GameObject obj = Instantiate(prefab, parent);

@@ -81,6 +81,7 @@ public class ProgressBar : MonoBehaviour
     {
         duration = total;
         actualTime = starting;
+        Debug.Log("Setting duration: " + duration + " and actual time: " + actualTime);
         showFinish = false;
     }
 

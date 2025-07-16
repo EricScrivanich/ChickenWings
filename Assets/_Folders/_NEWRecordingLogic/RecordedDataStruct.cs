@@ -31,6 +31,23 @@ public readonly struct RecordedDataStruct
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 4)]
+public readonly struct DataStructSimple
+{
+    public readonly short ID;         // 2 bytes
+    public readonly ushort type;      // 2 bytes
+    public readonly Vector2 startPos; // 8 bytes (x, y)
+
+
+    public DataStructSimple(short id, ushort type, Vector2 startPos)
+    {
+        this.ID = id;
+        this.type = type;
+        this.startPos = startPos;
+
+    }
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 4)]
 public readonly struct DataStructFloatOne
 {
     public readonly short ID;         // 2 bytes

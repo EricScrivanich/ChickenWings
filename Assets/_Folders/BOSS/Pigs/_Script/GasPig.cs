@@ -200,9 +200,14 @@ public class GasPig : MonoBehaviour, IRecordableObject
 
         if (speed < BoundariesManager.GroundSpeed)
         {
+            flipped = true;
             transform.localScale = Vector3.Scale(Vector3.one * .9f, BoundariesManager.FlippedXScale);
         }
-        else transform.localScale = Vector3.one * .9f;
+        else
+        {
+            transform.localScale = Vector3.one * .9f;
+            flipped = false;
+        }
 
 
 

@@ -25,7 +25,19 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public LevelCreatorColors colorSO;
 
-    public RecordableObjectPlacer[] recordableObjectsByID;
+    // public RecordableObjectPlacer[] recordableObjectsByIDfd;
+    public GameObject checkPointFlagPrefab;
+    public RecordableObjectPlacer[] pigsByID;
+    public RecordableObjectPlacer[] aiByID;
+    public RecordableObjectPlacer[] buildingsByID;
+    public RecordableObjectPlacer[] collectablesByID;
+    public RecordableObjectPlacer[] positionersByID;
+    public RecordableObjectPlacer[] ringsByID;
+    public RecordableObjectPlacer[] ByID;
+
+
+
+
     public RecordableObjectPlacer[] recordableObjectsWithNegtiveID;
     public GameObject[] specialAddedObjects;
 
@@ -54,6 +66,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public LevelData levelData;
 
     public List<RecordableObjectPlacer> RecordedObjects;
+
+    private List<CheckPointFlag> checkPointFlags = new List<CheckPointFlag>();
 
     [SerializeField] private RectTransform minuteHand;
     [SerializeField] private RectTransform hourHand;
@@ -135,7 +149,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     [SerializeField] private GameObject levelPicker;
 
-    [SerializeField] private GameObject openLevelPickerButton;
+    [SerializeField] private GameObject[] editorOnlyButtons;
 
 
 
@@ -393,12 +407,12 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         RecordableObjectPlacer newObj = null;
         if (obj.Data.ID >= 0)
         {
-            newObj = Instantiate(recordableObjectsByID[obj.ID]);
+            newObj = Instantiate(ReturnObjectByPoolType(obj.Data.ObjectType, obj.Data.ID));
         }
-        else
-        {
-            newObj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(obj.ID) - 1]);
-        }
+        // else
+        // {
+        //     newObj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(obj.ID) - 1]);
+        // }
 
         RecordedDataStructDynamic copy = obj.Data;
         newObj.LoadAssetFromSave(copy);
@@ -516,7 +530,10 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 #endif
         if (!isEditor)
         {
-            Destroy(openLevelPickerButton);
+            for (int i = editorOnlyButtons.Length - 1; i >= 0; i--)
+            {
+                Destroy(editorOnlyButtons[i]);
+            }
             Destroy(levelPicker);
         }
 
@@ -913,7 +930,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
     private RecordableObjectPlacer GetObjectFromTouchPosition(Vector2 worldPoint)
     {
-        if (isPlayModeView) return null;
+        if (isPlayModeView && !isEditor) return null;
 
 
         RaycastHit2D[] hits = Physics2D.RaycastAll(worldPoint, Vector2.zero);
@@ -924,6 +941,23 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         if (hits.Length == 0)
         {
             Debug.Log("NO OBJECTS FOUND");
+            return null;
+        }
+
+        if (isPlayModeView && isEditor)
+        {
+            foreach (var hit in hits)
+            {
+                if (hit.collider.gameObject.GetComponent<CheckPointFlag>() != null)
+                {
+                    Debug.Log("Touched Checkpoint");
+                    CheckPointFlag flag = hit.collider.gameObject.GetComponent<CheckPointFlag>();
+                    checkPointFlags.Remove(flag);
+                    Destroy(flag.gameObject);
+
+                }
+
+            }
             return null;
         }
 
@@ -1103,9 +1137,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         for (int i = 0; i < RecordedObjects.Count; i++)
         {
+           
             // Debug.Log("Checking Objects in list, current pbject: " + RecordedObjects[i].spawnedTimeStep + " unspawnTimestep: " + RecordedObjects[i].unspawnedTimeStep + "Current time step: " + CurrentTimeStep);
             if (RecordedObjects[i].spawnedTimeStep <= CurrentTimeStep && RecordedObjects[i].unspawnedTimeStep > CurrentTimeStep)
             {
+            
                 if (!RecordedObjects[i].gameObject.activeInHierarchy)
                     RecordedObjects[i].SetActiveFromList();
             }
@@ -1155,6 +1191,16 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
                     addedTitleText = $"{levelData.levelWorldAndNumber.x:00}-{levelData.levelWorldAndNumber.y:00} ";
                 else
                     addedTitleText = $"{levelData.levelWorldAndNumber.x:00}-{levelData.levelWorldAndNumber.y:00}-{levelData.levelWorldAndNumber.z:00} ";
+
+                if (levelData.checkPointSteps != null && levelData.checkPointSteps.Length > 0)
+                    for (int i = 0; i < levelData.checkPointSteps.Length; i++)
+                    {
+                        var o = Instantiate(checkPointFlagPrefab, new Vector2(BoundariesManager.rightBoundary, -.49f), Quaternion.Euler(new Vector3(0, 0, 90))).GetComponent<CheckPointFlag>();
+                        o.SetSpawnedTimeStep(levelData.checkPointSteps[i]);
+
+                        checkPointFlags.Add(o);
+                        o.gameObject.SetActive(false);
+                    }
             }
             else
             {
@@ -1196,13 +1242,15 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         for (int i = 0; i < data.Count; i++)
         {
-            RecordableObjectPlacer obj;
-            if (data[i].ID < 0)
-            {
-                obj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(data[i].ID) - 1]);
-            }
-            else
-                obj = Instantiate(recordableObjectsByID[data[i].ID]);
+            // RecordableObjectPlacer obj;
+            // if (data[i].ID < 0)
+            // {
+            //     obj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(data[i].ID) - 1]);
+            // }
+            // else
+            //     obj = Instantiate(recordableObjectsByID[data[i].ID]);
+
+            RecordableObjectPlacer obj = Instantiate(ReturnObjectByPoolType(data[i].ObjectType, data[i].ID));
 
             if (obj == null)
             {
@@ -1219,6 +1267,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
     public void SaveAsset()
     {
+        currentSelectedObject = null;
+        showLinesTemp = ShowLines;
+        showParamsTemp = ShowParameters;
+        currentTimeStepTemp = CurrentTimeStep;
+        CurrentPlayTimeStep = CurrentTimeStep;
 
         SortRecordedObjectsBySpawnTime();
         PreloadPlayScene();
@@ -1226,7 +1279,31 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         ushort lastTimeStep = 0;
         int lastSpawnedIndex = 0;
 
-        int[] poolSizes = new int[recordableObjectsByID.Length];
+
+        // int[] poolSizes = new int[recordableObjectsByID.Length];
+        ushort[] pigPoolSizes = new ushort[pigsByID.Length];
+        ushort[] aiPoolSizes = new ushort[aiByID.Length];
+        ushort[] builderPoolSizes = new ushort[buildingsByID.Length];
+        ushort[] collectablePoolSizes = new ushort[collectablesByID.Length];
+        ushort[] positionerPoolSizes = new ushort[positionersByID.Length];
+        ushort[] ringPoolSizes = new ushort[ringsByID.Length];
+
+        List<ushort[]> poolSizesList = new List<ushort[]>();
+        poolSizesList.Add(pigPoolSizes);
+        poolSizesList.Add(aiPoolSizes);
+        poolSizesList.Add(builderPoolSizes);
+        poolSizesList.Add(collectablePoolSizes);
+        poolSizesList.Add(positionerPoolSizes);
+        poolSizesList.Add(ringPoolSizes);
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1256,29 +1333,56 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
             }
             if (!addedMore) continue;
-            int[] poolSizeCompare = new int[recordableObjectsByID.Length];
+            // int[] poolSizeCompare = new int[recordableObjectsByID.Length];
+            int[] pigPoolSizeCompare = new int[pigsByID.Length];
+            int[] aiPoolSizeCompare = new int[aiByID.Length];
+            int[] builderPoolSizeCompare = new int[buildingsByID.Length];
+            int[] collectablePoolSizeCompare = new int[collectablesByID.Length];
+            int[] positionerPoolSizeCompare = new int[positionersByID.Length];
+            int[] ringPoolSizeCompare = new int[ringsByID.Length];
+            List<int[]> poolSizeCompareList = new List<int[]>();
+            poolSizeCompareList.Add(pigPoolSizeCompare);
+            poolSizeCompareList.Add(aiPoolSizeCompare);
+            poolSizeCompareList.Add(builderPoolSizeCompare);
+            poolSizeCompareList.Add(collectablePoolSizeCompare);
+            poolSizeCompareList.Add(positionerPoolSizeCompare);
+            poolSizeCompareList.Add(ringPoolSizeCompare);
+
 
             for (int o = 0; o < activeObjects.Count; o++)
             {
-                Debug.Log("Checking object: " + activeObjects[o].name + " with ID: " + activeObjects[o].ID + " and pool size: " + poolSizes.Length);
+                // Debug.Log("Checking object: " + activeObjects[o].name + " with ID: " + activeObjects[o].ID + " and pool size: " + poolSizes.Length);
                 if (!activeObjects[o].CheckForPoolSizes(s)) activeObjects[o] = null;
 
-                else poolSizeCompare[activeObjects[o].ID]++;
+                // else poolSizeCompare[activeObjects[o].ID]++;
+
+                else poolSizeCompareList[activeObjects[o].ObjectType][activeObjects[o].ID]++;
+
             }
 
-            for (int i = 0; i < poolSizeCompare.Length; i++)
+            // for (int i = 0; i < poolSizeCompare.Length; i++)
+            // {
+            //     if (poolSizeCompare[i] > poolSizes[i]) poolSizes[i] = poolSizeCompare[i];
+            // }
+
+            for (int o = 0; o < poolSizeCompareList.Count; o++)
             {
-                if (poolSizeCompare[i] > poolSizes[i]) poolSizes[i] = poolSizeCompare[i];
+                for (int i = 0; i < poolSizeCompareList[o].Length; i++)
+                {
+                    if (poolSizeCompareList[o][i] > poolSizesList[o][i]) poolSizesList[o][i] = (ushort)poolSizeCompareList[o][i];
+                }
             }
+
+
             activeObjects.RemoveAll(x => x == null);
 
 
         }
 
-        for (int i = 0; i < poolSizes.Length; i++)
-        {
-            Debug.Log("Pool size for index: " + i + " is: " + poolSizes[i]);
-        }
+        // for (int i = 0; i < poolSizes.Length; i++)
+        // {
+        //     Debug.Log("Pool size for index: " + i + " is: " + poolSizes[i]);
+        // }
 
 
 
@@ -1287,8 +1391,27 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         if (isEditor)
         {
+            List<ushort> flags = new List<ushort>();
 
-            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, "", poolSizes, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives, levelData);
+            if (checkPointFlags.Count > 0)
+            {
+                for (int i = 0; i < checkPointFlags.Count; i++)
+                {
+                    flags.Add(checkPointFlags[i].spawnedTimeStep);
+                }
+
+                flags.Sort();
+                levelData.checkPointSteps = flags.ToArray();
+
+            }
+            else
+            {
+                levelData.checkPointSteps = null;
+            }
+
+
+
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, "", poolSizesList, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives, levelData);
             // Level data added at end to save it directly to scriptable object
 
         }
@@ -1302,7 +1425,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             }
 
 
-            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, path, poolSizes, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives);
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, path, poolSizesList, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives);
             Debug.Log("Saved with final spawn step: " + finalSpawnStep);
 
         }
@@ -1409,6 +1532,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         controls.LevelCreator.Enable();
         // LevelRecordManager.AddNewObject += SetObjectToBeAdded;
         LevelRecordManager.PressTimerBar += PressTimeBarWhilePlaying;
+        if (isEditor) SetGlobalTime += CheckGlobalTime;
     }
 
     private void OnDisable()
@@ -1418,7 +1542,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         // timeSlider.onValueChanged.RemoveAllListeners();
         // LevelRecordManager.AddNewObject -= SetObjectToBeAdded;
         LevelRecordManager.PressTimerBar -= PressTimeBarWhilePlaying;
-
+        if (isEditor) SetGlobalTime -= CheckGlobalTime;
 
 
 
@@ -1468,6 +1592,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             }
         }
     }
+
+
 
     public void PressTimeBarWhilePlaying()
     {
@@ -1722,7 +1848,44 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         else return null;
 
     }
+    private RecordableObjectPlacer ReturnObjectByPoolType(short objectType, short id)
+    {
+        //Pools, Pigs 0, AI 1, Buildings 2, Collectables 3, Positioners 4, Rings 5
+        switch (objectType)
+        {
+            case 0: // PositionerObject
+                return pigsByID[id];
 
+                break;
+            case 1: // ProjectileObject
+                return aiByID[id];
+
+                break;
+            case 2: // BuildingObject
+                return buildingsByID[id];
+
+                break;
+            case 3: // CollectableObject
+                return collectablesByID[id];
+
+                break;
+            case 4: // PositionerObject
+                return positionersByID[id];
+
+                break;
+            case 5: // RingObject
+                return ringsByID[id];
+
+                break;
+
+            default:
+                Debug.LogError("Invalid object type: " + objectType);
+                return null;
+
+
+        }
+
+    }
     public void ReturnPooledObjectToQ(GameObject obj, int type)
     {
 
@@ -1775,6 +1938,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             MultipleSelectedObjects.Clear();
             MultipleSelectedObjects = new List<RecordableObjectPlacer>();
             currentSelectedObject = null;
+            multipleSelectedIDs = false;
+            parameterUI.SetActive(false);
 
             CustomTimeSlider.instance.ExitMultipleObjectSelection();
             if (spawnStepsPerObject != null)
@@ -1785,6 +1950,44 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         }
         CheckViewParameters?.Invoke();
+
+    }
+
+    public void AddFlag()
+    {
+
+        var o = Instantiate(checkPointFlagPrefab, new Vector2(BoundariesManager.rightBoundary, -.49f), Quaternion.Euler(new Vector3(0, 0, 90))).GetComponent<CheckPointFlag>();
+        o.SetSpawnedTimeStep(CurrentTimeStep);
+        checkPointFlags.Add(o);
+
+
+        // sort the flags in ascending order
+
+    }
+
+    public void CheckGlobalTime(ushort step, float realTime)
+    {
+        float time = step * TimePerStep;
+        if (realTime > 0)
+        {
+            time = realTime;
+        }
+        foreach (var o in checkPointFlags)
+        {
+            Vector2 pos = o.GetPositionAtStep(time);
+            if (pos == Vector2.zero && o.gameObject.activeInHierarchy)
+            {
+                o.gameObject.SetActive(false);
+            }
+            else if (pos != Vector2.zero)
+            {
+                if (!o.gameObject.activeInHierarchy)
+                {
+                    o.gameObject.SetActive(true);
+                }
+                o.transform.position = pos;
+            }
+        }
 
     }
 

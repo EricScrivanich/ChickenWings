@@ -34,7 +34,7 @@ public class CollectablePoolManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ringPool.Initialize();
+        ringPool.Initialize(15,3);
         currentAmountOfSpawns = 0;
 
         if (testTrigger > 0)

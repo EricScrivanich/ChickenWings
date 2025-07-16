@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 3620041786679927124}
   - component: {fileID: 176715740358749963}
   - component: {fileID: 3484267423528687177}
-  m_Layer: 11
+  - component: {fileID: 9177246657689751093}
+  m_Layer: 15
   m_Name: Bullet
-  m_TagString: Plane
+  m_TagString: Explosive
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -292,3 +293,19 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &9177246657689751093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212244279657301723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 893808f128e50421f98c1a4b1b4645ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalExplosionScale: {x: 0.5, y: 0.5, z: 0.5}
+  groundExplosionScale: {x: 0.7, y: 0.7, z: 0.7}
+  isBomberBomb: 1
+  ID: {fileID: 0}

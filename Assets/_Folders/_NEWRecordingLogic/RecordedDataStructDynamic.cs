@@ -4,6 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public struct RecordedDataStructDynamic
 {
+    public short ObjectType;
     public short ID;
     public ushort type;
 
@@ -25,8 +26,9 @@ public struct RecordedDataStructDynamic
 
 
 
-    public RecordedDataStructDynamic(short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, bool hasCage = false)
+    public RecordedDataStructDynamic(short objectType, short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, bool hasCage = false)
     {
+        this.ObjectType = objectType;
         this.ID = id;
         this.type = typ;
         this.startPos = pos;
@@ -35,7 +37,7 @@ public struct RecordedDataStructDynamic
         this.float3 = f3;
         this.float4 = f4;
         this.float5 = f5;
-       
+
         positionerData = null;
 
         this.spawnedStep = spawnStep;

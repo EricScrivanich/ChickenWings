@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Level Data", menuName = "Setups/LevelData")]
@@ -21,6 +22,8 @@ public class LevelData : ScriptableObject
     public Vector3 levelWorldAndNumber;
     public ushort[] spawnSteps;
     public ushort finalSpawnStep;
+    public short[] objectTypes;
+
     public short[] idList;
     public short[] dataTypes;
 
@@ -30,6 +33,12 @@ public class LevelData : ScriptableObject
 
 
     public ushort[] poolSizes;
+    public ushort[] pigPoolSizes;
+    public ushort[] aiPoolSizes;
+    public ushort[] buildingPoolSizes;
+    public ushort[] collectablePoolSizes;
+    public ushort[] positionerPoolSizes;
+    public ushort[] ringPoolSizes;
     public ushort[] cageAttachments;
 
     private int currentCageIndex = 0;
@@ -42,7 +51,7 @@ public class LevelData : ScriptableObject
     private ushort one = 1;
     private int[] dataTypeIndexes;
 
-    [SerializeField] private ushort[] checkPointSteps;
+    public ushort[] checkPointSteps;
 
     private SpawnStateManager spawner;
     public short[] StartingAmmos;
@@ -50,6 +59,7 @@ public class LevelData : ScriptableObject
 
 
     private RecordedDataStruct[] Data;
+    private DataStructSimple[] dataStructSimple;
     private DataStructFloatOne[] dataStructFloatOne;
     private DataStructFloatTwo[] dataStructFloatTwo;
     private DataStructFloatThree[] dataStructFloatThree;
@@ -57,7 +67,8 @@ public class LevelData : ScriptableObject
     private DataStructFloatFive[] dataStructFloatFive;
     public RecordedObjectPositionerDataSave[] postionerData = null;
     private int currentPositionerObjectIndex = 0;
-
+    private int currentCheckpointIndex = 0;
+    private bool checkForCheckpoint = false;
 
 
     private bool checkForCage = false;
@@ -70,7 +81,7 @@ public class LevelData : ScriptableObject
     public void InitializeData(SpawnStateManager s, ushort startingStep, int preloadIndex = -1, int difficulty = 1)
     {
         spawner = s;
-        objData.ringPool.Initialize(s);
+
 
 
         // Load your level save data first. This sets spawnSteps, idList, etc.
@@ -91,7 +102,7 @@ public class LevelData : ScriptableObject
 
             playerID.SetStartingStats(startingStats);
         }
-        dataTypeIndexes = new int[5];
+        dataTypeIndexes = new int[6];
 
         // Set currentSpawnStep to the specified starting step.
         if (preloadIndex >= 0) startingStep = (ushort)preloadIndex;
@@ -113,6 +124,15 @@ public class LevelData : ScriptableObject
             checkForCage = true;
 
         }
+        currentCheckpointIndex = 0;
+        if (checkPointSteps == null || checkPointSteps.Length <= 0)
+        {
+            checkForCheckpoint = false;
+        }
+        else
+        {
+            checkForCheckpoint = true;
+        }
         for (ushort i = 0; i < spawnSteps.Length; i++)
         {
             if (spawnSteps[i] >= startingStep)
@@ -132,7 +152,7 @@ public class LevelData : ScriptableObject
 
             if (idList[i] >= 0)
             {
-                dataTypeIndexes[dataTypes[i] - 1]++;
+                dataTypeIndexes[dataTypes[i]]++;
 
                 if (dataTypes[i] < 0)
                 {
@@ -146,7 +166,7 @@ public class LevelData : ScriptableObject
             else if (idList[i] < 0)
             {
 
-                dataTypeIndexes[2]++;
+                dataTypeIndexes[3]++;
 
             }
 
@@ -160,11 +180,36 @@ public class LevelData : ScriptableObject
 
 
         // Create pools for each object type if needed.
-        for (int i = 0; i < poolSizes.Length; i++)
+        List<ushort[]> poolList = new List<ushort[]>
         {
-            if (objData.pools[i] != null && poolSizes[i] > 0)
-                objData.pools[i].CreatePool(poolSizes[i]);
+            pigPoolSizes,
+            aiPoolSizes,
+            buildingPoolSizes,
+            collectablePoolSizes,
+            positionerPoolSizes,
+            ringPoolSizes
+        };
+
+        for (int i = 0; i < poolList.Count; i++)
+        {
+            if (i == 5) // ring pool
+            {
+                objData.ringPool.Initialize(ringPoolSizes[0], ringPoolSizes[1], s);
+            }
+            else if (poolList[i] != null && poolList[i].Length > 0)
+            {
+                var poolToPopulate = objData.GetPoolArrayByObjectType(i);
+                for (int j = 0; j < poolList[i].Length; j++)
+                {
+                    poolToPopulate[j].CreatePool(poolList[i][j]);
+                }
+            }
         }
+        // for (int i = 0; i < poolSizes.Length; i++)
+        // {
+        //     if (objData.pools[i] != null && poolSizes[i] > 0)
+        //         objData.pools[i].CreatePool(poolSizes[i]);
+        // }
 
         CreateDataStructs();
         GetSpawnSizeForNextTimeStep();
@@ -192,15 +237,22 @@ public class LevelData : ScriptableObject
 
     private void CreateDataStructs()
     {
+        int simpleStructSize = 0;
         int[] floatSizes = new int[5];
         for (int i = 0; i < dataTypes.Length; i++)
         {
-            if (dataTypes[i] <= floatSizes.Length && dataTypes[i] >= 0)
+            if (dataTypes[i] == 0)
+            {
+                simpleStructSize++;
+
+            }
+            else if (dataTypes[i] <= floatSizes.Length && dataTypes[i] > 0)
                 floatSizes[dataTypes[i] - 1]++;
             else
                 Debug.LogError("Data Type: " + dataTypes[i] + " is not valid. Please check the data type.");
 
         }
+        dataStructSimple = new DataStructSimple[simpleStructSize];
         dataStructFloatOne = new DataStructFloatOne[floatSizes[0]];
         dataStructFloatTwo = new DataStructFloatTwo[floatSizes[1]];
         dataStructFloatThree = new DataStructFloatThree[floatSizes[2]];
@@ -214,7 +266,7 @@ public class LevelData : ScriptableObject
 
         int floatListIndex = 0;
         int subrtactIndex = 0;
-
+        int simpleStructIndex = 0;
         int float1Index = 0;
         int float2Index = 0;
         int float3Index = 0;
@@ -229,8 +281,15 @@ public class LevelData : ScriptableObject
                 subrtactIndex++;
                 continue;
             }
+
             switch (dataTypes[i])
             {
+                case 0:
+                    dataStructSimple[simpleStructIndex] = new DataStructSimple(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex]);
+
+                    simpleStructIndex++;
+                    // This is a simple object, already handled above
+                    break;
                 case 1:
                     dataStructFloatOne[float1Index] = new DataStructFloatOne(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex]);
                     float1Index++;
@@ -242,6 +301,8 @@ public class LevelData : ScriptableObject
                     floatListIndex += 2;
                     break;
                 case 3:
+                    Debug.LogError("Type is: " + typeList[i - subrtactIndex]);
+                    Debug.LogError("Creating Float Three Data Struct for ID: " + idList[i] + " at index: " + i + " with pos: " + posList[i - subrtactIndex] + " and floatList: " + floatList[floatListIndex] + ", " + floatList[floatListIndex + 1] + ", " + floatList[floatListIndex + 2]);
                     dataStructFloatThree[float3Index] = new DataStructFloatThree(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2]);
                     float3Index++;
                     floatListIndex += 3;
@@ -274,6 +335,7 @@ public class LevelData : ScriptableObject
             Debug.LogError("LevelDataSave is null");
             finalSpawnStep = 300;
             spawnSteps = new ushort[0];
+            objectTypes = new short[0];
             idList = new short[0];
             posList = new Vector2[0];
             dataTypes = new short[0];
@@ -283,6 +345,12 @@ public class LevelData : ScriptableObject
             StartingAmmos[1] = 3;
             StartingLives = 3;
             startingStats.SetData(StartingLives, StartingAmmos);
+            pigPoolSizes = new ushort[0];
+            aiPoolSizes = new ushort[0];
+            buildingPoolSizes = new ushort[0];
+            collectablePoolSizes = new ushort[0];
+            positionerPoolSizes = new ushort[0];
+            ringPoolSizes = new ushort[0];
 
 
 
@@ -294,8 +362,15 @@ public class LevelData : ScriptableObject
         spawnSteps = lds.spawnSteps;
         finalSpawnStep = lds.finalSpawnStep;
         floatList = lds.floatList;
+        objectTypes = lds.objectTypes;
         idList = lds.idList;
         cageAttachments = lds.cageAttachments;
+        pigPoolSizes = lds.pigPoolSizes;
+        aiPoolSizes = lds.aiPoolSizes;
+        buildingPoolSizes = lds.buildingPoolSizes;
+        collectablePoolSizes = lds.collectablePoolSizes;
+        positionerPoolSizes = lds.positonerPoolSizes;
+        ringPoolSizes = lds.ringPoolSizes;
 
         posList = lds.posList;
         dataTypes = lds.dataTypes;
@@ -342,25 +417,33 @@ public class LevelData : ScriptableObject
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
-        if (checkPointSteps != null && checkPointSteps.Length > 0 && ss == checkPointSteps[0])
+        if (checkForCheckpoint && ss == checkPointSteps[currentCheckpointIndex])
         {
             objData.SpawnCheckPoint(false);
+            currentCheckpointIndex++;
+            if (currentCheckpointIndex >= checkPointSteps.Length)
+            {
+                checkForCheckpoint = false; // No more checkpoints to spawn
+            }
         }
         if (ss == nextSpawnStep)
         {
             Debug.LogError("Next Spawn Step: " + ss + " is the same as current spawn step: " + currentSpawnStep + ". Spawning objects now.");
 
+
             for (ushort i = currentSpawnIndex; i < nextSpawnIndex; i++)
             {
+                // Debug.LogError("Object Type: " + objectTypes[i] + ", ID: " + idList[i]);
                 // Debug.LogError("Spawning Object: ID: " + Data[i].ID + " Pos: " + Data[i].startPos + " Speed: " + Data[i].speed + " Scale: " + Data[i].scale + " Mag: " + Data[i].magPercent + " Time: " + Data[i].timeInterval + " Delay: " + Data[i].delayInterval + " Type: " + Data[i].type);
                 // spawner.SpawnObject(Data[i]);
 
 
-                if (idList[i] >= 0)
+                if (objectTypes[i] != 5)
                 {
+
                     if (dataTypes[i] < 0)
                     {
-                        objData.pools[idList[i]].SpawnPositionerData(postionerData[currentPositionerObjectIndex]);
+                        objData.positionerPools[idList[i]].SpawnPositionerData(postionerData[currentPositionerObjectIndex]);
                         currentPositionerObjectIndex++;
                         if (checkForCage && i == cageAttachments[currentCageIndex])
                         {
@@ -381,24 +464,28 @@ public class LevelData : ScriptableObject
                         continue; // Skip to the next iteration for positioner objects
 
                     }
-
+                    var poolArray = objData.GetPoolArrayByObjectType(objectTypes[i]);
+                    var pool = poolArray[idList[i]];
 
                     switch (dataTypes[i])
                     {
+                        case 0:
+                            pool.SpawnSimpleObject(dataStructSimple[dataTypeIndexes[0]]);
+                            break;
                         case 1:
-                            objData.pools[idList[i]].SpawnFloatOne(dataStructFloatOne[dataTypeIndexes[0]]);
+                            pool.SpawnFloatOne(dataStructFloatOne[dataTypeIndexes[1]]);
                             break;
                         case 2:
-                            objData.pools[idList[i]].SpawnFloatTwo(dataStructFloatTwo[dataTypeIndexes[1]]);
+                            pool.SpawnFloatTwo(dataStructFloatTwo[dataTypeIndexes[2]]);
                             break;
                         case 3:
-                            objData.pools[idList[i]].SpawnFloatThree(dataStructFloatThree[dataTypeIndexes[2]]);
+                            pool.SpawnFloatThree(dataStructFloatThree[dataTypeIndexes[3]]);
                             break;
                         case 4:
-                            objData.pools[idList[i]].SpawnFloatFour(dataStructFloatFour[dataTypeIndexes[3]]);
+                            pool.SpawnFloatFour(dataStructFloatFour[dataTypeIndexes[4]]);
                             break;
                         case 5:
-                            objData.pools[idList[i]].SpawnFloatFive(dataStructFloatFive[dataTypeIndexes[4]]);
+                            pool.SpawnFloatFive(dataStructFloatFive[dataTypeIndexes[5]]);
                             break;
 
                     }
@@ -422,18 +509,24 @@ public class LevelData : ScriptableObject
 
 
 
-                    dataTypeIndexes[dataTypes[i] - 1]++;
+                    dataTypeIndexes[dataTypes[i]]++;
                 }
-                else if (idList[i] == -2)
+                else if (idList[i] == 0)
                 {
-                    objData.ringPool.SpawnRingByData(dataStructFloatThree[dataTypeIndexes[2]]);
-                    dataTypeIndexes[2]++;
+                    Debug.LogError("Spawning Ring for ID: " + idList[i] + " at index: " + i);
+                    objData.ringPool.SpawnRingByData(dataStructFloatThree[dataTypeIndexes[3]]);
+                    dataTypeIndexes[3]++;
 
                 }
-                else if (idList[i] == -1)
+                else if (idList[i] == 1)
                 {
-                    objData.ringPool.SpawnBucketByData(dataStructFloatThree[dataTypeIndexes[2]]);
-                    dataTypeIndexes[2]++;
+                    Debug.LogError("Spawning Buvket for ID: " + idList[i] + " at index: " + i);
+                    objData.ringPool.SpawnBucketByData(dataStructFloatThree[dataTypeIndexes[3]]);
+                    dataTypeIndexes[3]++;
+                }
+                else
+                {
+                    Debug.LogError("Unknown ID: " + idList[i] + " at index: " + i);
                 }
 
 
