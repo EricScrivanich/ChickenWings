@@ -7,10 +7,12 @@ public class TriggerNextSection : MonoBehaviour
 {
 
     private SpriteRenderer spriteRen;
-
+    public TutorialData tutorialData;
 
     [SerializeField] private int setCheckPoint;
     private bool ignoreTrigger;
+
+    [SerializeField] private GameObject blobBurstPrefab;
     [SerializeField] private bool continueLockedInputs;
     [SerializeField] private int activateSection;
     [SerializeField] private bool useContactPoint;
@@ -20,6 +22,7 @@ public class TriggerNextSection : MonoBehaviour
     [SerializeField] private bool WaitForAlowedExit;
 
     private bool hasExited;
+    private int ID;
 
 
 
@@ -125,15 +128,28 @@ public class TriggerNextSection : MonoBehaviour
 
     }
 
+    public void InitiliazeBubble(TutorialData t, int id, float suckDur, float inputDelay)
+    {
+        ID = id;
+        tutorialData = t;
+        var s = suctionObject.GetComponent<SuctionScript>();
+        s.duration = suckDur * FrameRateManager.BaseTimeScale;
+        delayInputsDuration = inputDelay * FrameRateManager.BaseTimeScale;
+        s.parentScript = this;
+
+    }
+
     public void TriggerEventOnEnterSuction()
     {
+        player.events.EnableButtons?.Invoke(false);
+        tutorialData.HandleBubble(true, ID);
 
-        if (triggerEventOnEnterSuction != null)
-        {
+        // if (triggerEventOnEnterSuction != null)
+        // {
 
-            triggerEventOnEnterSuction.TriggerEvent();
+        //     triggerEventOnEnterSuction.TriggerEvent();
 
-        }
+        // }
 
     }
 
@@ -247,24 +263,22 @@ public class TriggerNextSection : MonoBehaviour
             lvlID.outputEvent.GetSpecialRing?.Invoke(doSpecialRingFadeIndex, doSpecialRingFadeTransform.position, delayInputsDuration);
 
         }
-        else
-        {
-            Debug.Log("nar");
-        }
+
 
         Time.timeScale = 0;
+        
+        StartCoroutine(WaitForAllowedExit());
 
-        if (!WaitForAlowedExit)
-        {
-            ReadyForExitAndPressButtons(true);
-        }
-        else
-        {
-            activateSection++;
-        }
+
 
         // TweenPlayer(true);
 
+    }
+
+    private IEnumerator WaitForAllowedExit()
+    {
+        yield return new WaitForSecondsRealtime(delayInputsDuration);
+        player.events.EnableButtons?.Invoke(true);
     }
 
     private void ReadyForExitAndPressButtons(bool isReady)
@@ -305,9 +319,11 @@ public class TriggerNextSection : MonoBehaviour
 
         // Calculate the angle in degrees, and add 90 degrees to rotate the sprite
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Instantiate(blobBurstPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, angle)));
+        tutorialData.HandleBubble(false, ID);
 
 
-        lvlID.GetBlobBurst(transform.position, angle);
+        // lvlID.GetBlobBurst(transform.position, angle);
         AudioManager.instance.PlayBlobNoise(false);
 
         this.gameObject.SetActive(false);
@@ -339,7 +355,7 @@ public class TriggerNextSection : MonoBehaviour
             Debug.LogError("Stop spawning is now false");
         }
         lvlID.outputEvent.SetPressButtonText?.Invoke(false, 0, "");
-        Time.timeScale = FrameRateManager.TargetTimeScale;
+        Time.timeScale = FrameRateManager.BaseTimeScale;
         // this.gameObject.SetActive(false);
 
         if (setActiveAfterDelayObjects.Length > 0 && !hasExited)
@@ -385,7 +401,7 @@ public class TriggerNextSection : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.LogError("Suction disabled");
+        Debug.LogError("Suction enabled");
 
         lvlID.outputEvent.SetCheckPoint += HandleOnCheckpoint;
         player.globalEvents.ExitSectionTrigger += ExitSection;

@@ -5,7 +5,7 @@ using TMPro;
 
 public class SliderHandle : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
-    public enum HandleType { Main, Min, Max, AbsoluteMax, Object, Time, StartTime, StartTween, EndTween, TweenDisplay, MultipleObject }
+    public enum HandleType { Main, Min, Max, AbsoluteMax, Object, Time, StartTime, StartTween, EndTween, TweenDisplay, MultipleObject, MultSelectCenter, MultSelectLeft, MultSelectRight, MultSelectMove }
 
     [SerializeField] private bool isStartTween;
     [SerializeField] private TextMeshProUGUI text;

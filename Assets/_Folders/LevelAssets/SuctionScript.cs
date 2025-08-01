@@ -7,7 +7,7 @@ public class SuctionScript : MonoBehaviour
 {
     [SerializeField] private AnimationDataSO animSO;
     private bool hasEnteredTrigger = false;
-    
+
 
     [SerializeField] private float startCircleScale;
     [SerializeField] private float circleTweenDur;
@@ -20,9 +20,9 @@ public class SuctionScript : MonoBehaviour
 
     [SerializeField] private SpriteRenderer circleHighlight;
     [SerializeField] private float rotateSpeed;
-    private TriggerNextSection parentScript;
+    public TriggerNextSection parentScript;
     [SerializeField] private PlayerID player;
-    [SerializeField] private float duration;
+    public float duration;
     [SerializeField] private bool clockwise;
     private Transform playerTrans;
 
@@ -59,7 +59,7 @@ public class SuctionScript : MonoBehaviour
 
 
         colliderObj = GetComponent<Collider2D>();
-        parentScript = GetComponentInParent<TriggerNextSection>();
+       
         circleHighlight.gameObject.SetActive(false);
 
 

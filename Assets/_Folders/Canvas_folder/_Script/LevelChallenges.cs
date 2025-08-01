@@ -7,6 +7,9 @@ using UnityEngine;
 public class LevelChallenges : ScriptableObject
 {
     [SerializeField] private LevelManagerID lvlID;
+
+    public Vector3Int LevelWorldAndNumber { get; private set; }
+    public int LevelDifficulty { get; private set; } // Default to 0, can be set externally
     public enum ChallengeTypes
     {
         None,
@@ -39,7 +42,142 @@ public class LevelChallenges : ScriptableObject
     [SerializeField] private int[] TrackedPigAmountsByID;
 
     [SerializeField] private List<int> CertainNonAllowedInputs;
-    [SerializeField] private List<Vector2Int> ringsTypeAndAmount;
+    [SerializeField] private Vector2Int ringsTypeAndAmount;
+    private bool trackPigs;
+    private bool trackInputs;
+    private bool trackRings;
+    private bool trackAmmo;
+
+
+
+    public List<Vector3Int> KilledPigs { get; private set; }
+    public List<int> PlayerInputs { get; private set; }
+    public List<int> CompletedRings { get; private set; }
+    public int BarnsHitWithEgg { get; private set; }
+    public int Lives { get; private set; }
+    public short[] Ammos { get; private set; }
+    public ushort CurrentCheckPoint { get; private set; }
+
+    public void ResetData(Vector3Int lvlNum, int difficulty, short[] startingAmmos, int startingLives)
+    {
+        Debug.Log("Resetting LevelChallenges data for level: " + lvlNum + " with difficulty: " + difficulty);
+        LevelWorldAndNumber = lvlNum;
+        LevelDifficulty = difficulty;
+        KilledPigs = new List<Vector3Int>();
+        PlayerInputs = new List<int>();
+        CompletedRings = new List<int>();
+        BarnsHitWithEgg = 0;
+        Lives = startingLives;
+        Ammos = new short[startingAmmos.Length]; // Assuming 2 types of ammo: Egg and Shotgun
+        for (int i = 0; i < startingAmmos.Length; i++)
+        {
+            Ammos[i] = startingAmmos[i]; // Initialize all ammo types to 0
+        }
+
+        // Assuming 2 types of ammo: Egg and Shotgun
+        CurrentCheckPoint = 0;
+        SetTrackingBools();
+
+
+    }
+
+    private void SetTrackingBools()
+    {
+        trackPigs = false;
+        trackInputs = false;
+        trackRings = false;
+        trackAmmo = false;
+        for (int i = 0; i < challenges.Length; i++)
+        {
+            switch (challenges[i])
+            {
+                case ChallengeTypes.CheckPigs:
+                case ChallengeTypes.CheckPigsByAmmoTypeWithPigType:
+                case ChallengeTypes.CheckPigsByBulletIdWithPigType:
+                    trackPigs = true;
+                    break;
+                case ChallengeTypes.CheckCertainNonAllowedInputs:
+                    trackInputs = true;
+                    break;
+                case ChallengeTypes.CheckCompletedRings:
+                    trackRings = true;
+                    break;
+                case ChallengeTypes.CheckAmmo:
+                    trackAmmo = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    public void SetCheckPoint(ushort checkPoint)
+    {
+        CurrentCheckPoint = checkPoint;
+    }
+
+    public void LoadData(Vector3Int lvlWorldNumb, int difficulty, TemporaryLevelCheckPointData tempData)
+    {
+        LevelWorldAndNumber = lvlWorldNumb;
+        LevelDifficulty = difficulty;
+        KilledPigs = new List<Vector3Int>(tempData.KilledPigs);
+        Lives = tempData.CurrentLives;
+        Ammos = tempData.CurrentAmmos;
+        CurrentCheckPoint = tempData.CurrentCheckPoint;
+        PlayerInputs =
+        CompletedRings = new List<int>(tempData.CompletedRings);
+        BarnsHitWithEgg = 0; // Reset or load from saved data if needed
+        SetTrackingBools();
+
+    }
+
+    public void AddKillPig(Vector3Int pigData)
+    {
+        if (!trackPigs) return; // If not tracking pigs, do nothing
+        if (KilledPigs == null) KilledPigs = new List<Vector3Int>();
+        KilledPigs.Add(pigData);
+    }
+    public void AddPlayerInput(int input)
+    {
+        if (!trackInputs && !CertainNonAllowedInputs.Contains(input)) return; // If not tracking inputs, do nothing
+        if (PlayerInputs == null) PlayerInputs = new List<int>();
+        PlayerInputs.Add(input);
+    }
+    public void AddCompletedRing(int ringType)
+    {
+        if (!trackRings) return; // If not tracking rings, do nothing
+        if (CompletedRings == null) CompletedRings = new List<int>();
+        CompletedRings.Add(ringType);
+    }
+    public void AddBarnHitWithEgg()
+    {
+        BarnsHitWithEgg++;
+    }
+
+    public void EditCurrentAmmos(int ammoType, int amount)
+    {
+        if (!trackAmmo) return; // If not tracking ammo, do nothing
+        if (Ammos == null) Ammos = new short[4]; // Assuming 2 types of ammo: Egg and Shotgun
+
+        if (ammoType >= Ammos.Length)
+        {
+            short[] newAmmos = new short[ammoType + 1];
+            for (int i = 0; i < Ammos.Length; i++)
+            {
+                newAmmos[i] = Ammos[i];
+            }
+            Ammos = newAmmos;
+        }
+        Ammos[ammoType] = (short)amount;
+
+    }
+    public void EditCurrentLives(int lives)
+    {
+        Lives = lives;
+
+    }
+
+
+
 
     public int GetAmountOfChallenges()
     {
@@ -65,6 +203,13 @@ public class LevelChallenges : ScriptableObject
                 if (TrackedPigsByBulletTypeWithPigType.Length == 0 || TrackedPigAmountsByBullet.Length == 0) return 0;
 
                 return TrackedPigAmountsByBullet.Length;
+            case ChallengeTypes.CheckCompletedRings:
+                if (ringsTypeAndAmount.y <= 1) return 0;
+                else return 1;
+
+
+
+
 
 
 
@@ -89,7 +234,7 @@ public class LevelChallenges : ScriptableObject
 
                 if (TrackedPigs == null || TrackedPigs.Length == 0) return vect;
 
-                var list = lvlID.ReturnKilledPigs();
+
 
                 yTotal = TrackedPigAmounts[challengeIndex];
 
@@ -101,16 +246,16 @@ public class LevelChallenges : ScriptableObject
                 {
 
 
-                    xProgess = list.Count;
+                    xProgess = KilledPigs.Count;
 
 
 
                 }
 
-                // if (CheckNumberOfCertainIntInList(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
+                // if (CheckNumberOfCertainIntInKilledPigs(KilledPigs, TrackedPigs[0]) >= TrackedPigAmounts[0])
                 else
                 {
-                    xProgess = CountPigsOfType(list, TrackedPigs[challengeIndex]);
+                    xProgess = CountPigsOfType(KilledPigs, TrackedPigs[challengeIndex]);
 
 
                 }
@@ -139,9 +284,192 @@ public class LevelChallenges : ScriptableObject
 
                 break;
 
+            case ChallengeTypes.CheckCompletedRings:
+                int x = 0;
+                for (int i = 0; i < CompletedRings.Count; i++)
+                {
+                    if (CompletedRings[i] == ringsTypeAndAmount.x)
+                    {
+                        x++;
+                    }
+                }
 
+                vect = new Vector2(x, ringsTypeAndAmount.y);
+
+                break;
         }
         return vect;
+
+    }
+
+    public int ReturnChallengeCompletion(int index, bool forFinish) // New logic 
+    {
+
+        switch (challenges[index])
+        {
+            case ChallengeTypes.None:
+                return 0;
+
+
+            case ChallengeTypes.CompleteLevel:
+                if (forFinish)
+                    return 1;
+                else return 0;
+
+
+            case ChallengeTypes.CheckLives:
+                int l = lvlID.ReturnPlayerLives();
+
+                if (l >= LifeTarget)
+                {
+                    if (forFinish) return 1;
+                    else return 0;
+                }
+                else return -1;
+
+
+
+
+            case ChallengeTypes.CheckPigs:
+
+                if (TrackedPigs == null || TrackedPigs.Length == 0) return 0;
+
+
+
+                bool fullyCompleted = true;
+                for (int i = 0; i < TrackedPigs.Length; i++)
+                {
+                    if (TrackedPigs[i] == -1)
+                    {
+                        int totalPigsKilled = KilledPigs.Count;
+
+                        if (totalPigsKilled < TrackedPigAmounts[i])
+                        {
+                            fullyCompleted = false;
+                            break;
+                        }
+
+                    }
+
+                    // if (CheckNumberOfCertainIntInList(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
+                    else if (CountPigsOfType(KilledPigs, TrackedPigs[i]) < TrackedPigAmounts[i])
+                    {
+                        fullyCompleted = false;
+                        break;
+
+                    }
+                }
+
+                if (fullyCompleted) return 1;
+                else if (forFinish) return -1;
+                else return 0;
+
+
+
+
+            case ChallengeTypes.CheckAmmo:
+
+
+                var amounts = lvlID.ReturnAmmoAmounts();
+
+                if (amounts.x >= EggAmmoTarget && amounts.y >= ShotgunAmmoTarget)
+                {
+                    if (forFinish) return 1;
+                    else return 0;
+                }
+
+                else return -1;
+
+                break;
+
+            case ChallengeTypes.CheckCertainNonAllowedInputs:
+
+
+
+                foreach (var item in CertainNonAllowedInputs)
+                {
+                    if (PlayerInputs.Contains(item)) return -1;
+
+                }
+                if (forFinish)
+                {
+                    return 1;
+                }
+                else
+                {
+                    // If not for finish, return 1 to indicate challenge is in progress
+                    return 0;
+                }
+
+
+
+
+            case ChallengeTypes.CheckPigsByAmmoTypeWithPigType:
+                if (TrackedPigsByBulletTypeWithPigType.Length == 0 || TrackedPigAmountsByBullet.Length == 0) return 0;
+
+                if (CountPigsByBulletType(lvlID.ReturnKilledPigs(), TrackedPigsByBulletTypeWithPigType[0].x,
+                    TrackedPigsByBulletTypeWithPigType[0].y) >= TrackedPigAmountsByBullet[0])
+                {
+                    return 1;
+                }
+                else if (forFinish)
+                {
+                    return -1; // Challenge not completed yet
+                }
+                else
+                {
+                    return 0; // Challenge in progress
+                }
+
+
+
+
+            case ChallengeTypes.CheckPigsByBulletIdWithPigType:
+                if (TrackedPigIDWithPigType.Length == 0 || TrackedPigAmountsByID.Length == 0)
+                {
+                    if (forFinish) return -1;
+                    else return 0;
+                }
+
+                if (LargestGroupByBulletIDAndType(
+                        lvlID.ReturnKilledPigs(),
+                        TrackedPigIDWithPigType[0])
+                    >= TrackedPigAmountsByID[0])
+                    return 1;
+
+                else if (forFinish)
+                {
+                    return -1; // Challenge not completed yet
+                }
+                else
+                {
+                    return 0; // Challenge in progress
+                }
+
+            case ChallengeTypes.CheckCompletedRings:
+
+
+                int checkFor = ringsTypeAndAmount.x;
+                int amount = ringsTypeAndAmount.y;
+                int currentCount = 0;
+
+                for (int i = 0; i < CompletedRings.Count; i++)
+                {
+                    if (CompletedRings[i] == checkFor)
+                    {
+                        currentCount++;
+                    }
+                }
+
+                if (currentCount >= amount) return 1;
+
+
+                if (forFinish) return -1;
+                else return 0; // Challenge completed but not for finish
+
+
+        }
+        return 0;
 
     }
 
@@ -253,19 +581,11 @@ public class LevelChallenges : ScriptableObject
 
             case ChallengeTypes.CheckCompletedRings:
 
-                if (ringsTypeAndAmount.Count == 0) return 0;
+                // if (ringsTypeAndAmount.Count == 0) return 0;
                 var ringList = lvlID.ReturnRingData();
                 if (ringList == null || ringList.Length < 1) return 1;
                 bool complete = true;
-                foreach (var ring in ringsTypeAndAmount)
-                {
-                    if (ringList[ring.x] < ring.y)
-                    {
-                        return 1;
 
-                    }
-
-                }
                 return 2;
 
 
@@ -391,22 +711,22 @@ public class LevelChallenges : ScriptableObject
 
                 return false;
 
-            case ChallengeTypes.CheckCompletedRings:
+                // case ChallengeTypes.CheckCompletedRings:
 
-                if (ringsTypeAndAmount.Count == 0) return false;
-                var ringList = lvlID.ReturnRingData();
-                if (ringList == null || ringList.Length < 1) return false;
-                bool complete = true;
-                foreach (var ring in ringsTypeAndAmount)
-                {
-                    if (ringList[ring.x] < ring.y)
-                    {
-                        complete = false;
-                        break;
-                    }
+                //     if (ringsTypeAndAmount.Count == 0) return false;
+                //     var ringList = lvlID.ReturnRingData();
+                //     if (ringList == null || ringList.Length < 1) return false;
+                //     bool complete = true;
+                //     foreach (var ring in ringsTypeAndAmount)
+                //     {
+                //         if (ringList[ring.x] < ring.y)
+                //         {
+                //             complete = false;
+                //             break;
+                //         }
 
-                }
-                return complete;
+                //     }
+                //     return complete;
 
         }
 

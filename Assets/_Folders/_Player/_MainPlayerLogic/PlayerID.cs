@@ -38,10 +38,14 @@ public class PlayerID : ScriptableObject
 
     public int amountOfWeapons { get; private set; }
 
+    public LevelChallenges LevelChallenges { get; private set; }
+
+
 
 
     public List<int> PlayerInputs { get; private set; }
     public List<Vector3Int> KilledPigs { get; private set; }
+    public int BarnsHitWithEgg { get; private set; }
 
 
 
@@ -94,6 +98,8 @@ public class PlayerID : ScriptableObject
 
 
             globalEvents.OnUpdateLives?.Invoke(lives);
+
+            if (LevelChallenges != null) LevelChallenges.EditCurrentLives(lives);
         }
     }
     private int score;
@@ -133,6 +139,11 @@ public class PlayerID : ScriptableObject
             normalAmmo = value;
             globalEvents.OnUpdateAmmo?.Invoke(normalAmmo);
             UiEvents.OnCollectAmmo?.Invoke(0);
+
+            if (LevelChallenges != null)
+            {
+                LevelChallenges.EditCurrentAmmos(0, normalAmmo);
+            }
             // if (ammosOnZero) CheckAmmosOnZero(0);
 
         }
@@ -152,8 +163,13 @@ public class PlayerID : ScriptableObject
 
             shotgunAmmo = value;
 
+
             globalEvents.OnUpdateShotgunAmmo?.Invoke(shotgunAmmo);
             UiEvents.OnCollectAmmo?.Invoke(1);
+            if (LevelChallenges != null)
+            {
+                LevelChallenges.EditCurrentAmmos(1, shotgunAmmo);
+            }
             // if (ammosOnZero) CheckAmmosOnZero(1);
 
 
@@ -260,7 +276,7 @@ public class PlayerID : ScriptableObject
     //     }
 
     // }
-    public void SetStartingStats(PlayerStartingStatsForLevels stats)
+    public void SetDataForLevel(PlayerStartingStatsForLevels stats, LevelChallenges challenges)
     {
         if (stats == null)
         {
@@ -275,7 +291,9 @@ public class PlayerID : ScriptableObject
             Ammo = stats.startingAmmos[0];
             shotgunAmmo = stats.startingAmmos[1];
             startingLives = stats.StartingLives;
+            Debug.Log("Starting lives set to: " + startingLives);
         }
+        this.LevelChallenges = challenges;
 
         lives = startingLives;
 
@@ -320,16 +338,7 @@ public class PlayerID : ScriptableObject
 
     }
 
-    public void AddPlayerInput(int inp)
-    {
 
-        PlayerInputs.Add(inp);
-    }
-
-    public void AddKillPig(int type, int bulletType, int bulletID)
-    {
-        KilledPigs.Add(new Vector3Int(type, bulletType, bulletID));
-    }
 
     public void NewGasParticles(float y, bool add)
     {
@@ -357,10 +366,31 @@ public class PlayerID : ScriptableObject
         // }
         globalEvents.KillPlayer?.Invoke();
     }
+    public void AddKillPig(int type, int bulletType, int bulletID)
+    {
+        if (LevelChallenges != null) LevelChallenges.AddKillPig(new Vector3Int(type, bulletType, bulletID));
+    }
+    public void AddPlayerInput(int inp)
+    {
 
-    public void AddScore(int amount)
+        // PlayerInputs.Add(inp);
+        if (LevelChallenges != null) LevelChallenges.AddPlayerInput(inp);
+    }
+    public void AddRingCompletion(int type)
+    {
+        if (LevelChallenges != null) LevelChallenges.AddCompletedRing(type);
+    }
+
+
+
+    public void AddScore(int amount, bool isEggDropInBarn = false)
     {
         Score += amount;
+        if (isEggDropInBarn && LevelChallenges != null)
+        {
+            LevelChallenges.AddBarnHitWithEgg();
+        }
+
         globalEvents.OnAddScore?.Invoke(amount);
 
 

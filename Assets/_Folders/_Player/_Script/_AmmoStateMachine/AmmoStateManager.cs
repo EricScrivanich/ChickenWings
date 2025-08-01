@@ -113,6 +113,7 @@ public class AmmoStateManager : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("AmmoStateManager Awake called");
         rect = GetComponent<RectTransform>();
 
         originalYPos = scopeRect.localPosition.y;
@@ -125,6 +126,7 @@ public class AmmoStateManager : MonoBehaviour
     }
     void Start()
     {
+        Debug.Log("AmmoStateManager Start called");
         if (swipeButton != null)
             swipeButton.SetActive(false);
 

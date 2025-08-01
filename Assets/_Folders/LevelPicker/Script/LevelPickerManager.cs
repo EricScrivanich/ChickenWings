@@ -21,10 +21,41 @@ public class LevelPickerManager : MonoBehaviour
     private CanvasGroup currentPopup;
     private CanvasGroup nextPopup;
 
+    [Header("Sign Sequence Position Settings")]
+    [SerializeField] private float topHiddenY;
+    [SerializeField] private float normalY;
+    [SerializeField] private float overShootY;
+    [SerializeField] private float hiddenX;
+
+    [SerializeField] private float rotationAngle;
+
+    [Header("Sign Sequence Duration Settings")]
+    [SerializeField] private float moveDownDuration;
+    [SerializeField] private float moveUpDuration;
+    [SerializeField] private float overshootDownDuration;
+    [SerializeField] private float overshootUpDuration;
+    [SerializeField] private float moveSideDuration;
+    [SerializeField] private float swingDuration;
+
+
+
+
+    private readonly Vector3[] rotations = new Vector3[]
+      {
+        new Vector3(0, 0, 8f),
+        new Vector3(0, 0, -6.5f),
+        new Vector3(0, 0, 3f),
+        new Vector3(0, 0, -1.7f),
+        new Vector3(0, 0, .7f),
+
+        Vector3.zero
+      };
 
 
 
     private Sequence popupSequence;
+    private Sequence signYSeq;
+    private Sequence signXSeq;
 
     private int currentPopupIndex;
 
@@ -93,6 +124,7 @@ public class LevelPickerManager : MonoBehaviour
 
         if (obj != null && obj != currentTarget)
         {
+            HapticFeedbackManager.instance.PlayerButtonPress();
             if (currentTarget != null)
             {
                 currentTarget.SetSelected(false);
@@ -125,18 +157,105 @@ public class LevelPickerManager : MonoBehaviour
         }
     }
 
+    private void HandleSignY(RectTransform target, bool reverse)
+    {
+
+
+
+        if (reverse)
+        {
+            Sequence hideSeq = DOTween.Sequence();
+            hideSeq.Append(target.DOAnchorPosY(normalY - overShootY, overshootUpDuration));
+            hideSeq.Append(target.DOAnchorPosY(topHiddenY, moveUpDuration));
+            hideSeq.Play().SetEase(Ease.InSine).SetUpdate(true).OnComplete(() =>
+              {
+                  Destroy(target.gameObject);
+              });
+
+
+
+        }
+        else
+        {
+            signYSeq = DOTween.Sequence();
+            signYSeq.Append(target.DOAnchorPosY(normalY - overShootY, moveDownDuration));
+            signYSeq.Append(target.DOAnchorPosY(normalY, overshootDownDuration));
+            signYSeq.Play().SetEase(Ease.InSine).SetUpdate(true);
+
+        }
+
+
+
+    }
+
+    private void HandleSignX(RectTransform currentShown, RectTransform nextShown, int flip)
+    {
+        signXSeq = DOTween.Sequence();
+        float halfPos = hiddenX * .5f;
+        float halfDur = moveSideDuration * .5f;
+
+
+        currentShown.DOAnchorPosX(hiddenX * -flip, halfDur).SetEase(Ease.InSine).SetUpdate(true);
+        currentShown.DORotate(rotations[0] * flip, halfDur).SetEase(Ease.InSine).SetUpdate(true).OnComplete(() =>
+        {
+            Destroy(currentShown.gameObject);
+        });
+        signXSeq.Append(nextShown.DOAnchorPosX(halfPos, halfDur).SetEase(Ease.InSine));
+        signXSeq.Join(nextShown.DORotate(rotations[0] * flip, halfDur).SetEase(Ease.InSine));
+
+        signXSeq.Append(nextShown.DOAnchorPosX(0, halfDur + .1f).SetEase(Ease.OutSine));
+        signXSeq.Join(nextShown.DORotate(rotations[1] * flip, halfDur + .1f).SetEase(Ease.OutSine));
+
+        for (int i = 2; i < rotations.Length; i++)
+        {
+            signXSeq.Append(nextShown.DORotate(rotations[i] * flip, swingDuration).SetEase(Ease.InOutSine));
+
+        }
+
+        signXSeq.Play().SetUpdate(true);
+
+
+
+
+    }
+    void ResetCurrentSign()
+    {
+        if (currentPopup != null)
+        {
+            Destroy(currentPopup.gameObject);
+            currentPopup = null;
+        }
+        if (nextPopup != null)
+        {
+            currentPopup = nextPopup;
+            nextPopup = null;
+        }
+    }
+
     public void BackOut()
     {
+        HapticFeedbackManager.instance.PlayerButtonPress();
+        currentTarget.SetSelected(false);
+        currentTarget = null;
         DoLevelPopupSeq(false, Vector3Int.zero, true);
     }
 
     private void DoLevelPopupSeq(bool normalOrder, Vector3Int worldNum, bool goBack = false)
     {
-        if (popupSequence != null && popupSequence.IsActive())
+        // if (popupSequence != null && popupSequence.IsActive())
+        // {
+        //     popupSequence.Complete();
+        // }
+        // popupSequence = DOTween.Sequence();
+
+        if (signYSeq != null && signYSeq.IsActive())
         {
-            popupSequence.Complete();
+            signYSeq.Kill();
         }
-        popupSequence = DOTween.Sequence();
+        if (signXSeq != null && signXSeq.IsActive())
+        {
+            signXSeq.Kill();
+        }
 
 
 
@@ -144,66 +263,98 @@ public class LevelPickerManager : MonoBehaviour
 
         if (goBack)
         {
-            var r1 = currentPopup.GetComponent<RectTransform>();
-            currentPopup.interactable = false;
-            popupSequence.Append(r1.DOScale(tweenScaleBack, tweenDurBack).From(1));
-            popupSequence.Join(r1.DOMove(Vector3.zero, tweenDurBack).From(displayPopupPos.position));
-            popupSequence.Join(currentPopup.DOFade(0, tweenDurBack));
-            popupSequence.Play().OnComplete(() =>
-            {
-
-                if (currentPopup.gameObject != null)
-                    Destroy(currentPopup.gameObject);
-
-                currentPopup = null;
+            // var r1 = currentPopup.GetComponent<RectTransform>();
+            // currentPopup.interactable = false;
+            // // popupSequence.Append(r1.DOScale(tweenScaleBack, tweenDurBack).From(1));
+            // // popupSequence.Join(r1.DOMove(Vector3.zero, tweenDurBack).From(displayPopupPos.position));
+            // // popupSequence.Join(currentPopup.DOFade(0, tweenDurBack));
 
 
+            // popupSequence.Play().OnComplete(() =>
+            // {
 
-            });
+            //     if (currentPopup.gameObject != null)
+            //         Destroy(currentPopup.gameObject);
+
+            //     currentPopup = null;
+
+
+
+            // });
+
+            HandleSignY(currentPopup.GetComponent<RectTransform>(), true);
+            currentPopup = null;
             return;
 
 
 
         }
         LevelDataConverter.instance.SetCurrentLevelInstance(worldNum);
+        int flip = 1;
+        Vector2 startPos = Vector2.up * topHiddenY;
+        if (!normalOrder)
+        {
+            flip = -1;
+        }
+        if (currentPopup != null)
+        {
+            startPos = new Vector2(hiddenX * flip, normalY);
+
+        }
         nextPopup = Instantiate(levelUiPopupPrefab, levelPopupParent).GetComponent<CanvasGroup>();
-        nextPopup.alpha = 0;
+        nextPopup.GetComponent<RectTransform>().anchoredPosition = startPos;
+
         nextPopup.GetComponent<LevelPickerUIPopup>().ShowData(LevelDataConverter.instance.ReturnLevelData(), this);
         nextPopup.gameObject.SetActive(true);
 
-        if (normalOrder)
+
+        if (currentPopup != null)
         {
-            var r1 = nextPopup.GetComponent<RectTransform>();
-            popupSequence.Append(r1.DOScale(1, tweenDurBack).SetEase(Ease.OutBack).From(tweenScaleBack));
-            popupSequence.Join(r1.DOMove(displayPopupPos.position, tweenDurBack).SetEase(Ease.OutBack).From(Vector3.zero));
-            popupSequence.Join(nextPopup.DOFade(1, tweenDurBack).From(.3f).SetEase(Ease.OutSine));
 
-            if (currentPopup != null)
-            {
-                var r2 = currentPopup.GetComponent<RectTransform>();
-                currentPopup.interactable = false;
-                popupSequence.Join(r2.DOScale(tweenScaleFront, tweenDurFront));
-                popupSequence.Join(r2.DOMove(Vector3.zero, tweenDurFront));
-                popupSequence.Join(currentPopup.DOFade(0, tweenDurFront));
-
-            }
-
-            popupSequence.Play().OnComplete(() =>
-            {
-                nextPopup.interactable = true;
-                nextPopup.alpha = 1;
-                if (currentPopup != null)
-                    Destroy(currentPopup.gameObject);
-
-                currentPopup = nextPopup;
-                nextPopup = null;
-
-
-
-            });
-
-
+            HandleSignX(currentPopup.GetComponent<RectTransform>(), nextPopup.GetComponent<RectTransform>(), flip);
+            currentPopup = nextPopup;
+            nextPopup = null;
         }
+        else
+        {
+            HandleSignY(nextPopup.GetComponent<RectTransform>(), false);
+            currentPopup = nextPopup;
+            nextPopup = null;
+        }
+
+
+
+        // var r1 = nextPopup.GetComponent<RectTransform>();
+        // popupSequence.Append(r1.DOScale(1, tweenDurBack).SetEase(Ease.OutBack).From(tweenScaleBack));
+        // popupSequence.Join(r1.DOMove(displayPopupPos.position, tweenDurBack).SetEase(Ease.OutBack).From(Vector3.zero));
+        // popupSequence.Join(nextPopup.DOFade(1, tweenDurBack).From(.3f).SetEase(Ease.OutSine));
+
+        // if (currentPopup != null)
+        // {
+        //     var r2 = currentPopup.GetComponent<RectTransform>();
+        //     currentPopup.interactable = false;
+        //     popupSequence.Join(r2.DOScale(tweenScaleFront, tweenDurFront));
+        //     popupSequence.Join(r2.DOMove(Vector3.zero, tweenDurFront));
+        //     popupSequence.Join(currentPopup.DOFade(0, tweenDurFront));
+
+        // }
+
+        // popupSequence.Play().OnComplete(() =>
+        // {
+        //     nextPopup.interactable = true;
+        //     nextPopup.alpha = 1;
+        //     if (currentPopup != null)
+        //         Destroy(currentPopup.gameObject);
+
+        //     currentPopup = nextPopup;
+        //     nextPopup = null;
+
+
+
+        // });
+
+
+
 
 
 

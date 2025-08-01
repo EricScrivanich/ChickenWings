@@ -31,12 +31,14 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     public int[] AvailableAmmos;
 
 
-    public void SetData(short startingLives, short[] startingAmmos)
+    public void SetData(short startingLives, short[] ammos, int maxLive = -1)
     {
-        this.startingAmmos = startingAmmos;
-        this.StartingLives = startingLives;
+        startingAmmos = ammos;
 
-      
+        this.StartingLives = startingLives;
+        Debug.Log("Starting Lives in stat ID: " + StartingLives);
+
+
 
     }
 

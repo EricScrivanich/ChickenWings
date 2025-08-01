@@ -58,6 +58,7 @@ public class PauseMenuManager : MonoBehaviour
         scoreWarning.enabled = false;
         challengeWarning.enabled = false;
         levelWarning.enabled = false;
+        challenges.ShowChallengesForLevelPicker(LevelDataConverter.instance.ReturnLevelData().GetLevelChallenges(false, null), LevelDataConverter.instance.ReturnLevelSavedData());
 
         CheckWarnings();
 
@@ -126,6 +127,7 @@ public class PauseMenuManager : MonoBehaviour
             StartCoroutine(DarkPanelFadeOut());
         }
     }
+    
 
     private void OnEnable()
     {

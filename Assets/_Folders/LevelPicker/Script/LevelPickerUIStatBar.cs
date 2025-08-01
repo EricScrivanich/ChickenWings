@@ -8,17 +8,18 @@ public class LevelPickerUIStatBar : MonoBehaviour
     [SerializeField] private TextMeshProUGUI liveText;
     [SerializeField] private GameObject ammoDisplayPrefab;
     [SerializeField] private Transform ammoDisplayParent;
-
+    [SerializeField] private TextMeshProUGUI checkPointNumber;
     private TextMeshProUGUI[] texts;
     private Image[] images;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
 
     // Update is called once per frame
-    public void CreateSelf(LevelPickerUIPopup p, Vector2Int current_maxLives, short[] ammoAmounts, bool shown)
+    public void CreateSelf(LevelPickerUIPopup p, int numb, Vector2Int current_maxLives, short[] ammoAmounts, bool shown)
     {
         List<Image> imageList = new List<Image>();
         List<TextMeshProUGUI> textList = new List<TextMeshProUGUI>();
+        checkPointNumber.text = numb.ToString() + ".";
         var image = GetComponent<Image>();
         liveText.text = $"{current_maxLives.x}/{current_maxLives.y}";
         imageList.Add(image);
@@ -48,7 +49,7 @@ public class LevelPickerUIStatBar : MonoBehaviour
 
     public void SetColor(bool shown)
     {
-        Color color = shown ? Color.white : Color.white * 0.5f;
+        Color color = shown ? Color.white : Color.white * 0.65f;
         foreach (var image in images)
         {
             image.color = color;
@@ -56,6 +57,10 @@ public class LevelPickerUIStatBar : MonoBehaviour
         foreach (var text in texts)
         {
             text.color = color;
+        }
+        if (checkPointNumber != null)
+        {
+            checkPointNumber.color = color;
         }
     }
 }

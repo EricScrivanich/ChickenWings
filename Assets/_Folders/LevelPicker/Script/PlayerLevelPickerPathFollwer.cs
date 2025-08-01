@@ -2,6 +2,7 @@ using UnityEngine;
 using PathCreation;
 using System.Collections;
 using UnityEngine.Rendering;
+using DG.Tweening;
 
 public class PlayerLevelPickerPathFollwer : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
 
     [SerializeField] private Vector2 minMaxScale;
+    [SerializeField] private Vector2 minMaxZoom;
+
     private SortingGroup sortingGroup;
 
     [SerializeField] private ParticleSystem ps;
@@ -32,6 +35,8 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     private LevelPickerPathData pathData;
     private Animator anim;
     private Coroutine followPathCoroutine;
+
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -184,9 +189,38 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
             StopCoroutine(followPathCoroutine);
         }
         followPathCoroutine = StartCoroutine(DoPath(path, distance));
+        hitZoom = false;
+
 
 
     }
+    [SerializeField] private float zoomSpeed;
+    // void LateUpdate()
+    // {
+    //     if (!hitZoom)
+    //         Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, targetZoom, zoomSpeed * Time.deltaTime);
+
+    // }
+
+    private Sequence zoomSequence;
+    private void ZoomCamera(float distancePercent, Vector2 pos, float time)
+    {
+        if (zoomSequence != null && zoomSequence.IsActive() && zoomSequence.IsPlaying())
+        {
+            zoomSequence.Kill();
+        }
+
+        zoomSequence = DOTween.Sequence();
+        targetZoom = Mathf.Lerp(minMaxZoom.x, minMaxZoom.y, distancePercent * .01f);
+        zoomSequence.Append(Camera.main.DOOrthoSize(targetZoom, 0.5f))
+                    .OnComplete(() => Debug.Log("Camera zoomed to: " + targetZoom + " at distance percent: " + distancePercent))
+                    .SetUpdate(true);
+
+
+    }
+    private float targetZoom;
+    private bool hitZoom = true;
+
     private IEnumerator DoPath(PathCreator path, float distanceToTravel)
     {
         if (path == null) yield break;
@@ -197,6 +231,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         transform.position = path.path.GetPointAtDistance(0);
 
         lastDistance = path.GetCustomPointDistanceAtTime(currentDistance / path.path.length);
+        // ZoomCamera(path.GetCustomPointDistanceAtTime(distanceToTravel / path.path.length));
         float s = Mathf.Lerp(minMaxScale.y, minMaxScale.x, lastDistance / 100);
         speed = Mathf.Lerp(minMaxSpeed.y, minMaxSpeed.x, lastDistance / 100);
         transform.localScale = Vector3.one * s;
@@ -213,6 +248,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
             currentDistance += Time.deltaTime * speed * direction * easeFactor;
 
+
             // Clamp in case we overshoot
             if ((direction == 1 && currentDistance > distanceToTravel) ||
                 (direction == -1 && currentDistance < distanceToTravel))
@@ -224,6 +260,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
             float distSample = path.GetCustomPointDistanceAtTime(currentDistance / path.path.length, direction);
             float scale = Mathf.Lerp(minMaxScale.y, minMaxScale.x, distSample / 100);
+            targetZoom = Mathf.Lerp(minMaxZoom.x, minMaxZoom.y, (distSample / 100));
             float distModifier = distanceSpeedModifier * Mathf.Abs(distSample - lastDistance);
 
             float rawSpeed = Mathf.Lerp(minMaxSpeed.y, minMaxSpeed.x, distSample / 100) - distModifier;

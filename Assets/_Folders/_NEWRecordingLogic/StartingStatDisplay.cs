@@ -22,7 +22,7 @@ public class StartingStatDisplay : MonoBehaviour, IPointerDownHandler
     void Start()
     {
 
-        currentAmount = LevelRecordManager.instance.levelData.startingStats.startingAmmos[type];
+        currentAmount = LevelRecordManager.instance.levelData.StartingAmmos[type];
         text.text = currentAmount.ToString();
 
         // if (type == 0)

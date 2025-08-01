@@ -22,6 +22,31 @@ public class LevelCreatorNew : Editor
         base.OnInspectorGUI(); // Draw 
 
         // Make this a dropdown that be shown or hidden
+
+        if (Parent.tutorialData == null)
+            if (GUILayout.Button("Add Tutorial Data", GUILayout.Height(40)))
+            {
+                TutorialData asset = ScriptableObject.CreateInstance<TutorialData>();
+                string numberString = "";
+                Vector3Int numbers = Parent.levelWorldAndNumber;
+
+                if (numbers.z <= 0)
+                    numberString = $"{numbers.x:00}-{numbers.y:00}_";
+                else
+                    numberString = $"{numbers.x:00}-{numbers.y:00}-{numbers.z:00}_";
+
+                string path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/TutorialData/" + "TutuorialData" + numberString + Parent.LevelName + ".asset");
+                AssetDatabase.CreateAsset(asset, path);
+                UnityEditor.EditorUtility.SetDirty(asset);
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
+                Parent.tutorialData = asset;
+                UnityEditor.EditorUtility.SetDirty(Parent);
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
+
+            }
+
         dropdownOpen = EditorGUILayout.Foldout(dropdownOpen, "Edit Level Name and Numbers");
         if (dropdownOpen)
         {
@@ -36,9 +61,9 @@ public class LevelCreatorNew : Editor
                 string name = newLevelName;
                 Vector3 numbers = newLevelNumbers;
 
-               if (PickLevelEditorOnly.ReturnLevelName(newLevelName, newLevelNumbers, false) != null)
+                if (PickLevelEditorOnly.ReturnLevelName(newLevelName, newLevelNumbers, false) != null)
                 {
-                   
+
 
 
 
@@ -52,7 +77,7 @@ public class LevelCreatorNew : Editor
                     }
                     Parent.LevelName = name;
                     Parent.levelWorldAndNumber = new Vector3Int((int)numbers.x, (int)numbers.y, (int)numbers.z);
-                    LevelDataConverter.instance.AddLevel(null); // adding null just so it gets reordered
+                    // LevelDataConverter.instance.AddLevel(null); // adding null just so it gets reordered
 
                     AssetDatabase.RenameAsset(currentPath, newFileName);
                     UnityEditor.EditorUtility.SetDirty(Parent);

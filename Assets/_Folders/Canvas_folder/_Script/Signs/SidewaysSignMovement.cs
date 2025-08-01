@@ -82,9 +82,7 @@ public class SidewaysSignMovement : MonoBehaviour
         signSequence.Join(rectTransform.DOAnchorPos(finalPosition, signMovementTime / 2).SetEase(Ease.OutSine)).SetUpdate(true);
 
         // Swing back and forth to simulate stopping
-        float halfRotationAmount = rotationAmountVar / 2f;
-        float quarterRotationAmount = rotationAmountVar / 4f;
-        float finalRotationAmount = -(quarterRotationAmount - 5);
+      
 
         // Rotate to half of the initial rotation amount in the opposite direction
         for (int i = 2; i < rotations.Length; i++)

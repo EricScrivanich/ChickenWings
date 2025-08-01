@@ -20,6 +20,7 @@ public class FlashGroup : MonoBehaviour
     [SerializeField] private float lowAlphaTime;
     [SerializeField] private float fullAlphaTransitionTime;
     [SerializeField] private float lowAlphaTransitionTime;
+    private int addedHeightPerLine = 40;
     private CanvasGroup group;
     private Vector3 startScale = new Vector3(1.55f, 1.55f, 1.55f);
 
@@ -38,6 +39,16 @@ public class FlashGroup : MonoBehaviour
     private void OnEnable()
     {
 
+    }
+
+    public void ShowMessage(string s)
+    {
+
+        group.alpha = 0;
+        transform.localScale = startScale * 1.4f;
+        text.text = s;
+
+        flashCor = StartCoroutine(Flash());
     }
 
 
@@ -114,24 +125,35 @@ public class FlashGroup : MonoBehaviour
         fadeOutSeq.Append(group.DOFade(fullAlphaAmount - .2f, .3f));
         fadeOutSeq.Append(group.DOFade(0, .4f).SetEase(Ease.OutSine));
         enlargeSeq.Play().SetUpdate(true);
-        fadeOutSeq.Play().SetUpdate(true);
+        fadeOutSeq.Play().SetUpdate(true).OnComplete(() =>
+        {
+            Destroy(gameObject);
+        });
         // fadeOutSeq.OnComplete(() => gameObject.SetActive(false));
     }
 
     // Update is called once per frame
     private IEnumerator Flash()
     {
-        group.alpha = lowAlphaAmount;
+        yield return new WaitForSecondsRealtime(1.3f);
+        var r = group.GetComponent<RectTransform>();
+        Debug.Log("Line count is: " + text.textInfo.lineCount);
+        r.sizeDelta = new Vector2(r.sizeDelta.x, (text.textInfo.lineCount * addedHeightPerLine) + 70);
+        float entracneDur = fullAlphaTransitionTime + 1.1f;
+        group.DOFade(fullAlphaAmount, entracneDur).SetEase(Ease.InOutSine).SetUpdate(true);
+        transform.DOScale(startScale, entracneDur).SetEase(Ease.InOutSine).SetUpdate(true); ;
+        yield return new WaitForSecondsRealtime(entracneDur + .1f);
 
         while (true)
         {
+            group.DOFade(lowAlphaAmount, lowAlphaTransitionTime).SetEase(Ease.InSine).SetUpdate(true);
+            yield return new WaitForSecondsRealtime(lowAlphaTransitionTime + lowAlphaTime);
 
             group.DOFade(fullAlphaAmount, fullAlphaTransitionTime).SetEase(Ease.OutSine).SetUpdate(true);
             // group.gameObject.transform.DOScale(startScale * 1.04f, fullAlphaTime + fullAlphaTransitionTime).SetEase(Ease.InOutSine).SetUpdate(true);
             yield return new WaitForSecondsRealtime(fullAlphaTime + fullAlphaTransitionTime);
             // group.gameObject.transform.DOScale(startScale * .96f, lowAlphaTime + lowAlphaTransitionTime).SetEase(Ease.InOutSine).SetUpdate(true);
-            group.DOFade(lowAlphaAmount, lowAlphaTransitionTime).SetEase(Ease.InSine).SetUpdate(true);
-            yield return new WaitForSecondsRealtime(lowAlphaTransitionTime + lowAlphaTime);
+
 
 
 

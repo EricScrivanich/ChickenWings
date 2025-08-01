@@ -6,6 +6,7 @@ using UnityEngine;
 public class SpawnStateManager : MonoBehaviour
 {
     [SerializeField] private bool isTestPlayer = false;
+    [SerializeField] private bool mainLevel = false;
     [SerializeField] private LevelManagerID LvlID;
 
     private BarnAndEggSpawner eggSpawner;
@@ -15,6 +16,8 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private int startingStateDelay = 3;
 
     [SerializeField] private float startDelay = 2.5f;
+
+
 
     public bool startedMissileTimer = false;
 
@@ -171,6 +174,7 @@ public class SpawnStateManager : MonoBehaviour
     public SpawnerRandomSetupEnemyState enemyRandomSetupState = new SpawnerRandomSetupEnemyState();
 
     [SerializeField] private LevelData levelData;
+    private TutorialData tutorialData;
     private ushort currentSpawnStep;
 
 
@@ -189,11 +193,14 @@ public class SpawnStateManager : MonoBehaviour
             transitionLogic.Reset();
             prevTransitonLogic = transitionLogic;
         }
-        if (isTestPlayer)
+
+
+        if (isTestPlayer && !mainLevel)
         {
+            levelData = LevelDataConverter.instance.ReturnLevelData();
             currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
             Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
-            levelData = LevelDataConverter.instance.ReturnLevelData();
+
 
             // if (levelData != null)
             //     levelData.InitializeData(this, currentSpawnStep);
@@ -235,7 +242,7 @@ public class SpawnStateManager : MonoBehaviour
             if (levelData != null)
             {
                 if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
-                levelData.InitializeData(this, currentSpawnStep, LevelRecordManager.PreloadObjectsTimeStep);
+                levelData.InitializeData(this, LevelRecordManager.PreloadObjectsTimeStep);
             }
 
 
@@ -245,9 +252,43 @@ public class SpawnStateManager : MonoBehaviour
         }
         else if (levelData != null)
         {
-            if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
-            levelData.InitializeData(this, currentSpawnStep);
+            if (LevelDataConverter.currentLevelInstance == 0)
+            {
+                LevelDataConverter.instance.SetCurrentLevelInstance(Vector3Int.zero);
+                levelData = LevelDataConverter.instance.ReturnLevelData();
+                levelData.LoadJsonToMemory();
+                levelData.InitializeData(this, currentSpawnStep);
+            }
+            else
+            {
+
+                var allCheckPointData = LevelDataConverter.instance.ReturnAllCheckPointDataForLevel();
+                var checkPointData = LevelDataConverter.instance.ReturnCheckPointDataForLevel();
+
+                LevelDataConverter.instance.SetCurrentLevelInstance(allCheckPointData.LevelAndWorldNumber);
+                levelData = LevelDataConverter.instance.ReturnLevelData();
+                if (checkPointData != null)
+                {
+                    currentSpawnStep = levelData.checkPointSteps[checkPointData.CurrentCheckPoint];
+                    Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
+                    levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, checkPointData, true);
+                }
+                else
+                {
+                    currentSpawnStep = 0;
+                    levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, null, true);
+                }
+
+            }
         }
+
+        LvlID.outputEvent.SetLevelProgress?.Invoke((float)currentSpawnStep / (float)levelData.finalSpawnStep);
+
+    }
+    public void SetTutorialData(TutorialData data)
+    {
+        tutorialData = data;
+        checkForMessage = true;
 
     }
 
@@ -318,7 +359,7 @@ public class SpawnStateManager : MonoBehaviour
 
         if (!isTestPlayer)
         {
-            LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
+            // LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
             SpawnPools();
             if (startDelay > 0)
             {
@@ -333,7 +374,8 @@ public class SpawnStateManager : MonoBehaviour
 
         else
         {
-            LvlID.outputEvent.OnGetLevelTimeNew?.Invoke((levelData.finalSpawnStep + 3) * LevelRecordManager.TimePerStep, currentSpawnStep * LevelRecordManager.TimePerStep);
+            // LvlID.outputEvent.OnGetLevelTimeNew?.Invoke((levelData.finalSpawnStep + 3) * LevelRecordManager.TimePerStep, currentSpawnStep * LevelRecordManager.TimePerStep);
+            Invoke("SubtractPlayerLivesFromCheckpointData", .1f);
             // StartCoroutine(SpawnDataNew());
         }
 
@@ -372,7 +414,10 @@ public class SpawnStateManager : MonoBehaviour
 
     }
     private WaitForSeconds wait = new WaitForSeconds(LevelRecordManager.TimePerStep);
-
+    private void SubtractPlayerLivesFromCheckpointData()
+    {
+        levelData.SetLostLives();
+    }
 
     private IEnumerator SpawnDataNew()
     {
@@ -391,34 +436,20 @@ public class SpawnStateManager : MonoBehaviour
     }
     private float waveTime = 0;
     private float timeToWait = LevelRecordManager.TimePerStep;
+    private bool addWaveTime = true;
     private void Update()
     {
+        if (!addWaveTime) return;
+
         waveTime += Time.deltaTime;
         if (waveTime >= timeToWait)
         {
-            levelData.NextSpawnStep(currentSpawnStep);
-            // Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
+            IterateSpawnStep();
 
-            currentSpawnStep++;
-            waveTime = waveTime - timeToWait; // do this to keep it ver accurate
 
-            if (waveTime >= timeToWait)
+            if (waveTime >= timeToWait && addWaveTime) // double check to carry value
             {
-                levelData.NextSpawnStep(currentSpawnStep);
-                // Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
-
-                currentSpawnStep++;
-                waveTime = waveTime - timeToWait; // do this to keep it ver accurate
-
-
-                if (waveTime >= timeToWait)
-                {
-                    levelData.NextSpawnStep(currentSpawnStep);
-                    // Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
-
-                    currentSpawnStep++;
-                    waveTime = waveTime - timeToWait; // do this to keep it ver accurate
-                }
+                IterateSpawnStep();
             }
 
 
@@ -426,6 +457,50 @@ public class SpawnStateManager : MonoBehaviour
 
 
 
+    }
+    private bool checkForMessage = false;
+    public void HandleWaveTime(bool play)
+    {
+
+
+        if (play)
+        {
+            IterateSpawnStep();
+            waveTime = 0;
+        }
+        addWaveTime = play;
+
+
+    }
+    public void HandleCheckForTutorial(bool check)
+    {
+        checkForMessage = check;
+
+    }
+
+    public void FinishLevel()
+    {
+        LvlID.outputEvent.SetLevelProgress?.Invoke(2);
+        addWaveTime = false;
+    }
+    private void IterateSpawnStep()
+    {
+        if (checkForMessage)
+        {
+            tutorialData.NextSpawnStep(currentSpawnStep);
+
+        }
+        // if (currentSpawnStep > levelData.finalSpawnStep)
+        // {
+
+
+        //     return;
+        // }
+        levelData.NextSpawnStep(currentSpawnStep);
+        LvlID.outputEvent.SetLevelProgress?.Invoke((float)currentSpawnStep / (float)levelData.finalSpawnStep);
+
+        currentSpawnStep++;
+        waveTime = waveTime - timeToWait;
     }
 
     private IEnumerator SwitchToStartingStateAfterDelay(float delay)
@@ -522,6 +597,18 @@ public class SpawnStateManager : MonoBehaviour
 
         return currentRingType;
 
+    }
+
+    public void PlayerKilled()
+    {
+        HandleWaveTime(false);
+
+        if (mainLevel)
+            LevelDataConverter.instance.SaveLevelDataForDeath(levelData.Difficulty, currentSpawnStep);
+
+
+
+        // Debug.LogError("Player Killed, current state: " + currentState);
     }
 
     public void GetEggByType(Vector2 pos, int type, float speed)
@@ -931,6 +1018,7 @@ public class SpawnStateManager : MonoBehaviour
 
     private void OnDisable()
     {
+        LevelDataConverter.instance.SaveCheckPointDataToJson();
         LvlID.outputEvent.OnSetNewIntensity -= SetNewIntensity;
         LvlID.outputEvent.OnSetNewTransitionLogic -= SetNewTransitionLogic;
         ResetManager.GameOverEvent -= OnGameOver;

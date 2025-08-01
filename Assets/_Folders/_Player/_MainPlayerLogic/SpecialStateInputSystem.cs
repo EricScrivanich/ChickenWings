@@ -15,6 +15,8 @@ public class SpecialStateInputSystem : MonoBehaviour
     [SerializeField] private bool useEgg;
     [SerializeField] private bool useShotgun;
 
+    private TutorialData tutorialData;
+
     private bool isInitialized;
 
     private bool usingShotgun = false;
@@ -108,6 +110,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     private bool usingDash;
     private bool usingDrop;
+    private bool additionalInputLock = false;
 
 
 
@@ -163,8 +166,85 @@ public class SpecialStateInputSystem : MonoBehaviour
     private bool startedFlashing = false;
 
 
+    public string ReturnDeviceType()
+    {
+        List<string> devices = new List<string>();
+
+        foreach (var device in InputSystem.devices)
+        {
+
+            if (device is Gamepad)
+            {
+                Debug.Log("Controller detected: " + device.displayName);
+                devices.Add("Gamepad");
+            }
+            else if (device is Touchscreen)
+            {
+                Debug.Log("Touchscreen detected: " + device.displayName);
+                devices.Add("Touchscreen");
+
+            }
+            else if (device is Keyboard)
+            {
+                Debug.Log("Keyboard detected: " + device.displayName);
+                devices.Add("Keyboard");
+
+            }
+
+        }
+        if (devices.Contains("Gamepad"))
+        {
+            return "Gamepad";
+        }
+        else if (devices.Contains("Touchscreen"))
+        {
+            return "Touchscreen";
+        }
+        else if (devices.Contains("Keyboard"))
+        {
+            return "Keyboard";
+        }
+        else return "Unknown";
+
+    }
+    public void SetTutorialData(TutorialData data)
+    {
+        tutorialData = data;
+        int t = data.GetButtonTypes();
 
 
+        if (t == 0)
+        {
+            useFlips = true;
+            useDash = false;
+            useDrop = false;
+            useEgg = false;
+        }
+        else if (t == 1)
+        {
+            useFlips = true;
+            useDash = true;
+            useDrop = false;
+            useEgg = false;
+        }
+        else if (t == 2)
+        {
+            useFlips = true;
+            useDash = true;
+            useDrop = true;
+            useEgg = false;
+        }
+        else if (t == 3)
+        {
+            useFlips = true;
+            useDash = true;
+            useDrop = true;
+            useEgg = true;
+        }
+        this.enabled = true;
+
+
+    }
     private void Awake()
     {
         ID.UsingClocker = false;
@@ -606,20 +686,20 @@ public class SpecialStateInputSystem : MonoBehaviour
         canUseDashSlashImageColor2 = ColorSO.canUseDashSlashImageColor2;
         if (useFlips)
         {
-            flipLeftImage = GameObject.Find("FlipLeftIMG").GetComponent<Image>();
-            flipRightImage = GameObject.Find("FlipRightIMG").GetComponent<Image>();
+            flipLeftImage = GameObject.Find("FlipLeftIMG")?.GetComponent<Image>();
+            flipRightImage = GameObject.Find("FlipRightIMG")?.GetComponent<Image>();
         }
         if (useEgg)
         {
-            eggImage = GameObject.Find("RingFill").GetComponent<Image>();
+            eggImage = GameObject.Find("RingFill")?.GetComponent<Image>();
         }
         if (useDrop && GameObject.Find("DropButton") != null)
         {
-            DropButton = GameObject.Find("DropButton").GetComponent<Image>();
+            DropButton = GameObject.Find("DropButton")?.GetComponent<Image>();
             // DropButton.color = normalButtonColor;
-            dropCooldownIN = GameObject.Find("DropCooldownIN").GetComponent<Image>();
-            dropIcon = GameObject.Find("DropICON").GetComponent<RectTransform>();
-            dropCooldownOUT = GameObject.Find("DropCooldownOUT").GetComponent<Image>();
+            dropCooldownIN = GameObject.Find("DropCooldownIN")?.GetComponent<Image>();
+            dropIcon = GameObject.Find("DropICON")?.GetComponent<RectTransform>();
+            dropCooldownOUT = GameObject.Find("DropCooldownOUT")?.GetComponent<Image>();
             originalDropY = dropIcon.anchoredPosition.y;
             dropCooldownIN.color = ColorSO.disabledButtonColorFull;
             dropCooldownIN.color *= Color.clear;
@@ -637,12 +717,12 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (useDash && GameObject.Find("DashButton") != null)
         {
-            dashImage = GameObject.Find("DashIMG").GetComponent<Image>();
+            dashImage = GameObject.Find("DashIMG")?.GetComponent<Image>();
 
 
-            dashCooldownIN = GameObject.Find("DashCooldownIN").GetComponent<Image>();
-            dashIcon = GameObject.Find("DashICON").GetComponent<RectTransform>();
-            dashCooldownGroup = GameObject.Find("DashCooldownGroup").GetComponent<CanvasGroup>();
+            dashCooldownIN = GameObject.Find("DashCooldownIN")?.GetComponent<Image>();
+            dashIcon = GameObject.Find("DashICON")?.GetComponent<RectTransform>();
+            dashCooldownGroup = GameObject.Find("DashCooldownGroup")?.GetComponent<CanvasGroup>();
 
             startingDashIconX = dashIcon.anchoredPosition.x;
             dashCooldownIN.color = ColorSO.disabledButtonColorFull;
@@ -660,7 +740,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
             usingDash = true;
-            dashImageMana = GameObject.Find("DashIMGMana").GetComponent<Image>();
+            dashImageMana = GameObject.Find("DashIMGMana")?.GetComponent<Image>();
             if (manaUsed)
             {
 
@@ -1159,9 +1239,15 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
     }
+    // public void SetAdditionalInputLock(bool lockInp)
+    // {
+    //     additionalInputLock = lockInp;
 
+
+    // }
     public void ActivateButtons(bool IsActive)
     {
+       
         ButtonsEnabled = IsActive;
 
 
@@ -1302,9 +1388,29 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
 
+    public void SetAllowedInputs(bool checkAny, string[] inp)
+    {
+        trackingInputs = true;
+        if (checkAny)
+        {
+            anyInput = true;
+            inputsTracked = null;
+            return;
+        }
+        inputsTracked = new List<string>();
+        if (inp != null && inp.Length > 0)
+        {
+            foreach (var s in inp)
+            {
+                inputsTracked.Add(s);
+                Debug.Log($"Input tracked added: {s}");
+            }
+        }
 
+    }
     private void SetInputs(bool checkAny, string[] inp, float mustHoldDurationP, float delayForInputs, bool flashImage, bool lockInputsAfterCheck)
     {
+        Debug.Log("Setting other trackeed inputs for some reason");
         bool alreadyStartedFlash = false;
         trackingInputs = true;
 
@@ -1431,15 +1537,22 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     private bool CheckInputs(string s)
     {
+        Debug.Log($"Checking inputs for: {s}");
 
         if (anyInput)
         {
             ID.globalEvents.ExitSectionTrigger?.Invoke();
+            tutorialData.HitCorrectInput();
             return true;
         }
 
         else
         {
+            if (inputsTracked == null || inputsTracked.Count == 0)
+            {
+               
+                return false;
+            }
             foreach (var sVar in inputsTracked)
             {
                 if (sVar == s)
@@ -1452,6 +1565,7 @@ public class SpecialStateInputSystem : MonoBehaviour
                         ActivateButtons(false);
                         doCooldownsBool = false;
                     }
+                    tutorialData.HitCorrectInput();
                     return true;
                 }
             }

@@ -94,6 +94,7 @@ public class PickLevelEditorOnly : MonoBehaviour
     public void AddNewLevel(Vector3Int numbers, string name)
     {
         LevelData asset = ScriptableObject.CreateInstance<LevelData>();
+        LevelChallenges challenges = ScriptableObject.CreateInstance<LevelChallenges>();
 
         string numberString = "";
 
@@ -103,11 +104,22 @@ public class PickLevelEditorOnly : MonoBehaviour
             numberString = $"{numbers.x:00}-{numbers.y:00}-{numbers.z:00}_";
 
         string n = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/Main/" + numberString + name + ".asset");
+        string challengePath = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/Challenges/" + numberString + name + "Challenge" + ".asset");
         AssetDatabase.CreateAsset(asset, n);
-        asset.SetDefaults(objData, startingStats, playerID);
+        AssetDatabase.CreateAsset(challenges, challengePath);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+
+
+        asset.SetDefaults(objData, startingStats, playerID, challenges);
+        asset.LoadLevelSaveData(null);
         asset.LevelName = name;
         asset.levelWorldAndNumber = numbers;
         UnityEditor.EditorUtility.SetDirty(asset);
+        UnityEditor.EditorUtility.SetDirty(challenges);
+
         UnityEditor.AssetDatabase.SaveAssets();
         UnityEditor.AssetDatabase.Refresh();
         LevelDataConverter.instance.AddLevel(asset); // This will also reorder the levels

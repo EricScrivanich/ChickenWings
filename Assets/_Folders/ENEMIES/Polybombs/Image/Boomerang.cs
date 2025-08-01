@@ -47,6 +47,7 @@ public class Boomerang : MonoBehaviour, ICollectible
     private float cooldownTimer = 0f;
 
 
+
     public float maxDragTime = 1f; // Maximum time to affect the velocity calculation
     public float distanceMultiplier = 1f; // Multiplier for drag distance
     public float timeMultiplier = 1f; // Multiplier for drag time
@@ -55,6 +56,7 @@ public class Boomerang : MonoBehaviour, ICollectible
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
         playerRb = playerPos.GetComponent<Rigidbody2D>();
         startRot = rb.rotation;
         if (holdingBoomerang) rb.simulated = false;
@@ -124,6 +126,7 @@ public class Boomerang : MonoBehaviour, ICollectible
         collectableCollider.enabled = false;
         rb.angularVelocity = 0;
         rb.SetRotation(startRot);
+        rb.linearVelocity = Vector2.zero; // Stop the boomerang
         holdingBoomerang = true;
         isReturning = false;
         rb.simulated = false;
@@ -140,13 +143,22 @@ public class Boomerang : MonoBehaviour, ICollectible
         rb.simulated = true;
 
         playerVelWhenThown = playerRb.linearVelocity;
+        float dotMultiplier = 1;
+        float dot = Vector2.Dot(direction, playerVelWhenThown.normalized);
+
+        // compare how similar to thrown direction is to player velocity
+        if (dot > .5f)
+            dotMultiplier += dot * playerVelWhenThown.magnitude * .04f;
+
+        Debug.Log("Dot Multi: " + dotMultiplier);
+
         holdingBoomerang = false;
         startPosition = transform.position; // Record the release position
         thrownDirection = direction;
         returnDirection = -direction;
 
         // rb.linearVelocity = Vector2.right * throwSpeed; // Throw the boomerang to the right
-        rb.linearVelocity = direction * throwMagnitude;
+        rb.linearVelocity = direction * throwMagnitude * dotMultiplier;
         // isReturning = false; // Boomerang is in the throwing phase
         rb.angularVelocity = startAngVel;
         StartReturn();
@@ -172,7 +184,7 @@ public class Boomerang : MonoBehaviour, ICollectible
     }
     private void Return()
     {
-        Debug.Log("Returning");
+
         rb.AddForce(returnDirection * returnForce);
         // rb.AddForce(playerVelWhenThown * playerVelocityRatio);
 
@@ -205,11 +217,16 @@ public class Boomerang : MonoBehaviour, ICollectible
         if (rb.linearVelocity.magnitude < 3 && !peaked && isReturning)
         {
             peaked = true;
+
         }
+
+
         // MaxFallSpeed();
         // If the boomerang is returning and reaches its start position, stop it
         if (isReturning)
         {
+
+
             // rb.linearVelocity = Vector2.zero; // Stop the boomerang
             // isReturning = false; // Reset state
             // Debug.Log("Boomerang returned!");
@@ -217,8 +234,13 @@ public class Boomerang : MonoBehaviour, ICollectible
 
             if (peaked)
             {
+                returnDirection = (playerPos.position - transform.position).normalized;
                 if (rb.linearVelocity.magnitude > maxReturnSpeed)
                     isReturning = false;
+
+            }
+            else
+            {
 
             }
         }
@@ -227,6 +249,15 @@ public class Boomerang : MonoBehaviour, ICollectible
 
 
     }
+
+    // void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     if (other.gameObject.CompareTag("Player") && !holdingBoomerang && justThrown)
+    //     {
+    //         Catch();
+    //         player.globalEvents.OnCatchBoomerang?.Invoke();
+    //     }
+    // }
     private void Equip(int type, bool equip)
     {
         if (type == 2)

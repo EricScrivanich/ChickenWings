@@ -118,7 +118,7 @@ public class PogoPig : MonoBehaviour, ISimpleRecordableObject
                 // 30% chance for a big bounce
                 doingQuickBounce = false;
             }
-            else if (quickBounceCount >= (int)Random.Range(1, 3))
+            else if (quickBounceCount >= (int)Random.Range(1, 4))
             {
                 doingQuickBounce = false;
                 doingRandomBounce = true;

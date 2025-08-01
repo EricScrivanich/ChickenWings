@@ -4,8 +4,8 @@ using System.Collections;
 public class BallMaterialMovement : MonoBehaviour
 {
     public RingID ID;
-   
-    
+
+
     [SerializeField] private float explodeDuration;
 
     [SerializeField] private ParticleSystem ParticlePrefab;
@@ -48,7 +48,7 @@ public class BallMaterialMovement : MonoBehaviour
         if (targetObject != null)
         {
             // Linear movement towards a moving target (GameObject)
-            MoveTowards(targetPos, dynamicSpeed);
+            MoveTowards(targetPos, dynamicSpeed * 1.3f);
         }
         else
         {

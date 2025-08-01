@@ -968,7 +968,7 @@ public class RecordableObjectPlacer : MonoBehaviour
     {
         if (_pType == PostionType.AI || isSimpleObject)
         {
-            if (timeStep < spawnedTimeStep)
+            if (timeStep < spawnedTimeStep && !(LevelRecordManager.instance.multipleObjectsSelected && isSelected))
             {
                 gameObject.SetActive(false);
                 return;
@@ -1625,6 +1625,9 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     }
+
+  
+    
 
     private void CheckForPreloadTimeStep(int checkedStep)
     {

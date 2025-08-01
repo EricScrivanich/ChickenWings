@@ -327,6 +327,13 @@ public class ButtonManager : MonoBehaviour
 
 
     }
+
+    public void DisableButtons(List<ButtonID.ButtonType> types)
+    {
+        
+
+    }
+
     void Start()
     {
         saveSystem = GetComponent<ButtonColorManager>();

@@ -8,7 +8,9 @@ public class LevelManagerID : ScriptableObject
     public InputLvlEvent inputEvent;
     public OutputLvlEvent outputEvent;
 
-    public PlayerStartingStatsForLevels playerStartingStats;
+    public Vector3Int LevelWorldNumber { get; private set; }
+
+
 
     public bool LevelCompleted { get; private set; }
 
@@ -48,6 +50,10 @@ public class LevelManagerID : ScriptableObject
     public int ReturnPlayerLives()
     {
         return player.Lives;
+    }
+    public int ReturnBarnsHitWithEgg()
+    {
+        return player.BarnsHitWithEgg;
     }
 
     public List<int> ReturnPlayerInputs()

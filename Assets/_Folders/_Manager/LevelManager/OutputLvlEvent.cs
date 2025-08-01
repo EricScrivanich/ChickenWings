@@ -37,9 +37,11 @@ public struct OutputLvlEvent
 
     public Action<int, int> killedPig;
 
-    public Action<float> OnGetLevelTime;
+  
 
-    public Action<float, float> OnGetLevelTimeNew;
+  
+
+    public Action<float> SetLevelProgress;
 
 
 

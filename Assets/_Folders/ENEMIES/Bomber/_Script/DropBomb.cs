@@ -351,7 +351,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
 
         StopAllCoroutines();
 
-        if (!hasFadedDropZone)
+        if (!hasFadedDropZone && hasSpawned)
         {
             hasFadedDropZone = true;
             dropZone.FadeOut();
@@ -449,7 +449,8 @@ public class DropBomb : MonoBehaviour, IRecordableObject
 
 
     }
-    private WaitForSeconds wait = new WaitForSeconds(.1f);
+    private WaitForSeconds wait = new WaitForSeconds(.08f);
+
     private IEnumerator DropBombs()
     {
         int dropCount = 2;

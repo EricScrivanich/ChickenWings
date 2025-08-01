@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1237960647493614051}
   - component: {fileID: 8825740233988290671}
   - component: {fileID: 1289930387296832898}
+  - component: {fileID: 5076868968221451896}
   m_Layer: 0
   m_Name: SpawnManager
   m_TagString: Untagged
@@ -61,6 +62,7 @@ MonoBehaviour:
   shotgunImage: {fileID: -1455860897, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
   shotgunThreeImage: {fileID: 16208088, guid: fab4762a5eb54434cb3e563ab6cdb7b4, type: 3}
   eggCollectablePrefab: {fileID: 4351014547753438834, guid: 6671afaf7b99244b0846e32d3e79bec6, type: 3}
+  shotgunCollectablePrefab: {fileID: 0}
   eggCollectableCount: 8
   eggTimeRange: {x: 11, y: 17}
   baseEggThreeChance: 0.2
@@ -84,6 +86,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 709e9581fe97840f09b75dff153ede22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTestPlayer: 0
+  mainLevel: 0
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   startingState: 3
   startingStateDelay: 2
@@ -133,6 +137,7 @@ MonoBehaviour:
   ringPool: {fileID: 11400000, guid: e091696280b8b45339411e84babae8cb, type: 2}
   currentRingType: 0
   recentlySpanwnedPositions: []
+  levelData: {fileID: 0}
 --- !u!114 &1237960647493614051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,3 +206,31 @@ MonoBehaviour:
   eggParticleColliderCoverPrefab: {fileID: 3148713029437857749, guid: 67f9171f2ae064c559b81016d5c0175a, type: 3}
   eggParticleColliderPrefab: {fileID: 8411991336060583700, guid: 431fd07ce78564e4b9d2ad5bc1fa994b, type: 3}
   gasCloudHitParticlesPrefab: {fileID: 4238105998688326948, guid: 46cf02b4a5ffb48c49a74b30057887fe, type: 3}
+--- !u!114 &5076868968221451896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609617747852223854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5afb71e0f66fa4ec38f2f59bb2c61308, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 11400000, guid: 640dc4253f94c442ea1eaf7ca15c382a, type: 2}
+  onEventTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 181520417636617702}
+        m_TargetAssemblyTypeName: SpawnStateManager, Assembly-CSharp
+        m_MethodName: PlayerKilled
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

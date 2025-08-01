@@ -19,7 +19,7 @@ public class ProgressBar : MonoBehaviour
 
     [SerializeField] private GameObject FinishLineEgg;
     [SerializeField] private Vector3 FinishLineEggSpawnPostion;
-    private Image outline;
+    [SerializeField] private Image outline;
 
     private Sequence finishSeq;
     private float actualTime;
@@ -32,22 +32,23 @@ public class ProgressBar : MonoBehaviour
     private bool showFinish = true;
 
     // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
         fill = GetComponent<Image>();
-        outline = gameObject.transform.Find("Outline").GetComponent<Image>();
+
         progress.fillAmount = 0;
         startPosition = chicken.localPosition;
         endPosition = new Vector3(chickenEndPos.localPosition.x + 20, chickenEndPos.localPosition.y, 0);
 
-        if (duration > 100)
-            timeStamp = .12f;
-        else if (duration > 80)
-            timeStamp = .09f;
-        else if (duration > 60)
-            timeStamp = .06f;
-        else if (duration > 40)
-            timeStamp = .04f;
+        // if (duration > 100)
+        //     timeStamp = .12f;
+        // else if (duration > 80)
+        //     timeStamp = .09f;
+        // else if (duration > 60)
+        //     timeStamp = .06f;
+        // else if (duration > 40)
+        //     timeStamp = .04f;
         // slider = GetComponent<Slider>();
         // slider.value = 0;
         // StartCoroutine(DoSlider());
@@ -58,12 +59,9 @@ public class ProgressBar : MonoBehaviour
         progress.color = colorSO.normalButtonColorFull;
         fill.color = fillColor;
         outline.color = colorSO.OutLineColor;
-
-    }
-    private void Awake()
-    {
-        levelManagerID.outputEvent.OnGetLevelTime += SetDuration;
-        levelManagerID.outputEvent.OnGetLevelTimeNew += SetDurationNew;
+        // levelManagerID.outputEvent.OnGetLevelTime += SetDuration;
+        // levelManagerID.outputEvent.OnGetLevelTimeNew += SetDurationNew;
+        levelManagerID.outputEvent.SetLevelProgress += SetProgress;
         ResetManager.GameOverEvent += OnGameOver;
 
     }
@@ -99,31 +97,55 @@ public class ProgressBar : MonoBehaviour
 
     }
 
-    private void Update()
+    // private void Update()
+    // {
+    //     if (stopUpdate) return;
+    //     actualTime += Time.deltaTime;
+    //     time += Time.deltaTime;
+
+    //     if (actualTime > duration && !stopUpdate)
+    //     {
+
+    //         FinishLevel();
+    //         stopUpdate = true;
+
+
+    //     }
+
+    //     if (time > timeStamp)
+    //     {
+    //         chicken.localPosition = Vector3.Lerp(startPosition, endPosition, actualTime / duration);
+    //         progress.fillAmount = Mathf.Lerp(0, 1, actualTime / duration);
+    //         time = 0;
+    //     }
+
+
+
+
+    // }
+
+    public void SetProgress(float progressValue)
     {
+
         if (stopUpdate) return;
-        actualTime += Time.deltaTime;
-        time += Time.deltaTime;
 
-        if (actualTime > duration && !stopUpdate)
+        if (progressValue > 1)
         {
-
-            FinishLevel();
+            chicken.GetComponent<Image>().DOFade(0, .4f);
+            fill.DOColor(colorSO.normalButtonColorFull, .3f).OnComplete(finishedTween);
             stopUpdate = true;
-
-
+            return;
         }
 
-        if (time > timeStamp)
-        {
-            chicken.localPosition = Vector3.Lerp(startPosition, endPosition, actualTime / duration);
-            progress.fillAmount = Mathf.Lerp(0, 1, actualTime / duration);
-            time = 0;
-        }
+        chicken.localPosition = Vector3.Lerp(startPosition, endPosition, progressValue);
+        progress.fillAmount = Mathf.Lerp(0, 1, progressValue);
 
 
-
-
+        // if (actualTime >= duration && !stopUpdate)
+        // {
+        //     FinishLevel();
+        //     stopUpdate = true;
+        // }
     }
 
 
@@ -168,8 +190,9 @@ public class ProgressBar : MonoBehaviour
 
     private void OnDisable()
     {
-        levelManagerID.outputEvent.OnGetLevelTime -= SetDuration;
-        levelManagerID.outputEvent.OnGetLevelTimeNew -= SetDurationNew;
+        // levelManagerID.outputEvent.OnGetLevelTime -= SetDuration;
+        // levelManagerID.outputEvent.OnGetLevelTimeNew -= SetDurationNew;
+        levelManagerID.outputEvent.SetLevelProgress -= SetProgress;
 
         ResetManager.GameOverEvent -= OnGameOver;
 

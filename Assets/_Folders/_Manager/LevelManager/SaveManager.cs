@@ -75,6 +75,11 @@ public class SaveManager : MonoBehaviour
         SaveData();
     }
 
+    public void CreateTemporaryCheckPointSave()
+    {
+        
+    }
+
     public void SetLevelStarsForTest()
     {
         if (SetStarsForEachLevel == null) return;
@@ -216,7 +221,7 @@ public class SaveManager : MonoBehaviour
                 Debug.Log($"Level data for level {levelId} not found in saved data. Initializing new data with {challengeCount} challenges.");
 
                 // Initialize new LevelSavedData with default values and add it to gameData
-                levelData = new LevelSavedData(levelId, challengeCount);
+                // levelData = new LevelSavedData(levelId, challengeCount);
                 gameData.Levels.Add(levelData);
 
                 // Save updated data
@@ -269,7 +274,7 @@ public class SaveManager : MonoBehaviour
             Debug.Log("FROM SAVE 2");
 
             int challengeCount = sceneSO.ReturnChallengeCountByLevel(i);
-            gameData.Levels.Add(new LevelSavedData(i, challengeCount));
+            // gameData.Levels.Add(new LevelSavedData(i, challengeCount));
         }
     }
 }

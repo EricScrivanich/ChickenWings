@@ -194,7 +194,8 @@ public class AudioManager : MonoBehaviour
 
 
 
-    private WaitForSeconds minJetPackAndBombWait = new WaitForSeconds(.15f);
+    private WaitForSeconds minJetPackWait = new WaitForSeconds(.15f);
+    private WaitForSeconds minBombWait = new WaitForSeconds(.1f);
     private WaitForSeconds minWindmillWait = new WaitForSeconds(.25f);
 
 
@@ -252,7 +253,7 @@ public class AudioManager : MonoBehaviour
     private IEnumerator JetPackNoiseWait()
     {
         if (canPlayJetPackNoise) yield break;
-        yield return minJetPackAndBombWait;
+        yield return minJetPackWait;
         canPlayJetPackNoise = true;
 
 
@@ -260,7 +261,7 @@ public class AudioManager : MonoBehaviour
     private IEnumerator BombNoiseWait()
     {
         if (canPlayBombNoise) yield break;
-        yield return minJetPackAndBombWait;
+        yield return minBombWait;
         canPlayBombNoise = true;
 
 

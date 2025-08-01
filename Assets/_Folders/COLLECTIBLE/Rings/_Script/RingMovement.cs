@@ -61,7 +61,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
         col = GetComponent<EdgeCollider2D>();
 
 
-       
+
 
 
 
@@ -235,10 +235,10 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
 
     public void SetCorrectRing()
     {
-      
+
         if (ID != null && order == ID.CorrectRing)
         {
-         
+
             sprite.material = ID.highlightedMaterial;
             backRing.material = ID.highlightedMaterial;
 
@@ -413,7 +413,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
         speed = data.float1;
         int scaleFlip = 1;
         if (speed < 0) scaleFlip = -1;
-        transform.localScale = new Vector3(data.float2 * scaleFlip, data.float2, data.float2);
+        transform.localScale = new Vector3(ClampedRingSize(data.float2) * scaleFlip, data.float2, data.float2);
         // transform.eulerAngles = new Vector3(0, 0, data.float3);
         gameObject.SetActive(true);
     }
@@ -431,10 +431,17 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
         speed = data.float1;
         int scaleFlip = 1;
         if (speed < 0) scaleFlip = -1;
-        transform.localScale = new Vector3(data.float2 * scaleFlip, data.float2, data.float2);
+        transform.localScale = new Vector3(ClampedRingSize(data.float2) * scaleFlip, data.float2, data.float2);
         transform.eulerAngles = new Vector3(0, 0, data.float3);
     }
+    private float ClampedRingSize(float size)
+    {
+        size = Mathf.InverseLerp(.7f, 1.3f, size);
+        size = Mathf.Lerp(1.2f, 1.32f, size);
+        return size;
 
+
+    }
 
 
     public bool ShowLine()

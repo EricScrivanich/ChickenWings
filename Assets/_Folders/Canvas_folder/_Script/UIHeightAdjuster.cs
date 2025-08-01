@@ -2,13 +2,15 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections;
 
 public class UIHeightAdjuster : MonoBehaviour
 {
     [SerializeField] private ButtonColorsSO colorSO;
     [SerializeField] private TextMeshProUGUI targetText;  // Reference to the text component
     [SerializeField] private TextMeshProUGUI difficultyText;  // Reference to the text component
-    [SerializeField] private RectTransform image1;
+    private RectTransform rect;
+
     [SerializeField] private Image outlineImage;
     private Image fillImage;
 
@@ -20,7 +22,7 @@ public class UIHeightAdjuster : MonoBehaviour
 
     [SerializeField] private float baseHeight = 100f;     // Base height for one line of text
     [SerializeField] private float extraLineHeight = 20f; // Additional height for each extra line
-    [SerializeField] private float padding = 10f;
+    [SerializeField] private float padding;
 
     private Sequence starHitSeq;
 
@@ -35,11 +37,13 @@ public class UIHeightAdjuster : MonoBehaviour
     private LevelChallenges currentChallengeSO;
     private int index;
 
+ 
 
 
 
 
 
+   
 
 
 
@@ -68,11 +72,13 @@ public class UIHeightAdjuster : MonoBehaviour
 
     public void SetChallenge(LevelChallenges challengeSO, int i, string challenge, string difficulty, bool hasCompleted)
     {
-        if (image1 == null) image1 = GetComponent<RectTransform>();
+        Debug.LogError("Setting challenge: " + challenge + " with difficulty: " + difficulty + " at index: " + i);
+        if (rect == null) rect = GetComponent<RectTransform>();
         if (fillImage == null) fillImage = GetComponent<Image>();
         currentChallengeSO = challengeSO;
         index = i;
         targetText.text = challenge;
+        // targetText.ForceMeshUpdate();
         difficultyText.text = difficulty;
 
         progressTextsShown = currentChallengeSO.ReturnAmountOfNeededProgressTexts(i);
@@ -92,29 +98,32 @@ public class UIHeightAdjuster : MonoBehaviour
 
         if (hasCompleted)
         {
-            disabledStarColor = colorSO.StarGottenColor;
+            disabledStarColor = Color.white;
             // outlineImage.color = colorSO.StarCardGoldOutlineColor2;
         }
         else
         {
+
             disabledStarColor = colorSO.StarNoneColor;
             // outlineImage.color = colorSO.StarCardDisabledOutlineColor;
         }
+        StarImage.color = disabledStarColor;
 
-        AdjustHeight();
+        // StartCoroutine(DelayToLineCount());
+
         // CheckIfChallengeComplete();
 
 
     }
 
 
-    public void MoveOnEnable(int type, float dur)
-    {
+    // public void MoveOnEnable(int type, float dur)
+    // {
 
 
-        transform.DOLocalMoveX(0, dur).SetEase(Ease.OutBack).SetUpdate(true);
+    //     imageRect.DOLocalMoveX(0, dur).SetEase(Ease.OutBack).SetUpdate(true);
 
-    }
+    // }
 
     private void OnDisable()
     {
@@ -128,7 +137,7 @@ public class UIHeightAdjuster : MonoBehaviour
     }
     public void SetPosition(float xOffset)
     {
-        transform.localPosition = new Vector2(xOffset, transform.localPosition.y);
+        // imageRect.localPosition = new Vector2(xOffset, transform.localPosition.y);
     }
 
     private void SetCardOnPause(int type)
@@ -176,14 +185,14 @@ public class UIHeightAdjuster : MonoBehaviour
         {
             case 0:
 
-                SetCardOnPause(currentChallengeSO.CheckChallengeType(index));
+                // SetCardOnPause(currentChallengeSO.CheckChallengeType(index));
 
 
                 break;
 
             case 1:
                 StarImage.color = disabledStarColor;
-                transform.DOLocalMoveX(0, .4f).SetEase(Ease.OutBack).SetUpdate(true).OnComplete(Case1Function);
+                // imageRect.DOLocalMoveX(0, .4f).SetEase(Ease.OutBack).SetUpdate(true).OnComplete(Case1Function);
 
                 break;
             case 2:
@@ -193,26 +202,47 @@ public class UIHeightAdjuster : MonoBehaviour
 
 
     }
+    public void StartStarHit(float dur)
+    {
+        if (starHitSeq != null && starHitSeq.IsPlaying())
+            starHitSeq.Kill();
+        starHitSeq = DOTween.Sequence();
+        starHitSeq.AppendInterval(dur * .4f);
+        starHitSeq.Append(outlineImage.DOColor(colorSO.StarCardGoldOutlineColor1, dur * .6f));
+        starHitSeq.Join(fillImage.DOColor(colorSO.StarCardGoldFillColor1, dur * .6f));
+        starHitSeq.Play().SetEase(Ease.InCubic).SetUpdate(true);
+    }
 
     public void OnCompletedStarHit()
     {
+        if (starHitSeq != null && starHitSeq.IsPlaying())
+            starHitSeq.Kill();
         starHitSeq = DOTween.Sequence();
-        transform.DOShakeRotation(.3f, 30, 8, 50).SetUpdate(true);
-        starHitSeq.Append(outlineImage.DOColor(colorSO.StarCardGoldOutlineColor1, .4f));
-        starHitSeq.Join(fillImage.DOColor(colorSO.StarCardGoldFillColor1, .4f));
-        starHitSeq.Append(outlineImage.DOColor(colorSO.StarCardGoldOutlineColor2, .4f).SetEase(Ease.OutSine));
-        starHitSeq.Join(fillImage.DOColor(colorSO.StarCardGoldFillColor2, .4f).SetEase(Ease.OutSine));
+        transform.DOShakeRotation(.2f, 40, 8, 50).SetUpdate(true);
+
+        starHitSeq.Append(outlineImage.DOColor(colorSO.StarCardGoldOutlineColor2, .25f).SetEase(Ease.OutSine));
+        starHitSeq.Join(fillImage.DOColor(colorSO.StarCardGoldFillColor2, .25f).SetEase(Ease.OutSine));
         starHitSeq.Play().SetUpdate(true);
 
+    }
+
+    public Transform ReturnStarTransform()
+    {
+        return StarImage.transform;
     }
 
 
     private void Case1Function()
     {
         if (currentChallengeSO.CheckChallengeCompletion(index))
+        {
             ChallengesUIManager.OnGetCompletedStar?.Invoke(index, StarImage.transform);
+            Debug.Log("Challenge completed for index: " + index);
+        }
+
         else
         {
+            Debug.Log("Challenge failed for index: " + index);
 
             starHitSeq = DOTween.Sequence();
             starHitSeq.AppendInterval(.45f);
@@ -227,34 +257,62 @@ public class UIHeightAdjuster : MonoBehaviour
 
     }
 
-    public void TurnRed()
+    public void SetColorForCard(int completion)
     {
-        fillImage.DOColor(colorSO.StarCardDisabledFillColor, .3f).SetUpdate(true);
+        if (completion == -1)
+        {
+            fillImage.color = colorSO.StarCardDisabledFillColor;
+            outlineImage.color = colorSO.StarCardDisabledOutlineColor;
 
-        outlineImage.DOColor(colorSO.StarCardDisabledOutlineColor, .3f).SetUpdate(true);
+        }
+        else if (completion == 1)
+        {
+            fillImage.color = colorSO.StarCardGoldFillColor2;
+            outlineImage.color = colorSO.StarCardGoldOutlineColor2;
+        }
 
-        if (seq != null && seq.IsPlaying())
-            seq.Kill();
-
-        StarImage.color = disabledStarColor;
 
     }
 
-
-    private void AdjustHeight()
+    public void TurnRed()
     {
-        if (targetText == null || image1 == null) return;
+
+        starHitSeq = DOTween.Sequence();
+        starHitSeq.AppendInterval(.25f);
+        // starHitSeq.AppendCallback(() => AudioManager.instance.PlayErrorSound(true));
+        starHitSeq.Append(fillImage.DOColor(colorSO.StarCardDisabledFillColor, .4f));
+
+        starHitSeq.Join(outlineImage.DOColor(colorSO.StarCardDisabledOutlineColor, .4f));
+        starHitSeq.Join(transform.DOShakeRotation(.45f, 35, 8, 50));
+        starHitSeq.Play().SetUpdate(true);
+
+        // fillImage.DOColor(colorSO.StarCardDisabledFillColor, .3f).SetUpdate(true);
+
+        // outlineImage.DOColor(colorSO.StarCardDisabledOutlineColor, .3f).SetUpdate(true);
+
+        // if (seq != null && seq.IsPlaying())
+        //     seq.Kill();
+
+        // StarImage.color = disabledStarColor;
+
+    }
+
+    public void AdjustHeight()
+    {
+        if (targetText == null || rect == null) return;
 
         // Force TextMeshPro to update text layout to get accurate line count
-        targetText.ForceMeshUpdate();
+
 
         // Get the number of lines in the current text
         int lineCount = targetText.textInfo.lineCount;
+
 
         // Calculate the new height: baseHeight for one line + extraLineHeight for each additional line
         float newHeight = baseHeight + (Mathf.Max(0, lineCount - 1) * extraLineHeight) + padding;
 
         // Apply the new height to the image
-        image1.sizeDelta = new Vector2(image1.sizeDelta.x, newHeight);
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
+        Debug.LogError("Adjusted height to: " + newHeight + " for text: " + targetText.text);
     }
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d1a22450bf8e4553bb071265dc2430f, type: 3}
   m_Name: MovementDataBasicWithBounce
   m_EditorClassIdentifier: 
-  maxFallSpeed: -9.1
+  maxFallSpeed: -9
   GravityScale: 1.75
   JumpForce: {x: 0, y: 10.36}
   JumpDrag: 0
@@ -20,14 +20,14 @@ MonoBehaviour:
   DragLerpDuration: 0
   RemoveJumpForce: {x: 0, y: 0}
   addJumpForce: 15.3
-  FlipRightInitialForceVector: {x: 3.5, y: 10}
-  FlipRightAddForce: {x: 5.1, y: 4.65}
-  FlipRightDownForce: {x: 4, y: -6}
-  flipRightAddForceTime: 0.8
-  flipRightDownForceTime: 0.5
-  FlipLeftInitialForceVector: {x: -6.6, y: 8.6}
-  FlipLeftAddForce: {x: -3.6, y: 4.5}
-  FlipLeftDownForce: {x: -2.4, y: -2.8}
+  FlipRightInitialForceVector: {x: 3.6, y: 10.6}
+  FlipRightAddForce: {x: 6.2, y: 4.6}
+  FlipRightDownForce: {x: 2.3, y: -11.3}
+  flipRightAddForceTime: 0.7
+  flipRightDownForceTime: 0.9
+  FlipLeftInitialForceVector: {x: -6.9, y: 9}
+  FlipLeftAddForce: {x: -4.5, y: 4.5}
+  FlipLeftDownForce: {x: -2, y: -8}
   flipLeftAddForceTime: 0.55
   flipLeftDownForceTime: 0.3
   maxAmpRadRatio: 0.5

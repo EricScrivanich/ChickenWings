@@ -59,12 +59,12 @@ public class PauseMenuButton : MonoBehaviour
         AudioListener.pause = true;
         PauseMenu.SetActive(true);
         pmm.InstantPause();
-
+        targetTime = Time.timeScale;
         Time.timeScale = 0;
         isPaused = true;
     }
 
-
+    private float targetTime = 0;
     public void NormalPause()
     {
         // if (Time.timeScale < FrameRateManager.TargetTimeScale || gameOver) return;
@@ -75,6 +75,7 @@ public class PauseMenuButton : MonoBehaviour
             PauseMenuButton.OnPauseGame?.Invoke(true);
 
             HapticFeedbackManager.instance.PressUIButton();
+            targetTime = Time.timeScale;
             Time.timeScale = 0;
 
             Color normalColor = fillImage.color;
@@ -100,7 +101,7 @@ public class PauseMenuButton : MonoBehaviour
 
             isPaused = false;
             pmm.RetractOnly();
-            StartCoroutine(SmoothTimeScaleTransition(FrameRateManager.TargetTimeScale, .25f, .95f));
+            StartCoroutine(SmoothTimeScaleTransition(targetTime, .25f, .95f));
         }
     }
 

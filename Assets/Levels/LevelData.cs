@@ -7,19 +7,22 @@ public class LevelData : ScriptableObject
 {
     [Header("Difficulty overrides")]
 
-    [SerializeField] private short[] easyStartingAmmos;
-    [SerializeField] private short easyStartingLives;
-
+    [field: SerializeField] public short[] easyStartingAmmos { get; private set; }
+    [field: SerializeField] public short easyStartingLives { get; private set; }
+    public TutorialData tutorialData;
 
 
     [SerializeField] private AllObjectData objData;
     public PlayerStartingStatsForLevels startingStats;
 
+    [ExposedScriptableObject]
+    [SerializeField] private LevelChallenges levelChallenges;
 
 
+    private int livesToSubtract;
     public PlayerID playerID;
     public string LevelName;
-    public Vector3 levelWorldAndNumber;
+    public Vector3Int levelWorldAndNumber;
     public ushort[] spawnSteps;
     public ushort finalSpawnStep;
     public short[] objectTypes;
@@ -54,8 +57,8 @@ public class LevelData : ScriptableObject
     public ushort[] checkPointSteps;
 
     private SpawnStateManager spawner;
-    public short[] StartingAmmos;
-    public short StartingLives;
+    [field: SerializeField] public short[] StartingAmmos { get; private set; }
+    [field: SerializeField] public short StartingLives { get; private set; }
 
 
     private RecordedDataStruct[] Data;
@@ -69,44 +72,100 @@ public class LevelData : ScriptableObject
     private int currentPositionerObjectIndex = 0;
     private int currentCheckpointIndex = 0;
     private bool checkForCheckpoint = false;
+    public bool usedCheckPoint { get; private set; } = false;
+    public int Difficulty { get; private set; } = 1;
 
 
     private bool checkForCage = false;
+    private bool checkPointHasBeenCollected = false;
+
 
 
     public void LoadJsonToMemory()
     {
         LoadLevelSaveData(LevelDataConverter.instance.ConvertDataFromJson());
     }
-    public void InitializeData(SpawnStateManager s, ushort startingStep, int preloadIndex = -1, int difficulty = 1)
+    public void InitializeData(SpawnStateManager s, ushort startingStep, int difficulty = 1, TemporaryLevelCheckPointData checkPointData = null, bool isLevel = false)
     {
         spawner = s;
+        Difficulty = difficulty;
 
 
+        checkPointHasBeenCollected = false;
+        livesToSubtract = 0;
+        currentCheckpointIndex = 0;
 
         // Load your level save data first. This sets spawnSteps, idList, etc.
 
-        if (playerID != null)
+        if (checkPointData != null && playerID != null)
         {
+
+
+            currentCheckpointIndex = checkPointData.CurrentCheckPoint;
+            Debug.LogError("Current checkpoint index: " + currentCheckpointIndex + " with current spawn step: " + currentSpawnStep + " and current spawn index: " + currentSpawnIndex);
             if (difficulty == 1)
             {
+                startingStats.SetData(StartingLives, checkPointData.CurrentAmmos);
+            }
+            else if (difficulty == 0)
+            {
+                startingStats.SetData(easyStartingLives, checkPointData.CurrentAmmos);
+
+                // Normal or Hard difficulty, use default values
+
+            }
+            if (startingStats.StartingLives > checkPointData.CurrentLives)
+            {
+
+                livesToSubtract = startingStats.StartingLives - checkPointData.CurrentLives;
+            }
+
+
+
+
+            checkPointHasBeenCollected = true;
+            usedCheckPoint = true;
+            if (levelChallenges != null)
+                levelChallenges.LoadData(levelWorldAndNumber, difficulty, checkPointData);
+        }
+
+        else if (playerID != null)
+        {
+            usedCheckPoint = false;
+            if (difficulty == 1)
+            {
+                Debug.LogError("Setting Starting Stats for normal Difficulty");
                 // normal difficulty
 
                 startingStats.SetData(StartingLives, StartingAmmos);
+                if (levelChallenges != null)
+                    levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
             }
             else if (difficulty == 0)
             {
                 // Normal or Hard difficulty, use default values
                 startingStats.SetData(easyStartingLives, easyStartingAmmos);
+                if (levelChallenges != null)
+                    levelChallenges.ResetData(levelWorldAndNumber, difficulty, easyStartingAmmos, easyStartingLives);
             }
 
-            playerID.SetStartingStats(startingStats);
+
+
+
         }
+
+        if (tutorialData != null && isLevel)
+        {
+            Debug.LogError("Setting Tutorial Data for level: " + LevelName + " with difficulty: " + difficulty);
+            s.SetTutorialData(tutorialData);
+            tutorialData.Initialize(s, startingStep);
+        }
+        playerID.SetDataForLevel(startingStats, levelChallenges);
         dataTypeIndexes = new int[6];
 
         // Set currentSpawnStep to the specified starting step.
-        if (preloadIndex >= 0) startingStep = (ushort)preloadIndex;
-        Debug.LogError("Starting Step: " + startingStep + " preloadIndex: " + preloadIndex);
+
+
         currentSpawnStep = startingStep;
 
         currentCageIndex = 0;
@@ -124,7 +183,7 @@ public class LevelData : ScriptableObject
             checkForCage = true;
 
         }
-        currentCheckpointIndex = 0;
+
         if (checkPointSteps == null || checkPointSteps.Length <= 0)
         {
             checkForCheckpoint = false;
@@ -215,11 +274,14 @@ public class LevelData : ScriptableObject
         GetSpawnSizeForNextTimeStep();
     }
 
-    public void SetDefaults(AllObjectData objData, PlayerStartingStatsForLevels stats, PlayerID id)
+    public void SetDefaults(AllObjectData objData, PlayerStartingStatsForLevels stats, PlayerID id, LevelChallenges challenges)
     {
         this.objData = objData;
         this.startingStats = stats;
         this.playerID = id;
+        this.levelChallenges = challenges;
+
+
 
         finalSpawnStep = 300;
         spawnSteps = new ushort[0];
@@ -325,6 +387,25 @@ public class LevelData : ScriptableObject
 
     }
 
+    public void SaveLevelCheckPoint(ushort checkPointIndex)
+    {
+        Debug.LogError("Saving Level CheckPoint at index: " + checkPointIndex + " with current spawn step: " + currentSpawnStep + " and current spawn index: " + currentSpawnIndex);
+        levelChallenges.SetCheckPoint(checkPointIndex);
+        LevelDataConverter.instance.SaveTemporaryCheckPointData(levelChallenges);
+
+    }
+
+    public void EditAmmos(int index, int amount)
+    {
+        Debug.LogError("Editing ammos in level data");
+        StartingAmmos[index] = (short)amount;
+    }
+    public void EditLives(int amount)
+    {
+        StartingLives = (short)amount;
+        Debug.LogError("Editing lives in level data to: " + StartingLives);
+    }
+
 
 
 
@@ -389,6 +470,7 @@ public class LevelData : ScriptableObject
 
         if (lds.startingAmmos == null || lds.startingAmmos.Length <= 0)
         {
+            Debug.LogError("Starting Ammos is null or empty, setting default values.");
             StartingAmmos = new short[5];
             StartingAmmos[0] = 3;
             StartingAmmos[1] = 3;
@@ -409,17 +491,38 @@ public class LevelData : ScriptableObject
         startingStats.SetData(StartingLives, StartingAmmos);
 
 
-        Debug.LogError("Finished loading data for level: " + LevelName + " with " + spawnSteps.Length + " spawn steps and " + idList.Length + " objects.");
+        Debug.LogError("Finished loading data for level: " + "Starting Lives" + StartingLives + LevelName + " with " + spawnSteps.Length + " spawn steps and " + idList.Length + " objects.");
     }
 
+    public void SetLostLives()
+    {
+        if (livesToSubtract > 0)
+        {
+            for (int i = 0; i < livesToSubtract; i++)
+            {
+                playerID.Lives--; // Prevent negative lives
+            }
 
+            livesToSubtract = 0; // Reset after applying
+        }
+    }
 
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
+
+        if (ss > finalSpawnStep)
+        {
+            objData.SpawnFinishLine();
+            spawner.FinishLevel();
+            return;
+        }
+
         if (checkForCheckpoint && ss == checkPointSteps[currentCheckpointIndex])
         {
-            objData.SpawnCheckPoint(false);
+            Debug.LogError("Spawning Checkpoint at step: " + ss + " with index: " + currentCheckpointIndex);
+            objData.SpawnCheckPoint(checkPointHasBeenCollected, (ushort)currentCheckpointIndex, this);
+            if (checkPointHasBeenCollected) checkPointHasBeenCollected = false; // Only spawn the checkpoint once
             currentCheckpointIndex++;
             if (currentCheckpointIndex >= checkPointSteps.Length)
             {
@@ -570,7 +673,27 @@ public class LevelData : ScriptableObject
 
 
 
+    public LevelChallenges GetLevelChallenges(bool loadData, TemporaryLevelCheckPointData data, int difficulty = 1)
+    {
+        if (levelChallenges == null)
+        {
+            Debug.LogError("Level Challenges is null");
+            return null;
+        }
+        if (data == null && loadData)
+        {
+            levelChallenges.ResetData(levelWorldAndNumber, 1, StartingAmmos, StartingLives);
+            return levelChallenges;
+        }
+        else if (loadData)
+        {
+            levelChallenges.LoadData(levelWorldAndNumber, difficulty, data);
+            levelChallenges.SetCheckPoint(data.CurrentCheckPoint);
 
+            // Debug.LogError("Loaded Level Challenges for level: " + levelWorldAndNumber + " with difficulty: " + difficulty);
+        }
+        return levelChallenges;
+    }
 
 
 

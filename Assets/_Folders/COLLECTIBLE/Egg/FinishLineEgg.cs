@@ -8,6 +8,7 @@ public class FinishLineEgg : MonoBehaviour, ICollectible
     private Animator anim;
 
     [SerializeField] private LevelManagerID levelManagerID;
+    [SerializeField] private PlayerID player;
     [SerializeField] private float moveDuration;
 
     [SerializeField] private Vector2 startPos;
@@ -26,7 +27,8 @@ public class FinishLineEgg : MonoBehaviour, ICollectible
 
     private void InvokedFinish()
     {
-        levelManagerID.inputEvent.OnEggFinishLine?.Invoke();
+        // levelManagerID.inputEvent.OnEggFinishLine?.Invoke();
+        player.globalEvents.OnFinishedLevel?.Invoke();
 
     }
 

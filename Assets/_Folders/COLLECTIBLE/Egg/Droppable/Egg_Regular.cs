@@ -95,7 +95,7 @@ public class Egg_Regular : MonoBehaviour
         else if (other.CompareTag("Barn"))
         {
             hasHit = true;
-            ID.AddScore(5);
+            ID.AddScore(5, true);
             AudioManager.instance.PlayScoreSound();
             gameObject.SetActive(false);
             // pool.Despawn(gameObject);

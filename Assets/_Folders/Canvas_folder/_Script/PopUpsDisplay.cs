@@ -8,8 +8,9 @@ public class PopUpsDisplay : MonoBehaviour
 {
 
     public PlayerID ID;
+    [SerializeField] private bool isLevelCreator = false;
 
-    [SerializeField] private GameObject levelChallengesPrefab;
+    [SerializeField] private GameObject levelChallenges;
 
     [SerializeField] private RectTransform levelChallengesPos;
 
@@ -18,7 +19,7 @@ public class PopUpsDisplay : MonoBehaviour
 
     [Header("Level Title Display")]
     [SerializeField] private GameObject LevelNamePrefab;
-    [SerializeField] private TextMeshProUGUI GameSpeedText;
+    // [SerializeField] private TextMeshProUGUI GameSpeedText;
 
     [SerializeField] private float fadeInDuration = 1f; // Duration of the fade-in
     [SerializeField] private float fadeOutDuration = 1f; // Duration of the fade-out
@@ -35,6 +36,7 @@ public class PopUpsDisplay : MonoBehaviour
     private Vector3 gameOverScale = new Vector3(1, 1, 1);
 
     [SerializeField] private GameObject GameOverPrefab;
+    [SerializeField] private GameObject LevelCompletePrefab;
     [SerializeField] private LevelManagerID LvlID;
 
 
@@ -45,20 +47,23 @@ public class PopUpsDisplay : MonoBehaviour
     private GameObject player;
 
     private RectTransform gameOver;
-    private Vector2 initialPosition;
-    private Vector2 targetPosition;
+
+
     private float positionArrivalThreshold = 1f;
-    private PlayerManager playerMan;
-    private ScoreManager scoreMan;
+
+
     [SerializeField] private Material frozenMaterial;
 
 
 
     private string levelName;
     private int levelNum;
-    private float fadeInDurationFroz = .9f;
+    private float fadeInDurationFroz = .7f;
     private float fadeOutDurationFroz = .2f;
     [SerializeField] private float frozenTime = .2f;
+
+
+
 
     // New variable for fade amount of frozenOverlayMaterial
     private void Awake()
@@ -107,33 +112,33 @@ public class PopUpsDisplay : MonoBehaviour
 
         // gameOver.gameObject.SetActive(false);
         Frozen.SetActive(false);
-        GameSpeedText.text = "Game Speed: " + PlayerPrefs.GetFloat("GameSpeed", 1).ToString("F2");
+        // GameSpeedText.text = "Game Speed: " + PlayerPrefs.GetFloat("GameSpeed", 1).ToString("F2");
+
+        var levelData = LevelDataConverter.instance.ReturnLevelData();
 
 
-        if (sceneSO.ReturnLevelChallenges() != null)
+        if (levelData != null)
         {
-            Debug.LogError("YERERERE");
-            Instantiate(levelChallengesPrefab, levelChallengesPos.position, Quaternion.identity, gameObject.GetComponentInParent<Transform>());
-        }
-        else
-            Debug.LogError("Nothing here");
+
+            levelChallenges.GetComponent<ChallengesUIManager>().ShowChallengesForLevelPicker(levelData.GetLevelChallenges(false, null), LevelDataConverter.instance.ReturnLevelSavedData());
+            levelChallenges.SetActive(true);
 
 
-        if (levelNum > 0 || !isLevel)
-        {
+
+
             LvlID.inputEvent.OnGetLevelNumber?.Invoke(levelNum);
             var textObj = Instantiate(LevelNamePrefab, Vector2.zero, Quaternion.identity, gameObject.GetComponentInParent<Transform>());
             TextMeshProUGUI textLevelName = textObj.GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI textLevelNum = textObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 
-
-            if (isLevel)
+            showScore = false;
+            if (levelData.levelWorldAndNumber != Vector3Int.zero)
             {
 
-                textLevelNum.text = "Level " + levelNum.ToString();
+                textLevelNum.text = "Level " + levelData.levelWorldAndNumber.x.ToString() + "-" + levelData.levelWorldAndNumber.y.ToString();
                 LvlID.LevelTitle = textLevelNum.text;
-                textLevelName.text = sceneSO.ReturnLevelName(levelNum);
-                showScore = false;
+                textLevelName.text = levelData.LevelName;
+
             }
             else
             {
@@ -142,7 +147,7 @@ public class PopUpsDisplay : MonoBehaviour
                 textTargetPosition *= 1.1f;
                 displayDuration *= .6f;
                 textMoveDuration *= .7f;
-                textLevelName.text = sceneSO.ReturnGameModeName(levelNum);
+                textLevelName.text = levelData.LevelName;
             }
 
 
@@ -151,16 +156,18 @@ public class PopUpsDisplay : MonoBehaviour
             // Move the text from the top of the screen to the target position
             RectTransform textRectTransform = textLevelName.GetComponent<RectTransform>();
             textRectTransform.anchoredPosition = new Vector2(0, Screen.height);
+            var chall = levelChallenges.GetComponent<CanvasGroup>();
 
             // Add tweens to the sequence
             textSequence
                 // Fade in both text objects
                 .Append(textLevelName.DOFade(1, fadeInDuration))
                 .Join(textLevelNum.DOFade(1, fadeInDuration))
+                .Join(chall.DOFade(1, fadeInDuration * .8f).From(0))
 
                 // Move the text to the target position
                 .Join(textRectTransform.DOAnchorPos(textTargetPosition, textMoveDuration).SetEase(moveInEase))
-                .Join(GameSpeedText.DOFade(1, textMoveDuration).SetEase(Ease.InSine))
+                // .Join(GameSpeedText.DOFade(1, textMoveDuration).SetEase(Ease.InSine))
 
 
                 // Keep the text on screen for displayDuration
@@ -169,23 +176,100 @@ public class PopUpsDisplay : MonoBehaviour
                 // Fade out both text objects
                 .Append(textLevelName.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine)
                 .Join(textLevelNum.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine)
-                .Join(GameSpeedText.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine);
+                .Join(chall.DOFade(0, fadeOutDuration + .3f));
+            // .Join(GameSpeedText.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine);
 
 
-            textSequence.Play().SetUpdate(true).OnComplete(() => DeleteDisplayTexts(textObj, GameSpeedText.gameObject));
+            textSequence.Play().SetUpdate(true).OnComplete(() => DeleteDisplayObjects(textObj, levelChallenges)); // destroy gameSpeed here
+
 
         }
+        else
+        {
+            Debug.LogError("LevelData is null");
+        }
 
-        sceneSO.isLevel = isLevel;
+
+        return;
+
+        // if (sceneSO.ReturnLevelChallenges() != null)
+        // {
+        //     Debug.LogError("YERERERE");
+        //     Instantiate(levelChallengesPrefab, levelChallengesPos.position, Quaternion.identity, gameObject.GetComponentInParent<Transform>());
+        // }
+        // else
+        //     Debug.LogError("Nothing here");
+
+
+        // if (levelNum > 0 || !isLevel)
+        // {
+        //     LvlID.inputEvent.OnGetLevelNumber?.Invoke(levelNum);
+        //     var textObj = Instantiate(LevelNamePrefab, Vector2.zero, Quaternion.identity, gameObject.GetComponentInParent<Transform>());
+        //     TextMeshProUGUI textLevelName = textObj.GetComponent<TextMeshProUGUI>();
+        //     TextMeshProUGUI textLevelNum = textObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
+
+        //     if (isLevel)
+        //     {
+
+        //         textLevelNum.text = "Level " + levelNum.ToString();
+        //         LvlID.LevelTitle = textLevelNum.text;
+        //         textLevelName.text = sceneSO.ReturnLevelName(levelNum);
+        //         showScore = false;
+        //     }
+        //     else
+        //     {
+
+        //         textLevelNum.text = "";
+        //         textTargetPosition *= 1.1f;
+        //         displayDuration *= .6f;
+        //         textMoveDuration *= .7f;
+        //         textLevelName.text = sceneSO.ReturnGameModeName(levelNum);
+        //     }
+
+
+        //     Sequence textSequence = DOTween.Sequence();
+
+        //     // Move the text from the top of the screen to the target position
+        //     RectTransform textRectTransform = textLevelName.GetComponent<RectTransform>();
+        //     textRectTransform.anchoredPosition = new Vector2(0, Screen.height);
+
+        //     // Add tweens to the sequence
+        //     textSequence
+        //         // Fade in both text objects
+        //         .Append(textLevelName.DOFade(1, fadeInDuration))
+        //         .Join(textLevelNum.DOFade(1, fadeInDuration))
+
+        //         // Move the text to the target position
+        //         .Join(textRectTransform.DOAnchorPos(textTargetPosition, textMoveDuration).SetEase(moveInEase))
+        //         .Join(GameSpeedText.DOFade(1, textMoveDuration).SetEase(Ease.InSine))
+
+
+        //         // Keep the text on screen for displayDuration
+        //         .AppendInterval(displayDuration)
+
+        //         // Fade out both text objects
+        //         .Append(textLevelName.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine)
+        //         .Join(textLevelNum.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine)
+        //         .Join(GameSpeedText.DOFade(0, fadeOutDuration)).SetEase(Ease.InSine);
+
+
+        //     textSequence.Play().SetUpdate(true).OnComplete(() => DeleteDisplayTexts(textObj, GameSpeedText.gameObject));
+
+        // }
+
+        // sceneSO.isLevel = isLevel;
 
 
 
     }
 
-    private void DeleteDisplayTexts(GameObject levelName, GameObject gameSpeed)
+    private void DeleteDisplayObjects(GameObject levelName, GameObject challengeCards)
     {
         Destroy(levelName);
-        Destroy(gameSpeed);
+        if (challengeCards != null)
+            Destroy(challengeCards);
+        // Destroy(gameSpeed);
 
     }
 
@@ -195,6 +279,7 @@ public class PopUpsDisplay : MonoBehaviour
     void OnEnable()
     {
         ID.globalEvents.Frozen += FrozenEvent;
+        ID.globalEvents.OnFinishedLevel += ShowFinishLevelPopup;
 
         if (LvlID != null)
         {
@@ -203,9 +288,19 @@ public class PopUpsDisplay : MonoBehaviour
 
     }
 
+    private void ShowFinishLevelPopup()
+    {
+        if (isLevelCreator) return;
+        Debug.Log("SHould finish Level");
+        LevelDataConverter.instance.SaveLevelDataForLevelComplete();
+        Instantiate(LevelCompletePrefab, transform);
+        FinishLevel();
+    }
+
     void OnDisable()
     {
         ID.globalEvents.Frozen -= FrozenEvent;
+        ID.globalEvents.OnFinishedLevel -= ShowFinishLevelPopup;
         if (newHighScoreSeq != null && newHighScoreSeq.IsPlaying())
             newHighScoreSeq.Kill();
         DOTween.Kill(this);

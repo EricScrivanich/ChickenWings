@@ -75,13 +75,13 @@ public class StartingStatEditor : MonoBehaviour
         else if (currentAmount < minAmount) currentAmount = minAmount;
         if (ammoType == -1)
         {
-            LevelRecordManager.instance.levelData.startingStats.StartingLives = (short)currentAmount;
+            LevelRecordManager.instance.levelData.EditLives(currentAmount);
             textMain.text = currentAmount.ToString();
 
         }
         else
         {
-            LevelRecordManager.instance.levelData.startingStats.startingAmmos[ammoType] = (short)currentAmount;
+            LevelRecordManager.instance.levelData.EditAmmos(ammoType, currentAmount);
             textMain.text = currentAmount.ToString();
             addedText.text = currentAmount.ToString();
         }

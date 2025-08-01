@@ -18,6 +18,7 @@ public class AllObjectData : ScriptableObject
     [Header("Prefabs")]
     [field: SerializeField] public GameObject cageObject { get; private set; }
     [field: SerializeField] public CheckPointFlag checkPointFlag { get; private set; }
+    [field: SerializeField] public GameObject finishLine { get; private set; }
 
     public RecordableObjectPool[] GetPoolArrayByObjectType(int objectType)
     {
@@ -31,10 +32,14 @@ public class AllObjectData : ScriptableObject
             _ => pools // fallback or shared/global pool list
         };
     }
-    public void SpawnCheckPoint(bool hasCollected)
+    public void SpawnCheckPoint(bool hasCollected, ushort checkPointNumber, LevelData lvlData)
     {
         var o = Instantiate(checkPointFlag, new Vector2(BoundariesManager.rightBoundary, -.49f), Quaternion.Euler(new Vector3(0, 0, 90)));
-        o.Initialize(hasCollected);
+        o.Initialize(hasCollected, checkPointNumber, lvlData);
+    }
+    public void SpawnFinishLine()
+    {
+        Instantiate(finishLine, new Vector2(BoundariesManager.rightBoundary, 0f), Quaternion.identity);
     }
 
 }

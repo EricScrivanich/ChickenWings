@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlayerFrozenState : PlayerBaseState
 {
 
-    private float waitAtTopDuration = .35f;
+    private float waitAtTopDuration = .15f;
+    private float maxFallSpeed = -7.5f;
+    private Vector2 addDownForce = new Vector2(0, -1f);
     private float time;
     private bool rotate;
     // Start is called before the first frame update
@@ -19,6 +21,7 @@ public class PlayerFrozenState : PlayerBaseState
         player.ID.globalEvents.OnPlayerFrozen?.Invoke(true);
         player.anim.SetBool(player.FrozenBool, true);
         // player.disableButtons = true;
+        addDownForce.x = player.rb.linearVelocity.x * .2f;
         player.rb.linearVelocity = new Vector2(0, 0);
         player.maxFallSpeed = 0;
         player.rb.freezeRotation = true;
@@ -54,13 +57,14 @@ public class PlayerFrozenState : PlayerBaseState
     public override void UpdateState(PlayerStateManager player)
     {
         time += Time.deltaTime;
-        if (time > waitAtTopDuration)
+        if (!rotate && time > waitAtTopDuration)
         {
-            player.maxFallSpeed = -4.7f;
+            player.maxFallSpeed = maxFallSpeed;
+            player.rb.linearVelocity = addDownForce;
             rotate = true;
 
         }
-        if (player.transform.position.y < 1.7f)
+        if (player.transform.position.y < 1f)
         {
             // player.disableButtons = false;
             player.ID.events.EnableButtons?.Invoke(true);

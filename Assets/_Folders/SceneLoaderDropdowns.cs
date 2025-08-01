@@ -56,6 +56,10 @@ namespace KingdomOfNight
         public static void LoadLevel8() { OpenScene("Assets/scenes/Levels/Level8.unity"); }
         [MenuItem("Scenes/Levels/Level9")]
         public static void LoadLevel9() { OpenScene("Assets/scenes/Levels/Level9.unity"); }
+        [MenuItem("Scenes/Levels/MainLevelPlayTutorial")]
+        public static void LoadMainLevelPlayTutorial() { OpenScene("Assets/scenes/Levels/MainLevelPlayTutorial.unity"); }
+        [MenuItem("Scenes/Levels/MainLevelPlayer")]
+        public static void LoadMainLevelPlayer() { OpenScene("Assets/scenes/Levels/MainLevelPlayer.unity"); }
         [MenuItem("Scenes/Levels/YoutubeVideos")]
         public static void LoadYoutubeVideos() { OpenScene("Assets/scenes/Levels/YoutubeVideos.unity"); }
         [MenuItem("Scenes/Main/Basics")]

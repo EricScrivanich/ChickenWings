@@ -352,7 +352,7 @@ public class PlayerStateManager : MonoBehaviour
 
         ID.ResetValues();
         if (ammoManager != null)
-            ID.SetStartingStats(ammoManager);
+            ID.SetDataForLevel(ammoManager, null);
 
         // holdingFlip = false;
         ID.UsingClocker = false;
@@ -936,11 +936,16 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
+    private bool canSwitchAmmo = true;
+    public void SetCanSwitchAmmo(bool canSwitch)
+    {
+        canSwitchAmmo = canSwitch;
 
-
+    }
     public void SwitchWeaponState(int direction, int specificWeapon)
     {
         Debug.Log("Ammo button press is: " + ammoButtonPressed);
+        if (!canSwitchAmmo) return;
         if (ammoManager.AvailableAmmos.Length < 2) return;
         if (ammoButtonPressed && specificWeapon == -1) return;
         if (currentWeaponState != null)

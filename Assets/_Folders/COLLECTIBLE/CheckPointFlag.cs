@@ -6,6 +6,7 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
 
     private AudioSource audioSource;
     public ushort spawnedTimeStep { get; private set; }
+    private LevelData levelData;
 
     [SerializeField] private AudioClip flagLiftSound;
     private float flagLiftVolume = .45f;
@@ -21,11 +22,14 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
 
 
     private float groundOffset = .4f;
-    [SerializeField] private bool testHasCollected;
+
     private Rigidbody2D rb;
     private bool isCollected = false;
     private BoxCollider2D boxCollider;
     private float baseVolume = .37f;
+    private ushort checkPointIndex;
+    private float volume;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -36,7 +40,8 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
         boxCollider = GetComponent<BoxCollider2D>();
         if (audioSource != null)
         {
-            audioSource.volume = AudioManager.instance.SfxVolume * baseVolume;
+            volume = AudioManager.instance.SfxVolume * baseVolume;
+            audioSource.volume = volume;
 
         }
 
@@ -46,14 +51,17 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
 
 
 
-    public void Initialize(bool hasCollected)
+    public void Initialize(bool hasCollected, ushort index, LevelData lvlData)
     {
         float desiredTotalHeight = Mathf.Abs(transform.position.y - BoundariesManager.GroundPosition + groundOffset);
         sr.size = new Vector2(desiredTotalHeight, sr.size.y);
+        checkPointIndex = index;
 
 
         if (hasCollected)
         {
+            volume *= .8f;
+            audioSource.volume = volume;
             isCollected = true;
             boxCollider.enabled = false;
             flagTransform.localPosition = topFlapPos;
@@ -66,6 +74,7 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
         }
         else
         {
+            levelData = lvlData;
             bottomFlapXPos = -desiredTotalHeight + .2f;
             sr.enabled = true;
             flagTransform.localPosition = new Vector2(bottomFlapXPos, flagTransform.localPosition.y);
@@ -84,6 +93,7 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
     public void CollectFlag()
     {
         GetComponent<ConstantSpriteSwitch>().enabled = true;
+        levelData.SaveLevelCheckPoint(checkPointIndex);
         isCollected = true;
         boxCollider.enabled = false;
         audioSource.Play();
@@ -119,9 +129,9 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
     void FixedUpdate()
     {
         rb.MovePosition(rb.position + Vector2.left * BoundariesManager.GroundSpeed * Time.fixedDeltaTime);
-        if (transform.position.x < BoundariesManager.leftViewBoundary + 2f)
+        if (Mathf.Abs(transform.position.x) > BoundariesManager.rightViewBoundary - 2f)
         {
-            audioSource.volume = Mathf.InverseLerp(BoundariesManager.leftBoundary, BoundariesManager.leftViewBoundary + 2f, transform.position.x) * AudioManager.instance.SfxVolume * baseVolume;
+            audioSource.volume = Mathf.InverseLerp(BoundariesManager.rightBoundary, BoundariesManager.rightViewBoundary - 4f, Mathf.Abs(transform.position.x)) * volume;
             if (transform.position.x < BoundariesManager.leftBoundary) gameObject.SetActive(false);
         }
     }

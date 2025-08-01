@@ -13,7 +13,9 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 {
     public static LevelRecordManager instance;
 
+
     [SerializeField] private bool testNonEditorMode = false;
+    [SerializeField] private GameObject DeleteButtonForMultSelectTime;
 
     [SerializeField] private GameObject PlayTimeObject;
     [SerializeField] private GameObject ViewObject;
@@ -75,6 +77,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     // [SerializeField] private Slider timeSlider;
     [SerializeField] private TextMeshProUGUI timeText;
+    [SerializeField] private TextMeshProUGUI stepText;
 
 
     public static Action<ushort, float> SetGlobalTime;
@@ -242,6 +245,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
     public void EnterPlayTime(bool enter)
     {
+        if (enter && isPlayModeView)
+            enter = false;
         if (enter)
         {
 
@@ -424,7 +429,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public void DeleteObject()
     {
-        if (multipleObjectsSelected)
+        if (multipleObjectsSelected && MultipleSelectedObjects.Count > 0)
         {
             for (int i = 0; i < MultipleSelectedObjects.Count; i++)
             {
@@ -435,7 +440,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
                 }
             }
             MultipleSelectedObjects.Clear();
-            SetUsingMultipleSelect(false);
+            if (!CustomTimeSlider.instance.isPlayView)
+                SetUsingMultipleSelect(false);
             currentSelectedObject = null;
             parameterUI.SetActive(false);
             SortRecordedObjectsBySpawnTime();
@@ -530,6 +536,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 #endif
         if (!isEditor)
         {
+            Destroy(stepText);
             for (int i = editorOnlyButtons.Length - 1; i >= 0; i--)
             {
                 Destroy(editorOnlyButtons[i]);
@@ -1112,6 +1119,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         // Format time as MM:SS.DD
         timeText.text = $"{minutes:00}:{seconds:00}.{decimals:00}";
+        if (isEditor)
+            stepText.text = "Step: " + CurrentTimeStep;
         LoadAssets();
         CheckAllObjectsForNewTimeStep();
         StartCoroutine(InvokeTimeAfterDelay());
@@ -1137,11 +1146,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         for (int i = 0; i < RecordedObjects.Count; i++)
         {
-           
+
             // Debug.Log("Checking Objects in list, current pbject: " + RecordedObjects[i].spawnedTimeStep + " unspawnTimestep: " + RecordedObjects[i].unspawnedTimeStep + "Current time step: " + CurrentTimeStep);
             if (RecordedObjects[i].spawnedTimeStep <= CurrentTimeStep && RecordedObjects[i].unspawnedTimeStep > CurrentTimeStep)
             {
-            
+
                 if (!RecordedObjects[i].gameObject.activeInHierarchy)
                     RecordedObjects[i].SetActiveFromList();
             }
@@ -1411,7 +1420,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
-            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, "", poolSizesList, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives, levelData);
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, "", poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives, levelData);
             // Level data added at end to save it directly to scriptable object
 
         }
@@ -1425,7 +1434,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             }
 
 
-            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, path, poolSizesList, finalSpawnStep, levelData.startingStats.startingAmmos, levelData.startingStats.StartingLives);
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, path, poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives);
             Debug.Log("Saved with final spawn step: " + finalSpawnStep);
 
         }
@@ -1644,6 +1653,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             if (CurrentTimeStep != (ushort)roundedTimeStep)
             {
                 CurrentTimeStep = (ushort)roundedTimeStep;
+                if (isEditor)
+                    stepText.text = "Step: " + CurrentTimeStep;
                 CustomTimeSlider.instance.UpdateMainHandlePosition(CurrentTimeStep);
                 CustomTimeSlider.instance.SetMainHandlePosition(CurrentTimeStep);
 
@@ -1672,17 +1683,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             currentSelectedObject.UpdateTimeStep(val);
     }
 
-    public void UpdateMultipleObjectsTime(int change)
-    {
-        for (int i = 0; i < MultipleSelectedObjects.Count; i++)
-        {
-            if (MultipleSelectedObjects[i] != null)
-            {
-                MultipleSelectedObjects[i].UpdateTimeStep(change + spawnStepsPerObject[i], true);
-            }
-        }
 
-    }
     private List<int> spawnStepsPerObject;
     public void SetChangeMultipleObjectSpawnStep(bool pressed)
     {
@@ -1752,7 +1753,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         // Format time as MM:SS.DD
         timeText.text = $"{minutes:00}:{seconds:00}.{decimals:00}";
-
+        if (isEditor)
+            stepText.text = "Step: " + CurrentTimeStep;
         // Rotate clock hands
         minuteHand.eulerAngles = new Vector3(0, 0, -val);
         hourHand.eulerAngles = new Vector3(0, 0, -val / 12);
@@ -1914,6 +1916,21 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             LevelTitleText.color = Color.white;
         }
     }
+
+    #region MultipleObjectSelection
+
+    public void UpdateMultipleObjectsTime(int change)
+    {
+        for (int i = 0; i < MultipleSelectedObjects.Count; i++)
+        {
+            Debug.Log("Chaning object time step");
+            if (MultipleSelectedObjects[i] != null)
+            {
+                MultipleSelectedObjects[i].UpdateTimeStep(change + spawnStepsPerObject[i], true);
+            }
+        }
+
+    }
     public void SetUsingMultipleSelect(bool isOn)
     {
         multipleObjectsSelected = isOn;
@@ -1928,6 +1945,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         }
         else
         {
+            DeleteButtonForMultSelectTime.SetActive(false);
             for (int i = 0; i < MultipleSelectedObjects.Count; i++)
             {
                 if (MultipleSelectedObjects[i] != null)
@@ -1952,6 +1970,38 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         CheckViewParameters?.Invoke();
 
     }
+
+    public void SetMultipleSelected(int min, int max)
+    {
+        foreach (var o in RecordedObjects)
+        {
+            if (o.spawnedTimeStep >= min && o.spawnedTimeStep <= max)
+            {
+                if (!MultipleSelectedObjects.Contains(o))
+                {
+                    MultipleSelectedObjects.Add(o);
+                    o.SetIsSelected(true);
+                }
+            }
+            else
+            {
+                if (MultipleSelectedObjects.Contains(o))
+                {
+                    o.SetIsSelected(false);
+                    MultipleSelectedObjects.Remove(o);
+                }
+            }
+        }
+
+        if (MultipleSelectedObjects.Count > 0 && !DeleteButtonForMultSelectTime.activeInHierarchy)
+            DeleteButtonForMultSelectTime.SetActive(true);
+        else if (MultipleSelectedObjects.Count <= 0 && DeleteButtonForMultSelectTime.activeInHierarchy)
+            DeleteButtonForMultSelectTime.SetActive(false);
+
+    }
+
+    #endregion
+
 
     public void AddFlag()
     {
@@ -2014,6 +2064,9 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
         return levelTime / FrameRateManager.BaseTimeScale;
     }
+
+
+
 
 
 }

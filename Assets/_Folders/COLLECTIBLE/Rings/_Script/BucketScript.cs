@@ -285,6 +285,7 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
         if (isCorrect)
         {
             ready = true;
+            Player.AddRingCompletion(index);
             Player.events.OnCompletedRingSequence?.Invoke(baseTransform);
             DisableColliders();
             // AudioManager.instance.PlayRingSuccessSound();
@@ -397,7 +398,7 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
 
     }
-    
+
     public float TimeAtCreateObject(int index)
     {
         return 0;
@@ -448,7 +449,7 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
     public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)
     {
-       
+
         return new Vector2(currPos.x + (-speed * time), currPos.y);
     }
 

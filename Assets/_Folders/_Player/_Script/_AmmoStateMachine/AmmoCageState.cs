@@ -7,6 +7,8 @@ public class AmmoCageState : AmmoBaseState
         // player.ID.UiEvents.OnShowCage?.Invoke(true);
         // player.ID.canPressEggButton = true;
         player.ID.UiEvents.OnSwitchDisplayedWeapon?.Invoke(-2, 0, 0);
+        player.SetCanSwitchAmmo(false);
+
 
 
 
@@ -21,9 +23,11 @@ public class AmmoCageState : AmmoBaseState
 
     public override void PressButton(PlayerStateManager player, Vector2 startPos)
     {
+        player.SetCanSwitchAmmo(true);
 
         player.ID.UiEvents.OnSwitchWeapon?.Invoke(0, -3);
         player.ID.globalEvents.OnReleaseCage?.Invoke();
+
 
     }
 

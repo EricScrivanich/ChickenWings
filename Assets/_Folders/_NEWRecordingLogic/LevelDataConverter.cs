@@ -8,6 +8,7 @@ public class LevelDataConverter : MonoBehaviour
     private UserCreatedLevels userCreatedLevels;
 
     public LevelContainer Levels;
+    private int maxTempLevelSaves;
 
     public static int currentLevelInstance { get; private set; } = -1;
 
@@ -27,6 +28,7 @@ public class LevelDataConverter : MonoBehaviour
 
     private void Awake()
     {
+
         if (instance != null && instance != this)
         {
             Destroy(this.gameObject);
@@ -49,6 +51,32 @@ public class LevelDataConverter : MonoBehaviour
 #endif
 
 
+    }
+
+    public void DeleteAllJsonSaves()
+    {
+        string path = Application.persistentDataPath;
+
+        if (Directory.Exists(path))
+        {
+            string[] jsonFiles = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+            foreach (string file in jsonFiles)
+            {
+                try
+                {
+                    File.Delete(file);
+                    Debug.Log("Deleted: " + file);
+                }
+                catch (IOException e)
+                {
+                    Debug.LogError("Could not delete file: " + file + "\n" + e.Message);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Persistent data directory does not exist.");
+        }
     }
 
     public LevelData ReturnLevelData(int index = -1)
@@ -74,7 +102,9 @@ public class LevelDataConverter : MonoBehaviour
 
     }
 
-    public void SetCurrentLevelInstance(Vector3 levelNumber)
+
+
+    public void SetCurrentLevelInstance(Vector3Int levelNumber)
     {
         if (levelNumber == Vector3.zero) currentLevelInstance = -1;
         for (int i = 0; i < Levels.levels.Length; i++)
@@ -390,6 +420,8 @@ public class LevelDataConverter : MonoBehaviour
         return l;
     }
 
+
+
     private string GetUserCreatedLevelsFilePath()
     {
         return Path.Combine(Application.persistentDataPath, "UserCreatedLevelNames.json");
@@ -451,608 +483,449 @@ public class LevelDataConverter : MonoBehaviour
         }
     }
 
-
-
-    // public void ConvertDataToArrays(List<RecordableObjectPlacer> obj, LevelData so)
-    // {
-    //     List<short> idList = new List<short>();
-    //     List<ushort> spawnedStepList = new List<ushort>();
-    //     List<Vector2> posList = new List<Vector2>();
-    //     List<float> speedList = new List<float>();
-    //     List<float> scaleList = new List<float>();
-    //     List<float> magList = new List<float>();
-    //     List<float> timeList = new List<float>();
-    //     List<float> delayList = new List<float>();
-    //     List<short> typeList = new List<short>();
-
-    //     for (int i = 0; i < obj.Count; i++)
-    //     {
-    //         var data = obj[i].Data;
-    //         idList.Add(data.ID);
-    //         spawnedStepList.Add(data.spawnedStep);
-    //         posList.Add(data.startPos);
-    //         typeList.Add(data.type);
-
-    //         switch (data.ID)
-    //         {
-    //             case -1:
-    //             case -2:// Ring (Speed, Size, Time, Type)
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 timeList.Add(data.timeInterval);
-
-
-    //                 break;
-    //             case 0:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-
-
-
-
-    //                 break;
-    //             case 1:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-
-
-
-
-    //                 break;
-    //             case 2:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 magList.Add(data.magPercent);
-    //                 delayList.Add(data.delayInterval);
-
-
-
-    //                 break;
-    //             case 3:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 magList.Add(data.magPercent);
-
-
-
-
-    //                 break;
-    //             case 4:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 magList.Add(data.magPercent);
-    //                 delayList.Add(data.delayInterval);
-
-
-
-
-    //                 break;
-    //             case 5:
-    //                 speedList.Add(data.speed);
-
-    //                 break;
-    //             case 6: //Bomber (size, type)
-    //                 scaleList.Add(data.scale);
-
-    //                 break;
-    //             case 7: // Flappy (Scale, Type)
-    //                 scaleList.Add(data.scale);
-
-    //                 break;
-    //             case 8: // Gas Ground (Speed, Delay, Time)
-
-    //                 speedList.Add(data.speed);
-    //                 timeList.Add(data.timeInterval);
-    //                 delayList.Add(data.delayInterval);
-
-
-
-    //                 break;
-
-    //             case 9:
-    //                 timeList.Add(data.timeInterval);
-
-
-
-    //                 break;
-
-    //             case 10: // Balloon (Speed, Mag, Time, Delay)
-    //                 speedList.Add(data.speed);
-    //                 magList.Add(data.magPercent);
-    //                 timeList.Add(data.timeInterval);
-    //                 delayList.Add(data.delayInterval);
-    //                 scaleList.Add(data.scale);
-
-    //                 break;
-    //             case 11: // Windmill (Speed, Size, Delay)                 
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 delayList.Add(data.delayInterval);
-
-
-    //                 break;
-    //             case 12: // Barn (Type)
-
-    //                 break;
-
-
-    //             case 15: // Egg Ammo (Speed, Mag, Delay, Type)
-    //             case 16: // Shotgun Ammo (Speed, Mag, Delay, Type)
-    //                 speedList.Add(data.speed);
-    //                 magList.Add(data.magPercent);
-    //                 delayList.Add(data.delayInterval);
-    //                 timeList.Add(data.timeInterval);
-    //                 scaleList.Add(data.scale);
-
-
-    //                 break;
-
-    //         }
-
-
-    //         so.spawnSteps = new ushort[spawnedStepList.Count];
-    //         so.spawnSteps = spawnedStepList.ToArray();
-    //         so.idList = new short[idList.Count];
-    //         so.idList = idList.ToArray();
-    //         so.posList = new Vector2[posList.Count];
-    //         so.posList = posList.ToArray();
-    //         so.speedList = new float[speedList.Count];
-    //         so.speedList = speedList.ToArray();
-    //         so.scaleList = new float[scaleList.Count];
-    //         so.scaleList = scaleList.ToArray();
-    //         so.magList = new float[magList.Count];
-    //         so.magList = magList.ToArray();
-    //         so.timeList = new float[timeList.Count];
-    //         so.timeList = timeList.ToArray();
-    //         so.delayList = new float[delayList.Count];
-    //         so.delayList = delayList.ToArray();
-    //         so.typeList = new short[typeList.Count];
-    //         so.typeList = typeList.ToArray();
-
-    //     }
-
-    // }
-
-    // public void ConvertDataToJson(List<RecordableObjectPlacer> obj, string title, int[] poolSizes, ushort finalSpawnStep)
-    // {
-    //     string savePath = Path.Combine(GetSaveDirectory(), title + ".json");
-    //     List<short> idList = new List<short>();
-    //     List<ushort> spawnedStepList = new List<ushort>();
-    //     List<Vector2> posList = new List<Vector2>();
-    //     List<float> speedList = new List<float>();
-    //     List<float> scaleList = new List<float>();
-    //     List<float> magList = new List<float>();
-    //     List<float> timeList = new List<float>();
-    //     List<float> delayList = new List<float>();
-    //     List<short> typeList = new List<short>();
-
-    //     for (int i = 0; i < obj.Count; i++)
-    //     {
-    //         var data = obj[i].Data;
-    //         idList.Add(data.ID);
-    //         spawnedStepList.Add(data.spawnedStep);
-    //         posList.Add(data.startPos);
-    //         typeList.Add(data.type);
-
-    //         switch (data.ID)
-    //         {
-    //             case -1:
-    //             case -2:// Ring (Speed, Size, Time, Type)
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 timeList.Add(data.timeInterval);
-
-
-    //                 break;
-    //             case 0:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-
-
-
-
-    //                 break;
-    //             case 1:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-
-
-
-
-    //                 break;
-    //             case 2:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 magList.Add(data.magPercent);
-    //                 delayList.Add(data.delayInterval);
-
-
-
-    //                 break;
-    //             case 3:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 magList.Add(data.magPercent);
-
-
-
-
-    //                 break;
-    //             case 4:
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 magList.Add(data.magPercent);
-    //                 delayList.Add(data.delayInterval);
-
-
-
-
-    //                 break;
-    //             case 5:
-    //                 speedList.Add(data.speed);
-
-    //                 break;
-    //             case 6: //Bomber (size, type)
-    //                 scaleList.Add(data.scale);
-
-    //                 break;
-    //             case 7: // Flappy (Scale, Type)
-    //                 scaleList.Add(data.scale);
-
-    //                 break;
-    //             case 8: // Gas Ground (Speed, Delay, Time)
-
-    //                 speedList.Add(data.speed);
-    //                 timeList.Add(data.timeInterval);
-    //                 delayList.Add(data.delayInterval);
-
-
-    //                 break;
-    //             case 9:
-    //                 timeList.Add(data.timeInterval);
-    //                 break;
-
-    //             case 10: // Balloon (Speed, Mag, Time, Delay)
-    //                 speedList.Add(data.speed);
-    //                 magList.Add(data.magPercent);
-    //                 timeList.Add(data.timeInterval);
-    //                 delayList.Add(data.delayInterval);
-    //                 scaleList.Add(data.scale);
-
-    //                 break;
-    //             case 11: // Windmill (Speed, Size, Delay)                 
-    //                 speedList.Add(data.speed);
-    //                 scaleList.Add(data.scale);
-    //                 delayList.Add(data.delayInterval);
-
-
-    //                 break;
-    //             case 12: // Barn (Type)
-
-    //                 break;
-
-
-    //             case 15: // Egg Ammo (Speed, Mag, Delay, Type)
-    //             case 16: // Shotgun Ammo (Speed, Mag, Delay, Type)
-    //                 speedList.Add(data.speed);
-    //                 magList.Add(data.magPercent);
-    //                 delayList.Add(data.delayInterval);
-    //                 timeList.Add(data.timeInterval);
-    //                 scaleList.Add(data.scale);
-
-
-    //                 break;
-
-    //         }
-
-
-
-
-    //     }
-
-    //     ushort[] poolData = new ushort[poolSizes.Length];
-    //     for (int i = 0; i < poolSizes.Length; i++)
-    //     {
-    //         poolData[i] = (ushort)poolSizes[i];
-    //     }
-
-    //     LevelDataSave save = new LevelDataSave(title, "none", idList.ToArray(), spawnedStepList.ToArray(), finalSpawnStep, posList.ToArray(), speedList.ToArray(), scaleList.ToArray(), magList.ToArray(), timeList.ToArray(), delayList.ToArray(), typeList.ToArray(), poolData);
-    //     string json = JsonUtility.ToJson(save, true);
-    //     File.WriteAllText(savePath, json);
-    //     Debug.Log("Level saved to: " + savePath);
-    // }
-
-
-
-    //short id, Vector2 pos, float speed, float scale, float mag, float time, float delay, short type , ushort ss, ushort us)
-    // public List<RecordedDataStructDynamic> ReturnDynamicData(LevelData data)
-    // {
-
-    //     int speedIndex = 0;
-    //     int scaleIndex = 0;
-    //     int magIndex = 0;
-    //     int timeIndex = 0;
-    //     int delayIndex = 0;
-    //     int typeIndex = 0;
-
-    //     var l = new List<RecordedDataStructDynamic>();
-
-    //     for (int i = 0; i < data.idList.Length; i++)
-    //     {
-    //         switch (data.idList[i])
-    //         {
-    //             case -1:
-    //             case -2: // Ring (Speed, Size, Time, Type)
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                     data.posList[i],
-    //                     data.speedList[speedIndex], data.scaleList[scaleIndex], 0, data.timeList[timeIndex], 0, data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 timeIndex++;
-
-    //                 break;
-    //             case 0:
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], 0, 0, 0, data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 break;
-    //             case 1:
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], 0, 0, 0, data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 break;
-    //             case 2:
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], 0, data.delayList[delayIndex], data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 magIndex++;
-    //                 delayIndex++;
-    //                 break;
-    //             case 3:
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], 0, 0, data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 magIndex++;
-    //                 break;
-    //             case 4:
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], 0, data.delayList[delayIndex], data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 magIndex++;
-    //                 delayIndex++;
-    //                 break;
-    //             case 5:
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                 data.posList[i],
-    //                 data.speedList[speedIndex],
-    //                 0, 0, 0, 0, data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 typeIndex++;
-    //                 break;
-    //             case 6: //Bomber (size, type)
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                 data.posList[i],
-    //                 0, data.scaleList[scaleIndex], 0, 0, 0, data.typeList[i], data.spawnSteps[i], 0));
-    //                 scaleIndex++;
-    //                 break;
-    //             case 7: // Flappy (Scale, Type) 
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                 data.posList[i],
-    //                 0, data.scaleList[scaleIndex], 0, 0, 0, data.typeList[i], data.spawnSteps[i], 0));
-    //                 scaleIndex++;
-    //                 break;
-    //             case 8: // Gas Ground (Speed, Delay, Time)
-
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                                        data.posList[i],
-    //                  data.speedList[speedIndex], 0, 0, data.timeList[timeIndex], data.delayList[delayIndex], data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 timeIndex++;
-    //                 delayIndex++;
-
-    //                 break;
-    //             case 9:
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                                                               data.posList[i],
-    //                                                               0, 0, 0, data.timeList[timeIndex], 0, data.typeList[i], data.spawnSteps[i], 0));
-    //                 timeIndex++;
-    //                 break;
-
-    //             case 10: // Balloon (Speed, Mag, Time, Delay)
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                     data.posList[i],
-    //                     data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], data.timeList[timeIndex], data.delayList[delayIndex], data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 magIndex++;
-    //                 timeIndex++;
-    //                 delayIndex++;
-    //                 scaleIndex++;
-    //                 break;
-    //             case 11: // Windmill (Speed, Size, Delay)
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                     data.posList[i],
-    //                     data.speedList[speedIndex], data.scaleList[scaleIndex], 0, 0, data.delayList[delayIndex], data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 delayIndex++;
-    //                 break;
-    //             case 12: // Barn (Type)
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                     data.posList[i],
-    //                     0, 0, 0, 0, 0, data.typeList[i], data.spawnSteps[i], 0));
-
-    //                 break;
-
-    //             case 15: // Egg Ammo (Speed, Mag, Delay, Type)
-    //             case 16: // Shotgun Ammo (Speed, Mag, Delay, Type)
-    //                 l.Add(new RecordedDataStructDynamic(data.idList[i],
-    //                     data.posList[i],
-    //                     data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], data.timeList[timeIndex], data.delayList[delayIndex], data.typeList[i], data.spawnSteps[i], 0));
-    //                 speedIndex++;
-    //                 magIndex++;
-    //                 delayIndex++;
-    //                 scaleIndex++;
-    //                 timeIndex++;
-
-    //                 break;
-
-
-    //         }
-    //     }
-    //     return l;
-
-
-    // }
-
-    // public RecordedDataStruct[] ReturnLevelData(LevelData data)
-    // {
-
-    //     int speedIndex = 0;
-    //     int scaleIndex = 0;
-    //     int magIndex = 0;
-    //     int timeIndex = 0;
-    //     int delayIndex = 0;
-
-
-    //     var l = new List<RecordedDataStruct>();
-
-    //     for (int i = 0; i < data.idList.Length; i++)
-    //     {
-
-    //         switch (data.idList[i])
-    //         {
-    //             case -1:
-    //             case -2: // Ring (Speed, Size, Time, Type)
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                     data.posList[i],
-    //                     data.speedList[speedIndex], data.scaleList[scaleIndex], 0, data.timeList[timeIndex], 0, data.typeList[i]));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 timeIndex++;
-    //                 break;
-    //             case 0:
-    //                 l.Add(new RecordedDataStruct(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], 0, 0, 0, data.typeList[i]));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 break;
-    //             case 1:
-    //                 l.Add(new RecordedDataStruct(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], 0, 0, 0, data.typeList[i]));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 break;
-    //             case 2:
-    //                 l.Add(new RecordedDataStruct(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], 0, data.delayList[delayIndex], data.typeList[i]));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 magIndex++;
-    //                 delayIndex++;
-    //                 break;
-    //             case 3:
-    //                 l.Add(new RecordedDataStruct(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], 0, 0, data.typeList[i]));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 magIndex++;
-    //                 break;
-    //             case 4:
-    //                 l.Add(new RecordedDataStruct(data.idList[i], data.posList[i], data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], 0, data.delayList[delayIndex], data.typeList[i]));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 magIndex++;
-    //                 delayIndex++;
-    //                 break;
-    //             case 5:
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                 data.posList[i],
-    //                 data.speedList[speedIndex],
-    //                 0, 0, 0, 0, data.typeList[i]));
-    //                 speedIndex++;
-
-    //                 break;
-    //             case 6: //Bomber (size, type)
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                 data.posList[i],
-    //                 0, data.scaleList[scaleIndex], 0, 0, 0, data.typeList[i]));
-    //                 scaleIndex++;
-    //                 break;
-    //             case 7: // Flappy (Scale, Type)
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                 data.posList[i],
-    //                 0, data.scaleList[scaleIndex], 0, 0, 0, data.typeList[i]));
-    //                 scaleIndex++;
-    //                 break;
-    //             case 8: // Gas Ground (Speed, Delay, Time)
-
-
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                                        data.posList[i],
-    //                                        data.speedList[speedIndex], 0, 0, data.timeList[timeIndex], data.delayList[delayIndex], data.typeList[i]));
-    //                 speedIndex++;
-    //                 timeIndex++;
-    //                 delayIndex++;
-
-
-
-
-    //                 break;
-    //             case 9:
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                                                              data.posList[i],
-    //                                                              0, 0, 0, data.timeList[timeIndex], 0, data.typeList[i]));
-    //                 timeIndex++;
-
-    //                 break;
-
-
-    //             case 10: // Balloon (Speed, Mag, Time, Delay)
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                     data.posList[i],
-    //                     data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], data.timeList[timeIndex], data.delayList[delayIndex], data.typeList[i]));
-    //                 speedIndex++;
-    //                 magIndex++;
-    //                 timeIndex++;
-    //                 delayIndex++;
-    //                 scaleIndex++;
-    //                 break;
-    //             case 11: // Windmill (Speed, Size, Delay)
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                     data.posList[i],
-    //                     data.speedList[speedIndex], data.scaleList[scaleIndex], 0, 0, data.delayList[delayIndex], data.typeList[i]));
-    //                 speedIndex++;
-    //                 scaleIndex++;
-    //                 delayIndex++;
-    //                 break;
-    //             case 12: // Barn (Type)
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                     data.posList[i],
-    //                     0, 0, 0, 0, 0, data.typeList[i]));
-
-    //                 break;
-
-
-
-    //             case 15: // Egg Ammo (Speed, Mag, Delay, Type)
-    //             case 16: // Shotgun Ammo (Speed, Mag, Delay, Type)
-    //                 l.Add(new RecordedDataStruct(data.idList[i],
-    //                     data.posList[i],
-    //                     data.speedList[speedIndex], data.scaleList[scaleIndex], data.magList[magIndex], data.timeList[timeIndex], data.delayList[delayIndex], data.typeList[i]));
-    //                 speedIndex++;
-    //                 magIndex++;
-    //                 delayIndex++;
-    //                 scaleIndex++;
-    //                 timeIndex++;
-
-    //                 break;
-
-
-    //         }
-    //     }
-    //     return l.ToArray();
-
-    // }
-
-    public static void CreateLevelDataFile(List<RecordedDataStruct> data, string levelName, string worldAndLevelNumber = null)
+    #region Temporary CheckPoint Data
+    public string GetTempLevelSaveDirectory()
     {
+        string directory = Path.Combine(Application.persistentDataPath, "LevelCheckPointSaves");
+
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+            Debug.Log("Created save directory: " + directory);
+        }
+
+        return directory;
+    }
+
+
+    public void RemoveTemporaryCheckPointData()
+    {
+        string savePath = Path.Combine(GetTempLevelSaveDirectory(), ".json");
+        if (File.Exists(savePath))
+        {
+            File.Delete(savePath);
+            Debug.Log("Deleted temporary checkpoint data file: " + savePath);
+        }
+        else
+        {
+            Debug.LogWarning("Temporary checkpoint data file does not exist: " + savePath);
+        }
+    }
+
+    public void OverwriteCheckpointDataForNewLevel(Vector3Int levelAndWorldNumber, int levelDifficulty)
+    {
+        string savePath = Path.Combine(GetTempLevelSaveDirectory(), ".json");
+        TemporaryAllLevelCheckPointData save = new TemporaryAllLevelCheckPointData();
+        save.LevelAndWorldNumber = levelAndWorldNumber;
+        save.LevelDifficulty = levelDifficulty;
+        string json = JsonUtility.ToJson(save, true);
+        File.WriteAllText(savePath, json);
+    }
+
+
+    public void OverwriteCheckPoint(short checkPointToLoad)
+    {
+        string savePath = Path.Combine(GetTempLevelSaveDirectory(), ".json");
+        string currentSave = File.ReadAllText(savePath);
+        var save = JsonUtility.FromJson<TemporaryAllLevelCheckPointData>(currentSave);
+        save = save.RemoveCheckPoints(checkPointToLoad);
+        string json = JsonUtility.ToJson(save, true);
+        File.WriteAllText(savePath, json);
 
     }
+
+    public bool CheckIfLevelOverwrite(Vector3Int levelAndWorldNumber, int levelDifficulty)
+    {
+        string savePath = Path.Combine(GetTempLevelSaveDirectory(), ".json");
+        if (!File.Exists(savePath))
+        {
+            Debug.LogError("Temporary checkpoint data file does not exist: " + savePath);
+            return false; // No save file exists, so no overwrite
+        }
+        string currentSave = File.ReadAllText(savePath);
+
+
+
+        var save = JsonUtility.FromJson<TemporaryAllLevelCheckPointData>(currentSave);
+        if (save == null)
+        {
+            Debug.LogError("Failed to deserialize TemporaryAllLevelCheckPointData from: " + savePath);
+            return false;
+        }
+        return !save.CheckIfSameLevel(levelAndWorldNumber, levelDifficulty);
+    }
+    public bool CheckIfCheckPointOverwrite(short checkPointToLoad)
+    {
+        string savePath = Path.Combine(GetTempLevelSaveDirectory(), ".json");
+        if (!File.Exists(savePath))
+        {
+            Debug.LogWarning("Temporary checkpoint data file does not exist: " + savePath);
+            return false; // No save file exists, so no overwrite
+        }
+        string currentSave = File.ReadAllText(savePath);
+        var save = JsonUtility.FromJson<TemporaryAllLevelCheckPointData>(currentSave);
+        if (save == null) return false;
+        return save.CheckIfCurrentCheckPoint(checkPointToLoad);
+    }
+
+
+
+    public TemporaryAllLevelCheckPointData ReturnAllCheckPointDataForLevel()
+    {
+        string savePath = Path.Combine(GetTempLevelSaveDirectory(), ".json");
+        if (!File.Exists(savePath))
+        {
+
+            return null; // No save file exists, so no overwrite
+        }
+        string currentSave = File.ReadAllText(savePath);
+
+        var save = JsonUtility.FromJson<TemporaryAllLevelCheckPointData>(currentSave);
+        if (save == null) return null;
+        else return save;
+
+        // if (save.CheckIfSameLevel(lvlID, levelDifficulty))
+        // {
+
+        //     return save;
+        // }
+        // else
+        // {
+
+        //     return null;
+        // }
+
+
+    }
+
+
+    private TemporaryAllLevelCheckPointData currentAllCheckPointData;
+    private bool hasAddedCheckPointData = false;
+    public TemporaryLevelCheckPointData ReturnCheckPointDataForLevel()
+    {
+        string savePath = Path.Combine(GetTempLevelSaveDirectory(), ".json");
+        if (!File.Exists(savePath))
+        {
+            currentAllCheckPointData = new TemporaryAllLevelCheckPointData();
+            return null; // No save file exists, so no overwrite
+        }
+        string currentSave = File.ReadAllText(savePath);
+        var save = JsonUtility.FromJson<TemporaryAllLevelCheckPointData>(currentSave);
+        if (save == null)
+        {
+            currentAllCheckPointData = new TemporaryAllLevelCheckPointData();
+            return null;
+        }
+
+        else
+        {
+            currentAllCheckPointData = save;
+            return save.ReturnCheckPointData(0, true);
+        }
+
+
+
+
+
+
+
+    }
+
+    public void SaveCheckPointDataToJson()
+    {
+        if (currentAllCheckPointData == null || !hasAddedCheckPointData)
+        {
+            Debug.LogWarning("No checkpoint data to save.");
+            currentAllCheckPointData = null;
+            return;
+        }
+
+        Debug.LogError("Saving Checkpoint Data to JSON with length: " + currentAllCheckPointData.LevelCheckPointData.Length);
+        hasAddedCheckPointData = false;
+
+        string savePath = Path.Combine(GetTempLevelSaveDirectory(), ".json");
+
+
+
+        string json = JsonUtility.ToJson(currentAllCheckPointData, true);
+        File.WriteAllText(savePath, json);
+        currentAllCheckPointData = null;
+    }
+
+
+    public void SaveTemporaryCheckPointData(LevelChallenges data)
+    {
+        if (data != null && currentAllCheckPointData != null)
+        {
+            hasAddedCheckPointData = true;
+            Debug.LogError("Adding Checkpoint Data: " + data.CurrentCheckPoint);
+
+            currentAllCheckPointData = currentAllCheckPointData.AddCheckPoint(data);
+        }
+
+
+    }
+    #endregion
+
+
+
+
+    #region Permanent Level Data
+    private SavedLevelDataByWorld currentLoadedSavedLevelDataByWorld;
+    private LevelSavedData currentLoadedSavedLevelData;
+
+    public string GetPermanentLevelSaveDirectory(int levelWorld)
+    {
+        string directory = Path.Combine(Application.persistentDataPath, "PermanentLevelData_" + "World_" + levelWorld.ToString());
+
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+            Debug.Log("Created save directory: " + directory);
+        }
+
+
+        return directory;
+    }
+
+    public void LoadLevelSavedData(LevelData data)
+    {
+        for (int i = 0; i < currentLoadedSavedLevelDataByWorld.levels.Length; i++)
+        {
+            if (currentLoadedSavedLevelDataByWorld.levels[i].LevelName == data.LevelName && currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.x == data.levelWorldAndNumber.y && currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.y == data.levelWorldAndNumber.z)
+            {
+
+                currentLoadedSavedLevelData = currentLoadedSavedLevelDataByWorld.levels[i];
+                if (currentLoadedSavedLevelData.ChallengeCompletion.Length != data.GetLevelChallenges(false, null).NumberOfChallenges)
+                {
+                    List<bool> challengeCompletion = new List<bool>();
+                    var c = data.GetLevelChallenges(false, null);
+
+                    for (int j = 0; j < c.NumberOfChallenges; j++)
+                    {
+                        if (currentLoadedSavedLevelData.ChallengeCompletion.Length > j && currentLoadedSavedLevelData.ChallengeCompletion[j])
+                        {
+                            challengeCompletion.Add(true);
+                        }
+                        else
+                        {
+                            challengeCompletion.Add(false);
+                        }
+                    }
+                    currentLoadedSavedLevelData.ChallengeCompletion = challengeCompletion.ToArray();
+
+
+                }
+                return;
+            }
+
+        }
+        Debug.LogError("No saved level data found to load for: " + data.LevelName + " in world: " + data.levelWorldAndNumber.x);
+
+    }
+    public LevelSavedData ReturnLevelSavedData()
+    {
+        if (currentLoadedSavedLevelData == null)
+        {
+            Debug.LogError("No current loaded saved level data.");
+            return null;
+        }
+        return currentLoadedSavedLevelData;
+    }
+
+    public void SaveLevelDataForLevelComplete()
+    {
+        var data = ReturnLevelData();
+        if (data == null)
+        {
+            Debug.LogError("No level data provided to save for level complete.");
+            return;
+        }
+        var challenges = data.GetLevelChallenges(false, null);
+        if (challenges == null || currentLoadedSavedLevelData == null)
+        {
+            Debug.LogError("No challenges or current loaded saved level data to save for level complete.");
+            return;
+        }
+
+        if (challenges.LevelDifficulty == 0)
+        {
+            currentLoadedSavedLevelData.CompletedLevelEasy = true;
+            currentLoadedSavedLevelData.FurthestCompletionEasy = data.finalSpawnStep;
+
+        }
+        else
+        {
+            Debug.Log("Saving level complete for normal difficulty: " + data.LevelName);
+            currentLoadedSavedLevelData.CompletedLevel = true;
+            currentLoadedSavedLevelData.FurthestCompletion = data.finalSpawnStep;
+            List<bool> challengeCompletion = new List<bool>();
+
+            for (int i = 0; i < challenges.NumberOfChallenges; i++)
+            {
+                if (currentLoadedSavedLevelData.ChallengeCompletion.Length > i && currentLoadedSavedLevelData.ChallengeCompletion[i])
+                {
+                    challengeCompletion.Add(true);
+                }
+                else if (challenges.ReturnChallengeCompletion(i, true) > 0)
+                {
+                    challengeCompletion.Add(true);
+                }
+                else challengeCompletion.Add(false);
+            }
+
+            currentLoadedSavedLevelData.ChallengeCompletion = challengeCompletion.ToArray();
+
+            for (int i = 0; i < currentLoadedSavedLevelData.ChallengeCompletion.Length; i++)
+            {
+                if (currentLoadedSavedLevelData.ChallengeCompletion[i])
+                {
+                    Debug.Log("Challenge " + i + " completed.");
+                }
+                else
+                {
+                    Debug.Log("Challenge " + i + " not completed.");
+                }
+            }
+
+        }
+
+        SavePermanentLevelData();
+
+
+
+    }
+
+    public void SavePermanentLevelData()
+    {
+        string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
+        string savePath = Path.Combine(GetPermanentLevelSaveDirectory(currentLoadedSavedLevelDataByWorld.LevelWorld), ".json");
+        File.WriteAllText(savePath, json);
+        Debug.Log("Saved level data to: " + savePath);
+    }
+    public void SaveLevelDataForDeath(int difficulty, ushort step)
+    {
+        if (currentLoadedSavedLevelData == null)
+        {
+            Debug.LogError("No current loaded saved level data to save for death.");
+            return;
+        }
+        bool overwrite = false;
+
+
+        if (difficulty == 1 && !currentLoadedSavedLevelData.CompletedLevel && step > currentLoadedSavedLevelData.FurthestCompletion)
+        {
+            currentLoadedSavedLevelData.FurthestCompletion = step;
+            Debug.Log("Saving furthest completion for normal difficulty: " + step);
+            overwrite = true;
+
+        }
+        else if (difficulty == 0 && !currentLoadedSavedLevelData.CompletedLevelEasy && step > currentLoadedSavedLevelData.FurthestCompletionEasy)
+        {
+
+            currentLoadedSavedLevelData.FurthestCompletionEasy = step;
+
+            Debug.Log("Saving furthest completion for easy difficulty: " + step);
+            overwrite = true;
+
+
+        }
+
+        if (overwrite)
+        {
+            SavePermanentLevelData();
+        }
+
+
+    }
+
+    public LevelSavedData ReturnAndLoadWorldLevelData(LevelData data)
+    {
+        if (currentLoadedSavedLevelDataByWorld == null)
+        {
+            string path = Path.Combine(GetPermanentLevelSaveDirectory(data.levelWorldAndNumber.x), ".json");
+            if (!File.Exists(path))
+            {
+                Debug.Log("No saved data found for world: " + data.levelWorldAndNumber.x + ". Creating new save file." + " save path: " + path);
+
+                LevelSavedData save = new LevelSavedData(data);
+
+                currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
+                currentLoadedSavedLevelDataByWorld.AddLevel(save);
+                string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
+                File.WriteAllText(path, json);
+
+
+            }
+            else
+            {
+                string json = File.ReadAllText(path);
+                currentLoadedSavedLevelDataByWorld = JsonUtility.FromJson<SavedLevelDataByWorld>(json);
+
+
+            }
+        }
+
+        else if (currentLoadedSavedLevelDataByWorld != null && currentLoadedSavedLevelDataByWorld.LevelWorld != (short)data.levelWorldAndNumber.x)
+        {
+            string path = Path.Combine(GetPermanentLevelSaveDirectory(data.levelWorldAndNumber.x), ".json");
+            if (!File.Exists(path))
+            {
+                Debug.Log("No saved data found for world Seocnd: " + data.levelWorldAndNumber.x + ". Creating new save file.");
+
+                LevelSavedData save = new LevelSavedData(data);
+
+                currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
+                currentLoadedSavedLevelDataByWorld.AddLevel(save);
+                string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
+                File.WriteAllText(path, json);
+
+
+            }
+            else
+            {
+                string json = File.ReadAllText(path);
+                currentLoadedSavedLevelDataByWorld = JsonUtility.FromJson<SavedLevelDataByWorld>(json);
+
+
+            }
+        }
+
+        if (currentLoadedSavedLevelDataByWorld.levels != null && currentLoadedSavedLevelDataByWorld.levels.Length > 0)
+        {
+            Debug.Log("Checking for existing level data for: " + data.LevelName + " in world: " + data.levelWorldAndNumber.x);
+            for (int i = 0; i < currentLoadedSavedLevelDataByWorld.levels.Length; i++)
+            {
+                Debug.Log("Checking level: " + currentLoadedSavedLevelDataByWorld.levels[i].LevelName + " in world: " + currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.x + "-" + currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.y);
+                // if (currentLoadedSavedLevelDataByWorld.levels[i].LevelName == data.LevelName && currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.x == data.levelWorldAndNumber.y && currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.y == data.levelWorldAndNumber.z)
+                if (currentLoadedSavedLevelDataByWorld.levels[i].LevelName == data.LevelName)
+                {
+                    Debug.Log("FOund correct level, level number: " + currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.x + data.levelWorldAndNumber.y + "-" + currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.y + data.levelWorldAndNumber.z);
+                    Debug.Log("Found existing level data for: " + data.LevelName);
+                    return currentLoadedSavedLevelDataByWorld.levels[i];
+                }
+
+
+            }
+        }
+        else Debug.Log("No existing level data found for: " + data.LevelName + " in world: " + data.levelWorldAndNumber.x);
+
+        string path2 = Path.Combine(GetPermanentLevelSaveDirectory(currentLoadedSavedLevelDataByWorld.LevelWorld), ".json");
+        LevelSavedData newLevel = new LevelSavedData(data);
+        Debug.Log("No saved data found for world third: " + data.levelWorldAndNumber.x + ". Creating new save file.");
+
+        currentLoadedSavedLevelDataByWorld.AddLevel(newLevel);
+        string json2 = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
+        File.WriteAllText(path2, json2);
+        return newLevel;
+
+
+
+    }
+
+
+
+    #endregion
+
 
 }

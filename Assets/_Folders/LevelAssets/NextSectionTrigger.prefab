@@ -347,7 +347,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ded3d200f9b6845fba7310d745a67789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tutorialData: {fileID: 0}
   setCheckPoint: 0
+  blobBurstPrefab: {fileID: 6107764337262287309, guid: 0b3b3dcecc15b4c81848325af74f13a7, type: 3}
   continueLockedInputs: 0
   activateSection: 0
   useContactPoint: 0
@@ -356,7 +358,7 @@ MonoBehaviour:
   triggerEventOnEnterSuction: {fileID: 0}
   WaitForAlowedExit: 0
   startSpawningAfterComplete: 0
-  isSuction: 0
+  isSuction: 1
   tweenPlayerBool: 1
   setPlayerPositionTransform: {fileID: 5098683284568248982}
   doSpecialRingFadeTransform: {fileID: 0}
@@ -467,7 +469,7 @@ Transform:
   m_GameObject: {fileID: 7770496979353785378}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.24, y: -0.34, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -547,7 +549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6517498135851573384, guid: 8b3460147548542bc9a6afc463239bf4, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7228250633311429734, guid: 8b3460147548542bc9a6afc463239bf4, type: 3}
       propertyPath: m_LocalScale.x
@@ -650,6 +652,7 @@ MonoBehaviour:
   endCircleScale: 0.8
   circleHighlight: {fileID: 211996162774810238}
   rotateSpeed: 0
+  parentScript: {fileID: 0}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   duration: 1.7
   clockwise: 0
