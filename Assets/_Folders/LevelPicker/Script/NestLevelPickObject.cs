@@ -6,6 +6,9 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     [SerializeField] private int type;
     [SerializeField] private int pathIndex;
     [SerializeField] private int order;
+    // [SerializeField] private Animator pigAnim;
+    [SerializeField] private GameObject sleepingPig;
+    [SerializeField] private GameObject flappingPig;
 
 
 
@@ -91,6 +94,32 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         // For example, change color or scale to indicate selection
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public void SetLastSelectable(Vector3Int num)
+    {
+        if (WorldNumber.x > num.x)
+        {
+            gameObject.SetActive(false);
+            return;
 
+        }
+
+        if (WorldNumber.y == num.y)
+        {
+            sleepingPig.SetActive(false);
+            flappingPig.SetActive(true);
+        }
+        else if (WorldNumber.y < num.y)
+        {
+            sleepingPig.SetActive(false);
+            flappingPig.SetActive(false);
+        }
+        else
+        {
+            sleepingPig.SetActive(true);
+            flappingPig.SetActive(false);
+        }
+
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    }
 }

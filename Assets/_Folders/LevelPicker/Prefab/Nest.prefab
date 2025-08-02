@@ -650,9 +650,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 775fdf446dcb24bd2b34a2592ed8d2f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <WorldNumber>k__BackingField: {x: 0, y: 0, z: 0}
   type: 0
   pathIndex: 1
   order: 0
+  sleepingPig: {fileID: 8718582612936097752}
+  flappingPig: {fileID: 3761331652074380635}
   linePosition: {fileID: 6940338462204052509}
   level_World_Number_Special: {x: 0, y: 0, z: 0}
   nestBlur: {fileID: 4011229337273106723}
@@ -844,6 +847,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2741680792689908139, guid: 77fb318e521c04750b7e8ad5ad8043af, type: 3}
   m_PrefabInstance: {fileID: 4702608491174541387}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8718582612936097752 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4160663257927010195, guid: 77fb318e521c04750b7e8ad5ad8043af, type: 3}
+  m_PrefabInstance: {fileID: 4702608491174541387}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8068441606990088491
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -989,6 +997,11 @@ PrefabInstance:
       addedObject: {fileID: 4518218740208467970}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 63efc3da13bc5416a884fecd93adceba, type: 3}
+--- !u!1 &3761331652074380635 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6614155976292684912, guid: 63efc3da13bc5416a884fecd93adceba, type: 3}
+  m_PrefabInstance: {fileID: 8068441606990088491}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4042778052864583170 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6332634868968419113, guid: 63efc3da13bc5416a884fecd93adceba, type: 3}

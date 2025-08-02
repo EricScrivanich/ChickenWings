@@ -7153,6 +7153,11 @@ Transform:
   - {fileID: 208758676}
   m_Father: {fileID: 21686735}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &366029938 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7255895193198297098, guid: 73799f85783094c1097a39c1b0751c67, type: 3}
+  m_PrefabInstance: {fileID: 1656493021}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &368618412
 GameObject:
   m_ObjectHideFlags: 0
@@ -16478,6 +16483,16 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 714060835}
   m_CullTransparentMesh: 1
+--- !u!1 &716085792 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7255895193198297098, guid: 73799f85783094c1097a39c1b0751c67, type: 3}
+  m_PrefabInstance: {fileID: 4433436162689069992}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &720687427 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7255895193198297098, guid: 73799f85783094c1097a39c1b0751c67, type: 3}
+  m_PrefabInstance: {fileID: 1724256478}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &723890054
 GameObject:
   m_ObjectHideFlags: 0
@@ -17064,6 +17079,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 754301897}
   m_CullTransparentMesh: 1
+--- !u!1 &759181876 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7255895193198297098, guid: 73799f85783094c1097a39c1b0751c67, type: 3}
+  m_PrefabInstance: {fileID: 352574377}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &759349866
 GameObject:
   m_ObjectHideFlags: 0
@@ -22056,6 +22076,12 @@ MonoBehaviour:
   playerPathFollower: {fileID: 1041610371}
   levelUiPopupPrefab: {fileID: 1811143389}
   levelPopupParent: {fileID: 601894996}
+  levelPickerPathObjects:
+  - {fileID: 720687427}
+  - {fileID: 759181876}
+  - {fileID: 366029938}
+  - {fileID: 716085792}
+  numberToCheck: {x: 1, y: 2, z: 0}
   tweenScaleBack: 0.3
   tweenDurBack: 1
   tweenScaleFront: 3

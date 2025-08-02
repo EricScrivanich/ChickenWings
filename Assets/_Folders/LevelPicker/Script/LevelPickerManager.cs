@@ -13,6 +13,9 @@ public class LevelPickerManager : MonoBehaviour
     private CanvasGroup[] levelPopups;
     [SerializeField] private Transform levelPopupParent;
 
+    [SerializeField] private GameObject[] levelPickerPathObjects;
+    [SerializeField] private Vector3Int numberToCheck;
+
     [SerializeField] private float tweenScaleBack;
     [SerializeField] private float tweenDurBack;
     [SerializeField] private float tweenScaleFront;
@@ -112,6 +115,14 @@ public class LevelPickerManager : MonoBehaviour
         //     };
 
 
+    }
+
+    private void Start()
+    {
+        for (int i = 0; i < levelPickerPathObjects.Length; i++)
+        {
+            levelPickerPathObjects[i].GetComponent<ILevelPickerPathObject>().SetLastSelectable(numberToCheck);
+        }
     }
     private int currentPlayerPath;
     private ILevelPickerPathObject currentTarget;
