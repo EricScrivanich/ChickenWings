@@ -555,7 +555,7 @@ public class PlayerStateManager : MonoBehaviour
         else
             currentState = StartingState;
 
-        ID.events.EnableButtons(true);
+        // ID.events.EnableButtons(true);
 
         if (!isLevelTester)
             currentState.EnterState(this);
@@ -1394,8 +1394,10 @@ public class PlayerStateManager : MonoBehaviour
 
     private void HandlePressWeaponButton(Vector2 pos)
     {
+
         if (!ammoButtonPressed)
         {
+
             centerTouchStartPos = pos;
             currentWeaponState.PressButton(this, pos);
             ammoButtonPressed = true;

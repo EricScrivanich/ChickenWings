@@ -304,8 +304,8 @@ public class ValueEditorManager : MonoBehaviour
     {
         valueSliderHorizontal.gameObject.SetActive(show);
     }
-
-    public void UpdateSpawnTime(ushort time)
+    private bool clippingTime = false;
+    public void UpdateSpawnTime(ushort time, bool clipping = false)
     {
         if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
         {
@@ -314,6 +314,17 @@ public class ValueEditorManager : MonoBehaviour
         }
         else
             timeText.text = "Spawn Time: " + LevelRecordManager.instance.FormatTimerText(time);
+
+        if (clipping && !clippingTime)
+        {
+            clippingTime = true;
+            timeText.color = Color.red;
+        }
+        else if (!clipping && clippingTime)
+        {
+            clippingTime = false;
+            timeText.color = Color.white;
+        }
     }
 
     public void OnPressEditor(bool pressed)

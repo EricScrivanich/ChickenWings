@@ -101,6 +101,20 @@ public class LevelDataConverter : MonoBehaviour
         }
 
     }
+    public LevelData ReturnLevelDataByNum(Vector3Int levelNumber)
+    {
+        if (levelNumber == Vector3.zero) return null;
+        for (int i = 0; i < Levels.levels.Length; i++)
+        {
+            if (Levels.levels[i].levelWorldAndNumber == levelNumber)
+            {
+                Debug.Log("Returning Level Data for: " + levelNumber);
+                return Levels.levels[i];
+            }
+        }
+        Debug.LogWarning("No level found for: " + levelNumber);
+        return null;
+    }
 
 
 
@@ -676,6 +690,7 @@ public class LevelDataConverter : MonoBehaviour
 
     public string GetPermanentLevelSaveDirectory(int levelWorld)
     {
+
         string directory = Path.Combine(Application.persistentDataPath, "PermanentLevelData_" + "World_" + levelWorld.ToString());
 
         if (!Directory.Exists(directory))
@@ -839,8 +854,33 @@ public class LevelDataConverter : MonoBehaviour
 
     }
 
-    public LevelSavedData ReturnAndLoadWorldLevelData(LevelData data)
+    public LevelSavedData ReturnAndLoadWorldLevelData(LevelData data, int world = 0)
     {
+        if (world > 0)
+        {
+            string path = Path.Combine(GetPermanentLevelSaveDirectory(world), ".json");
+            if (!File.Exists(path))
+            {
+
+
+
+
+                currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
+
+                string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
+                File.WriteAllText(path, json);
+
+
+            }
+            else
+            {
+                string json = File.ReadAllText(path);
+                currentLoadedSavedLevelDataByWorld = JsonUtility.FromJson<SavedLevelDataByWorld>(json);
+
+
+            }
+            return null;
+        }
         if (currentLoadedSavedLevelDataByWorld == null)
         {
             string path = Path.Combine(GetPermanentLevelSaveDirectory(data.levelWorldAndNumber.x), ".json");
@@ -918,6 +958,47 @@ public class LevelDataConverter : MonoBehaviour
         string json2 = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
         File.WriteAllText(path2, json2);
         return newLevel;
+
+
+
+    }
+
+    public bool[] ReturnCompletedChallengesForLevel(Vector3Int num)
+    {
+        if (currentLoadedSavedLevelDataByWorld == null || currentLoadedSavedLevelDataByWorld.levels == null || currentLoadedSavedLevelDataByWorld.levels.Length == 0)
+        {
+            Debug.LogError("No saved level data found for world: " + num.x);
+            return null;
+        }
+        if (num.x != currentLoadedSavedLevelDataByWorld.LevelWorld)
+        {
+
+            return null;
+        }
+
+        for (int i = 0; i < currentLoadedSavedLevelDataByWorld.levels.Length; i++)
+        {
+            if (currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.x == num.y && currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.y == num.z)
+            {
+                Debug.Log("Found saved level data for: " + currentLoadedSavedLevelDataByWorld.levels[i].LevelName);
+                return currentLoadedSavedLevelDataByWorld.levels[i].ChallengeCompletion;
+            }
+        }
+
+        var d = ReturnLevelDataByNum(num);
+
+        if (num != null)
+        {
+            var save = new LevelSavedData(d);
+            currentLoadedSavedLevelDataByWorld.AddLevel(save);
+            SavePermanentLevelData();
+            return save.ChallengeCompletion;
+
+        }
+        return null;
+
+
+
 
 
 

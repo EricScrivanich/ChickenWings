@@ -159,6 +159,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
+
+
     public static void ResetStaticParameters()
     {
         ShowLines = true;
@@ -176,7 +178,6 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
 
 
-
     public void SetMinAndMax(int min, int max)
     {
         currentSavedMinIndex = min;
@@ -186,6 +187,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static Action CheckViewParameters;
     public void InitializeViewParameters()
     {
+        CustomTimeSlider.instance.SetPixelDragFactor();
         if (ShowTime)
         {
             CustomTimeSlider.instance.TimeEditorView();
@@ -207,7 +209,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         ShowParameters = showParamsTemp;
         ShowTime = false;
         CurrentTimeStep = currentTimeStepTemp;
-
+        if (currentSelectedObject != null)
+        {
+            currentSelectedObject.SetIsSelected(false);
+            currentSelectedObject = null;
+        }
 
 
     }
@@ -251,6 +257,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
 
             isPlayModeView = true;
+            SetUsingMultipleSelect(false);
             PressTimeBarWhilePlaying();
             PlayTimeObject.SetActive(true);
             CustomTimeSlider.instance.PlayView();
@@ -518,8 +525,12 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             Destroy(this);
         }
         Time.timeScale = 0;
+        if (currentSelectedObject != null)
+        {
+            currentSelectedObject.SetIsSelected(false);
+            currentSelectedObject = null;
+        }
 
-        currentSelectedObject = null;
 
         ShowFolders = true;
         ShowTime = false;
@@ -591,7 +602,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
     }
-
+    private int pressedStep;
     private void HandleClickObject(Vector2 pos)
     {
         if (ignoreAllClicks) return;
@@ -609,6 +620,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
                 currentSelectedPostionerObject.Press(arrowPressedType);
 
                 lastObjPos = currentSelectedPostionerObject.transform.position;
+
                 screenClicked = true;
                 objectClicked = true;
                 return;
@@ -665,10 +677,12 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
             currentSelectedObject = obj;
 
+
             obj.SetSelectedObject();
             obj.HandleClick(true, arrowPressedType);
             ReturnRoundedPosition(obj.transform.position);
             lastObjPos = obj.transform.position;
+            Debug.Log("Clicked on object: " + obj.name + " at position: " + lastObjPos);
 
             objectClicked = true;
             OnShowObjectTime?.Invoke(currentSelectedObject.spawnedTimeStep);
@@ -788,6 +802,11 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
                 holdingObject = true;
                 FadeEditorCanvasGroup(true);
             }
+            if (resetMovePostion)
+            {
+                lastClickedPos = pos;
+                resetMovePostion = false;
+            }
             Vector2 moveAmount = lastClickedPos - pos;
 
             if (multipleObjectsSelected)
@@ -844,6 +863,12 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             newX = Mathf.Clamp(newX, -30, 30);
             Camera.main.transform.position = new Vector3(newX, Camera.main.transform.position.y, Camera.main.transform.position.z);
         }
+    }
+    private bool resetMovePostion = false;
+    public void ResetMovePosition(Vector2 newPosition)
+    {
+        lastObjPos = newPosition;
+        resetMovePostion = true;
     }
 
     public PositionerObject GetPositionerObjectFromTouchPosition(Vector2 worldPoint)
@@ -1072,12 +1097,14 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
 
     #endregion
-    public Vector2 ReturnRoundedPosition(Vector2 pos, bool unkown = false)
+    public Vector2 ReturnRoundedPosition(Vector2 pos, bool unkown = false, bool grounded = false)
     {
         float x = Mathf.Round(pos.x / 0.2f) * 0.2f;
         // Keep two decimal places
 
         float y = Mathf.Round(pos.y / 0.2f) * 0.2f;
+
+        if (grounded) y = pos.y;
         if (unkown)
         {
             posXText.text = "?";
@@ -1091,6 +1118,21 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         return new Vector2(x, y);
     }
+
+    // private void SetPositionText(Vector2 pos, bool unkown = false)
+    // {
+    //     if (unkown)
+    //     {
+    //         posXText.text = "?";
+    //         posYText.text = "?";
+    //     }
+    //     else
+    //     {
+    //         posXText.text = pos.x.ToString("0.0");
+    //         posYText.text = pos.y.ToString("0.0");
+    //     }
+
+    // }
     private int typeOvveride = -1;
     public void SetObjectToBeAdded(GameObject obj, int overrideType)
     {
@@ -1102,6 +1144,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
     void Start()
     {
+        Debug.Log("Left View and Right view boundaries: " + BoundariesManager.leftViewBoundary + " " + BoundariesManager.rightViewBoundary);
         AudioManager.instance.LoadVolume(1, 0);
         HandleReleaseClick();
 
@@ -1238,13 +1281,15 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         LevelTitleText.text = addedTitleText + levelData.LevelName;
         var data = LevelDataConverter.instance.ReturnDynamicData(levelData);
+
+        // logic to set min and max view
         finalSpawnStep = levelData.finalSpawnStep;
         if (finalSpawnStep < 50) finalSpawnStep = 50;
-        if (currentSavedMaxIndex > finalSpawnStep)
-        {
-            currentSavedMaxIndex = finalSpawnStep;
-        }
-
+        // if (currentSavedMaxIndex > finalSpawnStep)
+        // {
+        //     currentSavedMaxIndex = finalSpawnStep;
+        // }
+        currentSavedMaxIndex = finalSpawnStep;
 
         CustomTimeSlider.instance.SetVariables(CurrentTimeStep, currentSavedMinIndex, currentSavedMaxIndex);
         CustomTimeSlider.instance.SetMaxTime(finalSpawnStep);
@@ -1955,7 +2000,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             }
             MultipleSelectedObjects.Clear();
             MultipleSelectedObjects = new List<RecordableObjectPlacer>();
-            currentSelectedObject = null;
+            if (currentSelectedObject != null)
+            {
+                currentSelectedObject.SetIsSelected(false);
+                currentSelectedObject = null;
+            }
+
+
             multipleSelectedIDs = false;
             parameterUI.SetActive(false);
 

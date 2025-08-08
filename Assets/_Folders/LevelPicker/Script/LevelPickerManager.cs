@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 using PathCreation;
 using DG.Tweening;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 public class LevelPickerManager : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class LevelPickerManager : MonoBehaviour
     [SerializeField] private Transform levelPopupParent;
 
     [SerializeField] private GameObject[] levelPickerPathObjects;
+    private ILevelPickerPathObject[] levelPickerObjs;
     [SerializeField] private Vector3Int numberToCheck;
 
     [SerializeField] private float tweenScaleBack;
@@ -119,10 +122,37 @@ public class LevelPickerManager : MonoBehaviour
 
     private void Start()
     {
+        LevelDataConverter.instance.ReturnAndLoadWorldLevelData(null, numberToCheck.x);
+
+        List<ILevelPickerPathObject> pathObjects = new List<ILevelPickerPathObject>();
+        Vector3Int lastLevel = ReturnLastLevel();
+
         for (int i = 0; i < levelPickerPathObjects.Length; i++)
         {
-            levelPickerPathObjects[i].GetComponent<ILevelPickerPathObject>().SetLastSelectable(numberToCheck);
+            var l = levelPickerPathObjects[i].GetComponent<ILevelPickerPathObject>();
+            l.SetLastSelectable(numberToCheck);
+            if (l.ReturnWorldNumber() == lastLevel)
+            {
+                Debug.Log("Last level found: " + lastLevel);
+                Vector3Int data = l.Return_Type_PathIndex_Order();
+
+                float d = paths[data.y].path.GetClosestDistanceAlongPath(l.ReturnLinePostion());
+                playerPathFollower.SetInitialPostionAndLayer(paths[data.y], d);
+            }
+
+            var nums = l.ReturnWorldNumber();
+            if (nums.y < numberToCheck.y)
+            {
+                pathObjects.Add(l);
+            }
+
+
+
+
         }
+        levelPickerPathObjects = null;
+        levelPickerObjs = pathObjects.ToArray();
+        StartCoroutine(HandleStarTweens());
     }
     private int currentPlayerPath;
     private ILevelPickerPathObject currentTarget;
@@ -141,6 +171,7 @@ public class LevelPickerManager : MonoBehaviour
                 currentTarget.SetSelected(false);
             }
             currentTarget = obj;
+            CreateLastSave(obj.ReturnWorldNumber());
 
 
             currentTarget.SetSelected(true);
@@ -373,6 +404,62 @@ public class LevelPickerManager : MonoBehaviour
 
 
     }
+    private float tweenInInterval = .35f;
+    private float tweenOutInterval = .3f;
+    private IEnumerator HandleStarTweens()
+    {
+        int i = 0;
+        int lastIndex = -1;
+        yield return new WaitForSecondsRealtime(.2f);
+
+        while (true)
+        {
+            for (int s = 0; s < 3; s++)
+            {
+                foreach (var l in levelPickerObjs)
+                {
+                    l.DoStarSeq(s, true);
+                }
+
+                yield return new WaitForSecondsRealtime(tweenInInterval);
+
+            }
+            for (int s = 0; s < 3; s++)
+            {
+                foreach (var l in levelPickerObjs)
+                {
+                    l.DoStarSeq(s, false);
+                }
+
+                yield return new WaitForSecondsRealtime(tweenOutInterval);
+
+            }
+            // foreach (var l in levelPickerObjs)
+            // {
+            //     l.DoStarSeq(i, true);
+            // }
+            // yield return new WaitForSecondsRealtime(tweenInInterval * .5f);
+
+            // foreach (var l in levelPickerObjs)
+            // {
+            //     l.DoStarSeq(i, false);
+            // }
+            // yield return new WaitForSecondsRealtime(tweenOutInterval);
+            // lastIndex = i;
+            // i++;
+            // if (i >= 3)
+            // {
+            //     i = 0;
+            // }
+
+
+
+
+        }
+
+
+
+    }
 
 
 
@@ -420,6 +507,19 @@ public class LevelPickerManager : MonoBehaviour
 
 
 
+
+    }
+    private void CreateLastSave(Vector3Int worldNum)
+    {
+        string l = $"{worldNum.x}-{worldNum.y}-{worldNum.z}";
+        PlayerPrefs.SetString("LastLevel", l);
+        PlayerPrefs.Save();
+    }
+    private Vector3Int ReturnLastLevel()
+    {
+        string l = PlayerPrefs.GetString("LastLevel", "1-1-0");
+        string[] parts = l.Split('-');
+        return new Vector3Int(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
 
     }
 

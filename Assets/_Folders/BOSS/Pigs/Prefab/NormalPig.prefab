@@ -285,6 +285,7 @@ GameObject:
   - component: {fileID: 2454187349646226091}
   - component: {fileID: 1276336251284769455}
   - component: {fileID: 1150189937380638715}
+  - component: {fileID: 7973115796131044206}
   m_Layer: 11
   m_Name: NormalPig
   m_TagString: Plane
@@ -333,7 +334,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8192
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -415,6 +416,7 @@ MonoBehaviour:
   enableObjectOnDeath: {fileID: 6452491286330985697}
   disableObjectOnDeath: {fileID: 2516927681015555879}
   ignoreBoundaries: 0
+  destroyOnDeath: 0
   health: 1
   totalDamageTime: 0
   pigType: 0
@@ -492,9 +494,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0.29585722, y: -0.68552285}
-  transformInsteadOfOffset: {fileID: 0}
-  useTransformInsteadOfOffset: 0
+  <transformInsteadOfOffset>k__BackingField: {fileID: 0}
+  useAdditionalTransform: 0
   showGizmo: 1
+  <useRotation>k__BackingField: 0
+  rotationOffset: 0
+  <adjustLerpSpeed>k__BackingField: 0
+--- !u!114 &7973115796131044206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2425336107443998327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1046aea95d59c49a5aabbfc9051a57d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eggedYolkPrefab: {fileID: 4947069925263543665, guid: d0f679253b1f9449e82df6714d1d807f, type: 3}
+  eggedYolkOffset: {x: 0.81, y: 0.9}
+  secondEggedSprite: {fileID: -689367670, guid: 7d9197fa317c04201880df1529e44cce, type: 3}
+  yolkStartScale: 0.8
+  yolkEndScale: 1
+  yolkStartY: 0.9
+  yolkEndY: 0.6
+  yolkDripDuration: 0.6
 --- !u!1 &2927166378316838539
 GameObject:
   m_ObjectHideFlags: 0

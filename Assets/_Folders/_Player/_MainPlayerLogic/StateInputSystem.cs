@@ -165,7 +165,7 @@ public class StateInputSystem : MonoBehaviour
 
     // }
 
-   
+
 
     private bool trackingTwoFingerTouch;
     private void SetSwipesActive(bool doubleTap, Vector2 pos)
@@ -200,9 +200,10 @@ public class StateInputSystem : MonoBehaviour
     {
 
         ID.UsingClocker = false;
+        ButtonsEnabled = false;
 
 
-      
+
 
 
         controls = new InputController();

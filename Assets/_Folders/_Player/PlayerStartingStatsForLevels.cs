@@ -29,6 +29,7 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     public int startingShotgunAmmo;
 
     public int[] AvailableAmmos;
+    public int[] ChangedAvailableAmmos;
 
 
     public void SetData(short startingLives, short[] ammos, int maxLive = -1)

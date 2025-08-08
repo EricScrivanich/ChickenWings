@@ -9,6 +9,7 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     // [SerializeField] private Animator pigAnim;
     [SerializeField] private GameObject sleepingPig;
     [SerializeField] private GameObject flappingPig;
+    [SerializeField] private Transform stars;
 
 
 
@@ -22,6 +23,14 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     [SerializeField] private Transform selectedArrowTransform;
     [SerializeField] private float seqDur;
     private bool isSelected = false;
+
+    [SerializeField] private Color unbeatenBlurColor;
+    [SerializeField] private Color beatenBlurColor;
+
+    [SerializeField] private SpriteRenderer[] starSprites;
+    [SerializeField] private SpriteRenderer[] starBlurSprites;
+
+
 
     public Vector2 ReturnLinePostion()
     {
@@ -107,19 +116,89 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         {
             sleepingPig.SetActive(false);
             flappingPig.SetActive(true);
+            stars.gameObject.SetActive(false);
+
         }
         else if (WorldNumber.y < num.y)
         {
             sleepingPig.SetActive(false);
             flappingPig.SetActive(false);
+            nestBlur.color = beatenBlurColor;
+            selectedArrowTransform.GetComponent<SpriteRenderer>().color = beatenBlurColor;
+
+            if (transform.localScale.x < 0) stars.localScale = new Vector3(-1, 1, 1);
+            ReadyStarSeq();
         }
         else
         {
             sleepingPig.SetActive(true);
             flappingPig.SetActive(false);
+            stars.gameObject.SetActive(false);
         }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    }
+    private float blurInTime = .9f;
+    private float blurOutTime = .8f;
+    private float blurInterval = .2f;
+    private bool[] challengeCompletion;
+    private bool doStarSeq = false;
+    public void ReadyStarSeq()
+    {
+        challengeCompletion = LevelDataConverter.instance.ReturnCompletedChallengesForLevel(WorldNumber);
+        if (challengeCompletion == null || challengeCompletion.Length == 0)
+        {
+            Debug.LogWarning("No challenge completion data found for level: " + WorldNumber);
+            return;
+        }
+
+
+        for (int i = 0; i < challengeCompletion.Length; i++)
+        {
+
+            if (challengeCompletion[i])
+            {
+
+                starSprites[i].color = Color.white;
+                starBlurSprites[i].enabled = true;
+                if (!doStarSeq) doStarSeq = true;
+
+
+            }
+            else
+            {
+                // starSequence.AppendInterval(blurInTime + blurInterval);
+
+                starSprites[i].color = Color.black;
+                starBlurSprites[i].enabled = false;
+                starBlurSprites[i].color = beatenBlurColor;
+            }
+        }
+
+
+
+
+    }
+
+    public void DoStarSeq(int index, bool enter)
+    {
+        if (!doStarSeq)
+            return;
+
+        if (challengeCompletion[index])
+        {
+            if (enter)
+            {
+                starBlurSprites[index].DOFade(1, blurInTime).SetUpdate(true).SetEase(Ease.InSine);
+            }
+            else
+            {
+                starBlurSprites[index].DOFade(0, blurOutTime).SetUpdate(true);
+
+            }
+
+        }
 
     }
 }

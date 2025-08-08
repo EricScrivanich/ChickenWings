@@ -620,6 +620,33 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Finger2Press"",
+                    ""type"": ""Button"",
+                    ""id"": ""9bee5ed2-7d43-4772-afa3-ace18b21e814"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Finger2Pos"",
+                    ""type"": ""Value"",
+                    ""id"": ""0ff857c1-399a-4105-ad47-04d10af53a7f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ShiftClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""78625192-8d1f-40c6-b46b-31e4aa44c5b8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -664,6 +691,39 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard"",
                     ""action"": ""CursorPos"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ec2aa473-0e1b-4028-bee4-a8d0dcc93ae9"",
+                    ""path"": ""<Touchscreen>/touch1/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Mobile"",
+                    ""action"": ""Finger2Press"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""30cbee94-bf1f-471c-be35-763e1702ad0d"",
+                    ""path"": ""<Touchscreen>/touch1/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Mobile"",
+                    ""action"": ""Finger2Pos"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc1688c4-01b0-46a0-a08f-63824f8f3159"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""ShiftClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -725,6 +785,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_LevelCreator_Finger1Pos = m_LevelCreator.FindAction("Finger1Pos", throwIfNotFound: true);
         m_LevelCreator_CursorClick = m_LevelCreator.FindAction("CursorClick", throwIfNotFound: true);
         m_LevelCreator_CursorPos = m_LevelCreator.FindAction("CursorPos", throwIfNotFound: true);
+        m_LevelCreator_Finger2Press = m_LevelCreator.FindAction("Finger2Press", throwIfNotFound: true);
+        m_LevelCreator_Finger2Pos = m_LevelCreator.FindAction("Finger2Pos", throwIfNotFound: true);
+        m_LevelCreator_ShiftClick = m_LevelCreator.FindAction("ShiftClick", throwIfNotFound: true);
     }
 
     ~@InputController()
@@ -1010,6 +1073,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private readonly InputAction m_LevelCreator_Finger1Pos;
     private readonly InputAction m_LevelCreator_CursorClick;
     private readonly InputAction m_LevelCreator_CursorPos;
+    private readonly InputAction m_LevelCreator_Finger2Press;
+    private readonly InputAction m_LevelCreator_Finger2Pos;
+    private readonly InputAction m_LevelCreator_ShiftClick;
     public struct LevelCreatorActions
     {
         private @InputController m_Wrapper;
@@ -1018,6 +1084,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         public InputAction @Finger1Pos => m_Wrapper.m_LevelCreator_Finger1Pos;
         public InputAction @CursorClick => m_Wrapper.m_LevelCreator_CursorClick;
         public InputAction @CursorPos => m_Wrapper.m_LevelCreator_CursorPos;
+        public InputAction @Finger2Press => m_Wrapper.m_LevelCreator_Finger2Press;
+        public InputAction @Finger2Pos => m_Wrapper.m_LevelCreator_Finger2Pos;
+        public InputAction @ShiftClick => m_Wrapper.m_LevelCreator_ShiftClick;
         public InputActionMap Get() { return m_Wrapper.m_LevelCreator; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1039,6 +1108,15 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @CursorPos.started += instance.OnCursorPos;
             @CursorPos.performed += instance.OnCursorPos;
             @CursorPos.canceled += instance.OnCursorPos;
+            @Finger2Press.started += instance.OnFinger2Press;
+            @Finger2Press.performed += instance.OnFinger2Press;
+            @Finger2Press.canceled += instance.OnFinger2Press;
+            @Finger2Pos.started += instance.OnFinger2Pos;
+            @Finger2Pos.performed += instance.OnFinger2Pos;
+            @Finger2Pos.canceled += instance.OnFinger2Pos;
+            @ShiftClick.started += instance.OnShiftClick;
+            @ShiftClick.performed += instance.OnShiftClick;
+            @ShiftClick.canceled += instance.OnShiftClick;
         }
 
         private void UnregisterCallbacks(ILevelCreatorActions instance)
@@ -1055,6 +1133,15 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @CursorPos.started -= instance.OnCursorPos;
             @CursorPos.performed -= instance.OnCursorPos;
             @CursorPos.canceled -= instance.OnCursorPos;
+            @Finger2Press.started -= instance.OnFinger2Press;
+            @Finger2Press.performed -= instance.OnFinger2Press;
+            @Finger2Press.canceled -= instance.OnFinger2Press;
+            @Finger2Pos.started -= instance.OnFinger2Pos;
+            @Finger2Pos.performed -= instance.OnFinger2Pos;
+            @Finger2Pos.canceled -= instance.OnFinger2Pos;
+            @ShiftClick.started -= instance.OnShiftClick;
+            @ShiftClick.performed -= instance.OnShiftClick;
+            @ShiftClick.canceled -= instance.OnShiftClick;
         }
 
         public void RemoveCallbacks(ILevelCreatorActions instance)
@@ -1121,5 +1208,8 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnFinger1Pos(InputAction.CallbackContext context);
         void OnCursorClick(InputAction.CallbackContext context);
         void OnCursorPos(InputAction.CallbackContext context);
+        void OnFinger2Press(InputAction.CallbackContext context);
+        void OnFinger2Pos(InputAction.CallbackContext context);
+        void OnShiftClick(InputAction.CallbackContext context);
     }
 }

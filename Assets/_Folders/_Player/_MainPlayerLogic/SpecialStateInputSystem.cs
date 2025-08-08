@@ -139,6 +139,8 @@ public class SpecialStateInputSystem : MonoBehaviour
     private bool ButtonsEnabled;
 
     private bool doCooldownsBool = true;
+    private int trackedTouchIndex = -1;
+    private bool isMousePressed = false;
 
     private Vector2 touchStartPosition;
     private float originalDropY;
@@ -207,6 +209,11 @@ public class SpecialStateInputSystem : MonoBehaviour
         else return "Unknown";
 
     }
+    private int tempLockInput = -1;
+    public void SetTempLockInput(int inpLock)
+    {
+        tempLockInput = inpLock;
+    }
     public void SetTutorialData(TutorialData data)
     {
         tutorialData = data;
@@ -241,7 +248,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             useDrop = true;
             useEgg = true;
         }
-        this.enabled = true;
+
 
 
     }
@@ -249,12 +256,215 @@ public class SpecialStateInputSystem : MonoBehaviour
     {
         ID.UsingClocker = false;
         startedHold = false;
+        ButtonsEnabled = false;
 
 
 
 
 
         controls = new InputController();
+
+        controls.Movement.ScytheStick.performed += ctx =>
+        {
+            ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
+            // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+
+        };
+
+        // controls.Movement.ScytheStick.canceled += ctx =>
+        // {
+        //     ID.events.OnReleaseStick?.Invoke();
+        //     // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+
+        // };
+
+
+        controls.Movement.MouseClick.performed += ctx =>
+        {
+            if (tempLockInput == 3) return;
+            isMousePressed = true;
+            // if (!trackingInputs)
+            // {
+            //     isMousePressed = true;
+            // }
+            // else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
+            // {
+            //     isMousePressed = true;
+            //     if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+
+            // }
+            // else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
+            // {
+            //     isMousePressed = true;
+
+            //     if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+            // }
+
+        };
+        controls.Movement.MouseClick.canceled += ctx =>
+        {
+
+            isMousePressed = false;
+            if (trackingCenterTouch)
+            {
+                // ID.events.ReleaseSwipe?.Invoke();
+                trackingCenterTouch = false;
+                ID.events.OnReleaseCenter?.Invoke();
+            }
+        };
+
+        controls.Movement.Cursor.performed += ctx =>
+        {
+
+            if (trackingCenterTouch && isMousePressed)
+            {
+
+                Vector2 p = ctx.ReadValue<Vector2>();
+                ID.events.SendParrySwipeData?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p);
+
+
+            }
+
+
+
+
+        };
+
+
+
+
+
+
+
+        // controls.Movement.Parry.canceled += ctx =>
+        // {
+        //     ID.events.OnPerformParry?.Invoke(false);
+        // };
+
+        controls.Movement.Finger1.performed += ctx =>
+      {
+
+          if (trackingCenterTouch && trackedTouchIndex == 1)
+          {
+              Vector2 p = ctx.ReadValue<Vector2>();
+              ID.events.SendParrySwipeData?.Invoke(p);
+              ID.events.OnDragCenter?.Invoke(p);
+
+          }
+
+      };
+
+
+        controls.Movement.Finger1Press.canceled += ctx =>
+       {
+
+
+           if (trackingCenterTouch && trackedTouchIndex == 1)
+           {
+               trackingCenterTouch = false;
+               ID.events.OnReleaseCenter?.Invoke();
+           }
+
+
+       };
+
+        controls.Movement.Finger2.performed += ctx =>
+        {
+            if (trackingCenterTouch && trackedTouchIndex == 2)
+            {
+                Vector2 p = ctx.ReadValue<Vector2>();
+                ID.events.SendParrySwipeData?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p);
+            }
+
+
+
+        };
+
+        controls.Movement.Finger2Press.canceled += ctx =>
+       {
+           trackingTwoFingerTouch = false;
+           if (trackingCenterTouch && trackedTouchIndex == 2)
+           {
+               trackingCenterTouch = false;
+               ID.events.OnReleaseCenter?.Invoke();
+           }
+
+
+       };
+
+        controls.Movement.Finger1Press.performed += ctx =>
+        {
+            if (tempLockInput == 3) return;
+            if (!trackingInputs)
+            {
+                if (!trackingCenterTouch)
+                    trackedTouchIndex = 1;
+            }
+            else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
+            {
+                if (!trackingCenterTouch)
+                    trackedTouchIndex = 1;
+
+                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+
+            }
+            else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
+            {
+                if (!trackingCenterTouch)
+                    trackedTouchIndex = 1;
+
+                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+            }
+
+
+
+            // currentTouchCount++;
+
+            // if (currentTouchCount == 2 && !ID.pressingButton)
+            // {
+            //     ID.events.OnPerformParry?.Invoke(true);
+            // }
+
+            // 
+
+
+        };
+
+        controls.Movement.Finger2Press.performed += ctx =>
+       {
+           if (tempLockInput == 3) return;
+
+           if (!trackingInputs)
+           {
+               if (!trackingCenterTouch)
+                   trackedTouchIndex = 2;
+           }
+           else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
+           {
+               if (!trackingCenterTouch)
+                   trackedTouchIndex = 2;
+               if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+
+           }
+           else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
+           {
+               if (!trackingCenterTouch)
+                   trackedTouchIndex = 2;
+
+               if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+           }
+
+
+       };
+
+        controls.Movement.Parry.performed += ctx =>
+         {
+             if (ButtonsEnabled)
+                 ID.events.OnPerformParry?.Invoke(true);
+         };
+
 
         // Bind existing actions to methods
 
@@ -294,7 +504,8 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (useFlips) controls.Movement.JumpRight.performed += ctx =>
         {
-            if (!ButtonsEnabled) return;
+
+            if (!ButtonsEnabled || tempLockInput == 0) return;
             flipRightImage.color = ColorSO.highlightButtonColor;
 
             if (!trackingInputs)
@@ -343,7 +554,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (useFlips) controls.Movement.JumpLeft.performed += ctx =>
         {
-            if (!ButtonsEnabled) return;
+            if (!ButtonsEnabled || tempLockInput == 0) return;
 
             flipLeftImage.color = ColorSO.highlightButtonColor;
 
@@ -394,7 +605,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         if (useDash) controls.Movement.Dash.performed += ctx =>
         {
 
-            if (!ButtonsEnabled) return;
+            if (!ButtonsEnabled || tempLockInput == 1) return;
 
 
             if (!trackingInputs)
@@ -467,7 +678,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (useDrop) controls.Movement.Drop.performed += ctx =>
         {
-            if (!ButtonsEnabled) return;
+            if (!ButtonsEnabled || tempLockInput == 2) return;
             if (!trackingInputs)
             {
                 if (canDrop)
@@ -511,7 +722,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         // controls.Movement.EggJoystick.canceled += ctx => ID.events.OnAimJoystick(-2);
         controls.Movement.EggJoystick.performed += ctx =>
         {
-
+            if (tempLockInput == 3) return;
 
             if (ID.canUseJoystick)
             {
@@ -596,34 +807,34 @@ public class SpecialStateInputSystem : MonoBehaviour
         //        }
         //    };
 
-        controls.Movement.DropEgg.performed += ctx =>
-        {
-            if (ButtonsEnabled && !eggButtonHidden)
-            {
-                if (!trackingInputs)
-                    ID.events.OnPressAmmo?.Invoke(true);
-                else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
-                {
-                    var player = GetComponent<PlayerStateManager>();
-                    player.EnterIdleStateWithVel(new Vector2(0, .5f));
-                    ID.events.OnPressAmmo?.Invoke(true);
-                    if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+        //     controls.Movement.DropEgg.performed += ctx =>
+        //     {
+        //         if (ButtonsEnabled && !eggButtonHidden && tempLockInput != 3)
+        //         {
+        //             if (!trackingInputs)
+        //                 ID.events.OnPressAmmo?.Invoke(true);
+        //             else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
+        //             {
+        //                 var player = GetComponent<PlayerStateManager>();
+        //                 player.EnterIdleStateWithVel(new Vector2(0, .5f));
+        //                 ID.events.OnPressAmmo?.Invoke(true);
+        //                 if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
 
-                }
-                else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
-                {
-                    ID.events.OnPressAmmo?.Invoke(true);
-                    if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
-                }
+        //             }
+        //             else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
+        //             {
+        //                 ID.events.OnPressAmmo?.Invoke(true);
+        //                 if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+        //             }
 
 
-            }
-        };
+        //         }
+        //     };
 
-        controls.Movement.DropEgg.canceled += ctx =>
-       {
-           ID.events.OnPressAmmo?.Invoke(false);
-       };
+        //     controls.Movement.DropEgg.canceled += ctx =>
+        //    {
+        //        ID.events.OnPressAmmo?.Invoke(false);
+        //    };
 
         controls.Movement.SwitchAmmoRight.performed += ctx =>
      {
@@ -1247,7 +1458,7 @@ public class SpecialStateInputSystem : MonoBehaviour
     // }
     public void ActivateButtons(bool IsActive)
     {
-       
+
         ButtonsEnabled = IsActive;
 
 
@@ -1345,7 +1556,57 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
     }
+    private bool trackingCenterTouch = false;
+    private bool trackingTwoFingerTouch = false;
+    private void SetSwipesActive(bool doubleTap, Vector2 pos)
+    {
+        if (ButtonsEnabled && !trackingCenterTouch && !trackingTwoFingerTouch && tempLockInput != 3)
+        {
+           
+            if (!trackingInputs)
+            {
+                trackingCenterTouch = true;
+                ID.events.OnTouchCenter?.Invoke(pos);
+                ID.events.OnShowCursor?.Invoke(pos, 0);
+            }
+            else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
+            {
+                trackingCenterTouch = true;
+                ID.events.OnTouchCenter?.Invoke(pos);
+                ID.events.OnShowCursor?.Invoke(pos, 0);
+                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
 
+            }
+            else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
+            {
+                trackingCenterTouch = true;
+                ID.events.OnTouchCenter?.Invoke(pos);
+                ID.events.OnShowCursor?.Invoke(pos, 0);
+
+                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+            }
+
+        }
+
+
+        // if ()
+    }
+    private void QuickCenterRelease()
+    {
+        // ID.events.ReleaseSwipe?.Invoke();
+        trackingCenterTouch = false;
+        ID.events.OnReleaseCenter?.Invoke();
+    }
+
+    private void TwoFingerTouch()
+    {
+        if (ButtonsEnabled)
+        {
+            ID.events.OnPerformParry?.Invoke(true);
+            trackingTwoFingerTouch = true;
+            trackingCenterTouch = false;
+        }
+    }
 
 
     private void CancelFlashButtonTween()
@@ -1550,7 +1811,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         {
             if (inputsTracked == null || inputsTracked.Count == 0)
             {
-               
+
                 return false;
             }
             foreach (var sVar in inputsTracked)
@@ -1589,6 +1850,9 @@ public class SpecialStateInputSystem : MonoBehaviour
         ID.events.OnDash += HandleDashNew;
         ID.globalEvents.OnSetInputs += SetInputs;
         ID.globalEvents.FillPlayerMana += FillAllMana;
+        ID.events.OnPointerCenter += SetSwipesActive;
+        ID.events.TwoFingerCenterTouch += TwoFingerTouch;
+        ID.events.QuickCenterRelease += QuickCenterRelease;
 
 
         ID.globalEvents.CanDashSlash += ExitDash;
@@ -1608,6 +1872,9 @@ public class SpecialStateInputSystem : MonoBehaviour
         CancelFlashButtonTween();
         controls.Movement.Disable();
         ID.events.EnableButtons -= ActivateButtons;
+        ID.events.OnPointerCenter += SetSwipesActive;
+        ID.events.TwoFingerCenterTouch -= TwoFingerTouch;
+        ID.events.QuickCenterRelease -= QuickCenterRelease;
         ID.globalEvents.OnSetInputs -= SetInputs;
         ID.globalEvents.FillPlayerMana -= FillAllMana;
         ID.globalEvents.OnHideEggButton -= HideEggButton;

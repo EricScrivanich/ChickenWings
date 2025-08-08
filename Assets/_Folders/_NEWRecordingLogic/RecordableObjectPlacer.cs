@@ -155,6 +155,14 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     private bool isSimpleObject = false;
 
+    [Header("Placing Objects Past Boundary Settings")]
+    [SerializeField] private bool useCustomBoundaries = false;
+    [SerializeField] private bool usingGroundSpeed = false;
+    [SerializeField] private float addedOffestToViewBoundary;
+    [SerializeField] private float addedOffestToOuterBoundary;
+
+
+
 
 
 
@@ -473,7 +481,7 @@ public class RecordableObjectPlacer : MonoBehaviour
                 }
             }
         }
-        UpdateBasePosition(Data.startPos);
+        UpdateBasePosition(Data.startPos, false, true);
 
         // UpdateObjectData();
 
@@ -505,11 +513,16 @@ public class RecordableObjectPlacer : MonoBehaviour
     //     }
     // }
 
-
+    private int spawnStepOnPress = 0;
+    private int currentStepOffset = 0;
+    private int clickedStepOffset = 0;
     public void HandleClick(bool clicked, int arrowType)
     {
         if (clicked)
         {
+            spawnStepOnPress = spawnedTimeStep;
+            currentStepOffset = LevelRecordManager.CurrentTimeStep - spawnedTimeStep;
+            clickedStepOffset = currentStepOffset;
             if (_pType == PostionType.Grounded || _pType == PostionType.CenterOnly) yArrow.gameObject.SetActive(false);
             if (arrowType == 0)
             {
@@ -791,7 +804,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public void UpdateBasePosition(Vector2 pos, bool usingOffset = false)
+    public void UpdateBasePosition(Vector2 pos, bool usingOffset = false, bool skipForStart = false)
     {
         // if (Title == "Windmill") obj.ApplyCustomizedData(Data);
 
@@ -799,13 +812,13 @@ public class RecordableObjectPlacer : MonoBehaviour
         if (_pType == PostionType.Grounded)
         {
             if (pos.x < BoundariesManager.leftViewBoundary) return;
-            transform.position = new Vector2(pos.x, BoundariesManager.GroundPosition + minMaxY.x);
+            pos = new Vector2(pos.x, BoundariesManager.GroundPosition + minMaxY.x);
             Data.startPos = transform.position;
 
-            UpdateObjectData();
 
 
-            return;
+
+
 
         }
         else if (_pType == PostionType.AnySide)
@@ -836,27 +849,166 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         }
 
-        transform.position = pos;
-        Data.startPos = pos;
-        if (Data.float1 > 0 && pos.x < 0 && floatOneIsSpeed)
+
+
+
+        if (Data.float1 > 0 && pos.x < BoundariesManager.leftViewBoundary + 3.5f && floatOneIsSpeed)
         {
             Data.float1 *= -1;
             movingRight = true;
 
 
-            return;
+
+
         }
-        else if (Data.float1 < 0 && pos.x > 0 && floatOneIsSpeed)
+        else if (Data.float1 < 0 && pos.x > BoundariesManager.rightViewBoundary - 3.5f && floatOneIsSpeed)
         {
             Data.float1 *= -1;
             movingRight = false;
 
+        }
+
+        if (!usingOffset && !skipForStart && useCustomBoundaries && Mathf.Abs(pos.x) <= BoundariesManager.rightViewBoundary + addedOffestToViewBoundary)
+        {
+            int newStep = 0;
+
+            if (movingRight)
+            {
+                float s = 0;
+                if (usingGroundSpeed) s = BoundariesManager.GroundSpeed;
+                else s = Data.float1;
+                int steps = Mathf.RoundToInt(((BoundariesManager.leftViewBoundary - addedOffestToViewBoundary - pos.x) / s) / LevelRecordManager.TimePerStep);
+                if (steps < 0) steps = 0;
+                // if (steps > 100) steps = 100;
+                newStep = ((int)LevelRecordManager.CurrentTimeStep - steps) - currentStepOffset;
+
+                // Debug.Log("New Step: " + newStep + " Current Time Step: " + LevelRecordManager.CurrentTimeStep + " Steps: " + steps + " Speed: " + speed + " Pos.x: " + pos.x);
+
+                pos.x = BoundariesManager.leftViewBoundary - addedOffestToViewBoundary;
+                Data.spawnedStep = (ushort)newStep;
 
 
 
-            return;
+                // find out how many steps in would take to make pos.x equal to right boundary
+
+
+            }
+            else
+            {
+                float s = 0;
+                if (usingGroundSpeed) s = BoundariesManager.GroundSpeed;
+                else s = Data.float1;
+
+
+                int steps = Mathf.RoundToInt(((BoundariesManager.rightViewBoundary + addedOffestToViewBoundary - pos.x) / s) / LevelRecordManager.TimePerStep);
+                if (steps < 0) steps = 0;
+                // if (steps > 100) steps = 100;
+                newStep = ((int)LevelRecordManager.CurrentTimeStep - steps) - currentStepOffset;
+
+
+                // Debug.Log("New Step: " + newStep + " Current Time Step: " + LevelRecordManager.CurrentTimeStep + " Steps: " + steps + " Speed: " + speed + " Pos.x: " + pos.x);
+
+
+                pos.x = BoundariesManager.rightViewBoundary + addedOffestToViewBoundary;
+                Data.spawnedStep = (ushort)newStep;
+
+
+
+
+            }
+            if (newStep > 0)
+            {
+                pos = LevelRecordManager.instance.ReturnRoundedPosition(pos, false, _pType == PostionType.Grounded);
+                spawnedTimeStep = Data.spawnedStep;
+                ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep);
+            }
+            else
+            {
+                Data.spawnedStep = 0;
+                pos = LevelRecordManager.instance.ReturnRoundedPosition(pos, false, _pType == PostionType.Grounded);
+                spawnedTimeStep = Data.spawnedStep;
+                ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep, true);
+
+            }
+
+
 
         }
+
+        // else if (!usingOffset && useCustomBoundaries && Mathf.Abs(pos.x) >= BoundariesManager.rightBoundary + addedOffestToOuterBoundary && currentStepOffset > 0)
+        // {
+        //     float s = usingGroundSpeed ? BoundariesManager.GroundSpeed : Data.float1;
+
+        //     int newStep = 0;
+
+
+        //     if (!movingRight)
+        //     {
+        //         // Object went too far right, push spawn time back by reducing step offset
+        //         int steps = (Mathf.RoundToInt((((pos.x - BoundariesManager.rightBoundary + addedOffestToOuterBoundary)) / s) / LevelRecordManager.TimePerStep));
+
+
+        //         currentStepOffset = clickedStepOffset - steps;
+
+
+        //         if (currentStepOffset <= 0)
+        //         {
+        //             currentStepOffset = 0;
+
+        //         }
+
+        //         newStep = (int)LevelRecordManager.CurrentTimeStep - currentStepOffset;
+        //         pos.x = BoundariesManager.rightBoundary + addedOffestToOuterBoundary;
+        //     }
+        //     else
+        //     {
+        //         // Object went too far left, same logic
+        //         int steps = (Mathf.RoundToInt((((pos.x - BoundariesManager.leftBoundary - addedOffestToOuterBoundary)) / s) / LevelRecordManager.TimePerStep));
+
+
+        //         currentStepOffset = clickedStepOffset - steps;
+
+
+        //         if (currentStepOffset <= 0)
+        //         {
+        //             currentStepOffset = 0;
+
+        //         }
+
+
+        //         newStep = (int)LevelRecordManager.CurrentTimeStep - currentStepOffset;
+        //         pos.x = BoundariesManager.leftBoundary - addedOffestToOuterBoundary;
+        //     }
+
+        //     if (newStep > LevelRecordManager.instance.finalSpawnStep)
+        //     {
+        //         newStep = LevelRecordManager.instance.finalSpawnStep;
+        //         pos = LevelRecordManager.instance.ReturnRoundedPosition(pos, false, _pType == PostionType.Grounded);
+        //         spawnedTimeStep = (ushort)newStep;
+        //         Data.spawnedStep = spawnedTimeStep;
+        //         ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep, true);
+        //     }
+        //     else
+        //     {
+        //         pos = LevelRecordManager.instance.ReturnRoundedPosition(pos, false, _pType == PostionType.Grounded);
+        //         spawnedTimeStep = (ushort)newStep;
+        //         Data.spawnedStep = spawnedTimeStep;
+        //         ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep, false);
+        //     }
+
+        //     if (currentStepOffset <= 0)
+        //     {
+        //         currentStepOffset = 0;
+        //         LevelRecordManager.instance.ResetMovePosition(transform.position);
+
+        //     }
+
+
+        // }
+
+        transform.position = pos;
+        // Debug.Log("Setting Obj Position: " + pos);
+        Data.startPos = pos;
         UpdateObjectData();
         UpdateLineRenderer();
         SetProjectileLines();
@@ -1626,8 +1778,8 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     }
 
-  
-    
+
+
 
     private void CheckForPreloadTimeStep(int checkedStep)
     {

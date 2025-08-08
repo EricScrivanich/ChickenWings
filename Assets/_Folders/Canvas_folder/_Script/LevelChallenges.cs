@@ -318,9 +318,9 @@ public class LevelChallenges : ScriptableObject
 
 
             case ChallengeTypes.CheckLives:
-                int l = lvlID.ReturnPlayerLives();
 
-                if (l >= LifeTarget)
+
+                if (Lives >= LifeTarget)
                 {
                     if (forFinish) return 1;
                     else return 0;
@@ -370,9 +370,9 @@ public class LevelChallenges : ScriptableObject
             case ChallengeTypes.CheckAmmo:
 
 
-                var amounts = lvlID.ReturnAmmoAmounts();
 
-                if (amounts.x >= EggAmmoTarget && amounts.y >= ShotgunAmmoTarget)
+
+                if (Ammos[0] >= EggAmmoTarget && Ammos[1] >= ShotgunAmmoTarget)
                 {
                     if (forFinish) return 1;
                     else return 0;

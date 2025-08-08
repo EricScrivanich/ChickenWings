@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8dd1420084594766975de59e2093ab1, type: 3}
+  m_Name: TutuorialData01-05_Time to Kill!
+  m_EditorClassIdentifier: 
+  playerID: {fileID: 0}
+  buttonType: 3
+  startButtonHidden: 1
+  startInputsLocked: 0
+  messages:
+  - INPUT to use your equipped weapon.
+  inputReplaceKeyboard:
+  - Click the center of the screen
+  inputReplaceGamepad:
+  - Press Right Trigger
+  inputReplaceTouchScreen:
+  - Tap the center of the  screen
+  allowedInput:
+  - Shotgun
+  shownAmmos: 
+  bubblePrefab: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
+  messagePrefab: {fileID: 9156284010655330016, guid: f81248dd664e04cd693cbf1b01a0def4, type: 3}
+  stepsForActions: 0e000e00
+  actionsForStep: 0400000001000000
+  actionsForEnterBubble: 0a000000
+  actionsForExitBubble: 
+  vectorValues:
+  - {x: 1.2, y: 1.2}
+  bubbleSuctionAndDelayDurations:
+  - {x: 2, y: 1.6}

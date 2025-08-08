@@ -682,6 +682,7 @@ MonoBehaviour:
   enableObjectOnDeath: {fileID: 0}
   disableObjectOnDeath: {fileID: 0}
   ignoreBoundaries: 0
+  destroyOnDeath: 0
   health: 1
   totalDamageTime: 0
   pigType: 1
@@ -712,9 +713,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: -0.09482288, y: -0.4918933}
-  transformInsteadOfOffset: {fileID: 2751193944643108337}
-  useTransformInsteadOfOffset: 0
+  <transformInsteadOfOffset>k__BackingField: {fileID: 0}
+  useAdditionalTransform: 0
   showGizmo: 1
+  <useRotation>k__BackingField: 0
+  rotationOffset: 0
+  <adjustLerpSpeed>k__BackingField: 0
 --- !u!1 &8888429728512582436
 GameObject:
   m_ObjectHideFlags: 0

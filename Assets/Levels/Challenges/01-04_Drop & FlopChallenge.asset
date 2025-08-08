@@ -10,27 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 58def7dd2d7aa4e7f90f39993f49d3dd, type: 3}
-  m_Name: 01-04_TESTChallenge
+  m_Name: 01-04_Drop & FlopChallenge
   m_EditorClassIdentifier: 
   lvlID: {fileID: 0}
-  challenges: 010000000300000008000000
+  challenges: 010000000800000002000000
   challengeTexts:
-  - Completye
-  - Kill Pig
-  - GetBUCKK
+  - Complete Level
+  - Complete 2 Gold Bucket Combos
+  - Lose Zero Lives
   challengeDifficulties:
   - 
   - 
   - 
-  LifeTarget: 0
+  LifeTarget: 3
   EggAmmoTarget: 0
   ShotgunAmmoTarget: 0
-  TrackedPigs: 00000000
-  TrackedPigAmounts: 01000000
+  TrackedPigs: 
+  TrackedPigAmounts: 
   TrackedPigsByBulletTypeWithPigType: []
   TrackedPigAmountsByBullet: 
   TrackedPigIDWithPigType: 
   TrackedPigAmountsByID: 
   CertainNonAllowedInputs: 
-  ringsTypeAndAmount:
-  - {x: 2, y: 1}
+  ringsTypeAndAmount: {x: 2, y: 2}

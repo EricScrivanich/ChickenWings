@@ -24,9 +24,11 @@ public class TutorialData : ScriptableObject
     [SerializeField] private string[] allowedInput;
 
 
+
     private int currentInputCheckIndex = 0;
     private int currentBubbleIndex = 0;
     private int currentVectorIndex = 0;
+    public int[] shownAmmos;
 
     private FlashGroup currentFlashMessage;
     private int currentMessageIndex;
@@ -53,7 +55,9 @@ public class TutorialData : ScriptableObject
         ResumeWaveTime,
         ResumeGameTime,
         StopAllButtons,
-        ShowHiddenButtons
+        ShowHiddenButtons,
+        ResumeWaveTimeAndShowHidden,
+        Next
 
 
 
@@ -64,6 +68,9 @@ public class TutorialData : ScriptableObject
 
     [SerializeField] private Vector2[] vectorValues;
     [SerializeField] private Vector2[] bubbleSuctionAndDelayDurations;
+
+
+
     private string deviceType;
 
 
@@ -77,6 +84,7 @@ public class TutorialData : ScriptableObject
     {
         inputSystem = null;
         buttonHandler = null;
+
         Debug.Log("Initialize TutorialData with currentStep: " + currentStep);
         if (inputSystem == null)
         {
@@ -89,6 +97,7 @@ public class TutorialData : ScriptableObject
             }
 
 
+
         }
 
 
@@ -97,6 +106,10 @@ public class TutorialData : ScriptableObject
 
             Debug.Log("Current step is greater than last step, finishing tutorial.");
             m.HandleCheckForTutorial(false);
+            if (inputSystem != null)
+            {
+                inputSystem.enabled = true;
+            }
             return;
         }
         spawnManager = m;
@@ -125,6 +138,11 @@ public class TutorialData : ScriptableObject
 
                     buttonHandler = GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>();
                     buttonHandler.InitializeTutorialButtons(buttonType, hideButton);
+                    if (inputSystem != null && hideButton)
+                    {
+                        inputSystem.SetTempLockInput(buttonType);
+                        inputSystem.enabled = true;
+                    }
                 }
                 return;
             }
@@ -150,7 +168,10 @@ public class TutorialData : ScriptableObject
             }
         }
 
-
+        if (inputSystem != null)
+        {
+            inputSystem.enabled = true;
+        }
 
 
         m.HandleCheckForTutorial(false);
@@ -197,6 +218,13 @@ public class TutorialData : ScriptableObject
         {
             case Type.None:
                 return;
+            case Type.ResumeWaveTimeAndShowHidden:
+
+                DoAction(Type.ResumeWaveTime);
+                DoAction(Type.ShowHiddenButtons);
+                inputSystem.SetTempLockInput(-1);
+
+                break;
 
             case Type.SpawnBubble:
                 var b = Instantiate(bubblePrefab, vectorValues[currentVectorIndex], Quaternion.identity);
@@ -234,6 +262,7 @@ public class TutorialData : ScriptableObject
 
             case Type.ShowHiddenButtons:
                 buttonHandler.FinishTween();
+                inputSystem.SetTempLockInput(-1);
 
                 break;
 
@@ -250,7 +279,7 @@ public class TutorialData : ScriptableObject
     {
 
     }
-
+    private int bubbleIDAddedCheck = 0;
     public void HandleBubble(bool entered, int ID)
     {
         if (entered)
@@ -264,8 +293,16 @@ public class TutorialData : ScriptableObject
             DoAction(Type.ShowMessage);
 
             if (ID < actionsForEnterBubble.Length)
-
+            {
                 DoAction(actionsForEnterBubble[ID]);
+                if (ID + 1 < actionsForEnterBubble.Length && actionsForEnterBubble[ID + 1] == Type.Next)
+                {
+                    DoAction(actionsForEnterBubble[ID]);
+                }
+            }
+
+
+
 
         }
         else

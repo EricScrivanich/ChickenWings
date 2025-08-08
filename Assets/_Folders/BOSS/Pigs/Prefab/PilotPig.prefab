@@ -804,6 +804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ddb33d42f3d4ea3aa9e68f03933811, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testNew: 0
   flightMode: 0
   initialSpeed: 0
   addForceY: 0
@@ -811,6 +812,7 @@ MonoBehaviour:
   maxY: 0
   maxYSpeed: 0
   xTrigger: 0
+  yForce: 0
 --- !u!210 &-8150473846529898941
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -858,6 +860,7 @@ MonoBehaviour:
   enableObjectOnDeath: {fileID: 0}
   disableObjectOnDeath: {fileID: 0}
   ignoreBoundaries: 0
+  destroyOnDeath: 0
   health: 1
   totalDamageTime: 0
   pigType: 4
@@ -895,6 +898,7 @@ MonoBehaviour:
   showGizmo: 1
   <useRotation>k__BackingField: 0
   rotationOffset: 0
+  <adjustLerpSpeed>k__BackingField: 0
 --- !u!1 &7531350597852955848
 GameObject:
   m_ObjectHideFlags: 0

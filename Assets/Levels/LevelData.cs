@@ -10,6 +10,7 @@ public class LevelData : ScriptableObject
     [field: SerializeField] public short[] easyStartingAmmos { get; private set; }
     [field: SerializeField] public short easyStartingLives { get; private set; }
     public TutorialData tutorialData;
+    public int[] AvailableAmmos = new int[2] { 0, 1 };
 
 
     [SerializeField] private AllObjectData objData;
@@ -159,7 +160,9 @@ public class LevelData : ScriptableObject
             Debug.LogError("Setting Tutorial Data for level: " + LevelName + " with difficulty: " + difficulty);
             s.SetTutorialData(tutorialData);
             tutorialData.Initialize(s, startingStep);
+
         }
+        startingStats.AvailableAmmos = AvailableAmmos;
         playerID.SetDataForLevel(startingStats, levelChallenges);
         dataTypeIndexes = new int[6];
 

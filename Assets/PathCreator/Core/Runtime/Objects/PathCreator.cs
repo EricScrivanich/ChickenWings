@@ -68,7 +68,7 @@ namespace PathCreation
             initialized = true;
         }
         private int currentLayer = 0;
-        public float GetCustomPointDistanceAtTime(float t, int direction = 1)
+        public float GetCustomPointDistanceAtPercent(float t, int direction = 1)
         {
 
 
@@ -86,6 +86,7 @@ namespace PathCreation
                 return editorData.customPoints[0].distance;
             }
 
+           
             for (int i = 0; i < editorData.customPoints.Count - 1; i++)
             {
                 if (editorData.customPoints[i].value <= t && t <= editorData.customPoints[i + 1].value)
@@ -108,11 +109,37 @@ namespace PathCreation
 
 
         }
+        private float currentMinLayerDistanceCheck;
+        private float currentMaxLayerDistanceCheck;
+        private void SetCurrentLayer(int direction, float distance)
+        {
+
+
+        }
 
         public int ReturnLayer()
         {
             return currentLayer;
         }
+
+        public int ReturnLayerForStart(float distance)
+        {
+            int layer = 0;
+            for (int i = 0; i < editorData.customPoints.Count - 1; i++)
+            {
+                if (distance < editorData.customPoints[i].value && editorData.customPoints[i].layerChanges != Vector2.zero)
+                {
+                    layer = editorData.customPoints[i].layerChanges.x;
+                    break;
+
+                }
+
+            }
+            currentLayer = layer;
+            return layer;
+
+        }
+
 
         public PathCreatorData EditorData
         {

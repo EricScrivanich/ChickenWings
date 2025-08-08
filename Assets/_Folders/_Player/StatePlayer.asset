@@ -12,7 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2969e9bedb78493d9c10fe18b8ea9c4, type: 3}
   m_Name: StatePlayer
   m_EditorClassIdentifier: 
-  lvlID: {fileID: 0}
+  playerStartingStats: {fileID: 0}
+  pressingEggButton: 0
+  pressingDashButton: 0
+  pressingDropButton: 0
+  pressingFlipRButton: 0
+  pressingFlipLButton: 0
+  pressingSwitchButton: 0
+  pressingHideButton: 0
+  scytheIsStuck: 0
+  chamberIsRotating: 0
+  canPressEggButton: 0
+  canUseJoystick: 0
   constantPlayerForceBool: 0
   constantPlayerForce: 0
   UsingClocker: 0
@@ -20,8 +31,13 @@ MonoBehaviour:
   isAlive: 1
   PlayerMaterial: {fileID: 2100000, guid: 30da6d11a7795474d9c7228bfbf84a37, type: 2}
   IsTwoTouchPoints: 0
+  CanParry: 0
+  CanPerectParry: 0
   startingShotgunAmmo: 1
-  startingChainedShotgunAmmo: 4
+  startingChainedShotgunAmmo: 0
   startingAmmo: 4
-  startingLives: 3
   infiniteLives: 0
+  usingChainedAmmo: 0
+  ammosButtonHidden: 0
+  BoomerangAmmo: 0
+  trackParrySwipe: 0

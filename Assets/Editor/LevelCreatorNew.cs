@@ -9,6 +9,7 @@ public class LevelCreatorNew : Editor
 {
     private LevelData Parent;
     public GameObject recorder;
+    [SerializeField] private TutorialData baseTutorialData;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private string newLevelName;
@@ -27,6 +28,9 @@ public class LevelCreatorNew : Editor
             if (GUILayout.Button("Add Tutorial Data", GUILayout.Height(40)))
             {
                 TutorialData asset = ScriptableObject.CreateInstance<TutorialData>();
+                asset.bubblePrefab = baseTutorialData.bubblePrefab;
+                asset.messagePrefab = baseTutorialData.messagePrefab;
+
                 string numberString = "";
                 Vector3Int numbers = Parent.levelWorldAndNumber;
 

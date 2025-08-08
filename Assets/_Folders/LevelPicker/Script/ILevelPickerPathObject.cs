@@ -11,4 +11,5 @@ public interface ILevelPickerPathObject
     void SetLastSelectable(Vector3Int num);
 
     void SetSelected(bool selected);
+    void DoStarSeq(int index, bool enterTween);
 }

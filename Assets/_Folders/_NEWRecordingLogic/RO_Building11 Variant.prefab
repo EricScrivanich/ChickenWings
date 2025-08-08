@@ -280,7 +280,15 @@ PrefabInstance:
       value: Direction
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: usingGroundSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <ID>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: useCustomBoundaries
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
@@ -308,12 +316,20 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: addedOffestToViewBoundary
+      value: 3.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: 'typeOptions.Array.data[0]'
       value: Clockwise
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: 'typeOptions.Array.data[1]'
       value: Counter-clockwise
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: addedOffestToOuterBoundary
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: <ObjectType>k__BackingField

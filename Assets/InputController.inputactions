@@ -598,6 +598,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Finger2Press",
+                    "type": "Button",
+                    "id": "9bee5ed2-7d43-4772-afa3-ace18b21e814",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Finger2Pos",
+                    "type": "Value",
+                    "id": "0ff857c1-399a-4105-ad47-04d10af53a7f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "ShiftClick",
+                    "type": "Button",
+                    "id": "78625192-8d1f-40c6-b46b-31e4aa44c5b8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -642,6 +669,39 @@
                     "processors": "",
                     "groups": ";Keyboard",
                     "action": "CursorPos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ec2aa473-0e1b-4028-bee4-a8d0dcc93ae9",
+                    "path": "<Touchscreen>/touch1/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mobile",
+                    "action": "Finger2Press",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "30cbee94-bf1f-471c-be35-763e1702ad0d",
+                    "path": "<Touchscreen>/touch1/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mobile",
+                    "action": "Finger2Pos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cc1688c4-01b0-46a0-a08f-63824f8f3159",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "ShiftClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

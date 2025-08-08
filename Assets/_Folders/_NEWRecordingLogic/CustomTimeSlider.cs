@@ -115,6 +115,8 @@ public class CustomTimeSlider : MonoBehaviour
     public int currentTweenIndex = 0;
 
     public bool usingListView = false;
+
+    private float pixelDragFactor;
     private void Awake()
     {
         if (instance == null)
@@ -126,6 +128,7 @@ public class CustomTimeSlider : MonoBehaviour
             Destroy(this);
         }
         canvas = GetComponentInParent<Canvas>();
+
         objectHandle.gameObject.SetActive(false);
         // startTimeHandle.gameObject.SetActive(false);
         mainHandle.localPosition = new Vector2(mainHandle.localPosition.x, 0);
@@ -136,7 +139,7 @@ public class CustomTimeSlider : MonoBehaviour
 
         // shownLength = normalLength;
         // sliderTrack.sizeDelta = new Vector2(shownLength, sliderTrack.sizeDelta.y);
-        // pixelsPerStep = (shownLength / (maxRange - minRange) * canvas.scaleFactor);
+        // pixelsPerStep = (shownLength / (maxRange - minRange) * canvas.scaleFactor* 1.6f);
 
 
         // minHandle.gameObject.SetActive(false);
@@ -149,16 +152,16 @@ public class CustomTimeSlider : MonoBehaviour
 
     }
 
-    private void Start()
-    {
 
-    }
+
 
     public void SetVariables(int main, int min, int max)
     {
         currentIndex = main;
         currentMinIndex = min;
         currentMaxIndex = max;
+        // minRange = min;
+        // maxRange = max;
 
         UpdateHandlePositions();
         UpdateTexts();
@@ -169,13 +172,16 @@ public class CustomTimeSlider : MonoBehaviour
 
     public void SetMaxTime(int max)
     {
+        if (currentMaxIndex >= absoluteMax) currentMaxIndex = max;
         absoluteMax = max;
+
+
 
         if (isPlayView)
         {
             maxRange = absoluteMax;
 
-            pixelsPerStep = (fullLength / (maxRange - minRange) * canvas.scaleFactor);
+            pixelsPerStep = (fullLength / (maxRange - minRange) * pixelDragFactor);
 
             SetAllHandles();
         }
@@ -251,7 +257,7 @@ public class CustomTimeSlider : MonoBehaviour
             sliderTrack.sizeDelta = new Vector2(fullLength, sliderTrack.sizeDelta.y);
             shownLength = fullLength;
 
-            pixelsPerStep = (fullLength / (maxRange - minRange) * canvas.scaleFactor);
+            pixelsPerStep = (fullLength / (maxRange - minRange) * pixelDragFactor);
             minHandle.gameObject.SetActive(true);
             maxHandle.gameObject.SetActive(true);
             if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
@@ -278,7 +284,7 @@ public class CustomTimeSlider : MonoBehaviour
             sliderTrack.sizeDelta = new Vector2(normalLength, sliderTrack.sizeDelta.y);
             shownLength = normalLength;
 
-            pixelsPerStep = (shownLength / (maxRange - minRange) * canvas.scaleFactor);
+            pixelsPerStep = (shownLength / (maxRange - minRange) * pixelDragFactor);
             minHandle.gameObject.SetActive(false);
             maxHandle.gameObject.SetActive(false);
             objectHandle.gameObject.SetActive(false);
@@ -309,7 +315,7 @@ public class CustomTimeSlider : MonoBehaviour
         sliderTrack.sizeDelta = new Vector2(fullLength, sliderTrack.sizeDelta.y);
         shownLength = fullLength;
 
-        pixelsPerStep = (fullLength / (maxRange - minRange) * canvas.scaleFactor);
+        pixelsPerStep = (fullLength / (maxRange - minRange) * pixelDragFactor);
         minHandle.gameObject.SetActive(true);
         maxHandle.gameObject.SetActive(true);
         OrganizeTimeSteps();
@@ -328,6 +334,10 @@ public class CustomTimeSlider : MonoBehaviour
 
 
     }
+    public void SetPixelDragFactor()
+    {
+        pixelDragFactor = GetComponentInParent<Canvas>().scaleFactor * 1.35f;
+    }
 
     public void NormalView()
     {
@@ -345,7 +355,7 @@ public class CustomTimeSlider : MonoBehaviour
         sliderTrack.sizeDelta = new Vector2(normalLength, sliderTrack.sizeDelta.y);
         shownLength = normalLength;
 
-        pixelsPerStep = (shownLength / (maxRange - minRange) * canvas.scaleFactor);
+        pixelsPerStep = (shownLength / (maxRange - minRange) * pixelDragFactor);
         minHandle.gameObject.SetActive(false);
         maxHandle.gameObject.SetActive(false);
 
@@ -399,7 +409,7 @@ public class CustomTimeSlider : MonoBehaviour
         canMultSelect = false;
 
 
-        pixelsPerStep = (shownLength / (maxRange - minRange) * canvas.scaleFactor);
+        pixelsPerStep = (shownLength / (maxRange - minRange) * pixelDragFactor);
         sliderTrack.sizeDelta = new Vector2(fullLength, sliderTrack.sizeDelta.y);
         OrganizeTimeSteps();
         // SetMainHandlePosition(currentIndex);
@@ -912,6 +922,8 @@ public class CustomTimeSlider : MonoBehaviour
 
     private void OnHandleDragged(SliderHandle.HandleType type, float deltaX)
     {
+
+
 
         int stepChange = Mathf.RoundToInt(deltaX / pixelsPerStep);
         if (stepChange == lastStepChange) return;
