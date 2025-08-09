@@ -57,7 +57,7 @@ public class TouchInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         joystickImage.raycastTarget = stuck;
         StuckInitialTween(stuck);
         FlashTween(stuck);
-       
+
 
 
 
@@ -89,7 +89,7 @@ public class TouchInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         if (stuck)
         {
             joystickGroup.gameObject.SetActive(true);
-            stuckSeq.Append(joystickGroup.DOFade(1,stuckTweenDur));
+            stuckSeq.Append(joystickGroup.DOFade(1, stuckTweenDur));
             // stuckSeq.Append(scytheCenter.DOScale(centerEndScale, stuckTweenDur));
 
             // foreach (var l in scytheLines)
@@ -130,7 +130,7 @@ public class TouchInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         initialPressPos = eventData.position;
 
 
-        if (touchCount == 2 && Time.time - lastTouchTime < .06)
+        if (touchCount == 2 && Time.time - lastTouchTime < .06f)
         {
             player.events.TwoFingerCenterTouch?.Invoke();
             didTwoFingerTap = true;

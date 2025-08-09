@@ -10,6 +10,7 @@ public class TutorialButtonHandler : MonoBehaviour
     private Vector2 orignalPosition2;
     private float hiddenAmmount = 500;
     private float showDuration = 2f;
+    [SerializeField] private Image handImage;
 
     [SerializeField] private GameObject[] dropOutlines;
     [SerializeField] private GameObject[] dashOutlines;
@@ -18,6 +19,7 @@ public class TutorialButtonHandler : MonoBehaviour
     [SerializeField] private GameObject dropButton;
     [SerializeField] private GameObject dashButton;
     private Sequence showButtonSeq;
+    private Sequence handSlideSeq;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -129,6 +131,38 @@ public class TutorialButtonHandler : MonoBehaviour
 
         }
 
+
+    }
+
+    public void DoHandSlide(bool kill)
+    {
+        Debug.Log("DoHandSlide called with kill: " + kill);
+        if (handSlideSeq != null && handSlideSeq.IsPlaying())
+        {
+            handSlideSeq.Kill();
+        }
+        handSlideSeq = DOTween.Sequence();
+        if (kill)
+        {
+            handSlideSeq.Join(handImage.DOFade(0, 0.4f));
+            handSlideSeq.Join(handImage.rectTransform.DOScale(1.4f, 0.4f));
+            handSlideSeq.Play().SetUpdate(true).OnComplete(() =>
+            {
+                handImage.gameObject.SetActive(false);
+            });
+            return;
+
+        }
+        handImage.gameObject.SetActive(true);
+
+        handSlideSeq.Append(handImage.rectTransform.DOAnchorPosY(160, 0));
+        handSlideSeq.Join(handImage.DOFade(1, 0.8f).From(0).SetEase(Ease.InSine));
+        handSlideSeq.Join(handImage.rectTransform.DOScale(.9f, 0.8f).From(1.4f).SetEase(Ease.InSine));
+        handSlideSeq.Append(handImage.rectTransform.DOAnchorPosY(-70, 1f).SetEase(Ease.InOutSine));
+        handSlideSeq.Append(handImage.DOFade(0, 0.2f));
+        handSlideSeq.Join(handImage.rectTransform.DOScale(1.4f, 0.2f));
+
+        handSlideSeq.Play().SetLoops(-1).SetUpdate(true);
 
     }
 

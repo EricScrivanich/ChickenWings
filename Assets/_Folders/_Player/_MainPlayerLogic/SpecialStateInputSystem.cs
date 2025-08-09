@@ -213,6 +213,7 @@ public class SpecialStateInputSystem : MonoBehaviour
     public void SetTempLockInput(int inpLock)
     {
         tempLockInput = inpLock;
+        Debug.Log("Temporary lock input set to: " + tempLockInput);
     }
     public void SetTutorialData(TutorialData data)
     {
@@ -1560,17 +1561,21 @@ public class SpecialStateInputSystem : MonoBehaviour
     private bool trackingTwoFingerTouch = false;
     private void SetSwipesActive(bool doubleTap, Vector2 pos)
     {
-        if (ButtonsEnabled && !trackingCenterTouch && !trackingTwoFingerTouch && tempLockInput != 3)
+        if (tempLockInput == 3) return;
+        if (ButtonsEnabled && !trackingCenterTouch && !trackingTwoFingerTouch)
         {
-           
+            Debug.Log("Set swipe active with temp lock input: " + tempLockInput);
             if (!trackingInputs)
             {
+                Debug.Log("Not tracking inputs");
                 trackingCenterTouch = true;
                 ID.events.OnTouchCenter?.Invoke(pos);
                 ID.events.OnShowCursor?.Invoke(pos, 0);
             }
             else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
             {
+                Debug.Log("Egg center touch");
+
                 trackingCenterTouch = true;
                 ID.events.OnTouchCenter?.Invoke(pos);
                 ID.events.OnShowCursor?.Invoke(pos, 0);
@@ -1579,6 +1584,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             }
             else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
             {
+                Debug.Log("Shotgun center touch");
                 trackingCenterTouch = true;
                 ID.events.OnTouchCenter?.Invoke(pos);
                 ID.events.OnShowCursor?.Invoke(pos, 0);
@@ -1589,7 +1595,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         }
 
 
-        // if ()
+
     }
     private void QuickCenterRelease()
     {
@@ -1844,6 +1850,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     private void OnEnable()
     {
+        Debug.Log("SpecialStateInputSystem enabled with temp lock input: " + tempLockInput);
         controls.Movement.Enable();
         isInitialized = true;
         ID.events.EnableButtons += ActivateButtons;
@@ -1872,7 +1879,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         CancelFlashButtonTween();
         controls.Movement.Disable();
         ID.events.EnableButtons -= ActivateButtons;
-        ID.events.OnPointerCenter += SetSwipesActive;
+        ID.events.OnPointerCenter -= SetSwipesActive;
         ID.events.TwoFingerCenterTouch -= TwoFingerTouch;
         ID.events.QuickCenterRelease -= QuickCenterRelease;
         ID.globalEvents.OnSetInputs -= SetInputs;

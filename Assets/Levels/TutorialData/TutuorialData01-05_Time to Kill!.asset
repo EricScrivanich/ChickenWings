@@ -17,23 +17,33 @@ MonoBehaviour:
   startButtonHidden: 1
   startInputsLocked: 0
   messages:
-  - INPUT to use your equipped weapon.
+  - INPUT to shoot your shotgun in the direction you are facing
+  - 'INPUT '
   inputReplaceKeyboard:
   - Click the center of the screen
+  - Click and drag to shoot in that direction
   inputReplaceGamepad:
   - Press Right Trigger
+  - While holding the shoot button, flick your left joystick to shoot in that direction
   inputReplaceTouchScreen:
   - Tap the center of the  screen
+  - Click and drag to shoot in that direction
   allowedInput:
+  - Shotgun
   - Shotgun
   shownAmmos: 
   bubblePrefab: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
   messagePrefab: {fileID: 9156284010655330016, guid: f81248dd664e04cd693cbf1b01a0def4, type: 3}
-  stepsForActions: 0e000e00
-  actionsForStep: 0400000001000000
-  actionsForEnterBubble: 0a000000
-  actionsForExitBubble: 
+  stepsForActions: 0e000e00320032003200
+  actionsForStep: 040000000100000004000000010000000b000000
+  actionsForEnterBubble: 0a0000000a000000
+  actionsForExitBubble: 000000000d000000
+  actionsForDelays: 0c000000
   vectorValues:
   - {x: 1.2, y: 1.2}
+  - {x: 3.4, y: 2.6}
   bubbleSuctionAndDelayDurations:
-  - {x: 2, y: 1.6}
+  - {x: 2, y: 1.4}
+  - {x: 2, y: 1.4}
+  delayValues:
+  - 2.2

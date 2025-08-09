@@ -39,6 +39,16 @@ public class PlayerNextSectionState : PlayerBaseState
         time = 0;
         moveTime = 0;
         player.rb.angularVelocity = 0;
+        rotateTime = 0;
+
+        if (player.isFrozen)
+        {
+            player.anim.SetBool(player.FrozenBool, false);
+            player.ID.globalEvents.OnPlayerFrozen?.Invoke(false);
+            player.isFrozen = false;
+        }
+
+
 
         currentRotation = player.transform.rotation.eulerAngles.z;
         reachedTargetPosition = false;

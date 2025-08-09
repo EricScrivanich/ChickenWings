@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 
@@ -28,6 +29,7 @@ public class TutorialData : ScriptableObject
     private int currentInputCheckIndex = 0;
     private int currentBubbleIndex = 0;
     private int currentVectorIndex = 0;
+    private int currentDelayedActionIndex;
     public int[] shownAmmos;
 
     private FlashGroup currentFlashMessage;
@@ -57,6 +59,9 @@ public class TutorialData : ScriptableObject
         StopAllButtons,
         ShowHiddenButtons,
         ResumeWaveTimeAndShowHidden,
+        StartDelayedAction,
+        ShowHandForSlide,
+        HideHandForSlide,
         Next
 
 
@@ -65,9 +70,11 @@ public class TutorialData : ScriptableObject
     [SerializeField] private Type[] actionsForStep;
     [SerializeField] private Type[] actionsForEnterBubble;
     [SerializeField] private Type[] actionsForExitBubble;
+    [SerializeField] private Type[] actionsForDelays;
 
     [SerializeField] private Vector2[] vectorValues;
     [SerializeField] private Vector2[] bubbleSuctionAndDelayDurations;
+    [SerializeField] private float[] delayValues;
 
 
 
@@ -113,6 +120,7 @@ public class TutorialData : ScriptableObject
             return;
         }
         spawnManager = m;
+        showingHand = false;
 
         pausedWaveTime = false;
         pausedGameTime = false;
@@ -121,6 +129,7 @@ public class TutorialData : ScriptableObject
         currentBubbleIndex = 0;
         currentInputCheckIndex = 0;
         currentMessageIndex = 0;
+        currentDelayedActionIndex = 0;
         currentStepIndex = 0;
         currentVectorIndex = 0;
         deviceType = inputSystem.ReturnDeviceType();
@@ -161,6 +170,9 @@ public class TutorialData : ScriptableObject
                         break;
                     case Type.WaitForInput:
                         currentInputCheckIndex++;
+                        break;
+                    case Type.StartDelayedAction:
+                        currentDelayedActionIndex++;
                         break;
 
 
@@ -265,6 +277,20 @@ public class TutorialData : ScriptableObject
                 inputSystem.SetTempLockInput(-1);
 
                 break;
+            case Type.StartDelayedAction:
+                if (currentDelayedActionIndex < actionsForDelays.Length)
+                {
+
+                    spawnManager.StartCoroutine(DelayedAction(delayValues[currentDelayedActionIndex]));
+
+                }
+                break;
+            case Type.ShowHandForSlide:
+                buttonHandler.DoHandSlide(false);
+                break;
+            case Type.HideHandForSlide:
+                buttonHandler.DoHandSlide(true);
+                break;
 
                 // case Type.DelayForInput:
                 //     spawnManager.DelayForInput(stepsForActions[currentStepIndex]);
@@ -274,10 +300,21 @@ public class TutorialData : ScriptableObject
                 //     break;
         }
     }
+    private bool showingHand = false;
 
     public void HitCorrectInput()
     {
 
+    }
+
+    private IEnumerator DelayedAction(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay / FrameRateManager.BaseTimeScale);
+        if (currentDelayedActionIndex < actionsForDelays.Length)
+        {
+            DoAction(actionsForDelays[currentDelayedActionIndex]);
+            currentDelayedActionIndex++;
+        }
     }
     private int bubbleIDAddedCheck = 0;
     public void HandleBubble(bool entered, int ID)

@@ -8,23 +8,24 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
     public PlayerID ID;
     private bool bursted;
     [SerializeField] private int type;
+    [SerializeField] private ParticleSystem ps;
     private bool isCollected;
 
-    private bool hasCrossedScreen = false;
+    // private bool hasCrossedScreen = false;
 
     [SerializeField] private SpriteRenderer blur;
 
-    private Color whiteColorStart = new Color(1, 1, 1, 1);
+    private Color whiteColorStart = new Color(1, 1, 1, .8f);
     private Color whiteColorEnd = new Color(1, 1, 1, 0);
-    private Color blueColorStart = new Color(.809f, .05f, .05f, 1);
+    private Color blueColorStart = new Color(.809f, .05f, .05f, .8f);
     private Color blueColorEnd = new Color(.809f, .05f, .05f, 0);
     private Color startColor;
     private Color endColor;
 
 
 
-    private Vector3 startScale = new Vector3(1f, 1f, 1f);
-    private Vector3 endScale;
+
+
 
     public BarnAndEggSpawner spawner;
     private float speed;
@@ -89,10 +90,26 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
     {
         mainSprite = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+
+        if (type == 0)
+        {
+
+            startColor = whiteColorStart;
+            endColor = whiteColorEnd;
+
+        }
+        else if (type == 1)
+        {
+
+
+            startColor = blueColorStart;
+            endColor = blueColorEnd;
+
+        }
     }
     public void EnableAmmo(Sprite mainImage, Sprite ThreeImage, bool mana, float speedVar)
     {
-        hasCrossedScreen = false;
+        // hasCrossedScreen = false;
         _position = transform.position;
 
         if (this.gameObject.activeInHierarchy)
@@ -175,8 +192,8 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
         blur.color = endColor;
         blur.enabled = false;
         isPostiveXSpeed = speed > 0;
-        transform.localScale = startScale;
-        endScale = startScale * 1.4f;
+        transform.localScale = Vector3.one;
+
 
         this.gameObject.SetActive(true);
 
@@ -263,6 +280,11 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
         if (isMana) t = 1;
 
         ID.globalEvents.OnAmmoEvent?.Invoke(t);
+        blur.enabled = false;
+        mainSprite.enabled = true;
+        bursted = false;
+        isCollected = false;
+        // hasCrossedScreen = false;
 
     }
 
@@ -291,19 +313,25 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
         blur.enabled = true;
         float startSpeed = speed;
         float endSpeed = startSpeed * .2f;
+        Vector3 endScale = transform.localScale * 1.3f;
 
         while (burstTimer < duration)
         {
             burstTimer += Time.deltaTime;
-            transform.localScale = Vector3.Lerp(startScale, endScale, burstTimer / duration);
+            transform.localScale = Vector3.Lerp(Vector3.one, endScale, burstTimer / duration);
             blur.color = Color.Lerp(endColor, startColor, burstTimer / duration);
             speed = Mathf.Lerp(startSpeed, endSpeed, burstTimer / duration);
 
             yield return null;
 
         }
-        if (spawner != null)
-            spawner.GetParticles(!isMana, transform.position);
+        // if (spawner != null)
+        //     spawner.GetParticles(!isMana, transform.position);
+        if (ps != null)
+        {
+
+            ps.Play();
+        }
         burstTimer = 0;
         duration = .2f;
         mainSprite.enabled = false;
@@ -312,12 +340,13 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
         while (burstTimer < duration)
         {
             burstTimer += Time.deltaTime;
-            transform.localScale = Vector3.Lerp(endScale, endScale * 1.1f, burstTimer / duration);
+            transform.localScale = Vector3.Lerp(endScale, endScale * 1.2f, burstTimer / duration);
             blur.color = Color.Lerp(startColor, endColor, burstTimer / duration);
 
             yield return null;
 
         }
+        yield return new WaitForSeconds(.3f);
 
         gameObject.SetActive(false);
 
@@ -430,6 +459,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
             isThreeAmmo = true;
 
         }
+
         gameObject.SetActive(true);
     }
 
