@@ -14,11 +14,12 @@ public class PickLevelEditorOnly : MonoBehaviour
     private LevelData selectedLevelData;
     private LevelData tempSelectedLevelData;
     private static LevelData[] sortedLevels;
-    [SerializeField] private Transform levelButtonParent;
+    [SerializeField] private Transform[] levelButtonParents;
     [SerializeField] private GameObject addLevelWindow;
     [SerializeField] private Button chooseLevelButton;
 
     [SerializeField] private GameObject levelButtonPrefab;
+    [SerializeField] private int maxLevelPerSection = 5;
 
     private List<PickLevelLevelButton> levelButtons = new List<PickLevelLevelButton>();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -132,12 +133,19 @@ public class PickLevelEditorOnly : MonoBehaviour
         if (open)
         {
             addLevelWindow.SetActive(true);
-            levelButtonParent.gameObject.SetActive(false);
+            foreach (var parent in levelButtonParents)
+            {
+                parent.gameObject.SetActive(false);
+            }
+
         }
         else
         {
             addLevelWindow.SetActive(false);
-            levelButtonParent.gameObject.SetActive(true);
+            foreach (var parent in levelButtonParents)
+            {
+                parent.gameObject.SetActive(true);
+            }
         }
 
     }
@@ -161,14 +169,22 @@ public class PickLevelEditorOnly : MonoBehaviour
     {
         addLevelWindow.SetActive(false);
         chooseLevelButton.interactable = false;
-        levelButtonParent.gameObject.SetActive(true);
-        levelButtons.Clear();
-        for (int i = levelButtonParent.childCount - 1; i >= 0; i--)
+        foreach (var parent in levelButtonParents)
         {
-            DestroyImmediate(levelButtonParent.GetChild(i).gameObject);
+            parent.gameObject.SetActive(true);
         }
-        string[] guids = AssetDatabase.FindAssets("t:LevelData", new[] { "Assets/Levels/Main" });
+        levelButtons.Clear();
+        for (int n = 0; n < levelButtonParents.Length; n++)
+        {
+            for (int i = levelButtonParents[n].childCount - 1; i >= 0; i--)
+            {
+                DestroyImmediate(levelButtonParents[n].GetChild(i).gameObject);
+            }
+        }
 
+        string[] guids = AssetDatabase.FindAssets("t:LevelData", new[] { "Assets/Levels/Main" });
+        int currentLevelCount = 0;
+        int currentLevelParent = 0;
         sortedLevels = guids
             .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
             .Where(ld => ld != null)
@@ -181,7 +197,7 @@ public class PickLevelEditorOnly : MonoBehaviour
         foreach (var level in sortedLevels)
         {
             Debug.Log("Loaded Level: " + level.LevelName);
-            GameObject buttonObject = Instantiate(levelButtonPrefab, levelButtonParent);
+            GameObject buttonObject = Instantiate(levelButtonPrefab, levelButtonParents[currentLevelParent]);
             levelButtons.Add(buttonObject.GetComponent<PickLevelLevelButton>());
             string numberString = "";
             if (level.levelWorldAndNumber.z <= 0)
@@ -190,6 +206,13 @@ public class PickLevelEditorOnly : MonoBehaviour
                 numberString = $"{level.levelWorldAndNumber.x:00}-{level.levelWorldAndNumber.y:00}-{level.levelWorldAndNumber.z:00}_";
 
             buttonObject.GetComponent<PickLevelLevelButton>().SetLevelName(this, numberString + level.LevelName, level.LevelName);
+            currentLevelCount++;
+            if (currentLevelCount >= maxLevelPerSection)
+            {
+                currentLevelCount = 0;
+                currentLevelParent++;
+
+            }
         }
 
     }

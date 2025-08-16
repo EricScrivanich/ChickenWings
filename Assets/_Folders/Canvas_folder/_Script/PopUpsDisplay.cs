@@ -119,9 +119,17 @@ public class PopUpsDisplay : MonoBehaviour
 
         if (levelData != null)
         {
+            if (levelData.Difficulty > 0)
+            {
+                levelChallenges.GetComponent<ChallengesUIManager>().ShowChallengesForLevelPicker(levelData.GetLevelChallenges(false, null), LevelDataConverter.instance.ReturnLevelSavedData());
+                levelChallenges.SetActive(true);
+            }
+            else
+            {
+                levelChallenges.SetActive(false);
+            }
 
-            levelChallenges.GetComponent<ChallengesUIManager>().ShowChallengesForLevelPicker(levelData.GetLevelChallenges(false, null), LevelDataConverter.instance.ReturnLevelSavedData());
-            levelChallenges.SetActive(true);
+
 
 
 
@@ -292,9 +300,10 @@ public class PopUpsDisplay : MonoBehaviour
     {
         if (isLevelCreator) return;
         Debug.Log("SHould finish Level");
-        LevelDataConverter.instance.SaveLevelDataForLevelComplete();
+
         Instantiate(LevelCompletePrefab, transform);
         FinishLevel();
+        LevelDataConverter.instance.SaveLevelDataForLevelComplete();
     }
 
     void OnDisable()

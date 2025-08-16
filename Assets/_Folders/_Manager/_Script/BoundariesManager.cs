@@ -26,8 +26,8 @@ public class BoundariesManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        Debug.unityLogger.logEnabled = false;
-
+        // Debug.unityLogger.logEnabled = false;
+        Debug.unityLogger.logEnabled = true;
 
 #if UNITY_EDITOR
         Debug.unityLogger.logEnabled = true;

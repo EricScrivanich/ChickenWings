@@ -77,8 +77,9 @@ public class PlayerID : ScriptableObject
     private int lives;
     [HideInInspector]
     public bool infiniteLives;
+    public int livesToLoseOnStart = 0;
 
-
+   
 
     public int Lives
     {
@@ -276,6 +277,15 @@ public class PlayerID : ScriptableObject
     //     }
 
     // }
+
+    public void LoseLivesOnStart()
+    {
+        if (livesToLoseOnStart > 0)
+            for (int i = 0; i < livesToLoseOnStart; i++)
+            {
+                Lives--;
+            }
+    }
     public void SetDataForLevel(PlayerStartingStatsForLevels stats, LevelChallenges challenges)
     {
         if (stats == null)
@@ -296,6 +306,7 @@ public class PlayerID : ScriptableObject
         this.LevelChallenges = challenges;
 
         lives = startingLives;
+        UiEvents.OnSetStartingLives?.Invoke(startingLives);
 
     }
     public void ResetValues()

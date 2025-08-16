@@ -39,6 +39,7 @@ public class LevelDataConverter : MonoBehaviour
         LevelRecordManager.ResetStaticParameters();
 
 
+
 #if UNITY_EDITOR
         {
             if (Levels.CheckNullItems())
@@ -775,9 +776,11 @@ public class LevelDataConverter : MonoBehaviour
             currentLoadedSavedLevelData.CompletedLevel = true;
             currentLoadedSavedLevelData.FurthestCompletion = data.finalSpawnStep;
             List<bool> challengeCompletion = new List<bool>();
+            bool hasCompletedAllChallenges = true;
 
             for (int i = 0; i < challenges.NumberOfChallenges; i++)
             {
+                if (challenges.ReturnChallengeCompletion(i, true) <= 0) hasCompletedAllChallenges = false;
                 if (currentLoadedSavedLevelData.ChallengeCompletion.Length > i && currentLoadedSavedLevelData.ChallengeCompletion[i])
                 {
                     challengeCompletion.Add(true);
@@ -791,17 +794,19 @@ public class LevelDataConverter : MonoBehaviour
 
             currentLoadedSavedLevelData.ChallengeCompletion = challengeCompletion.ToArray();
 
-            for (int i = 0; i < currentLoadedSavedLevelData.ChallengeCompletion.Length; i++)
-            {
-                if (currentLoadedSavedLevelData.ChallengeCompletion[i])
-                {
-                    Debug.Log("Challenge " + i + " completed.");
-                }
-                else
-                {
-                    Debug.Log("Challenge " + i + " not completed.");
-                }
-            }
+            if (hasCompletedAllChallenges) currentLoadedSavedLevelData.MasteredLevel = true;
+
+            // for (int i = 0; i < currentLoadedSavedLevelData.ChallengeCompletion.Length; i++)
+            // {
+            //     if (currentLoadedSavedLevelData.ChallengeCompletion[i])
+            //     {
+            //         Debug.Log("Challenge " + i + " completed.");
+            //     }
+            //     else
+            //     {
+            //         Debug.Log("Challenge " + i + " not completed.");
+            //     }
+            // }
 
         }
 
@@ -828,14 +833,16 @@ public class LevelDataConverter : MonoBehaviour
         bool overwrite = false;
 
 
-        if (difficulty == 1 && !currentLoadedSavedLevelData.CompletedLevel && step > currentLoadedSavedLevelData.FurthestCompletion)
+        if (difficulty >= 1 && step > currentLoadedSavedLevelData.FurthestCompletion)
         {
             currentLoadedSavedLevelData.FurthestCompletion = step;
+            if (step > currentLoadedSavedLevelData.FurthestCompletionEasy)
+                currentLoadedSavedLevelData.FurthestCompletionEasy = step;
             Debug.Log("Saving furthest completion for normal difficulty: " + step);
             overwrite = true;
 
         }
-        else if (difficulty == 0 && !currentLoadedSavedLevelData.CompletedLevelEasy && step > currentLoadedSavedLevelData.FurthestCompletionEasy)
+        else if (difficulty == 0 && step > currentLoadedSavedLevelData.FurthestCompletionEasy)
         {
 
             currentLoadedSavedLevelData.FurthestCompletionEasy = step;
@@ -864,8 +871,10 @@ public class LevelDataConverter : MonoBehaviour
 
 
 
-
-                currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
+                if (data == null && world > 0)
+                    currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)world);
+                else
+                    currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
 
                 string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
                 File.WriteAllText(path, json);
@@ -963,7 +972,7 @@ public class LevelDataConverter : MonoBehaviour
 
     }
 
-    public bool[] ReturnCompletedChallengesForLevel(Vector3Int num)
+    public LevelSavedData ReturnCompletedChallengesForLevel(Vector3Int num)
     {
         if (currentLoadedSavedLevelDataByWorld == null || currentLoadedSavedLevelDataByWorld.levels == null || currentLoadedSavedLevelDataByWorld.levels.Length == 0)
         {
@@ -981,7 +990,7 @@ public class LevelDataConverter : MonoBehaviour
             if (currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.x == num.y && currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.y == num.z)
             {
                 Debug.Log("Found saved level data for: " + currentLoadedSavedLevelDataByWorld.levels[i].LevelName);
-                return currentLoadedSavedLevelDataByWorld.levels[i].ChallengeCompletion;
+                return currentLoadedSavedLevelDataByWorld.levels[i];
             }
         }
 
@@ -992,7 +1001,7 @@ public class LevelDataConverter : MonoBehaviour
             var save = new LevelSavedData(d);
             currentLoadedSavedLevelDataByWorld.AddLevel(save);
             SavePermanentLevelData();
-            return save.ChallengeCompletion;
+            return save;
 
         }
         return null;

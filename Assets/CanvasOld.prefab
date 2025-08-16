@@ -277,7 +277,7 @@ MonoBehaviour:
   m_PixelsPerUnitMultiplier: 1
 --- !u!95 &4872531584012883774
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -291,6 +291,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -1066,6 +1067,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bdf61f3b2f834e5893326334e67fd56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerTransform: {fileID: 0}
+  cam: {fileID: 0}
+  zoomInDuration: 0
+  zoomOutDuration: 0
+  easeIn: 0
+  easeOut: 0
+  zoomInMultiplier: 0
+  cursorObject: {fileID: 0}
+  sliceableLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  slice: 0
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
 --- !u!1 &4023649845762075072
 GameObject:
@@ -1782,7 +1795,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shaderTypes: 0
+  currentShaderType: 3
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0
@@ -2352,7 +2365,7 @@ GameObject:
   - component: {fileID: 9122046527741202428}
   - component: {fileID: 5525448427375102692}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: CanvasOld
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2370,12 +2383,12 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5217150271723000061}
   - {fileID: 3469721022350203856}
   - {fileID: 3098389485844605828}
   - {fileID: 3844516029760745432}
   - {fileID: 5397627550510254398}
   - {fileID: 4176721043691830941}
+  - {fileID: 5217150271723000061}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2456,7 +2469,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 7acf52923a575421c994c7519ccae61c, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 7acf52923a575421c994c7519ccae61c, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -3143,6 +3157,14 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+    - target: {fileID: 3235471282781171282, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456421439802056448, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
     - target: {fileID: 4456766109796165030, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
       propertyPath: m_Name
       value: UIManager
@@ -3263,8 +3285,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66af20db4b43b4f8caccefdf16b3b857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &5217150271723000061 stripped
-Transform:
+--- !u!224 &5217150271723000061 stripped
+RectTransform:
   m_CorrespondingSourceObject: {fileID: 9114015588899894226, guid: e639662d7def64ee4a3724906deff4b4, type: 3}
   m_PrefabInstance: {fileID: 3899121549669688111}
   m_PrefabAsset: {fileID: 0}

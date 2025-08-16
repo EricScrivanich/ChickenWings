@@ -99,7 +99,7 @@ public class TutorialButtonHandler : MonoBehaviour
 
             for (int i = 0; i < eggButtons.Length; i++)
             {
-                eggButtons[i].SetActive(true);
+                eggButtons[i].SetActive(false);
             }
 
 

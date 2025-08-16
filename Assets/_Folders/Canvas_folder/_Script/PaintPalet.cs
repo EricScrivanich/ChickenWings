@@ -30,6 +30,8 @@ public class PaintPalet : MonoBehaviour
     private Sequence moveSeq;
     private float startPosY;
     private float startBrushPosY;
+    private bool hasInitializedInputSystem = false;
+    [SerializeField] private SpecialStateInputSystem inputSystem;
 
     // Start is called before the first frame update
     void Start()
@@ -57,6 +59,7 @@ public class PaintPalet : MonoBehaviour
 
     public void OnPress()
     {
+        if (!hasInitializedInputSystem) inputSystem.InitializeInputs();
         moveSeq.Kill();
         brushSeq.Kill();
         moveSeq = DOTween.Sequence();

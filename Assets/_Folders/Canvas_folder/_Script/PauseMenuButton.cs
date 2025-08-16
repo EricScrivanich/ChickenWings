@@ -19,6 +19,7 @@ public class PauseMenuButton : MonoBehaviour
     private Image fillImage;
     [SerializeField] private ButtonColorsSO colorSO;
     public static Action<bool> OnPauseGame;
+    private float lastTimeScale;
 
 
 
@@ -56,6 +57,7 @@ public class PauseMenuButton : MonoBehaviour
 
         PauseMenuButton.OnPauseGame?.Invoke(true);
 
+        Debug.Log("Instant Pause");
         AudioListener.pause = true;
         PauseMenu.SetActive(true);
         pmm.InstantPause();
@@ -70,6 +72,7 @@ public class PauseMenuButton : MonoBehaviour
         // if (Time.timeScale < FrameRateManager.TargetTimeScale || gameOver) return;
         if (!isPaused && Time.timeScale != 0 && !gameOver)
         {
+            Debug.Log("normal Pause");
             AudioListener.pause = true;
             isPaused = true;
             PauseMenuButton.OnPauseGame?.Invoke(true);
@@ -138,19 +141,19 @@ public class PauseMenuButton : MonoBehaviour
 
     private IEnumerator SmoothTimeScaleTransition(float targetTimeScale, float duration, float delay)
     {
-        float start = Time.timeScale;
-        float elapsed = 0f;
+        // float start = Time.timeScale;
+        // float elapsed = 0f;
 
         yield return new WaitForSecondsRealtime(delay);
-
+        Debug.Log("UnPause");
         AudioListener.pause = false;
-        while (elapsed < duration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            Time.timeScale = Mathf.Lerp(start, targetTimeScale, elapsed / duration);
-            AudioManager.instance.SlowAudioPitch(Time.timeScale);
-            yield return null;
-        }
+        // while (elapsed < duration)
+        // {
+        //     elapsed += Time.unscaledDeltaTime;
+        //     Time.timeScale = Mathf.Lerp(start, targetTimeScale, elapsed / duration);
+        //     AudioManager.instance.SlowAudioPitch(Time.timeScale);
+        //     yield return null;
+        // }
 
         Time.timeScale = targetTimeScale;
         AudioManager.instance.SlowAudioPitch(targetTimeScale);

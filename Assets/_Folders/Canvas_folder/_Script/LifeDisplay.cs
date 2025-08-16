@@ -17,7 +17,7 @@ public class LifeDisplay : MonoBehaviour
     private Coroutine gainLifeRoutine;
     private int lives;
     private Canvas canvas;
-    private bool isOverlay;
+    private bool isOverlay = false;
     private GameObject lastBrokenEgg;
 
 
@@ -57,38 +57,37 @@ public class LifeDisplay : MonoBehaviour
         // }
 
     }
-    private void Start()
-    {
-        canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
 
-        if (canvas != null)
-        {
-            if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-            {
-                isOverlay = true;
-            }
-            else if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
-            {
-                isOverlay = false;
-            }
-            else
-            {
-                Debug.Log("Canvas render mode is not Screen Space - Overlay or Screen Space - Camera");
-            }
-        }
-        else
-        {
-            Debug.LogError("Canvas component not found on GameObject 'Canvas'");
-        }
+    // private void Start()
+    // {
+    //     canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
 
-        player.infiniteLives = infiniteLives;
-        // player.Lives = startingLives;
-        lives = player.Lives;
+    //     if (canvas != null)
+    //     {
+    //         if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+    //         {
+    //             isOverlay = true;
+    //         }
+    //         else if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
+    //         {
+    //             isOverlay = false;
+    //         }
+    //         else
+    //         {
+    //             Debug.Log("Canvas render mode is not Screen Space - Overlay or Screen Space - Camera");
+    //         }
+    //     }
+    //     else
+    //     {
+    //         Debug.LogError("Canvas component not found on GameObject 'Canvas'");
+    //     }
 
-        InitializeEggs(lives);
 
-        // InitializeEggs(startingLives);
-    }
+
+    //     // InitializeEggs(startingLives);
+    // }
+
+
 
     public void SetInfiniteLives(bool isInfinite)
     {
@@ -105,8 +104,14 @@ public class LifeDisplay : MonoBehaviour
 
 
 
-    private void InitializeEggs(int lives)
+    private void InitializeEggs(int l)
     {
+        player.infiniteLives = infiniteLives;
+        lives = l;
+
+        // player.Lives = startingLives;
+
+
         float w = baseWidth + (lives * addedWidthPerEgg);
         float s = baseSpacing + (lives * spacingPerLife);
         eggImages = new Image[lives];
@@ -228,6 +233,7 @@ public class LifeDisplay : MonoBehaviour
     {
         player.globalEvents.OnInfiniteLives += InfiniteLivesAnim;
         player.globalEvents.OnUpdateLives += UpdateLives;
+        player.UiEvents.OnSetStartingLives += InitializeEggs;
 
 
     }
@@ -236,6 +242,7 @@ public class LifeDisplay : MonoBehaviour
     {
         player.globalEvents.OnInfiniteLives -= InfiniteLivesAnim;
         player.globalEvents.OnUpdateLives -= UpdateLives;
+        player.UiEvents.OnSetStartingLives -= InitializeEggs;
 
     }
 

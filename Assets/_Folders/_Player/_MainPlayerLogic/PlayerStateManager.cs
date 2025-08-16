@@ -2497,6 +2497,7 @@ public class PlayerStateManager : MonoBehaviour
     private void LevelFinished()
     {
         StopAllCoroutines();
+        ID.events.EnableButtons?.Invoke(false);
     }
     private void OnChangeMovementData(PlayerMovementData data)
     {

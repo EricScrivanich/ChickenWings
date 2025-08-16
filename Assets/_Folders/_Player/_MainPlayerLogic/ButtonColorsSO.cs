@@ -38,6 +38,8 @@ public class ButtonColorsSO : ScriptableObject
     public Color StarNoneColor;
     public Color StarGottenColor;
     public Color StarNormalColor;
+    public Color StarCardNormalFillColor;
+    public Color StarCardNormalOutlineColor;
     public Color StarCardDisabledFillColor;
     public Color StarCardDisabledOutlineColor;
     public Color StarCardGoldFillColor1;

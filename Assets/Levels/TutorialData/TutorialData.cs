@@ -81,10 +81,6 @@ public class TutorialData : ScriptableObject
     private string deviceType;
 
 
-    public int GetButtonTypes()
-    {
-        return buttonType;
-    }
 
 
     public void Initialize(SpawnStateManager m, ushort currentStep)
@@ -96,7 +92,7 @@ public class TutorialData : ScriptableObject
         if (inputSystem == null)
         {
             inputSystem = GameObject.Find("Player").GetComponent<SpecialStateInputSystem>();
-            inputSystem.SetTutorialData(this);
+            inputSystem.SetTutorialData(this, buttonType);
 
             if (currentStep == 0 && startInputsLocked)
             {
@@ -115,7 +111,15 @@ public class TutorialData : ScriptableObject
             m.HandleCheckForTutorial(false);
             if (inputSystem != null)
             {
-                inputSystem.enabled = true;
+                inputSystem.InitializeInputs();
+            }
+
+            if (buttonHandler == null && GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>() != null)
+            {
+
+
+                GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>().InitializeTutorialButtons(buttonType, false);
+
             }
             return;
         }
@@ -147,11 +151,15 @@ public class TutorialData : ScriptableObject
 
                     buttonHandler = GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>();
                     buttonHandler.InitializeTutorialButtons(buttonType, hideButton);
-                    if (inputSystem != null && hideButton)
-                    {
+
+                }
+                if (inputSystem != null)
+                {
+
+                    if (hideButton)
                         inputSystem.SetTempLockInput(buttonType);
-                        inputSystem.enabled = true;
-                    }
+                    inputSystem.InitializeInputs();
+
                 }
                 return;
             }
@@ -182,7 +190,7 @@ public class TutorialData : ScriptableObject
 
         if (inputSystem != null)
         {
-            inputSystem.enabled = true;
+            inputSystem.InitializeInputs();
         }
 
 

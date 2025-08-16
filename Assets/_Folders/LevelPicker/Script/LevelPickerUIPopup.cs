@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 {
     [SerializeField] private ChallengesUIManager challengeManager;
+    [SerializeField] private GameObject badgeObject;
+    [SerializeField] private RectTransform chickenObject;
+    [SerializeField] private ButtonTouchByIndex[] difficultyButtons;
 
     [SerializeField] private LevelData levelData;
     [SerializeField] private string sceneLoadOvverride;
@@ -64,7 +67,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
     //     }
     // }
 
-
+    private LevelSavedData levelSavedData;
     public void MoveStatItems(int mainIndex)
     {
         if (mainIndex != currentStatDisplayIndex && mainIndex >= 0 && mainIndex < amount)
@@ -111,25 +114,59 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 
 
 
-    public void ShowData(LevelData data, LevelPickerManager manager, int levelDifficulty = 1)
+    public void ShowData(LevelData data, LevelPickerManager manager, int levelDifficulty = 1, bool redo = false, bool isChallenge = false)
     {
-        if (manager != null)
-            levelPickerManager = manager;
+        // if (levelDifficulty == 2) levelDifficulty = 1; // Master difficulty is treated as normal difficulty in this context
+        data.Difficulty = levelDifficulty;
+        if (redo)
+        {
+            foreach (Transform child in statDisplayParent)
+            {
+                if (child.GetComponent<LevelPickerUIStatBar>() != null)
+                    Destroy(child.gameObject);
+            }
 
-        this.levelData = data;
-        LevelDataConverter.instance.ReturnAndLoadWorldLevelData(levelData);
-        LevelDataConverter.instance.LoadLevelSavedData(levelData);
-        levelNameText.text = data.LevelName;
+            DOTween.Kill(progressBarFill);
+            if (levelDifficulty >= 1)
+            {
+                float fill = (float)LevelDataConverter.instance.ReturnLevelSavedData().FurthestCompletion / (float)data.finalSpawnStep;
+                progressBarFill.DOFillAmount(fill, .7f).SetUpdate(true);
+            }
+
+            else if (levelDifficulty == 0)
+            {
+                float fill = (float)LevelDataConverter.instance.ReturnLevelSavedData().FurthestCompletionEasy / (float)data.finalSpawnStep;
+                progressBarFill.DOFillAmount(fill, .7f).SetUpdate(true);
+
+            }
+        }
+        else if (manager != null)
+        {
+            difficultyPanelImage = difficultyPanel.GetComponent<Image>();
+            levelPickerManager = manager;
+            this.levelData = data;
+            levelSavedData = LevelDataConverter.instance.ReturnAndLoadWorldLevelData(levelData);
+            bool mastered = levelSavedData != null && levelSavedData.MasteredLevel;
+
+            if (mastered) badgeObject.SetActive(true);
+            else badgeObject.SetActive(false);
+            LevelDataConverter.instance.LoadLevelSavedData(levelData);
+            levelNameText.text = data.LevelName;
+            if (levelDifficulty >= 1)
+                progressBarFill.fillAmount = (float)LevelDataConverter.instance.ReturnLevelSavedData().FurthestCompletion / (float)data.finalSpawnStep;
+            else if (levelDifficulty == 0)
+                progressBarFill.fillAmount = (float)LevelDataConverter.instance.ReturnLevelSavedData().FurthestCompletionEasy / (float)data.finalSpawnStep;
+
+            var b = startButton.GetComponent<ButtonTouchByIndex>();
+            // b.SetData(-1, this, false);
+            buttons.Add(b);
+        }
+
+
         currentSelectedLevelDifficulty = levelDifficulty;
         willOverwriteCheckPointSave = false;
         checkPointToLoad = -1;
-        var b = startButton.GetComponent<ButtonTouchByIndex>();
-        // b.SetData(-1, this, false);
-        buttons.Add(b);
-        if (levelDifficulty == 1)
-            progressBarFill.fillAmount = (float)LevelDataConverter.instance.ReturnLevelSavedData().FurthestCompletion / (float)data.finalSpawnStep;
-        else if (levelDifficulty == 0)
-            progressBarFill.fillAmount = (float)LevelDataConverter.instance.ReturnLevelSavedData().FurthestCompletionEasy / (float)data.finalSpawnStep;
+
 
 
         int validCheckPoints = 0;
@@ -155,6 +192,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
         }
 
         statDisplays = new RectTransform[amount];
+
         if (!usingCheckpoints)
         {
             var o = Instantiate(statDisplayPrefab, statDisplayParent);
@@ -165,21 +203,31 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
             currentStatDisplayIndex = 0;
             t.position = mainStatDisplayPos.position;
             t.localScale = Vector3.one;
-            short[] ammos = data.StartingAmmos;
-            statDisplay.CreateSelf(this, 0, new Vector2Int(data.StartingLives, data.StartingLives), ammos, true);
+            if (levelDifficulty >= 1)
+                statDisplay.CreateSelf(this, 0, new Vector2Int(data.StartingLives, data.StartingLives), data.StartingAmmos, true);
+            else
+            {
+                statDisplay.CreateSelf(this, 0, new Vector2Int(data.easyStartingLives, data.easyStartingLives), data.easyStartingAmmos, true);
+            }
         }
 
         else
         {
             var checkpointData = LevelDataConverter.instance.ReturnAllCheckPointDataForLevel();
-            int maxLives = data.StartingLives;
+            int maxLives = 0;
 
-            short[] ammos = data.StartingAmmos;
+            short[] ammos;
 
             if (levelDifficulty == 0)
             {
                 maxLives = data.easyStartingLives;
                 ammos = data.easyStartingAmmos;
+
+            }
+            else
+            {
+                ammos = data.StartingAmmos;
+                maxLives = data.StartingLives;
             }
             Debug.LogError("Amount: " + amount);
             int currentLives = maxLives;
@@ -231,41 +279,89 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 
         if (data.levelWorldAndNumber != Vector3Int.zero)
         {
-            levelNumberText.text = $"{data.levelWorldAndNumber.x}-{data.levelWorldAndNumber.y}";
-            if (data.checkPointSteps != null && data.checkPointSteps.Length > 0)
+            if (redo)
             {
-                for (int i = 0; i < data.checkPointSteps.Length; i++)
+
+            }
+            else
+            {
+                if (isChallenge)
                 {
-                    if (i == 0)
-                    {
-                        flagImage.localPosition = new Vector2(GetXOnProgressBar(GetPercent(data.checkPointSteps[i])), flagImage.localPosition.y);
-                        buttons.Add(flagImage.GetComponent<ButtonTouchByIndex>());
-                    }
-                    else
-                    {
-                        var f = Instantiate(flagImage, flagImage.parent);
-                        f.localPosition = new Vector2(GetXOnProgressBar(GetPercent(data.checkPointSteps[i])), flagImage.localPosition.y);
-                        buttons.Add(f.GetComponent<ButtonTouchByIndex>());
-                    }
 
+                    var o = Instantiate(difficultyPrefab, difficultyPanelsParent);
+                    var script = o.GetComponent<ButtonTouchByIndex>();
+                    script.SetData(3, this, false, false);
+                    script.CheckIfIndex(3);
+                    script.SetText(difficultyText[3]);
 
+                }
+                else
+                {
+                    List<ButtonTouchByIndex> difficultyButtonList = new List<ButtonTouchByIndex>();
+                    baseDifficultyHeight = difficultyPanel.rect.height;
+                    addedDifficultyHeightPerPanel = (addedDifficultyHeightPerPanel * 3) + baseDifficultyHeight;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        var o = Instantiate(difficultyPrefab, difficultyPanelsParent);
+                        var script = o.GetComponent<ButtonTouchByIndex>();
+                        bool showMasterDifficulty = levelSavedData != null && levelSavedData.CompletedLevel;
+                        if (i == 2 && showMasterDifficulty)
+                            script.SetData(i, this, false);
+                        else if (i == 2)
+                            script.SetData(i, this, true);
+                        else
+                            script.SetData(i, this, false);
+
+                        script.SetText(difficultyText[i]);
+                        script.CheckIfIndex(currentSelectedLevelDifficulty);
+                        difficultyButtonList.Add(script);
+
+                    }
+                    difficultyButtons = difficultyButtonList.ToArray();
 
 
 
                 }
 
 
+                levelNumberText.text = $"{data.levelWorldAndNumber.x}-{data.levelWorldAndNumber.y}";
+                if (data.checkPointSteps != null && data.checkPointSteps.Length > 0)
+                {
+                    for (int i = 0; i < data.checkPointSteps.Length; i++)
+                    {
+                        if (i == 0)
+                        {
+                            flagImage.localPosition = new Vector2(GetXOnProgressBar(GetPercent(data.checkPointSteps[i])), flagImage.localPosition.y);
+                            buttons.Add(flagImage.GetComponent<ButtonTouchByIndex>());
+                        }
+                        else
+                        {
+                            var f = Instantiate(flagImage, flagImage.parent);
+                            f.localPosition = new Vector2(GetXOnProgressBar(GetPercent(data.checkPointSteps[i])), flagImage.localPosition.y);
+                            buttons.Add(f.GetComponent<ButtonTouchByIndex>());
+                        }
 
 
+
+
+
+                    }
+
+
+                }
+
+                else
+                    flagImage.gameObject.SetActive(false);
             }
 
-            else
-                flagImage.gameObject.SetActive(false);
+
 
             for (int i = 0; i < buttons.Count; i++)
             {
+
                 bool canPress = i - 1 < validCheckPoints;
-                buttons[i].SetData(i - 1, this, !canPress);
+                Debug.Log($"Setting cp button {i} with index {i - 1}, canPress: {canPress}, redo: {redo}, validCheckPoints: {validCheckPoints}");
+                buttons[i].SetData(i - 1, this, !canPress, redo);
             }
             CheckCheckPoints(checkPointToLoad);
         }
@@ -278,7 +374,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 
     public void PlayLevel()
     {
-        HapticFeedbackManager.instance.PlayerButtonPress();
+        HapticFeedbackManager.instance.PressUIButton();
 
         if (LevelDataConverter.instance.ReturnAllCheckPointDataForLevel() == null || willOverwriteCheckPointSave)
         {
@@ -303,7 +399,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
         if (levelPickerManager != null)
         {
             levelPickerManager.BackOut();
-            
+
         }
         else
         {
@@ -317,6 +413,8 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
         {
             buttons[i].CheckIfIndex(index);
         }
+        DOTween.Kill(chickenObject);
+        chickenObject.DOLocalMoveX(buttons[index + 1].GetLocalX(), .7f).SetUpdate(true).SetEase(Ease.InOutSine);
 
         TemporaryLevelCheckPointData progressData = null;
 
@@ -338,12 +436,120 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
     {
         return (progressBar.rect.width * percent) - progressBar.rect.width * .5f;
     }
+    [SerializeField] private TextMeshProUGUI levelDifficultyText;
 
-    public void Press(int index)
+    public void Press(int index, ButtonTouchByIndex.ButtonType buttonType)
     {
-        MoveStatItems(index + 1);
-        checkPointToLoad = index;
-        CheckCheckPoints(index);
+        if (buttonType == ButtonTouchByIndex.ButtonType.LevelStart)
+        {
+            MoveStatItems(index + 1);
+            checkPointToLoad = index;
+            CheckCheckPoints(index);
+        }
+        else if (buttonType == ButtonTouchByIndex.ButtonType.Difficulty)
+        {
+            Debug.LogError("Difficulty Button Pressed: " + index);
+            for (int i = 0; i < difficultyButtons.Length; i++)
+            {
+                difficultyButtons[i].CheckIfIndex(index);
+            }
+            if (index != currentSelectedLevelDifficulty) ShowData(levelData, levelPickerManager, index, true);
+            currentSelectedLevelDifficulty = index;
+            HideDifficultys(false);
+
+        }
+
+    }
+    [Header("Difficulty Panel")]
+    [SerializeField] private RectTransform difficultyPanel;
+    private Image difficultyPanelImage;
+    [SerializeField] private float addedDifficultyHeightPerPanel;
+    [SerializeField] private float stretchTime;
+    [SerializeField] private float undoStretchTime;
+    [SerializeField] private float collapseTime;
+    private float extraHeightForStretch = 5;
+    [SerializeField] private Transform difficultyPanelsParent;
+    private Vector3 difficulyScaleStretch = new Vector3(.8f, 1.1f, 1);
+
+    private string[] difficultyText = { "Easy", "Classic", "Master", "Challenge" };
+    [SerializeField] private GameObject difficultyPrefab;
+    private float baseDifficultyHeight;
+    [SerializeField] private Color difficultyPanelColor;
+
+    private Sequence difficultySeq;
+    private bool isDifficultyShown = false;
+    public void ShowDifficultys()
+    {
+        if (isDifficultyShown) return;
+
+        if (difficultySeq != null && difficultySeq.IsActive())
+        {
+            difficultySeq.Complete();
+        }
+        difficultySeq = DOTween.Sequence();
+
+
+        HapticFeedbackManager.instance.PressUIButton();
+        isDifficultyShown = true;
+        foreach (var b in difficultyButtons)
+        {
+            b.gameObject.SetActive(true);
+        }
+
+        difficultySeq.Append(difficultyPanel.DOScale(difficulyScaleStretch, stretchTime).SetEase(Ease.OutBack));
+        difficultySeq.Join(difficultyPanel.DOSizeDelta(new Vector2(difficultyPanel.rect.width, addedDifficultyHeightPerPanel + extraHeightForStretch), stretchTime).SetEase(Ease.OutBack));
+        difficultySeq.Join(difficultyPanelImage.DOColor(difficultyPanelColor, stretchTime));
+        difficultySeq.Append(difficultyPanel.DOScale(Vector3.one * 0.9f, undoStretchTime).SetEase(Ease.OutBack));
+        difficultySeq.Join(difficultyPanel.DOSizeDelta(new Vector2(difficultyPanel.rect.width, addedDifficultyHeightPerPanel), undoStretchTime).SetEase(Ease.OutBack));
+        difficultySeq.Play();
+
+
+    }
+    public void HideDifficultys(bool exitView)
+    {
+
+
+        if (!isDifficultyShown) return;
+        if (difficultySeq != null && difficultySeq.IsActive())
+        {
+            difficultySeq.Complete();
+        }
+        difficultySeq = DOTween.Sequence();
+
+
+
+        isDifficultyShown = false;
+        if (!exitView)
+            difficultySeq.AppendInterval(.3f);
+        else
+            collapseTime *= .8f;
+
+        difficultySeq.Append(difficultyPanel.DOScale(Vector3.one * .85f, collapseTime));
+        difficultySeq.Join(difficultyPanel.DOSizeDelta(new Vector2(difficultyPanel.rect.width, baseDifficultyHeight), collapseTime));
+        difficultySeq.Join(difficultyPanelImage.DOColor(Color.clear, collapseTime));
+        difficultySeq.Play().OnComplete(() =>
+        {
+            foreach (var b in difficultyButtons)
+            {
+                b.gameObject.SetActive(false);
+            }
+        });
+
+
+    }
+
+
+
+
+
+
+    public void GetText(string text, ButtonTouchByIndex.ButtonType buttonType)
+    {
+        if (buttonType == ButtonTouchByIndex.ButtonType.Difficulty)
+        {
+            Debug.LogError("Difficulty Text: " + text);
+            levelDifficultyText.text = text;
+        }
     }
 
     // Update is called once per frame

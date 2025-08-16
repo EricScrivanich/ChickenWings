@@ -115,6 +115,7 @@ public class HapticFeedbackManager : MonoBehaviour
     public void PressUIButton()
     {
 
+       
         AudioManager.instance.PlayButtonClickSound();
         if (vibrationStrength > 0)
             HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);

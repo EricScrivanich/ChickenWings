@@ -10,6 +10,9 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     [SerializeField] private GameObject sleepingPig;
     [SerializeField] private GameObject flappingPig;
     [SerializeField] private Transform stars;
+    [SerializeField] private SpriteRenderer badge;
+    private bool doBadgeSeq = false;
+
 
 
 
@@ -146,7 +149,29 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     private bool doStarSeq = false;
     public void ReadyStarSeq()
     {
-        challengeCompletion = LevelDataConverter.instance.ReturnCompletedChallengesForLevel(WorldNumber);
+        var data = LevelDataConverter.instance.ReturnCompletedChallengesForLevel(WorldNumber);
+        if (data == null)
+        {
+            doBadgeSeq = false;
+            doStarSeq = false;
+            for (int i = 0; i < 3; i++)
+            {
+                starSprites[i].color = Color.black;
+                starBlurSprites[i].enabled = false;
+            }
+            return;
+        }
+
+        if (data.MasteredLevel)
+        {
+            doBadgeSeq = true;
+            stars.gameObject.SetActive(false);
+            badge.gameObject.SetActive(true);
+            return;
+        }
+        doBadgeSeq = false;
+        challengeCompletion = data.ChallengeCompletion;
+
         if (challengeCompletion == null || challengeCompletion.Length == 0)
         {
             Debug.LogWarning("No challenge completion data found for level: " + WorldNumber);
@@ -180,9 +205,28 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
 
 
     }
-
+    private bool badgeIn = false;
     public void DoStarSeq(int index, bool enter)
     {
+        if (doBadgeSeq)
+        {
+            if (index == 0 && enter)
+            {
+                if (badgeIn)
+                {
+                    badgeIn = false;
+                    badge.DOFade(1, blurInTime * 2).SetUpdate(true).SetEase(Ease.InSine).From(0);
+                }
+                else
+                {
+                    badgeIn = true;
+                    badge.DOFade(0, blurOutTime * 2).SetUpdate(true);
+                }
+
+            }
+
+            return;
+        }
         if (!doStarSeq)
             return;
 

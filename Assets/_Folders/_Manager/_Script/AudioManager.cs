@@ -58,6 +58,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip cageHitSound;
     [SerializeField] private AudioClip cageDestroySound;
     [SerializeField] private AudioClip[] chicHappySounds;
+    [SerializeField] private AudioClip[] footSteps;
+    private int footStepIndex = 0;
+
 
 
 
@@ -119,6 +122,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Volumes")]
 
+    [SerializeField] private float footStepsVolume;
     [SerializeField] private float chicHappyVolume;
     [SerializeField] private float cageHitVolume;
     [SerializeField] private float cageDestroyVolume;
@@ -202,6 +206,15 @@ public class AudioManager : MonoBehaviour
 
     public void LoadVolume(float musicVol, float sfxVolume, bool mutePlayerInputVolume = false)
     {
+
+
+        audioSource.Stop();
+        chickenSource.Stop();
+        nonSlowSource.Stop();
+        ringPassSource.Stop();
+        pigAudioSource.Stop();
+        windMillAudioSource.Stop();
+        AudioListener.pause = false;
 
         musicSource.volume = musicVol;
         audioSource.volume = sfxVolume;
@@ -299,6 +312,15 @@ public class AudioManager : MonoBehaviour
     {
         chickenSource.PlayOneShot(parrySound, parryVolume);
     }
+    public void PlayFootStepSound(float volMult)
+    {
+        audioSource.PlayOneShot(footSteps[footStepIndex], footStepsVolume * volMult);
+        footStepIndex++;
+        if (footStepIndex >= footSteps.Length)
+        {
+            footStepIndex = 0;
+        }
+    }
 
     public void PlayChicHappySound(int i)
     {
@@ -319,7 +341,7 @@ public class AudioManager : MonoBehaviour
         else if (type == 1)
             nonSlowSource.PlayOneShot(starHitSound, starHitVolume);
         else if (type == 2) nonSlowSource.PlayOneShot(starWhooshSound, starWhooshVolume);
-        else if (type == 3) nonSlowSource.PlayOneShot(badgeSlapSound, badgeSlapVolume);
+        else if (type == 3) nonSlowSource.PlayOneShot(badgeSlapSound, badgeSlapVolume + .1f);
     }
 
     public void PlayLongFarts()
@@ -663,7 +685,9 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayStartSound()
     {
+
         chickenSource.PlayOneShot(start, startVolume);
+
     }
 
     public void PlayScoreSound()
@@ -677,19 +701,20 @@ public class AudioManager : MonoBehaviour
 
     public void PauseAllAudio(bool pause)
     {
+        Debug.Log("AudioManager PauseAllAudio: " + pause);
         if (pause)
         {
             AudioListener.pause = true;
             nonSlowSource.Pause();
-            ringPassSource.Pause();
-            audioSource.Pause();
+
+
         }
         else
         {
             AudioListener.pause = false;
 
-            ringPassSource.UnPause();
-            audioSource.UnPause();
+
+
             nonSlowSource.UnPause();
 
         }
@@ -697,21 +722,20 @@ public class AudioManager : MonoBehaviour
     }
     private void OnApplicationPause(bool isPaused)
     {
+        Debug.Log("AudioManager OnAppPauseAllAudio: " + isPaused);
         if (isPaused)
         {
             AudioListener.pause = true;
             nonSlowSource.Pause();
             musicSource.Pause();
-            ringPassSource.Pause();
-            audioSource.Pause();
+
         }
         else
         {
             AudioListener.pause = false;
             musicSource.UnPause();
             ringPassSource.UnPause();
-            audioSource.UnPause();
-            nonSlowSource.UnPause();
+
 
         }
     }

@@ -20,7 +20,7 @@ public class LevelData : ScriptableObject
     [SerializeField] private LevelChallenges levelChallenges;
 
 
-    private int livesToSubtract;
+
     public PlayerID playerID;
     public string LevelName;
     public Vector3Int levelWorldAndNumber;
@@ -74,11 +74,12 @@ public class LevelData : ScriptableObject
     private int currentCheckpointIndex = 0;
     private bool checkForCheckpoint = false;
     public bool usedCheckPoint { get; private set; } = false;
-    public int Difficulty { get; private set; } = 1;
+    public int Difficulty = 1;
 
 
     private bool checkForCage = false;
     private bool checkPointHasBeenCollected = false;
+    private bool isRealLevel;
 
 
 
@@ -90,10 +91,11 @@ public class LevelData : ScriptableObject
     {
         spawner = s;
         Difficulty = difficulty;
+        this.isRealLevel = isLevel;
 
 
         checkPointHasBeenCollected = false;
-        livesToSubtract = 0;
+        playerID.livesToLoseOnStart = 0;
         currentCheckpointIndex = 0;
 
         // Load your level save data first. This sets spawnSteps, idList, etc.
@@ -103,7 +105,7 @@ public class LevelData : ScriptableObject
 
 
             currentCheckpointIndex = checkPointData.CurrentCheckPoint;
-            Debug.LogError("Current checkpoint index: " + currentCheckpointIndex + " with current spawn step: " + currentSpawnStep + " and current spawn index: " + currentSpawnIndex);
+
             if (difficulty == 1)
             {
                 startingStats.SetData(StartingLives, checkPointData.CurrentAmmos);
@@ -118,7 +120,7 @@ public class LevelData : ScriptableObject
             if (startingStats.StartingLives > checkPointData.CurrentLives)
             {
 
-                livesToSubtract = startingStats.StartingLives - checkPointData.CurrentLives;
+                playerID.livesToLoseOnStart = startingStats.StartingLives - checkPointData.CurrentLives;
             }
 
 
@@ -366,8 +368,7 @@ public class LevelData : ScriptableObject
                     floatListIndex += 2;
                     break;
                 case 3:
-                    Debug.LogError("Type is: " + typeList[i - subrtactIndex]);
-                    Debug.LogError("Creating Float Three Data Struct for ID: " + idList[i] + " at index: " + i + " with pos: " + posList[i - subrtactIndex] + " and floatList: " + floatList[floatListIndex] + ", " + floatList[floatListIndex + 1] + ", " + floatList[floatListIndex + 2]);
+
                     dataStructFloatThree[float3Index] = new DataStructFloatThree(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2]);
                     float3Index++;
                     floatListIndex += 3;
@@ -497,18 +498,7 @@ public class LevelData : ScriptableObject
         Debug.LogError("Finished loading data for level: " + "Starting Lives" + StartingLives + LevelName + " with " + spawnSteps.Length + " spawn steps and " + idList.Length + " objects.");
     }
 
-    public void SetLostLives()
-    {
-        if (livesToSubtract > 0)
-        {
-            for (int i = 0; i < livesToSubtract; i++)
-            {
-                playerID.Lives--; // Prevent negative lives
-            }
 
-            livesToSubtract = 0; // Reset after applying
-        }
-    }
 
     public void NextSpawnStep(ushort ss)
     {
@@ -523,7 +513,7 @@ public class LevelData : ScriptableObject
 
         if (checkForCheckpoint && ss == checkPointSteps[currentCheckpointIndex])
         {
-            Debug.LogError("Spawning Checkpoint at step: " + ss + " with index: " + currentCheckpointIndex);
+            // Debug.LogError("Spawning Checkpoint at step: " + ss + " with index: " + currentCheckpointIndex);
             objData.SpawnCheckPoint(checkPointHasBeenCollected, (ushort)currentCheckpointIndex, this);
             if (checkPointHasBeenCollected) checkPointHasBeenCollected = false; // Only spawn the checkpoint once
             currentCheckpointIndex++;
@@ -534,7 +524,7 @@ public class LevelData : ScriptableObject
         }
         if (ss == nextSpawnStep)
         {
-            Debug.LogError("Next Spawn Step: " + ss + " is the same as current spawn step: " + currentSpawnStep + ". Spawning objects now.");
+            // Debug.LogError("Next Spawn Step: " + ss + " is the same as current spawn step: " + currentSpawnStep + ". Spawning objects now.");
 
 
             for (ushort i = currentSpawnIndex; i < nextSpawnIndex; i++)
@@ -619,14 +609,14 @@ public class LevelData : ScriptableObject
                 }
                 else if (idList[i] == 0)
                 {
-                    Debug.LogError("Spawning Ring for ID: " + idList[i] + " at index: " + i);
+
                     objData.ringPool.SpawnRingByData(dataStructFloatThree[dataTypeIndexes[3]]);
                     dataTypeIndexes[3]++;
 
                 }
                 else if (idList[i] == 1)
                 {
-                    Debug.LogError("Spawning Buvket for ID: " + idList[i] + " at index: " + i);
+
                     objData.ringPool.SpawnBucketByData(dataStructFloatThree[dataTypeIndexes[3]]);
                     dataTypeIndexes[3]++;
                 }
@@ -651,7 +641,7 @@ public class LevelData : ScriptableObject
         // Edge case: If all objects have already been spawned
         if (nextSpawnIndex >= spawnSteps.Length)
         {
-            Debug.LogWarning("All spawn steps processed. No more objects to spawn.");
+            // Debug.LogWarning("All spawn steps processed. No more objects to spawn.");
             return;
         }
 
@@ -664,19 +654,19 @@ public class LevelData : ScriptableObject
             if (spawnSteps[i] > nextSpawnStep) // Look for the next step in sequence
             {
                 nextSpawnIndex = i;  // Store the next spawn index correctly
-                Debug.LogError("Next Spawn Step: " + nextSpawnStep + ", Next Spawn Index: " + nextSpawnIndex);
+                // Debug.LogError("Next Spawn Step: " + nextSpawnStep + ", Next Spawn Index: " + nextSpawnIndex);
                 return; // Exit loop early once found
             }
         }
 
         // If no greater spawn step is found, assume all remaining objects spawn at the same step
         nextSpawnIndex = (ushort)spawnSteps.Length; // Mark as fully processed
-        Debug.LogWarning("No further spawn steps found. All objects may have been processed.");
+        // Debug.LogWarning("No further spawn steps found. All objects may have been processed.");
     }
 
 
 
-    public LevelChallenges GetLevelChallenges(bool loadData, TemporaryLevelCheckPointData data, int difficulty = 1)
+    public LevelChallenges GetLevelChallenges(bool loadData, TemporaryLevelCheckPointData data)
     {
         if (levelChallenges == null)
         {
@@ -685,16 +675,17 @@ public class LevelData : ScriptableObject
         }
         if (data == null && loadData)
         {
-            levelChallenges.ResetData(levelWorldAndNumber, 1, StartingAmmos, StartingLives);
+            levelChallenges.ResetData(levelWorldAndNumber, Difficulty, StartingAmmos, StartingLives);
             return levelChallenges;
         }
         else if (loadData)
         {
-            levelChallenges.LoadData(levelWorldAndNumber, difficulty, data);
+            levelChallenges.LoadData(levelWorldAndNumber, Difficulty, data);
             levelChallenges.SetCheckPoint(data.CurrentCheckPoint);
 
             // Debug.LogError("Loaded Level Challenges for level: " + levelWorldAndNumber + " with difficulty: " + difficulty);
         }
+        levelChallenges.SetDifficulty(Difficulty);
         return levelChallenges;
     }
 

@@ -213,6 +213,7 @@ public class ResetManager : MonoBehaviour
         }
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         lvlID.usingCheckPoint = true;
+        // Unpause audio when resetting the game
 
     }
 

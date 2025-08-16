@@ -19,6 +19,9 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
     [SerializeField] private Vector2 minMaxSpeed;
     [SerializeField] private float distanceSpeedModifier;
+    [SerializeField] private Vector2 minMaxFootstepVolumeMultiplier;
+    [SerializeField] private Vector2 minMaxFootstepTime;
+    private float currentFootstepTime = 0;
 
 
     [SerializeField] private Vector2 minMaxScale;
@@ -106,7 +109,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         transform.localScale = Vector3.one * s;
         Debug.Log("Set initial position: " + transform.position + " at distance: " + currentDistance + " with scale: " + s);
 
-        int l = path.ReturnLayer();
+        int l = path.ReturnLayerForStart(currentDistance / path.path.length);
         if (l != currentLayer)
         {
             currentLayer = l;
@@ -176,9 +179,18 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         while ((direction == 1 && currentDistance < distanceToTravel) ||
                (direction == -1 && currentDistance > distanceToTravel))
         {
+
+
+
             float remainingDist = Mathf.Abs(distanceToTravel - currentDistance);
             float t = Mathf.Clamp01(remainingDist / 1.3f); // <= Easing radius (5 units)
             float easeFactor = Mathf.SmoothStep(0.2f, 1f, t); // Slows down near target
+
+            if (currentFootstepTime <= 0)
+            {
+                currentFootstepTime = Mathf.Lerp(minMaxFootstepTime.x, minMaxFootstepTime.y, t);
+            }
+            currentFootstepTime -= Time.deltaTime;
 
 
             currentDistance += Time.deltaTime * speed * direction * easeFactor;
@@ -204,6 +216,10 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
             transform.localScale = Vector3.one * scale;
             lastDistance = distSample;
+            if (currentFootstepTime <= 0)
+            {
+                AudioManager.instance.PlayFootStepSound(Mathf.Lerp(minMaxFootstepVolumeMultiplier.x, minMaxFootstepVolumeMultiplier.y, distSample / 100));
+            }
 
             int l = path.ReturnLayer();
             if (l != currentLayer)

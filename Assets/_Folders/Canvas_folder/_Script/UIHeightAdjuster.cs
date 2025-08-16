@@ -37,13 +37,13 @@ public class UIHeightAdjuster : MonoBehaviour
     private LevelChallenges currentChallengeSO;
     private int index;
 
- 
 
 
 
 
 
-   
+
+
 
 
 
@@ -259,7 +259,12 @@ public class UIHeightAdjuster : MonoBehaviour
 
     public void SetColorForCard(int completion)
     {
-        if (completion == -1)
+        if (completion == 0)
+        {
+            fillImage.color = colorSO.StarCardNormalFillColor;
+            outlineImage.color = colorSO.StarCardNormalOutlineColor;
+        }
+        else if (completion == -1)
         {
             fillImage.color = colorSO.StarCardDisabledFillColor;
             outlineImage.color = colorSO.StarCardDisabledOutlineColor;
@@ -279,7 +284,7 @@ public class UIHeightAdjuster : MonoBehaviour
 
         starHitSeq = DOTween.Sequence();
         starHitSeq.AppendInterval(.25f);
-        // starHitSeq.AppendCallback(() => AudioManager.instance.PlayErrorSound(true));
+        starHitSeq.AppendCallback(() => AudioManager.instance.PlayErrorSound(false));
         starHitSeq.Append(fillImage.DOColor(colorSO.StarCardDisabledFillColor, .4f));
 
         starHitSeq.Join(outlineImage.DOColor(colorSO.StarCardDisabledOutlineColor, .4f));

@@ -9,11 +9,12 @@ using System.Collections.Generic;
 
 public class SpecialStateInputSystem : MonoBehaviour
 {
-    [SerializeField] private bool useFlips;
-    [SerializeField] private bool useDash;
-    [SerializeField] private bool useDrop;
-    [SerializeField] private bool useEgg;
-    [SerializeField] private bool useShotgun;
+    private bool useFlips = true;
+    private bool useDash = true;
+    private bool useDrop = true;
+    private bool useEgg = true;
+    private bool useShotgun = true;
+    [SerializeField] private bool isMainMenu = false;
 
     private TutorialData tutorialData;
 
@@ -37,7 +38,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     private Image flipLeftImage;
     private Image flipRightImage;
-    private Image eggImage;
+    // private Image eggImage;
     [SerializeField] private LevelManagerID lvlID;
     private InputController controls;
     private Sequence dropButtonSeq;
@@ -215,10 +216,10 @@ public class SpecialStateInputSystem : MonoBehaviour
         tempLockInput = inpLock;
         Debug.Log("Temporary lock input set to: " + tempLockInput);
     }
-    public void SetTutorialData(TutorialData data)
+    public void SetTutorialData(TutorialData data, int t)
     {
         tutorialData = data;
-        int t = data.GetButtonTypes();
+
 
 
         if (t == 0)
@@ -255,22 +256,31 @@ public class SpecialStateInputSystem : MonoBehaviour
     }
     private void Awake()
     {
+
+        controls = new InputController();
+    }
+
+    public void InitializeInputs()
+    {
+        Debug.LogError("Initializing inputs in SpecialStateInputSystem with useFlips: " + useFlips + ", useDash: " + useDash + ", useDrop: " + useDrop + ", useEgg: " + useEgg);
         ID.UsingClocker = false;
         startedHold = false;
         ButtonsEnabled = false;
 
+        if (isMainMenu) ButtonsEnabled = true;
 
 
 
 
-        controls = new InputController();
 
-        controls.Movement.ScytheStick.performed += ctx =>
-        {
-            ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
-            // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
 
-        };
+
+        if (useEgg) controls.Movement.ScytheStick.performed += ctx =>
+         {
+             ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
+             // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+
+         };
 
         // controls.Movement.ScytheStick.canceled += ctx =>
         // {
@@ -280,7 +290,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         // };
 
 
-        controls.Movement.MouseClick.performed += ctx =>
+        if (useEgg) controls.Movement.MouseClick.performed += ctx =>
         {
             if (tempLockInput == 3) return;
             isMousePressed = true;
@@ -302,7 +312,29 @@ public class SpecialStateInputSystem : MonoBehaviour
             // }
 
         };
-        controls.Movement.MouseClick.canceled += ctx =>
+
+        if (useEgg) controls.Movement.Finger1Press.performed += ctx =>
+      {
+          if (tempLockInput == 3) return;
+
+
+          if (!trackingCenterTouch)
+              trackedTouchIndex = 1;
+      };
+
+        if (useEgg) controls.Movement.Finger2Press.performed += ctx =>
+       {
+           if (tempLockInput == 3) return;
+
+
+           if (!trackingCenterTouch)
+               trackedTouchIndex = 2;
+
+
+
+       };
+
+        if (useEgg) controls.Movement.MouseClick.canceled += ctx =>
         {
 
             isMousePressed = false;
@@ -314,7 +346,34 @@ public class SpecialStateInputSystem : MonoBehaviour
             }
         };
 
-        controls.Movement.Cursor.performed += ctx =>
+
+        if (useEgg) controls.Movement.Finger1Press.canceled += ctx =>
+      {
+
+
+          if (trackingCenterTouch && trackedTouchIndex == 1)
+          {
+              trackingCenterTouch = false;
+              ID.events.OnReleaseCenter?.Invoke();
+          }
+
+
+      };
+
+        if (useEgg) controls.Movement.Finger2.performed += ctx =>
+        {
+            if (trackingCenterTouch && trackedTouchIndex == 2)
+            {
+                Vector2 p = ctx.ReadValue<Vector2>();
+                ID.events.SendParrySwipeData?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p);
+            }
+
+
+
+        };
+
+        if (useEgg) controls.Movement.Cursor.performed += ctx =>
         {
 
             if (trackingCenterTouch && isMousePressed)
@@ -343,7 +402,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         //     ID.events.OnPerformParry?.Invoke(false);
         // };
 
-        controls.Movement.Finger1.performed += ctx =>
+        if (useEgg) controls.Movement.Finger1.performed += ctx =>
       {
 
           if (trackingCenterTouch && trackedTouchIndex == 1)
@@ -357,33 +416,9 @@ public class SpecialStateInputSystem : MonoBehaviour
       };
 
 
-        controls.Movement.Finger1Press.canceled += ctx =>
-       {
 
 
-           if (trackingCenterTouch && trackedTouchIndex == 1)
-           {
-               trackingCenterTouch = false;
-               ID.events.OnReleaseCenter?.Invoke();
-           }
-
-
-       };
-
-        controls.Movement.Finger2.performed += ctx =>
-        {
-            if (trackingCenterTouch && trackedTouchIndex == 2)
-            {
-                Vector2 p = ctx.ReadValue<Vector2>();
-                ID.events.SendParrySwipeData?.Invoke(p);
-                ID.events.OnDragCenter?.Invoke(p);
-            }
-
-
-
-        };
-
-        controls.Movement.Finger2Press.canceled += ctx =>
+        if (useEgg) controls.Movement.Finger2Press.canceled += ctx =>
        {
            trackingTwoFingerTouch = false;
            if (trackingCenterTouch && trackedTouchIndex == 2)
@@ -395,72 +430,9 @@ public class SpecialStateInputSystem : MonoBehaviour
 
        };
 
-        controls.Movement.Finger1Press.performed += ctx =>
-        {
-            if (tempLockInput == 3) return;
-            if (!trackingInputs)
-            {
-                if (!trackingCenterTouch)
-                    trackedTouchIndex = 1;
-            }
-            else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
-            {
-                if (!trackingCenterTouch)
-                    trackedTouchIndex = 1;
-
-                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
-
-            }
-            else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
-            {
-                if (!trackingCenterTouch)
-                    trackedTouchIndex = 1;
-
-                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
-            }
 
 
-
-            // currentTouchCount++;
-
-            // if (currentTouchCount == 2 && !ID.pressingButton)
-            // {
-            //     ID.events.OnPerformParry?.Invoke(true);
-            // }
-
-            // 
-
-
-        };
-
-        controls.Movement.Finger2Press.performed += ctx =>
-       {
-           if (tempLockInput == 3) return;
-
-           if (!trackingInputs)
-           {
-               if (!trackingCenterTouch)
-                   trackedTouchIndex = 2;
-           }
-           else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
-           {
-               if (!trackingCenterTouch)
-                   trackedTouchIndex = 2;
-               if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
-
-           }
-           else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
-           {
-               if (!trackingCenterTouch)
-                   trackedTouchIndex = 2;
-
-               if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
-           }
-
-
-       };
-
-        controls.Movement.Parry.performed += ctx =>
+        if (useEgg) controls.Movement.Parry.performed += ctx =>
          {
              if (ButtonsEnabled)
                  ID.events.OnPerformParry?.Invoke(true);
@@ -636,12 +608,12 @@ public class SpecialStateInputSystem : MonoBehaviour
                     HapticFeedbackManager.instance.PlayerButtonPress();
                     ID.events.OnDash?.Invoke(true);
                 }
-                else if (!canDashSlash && startedHold)
-                {
-                    Time.timeScale = FrameRateManager.TargetTimeScale;
-                    lvlID.outputEvent.SetPressButtonText?.Invoke(false, 3, "JUMP");
-                    return;
-                }
+                // else if (!canDashSlash && startedHold)
+                // {
+                //     Time.timeScale = FrameRateManager.TargetTimeScale;
+                //     lvlID.outputEvent.SetPressButtonText?.Invoke(false, 3, "JUMP");
+                //     return;
+                // }
 
                 else if (canDashSlash && !startedHold)
                 {
@@ -847,6 +819,82 @@ public class SpecialStateInputSystem : MonoBehaviour
      };
 
 
+        fillingManaColor = ColorSO.fillingManaColor;
+        canUseDashSlashImageColor1 = ColorSO.canUseDashSlashImageColor1;
+        canUseDashSlashImageColor2 = ColorSO.canUseDashSlashImageColor2;
+        if (useFlips)
+        {
+            flipLeftImage = GameObject.Find("FlipLeftIMG")?.GetComponent<Image>();
+            flipRightImage = GameObject.Find("FlipRightIMG")?.GetComponent<Image>();
+        }
+
+        if (useDrop && GameObject.Find("DropButton") != null)
+        {
+            dropIcon = GameObject.Find("DropICON")?.GetComponent<RectTransform>();
+            DropButton = dropIcon.GetComponent<Image>();
+            // DropButton.color = normalButtonColor;
+            dropCooldownIN = GameObject.Find("DropCooldownIN")?.GetComponent<Image>();
+
+            dropCooldownOUT = GameObject.Find("DropCooldownOUT")?.GetComponent<Image>();
+            originalDropY = dropIcon.anchoredPosition.y;
+            dropCooldownIN.color = ColorSO.disabledButtonColorFull;
+            dropCooldownIN.gameObject.SetActive(false);
+            dropCooldownOUT.gameObject.SetActive(false);
+
+            canDrop = true;
+            usingDrop = true;
+
+
+        }
+        else
+        {
+            usingDrop = false;
+        }
+
+
+        if (useDash && GameObject.Find("DashButton") != null)
+        {
+
+            dashCooldownIN = GameObject.Find("DashCooldownIN")?.GetComponent<Image>();
+            dashIcon = GameObject.Find("DashICON")?.GetComponent<RectTransform>();
+            dashImage = dashIcon.gameObject.GetComponent<Image>();
+            if (dashImage != null)
+                Debug.Log("Dash Image found: " + dashImage.name);
+            dashCooldownGroup = GameObject.Find("DashCooldownGroup")?.GetComponent<CanvasGroup>();
+
+            startingDashIconX = dashIcon.anchoredPosition.x;
+            dashCooldownIN.color = ColorSO.disabledButtonColorFull;
+
+            dashCooldownGroup.alpha = 0;
+            canDashSlash = false;
+            coolingDownDash = false;
+            // usingDash = true;
+            // dashImageMana = GameObject.Find("DashIMGMana")?.GetComponent<Image>();
+            // if (manaUsed)
+            // {
+
+            //     dashImageMana.enabled = true;
+
+            //     if (fillAllMana)
+            //     {
+            //         currentMana = maxMana;
+            //         dashImageMana.fillAmount = (1);
+            //         HandleDashSlashImage(true);
+            //     }
+            //     else
+            //     {
+            //         dashImageMana.color = fillingManaColor;
+
+            //         dashImageMana.fillAmount = (currentMana / maxMana);
+            //         mainFillCourintine = StartCoroutine(RegenerateMana());
+            //     }
+            // }
+            // else
+            //     dashImageMana.gameObject.SetActive(false);
+            // FullMana(fillAllMana);
+        }
+        else
+            usingDash = false;
 
 
 
@@ -855,6 +903,12 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
     }
+    // private void Awake()
+    // {
+
+
+
+    // }
 
     private void HideEggButton(bool hidden)
     {
@@ -883,116 +937,21 @@ public class SpecialStateInputSystem : MonoBehaviour
     // }
 
 
-    void Start()
-    {
-        // normalButtonColor = ColorSO.normalButtonColor;
-        // highlightButtonColor = ColorSO.highlightButtonColor;
-        // disabledButtonColor = ColorSO.disabledButtonColor;
-        // DashImageManaHighlight = ColorSO.DashImageManaHighlight;
-        // DashImageManaDisabled = ColorSO.DashImageManaDisabled;
-        // DashImageManaDisabledFilling = ColorSO.DashImageManaDisabledFilling;
-        // coolDownColorRed = ColorSO.disabledButtonColorFull;
-        // coolDownColorBlue = ColorSO.coolDownColorBlue;
-        fillingManaColor = ColorSO.fillingManaColor;
-        canUseDashSlashImageColor1 = ColorSO.canUseDashSlashImageColor1;
-        canUseDashSlashImageColor2 = ColorSO.canUseDashSlashImageColor2;
-        if (useFlips)
-        {
-            flipLeftImage = GameObject.Find("FlipLeftIMG")?.GetComponent<Image>();
-            flipRightImage = GameObject.Find("FlipRightIMG")?.GetComponent<Image>();
-        }
-        if (useEgg)
-        {
-            eggImage = GameObject.Find("RingFill")?.GetComponent<Image>();
-        }
-        if (useDrop && GameObject.Find("DropButton") != null)
-        {
-            DropButton = GameObject.Find("DropButton")?.GetComponent<Image>();
-            // DropButton.color = normalButtonColor;
-            dropCooldownIN = GameObject.Find("DropCooldownIN")?.GetComponent<Image>();
-            dropIcon = GameObject.Find("DropICON")?.GetComponent<RectTransform>();
-            dropCooldownOUT = GameObject.Find("DropCooldownOUT")?.GetComponent<Image>();
-            originalDropY = dropIcon.anchoredPosition.y;
-            dropCooldownIN.color = ColorSO.disabledButtonColorFull;
-            dropCooldownIN.color *= Color.clear;
-            dropCooldownOUT.color *= Color.clear;
-            canDrop = true;
-            usingDrop = true;
-
-
-        }
-        else
-        {
-            usingDrop = false;
-        }
-
-
-        if (useDash && GameObject.Find("DashButton") != null)
-        {
-            dashImage = GameObject.Find("DashIMG")?.GetComponent<Image>();
-
-
-            dashCooldownIN = GameObject.Find("DashCooldownIN")?.GetComponent<Image>();
-            dashIcon = GameObject.Find("DashICON")?.GetComponent<RectTransform>();
-            dashCooldownGroup = GameObject.Find("DashCooldownGroup")?.GetComponent<CanvasGroup>();
-
-            startingDashIconX = dashIcon.anchoredPosition.x;
-            dashCooldownIN.color = ColorSO.disabledButtonColorFull;
-
-            dashCooldownGroup.alpha = 0;
-
-            canDashSlash = false;
-            coolingDownDash = false;
+    // void Start()
+    // {
+    //     // normalButtonColor = ColorSO.normalButtonColor;
+    //     // highlightButtonColor = ColorSO.highlightButtonColor;
+    //     // disabledButtonColor = ColorSO.disabledButtonColor;
+    //     // DashImageManaHighlight = ColorSO.DashImageManaHighlight;
+    //     // DashImageManaDisabled = ColorSO.DashImageManaDisabled;
+    //     // DashImageManaDisabledFilling = ColorSO.DashImageManaDisabledFilling;
+    //     // coolDownColorRed = ColorSO.disabledButtonColorFull;
+    //     // coolDownColorBlue = ColorSO.coolDownColorBlue;
 
 
 
 
-
-
-
-
-            usingDash = true;
-            dashImageMana = GameObject.Find("DashIMGMana")?.GetComponent<Image>();
-            if (manaUsed)
-            {
-
-                dashImageMana.enabled = true;
-
-                if (fillAllMana)
-                {
-                    currentMana = maxMana;
-
-                    dashImageMana.fillAmount = (1);
-                    HandleDashSlashImage(true);
-
-
-
-                }
-                else
-                {
-                    dashImageMana.color = fillingManaColor;
-
-                    dashImageMana.fillAmount = (currentMana / maxMana);
-                    mainFillCourintine = StartCoroutine(RegenerateMana());
-                }
-
-
-
-
-            }
-            else
-                dashImageMana.gameObject.SetActive(false);
-
-            FullMana(fillAllMana);
-
-
-        }
-        else
-            usingDash = false;
-
-
-
-    }
+    // }
 
     public bool dashSlashReady()
     {
@@ -1028,12 +987,15 @@ public class SpecialStateInputSystem : MonoBehaviour
     {
         coolingDownDrop = true;
         canDrop = false;
+
         // dashButtonIMG.DOColor(DisabledButtonColor, .25f);
         DropButton.DOColor(ColorSO.highlightButtonColor, .15f);
         dropIcon.DOScale(largeIconScale, .3f).SetEase(Ease.OutSine);
         dropIcon.DOAnchorPosY(originalDropY - 30, .2f).SetEase(Ease.OutSine);
-        dropCooldownIN.DOFade(.7f, .15f);
-        dropCooldownOUT.DOFade(1, .15f);
+        dropCooldownIN.color = ColorSO.disabledButtonColorFull;
+        dropCooldownIN.gameObject.SetActive(true);
+        dropCooldownOUT.gameObject.SetActive(true);
+
 
         dropCooldownIN.DOFillAmount(0, 2.25f).From(1);
         yield return new WaitForSeconds(.2f);
@@ -1046,8 +1008,8 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
         yield return new WaitForSeconds(1.67f);
-        dropCooldownIN.DOFade(0, 0);
-        dropCooldownOUT.DOFade(0, .1f);
+        dropCooldownIN.gameObject.SetActive(false);
+        dropCooldownOUT.gameObject.SetActive(false);
 
         // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
         DropButton.DOColor(ColorSO.normalButtonColor, .13f);
@@ -1101,14 +1063,19 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     void HandleDashNew(bool isDashing)
     {
+        Debug.Log("HandleDashNew called with isDashing: " + isDashing);
         if (isDashing)
         {
             if (canDash)
             {
                 canDash = false;
-                dashImage.color = ColorSO.highlightButtonColor;
+                // dashImage.color = ColorSO.highlightButtonColor;
+                Debug.Log("Dashing started");
                 StartCoroutine(CalcualteDashTimeLeft());
+                Debug.Log("Doing Dash Icon Tween");
                 IconTween(1);
+                Debug.Log("fibsih tween");
+
 
             }
 
@@ -1117,7 +1084,10 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (!coolingDownDash && !isDashing && !canDash)
         {
+            Debug.Log("other habndle dash");
             StartCoroutine(DashCooldown());
+            Debug.Log("caleed coroutine");
+
 
 
         }
@@ -1129,37 +1099,37 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
 
-    private void FullMana(bool isFull)
-    {
-        manaFull = isFull;
+    // private void FullMana(bool isFull)
+    // {
+    //     manaFull = isFull;
 
-        if (isFull)
-        {
-            ID.globalEvents.SetCanDashSlash?.Invoke(true);
+    //     if (isFull)
+    //     {
+    //         ID.globalEvents.SetCanDashSlash?.Invoke(true);
 
-            dashCooldownIN.color = ColorSO.coolDownColorBlue;
+    //         dashCooldownIN.color = ColorSO.coolDownColorBlue;
 
-        }
-        else
-        {
-            ID.globalEvents.SetCanDashSlash?.Invoke(false);
-            dashCooldownIN.color = ColorSO.disabledButtonColorFull;
+    //     }
+    //     else
+    //     {
+    //         ID.globalEvents.SetCanDashSlash?.Invoke(false);
+    //         dashCooldownIN.color = ColorSO.disabledButtonColorFull;
 
 
-        }
+    //     }
 
-    }
+    // }
     private void ExitDash(bool notExited)
     {
         if (!notExited)
         {
             canDashSlash = false;
-            if (manaFull)
-            {
-                dashCooldownIN.color = ColorSO.disabledButtonColorFull;
-                dashImageMana.DOColor(ColorSO.DashImageManaDisabled, .1f);
+            // if (manaFull)
+            // {
+            //     dashCooldownIN.color = ColorSO.disabledButtonColorFull;
+            //     dashImageMana.DOColor(ColorSO.DashImageManaDisabled, .1f);
 
-            }
+            // }
             IconTween(2);
 
         }
@@ -1167,7 +1137,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         {
             if (manaFull)
             {
-                canDashSlash = true;
+                // canDashSlash = true;
                 dashCooldownIN.color = ColorSO.coolDownColorBlue;
                 FlashDashImage(.8f);
 
@@ -1217,7 +1187,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             coolingDownDash = false;
             if (manaFull)
             {
-                canDashSlash = true;
+                // canDashSlash = true;
                 dashCooldownIN.color = ColorSO.coolDownColorBlue;
                 if (flashSequence != null && flashSequence.IsPlaying())
                     flashSequence.Kill();
@@ -1241,8 +1211,8 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (useDrop)
         {
-            dropCooldownIN.DOFade(0, .13f).SetUpdate(true);
-            dropCooldownOUT.DOFade(0, .13f).SetUpdate(true);
+            dropCooldownIN.gameObject.SetActive(false);
+            dropCooldownOUT.gameObject.SetActive(false);
 
             // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
             DropButton.DOColor(ColorSO.normalButtonColor, .13f).SetUpdate(true).OnComplete(FlashDropToPress);
@@ -1270,20 +1240,24 @@ public class SpecialStateInputSystem : MonoBehaviour
         canDash = false;
 
 
-        if (manaFull)
-        {
-            canDashSlash = true;
-            flashSequence.Kill();
-            dashImageMana.DOColor(ColorSO.DashImageManaHighlight, .1f);
+        // if (manaFull)
+        // {
+        //     canDashSlash = true;
+        //     flashSequence.Kill();
+        //     dashImageMana.DOColor(ColorSO.DashImageManaHighlight, .1f);
 
-        }
-        else
-        {
+        // }
+        // else
+        // {
 
-            yield return new WaitForSeconds(dashTimeLeft);
 
-            IconTween(2);
-        }
+        // }
+        yield return new WaitForSeconds(dashTimeLeft);
+        Debug.Log("Dash Cooldown 1");
+
+        IconTween(2);
+        Debug.Log("Dash Cooldown 2");
+
         // else
         // {
         //     dashImageMana.color = DashImageManaDisabledFilling;
@@ -1291,22 +1265,26 @@ public class SpecialStateInputSystem : MonoBehaviour
         // dashButtonIMG.DOColor(DisabledButtonColor, .25f);
         dashImage.DOColor(ColorSO.disabledButtonColor, .25f);
 
+
         dashCooldownGroup.DOFade(1, .15f);
 
         dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
         yield return new WaitForSeconds(1.1f);
+        Debug.Log("Dash Cooldown 3");
+
 
 
         dashCooldownGroup.DOFade(0, .15f);
 
         // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
         dashImage.DOColor(ColorSO.normalButtonColor, .15f);
+        Debug.Log("Dash Cooldown 4");
         IconTween(0);
 
         canDash = true;
 
         coolingDownDash = false;
-        ExitDash(true);
+        // ExitDash(true);
 
     }
 
@@ -1387,7 +1365,7 @@ public class SpecialStateInputSystem : MonoBehaviour
         // canDashSlash = true;
 
         HandleDashSlashImage(true);
-        FullMana(true);
+        // FullMana(true);
 
         currentMana = maxMana;
 
@@ -1424,7 +1402,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
             if (currentMana > maxMana)
             {
-                FullMana(true);
+                // FullMana(true);
                 HandleDashSlashImage(true);
                 finished = true;
 
@@ -1434,7 +1412,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             {
                 finished = true;
                 currentMana = 0;
-                FullMana(false);
+                // FullMana(false);
                 dashImageMana.fillAmount = (0);
                 yield return new WaitForSeconds(.3f);
                 mainFillCourintine = StartCoroutine(RegenerateMana());
@@ -1500,7 +1478,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
                     break;
                 case ("Egg"):
-                    currentFlashImages.Add(eggImage);
+                    // currentFlashImages.Add(eggImage);
                     break;
             }
         }
@@ -1561,7 +1539,7 @@ public class SpecialStateInputSystem : MonoBehaviour
     private bool trackingTwoFingerTouch = false;
     private void SetSwipesActive(bool doubleTap, Vector2 pos)
     {
-        if (tempLockInput == 3) return;
+        if (tempLockInput == 3 || !useEgg) return;
         if (ButtonsEnabled && !trackingCenterTouch && !trackingTwoFingerTouch)
         {
             Debug.Log("Set swipe active with temp lock input: " + tempLockInput);

@@ -248,41 +248,42 @@ public class SpawnStateManager : MonoBehaviour
 
             // Camera.main.enabled = false;
             StartCoroutine(PreloadScene(spedScale));
+            LvlID.outputEvent.SetLevelProgress?.Invoke((float)currentSpawnStep / (float)levelData.finalSpawnStep);
 
         }
-        else if (levelData != null)
-        {
-            if (LevelDataConverter.currentLevelInstance == 0)
-            {
-                LevelDataConverter.instance.SetCurrentLevelInstance(Vector3Int.zero);
-                levelData = LevelDataConverter.instance.ReturnLevelData();
-                levelData.LoadJsonToMemory();
-                levelData.InitializeData(this, currentSpawnStep);
-            }
-            else
-            {
+        //     else if (levelData != null)
+        //     {
+        //         if (LevelDataConverter.currentLevelInstance == 0)
+        //         {
+        //             LevelDataConverter.instance.SetCurrentLevelInstance(Vector3Int.zero);
+        //             levelData = LevelDataConverter.instance.ReturnLevelData();
+        //             levelData.LoadJsonToMemory();
+        //             levelData.InitializeData(this, currentSpawnStep);
+        //         }
+        //         else
+        //         {
 
-                var allCheckPointData = LevelDataConverter.instance.ReturnAllCheckPointDataForLevel();
-                var checkPointData = LevelDataConverter.instance.ReturnCheckPointDataForLevel();
+        //             var allCheckPointData = LevelDataConverter.instance.ReturnAllCheckPointDataForLevel();
+        //             var checkPointData = LevelDataConverter.instance.ReturnCheckPointDataForLevel();
 
-                LevelDataConverter.instance.SetCurrentLevelInstance(allCheckPointData.LevelAndWorldNumber);
-                levelData = LevelDataConverter.instance.ReturnLevelData();
-                if (checkPointData != null)
-                {
-                    currentSpawnStep = levelData.checkPointSteps[checkPointData.CurrentCheckPoint];
-                    Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
-                    levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, checkPointData, true);
-                }
-                else
-                {
-                    currentSpawnStep = 0;
-                    levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, null, true);
-                }
+        //             LevelDataConverter.instance.SetCurrentLevelInstance(allCheckPointData.LevelAndWorldNumber);
+        //             levelData = LevelDataConverter.instance.ReturnLevelData();
+        //             if (checkPointData != null)
+        //             {
+        //                 currentSpawnStep = levelData.checkPointSteps[checkPointData.CurrentCheckPoint];
+        //                 Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
+        //                 levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, checkPointData, true);
+        //             }
+        //             else
+        //             {
+        //                 currentSpawnStep = 0;
+        //                 levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, null, true);
+        //             }
 
-            }
-        }
+        //         }
+        //     }
 
-        LvlID.outputEvent.SetLevelProgress?.Invoke((float)currentSpawnStep / (float)levelData.finalSpawnStep);
+        //     LvlID.outputEvent.SetLevelProgress?.Invoke((float)currentSpawnStep / (float)levelData.finalSpawnStep);
 
     }
     public void SetTutorialData(TutorialData data)
@@ -331,6 +332,41 @@ public class SpawnStateManager : MonoBehaviour
     }
     void Start()
     {
+        if (levelData != null && mainLevel)
+        {
+            if (LevelDataConverter.currentLevelInstance == 0)
+            {
+                LevelDataConverter.instance.SetCurrentLevelInstance(Vector3Int.zero);
+                levelData = LevelDataConverter.instance.ReturnLevelData();
+                levelData.LoadJsonToMemory();
+                levelData.InitializeData(this, currentSpawnStep);
+            }
+            else
+            {
+
+                var allCheckPointData = LevelDataConverter.instance.ReturnAllCheckPointDataForLevel();
+                var checkPointData = LevelDataConverter.instance.ReturnCheckPointDataForLevel();
+
+                LevelDataConverter.instance.SetCurrentLevelInstance(allCheckPointData.LevelAndWorldNumber);
+                levelData = LevelDataConverter.instance.ReturnLevelData();
+                if (checkPointData != null)
+                {
+                    currentSpawnStep = levelData.checkPointSteps[checkPointData.CurrentCheckPoint];
+                    Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
+                    levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, checkPointData, true);
+                }
+                else
+                {
+                    currentSpawnStep = 0;
+                    levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, null, true);
+                }
+
+            }
+        }
+
+
+
+
 
         stopRandomSpawning = false;
         // currentTransitionLogicIndex = 0;
@@ -372,12 +408,7 @@ public class SpawnStateManager : MonoBehaviour
             }
         }
 
-        else
-        {
-            // LvlID.outputEvent.OnGetLevelTimeNew?.Invoke((levelData.finalSpawnStep + 3) * LevelRecordManager.TimePerStep, currentSpawnStep * LevelRecordManager.TimePerStep);
-            Invoke("SubtractPlayerLivesFromCheckpointData", .1f);
-            // StartCoroutine(SpawnDataNew());
-        }
+
 
 
 #if UNITY_EDITOR
@@ -414,10 +445,7 @@ public class SpawnStateManager : MonoBehaviour
 
     }
     private WaitForSeconds wait = new WaitForSeconds(LevelRecordManager.TimePerStep);
-    private void SubtractPlayerLivesFromCheckpointData()
-    {
-        levelData.SetLostLives();
-    }
+
 
     private IEnumerator SpawnDataNew()
     {
@@ -603,8 +631,7 @@ public class SpawnStateManager : MonoBehaviour
     {
         HandleWaveTime(false);
 
-        if (mainLevel)
-            LevelDataConverter.instance.SaveLevelDataForDeath(levelData.Difficulty, currentSpawnStep);
+
 
 
 
@@ -1018,7 +1045,13 @@ public class SpawnStateManager : MonoBehaviour
 
     private void OnDisable()
     {
-        LevelDataConverter.instance.SaveCheckPointDataToJson();
+
+        if (mainLevel)
+        {
+            LevelDataConverter.instance.SaveCheckPointDataToJson();
+            LevelDataConverter.instance.SaveLevelDataForDeath(levelData.Difficulty, currentSpawnStep);
+        }
+
         LvlID.outputEvent.OnSetNewIntensity -= SetNewIntensity;
         LvlID.outputEvent.OnSetNewTransitionLogic -= SetNewTransitionLogic;
         ResetManager.GameOverEvent -= OnGameOver;

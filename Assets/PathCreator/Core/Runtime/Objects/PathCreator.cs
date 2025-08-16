@@ -86,7 +86,7 @@ namespace PathCreation
                 return editorData.customPoints[0].distance;
             }
 
-           
+
             for (int i = 0; i < editorData.customPoints.Count - 1; i++)
             {
                 if (editorData.customPoints[i].value <= t && t <= editorData.customPoints[i + 1].value)
@@ -125,16 +125,37 @@ namespace PathCreation
         public int ReturnLayerForStart(float distance)
         {
             int layer = 0;
+            bool foundLayer = false;
             for (int i = 0; i < editorData.customPoints.Count - 1; i++)
             {
+
                 if (distance < editorData.customPoints[i].value && editorData.customPoints[i].layerChanges != Vector2.zero)
                 {
+
                     layer = editorData.customPoints[i].layerChanges.x;
+                    foundLayer = true;
                     break;
 
                 }
 
             }
+            if (!foundLayer)
+            {
+                for (int i = editorData.customPoints.Count - 1; i >= 0; i--)
+                {
+
+                    if (distance > editorData.customPoints[i].value && editorData.customPoints[i].layerChanges != Vector2.zero)
+                    {
+
+                        layer = editorData.customPoints[i].layerChanges.y;
+                        foundLayer = true;
+                        break;
+
+                    }
+
+                }
+            }
+
             currentLayer = layer;
             return layer;
 

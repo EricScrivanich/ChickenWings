@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -107,3 +108,35 @@ public class LevelCreatorNew : Editor
     }
 
 }
+public static class JsonDataTools
+{
+    [MenuItem("Tools/ClearAllJsonData")]
+    public static void ClearAllJsonData()
+    {
+        // Add your clear logic here
+        string path = Application.persistentDataPath;
+
+        if (Directory.Exists(path))
+        {
+            string[] jsonFiles = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+            foreach (string file in jsonFiles)
+            {
+                try
+                {
+                    File.Delete(file);
+                    Debug.Log("Deleted: " + file);
+                }
+                catch (IOException e)
+                {
+                    Debug.LogError("Could not delete file: " + file + "\n" + e.Message);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Persistent data directory does not exist.");
+        }
+    }
+}
+
+

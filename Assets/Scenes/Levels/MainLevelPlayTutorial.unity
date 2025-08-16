@@ -3256,7 +3256,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3549554370242709108, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
   m_PrefabInstance: {fileID: 2064806767125269154}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2016692608
+--- !u!114 &2016692619
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3265,26 +3265,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 971626123}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88c6618ad63eb4ea8aeb0653b43dbf36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2016692619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 971626123}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec65482203198464cafb1d312d9ff0a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useFlips: 0
-  useDash: 0
-  useDrop: 0
-  useEgg: 0
-  useShotgun: 0
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   ColorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
   manaUsed: 0
@@ -4020,7 +4003,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 107412689077373414, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3549554370242709108, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
@@ -4039,9 +4023,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 784531250}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2938654145027134748, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2016692608}
     - targetCorrespondingSourceObject: {fileID: 2938654145027134748, guid: b11ca3e645ad6404693dd72329ddd35d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2016692619}
@@ -4601,6 +4582,10 @@ PrefabInstance:
       propertyPath: 'moveRectsLeftSide.Array.data[3]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3235101558066916252, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3239463988805034073, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -4824,6 +4809,10 @@ PrefabInstance:
     - target: {fileID: 5143032728935666431, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_ShowMaskGraphic
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5143717642555753544, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5174957847518183628, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -6167,6 +6156,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 803585815}
   - {fileID: 576435769}
+  - {fileID: 2064806767125269154}
   - {fileID: 1092286724}
   - {fileID: 1633730498}
   - {fileID: 80536265}
@@ -6180,4 +6170,3 @@ SceneRoots:
   - {fileID: 1679144261}
   - {fileID: 4792454934021829689}
   - {fileID: 2143378270}
-  - {fileID: 2064806767125269154}

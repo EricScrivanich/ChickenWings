@@ -181,6 +181,13 @@ public class MainMenuScript : MonoBehaviour
 
     public void SwitchMenu(int switchTo)
     {
+        // if (switchTo == 1)
+        // {
+        //     SceneManager.LoadScene("LevelPicker");
+        //     return;
+
+        // }
+
         coverPanel.SetActive(true);
         // Declare variables for RectTransforms and animation parameters
         RectTransform menuToMoveOut = null;

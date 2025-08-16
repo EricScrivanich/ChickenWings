@@ -16,7 +16,7 @@ public class ChallengesUIManager : MonoBehaviour
     [SerializeField] private float cardScale;
 
     private Vector2 startBadgePos;
-    [SerializeField] private Image certifiedBadge;
+    [SerializeField] private RectTransform certifiedBadge;
     [SerializeField] private GameObject certifiedBadgePrev;
     [SerializeField] private SceneManagerSO sceneSO;
     [SerializeField] private GameObject challengeUIPrefab;
@@ -30,6 +30,8 @@ public class ChallengesUIManager : MonoBehaviour
     [SerializeField] private float scaleForLevelStart;
 
     [SerializeField] private GameObject NoChallenges;
+    [SerializeField] private GameObject EasyModeText;
+
 
     [SerializeField] private float fadeInFinishedDur;
     [SerializeField] private float betweenStarTime;
@@ -72,6 +74,7 @@ public class ChallengesUIManager : MonoBehaviour
     [SerializeField] private bool skipStart = false;
 
     private bool doMoveCardSeq = false;
+
 
 
     // Start is called before the first frame update
@@ -193,12 +196,43 @@ public class ChallengesUIManager : MonoBehaviour
     {
         group.DOFade(0, dur).SetUpdate(true).SetEase(Ease.InSine);
     }
+    public void ShowEasyModeText()
+    {
+        if (challengeCards != null || challengeCards.Length > 0)
+        {
+            foreach (var item in challengeCards)
+            {
+                item.gameObject.SetActive(false);
+            }
+        }
+        EasyModeText.SetActive(true);
+    }
 
     public void ShowChallengesForLevelPicker(LevelChallenges challenges, LevelSavedData savedLevelData, bool finisheLevel = false)
     {
-        Debug.Log("Showing Challenges for Level Picker");
+        bool isEasy = challenges.LevelDifficulty == 0;
+        if (!isEasy && EasyModeText.activeInHierarchy)
+            EasyModeText.SetActive(false);
+        else if (isEasy)
+            EasyModeText.SetActive(true);
+        if (challenges == null)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
         currentLevelChallenge = challenges;
-        float currentYPosition = 0f; // Starting Y position for the first challenge
+        // Starting Y position for the first challenge
+
+        if (doMoveCardSeq && isEasy) doMoveCardSeq = false;
+        if (isEasy && finisheLevel)
+        {
+            doMoveCardSeq = false;
+            certifiedBadgePrev.SetActive(false);
+            certifiedBadge.gameObject.SetActive(false);
+
+            return;
+
+        }
         doMoveCardSeq = finisheLevel;
 
         // challengeCards = null;
@@ -244,6 +278,8 @@ public class ChallengesUIManager : MonoBehaviour
         {
             for (int i = 0; i < challengeCards.Length; i++)
             {
+                if (!challengeCards[i].gameObject.activeInHierarchy)
+                    challengeCards[i].gameObject.SetActive(true);
                 challengeCards[i].SetChallenge(currentLevelChallenge, i, currentLevelChallenge.challengeTexts[i], currentLevelChallenge.challengeDifficulties[i], savedLevelData.ChallengeCompletion[i]);
             }
 
@@ -253,10 +289,9 @@ public class ChallengesUIManager : MonoBehaviour
 
 
 
-        Debug.Log("Current Level Challenge: " + currentLevelChallenge.challengeTexts.Length + " " + challengeCards.Length);
         if (challengeCards.Length != currentLevelChallenge.challengeTexts.Length)
         {
-            Debug.Log("Challenge Cards Length Changed: " + challengeCards.Length + " != " + currentLevelChallenge.challengeTexts.Length);
+
             // Clear existing challenge cards if the length has changed
             foreach (Transform child in transform)
             {
@@ -271,12 +306,41 @@ public class ChallengesUIManager : MonoBehaviour
         if (finisheLevel)
         {
             group = GetComponent<CanvasGroup>();
-            Debug.LogError("Doing finsih level Challenge Tween");
+
+            bool completedAll = true;
+            if (!challenges.UsedCheckpoint)
+                for (int n = 0; n < challenges.NumberOfChallenges; n++)
+                {
+                    int c = challenges.ReturnChallengeCompletion(n, true);
+
+                    if (c <= 0)
+                    {
+                        completedAll = false;
+                        break;
+                    }
+                }
+            else completedAll = false;
+
+
+            doBadgeSeq = completedAll;
+            certifiedBadgePrev.SetActive(completedAll);
+            certifiedBadge.gameObject.SetActive(false);
+
             group.DOFade(1, fadeInFinishedDur).SetUpdate(true).SetEase(Ease.InSine).OnComplete(() =>
             {
                 StartCoroutine(LevelFinishedRoutine());
             });
 
+        }
+        else
+        {
+
+            for (int i = 0; i < challengeCards.Length; i++)
+            {
+                int c = challenges.ReturnChallengeCompletion(i, false);
+                if (isEasy) c = -1;
+                challengeCards[i].SetColorForCard(c);
+            }
         }
 
 
@@ -301,37 +365,47 @@ public class ChallengesUIManager : MonoBehaviour
 
     }
 
-    private void HandleBadge(bool doTween)
+    private void HandleBadge()
     {
-        if (doTween)
-        {
-            startBadgePos = certifiedBadge.rectTransform.localPosition;
 
-            certifiedBadge.rectTransform.localPosition = new Vector2(startBadgePos.x + 350, startBadgePos.y + 1200);
+        startBadgePos = certifiedBadge.localPosition;
 
-            certifiedBadge.rectTransform.localScale = BoundariesManager.vectorThree1 * 6.5f;
-            certifiedBadge.rectTransform.eulerAngles = Vector3.zero;
-            certifiedBadge.gameObject.SetActive(true);
-            doBadgeSeq = true;
+        certifiedBadge.localPosition = new Vector2(startBadgePos.x + 350, startBadgePos.y + 1200);
+
+        certifiedBadge.localScale = BoundariesManager.vectorThree1 * 6.5f;
+        certifiedBadge.eulerAngles = Vector3.zero;
+        certifiedBadge.gameObject.SetActive(true);
+        doBadgeSeq = true;
+        TweenBadge();
 
 
-        }
-        else
-        {
-            doBadgeSeq = false;
-            certifiedBadge.gameObject.SetActive(false);
-        }
+
+
     }
 
     private void TweenBadge()
     {
         badgeSeq = DOTween.Sequence();
-        badgeSeq.Append(certifiedBadge.rectTransform.DOLocalMove(startBadgePos, .7f));
-        badgeSeq.Join(certifiedBadge.rectTransform.DOScale(1, .7f).SetEase(Ease.InBack));
-        badgeSeq.Join(certifiedBadge.rectTransform.DORotate(Vector3.forward * -12.5f, .7f));
+        Image b = certifiedBadge.gameObject.GetComponentInChildren<Image>();
+        Debug.Log("Blur: " + b.name);
 
-        badgeSeq.Play().SetUpdate(true).SetEase(Ease.InSine).OnComplete(() => AudioManager.instance.PlayLevelFinishSounds(3));
+        badgeSeq.Append(certifiedBadge.DOLocalMove(startBadgePos, .7f));
+        badgeSeq.Join(b.DOFade(1, .7f).From(0));
+        badgeSeq.Join(certifiedBadge.DOScale(1, .7f).SetEase(Ease.InBack));
+        badgeSeq.Join(certifiedBadge.DORotate(Vector3.forward * -12.5f, .7f));
 
+        badgeSeq.Play().SetUpdate(true).OnComplete(() => CompleteBadgeTween(b));
+
+    }
+
+    private void CompleteBadgeTween(Image blur)
+    {
+        var seq = DOTween.Sequence();
+        starSeqs.Add(seq);
+        seq.Append(blur.DOFade(0, .5f).SetEase(Ease.OutSine));
+        seq.Join(blur.rectTransform.DOScale(3.5f, .5f).SetEase(Ease.OutSine));
+        seq.Play().SetUpdate(true);
+        AudioManager.instance.PlayLevelFinishSounds(3);
     }
 
 
@@ -359,9 +433,11 @@ public class ChallengesUIManager : MonoBehaviour
             {
                 GetCompletedStar(challengeCards[i].ReturnStarTransform(), i);
             }
-            yield return new WaitForSecondsRealtime(betweenStarTime);
+            if (doBadgeSeq) yield return new WaitForSecondsRealtime(betweenStarTime * .4f);
+            else yield return new WaitForSecondsRealtime(betweenStarTime);
 
         }
+        if (doBadgeSeq) HandleBadge();
 
 
 
@@ -384,11 +460,13 @@ public class ChallengesUIManager : MonoBehaviour
 
 
     }
+    private List<Sequence> starSeqs = new List<Sequence>();
 
     private void GetCompletedStar(Transform par, int i)
     {
 
         var obj = Instantiate(StarSprite, par);
+        Image blur = obj.GetComponentInChildren<Image>();
         var rect = obj.GetComponent<RectTransform>();
         AudioManager.instance.PlayLevelFinishSounds(2);
         rect.localPosition = new Vector2(starStartPos.x, starStartPos.y);
@@ -399,20 +477,32 @@ public class ChallengesUIManager : MonoBehaviour
         //     starSeq.Kill();
 
         Sequence newSeq = DOTween.Sequence();
+        starSeqs.Add(newSeq);
         // newSeq.AppendInterval(.2f);
         newSeq.Append(rect.DOLocalMove(Vector2.zero, starTweenDur).SetEase(Ease.InSine));
+        newSeq.Join(blur.DOFade(1, starTweenDur).SetEase(Ease.InSine).From(0));
         newSeq.Join(rect.DOScale(BoundariesManager.vectorThree1, starTweenDur).SetEase(Ease.InBack));
         newSeq.Join(rect.DORotate(Vector3.zero, starTweenDur - .1f).From(Vector3.forward * 720).SetEase(Ease.InOutSine).OnComplete(() => AudioManager.instance.PlayLevelFinishSounds(1)));
 
-        newSeq.Play().SetUpdate(true).OnComplete(() => challengeCards[i].OnCompletedStarHit());
+        newSeq.Play().SetUpdate(true).OnComplete(() => StarHit(i, blur));
         //  starSeq.Play().SetUpdate(true).OnComplete(() => CheckNextChallenge(n + 1));
 
     }
 
-    private void StarHit(int n)
+
+    private void StarHit(int n, Image blur)
     {
-        AudioManager.instance.PlayLevelFinishSounds(1);
         challengeCards[n].OnCompletedStarHit();
+        Sequence seq = DOTween.Sequence();
+        starSeqs.Add(seq);
+        seq.Append(blur.DOFade(0, .5f).SetEase(Ease.OutSine));
+        seq.Join(blur.rectTransform.DOScale(4.5f, .5f).SetEase(Ease.OutSine));
+
+
+        seq.Play().SetUpdate(true);
+
+
+
 
     }
 
@@ -457,7 +547,7 @@ public class ChallengesUIManager : MonoBehaviour
         }
 
         data[1] = completedAll;
-        HandleBadge(completedAll);
+        // HandleBadge(completedAll);
 
         for (int b = 0; b < data.Length; b++)
         {
@@ -499,6 +589,12 @@ public class ChallengesUIManager : MonoBehaviour
 
         if (starSeq != null && starSeq.IsPlaying())
             starSeq.Kill();
+
+        foreach (var seq in starSeqs)
+        {
+            if (seq.IsPlaying())
+                seq.Kill();
+        }
     }
     // Update is called once per frame
 

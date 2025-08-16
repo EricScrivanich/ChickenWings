@@ -46,7 +46,7 @@ public class LevelChallenges : ScriptableObject
     private bool trackPigs;
     private bool trackInputs;
     private bool trackRings;
-    private bool trackAmmo;
+
 
 
 
@@ -57,6 +57,8 @@ public class LevelChallenges : ScriptableObject
     public int Lives { get; private set; }
     public short[] Ammos { get; private set; }
     public ushort CurrentCheckPoint { get; private set; }
+    public bool UsedCheckpoint { get; private set; }
+
 
     public void ResetData(Vector3Int lvlNum, int difficulty, short[] startingAmmos, int startingLives)
     {
@@ -76,6 +78,7 @@ public class LevelChallenges : ScriptableObject
 
         // Assuming 2 types of ammo: Egg and Shotgun
         CurrentCheckPoint = 0;
+        UsedCheckpoint = false;
         SetTrackingBools();
 
 
@@ -86,7 +89,7 @@ public class LevelChallenges : ScriptableObject
         trackPigs = false;
         trackInputs = false;
         trackRings = false;
-        trackAmmo = false;
+
         for (int i = 0; i < challenges.Length; i++)
         {
             switch (challenges[i])
@@ -102,9 +105,8 @@ public class LevelChallenges : ScriptableObject
                 case ChallengeTypes.CheckCompletedRings:
                     trackRings = true;
                     break;
-                case ChallengeTypes.CheckAmmo:
-                    trackAmmo = true;
-                    break;
+
+
                 default:
                     break;
             }
@@ -127,7 +129,12 @@ public class LevelChallenges : ScriptableObject
         CompletedRings = new List<int>(tempData.CompletedRings);
         BarnsHitWithEgg = 0; // Reset or load from saved data if needed
         SetTrackingBools();
+        UsedCheckpoint = true;
 
+    }
+    public void SetDifficulty(int difficulty)
+    {
+        LevelDifficulty = difficulty;
     }
 
     public void AddKillPig(Vector3Int pigData)
@@ -155,7 +162,7 @@ public class LevelChallenges : ScriptableObject
 
     public void EditCurrentAmmos(int ammoType, int amount)
     {
-        if (!trackAmmo) return; // If not tracking ammo, do nothing
+
         if (Ammos == null) Ammos = new short[4]; // Assuming 2 types of ammo: Egg and Shotgun
 
         if (ammoType >= Ammos.Length)

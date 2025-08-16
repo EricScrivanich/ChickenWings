@@ -40,19 +40,19 @@ public class LevelPickerManager : MonoBehaviour
     [SerializeField] private float moveUpDuration;
     [SerializeField] private float overshootDownDuration;
     [SerializeField] private float overshootUpDuration;
-    [SerializeField] private float moveSideDuration;
-    [SerializeField] private float swingDuration;
+    private float moveSideDuration = 1.3f;
+    private float swingDuration = .4f;
 
 
 
 
     private readonly Vector3[] rotations = new Vector3[]
       {
-        new Vector3(0, 0, 8f),
-        new Vector3(0, 0, -6.5f),
-        new Vector3(0, 0, 3f),
-        new Vector3(0, 0, -1.7f),
-        new Vector3(0, 0, .7f),
+        new Vector3(0, 0, 7.5f),
+        new Vector3(0, 0, -6f),
+        new Vector3(0, 0, 2.5f),
+        new Vector3(0, 0, -1.2f),
+        new Vector3(0, 0, .3f),
 
         Vector3.zero
       };
@@ -152,7 +152,7 @@ public class LevelPickerManager : MonoBehaviour
         }
         levelPickerPathObjects = null;
         levelPickerObjs = pathObjects.ToArray();
-        StartCoroutine(HandleStarTweens());
+
     }
     private int currentPlayerPath;
     private ILevelPickerPathObject currentTarget;
@@ -165,7 +165,7 @@ public class LevelPickerManager : MonoBehaviour
 
         if (obj != null && obj != currentTarget)
         {
-            HapticFeedbackManager.instance.PlayerButtonPress();
+            HapticFeedbackManager.instance.PressUIButton();
             if (currentTarget != null)
             {
                 currentTarget.SetSelected(false);
@@ -276,7 +276,7 @@ public class LevelPickerManager : MonoBehaviour
 
     public void BackOut()
     {
-        HapticFeedbackManager.instance.PlayerButtonPress();
+        HapticFeedbackManager.instance.PressUIButton();
         currentTarget.SetSelected(false);
         currentTarget = null;
         DoLevelPopupSeq(false, Vector3Int.zero, true);
@@ -299,8 +299,8 @@ public class LevelPickerManager : MonoBehaviour
             signXSeq.Kill();
         }
 
-
-
+        if (currentPopup != null)
+            currentPopup.GetComponent<LevelPickerUIPopup>().HideDifficultys(true);
 
 
         if (goBack)
@@ -346,7 +346,7 @@ public class LevelPickerManager : MonoBehaviour
         nextPopup = Instantiate(levelUiPopupPrefab, levelPopupParent).GetComponent<CanvasGroup>();
         nextPopup.GetComponent<RectTransform>().anchoredPosition = startPos;
 
-        nextPopup.GetComponent<LevelPickerUIPopup>().ShowData(LevelDataConverter.instance.ReturnLevelData(), this);
+        nextPopup.GetComponent<LevelPickerUIPopup>().ShowData(LevelDataConverter.instance.ReturnLevelData(), this, 1, false);
         nextPopup.gameObject.SetActive(true);
 
 
@@ -408,8 +408,7 @@ public class LevelPickerManager : MonoBehaviour
     private float tweenOutInterval = .3f;
     private IEnumerator HandleStarTweens()
     {
-        int i = 0;
-        int lastIndex = -1;
+
         yield return new WaitForSecondsRealtime(.2f);
 
         while (true)
@@ -493,6 +492,7 @@ public class LevelPickerManager : MonoBehaviour
     private void OnEnable()
     {
         controls.LevelCreator.Enable();
+        StartCoroutine(HandleStarTweens());
         // LevelRecordManager.AddNewObject += SetObjectToBeAdded;
 
     }

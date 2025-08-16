@@ -34,12 +34,14 @@ public class PlayerStartingState : PlayerBaseState
 
         time = 0;
         AudioManager.instance.PlayStartSound();
+        player.ID.LoseLivesOnStart();
 
     }
     public override void ExitState(PlayerStateManager player)
     {
 
         player.maxFallSpeed = player.originalMaxFallSpeed;
+
 
 
 

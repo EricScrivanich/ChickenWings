@@ -102,6 +102,21 @@ public class Egg_Regular : MonoBehaviour
             // return;
 
         }
+        else if (other.gameObject.CompareTag("Plane"))
+        {
+            IEggable eggableEntity = other.gameObject.GetComponent<IEggable>();
+
+            if (eggableEntity != null)
+            {
+                AudioManager.instance.PlayCrackSound();
+
+                // pool.Despawn(gameObject);
+                // pool.Spawn("EggParticle", transform.position, Vector3.zero);
+
+                eggableEntity.OnEgged();
+                gameObject.SetActive(false);
+            }
+        }
     }
     private void OnCollisionEnter2D(Collision2D collider)
     {

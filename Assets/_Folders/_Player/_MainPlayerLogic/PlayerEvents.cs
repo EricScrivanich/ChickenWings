@@ -93,4 +93,5 @@ public struct UiEvents
     public Action<float> UseScythePower;
     public Action<float> ChangeScythePowerPitch;
     public Action<bool, float> ShowScythePower;
+    public Action<int> OnSetStartingLives;
 }
