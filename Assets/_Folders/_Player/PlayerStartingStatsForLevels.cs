@@ -10,6 +10,8 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     [SerializeField] private bool startHidden = false;
 
     private Egg_Regular[] eggPool;
+
+    [SerializeField] private QPool eggPoolNew;
     private ShotgunBlast[] shotgunPool;
 
     public short[] startingAmmos;
@@ -46,6 +48,7 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     public void Initialize()
     {
         numberOfWeapons = 0;
+
         currentEggIndex = 0;
         currentShotgunIndex = 0;
         eggID = 0;
@@ -57,14 +60,14 @@ public class PlayerStartingStatsForLevels : ScriptableObject
         }
 
 
-        eggPool = new Egg_Regular[eggPoolSize];
-        for (int i = 0; i < eggPoolSize; i++)
-        {
-            var obj = Instantiate(eggPrefab).GetComponent<Egg_Regular>();
-            eggPool[i] = obj;
-            obj.gameObject.SetActive(false);
+        // eggPool = new Egg_Regular[eggPoolSize];
+        // for (int i = 0; i < eggPoolSize; i++)
+        // {
+        //     var obj = Instantiate(eggPrefab).GetComponent<Egg_Regular>();
+        //     eggPool[i] = obj;
+        //     obj.gameObject.SetActive(false);
 
-        }
+        // }
 
         shotgunPool = new ShotgunBlast[shotgunPoolSize];
         for (int i = 0; i < shotgunPoolSize; i++)
@@ -115,25 +118,29 @@ public class PlayerStartingStatsForLevels : ScriptableObject
 
     }
 
-    public void GetEgg(Vector2 pos, float force)
+    public void GetEgg(Vector2 pos, Vector2 force)
     {
-        if (currentEggIndex >= eggPoolSize) currentEggIndex = 0;
+        // if (currentEggIndex >= eggPoolSize) currentEggIndex = 0;
 
-        if (eggPool[currentEggIndex].gameObject.activeInHierarchy)
-        {
-            var s = Instantiate(eggPrefab, pos, Quaternion.identity).GetComponent<Egg_Regular>();
-            s.Initialize(force);
+        // if (eggPool[currentEggIndex].gameObject.activeInHierarchy)
+        // {
+        //     var s = Instantiate(eggPrefab, pos, Quaternion.identity).GetComponent<Egg_Regular>();
+        //     s.Initialize(force);
 
-        }
-        else
-        {
-            var s = eggPool[currentEggIndex];
-            s.transform.position = pos;
-            s.gameObject.SetActive(true);
-            s.Initialize(force);
+        // }
+        // else
+        // {
+        //     var s = eggPool[currentEggIndex];
+        //     s.transform.position = pos;
+        //     s.gameObject.SetActive(true);
+        //     s.Initialize(force); 
 
-            currentEggIndex++;
-        }
+        //     currentEggIndex++;
+        // }
+        // Vector2 n = force.normalized;
+
+        // eggPoolNew.SpawnWithVelocityAndRotation(pos, force, Mathf.Atan2(n.x, -n.y) * Mathf.Rad2Deg * .5f);
+        eggPoolNew.SpawnWithVelocity(pos, force);
 
 
 

@@ -6,12 +6,13 @@ public interface IRecordableObject
 
     // void ApplyRecordedData(RecordedDataStruct data);
 
-    void ApplyFloatOneData(DataStructFloatOne data);
-    void ApplyFloatTwoData(DataStructFloatTwo data);
-    void ApplyFloatThreeData(DataStructFloatThree data);
-    void ApplyFloatFourData(DataStructFloatFour data);
-    void ApplyFloatFiveData(DataStructFloatFive data);
+    // void ApplyFloatOneData(DataStructFloatOne data);
+    // void ApplyFloatTwoData(DataStructFloatTwo data);
+    // void ApplyFloatThreeData(DataStructFloatThree data);
+    // void ApplyFloatFourData(DataStructFloatFour data);
+    // void ApplyFloatFiveData(DataStructFloatFive data);
     void ApplyCustomizedData(RecordedDataStructDynamic data);
+    // void LetsKill();
 
     // GameObject GetObject();
     bool ShowLine();

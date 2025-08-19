@@ -77,9 +77,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -745466857
-  m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingLayerID: -781766449
+  m_SortingLayer: 5
+  m_SortingOrder: -5
   m_Sprite: {fileID: 21300000, guid: 67f527606348f4404875f6b6164fa2a9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -104,7 +104,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 0.05
-  m_LinearDamping: 0
+  m_LinearDamping: 0.3
   m_AngularDamping: 0
   m_GravityScale: 1.6
   m_Material: {fileID: 0}
@@ -176,6 +176,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d16612fe8619e42d48cea96ced55040e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  yolkPool: {fileID: 11400000, guid: e9fb8e8a8060a481f8232f3b5676790b, type: 2}
+  shellPool: {fileID: 11400000, guid: 341e68176fe674b5088cdba23a91961b, type: 2}
   player: {fileID: 9107346555159015033, guid: 4d60310f404d6473c872d23c83b10116, type: 3}
   ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
 --- !u!1001 &9101787435610469545
@@ -253,6 +255,10 @@ PrefabInstance:
     - target: {fileID: 9182170255510180493, guid: eb69e00e82a894e3eb19a3e6eb6f8767, type: 3}
       propertyPath: m_Name
       value: Circle
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182170255510180493, guid: eb69e00e82a894e3eb19a3e6eb6f8767, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

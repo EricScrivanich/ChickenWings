@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableObject
+public class EggCollectableMovement : SpawnedObject, ICollectible, IRecordableObject
 {
 
     public PlayerID ID;
@@ -76,7 +76,7 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
     [SerializeField] private PigsScriptableObject pigID;
     Vector2 _position;
 
-    private Rigidbody2D rb;
+    
 
     private readonly Vector2 minMaxAmp = new Vector2(.2f, 4f);
     private readonly Vector2 maxFreqBasedOnAmp = new Vector2(.1f, 3.4f);
@@ -419,22 +419,8 @@ public class EggCollectableMovement : MonoBehaviour, ICollectible, IRecordableOb
 
 
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
-    }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
+   
+    public override void ApplyFloatFiveData(DataStructFloatFive data)
     {
         _position = data.startPos;
 

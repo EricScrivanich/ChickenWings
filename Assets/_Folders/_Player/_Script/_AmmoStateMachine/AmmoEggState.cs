@@ -34,17 +34,8 @@ public class AmmoEggState : AmmoBaseState
 
             AudioManager.instance.PlayEggDrop();
             HapticFeedbackManager.instance.PlayerButtonPress();
-            float force = 0;
-
-            if (player.rb.linearVelocity.x < 0)
-            {
-                force = player.rb.linearVelocity.x * .55f;
-            }
-            else
-            {
-                force = player.rb.linearVelocity.x * .45f;
-            }
-            player.GetEgg(force);
+            
+            player.GetEgg();
 
             player.ID.Ammo -= 1;
             player.ID.UiEvents.OnUseAmmo?.Invoke(player.ID.Ammo);

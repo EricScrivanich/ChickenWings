@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using HellTap.PoolKit;
 
-public class MissilePigScript : MonoBehaviour, IRecordableObject
+public class MissilePigScript : SpawnedObject, IRecordableObject
 {
     [SerializeField] private float turn_speed;
 
@@ -57,7 +57,7 @@ public class MissilePigScript : MonoBehaviour, IRecordableObject
 
     [SerializeField] private SpriteRenderer missileImage;
     private Animator anim;
-    private Rigidbody2D rb;
+    
 
     private Vector2 lookDirection;
     private Vector2 normalDirection = new Vector2(1, 1);
@@ -574,42 +574,15 @@ public class MissilePigScript : MonoBehaviour, IRecordableObject
 
     }
 
-    public void ApplyRecordedData(RecordedDataStruct data)
-    {
-        // transform.position = data.startPos;
-        speed = data.speed;
-        if (speed < BoundariesManager.GroundSpeed)
-        {
-            transform.localScale = Vector3.Scale((Vector3.one * .9f), BoundariesManager.FlippedXScale);
-        }
-        else transform.localScale = Vector3.one * .9f;
-        Initialize(data.startPos.x, data.type, 0, false);
-
-    }
-    public void ApplyFloatOneData(DataStructFloatOne data)
+   
+    public override void ApplyFloatOneData(DataStructFloatOne data)
     {
 
         speed = data.float1;
         Initialize(data.startPos.x, data.type, 0, false);
 
     }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
-
-    }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
-    }
+  
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {

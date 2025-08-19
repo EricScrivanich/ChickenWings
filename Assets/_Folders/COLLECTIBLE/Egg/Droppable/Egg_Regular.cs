@@ -1,27 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using HellTap.PoolKit;
+// using HellTap.PoolKit;
 
-public class Egg_Regular : MonoBehaviour
+public class Egg_Regular : SpawnedQueuedObject
 {
     private Vector2 startVelocity;
+    [SerializeField] private QPool yolkPool;
+    [SerializeField] private QPool shellPool;
     [SerializeField] private GameObject player;
     private Rigidbody2D playerRB;
     public PlayerID ID;
-    private Rigidbody2D rb;
+
     private BoxCollider2D coll2D;
     private bool isCracked;
     // private Animator anim;
     private bool isFirstActivation = true;
     private bool hitParticle = false;
     private bool hasHit = false;
-    private Pool pool;
+    // private Pool pool;
 
     private Vector2 normalColSize = new Vector2(1, 1.3f);
     private Vector2 expandedColSize = new Vector2(1.9f, 1.3f);
 
     private bool colliderIsExpanded = false;
+
 
 
     // private Vector2 playerForce;
@@ -38,7 +41,7 @@ public class Egg_Regular : MonoBehaviour
     }
     private void Start()
     {
-        pool = PoolKit.GetPool("EggPool");
+        // pool = PoolKit.GetPool("EggPool");
     }
 
     // private void OnEnable()
@@ -50,10 +53,14 @@ public class Egg_Regular : MonoBehaviour
 
     public void Initialize(float force)
     {
-        hasHit = false;
-        hitParticle = false;
+
         rb.linearVelocity = new Vector2(force, -1);
 
+    }
+    void OnEnable()
+    {
+        hasHit = false;
+        hitParticle = false;
     }
 
 
@@ -89,6 +96,9 @@ public class Egg_Regular : MonoBehaviour
     //     yield return new WaitForSeconds(.1f);
     //     gameObject.SetActive(false);
     // }
+
+
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (hasHit) return;
@@ -102,22 +112,26 @@ public class Egg_Regular : MonoBehaviour
             // return;
 
         }
-        else if (other.gameObject.CompareTag("Plane"))
+        else if (other.CompareTag("EggableEntity") && transform.position.y > other.transform.position.y - .5f)
         {
-            IEggable eggableEntity = other.gameObject.GetComponent<IEggable>();
+            if (transform.position.y > other.transform.position.y - .15f) Debug.LogError("EggableEntity is too high to be egged: " + (transform.position.y - other.transform.position.y));
+            var eggCollider = other.gameObject.GetComponent<EggableCollider>();
 
-            if (eggableEntity != null)
-            {
-                AudioManager.instance.PlayCrackSound();
+            hasHit = true;
 
-                // pool.Despawn(gameObject);
-                // pool.Spawn("EggParticle", transform.position, Vector3.zero);
+            eggCollider.GetEgged(this);
 
-                eggableEntity.OnEgged();
-                gameObject.SetActive(false);
-            }
+
         }
     }
+    public void EggPig()
+    {
+        AudioManager.instance.PlayCrackSound();
+        shellPool.Spawn(new Vector2(transform.position.x, transform.position.y - 1.7f));
+        gameObject.SetActive(false);
+    }
+
+
     private void OnCollisionEnter2D(Collision2D collider)
     {
         if (hasHit) return;
@@ -129,8 +143,11 @@ public class Egg_Regular : MonoBehaviour
             hasHit = true;
             // pool.Spawn("EggParticle", transform.position, Vector3.zero);
             // StartCoroutine(YolkMovement());
+
+            shellPool.Spawn(transform.position);
+            yolkPool.Spawn(transform.position);
             AudioManager.instance.PlayCrackSound();
-            pool.Spawn("YolkParent", transform.position, Vector3.zero);
+            // pool.Spawn("YolkParent", transform.position, Vector3.zero);
             // pool.Despawn(gameObject);
 
             // isCracked = true;
@@ -145,6 +162,7 @@ public class Egg_Regular : MonoBehaviour
             if (eggableEntity != null)
             {
                 AudioManager.instance.PlayCrackSound();
+                shellPool.Spawn(transform.position);
 
                 // pool.Despawn(gameObject);
                 // pool.Spawn("EggParticle", transform.position, Vector3.zero);
@@ -200,11 +218,20 @@ public class Egg_Regular : MonoBehaviour
 
     // }
 
+    void FixedUpdate()
+    {
+        // Vector2 n = rb.linearVelocity.normalized;
+        // float angle = Mathf.Atan2(n.x, -n.y) * Mathf.Rad2Deg * .5f;
+
+        // rb.MoveRotation(angle);
+    }
+
     private void OnDisable()
     {
+        Debug.Log("Egg despawned: " + gameObject.name);
 
-
-        rb.linearVelocity = Vector2.zero;
+        base.ReturnToPool();
+        // rb.linearVelocity = Vector2.zero;
 
     }
 

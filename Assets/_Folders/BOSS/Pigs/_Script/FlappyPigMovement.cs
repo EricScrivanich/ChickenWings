@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class FlappyPigMovement : MonoBehaviour, IEggable, IRecordableObject
+public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
 {
     public float scaleFactor;
     private bool hasFullyEntered;
@@ -516,11 +516,13 @@ public class FlappyPigMovement : MonoBehaviour, IEggable, IRecordableObject
             if (flapSeq != null && flapSeq.IsPlaying())
                 flapSeq.Kill();
 
-            flapSeq = DOTween.Sequence();
+            // flapSeq = DOTween.Sequence();
             rb.simulated = false;
-            flapSeq.Append(sprite.DOScale(new Vector3(1.15f, .8f, 1), .25f).SetEase(Ease.OutSine));
-            flapSeq.Join(sprite.DOLocalMoveY(-.4f, .25f).SetEase(Ease.OutSine));
-            flapSeq.Play();
+            this.enabled = false;
+            anim.enabled = false;
+            // flapSeq.Append(sprite.DOScale(new Vector3(1.15f, .8f, 1), .25f).SetEase(Ease.OutSine));
+            // flapSeq.Join(sprite.DOLocalMoveY(-.4f, .25f).SetEase(Ease.OutSine));
+            // flapSeq.Play();
 
             pigMatHandler.Damage(1, 0, -1);
             return;
@@ -600,30 +602,13 @@ public class FlappyPigMovement : MonoBehaviour, IEggable, IRecordableObject
     }
 
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
+
+    public override void ApplyFloatOneData(DataStructFloatOne data)
     {
         transform.position = data.startPos;
         transform.localScale = BoundariesManager.vectorThree1 * data.float1 * .9f;
         scaleFactor = data.float1 - .1f;
         gameObject.SetActive(true);
-
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
-
-    }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
     }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)

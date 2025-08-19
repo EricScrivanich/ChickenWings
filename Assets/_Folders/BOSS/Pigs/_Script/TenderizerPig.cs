@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
+public class TenderizerPig : SpawnedObject, ICollectible, IRecordableObject
 {
     public float speed;
     public bool hasHammer;
@@ -39,7 +39,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
 
     [SerializeField] private PigsScriptableObject pigID;
     Vector2 _position;
-    private Rigidbody2D rb;
+
 
 
 
@@ -108,6 +108,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
 
         rb.MovePosition(_position + Vector2.up * period * _sineMagnitude);
     }
+    private bool isBlinded = false;
     private void MoveEyesWithTicker()
     {
 
@@ -127,9 +128,11 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
         }
 
     }
+    private bool coolingDown = false;
 
     private IEnumerator AfterSwing()
     {
+        coolingDown = true;
         yield return new WaitForSeconds(.45f);
         AudioManager.instance.PlayPigHammerSwingSound();
         yield return new WaitForSeconds(1.9f);
@@ -139,9 +142,11 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
 
         else
         {
-            yield return new WaitForSeconds(4f);
+            yield return new WaitForSeconds(3.8f);
             parried = false;
-            detection.enabled = true;
+            coolingDown = false;
+            if (!isBlinded)
+                detection.enabled = true;
 
         }
 
@@ -158,6 +163,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
 
     public void Collected()
     {
+
         detection.enabled = false;
         anim.SetTrigger("SwingTrigger");
         StartCoroutine(AfterSwing());
@@ -171,11 +177,8 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
     }
 
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
 
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
+    public override void ApplyFloatTwoData(DataStructFloatTwo data)
     {
         transform.position = data.startPos;
         _position = data.startPos;
@@ -185,24 +188,7 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
         pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
         gameObject.SetActive(true);
     }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
 
-    }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-        // magPercent = data.float3;
-        // phaseOffset = data.float4;
-
-        // pigID.ReturnSineWaveLogic(speed, magPercent, out _sineMagnitude, out _sineFrequency, out magDiff);
-        // gameObject.SetActive(true);
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
-    }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
@@ -224,6 +210,22 @@ public class TenderizerPig : MonoBehaviour, ICollectible, IRecordableObject
     public float TimeAtCreateObject(int index)
     {
         throw new System.NotImplementedException();
+    }
+
+    public override void EggPig(int type, Vector2 vector, float offset)
+    {
+        if (type == 0)
+        {
+            isBlinded = true;
+            detection.enabled = false;
+        }
+        else if (type == -1)
+        {
+            isBlinded = false;
+            if (!coolingDown)
+                detection.enabled = true;
+        }
+
     }
 
     public Vector2 PositionAtRelativeTime(float time, Vector2 currPos, float phaseOffset)

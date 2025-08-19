@@ -4,7 +4,7 @@ using UnityEngine;
 using HellTap.PoolKit;
 using DG.Tweening;
 
-public class DropBomb : MonoBehaviour, IRecordableObject
+public class DropBomb : SpawnedObject, IRecordableObject
 {
     // private Pool pool;
 
@@ -39,7 +39,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
 
 
 
-    private Rigidbody2D rb;
+    
 
     private bool hasEnteredTriggerArea = false;
 
@@ -514,7 +514,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
     }
 
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
+    public override void ApplyFloatOneData(DataStructFloatOne data)
     {
         ignoreAll = false;
         xDropPosition = data.startPos.x;
@@ -534,24 +534,7 @@ public class DropBomb : MonoBehaviour, IRecordableObject
         OnSpawned();
 
     }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
-
-    }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
-    }
-
+   
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
         hasEnteredTriggerArea = true;

@@ -250,17 +250,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3237138396820530507}
     m_Modifications:
-    - target: {fileID: 1954378623969243381, guid: 3f6b374657c8240ceaddeed9bfc7fb4b, type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 0.55
-      objectReference: {fileID: 0}
-    - target: {fileID: 1954378623969243381, guid: 3f6b374657c8240ceaddeed9bfc7fb4b, type: 3}
-      propertyPath: InitialModule.startSize.minScalar
-      value: 0.25
-      objectReference: {fileID: 0}
     - target: {fileID: 6715555911660817859, guid: 3f6b374657c8240ceaddeed9bfc7fb4b, type: 3}
       propertyPath: m_Name
       value: EggParticle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6715555911660817859, guid: 3f6b374657c8240ceaddeed9bfc7fb4b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8289751514423476081, guid: 3f6b374657c8240ceaddeed9bfc7fb4b, type: 3}
       propertyPath: m_LocalPosition.x

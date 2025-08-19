@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GasPig : MonoBehaviour, IRecordableObject
+public class GasPig : SpawnedObject, IRecordableObject
 {
     public float speed;
     public float delay = 0;
@@ -25,7 +25,7 @@ public class GasPig : MonoBehaviour, IRecordableObject
 
 
     private Animator anim;
-    private Rigidbody2D rb;
+   
 
 
 
@@ -176,7 +176,7 @@ public class GasPig : MonoBehaviour, IRecordableObject
     }
 
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
+    public override void ApplyFloatOneData(DataStructFloatOne data)
     {
         initialized = true;
         transform.position = data.startPos;
@@ -187,11 +187,8 @@ public class GasPig : MonoBehaviour, IRecordableObject
 
 
     }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
+   
+    public override void ApplyFloatThreeData(DataStructFloatThree data)
     {
         initialized = true;
         transform.position = data.startPos;
@@ -218,15 +215,7 @@ public class GasPig : MonoBehaviour, IRecordableObject
 
 
     }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
-    }
+  
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {

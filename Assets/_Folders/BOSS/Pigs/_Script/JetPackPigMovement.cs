@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JetPackPigMovement : MonoBehaviour, IRecordableObject
+public class JetPackPigMovement : SpawnedObject, IRecordableObject
 {
     public float speed;
     private bool hasPlayedAudio;
@@ -13,7 +13,7 @@ public class JetPackPigMovement : MonoBehaviour, IRecordableObject
     [HideInInspector]
     public int id;
 
-    private Rigidbody2D rb;
+   
 
     [SerializeField] private Transform smokePoint;
     // Start is called before the first frame update
@@ -74,11 +74,8 @@ public class JetPackPigMovement : MonoBehaviour, IRecordableObject
 
 
     
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
-
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
+   
+    public override void ApplyFloatTwoData(DataStructFloatTwo data)
     {
         transform.position = data.startPos;
         speed = data.float1;
@@ -91,19 +88,7 @@ public class JetPackPigMovement : MonoBehaviour, IRecordableObject
     }
 
     
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
-
-    }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
-    }
+ 
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PigMovementBasic : MonoBehaviour, IRecordableObject
+public class PigMovementBasic : SpawnedObject, IRecordableObject
 {
     [SerializeField] private short id;
     [SerializeField] private SpriteRenderer headSprite;
@@ -61,7 +61,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
     private bool upGlide;
     private float time;
     private bool sinDown;
-    private Rigidbody2D rb;
+    
 
     [SerializeField] private float sinDownSpeed;
 
@@ -379,11 +379,8 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
 
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
-
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
+   
+    public override void ApplyFloatTwoData(DataStructFloatTwo data)
     {
 
         transform.position = data.startPos;
@@ -403,11 +400,9 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
 
 
     }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
 
-    }
-    public void ApplyFloatFourData(DataStructFloatFour data)
+   
+    public override void ApplyFloatFourData(DataStructFloatFour data)
     {
 
         xSpeed = data.float1;
@@ -435,11 +430,7 @@ public class PigMovementBasic : MonoBehaviour, IRecordableObject
         if (!useDynamicMag) return 0;
         return x + (((Mathf.PI) / _sineFrequency) * phaseOffset);
     }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
-    }
-    public void ApplyCustomizedData(RecordedDataStructDynamic data)
+       public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
 
 

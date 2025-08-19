@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Windmill : MonoBehaviour, IRecordableObject
+public class Windmill : SpawnedObject, IRecordableObject
 {
 
     [SerializeField] private Rigidbody2D fanRb;
-    private Rigidbody2D rb;
+  
     private SpriteRenderer sr;
     private bool hasSpawned;
 
@@ -94,16 +94,8 @@ public class Windmill : MonoBehaviour, IRecordableObject
     }
 
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
-
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-
-
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
+    
+    public override void ApplyFloatThreeData(DataStructFloatThree data)
     {
         transform.position = data.startPos;
         bladeSpeed = data.float1;
@@ -121,15 +113,7 @@ public class Windmill : MonoBehaviour, IRecordableObject
         gameObject.SetActive(true);
 
     }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
-    }
+   
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {

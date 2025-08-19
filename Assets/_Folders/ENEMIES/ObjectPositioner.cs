@@ -1,13 +1,13 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class ObjectPositioner : MonoBehaviour, IRecordableObject
+public class ObjectPositioner : SpawnedObject, IRecordableObject
 {
 
     [SerializeField] private float testPathTime = 1f;
 
     [SerializeField] private Ease testPathEase;
-    private Rigidbody2D rb;
+  
     private float currentRotation;
     [SerializeField] private float rotationSpeed = 1f;
     private IPositionerObject addedComponent;
@@ -213,30 +213,8 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
     }
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
-        throw new System.NotImplementedException();
-    }
 
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-        throw new System.NotImplementedException();
-    }
 
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-        throw new System.NotImplementedException();
-    }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
@@ -246,7 +224,7 @@ public class ObjectPositioner : MonoBehaviour, IRecordableObject
 
     }
 
-    public void ApplyPositonerData(RecordedObjectPositionerDataSave data)
+    public override void ApplyPositionerData(RecordedObjectPositionerDataSave data)
     {
         transform.SetPositionAndRotation(data.startPos, Quaternion.Euler(0, 0, data.startRot));
         Debug.LogError("Saved Time Per Step is: " + data.savedTimePerStep);

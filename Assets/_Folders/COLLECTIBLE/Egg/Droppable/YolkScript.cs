@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class YolkScript : MonoBehaviour
+public class YolkScript : SpawnedQueuedObject
 {
     [SerializeField] private Transform eggYolk;
     [SerializeField] private Transform eggWhite;
@@ -33,6 +33,23 @@ public class YolkScript : MonoBehaviour
     private void OnEnable()
     {
         time = 0;
+        Ticker.OnTickAction015 += CheckTransform;
+    }
+    void OnDisable()
+    {
+        Ticker.OnTickAction015 -= CheckTransform;
+
+        base.ReturnToPool();
+    }
+
+    void CheckTransform()
+    {
+        if (transform.position.x < BoundariesManager.leftBoundary)
+        {
+            gameObject.SetActive(false);
+
+        }
+
     }
 
     void Update()

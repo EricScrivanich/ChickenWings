@@ -4,7 +4,7 @@ using UnityEngine;
 using HellTap.PoolKit;
 using DG.Tweening;
 
-public class PigMaterialHandler : MonoBehaviour, IDamageable
+public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
 {
     // 0 normal, 1 jetPack, 2 bigPig, 3 tenderizer
 
@@ -47,11 +47,13 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
     private bool canPerfectScythe;
 
     public bool CanPerfectScythe => !isHit;
+    private SpawnedObject thisObject;
 
     private void Awake()
     {
         isHit = false;
 
+        thisObject = GetComponent<SpawnedObject>();
 
 
     }
@@ -165,6 +167,15 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
             Ticker.OnTickAction015 -= Tick;
 
     }
+    public void SetYolkTransfrom(Transform yolkTrans)
+    {
+
+    }
+    public void DoPigHitActivation()
+    {
+        if (enableObjectOnDeath != null) enableObjectOnDeath.SetActive(true);
+        if (disableObjectOnDeath != null) disableObjectOnDeath.SetActive(false);
+    }
 
     public void Damage(int damageAmount, int type, int id)
     {
@@ -182,8 +193,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
             if (type == 3) AudioManager.instance.PlayScytheHitNoise(false);
             isHit = true;
 
-            if (enableObjectOnDeath != null) enableObjectOnDeath.SetActive(true);
-            if (disableObjectOnDeath != null) disableObjectOnDeath.SetActive(false);
+            if (type != 0)
+                DoPigHitActivation();
 
 
             AudioManager.instance.PlayPigDeathSound(pigTypeAudio);
@@ -218,7 +229,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
                 }
 
 
-                StartCoroutine(Explode(.45f));
+                StartCoroutine(Explode(.45f, type));
 
             }
             else
@@ -234,8 +245,9 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         }
         // instanceMaterial.SetColor("_ColorChangeNewCol", new Color(Random.Range(250, 255), Random.Range(80, 170), Random.Range(160, 180), 1));
     }
+    private Vector3 groundHitPercent = new Vector3(1.4f, .5f, 1);
 
-    private IEnumerator Explode(float time)
+    private IEnumerator Explode(float time, int type)
     {
         float elapsedTime = 0.0f;
         float endScale = initialScale * 1.2f;
@@ -249,8 +261,18 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         {
             GetComponent<CageAttatchment>().SetPigKilled();
         }
+        if (type == 0)
+        {
 
-        transform.DOScale(transform.localScale * 1.25f, .65f);
+            transform.DOScale(Vector3.Scale(transform.localScale, groundHitPercent), .6f).SetEase(Ease.OutSine);
+            // transform.DOMoveY(transform.position.y - 0.65f, .4f);
+            transform.DOMove(new Vector3(transform.position.x - (.55f * BoundariesManager.GroundSpeed), transform.position.y - 0.6f, 0), .6f).SetEase(Ease.Linear);
+            transform.DORotate(new Vector3(0, 0, 0), 0.6f).SetEase(Ease.OutSine);
+
+        }
+        else
+            transform.DOScale(transform.localScale * 1.25f, .65f);
+
         while (elapsedTime < .15f)
         {
             elapsedTime += Time.deltaTime;
@@ -351,6 +373,15 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable
         }
         isStuck = false;
         isHit = false;
+    }
+
+    public void OnEgged()
+    {
+        thisObject.enabled = false;
+        // if (recordableObject != null)
+        // {
+        //     recordableObject.enabled = false;
+        // }
     }
 }
 

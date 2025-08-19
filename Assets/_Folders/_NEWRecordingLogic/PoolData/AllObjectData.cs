@@ -19,6 +19,15 @@ public class AllObjectData : ScriptableObject
     [field: SerializeField] public GameObject cageObject { get; private set; }
     [field: SerializeField] public CheckPointFlag checkPointFlag { get; private set; }
     [field: SerializeField] public GameObject finishLine { get; private set; }
+    [field: SerializeField] public QPool[] QPools { get; private set; }
+
+    public void InitializeQPools()
+    {
+        foreach (var qPool in QPools)
+        {
+            qPool.Initialize();
+        }
+    }
 
     public RecordableObjectPool[] GetPoolArrayByObjectType(int objectType)
     {

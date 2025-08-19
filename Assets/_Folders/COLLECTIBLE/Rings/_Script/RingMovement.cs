@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
+public class RingMovement : SpawnedObject, ICollectible, IRecordableObject
 {
     // public int doesTriggerInt;
 
@@ -24,7 +24,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
 
 
     // private Transform _transform;
-    private Rigidbody2D rb;
+    
     [SerializeField] private SpriteRenderer backRing;
 
 
@@ -400,13 +400,8 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
     {
         return 0;
     }
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
+   
+    public override void ApplyFloatThreeData(DataStructFloatThree data)
     {
         // transform.position = data.startPos;
         transform.SetPositionAndRotation(data.startPos, Quaternion.Euler(0, 0, data.float3));
@@ -417,14 +412,7 @@ public class RingMovement : MonoBehaviour, ICollectible, IRecordableObject
         // transform.eulerAngles = new Vector3(0, 0, data.float3);
         gameObject.SetActive(true);
     }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-    }
+ 
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {

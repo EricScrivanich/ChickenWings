@@ -2,7 +2,7 @@ using UnityEngine;
 
 
 
-[CreateAssetMenu(fileName = "RecordableObjectPool", menuName = "RecordableObjectPool")]
+[CreateAssetMenu(fileName = "RecordableObjectPool", menuName = "ScriptableObjects/RecordableObjectPool")]
 public class RecordableObjectPool : ScriptableObject
 {
     [SerializeField] private GameObject prefab;
@@ -13,7 +13,8 @@ public class RecordableObjectPool : ScriptableObject
     [SerializeField] private IRecordableObject[] objectVarients;
     [SerializeField] private bool useObjectVarients = false;
 
-    private IRecordableObject[] pool;
+
+    private SpawnedObject[] pool;
     private ObjectPositioner[] positionerPool;
     private int currentIndex;
     public int poolSize;
@@ -27,36 +28,47 @@ public class RecordableObjectPool : ScriptableObject
             return;
         }
 
-        if (prefab.GetComponent<ObjectPositioner>() != null)
-        {
-            positionerPool = new ObjectPositioner[size];
-            poolSize = size;
-            for (int i = 0; i < size; i++)
-            {
-                var go = Instantiate(prefab);
-                Debug.Log("Creating pool object: " + go.name);
+        // if (prefab.GetComponent<ObjectPositioner>() != null)
+        // {
+        //     positionerPool = new ObjectPositioner[size];
+        //     poolSize = size;
+        //     for (int i = 0; i < size; i++)
+        //     {
+        //         var go = Instantiate(prefab);
+        //         Debug.Log("Creating pool object: " + go.name);
 
-                positionerPool[i] = go.GetComponent<ObjectPositioner>();
-                go.SetActive(false);
-            }
+        //         positionerPool[i] = go.GetComponent<ObjectPositioner>();
+        //         go.SetActive(false);
+        //     }
+
+        // }
+
+        // else
+        // {
+        //     pool = new SpawnedObject[size];
+        //     poolSize = size;
+        //     for (int i = 0; i < size; i++)
+        //     {
+        //         var go = Instantiate(prefab);
+        //         Debug.Log("Creating pool object: " + go.name);
+
+
+        //         pool[i] = go.GetComponent<SpawnedObject>();
+        //         go.SetActive(false);
+        //     }
+        // }
+        pool = new SpawnedObject[size];
+        poolSize = size;
+        for (int i = 0; i < size; i++)
+        {
+            var go = Instantiate(prefab);
+            Debug.Log("Creating pool object: " + go.name);
+
+
+            pool[i] = go.GetComponent<SpawnedObject>();
+            go.SetActive(false);
 
         }
-
-        else
-        {
-            pool = new IRecordableObject[size];
-            poolSize = size;
-            for (int i = 0; i < size; i++)
-            {
-                var go = Instantiate(prefab);
-                Debug.Log("Creating pool object: " + go.name);
-
-
-                pool[i] = go.GetComponent<IRecordableObject>();
-                go.SetActive(false);
-            }
-        }
-
     }
 
     // public void SpawnItem(RecordedDataStruct data)
@@ -75,19 +87,19 @@ public class RecordableObjectPool : ScriptableObject
     // }
     public void SpawnPositionerData(RecordedObjectPositionerDataSave data)
     {
-        if (positionerPool == null || positionerPool.Length == 0)
+        if (pool == null || pool.Length == 0)
         {
             return;
         }
-        if (positionerPool[currentIndex] == null)
+        if (pool[currentIndex] == null)
         {
-            Debug.LogError("positionerPool is empty");
+            Debug.LogError("pool is empty");
             return;
         }
-        positionerPool[currentIndex].ApplyPositonerData(data);
+        pool[currentIndex].ApplyPositionerData(data);
         currentIndex++;
 
-        if (currentIndex >= positionerPool.Length)
+        if (currentIndex >= pool.Length)
         {
             currentIndex = 0;
         }
@@ -151,6 +163,7 @@ public class RecordableObjectPool : ScriptableObject
     }
     public void SpawnFloatOne(DataStructFloatOne data, bool addCage = false)
     {
+
         if (pool == null || pool.Length == 0)
         {
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class HotAirBalloon : MonoBehaviour, IRecordableObject
+public class HotAirBalloon : SpawnedObject, IRecordableObject
 {
 
     [SerializeField] private int balloonType;
@@ -39,7 +39,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
     private bool usingGun = false;
     private bool waitingForDelay;
 
-    private Rigidbody2D rb;
+  
     private float time = 0;
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private AnimationDataSO animData;
@@ -409,27 +409,7 @@ public class HotAirBalloon : MonoBehaviour, IRecordableObject
     }
 
 
-
-
-
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
-
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
-
-    }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
+    public override void ApplyFloatFiveData(DataStructFloatFive data)
     {
         transform.position = data.startPos;
         _position = data.startPos;

@@ -8,6 +8,7 @@ public class SpawnStateManager : MonoBehaviour
     [SerializeField] private bool isTestPlayer = false;
     [SerializeField] private bool mainLevel = false;
     [SerializeField] private LevelManagerID LvlID;
+    [SerializeField] private AllObjectData allObjectData;
 
     private BarnAndEggSpawner eggSpawner;
     public bool stopRandomSpawning { get; private set; }
@@ -332,6 +333,7 @@ public class SpawnStateManager : MonoBehaviour
     }
     void Start()
     {
+        allObjectData?.InitializeQPools();
         if (levelData != null && mainLevel)
         {
             if (LevelDataConverter.currentLevelInstance == 0)

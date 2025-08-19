@@ -1307,32 +1307,53 @@ public class PlayerStateManager : MonoBehaviour
 
     private void HandleEggDrop()
     {
-        if (ammoManager == null) return;
+        // if (ammoManager == null) return;
 
-        if (ID.Ammo > 0)
-        {
-
-
-            AudioManager.instance.PlayEggDrop();
-            float force = 0;
-
-            if (rb.linearVelocity.x < 0)
-            {
-                force = rb.linearVelocity.x * .55f;
-            }
-            else
-            {
-                force = rb.linearVelocity.x * .45f;
-            }
-            ammoManager.GetEgg(transform.position, force);
-
-            ID.Ammo -= 1;
+        // if (ID.Ammo > 0)
+        // {
 
 
-        }
+        //     AudioManager.instance.PlayEggDrop();
+        //     float force = 0;
+
+        //     if (rb.linearVelocity.x < 0)
+        //     {
+        //         force = rb.linearVelocity.x * .55f;
+        //     }
+        //     else
+        //     {
+        //         force = rb.linearVelocity.x * .45f;
+        //     }
+        //     ammoManager.GetEgg(transform.position, force);
+
+        //     ID.Ammo -= 1;
+
+
+        // }
     }
-    public void GetEgg(float force)
+    public void GetEgg()
     {
+        float x;
+        float y = 0;
+
+        if (rb.linearVelocity.x < 0)
+        {
+            x = rb.linearVelocity.x * .9f;
+        }
+        else
+        {
+            x = rb.linearVelocity.x * .85f;
+        }
+
+        if (rb.linearVelocity.y < 0)
+        {
+            y = rb.linearVelocity.y * .3f;
+        }
+        // else
+        // {
+        //     y = rb.linearVelocity.y * .25f;
+        // }
+        Vector2 force = new Vector2(x, y - 1.7f);
         ammoManager.GetEgg(transform.position, force);
 
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-public class BarnMovement : MonoBehaviour, IRecordableObject
+public class BarnMovement : SpawnedObject, IRecordableObject
 {
     private int barnType;
     public BarnID ID;
@@ -138,31 +138,13 @@ public class BarnMovement : MonoBehaviour, IRecordableObject
 
     }
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
+    public override void ApplyFloatOneData(DataStructFloatOne data)
     {
         transform.position = data.startPos;
         Initialize((int)data.type);
     }
 
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void ApplyFloatThreeData(DataStructFloatThree data)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-        throw new System.NotImplementedException();
-    }
+   
     private int lastDataType;
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)

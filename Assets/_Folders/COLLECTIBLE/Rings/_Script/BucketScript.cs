@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
+public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
 {
     public RingID ID;
     private int ResetCounter = 0;
@@ -40,7 +40,7 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
     [SerializeField] private SpriteRenderer ringSpriteBack;
     private Animator anim;
-    private Rigidbody2D rb;
+
     private float slowDownDuration;
     // Start is called before the first frame update
 
@@ -403,13 +403,8 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
     {
         return 0;
     }
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
+   
+    public override void ApplyFloatThreeData(DataStructFloatThree data)
     {
         // transform.position = data.startPos;
         transform.SetPositionAndRotation(data.startPos, Quaternion.Euler(0, 0, data.float3));
@@ -421,14 +416,7 @@ public class BucketScript : MonoBehaviour, ICollectible, IRecordableObject
 
         gameObject.SetActive(true);
     }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
-
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-    }
+   
 
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
