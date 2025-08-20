@@ -58,11 +58,7 @@ public class PauseMenuManager : MonoBehaviour
         scoreWarning.enabled = false;
         challengeWarning.enabled = false;
         levelWarning.enabled = false;
-        var c = LevelDataConverter.instance.ReturnLevelData().GetLevelChallenges(false, null);
-        if (c.LevelDifficulty > 0)
-            challenges.ShowChallengesForLevelPicker(c, LevelDataConverter.instance.ReturnLevelSavedData());
-        else
-            challenges.gameObject.SetActive(false);
+
 
         CheckWarnings();
 
@@ -146,6 +142,12 @@ public class PauseMenuManager : MonoBehaviour
             rightArrow.enabled = false;
 
         gameSpeedText.text = displayedGameSpeed.ToString("F2");
+
+        var c = LevelDataConverter.instance.ReturnLevelData().GetLevelChallenges(false, null);
+        if (c.LevelDifficulty > 0)
+            challenges.ShowChallengesForLevelPicker(c, LevelDataConverter.instance.ReturnLevelSavedData());
+        else
+            challenges.gameObject.SetActive(false);
 
     }
     public void SaveOrDefault(bool saveNew)

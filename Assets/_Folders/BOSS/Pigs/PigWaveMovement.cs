@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class PigWaveMovement : MonoBehaviour, IRecordableObject
+public class PigWaveMovement : SpawnedObject, IRecordableObject
 {
-    private Rigidbody2D rb;
+
     [SerializeField] private bool useDynamicMag;
     [SerializeField] private float speed;
     private float _sineFrequency;
@@ -193,15 +193,8 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
 
 
 
-    public void ApplyFloatOneData(DataStructFloatOne data)
-    {
 
-    }
-    public void ApplyFloatTwoData(DataStructFloatTwo data)
-    {
-
-    }
-    public void ApplyFloatThreeData(DataStructFloatThree data)
+    public override void ApplyFloatThreeData(DataStructFloatThree data)
     {
         transform.position = data.startPos;
 
@@ -220,15 +213,7 @@ public class PigWaveMovement : MonoBehaviour, IRecordableObject
         gameObject.SetActive(true);
 
     }
-    public void ApplyFloatFourData(DataStructFloatFour data)
-    {
 
-
-    }
-    public void ApplyFloatFiveData(DataStructFloatFive data)
-    {
-
-    }
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {

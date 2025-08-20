@@ -62,7 +62,7 @@ public class TenderizerPig : SpawnedObject, ICollectible, IRecordableObject
     {
         Ticker.OnTickAction015 += MoveEyesWithTicker;
         frequency = baseFrequency + ((baseSpeed - Mathf.Abs(speed)) * .27f);
-
+        canAttack = true;
         flipped = false;
         startX = transform.position.x;
         _position = transform.position;
@@ -108,7 +108,7 @@ public class TenderizerPig : SpawnedObject, ICollectible, IRecordableObject
 
         rb.MovePosition(_position + Vector2.up * period * _sineMagnitude);
     }
-    private bool isBlinded = false;
+
     private void MoveEyesWithTicker()
     {
 
@@ -145,7 +145,7 @@ public class TenderizerPig : SpawnedObject, ICollectible, IRecordableObject
             yield return new WaitForSeconds(3.8f);
             parried = false;
             coolingDown = false;
-            if (!isBlinded)
+            if (canAttack)
                 detection.enabled = true;
 
         }
@@ -163,7 +163,7 @@ public class TenderizerPig : SpawnedObject, ICollectible, IRecordableObject
 
     public void Collected()
     {
-
+        if (!canAttack) return;
         detection.enabled = false;
         anim.SetTrigger("SwingTrigger");
         StartCoroutine(AfterSwing());
@@ -216,12 +216,13 @@ public class TenderizerPig : SpawnedObject, ICollectible, IRecordableObject
     {
         if (type == 0)
         {
-            isBlinded = true;
+            canAttack = false;
             detection.enabled = false;
+            Debug.Log("Egged TenderizerPig");
         }
         else if (type == -1)
         {
-            isBlinded = false;
+            canAttack = true;
             if (!coolingDown)
                 detection.enabled = true;
         }

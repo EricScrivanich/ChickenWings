@@ -196,62 +196,7 @@ public class SpawnStateManager : MonoBehaviour
         }
 
 
-        if (isTestPlayer && !mainLevel)
-        {
-            levelData = LevelDataConverter.instance.ReturnLevelData();
-            currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
-            Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
 
-
-            // if (levelData != null)
-            //     levelData.InitializeData(this, currentSpawnStep);
-
-            // StartCoroutine(PreloadScene(0, 1, true));
-            // return;
-
-            if (LevelRecordManager.CurrentPlayTimeStep == LevelRecordManager.PreloadObjectsTimeStep)
-            {
-
-                if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
-                if (levelData != null)
-                    levelData.InitializeData(this, currentSpawnStep);
-
-                StartCoroutine(PreloadScene(1, true));
-                GetComponent<PreloadSpawner>().DestoryLoadingScreen();
-                return;
-            }
-            Time.timeScale = 0;
-
-            AudioManager.instance.PauseAllAudio(true);
-            float initialDur = (currentSpawnStep - LevelRecordManager.PreloadObjectsTimeStep) * LevelRecordManager.TimePerStep;
-            int spedScale = 35;
-
-
-            if (initialDur < 10)
-            {
-                spedScale = 15;
-            }
-            else if (initialDur < 20)
-            {
-                spedScale = 25;
-            }
-            else if (initialDur < 30)
-            {
-                spedScale = 30;
-            }
-            // float loadDuration = initialDur / spedScale;
-            if (levelData != null)
-            {
-                if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
-                levelData.InitializeData(this, LevelRecordManager.PreloadObjectsTimeStep);
-            }
-
-
-            // Camera.main.enabled = false;
-            StartCoroutine(PreloadScene(spedScale));
-            LvlID.outputEvent.SetLevelProgress?.Invoke((float)currentSpawnStep / (float)levelData.finalSpawnStep);
-
-        }
         //     else if (levelData != null)
         //     {
         //         if (LevelDataConverter.currentLevelInstance == 0)
@@ -334,7 +279,63 @@ public class SpawnStateManager : MonoBehaviour
     void Start()
     {
         allObjectData?.InitializeQPools();
-        if (levelData != null && mainLevel)
+        if (isTestPlayer && !mainLevel)
+        {
+            levelData = LevelDataConverter.instance.ReturnLevelData();
+            currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
+            Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
+
+
+            // if (levelData != null)
+            //     levelData.InitializeData(this, currentSpawnStep);
+
+            // StartCoroutine(PreloadScene(0, 1, true));
+            // return;
+
+            if (LevelRecordManager.CurrentPlayTimeStep == LevelRecordManager.PreloadObjectsTimeStep)
+            {
+
+                if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
+                if (levelData != null)
+                    levelData.InitializeData(this, currentSpawnStep);
+
+                StartCoroutine(PreloadScene(1, true));
+                GetComponent<PreloadSpawner>().DestoryLoadingScreen();
+                return;
+            }
+            Time.timeScale = 0;
+
+            AudioManager.instance.PauseAllAudio(true);
+            float initialDur = (currentSpawnStep - LevelRecordManager.PreloadObjectsTimeStep) * LevelRecordManager.TimePerStep;
+            int spedScale = 35;
+
+
+            if (initialDur < 10)
+            {
+                spedScale = 15;
+            }
+            else if (initialDur < 20)
+            {
+                spedScale = 25;
+            }
+            else if (initialDur < 30)
+            {
+                spedScale = 30;
+            }
+            // float loadDuration = initialDur / spedScale;
+            if (levelData != null)
+            {
+                if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
+                levelData.InitializeData(this, LevelRecordManager.PreloadObjectsTimeStep);
+            }
+
+
+            // Camera.main.enabled = false;
+            StartCoroutine(PreloadScene(spedScale));
+            LvlID.outputEvent.SetLevelProgress?.Invoke((float)currentSpawnStep / (float)levelData.finalSpawnStep);
+
+        }
+        else if (levelData != null && mainLevel)
         {
             if (LevelDataConverter.currentLevelInstance == 0)
             {

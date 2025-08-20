@@ -5086,6 +5086,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -4.950001
       objectReference: {fileID: 0}
+    - target: {fileID: 610926366163631900, guid: 09319cb84670645b3a43a98e5a3de946, type: 3}
+      propertyPath: <WorldNumber>k__BackingField.y
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1799725007842778648, guid: 09319cb84670645b3a43a98e5a3de946, type: 3}
       propertyPath: m_MaskInteraction
       value: 2
@@ -5100,7 +5104,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5230374924131365762, guid: 09319cb84670645b3a43a98e5a3de946, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7312851732866330921, guid: 09319cb84670645b3a43a98e5a3de946, type: 3}
       propertyPath: displayPopupPos
@@ -10094,7 +10098,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: 195.39282}
+  m_AnchoredPosition: {x: -0, y: 195.39941}
   m_SizeDelta: {x: 580.68005, y: 150}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &558430835
@@ -33762,7 +33766,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1224682214}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.99908185
+  m_Size: 0.9999595
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

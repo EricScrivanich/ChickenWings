@@ -1338,22 +1338,22 @@ public class PlayerStateManager : MonoBehaviour
 
         if (rb.linearVelocity.x < 0)
         {
-            x = rb.linearVelocity.x * .9f;
+            x = rb.linearVelocity.x * .7f;
         }
         else
         {
-            x = rb.linearVelocity.x * .85f;
+            x = rb.linearVelocity.x * .6f;
         }
 
         if (rb.linearVelocity.y < 0)
         {
-            y = rb.linearVelocity.y * .3f;
+            y = rb.linearVelocity.y * .4f;
         }
         // else
         // {
         //     y = rb.linearVelocity.y * .25f;
         // }
-        Vector2 force = new Vector2(x, y - 1.7f);
+        Vector2 force = new Vector2(x, y - 1.5f);
         ammoManager.GetEgg(transform.position, force);
 
 

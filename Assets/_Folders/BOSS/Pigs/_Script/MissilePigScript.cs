@@ -57,7 +57,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
 
     [SerializeField] private SpriteRenderer missileImage;
     private Animator anim;
-    
+
 
     private Vector2 lookDirection;
     private Vector2 normalDirection = new Vector2(1, 1);
@@ -240,6 +240,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
 
             yield return null;
         }
+        if (!canAttack) yield break;
 
         ps.Play();
         yield return new WaitForSeconds(.2f);
@@ -262,6 +263,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
 
         while (elapsedTime < t)
         {
+            if (!canAttack) yield break;
             elapsedTime += Time.deltaTime;
 
             // Rotate launchAim to 90 degrees over the reloadTime period
@@ -285,6 +287,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
         while (elapsedTime < t2)
         {
             elapsedTime += Time.deltaTime;
+            if (!canAttack) yield break;
 
             // Rotate launchAim to 90 degrees over the reloadTime period
 
@@ -300,11 +303,13 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
         while (elapsedTime < t3)
         {
             elapsedTime += Time.deltaTime;
+            if (!canAttack) yield break;
 
             launchAim.localPosition = Vector3.Lerp(targetPosition, initialPosition, elapsedTime / t3);
 
             yield return null;
         }
+        if (!canAttack) yield break;
         launchAim.localPosition = initialPosition;
 
         canShoot = true;
@@ -318,6 +323,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
     private void OnEnable()
     {
         Ticker.OnTickAction015 += MoveEyesWithTicker;
+        canAttack = true;
         if (!isInitialized)
         {
             missileImage.enabled = true;
@@ -456,6 +462,12 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
         Ticker.OnTickAction015 -= MoveEyesWithTicker;
     }
     private bool pigFlipped;
+
+    public override void EggPig(int type, Vector2 velocity, float angle)
+    {
+        canAttack = false;
+    }
+
     public void Initialize(float xPos, int type, int moveType, bool skip = false)
     {
         isInitialized = true;
@@ -574,7 +586,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
 
     }
 
-   
+
     public override void ApplyFloatOneData(DataStructFloatOne data)
     {
 
@@ -582,7 +594,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
         Initialize(data.startPos.x, data.type, 0, false);
 
     }
-  
+
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {

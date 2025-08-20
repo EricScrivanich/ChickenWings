@@ -41,11 +41,17 @@ public class StartingStatEditor : MonoBehaviour
 
         if (ammoType == -1)
         {
-            currentAmount = LevelRecordManager.instance.levelData.startingStats.StartingLives;
+            currentAmount = LevelRecordManager.instance.levelData.StartingLives;
             textMain.text = currentAmount.ToString();
 
 
         }
+        else
+        {
+            currentAmount = LevelRecordManager.instance.levelData.StartingAmmos[ammoType];
+            textMain.text = currentAmount.ToString();
+        }
+
 
         plus.SetData(this);
         minus.SetData(this);
@@ -57,7 +63,7 @@ public class StartingStatEditor : MonoBehaviour
         ammoType = type;
         addedText = text;
         this.img.sprite = img;
-        currentAmount = LevelRecordManager.instance.levelData.startingStats.startingAmmos[ammoType];
+        currentAmount = LevelRecordManager.instance.levelData.StartingAmmos[ammoType];
         textMain.text = currentAmount.ToString();
     }
 

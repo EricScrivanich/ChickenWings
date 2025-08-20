@@ -3,7 +3,20 @@ using UnityEngine;
 public class SpawnedObject : MonoBehaviour
 {
     public Rigidbody2D rb { get; protected set; }
-    public bool killOnGroundHit = false;
+    protected bool canAttack = true;
+
+    public void InitialSpawnCheck()
+    {
+        if (this.gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(false);
+        }
+        if (!this.enabled)
+            this.enabled = true;
+
+
+
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public virtual void ApplyFloatOneData(DataStructFloatOne data)
     {
@@ -34,14 +47,14 @@ public class SpawnedObject : MonoBehaviour
     {
 
         this.enabled = false;
-        killOnGroundHit = true;
+
         //set rb to dynamic
         rb.gravityScale = 1.25f;
         rb.linearDamping = .25f;
         rb.angularDamping = .3f;
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.linearVelocity = vector;
-        rb.angularVelocity = offset * 5f;
+        rb.angularVelocity = offset * 10f;
         if (GetComponent<PigMaterialHandler>() != null)
         {
             GetComponent<PigMaterialHandler>().DoPigHitActivation();
@@ -50,17 +63,20 @@ public class SpawnedObject : MonoBehaviour
 
 
     }
-    
 
-   
+
+
     public void KillOnGround()
     {
         if (GetComponent<PigMaterialHandler>() != null)
         {
             rb.gravityScale = 0;
             rb.linearVelocity = Vector2.zero;
+
             rb.linearDamping = 0;
             rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.rotation = 0;
+            rb.angularVelocity = 0;
 
             GetComponent<PigMaterialHandler>().Damage(1, 0, -1);
         }

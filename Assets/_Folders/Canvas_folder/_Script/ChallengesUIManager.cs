@@ -234,6 +234,7 @@ public class ChallengesUIManager : MonoBehaviour
 
         }
         doMoveCardSeq = finisheLevel;
+        if (challenges == null || challenges.challengeTexts == null || challenges.challengeTexts.Length <= 0) return;
 
         // challengeCards = null;
         if (challengeCards == null)

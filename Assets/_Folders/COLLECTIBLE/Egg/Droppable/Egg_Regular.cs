@@ -112,14 +112,18 @@ public class Egg_Regular : SpawnedQueuedObject
             // return;
 
         }
-        else if (other.CompareTag("EggableEntity") && transform.position.y > other.transform.position.y - .5f)
+        else if (other.CompareTag("EggableEntity") && transform.position.y > other.transform.position.y - .6f)
         {
             if (transform.position.y > other.transform.position.y - .15f) Debug.LogError("EggableEntity is too high to be egged: " + (transform.position.y - other.transform.position.y));
             var eggCollider = other.gameObject.GetComponent<EggableCollider>();
+            if (!eggCollider.isEgged)
+            {
+                hasHit = true;
 
-            hasHit = true;
+                eggCollider.GetEgged(this);
+            }
 
-            eggCollider.GetEgged(this);
+
 
 
         }

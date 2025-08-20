@@ -63,41 +63,21 @@ public class LevelCreatorNew : Editor
             GUILayout.Space(20);
             if (GUILayout.Button("Rename Asset", GUILayout.Height(40)))
             {
-                string name = newLevelName;
-                Vector3 numbers = newLevelNumbers;
-
-                if (PickLevelEditorOnly.ReturnLevelName(newLevelName, newLevelNumbers, false) != null)
-                {
 
 
-
-
-                    string newFileName = PickLevelEditorOnly.ReturnLevelName(newLevelName, newLevelNumbers, false);
-                    // rename the asset file
-                    string currentPath = AssetDatabase.GetAssetPath(Parent.GetInstanceID());
-                    if (string.IsNullOrEmpty(currentPath))
-                    {
-                        Debug.LogError("Could not find asset path for the ScriptableObject.");
-                        return;
-                    }
-                    Parent.LevelName = name;
-                    Parent.levelWorldAndNumber = new Vector3Int((int)numbers.x, (int)numbers.y, (int)numbers.z);
-                    // LevelDataConverter.instance.AddLevel(null); // adding null just so it gets reordered
-
-                    AssetDatabase.RenameAsset(currentPath, newFileName);
-                    UnityEditor.EditorUtility.SetDirty(Parent);
-                    UnityEditor.AssetDatabase.SaveAssets();
-                    UnityEditor.AssetDatabase.Refresh();
-                }
-                else
-                {
-                    Debug.LogWarning("Invalid level name or numbers. Please ensure they are set correctly.");
-                }
-
-
+                DoAction(false);
 
 
             }
+            if (GUILayout.Button("Delete Asset", GUILayout.Height(40)))
+            {
+
+
+                DoAction(true);
+
+
+            }
+
             EditorGUILayout.EndVertical();
         }
 
@@ -107,7 +87,120 @@ public class LevelCreatorNew : Editor
 
     }
 
+    private string ReturnLevelName(string levelName, Vector3Int numbers, bool display)
+    {
+
+        // check if any levels already use numbers
+        if (string.IsNullOrEmpty(levelName) || numbers == null || numbers.x <= 0 || numbers.y <= 0 || numbers.z < 0)
+        {
+            Debug.LogWarning("Invalid level name");
+            return null;
+        }
+
+        string numberString = "";
+
+        if (numbers.z <= 0)
+            numberString = $"{numbers.x:00}-{numbers.y:00}_";
+        else
+            numberString = $"{numbers.x:00}-{numbers.y:00}-{numbers.z:00}_";
+
+        if (display)
+        {
+            // replaceUnderscore with space in numberString as well as remove the tenth place if zero
+            numberString = numberString.Replace("_", " ");
+            if (numbers.z <= 0)
+            {
+                numberString = numberString.Substring(0, numberString.Length - 3);
+            }
+            else
+            {
+                numberString = numberString.Substring(0, numberString.Length - 4);
+            }
+        }
+
+        return numberString + levelName;
+
+
+
+    }
+
+    private void DoAction(bool delete)
+    {
+        string name = newLevelName;
+        Vector3 numbers = newLevelNumbers;
+
+        if (ReturnLevelName(newLevelName, newLevelNumbers, false) != null || delete)
+        {
+
+
+            bool hasTutorialData = Parent.tutorialData != null;
+            string newFileName = ReturnLevelName(newLevelName, newLevelNumbers, false);
+            string newChallengeFileName = newFileName + "Challenge";
+            string newTutorialFileName = "";
+            // rename the asset file
+            string currentPath = AssetDatabase.GetAssetPath(Parent.GetInstanceID());
+            string currentChallengePath = AssetDatabase.GetAssetPath(Parent.GetLevelChallenges(false, null).GetInstanceID());
+            string currentTutorialPath = "";
+
+            if (string.IsNullOrEmpty(currentPath) || string.IsNullOrEmpty(currentChallengePath))
+            {
+                Debug.LogError("Could not find asset path for the ScriptableObject.");
+                return;
+            }
+            if (hasTutorialData)
+            {
+                currentTutorialPath = AssetDatabase.GetAssetPath(Parent.tutorialData.GetInstanceID());
+                if (string.IsNullOrEmpty(currentTutorialPath))
+                {
+                    Debug.LogError("Could not find asset path for the TutorialData.");
+                    return;
+                }
+                newTutorialFileName = "TutorialData" + newFileName;
+            }
+
+            if (delete)
+            {
+                AssetDatabase.DeleteAsset(currentPath);
+                AssetDatabase.DeleteAsset(currentChallengePath);
+                if (hasTutorialData)
+                {
+                    AssetDatabase.DeleteAsset(currentTutorialPath);
+                }
+                return;
+            }
+
+
+            Parent.LevelName = name;
+            Parent.levelWorldAndNumber = new Vector3Int((int)numbers.x, (int)numbers.y, (int)numbers.z);
+            Debug.Log("Renaming Level: " + Parent.LevelName + " with numbers: " + numbers);
+            UnityEditor.EditorUtility.SetDirty(Parent);
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.Refresh();
+            // LevelDataConverter.instance.AddLevel(null); // adding null just so it gets reordered
+
+            AssetDatabase.RenameAsset(currentPath, newFileName);
+            AssetDatabase.RenameAsset(currentChallengePath, newChallengeFileName);
+
+            if (hasTutorialData)
+            {
+                AssetDatabase.RenameAsset(currentTutorialPath, newTutorialFileName);
+
+            }
+
+
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.Refresh();
+        }
+        else
+        {
+            Debug.LogWarning("Invalid level name or numbers. Please ensure they are set correctly.");
+        }
+    }
+
 }
+
+
+
 public static class JsonDataTools
 {
     [MenuItem("Tools/ClearAllJsonData")]

@@ -20,7 +20,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
     [SerializeField] private Transform sprite;
     [SerializeField] private AnimationDataSO animData;
     [SerializeField] private SpriteRenderer yolkSR;
-    private Rigidbody2D rb;
+
     private Animator anim;
     public float forceAdded;
     private Transform playerTarget;
@@ -524,7 +524,13 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
             // flapSeq.Join(sprite.DOLocalMoveY(-.4f, .25f).SetEase(Ease.OutSine));
             // flapSeq.Play();
 
+
             pigMatHandler.Damage(1, 0, -1);
+            if (other.gameObject.GetComponent<groundExplosion>() != null)
+            {
+                other.gameObject.GetComponent<groundExplosion>().SetYolkTransform(yolkSR.transform);
+                yolkSR.enabled = false;
+            }
             return;
 
         }

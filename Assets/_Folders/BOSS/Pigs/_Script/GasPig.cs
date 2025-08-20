@@ -25,7 +25,7 @@ public class GasPig : SpawnedObject, IRecordableObject
 
 
     private Animator anim;
-   
+
 
 
 
@@ -148,6 +148,7 @@ public class GasPig : SpawnedObject, IRecordableObject
             //     yield return new WaitForSeconds(delay);
 
             // }
+            if (!canAttack) yield break;
 
             anim.SetTrigger("FartTrigger");
             yield return awaiterConstant;
@@ -187,7 +188,7 @@ public class GasPig : SpawnedObject, IRecordableObject
 
 
     }
-   
+
     public override void ApplyFloatThreeData(DataStructFloatThree data)
     {
         initialized = true;
@@ -207,6 +208,7 @@ public class GasPig : SpawnedObject, IRecordableObject
         }
 
 
+        canAttack = true;
 
         initialDelay = data.float3 * delay;
         gameObject.SetActive(true);
@@ -214,8 +216,18 @@ public class GasPig : SpawnedObject, IRecordableObject
         StartCoroutine(CloudRoutine());
 
 
+
     }
-  
+
+    public override void EggPig(int type, Vector2 position, float angle)
+    {
+        if (flying)
+        {
+            base.EggPig(type, position, angle);
+        }
+
+    }
+
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {

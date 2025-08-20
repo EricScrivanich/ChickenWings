@@ -96,6 +96,7 @@ public class RecordableObjectPool : ScriptableObject
             Debug.LogError("pool is empty");
             return;
         }
+        pool[currentIndex].InitialSpawnCheck();
         pool[currentIndex].ApplyPositionerData(data);
         currentIndex++;
 
@@ -174,6 +175,7 @@ public class RecordableObjectPool : ScriptableObject
             Debug.LogError("Pool is empty");
             return;
         }
+        pool[currentIndex].InitialSpawnCheck();
         pool[currentIndex].ApplyFloatOneData(data);
 
         currentIndex++;
@@ -189,6 +191,7 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
+        pool[currentIndex].InitialSpawnCheck();
         pool[currentIndex].ApplyFloatTwoData(data);
         currentIndex++;
         if (currentIndex >= pool.Length)
@@ -203,6 +206,7 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
+        pool[currentIndex].InitialSpawnCheck();
         pool[currentIndex].ApplyFloatThreeData(data);
         currentIndex++;
         if (currentIndex >= pool.Length)
@@ -217,6 +221,7 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
+        pool[currentIndex].InitialSpawnCheck();
         pool[currentIndex].ApplyFloatFourData(data);
         currentIndex++;
         if (currentIndex >= pool.Length)
@@ -231,6 +236,7 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
+        pool[currentIndex].InitialSpawnCheck();
         pool[currentIndex].ApplyFloatFiveData(data);
         currentIndex++;
         if (currentIndex >= pool.Length)

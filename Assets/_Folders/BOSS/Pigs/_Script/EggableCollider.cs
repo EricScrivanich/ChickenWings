@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 public class EggableCollider : MonoBehaviour
 {
@@ -7,15 +8,17 @@ public class EggableCollider : MonoBehaviour
     [SerializeField] private AnimationDataSO animData;
     [SerializeField] private float blindedDuration;
 
+
+
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
     private bool isHit = false;
-    private bool isEgged = false;
+    public bool isEgged { get; private set; } = false;
     private float baseScale;
     private Vector2 initialScalePercent = new Vector2(.85f, 1.15f);
     private float scaleDuration = .4f;
     private float switchSpriteTime = .2f;
-    private float timer;
+
     private bool colliderChecked = false;
     private bool switchSprite = false;
     private WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
@@ -31,10 +34,12 @@ public class EggableCollider : MonoBehaviour
 
 
 
+
     public void GetEgged(Egg_Regular egg)
     {
         // eggable.OnEgged();
         if (isEgged) return;
+
 
         isEgged = true;
         float angle = transform.position.x - egg.transform.position.x;
@@ -50,34 +55,18 @@ public class EggableCollider : MonoBehaviour
         spriteRenderer.transform.localScale = new Vector3(baseScale * initialScalePercent.x, baseScale * initialScalePercent.y, 1);
         transform.localPosition = new Vector3(transform.localPosition.x, baseYpos + yMoveAmount, transform.localPosition.z);
         spriteRenderer.enabled = true;
-        timer = 0;
-        this.enabled = true;
+
+        StartCoroutine(SpriteAnimation());
     }
-    void Update()
+
+    void OnEnable()
     {
-
-        timer += Time.deltaTime;
-        float scaleX = Mathf.Lerp(baseScale * initialScalePercent.x, baseScale, timer / scaleDuration);
-        float scaleY = Mathf.Lerp(baseScale * initialScalePercent.y, baseScale, timer / scaleDuration);
-        transform.localPosition = new Vector3(transform.localPosition.x, Mathf.Lerp(baseYpos + yMoveAmount, baseYpos, timer / scaleDuration), transform.localPosition.z);
-        transform.localScale = new Vector3(scaleX, scaleY, 1);
-
-        if (!switchSprite && timer >= switchSpriteTime)
-        {
-            spriteRenderer.sprite = animData.sprites[1];
-            switchSprite = true;
-        }
-        else if (switchSprite && timer >= scaleDuration)
-        {
-            boxCollider.enabled = true;
-            // isEgged = false;
-            timer = 0;
-            this.enabled = false;
-        }
-
-
-
+        spriteRenderer.enabled = false;
+        boxCollider.enabled = true;
+        isEgged = false;
     }
+
+
 
     public void Awake()
     {
@@ -98,13 +87,35 @@ public class EggableCollider : MonoBehaviour
         }
 
 
-        spriteRenderer.enabled = false;
+
         baseScale = transform.localScale.x;
         baseYpos = transform.localPosition.y;
         baseXpos = transform.localPosition.x;
-        timer = 0;
-    }
 
+    }
+    private WaitForSeconds waitForSwitch = new WaitForSeconds(.12f);
+
+    private IEnumerator SpriteAnimation()
+    {
+        float timer = 0;
+
+        while (timer < scaleDuration)
+        {
+            timer += Time.deltaTime;
+            float scaleX = Mathf.Lerp(baseScale * initialScalePercent.x, baseScale, timer / scaleDuration);
+            float scaleY = Mathf.Lerp(baseScale * initialScalePercent.y, baseScale, timer / scaleDuration);
+            transform.localPosition = new Vector3(transform.localPosition.x, Mathf.Lerp(baseYpos + yMoveAmount, baseYpos, timer / scaleDuration), transform.localPosition.z);
+            transform.localScale = new Vector3(scaleX, scaleY, 1);
+
+            if (!switchSprite && timer >= switchSpriteTime)
+            {
+                spriteRenderer.sprite = animData.sprites[1];
+                switchSprite = true;
+            }
+
+            yield return null;
+        }
+    }
     private IEnumerator OnEggRoutine(Egg_Regular egg, float angle)
     {
         Vector2 lastPos = thisObject.GetPosition();
@@ -117,12 +128,15 @@ public class EggableCollider : MonoBehaviour
         if (blindedDuration > 0)
         {
             thisObject.EggPig(0, Vector2.zero, 0);
-            // float head
-            yield return new WaitForSeconds(blindedDuration);
 
+            yield return new WaitForSeconds(blindedDuration);
 
             thisObject.EggPig(-1, Vector2.zero, 0);
 
+        }
+        else if (blindedDuration < 0)
+        {
+            thisObject.EggPig(0, Vector2.zero, 0);
         }
         else
         {
@@ -135,10 +149,13 @@ public class EggableCollider : MonoBehaviour
 
 
     }
+
+
     public void KillOnGround()
     {
         Debug.Log("EggableCollider KillOnGround");
         thisObject.KillOnGround();
+        boxCollider.enabled = false;
         spriteRenderer.enabled = false;
         transform.localPosition = new Vector2(baseXpos, baseYpos);
     }
@@ -146,7 +163,7 @@ public class EggableCollider : MonoBehaviour
     public Transform GetTransform()
     {
         if (!isEgged) return null;
-        boxCollider.enabled = false;
+        // boxCollider.enabled = false;
         isEgged = false;
         return transform;
     }

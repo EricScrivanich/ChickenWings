@@ -327,7 +327,9 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
 
             Destroy(instanceMaterial);
 
+
         }
+       
 
 
     }

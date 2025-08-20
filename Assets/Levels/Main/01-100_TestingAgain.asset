@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8ec5cdc658774fadb8730e2026d7251, type: 3}
-  m_Name: 01-100_TEST
+  m_Name: 01-100_TestingAgain
   m_EditorClassIdentifier: 
   <easyStartingAmmos>k__BackingField: 05000500000000000000
   <easyStartingLives>k__BackingField: 5
@@ -20,32 +20,34 @@ MonoBehaviour:
   startingStats: {fileID: 11400000, guid: d10dd9036610a46658e0229299e97856, type: 2}
   levelChallenges: {fileID: 11400000, guid: 0682b92cc74674ee5a6a580d035b2d15, type: 2}
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  LevelName: TEST
+  LevelName: TestingBuh
   levelWorldAndNumber: {x: 1, y: 100, z: 0}
-  spawnSteps: 0000090027002700
+  spawnSteps: 0000270027002800
   finalSpawnStep: 50
-  objectTypes: 0000000005000500
-  idList: 0100000000000100
-  dataTypes: 0200020003000300
+  objectTypes: 0000050005000000
+  idList: 0200000001000000
+  dataTypes: 0400030003000200
   posList:
-  - {x: 15.400001, y: 1.6}
-  - {x: 14, y: 0.6}
+  - {x: 14, y: 0.4}
   - {x: 12.8, y: -0.2}
   - {x: 13.8, y: -0.4}
+  - {x: 19.2, y: 1.8000001}
   floatList:
-  - 9.5
+  - 4
   - 1
+  - 0.5
+  - 0
+  - 5
+  - 1
+  - -0
+  - 5
+  - 1
+  - -0
   - 5.5
   - 1
-  - 5
-  - 1
-  - -0
-  - 5
-  - 1
-  - -0
-  typeList: 0000000002000200
+  typeList: 0000020002000000
   poolSizes: 
-  pigPoolSizes: 0100010000000000000000000000000000000000
+  pigPoolSizes: 0100000001000000000000000000000000000000
   aiPoolSizes: 00000000
   buildingPoolSizes: 00000000
   collectablePoolSizes: 00000000
@@ -53,7 +55,7 @@ MonoBehaviour:
   ringPoolSizes: 01000100
   cageAttachments: 
   checkPointSteps: 1a00
-  <StartingAmmos>k__BackingField: 05000300000000000000
+  <StartingAmmos>k__BackingField: 0f000a00000000000000
   <StartingLives>k__BackingField: 3
   postionerData:
   - ID: 0

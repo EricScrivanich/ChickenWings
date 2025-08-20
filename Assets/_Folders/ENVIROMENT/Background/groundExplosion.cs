@@ -10,19 +10,9 @@ public class groundExplosion : MonoBehaviour
         if (collider.CompareTag("EggableEntity"))
         {
             var o = collider.gameObject.GetComponent<EggableCollider>();
-            var t = o.GetTransform();
-            if (t != null)
-            {
-                var y = Instantiate(eggablePigYolk, t.position, t.rotation);
-                o.KillOnGround();
+            SetYolkTransform(o.GetTransform());
 
-                y.transform.localScale = t.lossyScale;
-                y.GetComponent<PigEggableYolk>().Initialize();
-            }
-            else
-            {
-                Debug.LogWarning("EggableCollider transform is null, cannot spawn yolk.");
-            }
+            o.KillOnGround();
 
 
 
@@ -33,6 +23,27 @@ public class groundExplosion : MonoBehaviour
         {
             explodableEntity.Explode(true);
         }
+
+    }
+    public void SetYolkTransform(Transform t)
+    {
+        if (t != null)
+        {
+            var y = Instantiate(eggablePigYolk, t.position, t.rotation);
+            Debug.Log("Setting yolk transform: " + t.position + " " + t.rotation);
+           
+
+
+
+            y.transform.localScale = t.lossyScale;
+            y.GetComponent<PigEggableYolk>().Initialize();
+
+        }
+        else
+        {
+            Debug.LogWarning("EggableCollider transform is null, cannot spawn yolk.");
+        }
+
 
     }
 }
