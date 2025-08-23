@@ -26,7 +26,7 @@ public class YolkScript : SpawnedQueuedObject
     [SerializeField] private Vector2 yolkInitialPosition;
     [SerializeField] private Vector3 whiteInitialScale;
 
-    private float lerpDuration = .15f;
+    private float lerpDuration = .1f;
     private float time;
 
 

@@ -17,22 +17,30 @@ MonoBehaviour:
   startButtonHidden: 1
   startInputsLocked: 0
   messages:
-  - Press Button to Drop an egg
-  inputReplaceKeyboard: []
-  inputReplaceGamepad: []
-  inputReplaceTouchScreen: []
+  - INPUT to Drop an egg
+  - Drop Eggs into barns for additional challenges. Aiming eggs will be difficult
+    at first, but practice will pay off!
+  inputReplaceKeyboard:
+  - Click the center of the screen
+  inputReplaceGamepad:
+  - Press "R2"
+  inputReplaceTouchScreen:
+  - Press the center of the screen
   allowedInput:
+  - Egg
   - Egg
   shownAmmos: 
   bubblePrefab: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
   messagePrefab: {fileID: 9156284010655330016, guid: f81248dd664e04cd693cbf1b01a0def4, type: 3}
-  stepsForActions: 12001200
-  actionsForStep: 0100000004000000
-  actionsForEnterBubble: 0a000000
+  stepsForActions: 1200120069006900
+  actionsForStep: 01000000040000000100000004000000
+  actionsForEnterBubble: 0a00000006000000
   actionsForExitBubble: 
   actionsForDelays: 
   vectorValues:
   - {x: 1.3, y: 2.4}
+  - {x: 5.6, y: 2.4}
   bubbleSuctionAndDelayDurations:
-  - {x: 1.7, y: 1.8}
+  - {x: 2.1, y: 1.8}
+  - {x: 2.2, y: 1.8}
   delayValues: []

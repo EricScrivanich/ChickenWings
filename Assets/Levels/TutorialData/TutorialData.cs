@@ -398,7 +398,7 @@ public class TutorialData : ScriptableObject
                 case "Gamepad":
                     s = s.Replace("INPUT", inputReplaceGamepad[currentMessageIndex]);
                     break;
-                case "TouchScreen":
+                case "Touchscreen":
                     s = s.Replace("INPUT", inputReplaceTouchScreen[currentMessageIndex]);
                     break;
             }

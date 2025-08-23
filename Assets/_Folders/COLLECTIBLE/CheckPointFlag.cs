@@ -75,6 +75,8 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
         else
         {
             levelData = lvlData;
+            boxCollider.enabled = true;
+            isCollected = false;
             bottomFlapXPos = -desiredTotalHeight + .2f;
             sr.enabled = true;
             flagTransform.localPosition = new Vector2(bottomFlapXPos, flagTransform.localPosition.y);
@@ -92,14 +94,15 @@ public class CheckPointFlag : MonoBehaviour, ICollectible
 
     public void CollectFlag()
     {
-        GetComponent<ConstantSpriteSwitch>().enabled = true;
-        levelData.SaveLevelCheckPoint(checkPointIndex);
         isCollected = true;
         boxCollider.enabled = false;
         audioSource.Play();
         audioSource.PlayOneShot(flagLiftSound, flagLiftVolume);
         flagTransform.DOLocalMoveX(topFlapPos.x, 0.5f);
         flagTransform.DOScale(topFlapScale, 0.3f);
+        levelData.SaveLevelCheckPoint(checkPointIndex);
+
+        GetComponent<ConstantSpriteSwitch>().enabled = true;
 
 
     }

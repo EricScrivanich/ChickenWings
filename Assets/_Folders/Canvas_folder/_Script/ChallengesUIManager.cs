@@ -74,6 +74,7 @@ public class ChallengesUIManager : MonoBehaviour
     [SerializeField] private bool skipStart = false;
 
     private bool doMoveCardSeq = false;
+    private bool hasSetCardHeights = false;
 
 
 
@@ -560,7 +561,13 @@ public class ChallengesUIManager : MonoBehaviour
     }
     private void OnEnable()
     {
-        StartCoroutine(DelayToLineCount());
+        if (!hasSetCardHeights && currentLevelChallenge != null)
+        {
+            Debug.Log("Setting Card Heights for");
+            StartCoroutine(DelayToLineCount());
+            hasSetCardHeights = true;
+        }
+
         // ChallengesUIManager.OnGetCompletedStar += GetCompletedStar;
         // ChallengesUIManager.OnFailedChallenge += FailedChallenge;
         // if (!hasInitialized || !challengesAvailable) return;

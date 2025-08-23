@@ -129,7 +129,12 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
             nestBlur.color = beatenBlurColor;
             selectedArrowTransform.GetComponent<SpriteRenderer>().color = beatenBlurColor;
 
-            if (transform.localScale.x < 0) stars.localScale = new Vector3(-1, 1, 1);
+            if (transform.localScale.x < 0)
+            {
+                stars.localScale = new Vector3(-1, 1, 1);
+                badge.transform.localScale = new Vector3(-badge.transform.localScale.x, badge.transform.localScale.y, badge.transform.localScale.z);
+            }
+
             ReadyStarSeq();
         }
         else

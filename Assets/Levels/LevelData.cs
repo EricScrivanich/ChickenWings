@@ -393,7 +393,7 @@ public class LevelData : ScriptableObject
 
     public void SaveLevelCheckPoint(ushort checkPointIndex)
     {
-        Debug.LogError("Saving Level CheckPoint at index: " + checkPointIndex + " with current spawn step: " + currentSpawnStep + " and current spawn index: " + currentSpawnIndex);
+       
         levelChallenges.SetCheckPoint(checkPointIndex);
         LevelDataConverter.instance.SaveTemporaryCheckPointData(levelChallenges);
 

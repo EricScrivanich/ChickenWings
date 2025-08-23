@@ -79,7 +79,7 @@ public class PlayerID : ScriptableObject
     public bool infiniteLives;
     public int livesToLoseOnStart = 0;
 
-   
+
 
     public int Lives
     {
@@ -392,15 +392,17 @@ public class PlayerID : ScriptableObject
         if (LevelChallenges != null) LevelChallenges.AddCompletedRing(type);
     }
 
+    public void AddBarnHit(ushort id)
+    {
+        if (LevelChallenges != null)
+            LevelChallenges.AddBarnHitWithEgg(id);
 
+        globalEvents.OnAddScore?.Invoke(5);
+    }
 
-    public void AddScore(int amount, bool isEggDropInBarn = false)
+    public void AddScore(int amount)
     {
         Score += amount;
-        if (isEggDropInBarn && LevelChallenges != null)
-        {
-            LevelChallenges.AddBarnHitWithEgg();
-        }
 
         globalEvents.OnAddScore?.Invoke(amount);
 

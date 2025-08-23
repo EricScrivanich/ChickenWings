@@ -8,11 +8,12 @@ using System.Collections.Generic;
 
 public class ResetManager : MonoBehaviour
 {
-    public static ResetManager Instance;
+   
     [SerializeField] private ShaderVariantCollection shaderVariantCollection;
 
     public LevelManagerID lvlID;
     private bool loadedAssets;
+   
 
     private GameObject blockButtons;
     [SerializeField] private PreloadAssetsContainer preLoadAssets;
@@ -31,7 +32,11 @@ public class ResetManager : MonoBehaviour
 
     void Awake()
     {
+        
         loadedAssets = false;
+        // check if in unity editor
+    
+
 
         controls = new InputController();
 
@@ -41,6 +46,7 @@ public class ResetManager : MonoBehaviour
         checkPoint = 0;
 
     }
+   
     void Start()
     {
         string sceneName = SceneManager.GetActiveScene().name;

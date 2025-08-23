@@ -103,7 +103,9 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void Menu()
     {
         type = 1;
+
         if (lockButtons) return;
+        SetNextLevel(true);
         PressInitializedTween();
 
     }
@@ -119,39 +121,42 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void NextLevel()
     {
         type = 3;
+        SetNextLevel(false);
         if (lockButtons) return;
 
-        if (!SaveManager.instance.HasCompletedLevel(sceneLoader.ReturnLevelNumber()))
-        {
-            string needToCompleteAtHigherSpeed = "Complete the entire level at a speed of .85 or above for this level to count";
-            if (lockedDisplay == null)
-            {
-                var parent = GameObject.Find("Canvas").GetComponent<Transform>();
-                lockedDisplay = Instantiate(levelLockedPrefab, parent).GetComponent<LevelLockedDisplay>();
-            }
-            lockedDisplay.Show(needToCompleteAtHigherSpeed, true, true);
-            return;
+        PressInitializedTween();
+
+        // if (!SaveManager.instance.HasCompletedLevel(sceneLoader.ReturnLevelNumber()))
+        // {
+        //     string needToCompleteAtHigherSpeed = "Complete the entire level at a speed of .85 or above for this level to count";
+        //     if (lockedDisplay == null)
+        //     {
+        //         var parent = GameObject.Find("Canvas").GetComponent<Transform>();
+        //         lockedDisplay = Instantiate(levelLockedPrefab, parent).GetComponent<LevelLockedDisplay>();
+        //     }
+        //     lockedDisplay.Show(needToCompleteAtHigherSpeed, true, true);
+        //     return;
 
 
-        }
-        string s = SaveManager.instance.CheckAdditonalChallenges(-1);
+        // }
+        // string s = SaveManager.instance.CheckAdditonalChallenges(-1);
 
 
-        Debug.Log(s);
+        // Debug.Log(s);
 
-        if (s == null)
-            PressInitializedTween();
+        // if (s == null)
+        //     PressInitializedTween();
 
-        else
-        {
-            if (lockedDisplay == null)
-            {
-                var parent = GameObject.Find("Canvas").GetComponent<Transform>();
-                lockedDisplay = Instantiate(levelLockedPrefab, parent).GetComponent<LevelLockedDisplay>();
-            }
+        // else
+        // {
+        //     if (lockedDisplay == null)
+        //     {
+        //         var parent = GameObject.Find("Canvas").GetComponent<Transform>();
+        //         lockedDisplay = Instantiate(levelLockedPrefab, parent).GetComponent<LevelLockedDisplay>();
+        //     }
 
-            lockedDisplay.Show(s, true, true);
-        }
+        //     lockedDisplay.Show(s, true, true);
+        // }
 
     }
 
@@ -277,6 +282,7 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
                 break;
             case (1):
                 GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint = 0;
+
                 SceneManager.LoadScene("MainMenu");
                 Time.timeScale = FrameRateManager.TargetTimeScale;  // Ensure game time is running normally in the main menu.
                 break;
@@ -285,13 +291,36 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
                 pmb.NormalPause();
                 break;
             case (3):
-                GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint = 0;
-                sceneLoader.LoadLevel(GameObject.Find("LevelManager").GetComponent<LevelManager>().LevelIndex + 1);
+                // GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint = 0;
+                Time.timeScale = FrameRateManager.TargetTimeScale;
+                SceneManager.LoadScene("MainMenu");
+
+                // sceneLoader.LoadLevel(GameObject.Find("LevelManager").GetComponent<LevelManager>().LevelIndex + 1);
                 break;
             case (4):
 
                 break;
         }
+
+    }
+
+
+    private void SetNextLevel(bool menu)
+    {
+        if (menu)
+        {
+            PlayerPrefs.SetString("NextLevel", "Menu");
+            PlayerPrefs.Save();
+            return;
+        }
+        string l = PlayerPrefs.GetString("LastLevel", "1-1-0");
+        string[] parts = l.Split('-');
+
+        var next = new Vector3Int(int.Parse(parts[0]), int.Parse(parts[1]) + 1, 0);
+        string n = $"{next.x}-{next.y}-{next.z}";
+        Debug.Log("Next level set to: " + n);
+        PlayerPrefs.SetString("NextLevel", n);
+        PlayerPrefs.Save();
 
     }
 

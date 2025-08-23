@@ -59,7 +59,9 @@ public class PauseMenuButton : MonoBehaviour
 
         Debug.Log("Instant Pause");
         AudioListener.pause = true;
+        PauseMenu.GetComponent<PauseMenuManager>().ShowChallenges();
         PauseMenu.SetActive(true);
+
         pmm.InstantPause();
         targetTime = Time.timeScale;
         Time.timeScale = 0;
@@ -92,8 +94,9 @@ public class PauseMenuButton : MonoBehaviour
             seq.Join(fillImage.DOColor(normalColor, .22f));
             seq.Play().SetUpdate(true);
 
-
+            PauseMenu.GetComponent<PauseMenuManager>().ShowChallenges();
             PauseMenu.SetActive(true);
+
             // StartCoroutine(SmoothTimeScaleTransition(0, .15f, 0));
 
             pmm.DropSignTween();
@@ -117,6 +120,7 @@ public class PauseMenuButton : MonoBehaviour
         ResetManager.GameOverEvent -= OnGameOveer;
 
     }
+
 
     private void OnGameOveer()
     {

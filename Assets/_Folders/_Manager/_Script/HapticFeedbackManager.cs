@@ -6,8 +6,15 @@ using Lofelt.NiceVibrations;
 public class HapticFeedbackManager : MonoBehaviour
 {
     public static HapticFeedbackManager instance;
+    private int deviceType;
 
     private int vibrationStrength;
+    // 0 touchscren, 1 gamepad 2 keyboard
+    public void SetDeviceType(int type)
+    {
+        deviceType = type;
+
+    }
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -31,6 +38,7 @@ public class HapticFeedbackManager : MonoBehaviour
     // Start is called before the first frame update
     public void PlayerButtonPress()
     {
+        if (deviceType > 0) return;
         switch (vibrationStrength)
         {
             case 0:
@@ -38,6 +46,7 @@ public class HapticFeedbackManager : MonoBehaviour
                 break;
             case 1:
                 HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
+
 
                 break;
             case 2:
@@ -54,6 +63,7 @@ public class HapticFeedbackManager : MonoBehaviour
 
     public void PressShotgunButton()
     {
+        if (deviceType > 0) return;
         if (vibrationStrength > 0)
             HapticPatterns.PlayPreset(HapticPatterns.PresetType.RigidImpact);
 
@@ -61,6 +71,13 @@ public class HapticFeedbackManager : MonoBehaviour
 
     public void ReleaseShotgunButton()
     {
+        if (deviceType > 1) return;
+        else if (deviceType == 1 && vibrationStrength > 0)
+        {
+            HapticPatterns.PlayPreset(HapticPatterns.PresetType.MediumImpact);
+            return;
+
+        }
         switch (vibrationStrength)
         {
             case 0:
@@ -86,6 +103,7 @@ public class HapticFeedbackManager : MonoBehaviour
 
     public void SwitchAmmo()
     {
+        if (deviceType > 0) return;
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.Warning);
 
     }
@@ -95,6 +113,7 @@ public class HapticFeedbackManager : MonoBehaviour
     public void PlayerButtonFailure()
     {
         AudioManager.instance.PlayErrorSound();
+        if (deviceType > 0) return;
 
         if (vibrationStrength > 0)
             HapticPatterns.PlayPreset(HapticPatterns.PresetType.Failure);
@@ -107,6 +126,7 @@ public class HapticFeedbackManager : MonoBehaviour
 
     public void SoftImpactButton()
     {
+        if (deviceType > 0) return;
         if (vibrationStrength > 0)
             HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
 
@@ -114,8 +134,8 @@ public class HapticFeedbackManager : MonoBehaviour
 
     public void PressUIButton()
     {
+        if (deviceType > 0) return;
 
-       
         AudioManager.instance.PlayButtonClickSound();
         if (vibrationStrength > 0)
             HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
@@ -123,6 +143,7 @@ public class HapticFeedbackManager : MonoBehaviour
     }
     public void LightImpactButton()
     {
+        if (deviceType > 0) return;
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
 
     }

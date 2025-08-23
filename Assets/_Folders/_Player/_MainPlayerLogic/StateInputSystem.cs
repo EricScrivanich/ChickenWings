@@ -168,6 +168,49 @@ public class StateInputSystem : MonoBehaviour
 
 
     private bool trackingTwoFingerTouch;
+
+    private void SetDeviceType()
+    {
+        int type = 2;
+
+        foreach (var device in InputSystem.devices)
+        {
+            Debug.Log("Device detected: " + device.displayName + " - Type: " + device.GetType().Name);
+
+            if (device is Gamepad gamepad)
+            {
+                // Skip virtual devices with no product/manufacturer info
+                if (string.IsNullOrEmpty(device.description.product) &&
+                    string.IsNullOrEmpty(device.description.manufacturer))
+                {
+                    Debug.Log("Skipping virtual gamepad: " + device.displayName);
+                    continue;
+                }
+
+                Debug.Log("Physical controller detected: " + device.displayName +
+                          " (" + device.description.manufacturer + " - " + device.description.product + ")");
+                HapticFeedbackManager.instance.SetDeviceType(1);
+                return;
+            }
+            else if (device is Touchscreen)
+            {
+                Debug.Log("Touchscreen detected: " + device.displayName);
+                type = 0;
+
+            }
+            else if (device is Keyboard)
+            {
+                Debug.Log("Keyboard detected: " + device.displayName);
+
+
+            }
+
+        }
+
+
+        HapticFeedbackManager.instance.SetDeviceType(type);
+
+    }
     private void SetSwipesActive(bool doubleTap, Vector2 pos)
     {
         if (ButtonsEnabled && !trackingCenterTouch && !trackingTwoFingerTouch)
@@ -692,7 +735,7 @@ public class StateInputSystem : MonoBehaviour
         controls.Movement.Parachute.canceled += ctx => ID.events.OnParachute?.Invoke(false);
 
 
-
+        SetDeviceType();
 
 
     }

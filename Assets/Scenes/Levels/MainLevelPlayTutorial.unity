@@ -3268,6 +3268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec65482203198464cafb1d312d9ff0a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMainMenu: 0
   lvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   ColorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
   manaUsed: 0
@@ -4102,6 +4103,10 @@ PrefabInstance:
     - target: {fileID: 8929117752227093032, guid: 5b335483328d7413c94f83a249641a73, type: 3}
       propertyPath: m_Name
       value: EggPool
+      objectReference: {fileID: 0}
+    - target: {fileID: 8929117752227093032, guid: 5b335483328d7413c94f83a249641a73, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

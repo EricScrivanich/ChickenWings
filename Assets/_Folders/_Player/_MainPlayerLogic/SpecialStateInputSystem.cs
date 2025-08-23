@@ -175,10 +175,21 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         foreach (var device in InputSystem.devices)
         {
+            Debug.Log("Device detected: " + device.displayName + " - Type: " + device.GetType().Name);
 
-            if (device is Gamepad)
+            if (device is Gamepad gamepad)
             {
-                Debug.Log("Controller detected: " + device.displayName);
+                // Skip virtual devices with no product/manufacturer info
+                if (string.IsNullOrEmpty(device.description.product) &&
+                    string.IsNullOrEmpty(device.description.manufacturer))
+                {
+                    Debug.Log("Skipping virtual gamepad: " + device.displayName);
+
+                    continue;
+                }
+
+                Debug.Log("Physical controller detected: " + device.displayName +
+                          " (" + device.description.manufacturer + " - " + device.description.product + ")");
                 devices.Add("Gamepad");
             }
             else if (device is Touchscreen)
@@ -195,18 +206,26 @@ public class SpecialStateInputSystem : MonoBehaviour
             }
 
         }
+
+
         if (devices.Contains("Gamepad"))
         {
+            HapticFeedbackManager.instance.SetDeviceType(1);
             return "Gamepad";
+
         }
         else if (devices.Contains("Touchscreen"))
         {
+            HapticFeedbackManager.instance.SetDeviceType(0);
             return "Touchscreen";
         }
         else if (devices.Contains("Keyboard"))
         {
+            HapticFeedbackManager.instance.SetDeviceType(2);
             return "Keyboard";
         }
+
+
         else return "Unknown";
 
     }

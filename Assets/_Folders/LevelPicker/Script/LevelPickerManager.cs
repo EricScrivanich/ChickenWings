@@ -17,7 +17,7 @@ public class LevelPickerManager : MonoBehaviour
 
     [SerializeField] private GameObject[] levelPickerPathObjects;
     private ILevelPickerPathObject[] levelPickerObjs;
-    [SerializeField] private Vector3Int numberToCheck;
+
 
     [SerializeField] private float tweenScaleBack;
     [SerializeField] private float tweenDurBack;
@@ -122,10 +122,13 @@ public class LevelPickerManager : MonoBehaviour
 
     private void Start()
     {
-        LevelDataConverter.instance.ReturnAndLoadWorldLevelData(null, numberToCheck.x);
+        string s = PlayerPrefs.GetString("LastLevel", "1-1-0");
+        Vector3Int lastLevel = ReturnLevelAsVector(s);
+        LevelDataConverter.instance.ReturnAndLoadWorldLevelData(null, lastLevel.x);
+        Vector3Int numberToCheck = LevelDataConverter.instance.CurrentFurthestLevel();
 
         List<ILevelPickerPathObject> pathObjects = new List<ILevelPickerPathObject>();
-        Vector3Int lastLevel = ReturnLastLevel();
+
 
         for (int i = 0; i < levelPickerPathObjects.Length; i++)
         {
@@ -150,10 +153,14 @@ public class LevelPickerManager : MonoBehaviour
 
 
         }
-        levelPickerPathObjects = null;
+
         levelPickerObjs = pathObjects.ToArray();
+        StartCoroutine(WaitToDoNextLevel());
+
 
     }
+
+
     private int currentPlayerPath;
     private ILevelPickerPathObject currentTarget;
 
@@ -406,6 +413,45 @@ public class LevelPickerManager : MonoBehaviour
     }
     private float tweenInInterval = .35f;
     private float tweenOutInterval = .3f;
+
+    private IEnumerator WaitToDoNextLevel()
+    {
+
+        yield return new WaitForSecondsRealtime(.1f);
+
+        if (PlayerPrefs.GetString("NextLevel", "Menu") != "Menu")
+        {
+            Vector3Int nextLevel = ReturnLevelAsVector(PlayerPrefs.GetString("NextLevel", "Menu"));
+
+            foreach (var o in levelPickerPathObjects)
+            {
+                var obj = o.GetComponent<ILevelPickerPathObject>();
+
+                if (obj.ReturnWorldNumber() == nextLevel)
+                {
+                    currentTarget = obj;
+                    CreateLastSave(obj.ReturnWorldNumber());
+
+
+                    currentTarget.SetSelected(true);
+                    Vector3Int data = obj.Return_Type_PathIndex_Order();
+
+                    float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
+                    playerPathFollower.DoPathToPoint(paths[data.y], d);
+                    DoLevelPopupSeq(true, obj.ReturnWorldNumber());
+                    PlayerPrefs.SetString("NextLevel", "Menu");
+                    PlayerPrefs.Save();
+                    yield break;
+                }
+            }
+
+
+        }
+        PlayerPrefs.SetString("NextLevel", "Menu");
+        PlayerPrefs.Save();
+
+
+    }
     private IEnumerator HandleStarTweens()
     {
 
@@ -515,9 +561,10 @@ public class LevelPickerManager : MonoBehaviour
         PlayerPrefs.SetString("LastLevel", l);
         PlayerPrefs.Save();
     }
-    private Vector3Int ReturnLastLevel()
+    private Vector3Int ReturnLevelAsVector(string l)
     {
-        string l = PlayerPrefs.GetString("LastLevel", "1-1-0");
+        Debug.Log("Returning level as vector for: " + l);
+
         string[] parts = l.Split('-');
         return new Vector3Int(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
 

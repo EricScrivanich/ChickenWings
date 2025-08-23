@@ -1,17 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
+
 public class BarnMovement : SpawnedObject, IRecordableObject
 {
     private int barnType;
+    private ParticleSystem ps;
+    public PlayerID playerID;
     public BarnID ID;
     [SerializeField] private SpriteRenderer leftSide;
     [SerializeField] private SpriteRenderer rightSide;
     [SerializeField] private SpriteRenderer smallHay;
     private BoxCollider2D coll;
     private int speed;
-    
+
 
     private float fullSize = 4.7f;
     private float middleSize = 3.85f;
@@ -30,6 +32,7 @@ public class BarnMovement : SpawnedObject, IRecordableObject
     private void Awake()
     {
         coll = GetComponent<BoxCollider2D>();
+        ps = GetComponent<ParticleSystem>();
 
     }
 
@@ -125,6 +128,17 @@ public class BarnMovement : SpawnedObject, IRecordableObject
 
 
     }
+    public void EggHit()
+    {
+        // if (ps.isPlaying)
+        // {
+        //     ps.Stop();
+        //     ps.Play();
+        // }
+        ps.Play();
+        AudioManager.instance.PlayScoreSound();
+        playerID.AddBarnHit(objectID);
+    }
 
     // Update is called once per frame
     void Update()
@@ -144,7 +158,7 @@ public class BarnMovement : SpawnedObject, IRecordableObject
         Initialize((int)data.type);
     }
 
-   
+
     private int lastDataType;
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)

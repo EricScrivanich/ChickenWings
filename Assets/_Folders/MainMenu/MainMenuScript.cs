@@ -129,6 +129,8 @@ public class MainMenuScript : MonoBehaviour
 
             MenuTypes[i].gameObject.SetActive(false);
         }
+        if (PlayerPrefs.GetString("NextLevel", "Menu") != "Menu")
+            MenuTypes[0].gameObject.SetActive(false);
 
         environmentMaterials = new List<Material>();
 

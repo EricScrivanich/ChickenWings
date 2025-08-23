@@ -128,6 +128,15 @@ public class PauseMenuManager : MonoBehaviour
         }
     }
 
+    public void ShowChallenges()
+    {
+        var c = LevelDataConverter.instance.ReturnLevelData().GetLevelChallenges(false, null);
+        if (c.LevelDifficulty > 0)
+            challenges.ShowChallengesForLevelPicker(c, LevelDataConverter.instance.ReturnLevelSavedData());
+        else
+            challenges.gameObject.SetActive(false);
+    }
+
 
     private void OnEnable()
     {
@@ -143,11 +152,7 @@ public class PauseMenuManager : MonoBehaviour
 
         gameSpeedText.text = displayedGameSpeed.ToString("F2");
 
-        var c = LevelDataConverter.instance.ReturnLevelData().GetLevelChallenges(false, null);
-        if (c.LevelDifficulty > 0)
-            challenges.ShowChallengesForLevelPicker(c, LevelDataConverter.instance.ReturnLevelSavedData());
-        else
-            challenges.gameObject.SetActive(false);
+
 
     }
     public void SaveOrDefault(bool saveNew)

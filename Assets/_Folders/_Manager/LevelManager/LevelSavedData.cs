@@ -231,6 +231,7 @@ public class TemporaryLevelCheckPointData
     public Vector3Int[] KilledPigs;
     public int[] PlayerInputs;
     public int[] CompletedRings;
+    public int[] CurrentEggedBarns;
 
     public TemporaryLevelCheckPointData(LevelChallenges data)
     {
@@ -239,9 +240,14 @@ public class TemporaryLevelCheckPointData
         CurrentCheckPoint = data.CurrentCheckPoint;
         CurrentLives = (short)data.Lives;
         CurrentAmmos = data.Ammos;
-        KilledPigs = data.KilledPigs.ToArray();
-        PlayerInputs = data.PlayerInputs.ToArray();
-        CompletedRings = data.CompletedRings.ToArray();
+        if (data.KilledPigs != null)
+            KilledPigs = data.KilledPigs.ToArray();
+        if (data.PlayerInputs != null)
+            PlayerInputs = data.PlayerInputs.ToArray();
+        if (data.CompletedRings != null)
+            CompletedRings = data.CompletedRings.ToArray();
+        if (data.BarnsHitWithEgg != null)
+            CurrentEggedBarns = data.BarnsHitWithEgg.ToArray();
 
     }
 

@@ -7,6 +7,7 @@ public class BoundariesManager : MonoBehaviour
     public static int rightBoundary = 15;
 
     public static Vector3 vectorThree1 = new Vector3(1, 1, 1);
+    
 
     public static bool isDay = true;
     public static int leftBoundary = -15;
@@ -26,16 +27,19 @@ public class BoundariesManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        // Debug.unityLogger.logEnabled = false;
-        Debug.unityLogger.logEnabled = true;
+        Debug.unityLogger.logEnabled = false;
+
+
 
 #if UNITY_EDITOR
         Debug.unityLogger.logEnabled = true;
+        // LoadLevelPicker = true;
 #endif
         // Time.timeScale = .1f;
 
     }
 
+   
     // Update is called once per frame
 
 }

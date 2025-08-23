@@ -23,9 +23,26 @@ public class MenuToLevelPickerTransition : MonoBehaviour
         {
             moveYOriginalY[i] = moveYObjects[i].localPosition.y;
         }
-        foreach (GameObject obj in levelPickerObjects)
+
+
+        if (PlayerPrefs.GetString("NextLevel", "Menu") != "Menu")
         {
-            obj.SetActive(false);
+            Debug.Log("Transition to level picker from menu with next level set to: " + PlayerPrefs.GetString("NextLevel", "Menu"));
+            foreach (GameObject obj in levelPickerObjects)
+            {
+                obj.SetActive(true);
+
+            }
+            Camera.main.transform.position = new Vector3(moveXAmount, Camera.main.transform.position.y, Camera.main.transform.position.z);
+
+
+        }
+        else
+        {
+            foreach (GameObject obj in levelPickerObjects)
+            {
+                obj.SetActive(false);
+            }
         }
     }
 

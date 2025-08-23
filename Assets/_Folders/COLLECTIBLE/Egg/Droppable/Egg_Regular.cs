@@ -10,7 +10,7 @@ public class Egg_Regular : SpawnedQueuedObject
     [SerializeField] private QPool shellPool;
     [SerializeField] private GameObject player;
     private Rigidbody2D playerRB;
-    public PlayerID ID;
+
 
     private BoxCollider2D coll2D;
     private bool isCracked;
@@ -105,8 +105,8 @@ public class Egg_Regular : SpawnedQueuedObject
         else if (other.CompareTag("Barn"))
         {
             hasHit = true;
-            ID.AddScore(5, true);
-            AudioManager.instance.PlayScoreSound();
+            other.gameObject.GetComponent<BarnMovement>().EggHit();
+
             gameObject.SetActive(false);
             // pool.Despawn(gameObject);
             // return;
@@ -211,24 +211,9 @@ public class Egg_Regular : SpawnedQueuedObject
         }
         // Debug.LogError("Egg Hit Smoke");
     }
-    // private void OnEnable()
-    // {
-
-
-    //     // rb.velocity = new Vector2(ID.AddEggVelocity, -1.5f);
 
 
 
-
-    // }
-
-    void FixedUpdate()
-    {
-        // Vector2 n = rb.linearVelocity.normalized;
-        // float angle = Mathf.Atan2(n.x, -n.y) * Mathf.Rad2Deg * .5f;
-
-        // rb.MoveRotation(angle);
-    }
 
     private void OnDisable()
     {

@@ -4,8 +4,9 @@ public class SpawnedObject : MonoBehaviour
 {
     public Rigidbody2D rb { get; protected set; }
     protected bool canAttack = true;
+    protected ushort objectID;
 
-    public void InitialSpawnCheck()
+    public void InitialSpawnCheck(ushort id)
     {
         if (this.gameObject.activeInHierarchy)
         {
@@ -14,8 +15,7 @@ public class SpawnedObject : MonoBehaviour
         if (!this.enabled)
             this.enabled = true;
 
-
-
+        objectID = id;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public virtual void ApplyFloatOneData(DataStructFloatOne data)

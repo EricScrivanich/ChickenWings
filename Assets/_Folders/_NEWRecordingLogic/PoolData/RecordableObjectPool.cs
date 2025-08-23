@@ -18,6 +18,7 @@ public class RecordableObjectPool : ScriptableObject
     private ObjectPositioner[] positionerPool;
     private int currentIndex;
     public int poolSize;
+    private ushort spawnNumber;
 
     public void CreatePool(int size)
     {
@@ -27,36 +28,8 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
+        spawnNumber = 0;
 
-        // if (prefab.GetComponent<ObjectPositioner>() != null)
-        // {
-        //     positionerPool = new ObjectPositioner[size];
-        //     poolSize = size;
-        //     for (int i = 0; i < size; i++)
-        //     {
-        //         var go = Instantiate(prefab);
-        //         Debug.Log("Creating pool object: " + go.name);
-
-        //         positionerPool[i] = go.GetComponent<ObjectPositioner>();
-        //         go.SetActive(false);
-        //     }
-
-        // }
-
-        // else
-        // {
-        //     pool = new SpawnedObject[size];
-        //     poolSize = size;
-        //     for (int i = 0; i < size; i++)
-        //     {
-        //         var go = Instantiate(prefab);
-        //         Debug.Log("Creating pool object: " + go.name);
-
-
-        //         pool[i] = go.GetComponent<SpawnedObject>();
-        //         go.SetActive(false);
-        //     }
-        // }
         pool = new SpawnedObject[size];
         poolSize = size;
         for (int i = 0; i < size; i++)
@@ -96,9 +69,10 @@ public class RecordableObjectPool : ScriptableObject
             Debug.LogError("pool is empty");
             return;
         }
-        pool[currentIndex].InitialSpawnCheck();
+        pool[currentIndex].InitialSpawnCheck(spawnNumber);
         pool[currentIndex].ApplyPositionerData(data);
         currentIndex++;
+        spawnNumber++;
 
         if (currentIndex >= pool.Length)
         {
@@ -175,10 +149,11 @@ public class RecordableObjectPool : ScriptableObject
             Debug.LogError("Pool is empty");
             return;
         }
-        pool[currentIndex].InitialSpawnCheck();
+        pool[currentIndex].InitialSpawnCheck(spawnNumber);
         pool[currentIndex].ApplyFloatOneData(data);
 
         currentIndex++;
+        spawnNumber++;
         if (currentIndex >= pool.Length)
         {
             currentIndex = 0;
@@ -191,8 +166,9 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
-        pool[currentIndex].InitialSpawnCheck();
+        pool[currentIndex].InitialSpawnCheck(spawnNumber);
         pool[currentIndex].ApplyFloatTwoData(data);
+        spawnNumber++;
         currentIndex++;
         if (currentIndex >= pool.Length)
         {
@@ -206,8 +182,9 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
-        pool[currentIndex].InitialSpawnCheck();
+        pool[currentIndex].InitialSpawnCheck(spawnNumber);
         pool[currentIndex].ApplyFloatThreeData(data);
+        spawnNumber++;
         currentIndex++;
         if (currentIndex >= pool.Length)
         {
@@ -221,9 +198,10 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
-        pool[currentIndex].InitialSpawnCheck();
+        pool[currentIndex].InitialSpawnCheck(spawnNumber);
         pool[currentIndex].ApplyFloatFourData(data);
         currentIndex++;
+        spawnNumber++;
         if (currentIndex >= pool.Length)
         {
             currentIndex = 0;
@@ -236,8 +214,9 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
-        pool[currentIndex].InitialSpawnCheck();
+        pool[currentIndex].InitialSpawnCheck(spawnNumber);
         pool[currentIndex].ApplyFloatFiveData(data);
+        spawnNumber++;
         currentIndex++;
         if (currentIndex >= pool.Length)
         {
