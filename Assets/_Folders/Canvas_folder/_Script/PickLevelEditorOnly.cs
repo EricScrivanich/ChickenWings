@@ -207,12 +207,17 @@ public class PickLevelEditorOnly : MonoBehaviour
 
             buttonObject.GetComponent<PickLevelLevelButton>().SetLevelName(this, numberString + level.LevelName, level.LevelName);
             currentLevelCount++;
-            if (currentLevelCount >= maxLevelPerSection)
-            {
-                currentLevelCount = 0;
-                currentLevelParent++;
+            // switch to organize buttons left to right
+            if (currentLevelParent >= 1)
+                currentLevelParent = 0;
+            else
+                currentLevelParent = 1;
+            // if (currentLevelCount >= maxLevelPerSection)
+            // {
+            //     currentLevelCount = 0;
+            //     currentLevelParent++;
 
-            }
+            // }
         }
 
     }

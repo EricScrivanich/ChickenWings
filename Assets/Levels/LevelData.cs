@@ -5,19 +5,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Level Data", menuName = "Setups/LevelData")]
 public class LevelData : ScriptableObject
 {
-    [Header("Difficulty overrides")]
+    [Header("Starting Stats")]
+    [field: SerializeField] public short[] StartingAmmos { get; private set; }
+    [field: SerializeField] public short StartingLives { get; private set; }
 
     [field: SerializeField] public short[] easyStartingAmmos { get; private set; }
     [field: SerializeField] public short easyStartingLives { get; private set; }
-    public TutorialData tutorialData;
+
+
+
     public int[] AvailableAmmos = new int[2] { 0, 1 };
 
-
+    [Header("Scriptable Objects")]
     [SerializeField] private AllObjectData objData;
     public PlayerStartingStatsForLevels startingStats;
 
     [ExposedScriptableObject]
     [SerializeField] private LevelChallenges levelChallenges;
+    [ExposedScriptableObject]
+    public TutorialData tutorialData;
 
 
 
@@ -58,8 +64,6 @@ public class LevelData : ScriptableObject
     public ushort[] checkPointSteps;
 
     private SpawnStateManager spawner;
-    [field: SerializeField] public short[] StartingAmmos { get; private set; }
-    [field: SerializeField] public short StartingLives { get; private set; }
 
 
     private RecordedDataStruct[] Data;
@@ -393,7 +397,7 @@ public class LevelData : ScriptableObject
 
     public void SaveLevelCheckPoint(ushort checkPointIndex)
     {
-       
+
         levelChallenges.SetCheckPoint(checkPointIndex);
         LevelDataConverter.instance.SaveTemporaryCheckPointData(levelChallenges);
 

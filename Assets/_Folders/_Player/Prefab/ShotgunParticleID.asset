@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29ef4b85d642a44adb0e8c62d33bf914, type: 3}
+  m_Name: ShotgunParticleID
+  m_EditorClassIdentifier: 
+  sprites: []
+  bulletCount: 7
+  startScale: 0.4
+  endScale: 1
+  speed: 8
+  startColor: {r: 1, g: 0.8537736, b: 0.8537736, a: 1}
+  endColor: {r: 0.5566038, g: 0.034131378, b: 0.034131378, a: 0.24705882}
+  lifeTime: 0.4
+  outerRadius: 0.4
+  outerRadiusArc: 50
+  outerRadiusAngleDamp: 0.4
+  innerRadius: 0.1
+  innerRadiusArc: 30
+  innerRadiusAngleDamp: 0.3
+  outerRadiusCount: 4
