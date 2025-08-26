@@ -10,18 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8ec5cdc658774fadb8730e2026d7251, type: 3}
-  m_Name: 01-07_Eggcelent
+  m_Name: 01-05_Eggcelent
   m_EditorClassIdentifier: 
+  <StartingAmmos>k__BackingField: 04000000000000000000
+  <StartingLives>k__BackingField: 3
   <easyStartingAmmos>k__BackingField: 07000000000000000000
   <easyStartingLives>k__BackingField: 5
-  tutorialData: {fileID: 11400000, guid: aeaa1a04db85a406e9b4de0d872ffb27, type: 2}
   AvailableAmmos: 00000000
   objData: {fileID: 11400000, guid: 39c7fc890c47e46058b8b922c162fb46, type: 2}
   startingStats: {fileID: 11400000, guid: d10dd9036610a46658e0229299e97856, type: 2}
   levelChallenges: {fileID: 11400000, guid: 12279026547034d76be861cbcf30eb53, type: 2}
+  tutorialData: {fileID: 11400000, guid: aeaa1a04db85a406e9b4de0d872ffb27, type: 2}
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: Eggcelent
-  levelWorldAndNumber: {x: 1, y: 7, z: 0}
+  levelWorldAndNumber: {x: 1, y: 5, z: 0}
   spawnSteps: 150027003b004e006a007000900090009100ab00ab00c100d800d800db00dd00e000ec00f300f500
   finalSpawnStep: 275
   objectTypes: 00000300000000000300020000000300000000000000020000000000030000000000030002000000
@@ -117,7 +119,5 @@ MonoBehaviour:
   ringPoolSizes: 00000000
   cageAttachments: 
   checkPointSteps: 7900
-  <StartingAmmos>k__BackingField: 04000000000000000000
-  <StartingLives>k__BackingField: 3
   postionerData: []
   Difficulty: 1

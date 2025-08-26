@@ -110,7 +110,9 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     {
         if (WorldNumber.x > num.x)
         {
-            gameObject.SetActive(false);
+            sleepingPig.SetActive(true);
+            flappingPig.SetActive(false);
+            stars.gameObject.SetActive(false);
             return;
 
         }

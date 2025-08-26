@@ -10,18 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8ec5cdc658774fadb8730e2026d7251, type: 3}
-  m_Name: 01-05_Time to Kill!
+  m_Name: 01-06_ShottyLikeAMelody
   m_EditorClassIdentifier: 
+  <StartingAmmos>k__BackingField: 00000300000000000000
+  <StartingLives>k__BackingField: 3
   <easyStartingAmmos>k__BackingField: 00000500000000000000
   <easyStartingLives>k__BackingField: 5
-  tutorialData: {fileID: 11400000, guid: 8ead213acfa8245c692ebac66b49a832, type: 2}
   AvailableAmmos: 01000000
   objData: {fileID: 11400000, guid: 39c7fc890c47e46058b8b922c162fb46, type: 2}
   startingStats: {fileID: 11400000, guid: d10dd9036610a46658e0229299e97856, type: 2}
   levelChallenges: {fileID: 11400000, guid: 2c5c8425568bd455187e8ef4e6aaa211, type: 2}
+  tutorialData: {fileID: 11400000, guid: 8ead213acfa8245c692ebac66b49a832, type: 2}
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
-  LevelName: Time to Kill!
-  levelWorldAndNumber: {x: 1, y: 5, z: 0}
+  LevelName: '"Shotty Like a Melody"'
+  levelWorldAndNumber: {x: 1, y: 6, z: 0}
   spawnSteps: 0f00330036004d00570057007500750075008500ae00c100c600d200d200e900
   finalSpawnStep: 300
   objectTypes: 0000030000000300000000000000000003000000000003000000000000000000
@@ -104,7 +106,5 @@ MonoBehaviour:
   ringPoolSizes: 00000000
   cageAttachments: 
   checkPointSteps: 
-  <StartingAmmos>k__BackingField: 00000300000000000000
-  <StartingLives>k__BackingField: 3
   postionerData: []
   Difficulty: 1

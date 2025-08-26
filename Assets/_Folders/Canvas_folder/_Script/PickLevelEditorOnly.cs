@@ -164,7 +164,22 @@ public class PickLevelEditorOnly : MonoBehaviour
             Debug.LogWarning("No level selected to confirm.");
         }
     }
+    [SerializeField] private float moveAmount;
+    public void MoveLevelButtons(bool moveDown)
+    {
+        if (moveDown)
+        {
+            levelButtonParents[0].position = new Vector2(levelButtonParents[0].position.x, levelButtonParents[0].position.y + moveAmount);
+            levelButtonParents[1].position = new Vector2(levelButtonParents[1].position.x, levelButtonParents[1].position.y + moveAmount);
+        }
+        else
+        {
+            levelButtonParents[0].position = new Vector2(levelButtonParents[0].position.x, levelButtonParents[0].position.y - moveAmount);
+            levelButtonParents[1].position = new Vector2(levelButtonParents[1].position.x, levelButtonParents[1].position.y - moveAmount);
 
+
+        }
+    }
     private void OnEnable()
     {
         addLevelWindow.SetActive(false);

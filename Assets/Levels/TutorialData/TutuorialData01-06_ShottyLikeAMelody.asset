@@ -10,37 +10,40 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8dd1420084594766975de59e2093ab1, type: 3}
-  m_Name: TutuorialData01-07_Eggcelent
+  m_Name: TutuorialData01-06_ShottyLikeAMelody
   m_EditorClassIdentifier: 
   playerID: {fileID: 0}
   buttonType: 3
   startButtonHidden: 1
   startInputsLocked: 0
   messages:
-  - INPUT to Drop an egg
-  - Drop Eggs into barns for additional challenges. Aiming eggs will be difficult
-    at first, but practice will pay off!
+  - INPUT to shoot your shotgun in the direction you are facing
+  - 'INPUT '
   inputReplaceKeyboard:
   - Click the center of the screen
+  - Click and drag to shoot in that direction
   inputReplaceGamepad:
-  - Press "R2"
+  - Press Right Trigger
+  - While holding the shoot button, flick your left joystick to shoot in that direction
   inputReplaceTouchScreen:
-  - Press the center of the screen
+  - Tap the center of the  screen
+  - Click and drag to shoot in that direction
   allowedInput:
-  - Egg
-  - Egg
+  - Shotgun
+  - Shotgun
   shownAmmos: 
   bubblePrefab: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
   messagePrefab: {fileID: 9156284010655330016, guid: f81248dd664e04cd693cbf1b01a0def4, type: 3}
-  stepsForActions: 1200120069006900
-  actionsForStep: 01000000040000000100000004000000
-  actionsForEnterBubble: 0a00000006000000
-  actionsForExitBubble: 
-  actionsForDelays: 
+  stepsForActions: 0e000e00320032003200
+  actionsForStep: 040000000100000004000000010000000b000000
+  actionsForEnterBubble: 0a0000000a000000
+  actionsForExitBubble: 000000000d000000
+  actionsForDelays: 0c000000
   vectorValues:
-  - {x: 1.3, y: 2.4}
-  - {x: 5.6, y: 2.4}
+  - {x: 1.2, y: 1.2}
+  - {x: 3.4, y: 2.6}
   bubbleSuctionAndDelayDurations:
-  - {x: 2.1, y: 1.8}
-  - {x: 2.2, y: 1.8}
-  delayValues: []
+  - {x: 2, y: 1.4}
+  - {x: 2, y: 1.4}
+  delayValues:
+  - 2.2

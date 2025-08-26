@@ -77,7 +77,7 @@ public class SaveManager : MonoBehaviour
 
     public void CreateTemporaryCheckPointSave()
     {
-        
+
     }
 
     public void SetLevelStarsForTest()
@@ -148,7 +148,7 @@ public class SaveManager : MonoBehaviour
         for (int i = 1; i < sceneSO.ReturnNumberOfLevels(); i++)
         {
             var data = GetLevelData(i);
-
+            if (data == null) continue;
             if (data.ChallengeCompletion.Length > 0)
             {
                 if (type == 0)

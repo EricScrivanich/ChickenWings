@@ -863,6 +863,11 @@ public class LevelDataConverter : MonoBehaviour
 
     public Vector3Int CurrentFurthestLevel()
     {
+        if (currentLoadedSavedLevelDataByWorld.levels == null)
+        {
+
+            return new Vector3Int(1, 1, 0);
+        }
         foreach (var level in currentLoadedSavedLevelDataByWorld.levels)
         {
             if (!level.CompletedLevel)
@@ -870,7 +875,7 @@ public class LevelDataConverter : MonoBehaviour
                 return new Vector3Int(currentLoadedSavedLevelDataByWorld.LevelWorld, level.LevelNumber.x, level.LevelNumber.y);
             }
         }
-        return new Vector3Int(currentLoadedSavedLevelDataByWorld.LevelWorld, 300, 0);
+        return new Vector3Int(1, 1, 0);
 
 
     }

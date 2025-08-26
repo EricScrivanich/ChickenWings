@@ -17,7 +17,7 @@ public class LevelPickerManager : MonoBehaviour
 
     [SerializeField] private GameObject[] levelPickerPathObjects;
     private ILevelPickerPathObject[] levelPickerObjs;
-
+    
 
     [SerializeField] private float tweenScaleBack;
     [SerializeField] private float tweenDurBack;
@@ -128,7 +128,7 @@ public class LevelPickerManager : MonoBehaviour
         Vector3Int numberToCheck = LevelDataConverter.instance.CurrentFurthestLevel();
 
         List<ILevelPickerPathObject> pathObjects = new List<ILevelPickerPathObject>();
-
+     
 
         for (int i = 0; i < levelPickerPathObjects.Length; i++)
         {

@@ -13,5 +13,5 @@ public interface ILevelPickerPathObject
     void SetSelected(bool selected);
     void DoStarSeq(int index, bool enterTween);
 
-    
+
 }
