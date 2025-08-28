@@ -7,6 +7,8 @@ public interface ILevelPickerPathObject
 
     Vector2 ReturnLinePostion();
     Vector3Int ReturnWorldNumber();
+    Vector3 ReturnPosScaleBackHill();
+    Vector3 ReturnPosScaleFrontHill();
 
     void SetLastSelectable(Vector3Int num);
 

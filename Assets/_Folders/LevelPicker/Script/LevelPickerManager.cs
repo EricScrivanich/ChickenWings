@@ -17,7 +17,7 @@ public class LevelPickerManager : MonoBehaviour
 
     [SerializeField] private GameObject[] levelPickerPathObjects;
     private ILevelPickerPathObject[] levelPickerObjs;
-    
+    private Sequence adjustHillSeq;
 
     [SerializeField] private float tweenScaleBack;
     [SerializeField] private float tweenDurBack;
@@ -42,6 +42,13 @@ public class LevelPickerManager : MonoBehaviour
     [SerializeField] private float overshootUpDuration;
     private float moveSideDuration = 1.3f;
     private float swingDuration = .4f;
+
+    [Header("Hill Parents and Transform Settings")]
+    [SerializeField] private Transform frontHillParent;
+    [SerializeField] private Vector2 frontHillStartPos;
+    [SerializeField] private Transform backHillParent;
+
+    [SerializeField] private Vector2 backHillStartPos;
 
 
 
@@ -128,7 +135,7 @@ public class LevelPickerManager : MonoBehaviour
         Vector3Int numberToCheck = LevelDataConverter.instance.CurrentFurthestLevel();
 
         List<ILevelPickerPathObject> pathObjects = new List<ILevelPickerPathObject>();
-     
+
 
         for (int i = 0; i < levelPickerPathObjects.Length; i++)
         {
@@ -188,6 +195,18 @@ public class LevelPickerManager : MonoBehaviour
             playerPathFollower.DoPathToPoint(paths[data.y], d);
             DoLevelPopupSeq(true, obj.ReturnWorldNumber());
 
+            Vector3 front = obj.ReturnPosScaleFrontHill();
+            Vector3 back = obj.ReturnPosScaleBackHill();
+            if (front == Vector3.zero || back == Vector3.zero)
+            {
+                MoveHillSeq(true, new Vector2(front.x, front.y), front.z, back.z, new Vector2(back.x, back.y), 1.3f);
+            }
+            else
+                MoveHillSeq(false, new Vector2(front.x, front.y), front.z, back.z, new Vector2(back.x, back.y), 1.3f);
+
+
+
+
 
 
 
@@ -204,6 +223,34 @@ public class LevelPickerManager : MonoBehaviour
             Debug.Log("No object found at the clicked position.");
 
         }
+    }
+
+    private void MoveHillSeq(bool revert, Vector2 frontPos, float frontScale, float zoom, Vector2 backPos, float dur)
+    {
+        dur = 1.5f;
+        if (adjustHillSeq != null && adjustHillSeq.IsActive())
+        {
+            adjustHillSeq.Kill();
+        }
+        adjustHillSeq = DOTween.Sequence();
+        if (revert)
+        {
+            frontPos = frontHillStartPos;
+            backPos = backHillStartPos;
+            frontScale = 1;
+            zoom = 5.2f;
+        }
+        else
+        {
+            frontPos = new Vector2(frontHillStartPos.x + frontPos.x, frontHillStartPos.y + frontPos.y);
+            backPos = new Vector2(backHillStartPos.x + backPos.x, backHillStartPos.y + backPos.y);
+        }
+        adjustHillSeq.AppendInterval(.3f);
+        adjustHillSeq.Append(frontHillParent.DOLocalMove(frontPos, dur));
+        adjustHillSeq.Join(frontHillParent.DOScale(frontScale, dur));
+        adjustHillSeq.Join(Camera.main.DOOrthoSize(zoom, dur));
+        adjustHillSeq.Join(backHillParent.DOLocalMove(backPos, dur));
+        adjustHillSeq.Play().SetEase(Ease.InOutSine).SetUpdate(true);
     }
 
     private void HandleSignY(RectTransform target, bool reverse)
@@ -284,6 +331,7 @@ public class LevelPickerManager : MonoBehaviour
     public void BackOut()
     {
         HapticFeedbackManager.instance.PressUIButton();
+        MoveHillSeq(true, Vector2.zero, 0, 0, Vector2.zero, 1.3f);
         currentTarget.SetSelected(false);
         currentTarget = null;
         DoLevelPopupSeq(false, Vector3Int.zero, true);

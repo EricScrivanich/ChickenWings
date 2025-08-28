@@ -66,7 +66,8 @@ public class RecordableObjectPlacer : MonoBehaviour
         Start_Rotation,
         Fart_Length,
         Frequency,
-        Laser_Spacing
+        Laser_Spacing,
+        Fence_Length
 
 
     }
@@ -1580,6 +1581,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     private void SetLineColor(Color col)
     {
+        if (!showLine) return;
         line.startColor = col;
         line.endColor = col;
     }

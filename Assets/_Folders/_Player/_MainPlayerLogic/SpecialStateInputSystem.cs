@@ -1574,7 +1574,7 @@ public class SpecialStateInputSystem : MonoBehaviour
                 Debug.Log("Egg center touch");
 
                 trackingCenterTouch = true;
-                GetComponent<PlayerStateManager>().EnterIdleStateWithVel(new Vector2(0, 1f));
+                // GetComponent<PlayerStateManager>().EnterIdleStateWithVel(new Vector2(0, 1f));
                 ID.events.OnTouchCenter?.Invoke(pos);
                 ID.events.OnShowCursor?.Invoke(pos, 0);
                 if (!mustHold && !lockAfterInputCheck) trackingInputs = false;

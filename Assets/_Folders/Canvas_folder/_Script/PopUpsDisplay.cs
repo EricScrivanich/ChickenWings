@@ -119,9 +119,10 @@ public class PopUpsDisplay : MonoBehaviour
 
         if (levelData != null)
         {
-            if (levelData.Difficulty > 0)
+            var challenges = levelData.GetLevelChallenges(false, null);
+            if (levelData.Difficulty > 0 && !challenges.skipShowChallenges)
             {
-                levelChallenges.GetComponent<ChallengesUIManager>().ShowChallengesForLevelPicker(levelData.GetLevelChallenges(false, null), LevelDataConverter.instance.ReturnLevelSavedData());
+                levelChallenges.GetComponent<ChallengesUIManager>().ShowChallengesForLevelPicker(challenges, LevelDataConverter.instance.ReturnLevelSavedData());
                 levelChallenges.SetActive(true);
             }
             else

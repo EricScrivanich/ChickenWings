@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BackGroundObject : MonoBehaviour
@@ -10,6 +11,7 @@ public class BackGroundObject : MonoBehaviour
     [SerializeField] private Vector2 magnitudesByDistance;
     [SerializeField] private Vector2 freqsByDistance;
     [SerializeField] private Vector2 animTimeByDistance;
+    [SerializeField] private float animationSpeed = 1;
     private Animator anim;
     private float animTime;
     private float timer;
@@ -19,15 +21,35 @@ public class BackGroundObject : MonoBehaviour
     private float sineFrequency;
     private float maxDistanceToTravel;
     private float startX;
+    private bool doAnimCheck = false;
 
+    private BackgroundObjects bgParent;
 
-    public void ApplyMaterialToAllSprites(Material mat, Transform parent = null)
+    [SerializeField] private bool doColor;
+    [SerializeField] private bool doMat;
+    [SerializeField] private Color color;
+
+    [SerializeField] private Material mat;
+
+    public void ApplyMaterialToAllSprites(Material mat, Transform parent = null, BackgroundObjects p = null)
     {
         // iterate over all children and app
-
+        if (p != null)
+        {
+            bgParent = p;
+        }
         if (parent == null)
         {
             parent = transform;
+            if (GetComponent<SpriteRenderer>() != null)
+            {
+
+                if (mat != null)
+                {
+                    GetComponent<SpriteRenderer>().material = mat;
+                }
+            }
+
 
         }
         foreach (Transform child in parent)
@@ -43,19 +65,87 @@ public class BackGroundObject : MonoBehaviour
 
         }
     }
+
+
+    public void ApplyColorToAllSprites(Color color, Transform parent = null, BackgroundObjects p = null)
+    {
+        // iterate over all children and app
+        if (p != null)
+        {
+            bgParent = p;
+        }
+        if (parent == null)
+        {
+            parent = transform;
+            if (GetComponent<SpriteRenderer>() != null)
+            {
+                GetComponent<SpriteRenderer>().color = color;
+                if (mat != null)
+                {
+                    GetComponent<SpriteRenderer>().material = mat;
+                }
+            }
+
+
+        }
+        foreach (Transform child in parent)
+        {
+
+            if (child.TryGetComponent<SpriteRenderer>(out SpriteRenderer sr))
+            {
+                sr.color = color;
+                if (mat != null)
+                {
+                    sr.material = mat;
+                }
+            }
+            if (child.childCount > 0)
+            {
+                ApplyColorToAllSprites(color, child);
+            }
+
+        }
+    }
     void Awake()
     {
         anim = GetComponent<Animator>();
+        if (anim != null)
+            anim.speed = animationSpeed;
+        if (string.IsNullOrEmpty(animationToTrigger))
+        {
+            doAnimCheck = false;
+        }
+        else
+        {
+            doAnimCheck = true;
+        }
+
+
+    }
+    void Start()
+    {
+        if (doColor)
+        {
+            ApplyColorToAllSprites(color);
+            this.enabled = false;
+
+        }
+        else if (doMat)
+        {
+            ApplyMaterialToAllSprites(mat);
+            this.enabled = false;
+        }
+
 
     }
 
 
 
-    public void Initialize(Vector2 pos, float distance, float maxDist)
+    public void Initialize(Vector2 pos, float distance)
     {
         transform.position = pos;
         startX = pos.x;
-        maxDistanceToTravel = maxDist;
+        // maxDistanceToTravel = maxDist;
 
         speed = Mathf.Lerp(speedsByDistance.x, speedsByDistance.y, distance);
         float scale = Mathf.Lerp(scalesByDistance.x, scalesByDistance.y, distance);
@@ -68,23 +158,39 @@ public class BackGroundObject : MonoBehaviour
 
     }
 
+    public bool CheckForDespawn(float x)
+    {
+        if (gameObject.activeSelf == false) return false;
+        else if (transform.position.x < x)
+        {
+            gameObject.SetActive(false);
+            return true;
+
+        }
+        else return false;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        timer += Time.deltaTime;
-        if (timer >= animTime)
+        if (doAnimCheck)
         {
-            timer = 0;
-            anim.SetTrigger(animationToTrigger);
+            timer += Time.deltaTime;
+            if (timer >= animTime)
+            {
+                timer = 0;
+                anim.SetTrigger(animationToTrigger);
 
+            }
         }
+
         float period = Mathf.Sin((transform.position.x - startX) * sineFrequency) * sineMagnitude;
-        transform.position = new Vector2(transform.position.x - speed * Time.deltaTime, transform.position.y + period * sineMagnitude);
-        if (transform.position.x < -maxDistanceToTravel)
-        {
-            gameObject.SetActive(false);
+        transform.position = new Vector2(transform.position.x - speed * Time.deltaTime * bgParent.baseSpeedMultiplier, transform.position.y + period * sineMagnitude);
+        // if (transform.position.x < -maxDistanceToTravel)
+        // {
+        //     gameObject.SetActive(false);
 
-        }
+        // }
 
 
 

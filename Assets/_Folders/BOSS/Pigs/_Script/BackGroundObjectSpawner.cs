@@ -22,7 +22,7 @@ public class BackGroundObjectSpawner : MonoBehaviour
             Vector2 pos = new Vector2(Random.Range(-maxXDistance, maxXDistance), Random.Range(minMaxY.x, minMaxY.y));
             BackGroundObject bgObj = Instantiate(backgroundObjects[Random.Range(0, backgroundObjects.Length)], pos, Quaternion.identity);
 
-            bgObj.Initialize(pos, Random.Range(0f, 1f), maxXDistance);
+            // bgObj.Initialize(pos, Random.Range(0f, 1f), maxXDistance);
         }
 
 

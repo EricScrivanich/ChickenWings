@@ -126,12 +126,13 @@ public class SiloMovement : MonoBehaviour
     }
 
     // Update is called once per frame
+    [SerializeField] private float moveSpeed;
     void Update()
     {
 
 
         CheckSide();
-        transform.Translate(Vector2.left * BoundariesManager.GroundSpeed * Time.deltaTime);
+        transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
         if (transform.position.x < BoundariesManager.leftPlayerBoundary - 2)
         {
             gameObject.SetActive(false);

@@ -67,6 +67,8 @@ public class LevelChallenges : ScriptableObject
     public ushort CurrentCheckPoint { get; private set; }
     public bool UsedCheckpoint { get; private set; }
 
+    public bool skipShowChallenges;
+
 
     public void ResetData(Vector3Int lvlNum, int difficulty, short[] startingAmmos, int startingLives)
     {
@@ -140,16 +142,22 @@ public class LevelChallenges : ScriptableObject
 
     public void LoadData(Vector3Int lvlWorldNumb, int difficulty, TemporaryLevelCheckPointData tempData)
     {
+        SetTrackingBools();
         LevelWorldAndNumber = lvlWorldNumb;
         LevelDifficulty = difficulty;
-        KilledPigs = new List<Vector3Int>(tempData.KilledPigs);
+
         Lives = tempData.CurrentLives;
         Ammos = tempData.CurrentAmmos;
         CurrentCheckPoint = tempData.CurrentCheckPoint;
-        PlayerInputs =
-        CompletedRings = new List<int>(tempData.CompletedRings);
-        BarnsHitWithEgg = new List<int>(tempData.CurrentEggedBarns); // Reset or load from saved data if needed
-        SetTrackingBools();
+        if (KilledPigs != null)
+            KilledPigs = new List<Vector3Int>(tempData.KilledPigs);
+        if (PlayerInputs != null)
+            PlayerInputs = new List<int>(tempData.PlayerInputs);
+        if (CompletedRings != null)
+            CompletedRings = new List<int>(tempData.CompletedRings);
+        if (BarnsHitWithEgg != null)
+            BarnsHitWithEgg = new List<int>(tempData.CurrentEggedBarns); // Reset or load from saved data if needed
+
         UsedCheckpoint = true;
 
     }
@@ -240,6 +248,10 @@ public class LevelChallenges : ScriptableObject
                 if (TrackedPigsByBulletType_PigType_Amount.Length == 0) return 0;
 
                 return 1;
+            case ChallengeTypes.CheckPigsByBulletIdWithPigType:
+
+                return 1;
+
             case ChallengeTypes.CheckCompletedRings:
                 if (ringsTypeAndAmount.y <= 1) return 0;
                 else return 1;
@@ -325,6 +337,16 @@ public class LevelChallenges : ScriptableObject
 
 
 
+
+                break;
+
+            case ChallengeTypes.CheckPigsByBulletIdWithPigType:
+                if (TrackedPigAmountsByBullet.Length == 0 || TrackedPigAmountsByBullet.Length == 0) return vect;
+
+                yTotal = TrackedPigAmountsByBullet[0];
+
+                xProgess = LargestGroupByBulletIDAndType(1);
+                vect = new Vector2(xProgess, yTotal);
 
                 break;
 
@@ -481,16 +503,13 @@ public class LevelChallenges : ScriptableObject
 
 
             case ChallengeTypes.CheckPigsByBulletIdWithPigType:
-                if (TrackedPigIDWithPigType.Length == 0 || TrackedPigAmountsByID.Length == 0)
+                if (TrackedPigAmountsByBullet.Length == 0 || TrackedPigAmountsByBullet.Length == 0)
                 {
                     if (forFinish) return -1;
                     else return 0;
                 }
 
-                if (LargestGroupByBulletIDAndType(
-
-                        TrackedPigIDWithPigType[0])
-                    >= TrackedPigAmountsByID[0])
+                if (LargestGroupByBulletIDAndType(1) >= TrackedPigAmountsByBullet[0])
                     return 1;
 
                 else if (forFinish)
@@ -544,304 +563,7 @@ public class LevelChallenges : ScriptableObject
 
     }
 
-    public int CheckChallengeType(int challengeIndex)
-    {
-        var c = challenges[challengeIndex];
 
-
-        switch (c)
-        {
-            case ChallengeTypes.None:
-                return 0;
-                break;
-
-            case ChallengeTypes.CompleteLevel:
-                return 1;
-                break;
-
-            case ChallengeTypes.CheckLives:
-                int l = lvlID.ReturnPlayerLives();
-
-                if (l >= LifeTarget) return 1;
-                else return 0;
-
-                break;
-
-            case ChallengeTypes.CheckPigs:
-
-                if (TrackedPigs == null || TrackedPigs.Length == 0) return 0;
-
-
-
-                bool fullyCompleted = true;
-                for (int i = 0; i < TrackedPigs.Length; i++)
-                {
-                    if (TrackedPigs[i] == -1)
-                    {
-                        int totalPigsKilled = KilledPigs.Count;
-
-                        if (totalPigsKilled < TrackedPigAmounts[i])
-                        {
-                            fullyCompleted = false;
-                            break;
-                        }
-
-                    }
-
-                    // if (CheckNumberOfCertainIntInList(list, TrackedPigs[0]) >= TrackedPigAmounts[0])
-                    else if (CountPigsOfType(TrackedPigs[i]) < TrackedPigAmounts[i])
-                    {
-                        fullyCompleted = false;
-                        break;
-
-                    }
-                }
-
-                if (fullyCompleted) return 2;
-                else return 1;
-
-
-                break;
-
-            case ChallengeTypes.CheckAmmo:
-
-
-                var amounts = lvlID.ReturnAmmoAmounts();
-
-                if (amounts.x >= EggAmmoTarget && amounts.y >= ShotgunAmmoTarget)
-                    return 1;
-                else return 1;
-
-                break;
-
-            case ChallengeTypes.CheckCertainNonAllowedInputs:
-
-                List<int> inputs = lvlID.ReturnPlayerInputs();
-
-                foreach (var item in CertainNonAllowedInputs)
-                {
-                    if (inputs.Contains(item)) return 0;
-
-                }
-
-                return 1;
-                break;
-
-            case ChallengeTypes.CheckPigsByAmmoTypeWithPigType:
-                if (TrackedPigsByBulletType_PigType_Amount.Length == 0) return 0;
-
-                if (CountPigsByBulletType(TrackedPigsByBulletType_PigType_Amount[0].x,
-                    TrackedPigsByBulletType_PigType_Amount[0].y) >= TrackedPigsByBulletType_PigType_Amount[0].z)
-                {
-                    return 2;
-                }
-
-
-                return 1;
-
-            case ChallengeTypes.CheckPigsByBulletIdWithPigType:
-                if (TrackedPigIDWithPigType.Length == 0 || TrackedPigAmountsByID.Length == 0) return 0;
-
-                if (LargestGroupByBulletIDAndType(
-
-                        TrackedPigIDWithPigType[0])
-                    >= TrackedPigAmountsByID[0])
-                    return 2;
-
-                return 1;
-
-            case ChallengeTypes.CheckCompletedRings:
-
-                // if (ringsTypeAndAmount.Count == 0) return 0;
-                var ringList = lvlID.ReturnRingData();
-                if (ringList == null || ringList.Length < 1) return 1;
-                bool complete = true;
-
-                return 2;
-
-
-        }
-
-        return 0;
-
-
-    }
-
-
-
-
-    public bool CheckChallengeCompletion(int challengeIndex)
-    {
-        var c = challenges[challengeIndex];
-
-        if (FrameRateManager.under1) return false;
-
-        switch (c)
-        {
-            case ChallengeTypes.None:
-                return false;
-                break;
-
-            case ChallengeTypes.CompleteLevel:
-                Debug.LogError("LevelCompleted is: " + lvlID.LevelCompleted);
-                return lvlID.LevelCompleted;
-                break;
-
-            case ChallengeTypes.CheckLives:
-                int l = lvlID.ReturnPlayerLives();
-
-                if (l >= LifeTarget) return true;
-                else return false;
-
-                break;
-
-            case ChallengeTypes.CheckPigs:
-
-                if (TrackedPigs == null || TrackedPigs.Length == 0) return false;
-
-
-
-                bool fullyCompleted = true;
-                for (int i = 0; i < TrackedPigs.Length; i++)
-                {
-                    if (TrackedPigs[i] == -1)
-                    {
-                        int totalPigsKilled = KilledPigs.Count;
-
-                        if (totalPigsKilled < TrackedPigAmounts[i])
-                        {
-                            fullyCompleted = false;
-                            break;
-                        }
-
-                    }
-
-                    // if (CheckNumberOfCertainIntInKilledPigs(KilledPigs, TrackedPigs[0]) >= TrackedPigAmounts[0])
-                    else if (CountPigsOfType(TrackedPigs[i]) < TrackedPigAmounts[i])
-                    {
-                        fullyCompleted = false;
-                        break;
-
-                    }
-                }
-
-                return fullyCompleted;
-
-
-
-
-            case ChallengeTypes.CheckAmmo:
-
-
-                var amounts = lvlID.ReturnAmmoAmounts();
-
-                if (amounts.x >= EggAmmoTarget && amounts.y >= ShotgunAmmoTarget)
-                    return true;
-                else return false;
-
-                break;
-
-
-            case ChallengeTypes.CheckCertainNonAllowedInputs:
-
-                List<int> inputs = lvlID.ReturnPlayerInputs();
-
-                foreach (var item in CertainNonAllowedInputs)
-                {
-                    if (inputs.Contains(item)) return false;
-
-                }
-
-                return true;
-
-
-
-
-                break;
-
-            // case ChallengeTypes.CheckPigsByAmmoTypeWithPigType:
-            //     if (TrackedPigsByBulletTypeWithPigType.Length == 0 || TrackedPigAmountsByBullet.Length == 0) return false;
-
-            //     if (CountPigsByBulletType(
-
-            //             TrackedPigsByBulletTypeWithPigType[0].x,
-            //             TrackedPigsByBulletTypeWithPigType[0].y)
-            //         >= TrackedPigAmountsByBullet[0])
-            //         return true;
-
-            //     return false;
-
-            case ChallengeTypes.CheckPigsByBulletIdWithPigType:
-                if (TrackedPigIDWithPigType.Length == 0 || TrackedPigAmountsByID.Length == 0) return false;
-
-                if (LargestGroupByBulletIDAndType(
-
-                        TrackedPigIDWithPigType[0])
-                    >= TrackedPigAmountsByID[0])
-                    return true;
-
-                return false;
-
-                // case ChallengeTypes.CheckCompletedRings:
-
-                //     if (ringsTypeAndAmount.Count == 0) return false;
-                //     var ringList = lvlID.ReturnRingData();
-                //     if (ringList == null || ringList.Length < 1) return false;
-                //     bool complete = true;
-                //     foreach (var ring in ringsTypeAndAmount)
-                //     {
-                //         if (ringList[ring.x] < ring.y)
-                //         {
-                //             complete = false;
-                //             break;
-                //         }
-
-                //     }
-                //     return complete;
-
-        }
-
-        return false;
-
-
-    }
-
-    public int CheckPigData(int targetInt, int component)
-    {
-        if (KilledPigs == null || KilledPigs.Count == 0) return 0;
-
-        int amount = 0;
-
-        switch (component)
-        {
-            case 0: // Check x component
-                for (int i = 0; i < KilledPigs.Count; i++)
-                {
-                    if (KilledPigs[i].x == targetInt) amount++;
-                }
-                break;
-
-            case 1: // Check y component
-                for (int i = 0; i < KilledPigs.Count; i++)
-                {
-                    if (KilledPigs[i].y == targetInt) amount++;
-                }
-                break;
-
-            case 2: // Check z component
-                for (int i = 0; i < KilledPigs.Count; i++)
-                {
-                    if (KilledPigs[i].z == targetInt) amount++;
-                }
-                break;
-
-            default:
-                Debug.LogWarning("Invalid component specified. Use 0 for x, 1 for y, or 2 for z.");
-                return 0; // Return 0 if an invalid component is passed
-        }
-
-        return amount;
-    }
 
     public int CountPigsOfType(int pigType)
     {
@@ -860,13 +582,13 @@ public class LevelChallenges : ScriptableObject
     }
 
     // 3. Return the length of the largest group of pigs that share the same bulletID and optionally match a type
-    public int LargestGroupByBulletIDAndType(int targetType)
+    public int LargestGroupByBulletIDAndType(int targetBulletType)
     {
         if (KilledPigs == null || KilledPigs.Count == 0) return 0;
 
         // Group pigs by bullet ID, filtering by targetType and ignoring bulletID == -1
         var groupedByBulletID = KilledPigs
-            .Where(pig => (targetType == -1 || pig.x == targetType) && pig.z != -1) // Filter by type and ignore bulletID -1
+            .Where(pig => pig.y == targetBulletType) // Filter by type and ignore bulletID -1
             .GroupBy(pig => pig.z); // Group by bullet ID
 
         // Find the largest group size
@@ -879,5 +601,15 @@ public class LevelChallenges : ScriptableObject
     //     var challengeType = challenges[challengeIndex];
 
     // }
+
+#if UNITY_EDITOR
+    public void Editor_SetChallenges()
+    {
+        challenges = new ChallengeTypes[] { ChallengeTypes.CompleteLevel, ChallengeTypes.None, ChallengeTypes.CheckLives };
+        challengeTexts = new string[] { "Complete Level", "No Challenge", "Lose Zero Lives" };
+        challengeDifficulties = new string[] { "", "", "" };
+
+    }
+#endif
 
 }

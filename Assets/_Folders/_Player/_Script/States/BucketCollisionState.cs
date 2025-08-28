@@ -14,6 +14,7 @@ public class BucketCollisionState : PlayerBaseState
 
         time = 0;
         player.rb.angularVelocity = 0;
+        player.rb.SetRotation(0);
 
 
         player.rb.linearVelocity = new Vector2(0, 0);
@@ -51,7 +52,6 @@ public class BucketCollisionState : PlayerBaseState
 
     }
     public override void ExitState(PlayerStateManager player)
-
     {
 
     }
@@ -84,6 +84,8 @@ public class BucketCollisionState : PlayerBaseState
             player.rb.simulated = true;
 
             player.AdjustForce(new Vector2(0, yForce));
+
+
 
             player.ID.events.EnableButtons?.Invoke(true);
             player.bucketIsExploded = false;

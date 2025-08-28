@@ -123,57 +123,57 @@ public class BackgroundController : MonoBehaviour
 
         }
 
-        cloudCount = Random.Range(cloudCountRange.x, cloudCountRange.y + 1);
-        for (int i = 0; i < cloudCount; i++)
-        {
-            // Randomly select a cloud sprite
+        // cloudCount = Random.Range(cloudCountRange.x, cloudCountRange.y + 1);
+        // for (int i = 0; i < cloudCount; i++)
+        // {
+        //     // Randomly select a cloud sprite
 
-            float distance = Random.Range(0f, 1f);
+        //     float distance = Random.Range(0f, 1f);
 
-            // Set the sprite and initial properties
-            clouds[i].sprite = cloudSprites[Random.Range(0, cloudSprites.Length)];
-            clouds[i].color = Color.Lerp(colorClose, colorFar, distance);
-            float s = Mathf.Lerp(cloudScaleRange.x, cloudScaleRange.y, distance);
-            float n = Random.Range(0, 1);
-            int flip = n > 0.45f ? 1 : -1;
+        //     // Set the sprite and initial properties
+        //     clouds[i].sprite = cloudSprites[Random.Range(0, cloudSprites.Length)];
+        //     clouds[i].color = Color.Lerp(colorClose, colorFar, distance);
+        //     float s = Mathf.Lerp(cloudScaleRange.x, cloudScaleRange.y, distance);
+        //     float n = Random.Range(0, 1);
+        //     int flip = n > 0.45f ? 1 : -1;
 
-            clouds[i].transform.localScale = new Vector3(s * flip + Random.Range(-.2f, .2f), s + Random.Range(-.2f, .2f), 1f);
-            activeClouds.Add(clouds[i].transform);
+        //     clouds[i].transform.localScale = new Vector3(s * flip + Random.Range(-.2f, .2f), s + Random.Range(-.2f, .2f), 1f);
+        //     activeClouds.Add(clouds[i].transform);
 
-            // Set initial position
-            Vector2 position = new Vector3(
-                Random.Range(BoundariesManager.leftBoundary + .4f, BoundariesManager.rightBoundary - .4f),
-                Random.Range(cloudYRange.x, cloudYRange.y)
-            );
-            activeClouds[i].position = position;
+        //     // Set initial position
+        //     Vector2 position = new Vector3(
+        //         Random.Range(BoundariesManager.leftBoundary + .4f, BoundariesManager.rightBoundary - .4f),
+        //         Random.Range(cloudYRange.x, cloudYRange.y)
+        //     );
+        //     activeClouds[i].position = position;
 
-            // Store the speed for this cloud
-            cloudSpeeds.Add(Mathf.Lerp(cloudSpeedRange.x, cloudSpeedRange.y, distance));
-            activeClouds[i].gameObject.SetActive(true);
-        }
+        //     // Store the speed for this cloud
+        //     cloudSpeeds.Add(Mathf.Lerp(cloudSpeedRange.x, cloudSpeedRange.y, distance));
+        //     activeClouds[i].gameObject.SetActive(true);
+        // }
     }
 
-    void Update()
-    {
+    // void Update()
+    // {
 
-        if (levelCreator) return;
-        for (int i = 0; i < activeClouds.Count; i++)
-        {
-            // Move each cloud based on its speed
-            activeClouds[i].position += Vector3.left * cloudSpeeds[i] * Time.deltaTime;
+    //     if (levelCreator) return;
+    //     for (int i = 0; i < activeClouds.Count; i++)
+    //     {
+    //         // Move each cloud based on its speed
+    //         activeClouds[i].position += Vector3.left * cloudSpeeds[i] * Time.deltaTime;
 
-            // Check if the cloud has moved out of bounds
-            if (activeClouds[i].position.x < BoundariesManager.leftBoundary)
-            {
-                // Reset position to the right side
-                activeClouds[i].position = new Vector2(
-                    Random.Range(BoundariesManager.rightBoundary + .4f, BoundariesManager.rightBoundary + 1.4f),
-                    Random.Range(cloudYRange.x, cloudYRange.y)
-                );
-            }
-        }
+    //         // Check if the cloud has moved out of bounds
+    //         if (activeClouds[i].position.x < BoundariesManager.leftBoundary)
+    //         {
+    //             // Reset position to the right side
+    //             activeClouds[i].position = new Vector2(
+    //                 Random.Range(BoundariesManager.rightBoundary + .4f, BoundariesManager.rightBoundary + 1.4f),
+    //                 Random.Range(cloudYRange.x, cloudYRange.y)
+    //             );
+    //         }
+    //     }
 
-    }
+    // }
 
     /// <summary>
     /// Sets all layer textures to the correct offset based on the given game time

@@ -232,31 +232,7 @@ public class UIHeightAdjuster : MonoBehaviour
     }
 
 
-    private void Case1Function()
-    {
-        if (currentChallengeSO.CheckChallengeCompletion(index))
-        {
-            ChallengesUIManager.OnGetCompletedStar?.Invoke(index, StarImage.transform);
-            Debug.Log("Challenge completed for index: " + index);
-        }
-
-        else
-        {
-            Debug.Log("Challenge failed for index: " + index);
-
-            starHitSeq = DOTween.Sequence();
-            starHitSeq.AppendInterval(.45f);
-            starHitSeq.AppendCallback(() => AudioManager.instance.PlayErrorSound(true));
-            starHitSeq.Append(fillImage.DOColor(colorSO.StarCardDisabledFillColor, .4f));
-
-            starHitSeq.Join(outlineImage.DOColor(colorSO.StarCardDisabledOutlineColor, .4f));
-            starHitSeq.Join(transform.DOShakeRotation(.45f, 35, 8, 50));
-            starHitSeq.Play().SetUpdate(true).OnComplete(() => ChallengesUIManager.OnFailedChallenge?.Invoke(index));
-        }
-
-
-    }
-
+    
     public void SetColorForCard(int completion)
     {
         if (completion == 0)

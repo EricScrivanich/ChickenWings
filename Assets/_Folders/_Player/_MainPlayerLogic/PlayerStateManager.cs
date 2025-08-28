@@ -48,9 +48,9 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private int yForceSubtractMultiplier;
     public bool useChainedAmmo { get; private set; }
 
-    public Coroutine aimCouroutine;
-    public Coroutine reloadCouroutine;
-    public Coroutine MaxSlowTimeCouroutine;
+    // public Coroutine aimCouroutine;
+    // public Coroutine reloadCouroutine;
+    // public Coroutine MaxSlowTimeCouroutine;
     public Coroutine SlowTimeRoutine;
     public Coroutine SpeedTimeRoutine;
     public Coroutine MaxSlowTimeRoutine;
@@ -1335,6 +1335,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         float x;
         float y = 0;
+        float playerY = 0;
 
         if (rb.linearVelocity.x < 0)
         {
@@ -1348,6 +1349,11 @@ public class PlayerStateManager : MonoBehaviour
         if (rb.linearVelocity.y < 0)
         {
             y = rb.linearVelocity.y * .4f;
+            playerY = .2f;
+        }
+        else
+        {
+            playerY = rb.linearVelocity.y * .7f;
         }
         // else
         // {
@@ -1355,6 +1361,8 @@ public class PlayerStateManager : MonoBehaviour
         // }
         Vector2 force = new Vector2(x, y - 1.5f);
         ammoManager.GetEgg(transform.position, force);
+        EnterIdleStateWithVel(new Vector2(rb.linearVelocityX * .9f, playerY + 3f));
+
 
 
     }
@@ -1819,10 +1827,10 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-            if (aimCouroutine != null) StopCoroutine(aimCouroutine);
-            if (reloadCouroutine != null) StopCoroutine(reloadCouroutine);
-            if (MaxSlowTimeCouroutine != null) StopCoroutine(MaxSlowTimeCouroutine);
-            if (ShotgunRotationRoutine != null) StopCoroutine(ShotgunRotationRoutine);
+            // if (aimCouroutine != null) StopCoroutine(aimCouroutine);
+            // if (reloadCouroutine != null) StopCoroutine(reloadCouroutine);
+            // if (MaxSlowTimeCouroutine != null) StopCoroutine(MaxSlowTimeCouroutine);
+            // if (ShotgunRotationRoutine != null) StopCoroutine(ShotgunRotationRoutine);
             if (slowingTime) StopCoroutine(SlowTimeRoutine);
             if (speedingTime) StopCoroutine(SpeedTimeRoutine);
             if (checkingMaxTime) StopCoroutine(MaxSlowTimeRoutine);
@@ -2166,7 +2174,7 @@ public class PlayerStateManager : MonoBehaviour
 
 
                 ID.Lives--;
-                if (ID.Lives <= 0)
+                if (ID.Lives <= 0 && !isLevelTester)
                 {
                     Die();
                     // ID.globalEvents.OnPlayerDamaged?.Invoke(true);
@@ -2248,8 +2256,12 @@ public class PlayerStateManager : MonoBehaviour
         {
 
             HandleDamaged();
+
             isDropping = false;
 
+
+
+            anim.SetTrigger(FlipTrigger);
             foreach (ContactPoint2D pos in collision.contacts)
             {
 

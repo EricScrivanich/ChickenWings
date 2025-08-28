@@ -13,17 +13,26 @@ MonoBehaviour:
   m_Name: 01-07_Lets Get RealChallenge
   m_EditorClassIdentifier: 
   lvlID: {fileID: 0}
-  challenges: 
-  challengeTexts: []
-  challengeDifficulties: []
-  LifeTarget: 0
+  challenges: 010000000700000002000000
+  challengeTexts:
+  - Complete Level
+  - Kill Three Pigs With One Shot
+  - Lose Zero Lives
+  challengeDifficulties:
+  - 
+  - 
+  - 
+  LifeTarget: 3
   EggAmmoTarget: 0
   ShotgunAmmoTarget: 0
   TrackedPigs: 
   TrackedPigAmounts: 
-  TrackedPigsByBulletTypeWithPigType: []
-  TrackedPigAmountsByBullet: 
+  TrackedPigsByBulletType_PigType_Amount: []
+  TrackedPigAmountsByBullet: 03000000
   TrackedPigIDWithPigType: 
   TrackedPigAmountsByID: 
   CertainNonAllowedInputs: 
   ringsTypeAndAmount: {x: 0, y: 0}
+  totalBarnEggAmount: 0
+  specificBarnEggAmount: 0
+  eachBarnAmount: {x: 0, y: 0}

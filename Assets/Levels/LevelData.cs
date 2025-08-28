@@ -102,6 +102,9 @@ public class LevelData : ScriptableObject
         playerID.livesToLoseOnStart = 0;
         currentCheckpointIndex = 0;
 
+        if (levelChallenges != null)
+            levelChallenges.skipShowChallenges = !isLevel;
+
         // Load your level save data first. This sets spawnSteps, idList, etc.
 
         if (checkPointData != null && playerID != null)

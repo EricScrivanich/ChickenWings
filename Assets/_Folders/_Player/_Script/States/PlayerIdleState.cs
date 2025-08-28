@@ -8,16 +8,15 @@ public class PlayerIdleState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
         // player.anim.SetTrigger("IdleTrigger");
-        player.rb.angularVelocity = 0;
-
+        // player.rb.angularVelocity = 0;
+        player.rb.angularDamping = .4f;
         player.rb.gravityScale = player.originalGravityScale;
 
 
     }
     public override void ExitState(PlayerStateManager player)
-
     {
-
+        player.rb.angularDamping = 0;
     }
 
     public override void FixedUpdateState(PlayerStateManager player)
@@ -33,7 +32,7 @@ public class PlayerIdleState : PlayerBaseState
 
     public override void RotateState(PlayerStateManager player)
     {
-        player.BaseRotationLogic();
+        // player.BaseRotationLogic();
 
 
     }

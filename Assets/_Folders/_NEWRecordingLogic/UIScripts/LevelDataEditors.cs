@@ -84,7 +84,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         {
             v = (Mathf.Round(v * 10) / 10) * recordedObj.speedChanger;
             SetValueBasedOnTypeIndex(v);
-            title.text = Type + ": " + v.ToString();
+            title.text = Type + ": " + Mathf.Abs(v).ToString();
         }
         else if (Type == "Blade Speed")
         {
@@ -93,7 +93,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             title.text = Type + ": " + v.ToString();
         }
 
-        else if (Type == "Size")
+        else if (Type == "Size" || Type == "Fence Length")
         {
 
             v = Mathf.Round(v * 100) / 100;

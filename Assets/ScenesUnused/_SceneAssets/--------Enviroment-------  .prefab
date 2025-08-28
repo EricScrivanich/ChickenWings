@@ -31,6 +31,86 @@ Transform:
   m_Children: []
   m_Father: {fileID: 446679495403232578}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4806185313250848035
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 659035705475027252}
+  - component: {fileID: 2384129192312402}
+  m_Layer: 7
+  m_Name: BackgroundObjects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &659035705475027252
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4806185313250848035}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 446679495403232578}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2384129192312402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4806185313250848035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 955496596b9c141c9a7d0fde32ffd1d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseSpeedMultiplier: 1
+  cloudSprites:
+  - {fileID: 4300442194807345184, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+  - {fileID: -5040580565352170820, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+  - {fileID: 618131312241453210, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+  - {fileID: 3174798112510930220, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+  - {fileID: 1751748196401987091, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+  - {fileID: 1492866074176810018, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+  - {fileID: 5423936643033455549, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+  - {fileID: 7730908102624513028, guid: 1fe146cea1c7d448cae850b9df405e54, type: 3}
+  cloudPrefab: {fileID: 4320994782377707176, guid: 86361d7609c034077ad3e324403f73ea, type: 3}
+  cloudCountRange: {x: 5, y: 7}
+  cloudSpeedRange: {x: 0.4, y: 0.15}
+  cloudScaleRange: {x: 2.7, y: 1}
+  colorFar: {r: 0.78431374, g: 0.77254903, b: 0.77254903, a: 0.4745098}
+  colorClose: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.7882353}
+  yChangeByDistance: {x: 2, y: -2}
+  cloudYRange: {x: 3.5, y: 1}
+  cloudXRange: {x: -13, y: 13}
+  spawnDelayRange: {x: 11, y: 15}
+  minYSeparation: 1.2
+  rightSpawnOffset: -1.8
+  leftDespawnOffset: -1.3
+  initialEdgePadding: 0.6
+  initialJitterX: 0.25
+  numberOfPigsOnScreen: 0
+  pigsInPool: 7
+  pigPrefabs:
+  - {fileID: 3512381587692177148, guid: 0f9858f9642c44d87ab6f1fe2ba21bda, type: 3}
+  - {fileID: 2171469001851932551, guid: 3bb2aaf934ab744549112a06ca5e0aea, type: 3}
+  - {fileID: 6724974015564906251, guid: fb0e55bfdb39442cd92c2fd4f5dc0382, type: 3}
+  pigSpawnChances:
+  - 0.6
+  - 0.3
+  - 0.1
+  backgroundMaterial: {fileID: 2100000, guid: 763e840b434e2497cafa6a8f64abeec8, type: 2}
 --- !u!1 &5149651664144998277
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,6 +250,7 @@ Transform:
   - {fileID: 3370166446289568688}
   - {fileID: 8187902104649478956}
   - {fileID: 4418432369732232261}
+  - {fileID: 659035705475027252}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7498918176700513834
@@ -359,6 +440,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 2734d605a0c8a42debe00b543a5876d3, type: 3}
+    - target: {fileID: 5530384420560900326, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
+      propertyPath: m_SortingOrder
+      value: -6
+      objectReference: {fileID: 0}
     - target: {fileID: 5769056071164886656, guid: e99b206c3254f49de8b5c2a8924233b9, type: 3}
       propertyPath: eggablePigYolk
       value: 

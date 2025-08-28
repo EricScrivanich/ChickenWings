@@ -156,7 +156,7 @@ public class LifeDisplay : MonoBehaviour
             // Find the most recently broken egg (if any)
 
         }
-        else if (newLives < lives) // Check if lost a life
+        else if (newLives < lives && lives > 0) // Check if lost a life
         {
             Debug.Log("Life should be lost");
             int livesLost = lives - newLives;

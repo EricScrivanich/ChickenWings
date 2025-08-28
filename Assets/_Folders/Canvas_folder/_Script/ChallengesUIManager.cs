@@ -211,17 +211,19 @@ public class ChallengesUIManager : MonoBehaviour
 
     public void ShowChallengesForLevelPicker(LevelChallenges challenges, LevelSavedData savedLevelData, bool finisheLevel = false)
     {
+
         bool isEasy = challenges.LevelDifficulty == 0;
         if (!isEasy && EasyModeText.activeInHierarchy)
             EasyModeText.SetActive(false);
         else if (isEasy)
             EasyModeText.SetActive(true);
-        if (challenges == null)
+        if (challenges == null || challenges.skipShowChallenges)
         {
             gameObject.SetActive(false);
             return;
         }
-        currentLevelChallenge = challenges;
+
+
         // Starting Y position for the first challenge
 
         if (doMoveCardSeq && isEasy) doMoveCardSeq = false;
@@ -524,41 +526,6 @@ public class ChallengesUIManager : MonoBehaviour
     }
 
 
-    private void SaveLevelCompletion()
-    {
-        int challengeCount = currentLevelChallenge.GetAmountOfChallenges();
-        bool[] data = new bool[challengeCount + 2];
-        Debug.LogError("Checking Level Complettion Bruh");
-        if (!FrameRateManager.under085)
-        {
-            data[0] = true;
-        }
-
-
-
-        bool completedAll = true;
-
-        for (int i = 0; i < challengeCount; i++)
-        {
-            bool complete = currentLevelChallenge.CheckChallengeCompletion(i);
-            if (FrameRateManager.under1) complete = false;
-
-            if (!complete) completedAll = false;
-
-            data[i + 2] = complete;
-        }
-
-        data[1] = completedAll;
-        // HandleBadge(completedAll);
-
-        for (int b = 0; b < data.Length; b++)
-        {
-            Debug.LogError("Saving Data: " + b + " is: " + data[b]);
-        }
-
-        SaveManager.instance.UpdateLevelData(sceneSO.ReturnLevelNumber(), data);
-
-    }
     private void OnEnable()
     {
         if (!hasSetCardHeights && currentLevelChallenge != null)

@@ -96,6 +96,7 @@ public class PickLevelEditorOnly : MonoBehaviour
     {
         LevelData asset = ScriptableObject.CreateInstance<LevelData>();
         LevelChallenges challenges = ScriptableObject.CreateInstance<LevelChallenges>();
+        challenges.Editor_SetChallenges();
 
         string numberString = "";
 

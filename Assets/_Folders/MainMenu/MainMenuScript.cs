@@ -205,18 +205,44 @@ public class MainMenuScript : MonoBehaviour
 
 
         float initialShift = 50f;
-        float initialDuration = 0.6f;  // Default duration for the initial shift
-        float finalShiftDuration = 1.6f;  // Default duration for the final shift
+        float initialDuration = 0.5f;  // Default duration for the initial shift
+        float finalShiftDuration = 1.3f;  // Default duration for the final shift
         float menuToMoveOutFinalPosX = -2700f;  // Final position for the menu moving out
         float menuToMoveInFinalPosX = 0f;  // Final position for the menu moving in
 
         if (switchTo == 0)
         {
             initialShift = -50f;
+
+            if (currentMenu == 0)
+            {
+                MenuTypes[0].gameObject.SetActive(true);
+                MenuTypes[0].DOAnchorPos(new Vector2(0, MenuTypes[0].anchoredPosition.y), finalShiftDuration * .8f).SetEase(Ease.OutSine).OnComplete(() => coverPanel.SetActive(false));
+                return;
+
+            }
+
             menuToMoveOut = MenuTypes[currentMenu];
             menuToMoveIn = MenuTypes[0];
             menuToMoveOutFinalPosX = 2700f;
 
+        }
+        else if (switchTo == -1)
+        {
+            MenuTypes[0].DOAnchorPos(new Vector2(MenuTypes[0].anchoredPosition.x + initialShift, MenuTypes[0].anchoredPosition.y), initialDuration)
+                       .SetEase(Ease.InOutSine).OnComplete(() =>
+            {
+                MenuTypes[0].DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, MenuTypes[0].anchoredPosition.y), finalShiftDuration).OnComplete(() =>
+                {
+                    coverPanel.SetActive(false);
+                    MenuTypes[0].gameObject.SetActive(false);
+                });
+
+            });
+            // set cover panel unactive as well
+
+
+            return;
         }
         else
         {

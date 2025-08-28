@@ -47,14 +47,7 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         }
     }
 
-    public Vector3Int Return_Type_PathIndex_Order()
-    {
-        return new Vector3Int(type, pathIndex, order);
-    }
-    public Vector3Int ReturnWorldNumber()
-    {
-        return WorldNumber;
-    }
+   
 
     private void Awake()
     {
@@ -251,5 +244,29 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
 
         }
 
+    }
+
+    [SerializeField] private Vector2 backHillPos;
+    [SerializeField] private float backHillScale;
+    [SerializeField] private Vector2 frontHillPos;
+    [SerializeField] private float frontHillScale;
+
+    public Vector3 ReturnPosScaleBackHill()
+    {
+        return new Vector3(backHillPos.x, backHillPos.y, backHillScale);
+    }
+
+    public Vector3 ReturnPosScaleFrontHill()
+    {
+        return new Vector3(frontHillPos.x, frontHillPos.y, frontHillScale);
+    }
+
+    public Vector3Int Return_Type_PathIndex_Order()
+    {
+        return new Vector3Int(type, pathIndex, order);
+    }
+    public Vector3Int ReturnWorldNumber()
+    {
+        return WorldNumber;
     }
 }
