@@ -11,12 +11,15 @@ public class Fence : SpawnedObject, IRecordableObject
     private float currentWidth;
     private float extendSpeed;
     private BoxCollider2D col;
+    [SerializeField] private SpriteRenderer blurOutline;
+    private float startX;
 
     private void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
+        extendSpeed = BoundariesManager.GroundSpeed / transform.lossyScale.x;
 
     }
 
@@ -61,8 +64,12 @@ public class Fence : SpawnedObject, IRecordableObject
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
+        startX = data.startPos.x;
+        currentWidth = baseWidth + (data.float1 * 100 * widthPerSection);
 
-        sr.size = new Vector2(baseWidth + (data.float1 * 100 * widthPerSection), sr.size.y);
+        sr.size = new Vector2(currentWidth, sr.size.y);
+        blurOutline.size = new Vector2(blurOutline.size.x, 1.2f + (data.float1 * 100 * widthPerSection));
+        blurOutline.transform.localPosition = new Vector3(currentWidth * .5f, .82f, 0);
     }
     private bool move = false;
     // void Update()
@@ -86,10 +93,11 @@ public class Fence : SpawnedObject, IRecordableObject
     //         move = true;
     //     }
     // }
-
+    private readonly float baseHeight = 1.25f;
     public override void ApplyFloatTwoData(DataStructFloatTwo data)
     {
         extendAmount = baseWidth + (data.float1 * 100 * widthPerSection);
+        transform.position = new Vector2(data.startPos.x, transform.position.y);
         sr.size = new Vector2(baseWidth, sr.size.y);
 
 
@@ -111,7 +119,12 @@ public class Fence : SpawnedObject, IRecordableObject
 
     public float ReturnPhaseOffset(float x)
     {
-        return 0f;
+        float rightPos = x + (currentWidth * transform.lossyScale.x);
+
+        if (rightPos <= BoundariesManager.leftBoundary)
+            return -1;
+        else
+            return 0f;
     }
 
     public bool ShowLine()

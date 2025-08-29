@@ -107,7 +107,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
         }
 
-        else if (Type == "Jump Height" || Type == "Glide Height")
+        else if (Type == "Jump Height" || Type == "Glide Height" || Type == "Fence Height")
         {
             v = Mathf.Round(v * 100) / 100;
             SetValueBasedOnTypeIndex(v);

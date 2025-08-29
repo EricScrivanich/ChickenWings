@@ -603,9 +603,28 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     }
     private int pressedStep;
+    private bool IsPointerOverUI(Vector2 screenPos)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = screenPos;
+
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        return results.Count > 1;
+    }
     private void HandleClickObject(Vector2 pos)
     {
         if (ignoreAllClicks) return;
+        if (IsPointerOverUI(pos))
+        {
+            Debug.LogError("Pointer is over UI");
+            return;
+        }
+        else
+        {
+            Debug.LogError("Pointer is not over UI");
+        }
         lastClickedPos = Camera.main.ScreenToWorldPoint(pos);
 
         if (editingPostionerObject)

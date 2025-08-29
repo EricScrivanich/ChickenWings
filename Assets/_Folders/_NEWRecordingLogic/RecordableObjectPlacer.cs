@@ -11,6 +11,7 @@ public class RecordableObjectPlacer : MonoBehaviour
     [field: SerializeField] public short ID { get; private set; }
 
     [SerializeField] private SpriteRenderer[] iconSprites;
+    [SerializeField] private bool useSpecialDeactivateCheck = false;
 
     [SerializeField] private GameObject baseIcon;
     [field: SerializeField] public string Title { get; private set; }
@@ -67,7 +68,8 @@ public class RecordableObjectPlacer : MonoBehaviour
         Fart_Length,
         Frequency,
         Laser_Spacing,
-        Fence_Length
+        Fence_Length,
+        Fence_Height
 
 
     }
@@ -1092,27 +1094,23 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         var p = obj.PositionAtRelativeTime(t - (spawnedTimeStep * LevelRecordManager.TimePerStep), transform.position, offset);
 
-        if (_pType != PostionType.CenterOnly && _pType != PostionType.AI && (Data.float1 >= 0 && p.x < BoundariesManager.leftBoundary + addedX) || (Data.float1 < 0 && p.x > BoundariesManager.rightBoundary - addedX))
-        {
+        if (!useSpecialDeactivateCheck)
+            if (_pType != PostionType.CenterOnly && _pType != PostionType.AI && (Data.float1 >= 0 && p.x < BoundariesManager.leftBoundary + addedX) || (Data.float1 < 0 && p.x > BoundariesManager.rightBoundary - addedX))
+            {
 
 
 
 
-            return false;
-        }
+                return false;
+            }
 
 
+            else if (Title == "Bomber" || Title == "Fence")
+            {
+                offset = obj.ReturnPhaseOffset(p.x);
 
-
-
-
-
-        if (Title == "Bomber")
-        {
-            offset = obj.ReturnPhaseOffset(p.x);
-
-            if (offset < 0) return false;
-        }
+                if (offset < 0) return false;
+            }
 
         return true;
     }
@@ -1473,35 +1471,35 @@ public class RecordableObjectPlacer : MonoBehaviour
         }
 
 
-
-        if (_pType != PostionType.CenterOnly && _pType != PostionType.AI && (Data.float1 >= 0 && p.x < BoundariesManager.leftBoundary) || (Data.float1 < 0 && p.x > BoundariesManager.rightBoundary))
-        {
-
-            // if (CustomTimeSlider.instance.ChangingObjectTime && !CustomTimeSlider.instance.OverObjectTime)
-            // {
-            //     CustomTimeSlider.instance.RetractTime(true);
-            //     Debug.Log("Retracting time with speed: " + Data.speed + " and pos of: " + p.x + " and time of: " + calculatedTime);
-
-            //     return;
-            // }
-            if (timeStep == 0)
+        if (!useSpecialDeactivateCheck)
+            if (_pType != PostionType.CenterOnly && _pType != PostionType.AI && (Data.float1 >= 0 && p.x < BoundariesManager.leftBoundary) || (Data.float1 < 0 && p.x > BoundariesManager.rightBoundary))
             {
 
-                unspawnedTimeStep = LevelRecordManager.CurrentTimeStep;
+                // if (CustomTimeSlider.instance.ChangingObjectTime && !CustomTimeSlider.instance.OverObjectTime)
+                // {
+                //     CustomTimeSlider.instance.RetractTime(true);
+                //     Debug.Log("Retracting time with speed: " + Data.speed + " and pos of: " + p.x + " and time of: " + calculatedTime);
+
+                //     return;
+                // }
+                if (timeStep == 0)
+                {
+
+                    unspawnedTimeStep = LevelRecordManager.CurrentTimeStep;
+
+                }
+                else
+                    unspawnedTimeStep = timeStep;
+
+                if (!(LevelRecordManager.instance.multipleObjectsSelected && isSelected))
+                {
+                    gameObject.SetActive(false);
+                    return;
+                }
+
+
 
             }
-            else
-                unspawnedTimeStep = timeStep;
-
-            if (!(LevelRecordManager.instance.multipleObjectsSelected && isSelected))
-            {
-                gameObject.SetActive(false);
-                return;
-            }
-
-
-
-        }
 
 
 
@@ -1511,7 +1509,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
-        if (Title == "Bomber")
+        if (useSpecialDeactivateCheck && (Title == "Bomber" || Title == "Fence"))
         {
             offset = obj.ReturnPhaseOffset(p.x);
 

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+
 public class LevelPickerManager : MonoBehaviour
 {
     private InputController controls;
@@ -173,6 +174,9 @@ public class LevelPickerManager : MonoBehaviour
 
     private void HandleClickObject(Vector2 screenPosition)
     {
+        Debug.LogError("Screen Position: " + screenPosition);
+
+
         Vector2 worldPoint = Camera.main.ScreenToWorldPoint(screenPosition);
 
         var obj = GetObjectFromTouchPosition(worldPoint);
