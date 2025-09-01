@@ -219,9 +219,14 @@ public class ChallengesUIManager : MonoBehaviour
             EasyModeText.SetActive(true);
         if (challenges == null || challenges.skipShowChallenges)
         {
+            if (challenges == null)
+                Debug.Log("No Challenges to Show ");
+            if (challenges.skipShowChallenges)
+                Debug.Log("Skipping Challenges Display");
             gameObject.SetActive(false);
             return;
         }
+currentLevelChallenge = challenges;
 
 
         // Starting Y position for the first challenge

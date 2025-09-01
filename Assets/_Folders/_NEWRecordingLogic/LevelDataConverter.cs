@@ -990,6 +990,32 @@ public class LevelDataConverter : MonoBehaviour
 
 
     }
+    public bool CheckIfCompletedLevel(Vector3Int num, int difficulty = 1)
+    {
+        if (currentLoadedSavedLevelDataByWorld == null || currentLoadedSavedLevelDataByWorld.levels == null || currentLoadedSavedLevelDataByWorld.levels.Length == 0)
+        {
+            Debug.LogError("No saved level data found for world: " + num.x);
+            return false;
+        }
+
+        if (num.x != currentLoadedSavedLevelDataByWorld.LevelWorld)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < currentLoadedSavedLevelDataByWorld.levels.Length; i++)
+        {
+            if (currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.x == num.y && currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber.y == num.z)
+            {
+                if (difficulty >= 1)
+                    return currentLoadedSavedLevelDataByWorld.levels[i].CompletedLevel;
+                else
+                    return currentLoadedSavedLevelDataByWorld.levels[i].CompletedLevelEasy;
+            }
+        }
+
+        return false;
+    }
 
     public LevelSavedData ReturnCompletedChallengesForLevel(Vector3Int num)
     {

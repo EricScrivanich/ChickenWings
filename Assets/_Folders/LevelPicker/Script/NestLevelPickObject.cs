@@ -32,20 +32,11 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
 
     [SerializeField] private SpriteRenderer[] starSprites;
     [SerializeField] private SpriteRenderer[] starBlurSprites;
+    
 
 
 
-    public Vector2 ReturnLinePostion()
-    {
-        if (linePosition != null)
-        {
-            return linePosition.position;
-        }
-        else
-        {
-            return transform.position;
-        }
-    }
+    
 
    
 
@@ -268,5 +259,17 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     public Vector3Int ReturnWorldNumber()
     {
         return WorldNumber;
+    }
+
+    public Vector2 ReturnLinePostion()
+    {
+        if (linePosition != null)
+        {
+            return linePosition.position;
+        }
+        else
+        {
+            return transform.position;
+        }
     }
 }

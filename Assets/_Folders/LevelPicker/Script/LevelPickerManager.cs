@@ -197,6 +197,7 @@ public class LevelPickerManager : MonoBehaviour
 
             float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
             playerPathFollower.DoPathToPoint(paths[data.y], d);
+            Debug.LogError("Moving to level: " + obj.ReturnWorldNumber());
             DoLevelPopupSeq(true, obj.ReturnWorldNumber());
 
             Vector3 front = obj.ReturnPosScaleFrontHill();

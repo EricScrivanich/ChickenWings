@@ -611,7 +611,14 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         var results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventData, results);
 
-        return results.Count > 1;
+        foreach (var result in results)
+        {
+            if (result.gameObject.CompareTag("Block"))
+            {
+                return true;
+            }
+        }
+        return false;
     }
     private void HandleClickObject(Vector2 pos)
     {

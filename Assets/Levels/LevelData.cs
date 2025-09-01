@@ -673,13 +673,14 @@ public class LevelData : ScriptableObject
 
 
 
-    public LevelChallenges GetLevelChallenges(bool loadData, TemporaryLevelCheckPointData data)
+    public LevelChallenges GetLevelChallenges(bool loadData, TemporaryLevelCheckPointData data, bool skip = false)
     {
         if (levelChallenges == null)
         {
             Debug.LogError("Level Challenges is null");
             return null;
         }
+        levelChallenges.skipShowChallenges = skip;
         if (data == null && loadData)
         {
             levelChallenges.ResetData(levelWorldAndNumber, Difficulty, StartingAmmos, StartingLives);
@@ -693,6 +694,7 @@ public class LevelData : ScriptableObject
             // Debug.LogError("Loaded Level Challenges for level: " + levelWorldAndNumber + " with difficulty: " + difficulty);
         }
         levelChallenges.SetDifficulty(Difficulty);
+
         return levelChallenges;
     }
 

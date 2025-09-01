@@ -342,7 +342,7 @@ public class SpawnStateManager : MonoBehaviour
                 LevelDataConverter.instance.SetCurrentLevelInstance(Vector3Int.zero);
                 levelData = LevelDataConverter.instance.ReturnLevelData();
                 levelData.LoadJsonToMemory();
-                levelData.InitializeData(this, currentSpawnStep);
+                levelData.InitializeData(this, currentSpawnStep, isLevel: true);
             }
             else
             {
