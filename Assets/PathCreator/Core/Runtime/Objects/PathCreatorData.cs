@@ -137,6 +137,16 @@ namespace PathCreation
                 bezierOrVertexPathModified();
             }
         }
+        public Vector3[] ReturnPoints()
+        {
+
+            Vector3[] points = new Vector3[_vertexPath.localPoints.Length];
+            for (int i = 0; i < _vertexPath.localPoints.Length; i++)
+            {
+                points[i] = _vertexPath.localPoints[i];
+            }
+            return points;
+        }
 
         public void PathModifiedByUndo()
         {

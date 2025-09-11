@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1237960647493614051}
   - component: {fileID: 8825740233988290671}
   - component: {fileID: 1289930387296832898}
+  - component: {fileID: 3163398117081798171}
   - component: {fileID: 5076868968221451896}
   m_Layer: 0
   m_Name: SpawnManager
@@ -207,6 +208,22 @@ MonoBehaviour:
   eggParticleColliderCoverPrefab: {fileID: 3148713029437857749, guid: 67f9171f2ae064c559b81016d5c0175a, type: 3}
   eggParticleColliderPrefab: {fileID: 8411991336060583700, guid: 431fd07ce78564e4b9d2ad5bc1fa994b, type: 3}
   gasCloudHitParticlesPrefab: {fileID: 4238105998688326948, guid: 46cf02b4a5ffb48c49a74b30057887fe, type: 3}
+--- !u!114 &3163398117081798171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5609617747852223854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cda04058270c842d2a0f6a2a389e1100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SetActiveOnLoaded:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &5076868968221451896
 MonoBehaviour:
   m_ObjectHideFlags: 0

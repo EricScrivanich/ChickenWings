@@ -16,11 +16,14 @@ public class PlayerStartingState : PlayerBaseState
     private Vector2 initialForce = new Vector2(8.3f, 8.9f);
     public override void EnterState(PlayerStateManager player)
     {
+        Debug.Log("Starting State Enter");
+        player.transform.position = startPosition;
+        player.rb.simulated = true;
         player.ChangeCollider(-1);
         hasFinishedLocked = false;
         player.maxFallSpeed = startMaxFallSpeed;
         currentRotation = 120;
-        player.transform.position = startPosition;
+
         player.AdjustForce(initialForce);
 
 
@@ -39,6 +42,7 @@ public class PlayerStartingState : PlayerBaseState
     }
     public override void ExitState(PlayerStateManager player)
     {
+        Debug.Log("Starting State Exit");
 
         player.maxFallSpeed = player.originalMaxFallSpeed;
 
@@ -88,6 +92,8 @@ public class PlayerStartingState : PlayerBaseState
 
             if (time > lockedDuration && !hasFinishedLocked)
             {
+                Debug.Log("Starting State Timer Finished");
+
                 hasFinishedLocked = true;
                 player.rb.gravityScale = player.originalGravityScale;
                 if (!player.usingConstantForce)

@@ -278,7 +278,9 @@ public class SpawnStateManager : MonoBehaviour
     }
     void Start()
     {
+
         allObjectData?.InitializeQPools();
+        Debug.LogError("Spawning all Qs");
         if (isTestPlayer && !mainLevel)
         {
             levelData = LevelDataConverter.instance.ReturnLevelData();
@@ -398,6 +400,8 @@ public class SpawnStateManager : MonoBehaviour
 
         if (!isTestPlayer)
         {
+            addWaveTime = false;
+            GameObject.Find("Player").GetComponent<PlayerStateManager>().ID.UiEvents.OnShowPlayerUI?.Invoke(true, 10, 0);
             // LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
             SpawnPools();
             if (startDelay > 0)

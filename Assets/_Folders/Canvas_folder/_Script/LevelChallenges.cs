@@ -68,6 +68,7 @@ public class LevelChallenges : ScriptableObject
     public bool UsedCheckpoint { get; private set; }
 
     public bool skipShowChallenges;
+    private bool ignoreAll = false;
 
 
     public void ResetData(Vector3Int lvlNum, int difficulty, short[] startingAmmos, int startingLives)
@@ -168,24 +169,25 @@ public class LevelChallenges : ScriptableObject
 
     public void AddKillPig(Vector3Int pigData)
     {
-        if (!trackPigs) return; // If not tracking pigs, do nothing
+        if (!trackPigs || skipShowChallenges) return; // If not tracking pigs, do nothing
         if (KilledPigs == null) KilledPigs = new List<Vector3Int>();
         KilledPigs.Add(pigData);
     }
     public void AddPlayerInput(int input)
     {
-        if (!trackInputs && !CertainNonAllowedInputs.Contains(input)) return; // If not tracking inputs, do nothing
+        if (skipShowChallenges || !trackInputs || CertainNonAllowedInputs != null && !CertainNonAllowedInputs.Contains(input)) return; // If not tracking inputs, do nothing
         if (PlayerInputs == null) PlayerInputs = new List<int>();
         PlayerInputs.Add(input);
     }
     public void AddCompletedRing(int ringType)
     {
-        if (!trackRings) return; // If not tracking rings, do nothing
+        if (skipShowChallenges || !trackRings) return; // If not tracking rings, do nothing
         if (CompletedRings == null) CompletedRings = new List<int>();
         CompletedRings.Add(ringType);
     }
     public void AddBarnHitWithEgg(int id)
     {
+        if (skipShowChallenges) return; // If skipping challenges, do nothing
 
         if (id >= BarnsHitWithEgg.Count)
         {
@@ -201,7 +203,7 @@ public class LevelChallenges : ScriptableObject
     public void EditCurrentAmmos(int ammoType, int amount)
     {
 
-        if (Ammos == null) Ammos = new short[4]; // Assuming 2 types of ammo: Egg and Shotgun
+        if (skipShowChallenges || Ammos == null) Ammos = new short[4]; // Assuming 2 types of ammo: Egg and Shotgun
 
         if (ammoType >= Ammos.Length)
         {
@@ -217,6 +219,7 @@ public class LevelChallenges : ScriptableObject
     }
     public void EditCurrentLives(int lives)
     {
+        if (skipShowChallenges) return;
         Lives = lives;
 
     }

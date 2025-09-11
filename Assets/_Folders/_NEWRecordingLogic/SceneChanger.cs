@@ -5,11 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class SceneChanger : MonoBehaviour
 {
+    [SerializeField] private string LoadSceneWithTransition;
     public void LoadCreatorScene(bool test)
     {
         if (test)
         {
-            
+
             StartCoroutine(AwaitLoadScene(true));
         }
         else
@@ -24,6 +25,8 @@ public class SceneChanger : MonoBehaviour
         yield return new WaitForSecondsRealtime(.1f);
         if (test)
         {
+            PlayerPrefs.SetString("LevelType", "Custom");
+            PlayerPrefs.Save();
             // yield return new WaitUntil(() => LevelRecordManager.PreloadedSceneReady);
             LevelRecordManager.instance.RestoreStaticParameters();
             SceneManager.LoadScene("LevelPlayer");
@@ -31,11 +34,18 @@ public class SceneChanger : MonoBehaviour
         }
         else
         {
+            PlayerPrefs.SetString("LevelType", "Menu");
+            PlayerPrefs.Save();
             LevelRecordManager.ResetStaticParameters();
             SceneManager.LoadScene("MainMenu");
         }
 
 
+    }
+
+    public void PressForSceneTransition()
+    {
+        TransitionDirector.instance.GoTo(LoadSceneWithTransition);
     }
 
     public void ShowPlayView(bool show)

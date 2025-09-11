@@ -145,7 +145,7 @@ public class AmmoShotgunState : AmmoBaseState
             player.ID.events.EnableButtons?.Invoke(false);
             // player.ID.UiEvents.OnUseJoystick?.Invoke(true);
             player.anim.SetBool(player.AimShotgunBool, true);
-            player.SetTimeScale(true, slowTimeDuration, targetTimeScale, maxHoldTime);
+            // player.SetTimeScale(true, slowTimeDuration, targetTimeScale, maxHoldTime);
             player.ID.UiEvents.OnPressWeaponButton?.Invoke(maxHoldTime);
 
         }
@@ -270,7 +270,7 @@ public class AmmoShotgunState : AmmoBaseState
 
         player.anim.SetBool(player.AimShotgunBool, false);
 
-        player.SetTimeScale(false, speedTimeDuration);
+        // player.SetTimeScale(false, speedTimeDuration);
         if (player.ID.ShotgunAmmo > 0)
         {
             player.ID.ShotgunAmmo--;
@@ -339,7 +339,7 @@ public class AmmoShotgunState : AmmoBaseState
                 rotationTarget = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 if (rotationTarget < 0) rotationTarget += 360;
                 rotatingToTarget = true;
-                player.RotateToTargetFromWeaponState(rotationTarget, 700);
+                player.RotateToTargetFromWeaponState(rotationTarget, 550);
                 isPressed = false;
 
             }

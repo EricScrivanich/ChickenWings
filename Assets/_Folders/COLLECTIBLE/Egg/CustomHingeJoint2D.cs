@@ -462,7 +462,8 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
                 StartCoroutine(CageExplode(true));
                 chicRb.simulated = false;
                 chicRb.transform.SetParent(other.transform);
-                chicRb.GetComponent<ChicTween>().DoBarnTween();
+                chicRb.GetComponent<ChicTween>().enabled = true;
+                AudioManager.instance.PlayScoreSound();
                 return;
             }
             else if (other.CompareTag("Floor"))

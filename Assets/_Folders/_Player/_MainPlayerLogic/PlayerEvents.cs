@@ -65,12 +65,14 @@ public struct PlayerEvents
     public Action<Vector2> OnSetScythePos;
     public Action OnReleaseStick;
     public Action OnCollision;
+    public Action OnStartPlayer;
 
 
 }
 
 public struct UiEvents
 {
+    public Action<bool, int, float> OnShowPlayerUI;
     public Action<bool> OnAllowSwipe;
     public Action<float> OnPressWeaponButton;
     public Action<int> OnCollectAmmo;

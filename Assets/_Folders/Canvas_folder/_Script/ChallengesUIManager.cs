@@ -226,7 +226,7 @@ public class ChallengesUIManager : MonoBehaviour
             gameObject.SetActive(false);
             return;
         }
-currentLevelChallenge = challenges;
+        currentLevelChallenge = challenges;
 
 
         // Starting Y position for the first challenge
@@ -261,7 +261,10 @@ currentLevelChallenge = challenges;
 
                 // setting completed to false since we are testing, (Last Bool parameter)
                 Debug.Log("Setting Challenge Card: " + i + " with text: " + currentLevelChallenge.challengeTexts[i] + " and difficulty: " + currentLevelChallenge.challengeDifficulties[i]);
-                challengeCard.SetChallenge(currentLevelChallenge, i, currentLevelChallenge.challengeTexts[i], currentLevelChallenge.challengeDifficulties[i], savedLevelData.ChallengeCompletion[i]);
+                challengeCard.SetChallenge(currentLevelChallenge, i,
+                 currentLevelChallenge.challengeTexts[i],
+                 currentLevelChallenge.challengeDifficulties[i],
+                 savedLevelData.ChallengeCompletion[i]);
                 // log saved level data name and challenge completion
                 Debug.Log("Saved Level Data: " + savedLevelData.LevelName + " Challenge Completion: " + savedLevelData.ChallengeCompletion[i]);
 

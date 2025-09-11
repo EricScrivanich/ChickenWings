@@ -10,6 +10,11 @@ public class CanvasScreenPositions : MonoBehaviour
     [SerializeField] private ParticleSystem heartParticles;
     [SerializeField] private ParticleSystem goldParticles;
     // Start is called before the first frame update
+    // void Start()
+    // {
+    //     GetComponent<Canvas>().worldCamera = Camera.main;
+
+    // }
     public Vector2 ReturnGoldPosition()
     {
         if (goldBucketBallTarget == null) return Vector2.zero;
@@ -20,5 +25,5 @@ public class CanvasScreenPositions : MonoBehaviour
         return lives.ReturnEggPosition();
     }
 
-  
+
 }

@@ -103,6 +103,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip bombLaunch;
     [SerializeField] private AudioClip windMill;
 
+    [SerializeField] private AudioClip incubatorHit;
+
 
     [Header("UI")]
     [SerializeField] private AudioClip chamberClick;
@@ -122,6 +124,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Volumes")]
 
+    [SerializeField] private float incubatorHitVolume;
     [SerializeField] private float footStepsVolume;
     [SerializeField] private float chicHappyVolume;
     [SerializeField] private float cageHitVolume;
@@ -321,7 +324,10 @@ public class AudioManager : MonoBehaviour
             footStepIndex = 0;
         }
     }
-
+    public void PlayIncubatorHit()
+    {
+        audioSource.PlayOneShot(incubatorHit, incubatorHitVolume);
+    }
     public void PlayChicHappySound(int i)
     {
         audioSource.PlayOneShot(chicHappySounds[i], chicHappyVolume);

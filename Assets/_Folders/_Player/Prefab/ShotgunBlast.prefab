@@ -76,8 +76,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1283433495
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_Sprite: {fileID: 103912202, guid: ef08eb9392c304e00befbc5d0af9b7c3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -103,7 +103,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0.9
+  m_LinearDamping: 1.4
   m_AngularDamping: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -151,7 +151,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.117954105, y: 0.0030628443}
+  m_Offset: {x: 0.16132113, y: -0.0012738556}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.065165766, y: 0.52742004}
@@ -161,7 +161,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8881033, y: 1.1471257}
+  m_Size: {x: 0.80136925, y: 0.8435564}
   m_EdgeRadius: 0
 --- !u!114 &5336961953253964648
 MonoBehaviour:
@@ -175,29 +175,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe47e65db4c584b5fa884d68b230c235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forceAmount: 5
-  xForceMultiplier: 2
+  forceAmount: 5.7
+  xForceMultiplier: 1.2
   img:
   - {fileID: 103912202, guid: ef08eb9392c304e00befbc5d0af9b7c3, type: 3}
   - {fileID: -23793593, guid: ef08eb9392c304e00befbc5d0af9b7c3, type: 3}
   - {fileID: 55598398, guid: ef08eb9392c304e00befbc5d0af9b7c3, type: 3}
   - {fileID: -1848890137, guid: ef08eb9392c304e00befbc5d0af9b7c3, type: 3}
   spriteDelays:
-  - 0.18
+  - 0.15
+  - 0.2
   - 0.25
-  - 0.3
   scales:
-  - {x: 1.2, y: 1}
-  - {x: 1.7, y: 1.5}
-  - {x: 2.2, y: 2.8}
-  - {x: 2.45, y: 3.1}
+  - {x: 1, y: 1}
+  - {x: 1.4, y: 1.3}
+  - {x: 2, y: 2.2}
+  - {x: 2.2, y: 2.5}
   opacities:
   - 1
   - 0.7
-  - 0.3
-  - 0.2
+  - 0.35
+  - 0.08
   scaleDelays:
   - 0.1
-  - 0.2
-  - 0.25
-  - 0.3
+  - 0.12
+  - 0.17
+  - 0.23

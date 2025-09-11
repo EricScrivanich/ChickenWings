@@ -69,7 +69,8 @@ public class RecordableObjectPlacer : MonoBehaviour
         Frequency,
         Laser_Spacing,
         Fence_Length,
-        Fence_Height
+        Fence_Height,
+        Duration
 
 
     }
@@ -938,76 +939,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         }
 
-        // else if (!usingOffset && useCustomBoundaries && Mathf.Abs(pos.x) >= BoundariesManager.rightBoundary + addedOffestToOuterBoundary && currentStepOffset > 0)
-        // {
-        //     float s = usingGroundSpeed ? BoundariesManager.GroundSpeed : Data.float1;
 
-        //     int newStep = 0;
-
-
-        //     if (!movingRight)
-        //     {
-        //         // Object went too far right, push spawn time back by reducing step offset
-        //         int steps = (Mathf.RoundToInt((((pos.x - BoundariesManager.rightBoundary + addedOffestToOuterBoundary)) / s) / LevelRecordManager.TimePerStep));
-
-
-        //         currentStepOffset = clickedStepOffset - steps;
-
-
-        //         if (currentStepOffset <= 0)
-        //         {
-        //             currentStepOffset = 0;
-
-        //         }
-
-        //         newStep = (int)LevelRecordManager.CurrentTimeStep - currentStepOffset;
-        //         pos.x = BoundariesManager.rightBoundary + addedOffestToOuterBoundary;
-        //     }
-        //     else
-        //     {
-        //         // Object went too far left, same logic
-        //         int steps = (Mathf.RoundToInt((((pos.x - BoundariesManager.leftBoundary - addedOffestToOuterBoundary)) / s) / LevelRecordManager.TimePerStep));
-
-
-        //         currentStepOffset = clickedStepOffset - steps;
-
-
-        //         if (currentStepOffset <= 0)
-        //         {
-        //             currentStepOffset = 0;
-
-        //         }
-
-
-        //         newStep = (int)LevelRecordManager.CurrentTimeStep - currentStepOffset;
-        //         pos.x = BoundariesManager.leftBoundary - addedOffestToOuterBoundary;
-        //     }
-
-        //     if (newStep > LevelRecordManager.instance.finalSpawnStep)
-        //     {
-        //         newStep = LevelRecordManager.instance.finalSpawnStep;
-        //         pos = LevelRecordManager.instance.ReturnRoundedPosition(pos, false, _pType == PostionType.Grounded);
-        //         spawnedTimeStep = (ushort)newStep;
-        //         Data.spawnedStep = spawnedTimeStep;
-        //         ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep, true);
-        //     }
-        //     else
-        //     {
-        //         pos = LevelRecordManager.instance.ReturnRoundedPosition(pos, false, _pType == PostionType.Grounded);
-        //         spawnedTimeStep = (ushort)newStep;
-        //         Data.spawnedStep = spawnedTimeStep;
-        //         ValueEditorManager.instance.UpdateSpawnTime(spawnedTimeStep, false);
-        //     }
-
-        //     if (currentStepOffset <= 0)
-        //     {
-        //         currentStepOffset = 0;
-        //         LevelRecordManager.instance.ResetMovePosition(transform.position);
-
-        //     }
-
-
-        // }
 
         transform.position = pos;
         // Debug.Log("Setting Obj Position: " + pos);
@@ -1095,6 +1027,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         var p = obj.PositionAtRelativeTime(t - (spawnedTimeStep * LevelRecordManager.TimePerStep), transform.position, offset);
 
         if (!useSpecialDeactivateCheck)
+        {
             if (_pType != PostionType.CenterOnly && _pType != PostionType.AI && (Data.float1 >= 0 && p.x < BoundariesManager.leftBoundary + addedX) || (Data.float1 < 0 && p.x > BoundariesManager.rightBoundary - addedX))
             {
 
@@ -1104,13 +1037,15 @@ public class RecordableObjectPlacer : MonoBehaviour
                 return false;
             }
 
+        }
 
-            else if (Title == "Bomber" || Title == "Fence")
-            {
-                offset = obj.ReturnPhaseOffset(p.x);
 
-                if (offset < 0) return false;
-            }
+        else if (useSpecialDeactivateCheck)
+        {
+            offset = obj.ReturnPhaseOffset(p.x);
+
+            if (offset < 0) return false;
+        }
 
         return true;
     }
@@ -1509,7 +1444,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
-        if (useSpecialDeactivateCheck && (Title == "Bomber" || Title == "Fence"))
+        if (useSpecialDeactivateCheck)
         {
             offset = obj.ReturnPhaseOffset(p.x);
 

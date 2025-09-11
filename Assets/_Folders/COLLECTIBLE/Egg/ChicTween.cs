@@ -18,7 +18,7 @@ public class ChicTween : MonoBehaviour
 
     public void DoBarnTween()
     {
-        AudioManager.instance.PlayScoreSound();
+
         DoChicHappySound();
         originalX = transform.localPosition.x;
         centerPos = new Vector2(originalX, 0);
@@ -48,6 +48,10 @@ public class ChicTween : MonoBehaviour
 
 
 
+    }
+    void OnEnable()
+    {
+        DoBarnTween();
     }
 
     private void FinishSeq()

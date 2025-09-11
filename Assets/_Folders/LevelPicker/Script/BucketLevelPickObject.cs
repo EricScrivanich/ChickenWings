@@ -1,17 +1,16 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class BucketLevelPickObject : MonoBehaviour, ILevelPickerPathObject
+public class BucketLevelPickObject :ILevelPickerPathObject
 {
     [SerializeField] private SpriteRenderer blur;
     [SerializeField] private Transform selectedArrowTransform;
-    [field: SerializeField] public Vector3Int WorldNumber { get; private set; }
+    
     [SerializeField] private Transform linePos;
     [SerializeField] private int type;
     [SerializeField] private int pathIndex;
     [SerializeField] private int order;
-    [SerializeField] private Color unbeatenColor;
-    [SerializeField] private Color beatenColor;
+   
 
     [SerializeField] private Vector2 backHillPos;
     [SerializeField] private float backHillScale;
@@ -33,31 +32,15 @@ public class BucketLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         selectedArrowTransform.gameObject.SetActive(false);
     }
 
-    public Vector3 ReturnPosScaleBackHill()
-    {
-        return new Vector3(backHillPos.x, backHillPos.y, backHillScale);
-    }
+    
 
-    public Vector3 ReturnPosScaleFrontHill()
-    {
-        return new Vector3(frontHillPos.x, frontHillPos.y, frontHillScale);
-    }
+    
 
-    public Vector3Int Return_Type_PathIndex_Order()
-    {
-        return new Vector3Int(type, pathIndex, order);
-    }
-    public Vector3Int ReturnWorldNumber()
-    {
-        return WorldNumber;
-    }
+  
+   
 
-    public Vector2 ReturnLinePostion()
-    {
-        return linePos.position;
-    }
 
-    public void SetLastSelectable(Vector3Int num)
+    public override void SetLastSelectable(Vector3Int num)
     {
         if (LevelDataConverter.instance.CheckIfCompletedLevel(WorldNumber))
         {
@@ -73,7 +56,7 @@ public class BucketLevelPickObject : MonoBehaviour, ILevelPickerPathObject
 
     }
 
-    public void SetSelected(bool selected)
+    public override void SetSelected(bool selected)
     {
         if (selected)
         {
@@ -112,8 +95,8 @@ public class BucketLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         arrowSequence.SetLoops(-1);
     }
 
-    public void DoStarSeq(int index, bool enterTween)
-    {
+    // public overvoid DoStarSeq(int index, bool enterTween)
+    // {
 
-    }
+    // }
 }

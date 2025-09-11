@@ -120,18 +120,19 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
     }
 
-    public void DoPathToPoint(PathCreator path, float distance)
+    public void DoPathToPoint(PathCreator path, float distance, PathCreator path2 = null, float distanceToTravel2 = 0)
     {
         if (followPathCoroutine != null)
         {
             StopCoroutine(followPathCoroutine);
         }
-        followPathCoroutine = StartCoroutine(DoPath(path, distance));
+        followPathCoroutine = StartCoroutine(DoPath(path, distance, path2, distanceToTravel2));
         hitZoom = false;
 
 
 
     }
+
     [SerializeField] private float zoomSpeed;
     // void LateUpdate()
     // {
@@ -159,7 +160,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     private float targetZoom;
     private bool hitZoom = true;
 
-    private IEnumerator DoPath(PathCreator path, float distanceToTravel)
+    private IEnumerator DoPath(PathCreator path, float distanceToTravel, PathCreator path2 = null, float distanceToTravel2 = 0)
     {
         if (path == null) yield break;
 
@@ -183,8 +184,11 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
 
             float remainingDist = Mathf.Abs(distanceToTravel - currentDistance);
-            float t = Mathf.Clamp01(remainingDist / 1.3f); // <= Easing radius (5 units)
-            float easeFactor = Mathf.SmoothStep(0.2f, 1f, t); // Slows down near target
+            float t = Mathf.Clamp01(remainingDist / 1.3f); // <= Easing radius 
+            float easeFactor = 1;
+
+            if (path2 != null) easeFactor = Mathf.SmoothStep(0.8f, 1f, t);
+            else easeFactor = Mathf.SmoothStep(0.2f, 1f, t);
 
             if (currentFootstepTime <= 0)
             {
@@ -232,8 +236,19 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
             yield return null;
         }
 
-        anim.SetBool("Run", false);
+        if (path2 != null)
+        {
+            currentDistance = path2.path.GetClosestDistanceAlongPath(transform.position);
+            followPathCoroutine = StartCoroutine(DoPath(path2, distanceToTravel2));
 
-        HideParticles();
+        }
+        else
+        {
+            anim.SetBool("Run", false);
+
+            HideParticles();
+        }
+
+
     }
 }

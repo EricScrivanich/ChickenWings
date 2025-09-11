@@ -1,9 +1,10 @@
 using UnityEngine;
 using DG.Tweening;
-public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
+public class NestLevelPickObject : ILevelPickerPathObject
 {
-    [field: SerializeField] public Vector3Int WorldNumber { get; private set; }
+
     [SerializeField] private int type;
+
     [SerializeField] private int pathIndex;
     [SerializeField] private int order;
     // [SerializeField] private Animator pigAnim;
@@ -11,6 +12,7 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     [SerializeField] private GameObject flappingPig;
     [SerializeField] private Transform stars;
     [SerializeField] private SpriteRenderer badge;
+    [SerializeField] private SpriteRenderer badgeInside;
     private bool doBadgeSeq = false;
 
 
@@ -22,29 +24,28 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     [SerializeField] private Vector3 level_World_Number_Special;
     [SerializeField] private SpriteRenderer nestBlur;
     [SerializeField] private SpriteRenderer pigBlur;
-    [SerializeField] private Color selectedColor;
+
     [SerializeField] private Transform selectedArrowTransform;
     [SerializeField] private float seqDur;
     private bool isSelected = false;
 
-    [SerializeField] private Color unbeatenBlurColor;
-    [SerializeField] private Color beatenBlurColor;
+
 
     [SerializeField] private SpriteRenderer[] starSprites;
     [SerializeField] private SpriteRenderer[] starBlurSprites;
-    
 
 
 
-    
 
-   
+
+
+
 
     private void Awake()
     {
-        pigBlur.color = selectedColor;
-        nestBlur.color = selectedColor;
-        selectedArrowTransform.GetComponent<SpriteRenderer>().color = selectedColor;
+        pigBlur.color = unbeatenColor;
+        nestBlur.color = unbeatenColor;
+        selectedArrowTransform.GetComponent<SpriteRenderer>().color = unbeatenColor;
         nestBlur.enabled = false;
         pigBlur.enabled = false;
         selectedArrowTransform.localPosition = new Vector3(0, 2.5f, 0);
@@ -70,7 +71,7 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         // arrowSequence.Join(selectedArrowTransform.DORotate(new Vector3(0, 360, 0), seqDur).SetEase(Ease.OutSine));
         arrowSequence.SetLoops(-1);
     }
-    public void SetSelected(bool selected)
+    public override void SetSelected(bool selected)
     {
 
         if (selected)
@@ -90,7 +91,7 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         // For example, change color or scale to indicate selection
     }
 
-    public void SetLastSelectable(Vector3Int num)
+    public override void SetLastSelectable(Vector3Int num)
     {
         if (WorldNumber.x > num.x)
         {
@@ -112,8 +113,8 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         {
             sleepingPig.SetActive(false);
             flappingPig.SetActive(false);
-            nestBlur.color = beatenBlurColor;
-            selectedArrowTransform.GetComponent<SpriteRenderer>().color = beatenBlurColor;
+            nestBlur.color = beatenColor;
+            selectedArrowTransform.GetComponent<SpriteRenderer>().color = beatenColor;
 
             if (transform.localScale.x < 0)
             {
@@ -138,6 +139,7 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
     private float blurInterval = .2f;
     private bool[] challengeCompletion;
     private bool doStarSeq = false;
+
     public void ReadyStarSeq()
     {
         var data = LevelDataConverter.instance.ReturnCompletedChallengesForLevel(WorldNumber);
@@ -188,7 +190,7 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
 
                 starSprites[i].color = Color.black;
                 starBlurSprites[i].enabled = false;
-                starBlurSprites[i].color = beatenBlurColor;
+                starBlurSprites[i].color = beatenColor;
             }
         }
 
@@ -197,8 +199,10 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
 
     }
     private bool badgeIn = false;
-    public void DoStarSeq(int index, bool enter)
+    private bool fadedFromView = false;
+    public override void DoStarSeq(int index, bool enter)
     {
+        if (fadedFromView) return;
         if (doBadgeSeq)
         {
             if (index == 0 && enter)
@@ -236,40 +240,89 @@ public class NestLevelPickObject : MonoBehaviour, ILevelPickerPathObject
         }
 
     }
+    private Sequence fadeFromView;
+    public override void SetLayerFades(int layer, float dur, Ease ease)
+    {
 
+        if (!fadedFromView && layerID < layer)
+        {
+            if (fadeFromView != null && fadeFromView.IsPlaying())
+                fadeFromView.Complete();
+            fadedFromView = true;
+
+
+
+            if (badge.gameObject.activeInHierarchy)
+            {
+                fadeFromView = DOTween.Sequence();
+                DOTween.Kill(badge);
+                fadeFromView.Append(badge.DOFade(0, dur * .5f));
+                fadeFromView.Join(badgeInside.DOFade(0, dur));
+                fadeFromView.Play().SetEase(ease);
+
+            }
+            else if (stars.gameObject.activeInHierarchy)
+            {
+                fadeFromView = DOTween.Sequence();
+                fadeFromView.Append(null);
+                foreach (var s in starBlurSprites)
+                {
+                    DOTween.Kill(s);
+                    fadeFromView.Join(s.DOFade(0, dur * .5f));
+                }
+                foreach (var s in starSprites)
+                {
+                    fadeFromView.Join(s.DOFade(0, dur));
+                }
+                fadeFromView.Play().SetEase(ease);
+            }
+        }
+        else if (fadedFromView && layerID >= layer)
+        {
+            if (fadeFromView != null && fadeFromView.IsPlaying())
+                fadeFromView.Complete();
+            fadedFromView = false;
+            bool change = false;
+            if (fadeFromView != null && fadeFromView.IsPlaying())
+                fadeFromView.Kill();
+
+
+            if (badge.gameObject.activeInHierarchy)
+            {
+                change = true;
+                fadeFromView = DOTween.Sequence();
+                DOTween.Kill(badge);
+                ;
+                fadeFromView.Append(badgeInside.DOFade(1, dur));
+
+
+            }
+            else if (stars.gameObject.activeInHierarchy)
+            {
+                change = true;
+                fadeFromView = DOTween.Sequence();
+                fadeFromView.Append(null);
+
+                foreach (var s in starSprites)
+                {
+                    fadeFromView.Join(s.DOFade(1, dur));
+                }
+
+            }
+            if (change) fadeFromView.Play().SetEase(ease).OnComplete(() => fadedFromView = false);
+
+        }
+    }
     [SerializeField] private Vector2 backHillPos;
     [SerializeField] private float backHillScale;
     [SerializeField] private Vector2 frontHillPos;
     [SerializeField] private float frontHillScale;
 
-    public Vector3 ReturnPosScaleBackHill()
-    {
-        return new Vector3(backHillPos.x, backHillPos.y, backHillScale);
-    }
 
-    public Vector3 ReturnPosScaleFrontHill()
-    {
-        return new Vector3(frontHillPos.x, frontHillPos.y, frontHillScale);
-    }
 
-    public Vector3Int Return_Type_PathIndex_Order()
-    {
-        return new Vector3Int(type, pathIndex, order);
-    }
-    public Vector3Int ReturnWorldNumber()
-    {
-        return WorldNumber;
-    }
 
-    public Vector2 ReturnLinePostion()
-    {
-        if (linePosition != null)
-        {
-            return linePosition.position;
-        }
-        else
-        {
-            return transform.position;
-        }
-    }
+
+
+
+
 }

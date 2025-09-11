@@ -64,9 +64,11 @@ public class MainMenuScript : MonoBehaviour
     void Awake()
     {
         isDay = BoundariesManager.isDay;
+        if (TransitionDirector.instance.mainMenuStarted)
+        {
+            MenuTypes[0].gameObject.SetActive(false);
 
-
-
+        }
 
 
         buttonPressed = false;
@@ -75,10 +77,10 @@ public class MainMenuScript : MonoBehaviour
     private void IntitialMenuTween(RectTransform target, float pos, bool doX)
     {
         if (doX)
-            target.DOAnchorPosX(pos, 1.5f).SetEase(Ease.OutBack);
+            target.DOAnchorPosX(pos, 1.2f).SetEase(Ease.OutBack);
 
         else
-            target.DOAnchorPosY(pos, 1.9f).SetEase(Ease.OutSine);
+            target.DOAnchorPosY(pos, 1.5f).SetEase(Ease.OutSine);
 
 
 
@@ -87,15 +89,27 @@ public class MainMenuScript : MonoBehaviour
     private IEnumerator InitialTweenCourintine()
     {
         coverPanel.SetActive(true);
-        yield return new WaitForSeconds(.1f);
-        IntitialMenuTween(titleRect, 0, false);
+        yield return new WaitForSeconds(.08f);
+        if (!TransitionDirector.instance.mainMenuStarted)
+        {
+            IntitialMenuTween(titleRect, 0, false);
+
+        }
+        else
+        {
+            titleRect.anchoredPosition = new Vector2(titleRect.anchoredPosition.x, 0);
+            MenuTypes[0].gameObject.SetActive(true);
+        }
+        TransitionDirector.instance.mainMenuStarted = true;
+
+
         for (int i = 0; i < buttonRects.Length; i++)
         {
             // Set the second parameter based on whether the index is even or odd
             int parameterValue = (i % 2 == 0) ? -335 : -385;
 
             IntitialMenuTween(buttonRects[i], parameterValue, true);
-            yield return new WaitForSeconds(.33f);
+            yield return new WaitForSeconds(.2f);
         }
         coverPanel.SetActive(false);
     }
@@ -104,7 +118,7 @@ public class MainMenuScript : MonoBehaviour
     {
 
 
-        Main.anchoredPosition = new Vector2(0, 0);
+        // Main.anchoredPosition = new Vector2(0, 0);
         currentMenu = 0;
         foreach (var r in canvasButtons)
         {
@@ -229,10 +243,10 @@ public class MainMenuScript : MonoBehaviour
         }
         else if (switchTo == -1)
         {
-            MenuTypes[0].DOAnchorPos(new Vector2(MenuTypes[0].anchoredPosition.x + initialShift, MenuTypes[0].anchoredPosition.y), initialDuration)
+            MenuTypes[0].DOAnchorPosX(MenuTypes[0].anchoredPosition.x + initialShift, initialDuration)
                        .SetEase(Ease.InOutSine).OnComplete(() =>
             {
-                MenuTypes[0].DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, MenuTypes[0].anchoredPosition.y), finalShiftDuration).OnComplete(() =>
+                MenuTypes[0].DOAnchorPosX(menuToMoveOutFinalPosX, finalShiftDuration).OnComplete(() =>
                 {
                     coverPanel.SetActive(false);
                     MenuTypes[0].gameObject.SetActive(false);
@@ -258,25 +272,25 @@ public class MainMenuScript : MonoBehaviour
             .OnComplete(() =>
             {
                 // Move the new menu into position
-                menuToMoveIn.DOAnchorPos(new Vector2(menuToMoveInFinalPosX, menuToMoveIn.anchoredPosition.y), finalShiftDuration).SetEase(Ease.OutSine).OnComplete(() => coverPanel.SetActive(false));
+                menuToMoveIn.DOAnchorPosX(menuToMoveInFinalPosX, finalShiftDuration).SetEase(Ease.OutSine).OnComplete(() => coverPanel.SetActive(false));
                 if (switchTo == 2)
                 {
                     foreach (var r in canvasButtons)
                     {
-                        r.DOAnchorPos(new Vector2(menuToMoveInFinalPosX, menuToMoveIn.anchoredPosition.y), finalShiftDuration).SetEase(Ease.OutSine);
+                        r.DOAnchorPosX(menuToMoveInFinalPosX, finalShiftDuration).SetEase(Ease.OutSine);
                     }
                     // canvasButtons[0].DOAnchorPos(new Vector2(menuToMoveInFinalPosX, menuToMoveIn.anchoredPosition.y), finalShiftDuration).SetEase(Ease.OutSine);
                     // canvasButtons[1].DOAnchorPos(new Vector2(menuToMoveInFinalPosX, menuToMoveIn.anchoredPosition.y), finalShiftDuration).SetEase(Ease.OutSine);
                 }
 
                 // Move the current menu to its final position off-screen
-                menuToMoveOut.DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration).OnComplete(() => { if (menuToMoveOut != MenuTypes[0]) menuToMoveOut.gameObject.SetActive(false); });
+                menuToMoveOut.DOAnchorPosX(menuToMoveOutFinalPosX, finalShiftDuration).OnComplete(() => { if (menuToMoveOut != MenuTypes[0]) menuToMoveOut.gameObject.SetActive(false); });
 
                 if (currentMenu == 2)
                 {
                     foreach (var r in canvasButtons)
                     {
-                        r.DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration);
+                        r.DOAnchorPosX(menuToMoveOutFinalPosX, finalShiftDuration);
                     }
                     // canvasButtons[0].DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration);
                     // canvasButtons[1].DOAnchorPos(new Vector2(menuToMoveOutFinalPosX, menuToMoveOut.anchoredPosition.y), finalShiftDuration);

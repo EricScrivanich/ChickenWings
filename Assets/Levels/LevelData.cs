@@ -103,7 +103,53 @@ public class LevelData : ScriptableObject
         currentCheckpointIndex = 0;
 
         if (levelChallenges != null)
+        {
             levelChallenges.skipShowChallenges = !isLevel;
+            Debug.Log("Setting skipShowChallenges to: " + levelChallenges.skipShowChallenges);
+        }
+        bool hasCollectables = false;
+
+        foreach (int a in collectablePoolSizes)
+        {
+            if (a > 0)
+            {
+                hasCollectables = true;
+                break;
+            }
+        }
+
+        if (!hasCollectables)
+        {
+            if (difficulty < 1)
+            {
+                foreach (int a2 in easyStartingAmmos)
+                {
+                    if (a2 > 0)
+                    {
+                        hasCollectables = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (int a2 in easyStartingAmmos)
+                {
+                    if (a2 > 0)
+                    {
+                        hasCollectables = true;
+                        break;
+                    }
+                }
+
+            }
+        }
+
+        if (!hasCollectables)
+        {
+            Debug.Log("No collectables found, hiding EggCanvas");
+            GameObject.Find("EggCanvas").SetActive(false);
+        }
 
         // Load your level save data first. This sets spawnSteps, idList, etc.
 
@@ -142,7 +188,7 @@ public class LevelData : ScriptableObject
         else if (playerID != null)
         {
             usedCheckPoint = false;
-            if (difficulty == 1)
+            if (difficulty == 1 || difficulty == 3)
             {
                 Debug.LogError("Setting Starting Stats for normal Difficulty");
                 // normal difficulty
@@ -151,6 +197,14 @@ public class LevelData : ScriptableObject
                 if (levelChallenges != null)
                     levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
             }
+            else if (difficulty == 2)
+            {
+                startingStats.SetData(1, StartingAmmos);
+                if (levelChallenges != null)
+                    levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
+            }
+
+
             else if (difficulty == 0)
             {
                 // Normal or Hard difficulty, use default values
@@ -168,8 +222,12 @@ public class LevelData : ScriptableObject
         {
             Debug.LogError("Setting Tutorial Data for level: " + LevelName + " with difficulty: " + difficulty);
             s.SetTutorialData(tutorialData);
-            tutorialData.Initialize(s, startingStep);
+            tutorialData.Initialize(s, startingStep, playerID);
 
+        }
+        else if (tutorialData == null)
+        {
+            playerID.UiEvents.OnShowPlayerUI?.Invoke(true, 10, 0);
         }
         startingStats.AvailableAmmos = AvailableAmmos;
         playerID.SetDataForLevel(startingStats, levelChallenges);
@@ -673,14 +731,16 @@ public class LevelData : ScriptableObject
 
 
 
-    public LevelChallenges GetLevelChallenges(bool loadData, TemporaryLevelCheckPointData data, bool skip = false)
+    public LevelChallenges GetLevelChallenges(bool loadData, TemporaryLevelCheckPointData data, bool overrideSkipChallengesFalse = false)
     {
         if (levelChallenges == null)
         {
             Debug.LogError("Level Challenges is null");
             return null;
         }
-        levelChallenges.skipShowChallenges = skip;
+        if (overrideSkipChallengesFalse)
+            levelChallenges.skipShowChallenges = false;
+
         if (data == null && loadData)
         {
             levelChallenges.ResetData(levelWorldAndNumber, Difficulty, StartingAmmos, StartingLives);

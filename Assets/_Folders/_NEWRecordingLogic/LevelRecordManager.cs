@@ -478,39 +478,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         RecordedObjects.Clear();
     }
 
-#if UNITY_EDITOR
-    public void OpenLevelPicker(bool open)
-    {
-        ignoreAllClicks = open;
-        if (open)
-        {
-            levelPicker.SetActive(true);
 
-        }
-        else if (dataLoaded)
-        {
-            levelPicker.SetActive(false);
-
-        }
-
-
-    }
-
-    public void LoadNewLevel(LevelData data)
-    {
-        OpenLevelPicker(false);
-        if (data != null)
-        {
-            LevelDataConverter.instance.SetCurrentLevelInstance(data.levelWorldAndNumber);
-            // reload the scene
-            ResetStaticParameters();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            return;
-        }
-
-
-    }
-#endif
     private bool isEditor = false;
     void Awake()
     {
@@ -988,6 +956,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
     private RecordableObjectPlacer GetObjectFromTouchPosition(Vector2 worldPoint)
     {
+        Debug.Log("Is play mode is: " + isPlayModeView);
         if (isPlayModeView && !isEditor) return null;
 
 
@@ -1252,6 +1221,57 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     #region Loading and Saving
     private bool dataLoaded = false;
+
+
+#if UNITY_EDITOR
+    private void CreateLastSave(Vector3Int worldNum)
+    {
+        string l = $"{worldNum.x}-{worldNum.y}-{worldNum.z}";
+        PlayerPrefs.SetString("LastEditorLevel", l);
+        PlayerPrefs.Save();
+    }
+    private Vector3Int ReturnLastEditorLevel()
+    {
+        string l = PlayerPrefs.GetString("LastEditorLevel", "0-0-0");
+
+        string[] parts = l.Split('-');
+        return new Vector3Int(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
+
+    }
+    public void OpenLevelPicker(bool open)
+    {
+        ignoreAllClicks = open;
+        if (open)
+        {
+            levelPicker.SetActive(true);
+
+        }
+        else if (dataLoaded)
+        {
+            levelPicker.SetActive(false);
+
+        }
+
+
+    }
+
+    public void LoadNewLevel(LevelData data)
+    {
+        OpenLevelPicker(false);
+        if (data != null)
+        {
+            CreateLastSave(data.levelWorldAndNumber);
+            LevelDataConverter.instance.SetCurrentLevelInstance(data.levelWorldAndNumber);
+            // reload the scene
+            ResetStaticParameters();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
+
+
+    }
+#endif
+
     public void LoadAssets()
     {
         RecordedObjects = new List<RecordableObjectPlacer>();
@@ -1259,6 +1279,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         if (isEditor)
         {
 #if UNITY_EDITOR
+
+            LevelDataConverter.instance.SetCurrentLevelInstance(ReturnLastEditorLevel());
             if (LevelDataConverter.instance.ReturnLevelData() != null && LevelDataConverter.currentLevelInstance > 0)
             {
                 levelData = LevelDataConverter.instance.ReturnLevelData();

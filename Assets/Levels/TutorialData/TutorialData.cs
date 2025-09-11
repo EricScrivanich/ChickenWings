@@ -10,6 +10,11 @@ public class TutorialData : ScriptableObject
     public PlayerID playerID;
     private SpawnStateManager spawnManager;
     [SerializeField] private int buttonType = -1;
+
+    public int ReturnButtonType()
+    {
+        return buttonType - 1;
+    }
     [SerializeField] private bool startButtonHidden = true;
     [SerializeField] private bool startInputsLocked;
 
@@ -83,11 +88,11 @@ public class TutorialData : ScriptableObject
 
 
 
-    public void Initialize(SpawnStateManager m, ushort currentStep)
+    public void Initialize(SpawnStateManager m, ushort currentStep, PlayerID player)
     {
         inputSystem = null;
         buttonHandler = null;
-
+        playerID = player;
         Debug.Log("Initialize TutorialData with currentStep: " + currentStep);
         if (inputSystem == null)
         {
@@ -114,13 +119,15 @@ public class TutorialData : ScriptableObject
                 inputSystem.InitializeInputs();
             }
 
-            if (buttonHandler == null && GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>() != null)
-            {
+            playerID.UiEvents.OnShowPlayerUI?.Invoke(true, buttonType, 0);
+
+            // if (buttonHandler == null && GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>() != null)
+            // {
 
 
-                GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>().InitializeTutorialButtons(buttonType, false);
+            //     // GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>().InitializeTutorialButtons(buttonType, false);
 
-            }
+            // }
             return;
         }
         spawnManager = m;
@@ -146,18 +153,24 @@ public class TutorialData : ScriptableObject
                 currentStepIndex = i;
                 Debug.Log("Current step index set to: " + currentStepIndex);
                 m.HandleCheckForTutorial(true);
-                if (buttonHandler == null && GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>() != null)
-                {
+                // if (buttonHandler == null && GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>() != null)
+                // {
 
-                    buttonHandler = GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>();
-                    buttonHandler.InitializeTutorialButtons(buttonType, hideButton);
+                //     // buttonHandler = GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>();
+                //     // buttonHandler.InitializeTutorialButtons(buttonType, hideButton);
 
-                }
+                // }
                 if (inputSystem != null)
                 {
 
                     if (hideButton)
+                    {
                         inputSystem.SetTempLockInput(buttonType);
+                        playerID.UiEvents.OnShowPlayerUI?.Invoke(true, buttonType - 1, 0);
+                    }
+                    else
+                        playerID.UiEvents.OnShowPlayerUI?.Invoke(true, buttonType, 0);
+
                     inputSystem.InitializeInputs();
 
                 }
@@ -281,7 +294,8 @@ public class TutorialData : ScriptableObject
                 break;
 
             case Type.ShowHiddenButtons:
-                buttonHandler.FinishTween();
+                // buttonHandler.FinishTween();
+                playerID.UiEvents.OnShowPlayerUI?.Invoke(true, buttonType, 2.5f);
                 inputSystem.SetTempLockInput(-1);
 
                 break;

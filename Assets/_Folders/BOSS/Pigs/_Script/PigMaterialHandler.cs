@@ -175,6 +175,11 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
     {
         if (enableObjectOnDeath != null) enableObjectOnDeath.SetActive(true);
         if (disableObjectOnDeath != null) disableObjectOnDeath.SetActive(false);
+        foreach (var col in colls)
+        {
+            col.enabled = false;
+        }
+
     }
 
     public void Damage(int damageAmount, int type, int id)
@@ -288,7 +293,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
             yield return null;
         }
         elapsedTime = 0;
-        explosionPool.Spawn("NormalExplosion", transform.position, Vector3.zero, explosionScale);
+        if (type != -2)
+            explosionPool.Spawn("NormalExplosion", transform.position, Vector3.zero, explosionScale);
 
         while (elapsedTime < time)
         {
@@ -313,7 +319,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
 
             yield return null;
         }
-        player.globalEvents.OnKillPig?.Invoke(pigType);
+        if (type != -2)
+            player.globalEvents.OnKillPig?.Invoke(pigType);
         isStuck = false;
         if (destroyOnDeath)
         {
@@ -329,7 +336,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
 
 
         }
-       
+
 
 
     }

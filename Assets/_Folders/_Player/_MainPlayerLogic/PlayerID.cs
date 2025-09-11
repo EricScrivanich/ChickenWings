@@ -18,6 +18,7 @@ public class PlayerID : ScriptableObject
     public bool pressingHideButton;
 
     public bool scytheIsStuck;
+    public int PlayerLoadType { get; private set; }
 
     public bool pressingButton
     {
@@ -39,6 +40,7 @@ public class PlayerID : ScriptableObject
     public int amountOfWeapons { get; private set; }
 
     public LevelChallenges LevelChallenges { get; private set; }
+    public Transform _transform { get; private set; }
 
 
 
@@ -80,7 +82,10 @@ public class PlayerID : ScriptableObject
     public int livesToLoseOnStart = 0;
 
 
-
+    public void SetTransform(Transform player)
+    {
+        _transform = player;
+    }
     public int Lives
     {
         get
@@ -406,6 +411,10 @@ public class PlayerID : ScriptableObject
 
         globalEvents.OnAddScore?.Invoke(amount);
 
+
+    }
+    public void SetPlayerLoadType()
+    {
 
     }
 

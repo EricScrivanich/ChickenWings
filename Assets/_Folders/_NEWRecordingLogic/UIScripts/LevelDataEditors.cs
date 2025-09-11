@@ -60,6 +60,7 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
 
     }
+    private float durationIncrement;
     public void SetTypeIndex(int index)
     {
         typeIndex = index;
@@ -161,6 +162,19 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
             // v = Mathf.Abs(v);
             SetValueBasedOnTypeIndex(-v);
 
+
+        }
+        else if (Type == "Duration")
+        {
+            //v is actual time
+
+
+            float gameTime = v / FrameRateManager.BaseTimeScale;
+            gameTime = Mathf.Round(gameTime / 0.2f) * 0.2f;
+
+            title.text = Type + ": " + gameTime.ToString();
+            SetValueBasedOnTypeIndex(gameTime * FrameRateManager.BaseTimeScale);
+            SetMainSliderText();
 
         }
         // else if (Type == "Starting Rotation")

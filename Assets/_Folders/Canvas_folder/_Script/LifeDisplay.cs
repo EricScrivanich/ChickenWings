@@ -114,8 +114,20 @@ public class LifeDisplay : MonoBehaviour
 
         float w = baseWidth + (lives * addedWidthPerEgg);
         float s = baseSpacing + (lives * spacingPerLife);
+
         eggImages = new Image[lives];
-        GetComponent<RectTransform>().sizeDelta = new Vector2(w, GetComponent<RectTransform>().sizeDelta.y);
+        var rect = GetComponent<RectTransform>();
+
+        if (l == 1)
+        {
+            rect.anchoredPosition = new Vector2(rect.anchoredPosition.x + 20, rect.anchoredPosition.y);
+            rect.sizeDelta = new Vector2(w, rect.sizeDelta.y + 30);
+        }
+        else
+        {
+            rect.sizeDelta = new Vector2(w, rect.sizeDelta.y);
+        }
+
 
         GetComponent<HorizontalLayoutGroup>().spacing = s;
 

@@ -535,6 +535,7 @@ public class LevelDataConverter : MonoBehaviour
         save.LevelDifficulty = levelDifficulty;
         string json = JsonUtility.ToJson(save, true);
         File.WriteAllText(savePath, json);
+        Debug.LogError("Overwritten checkpoint data for new level: " + levelAndWorldNumber + " Difficulty: " + levelDifficulty);
     }
 
 
@@ -875,7 +876,7 @@ public class LevelDataConverter : MonoBehaviour
                 return new Vector3Int(currentLoadedSavedLevelDataByWorld.LevelWorld, level.LevelNumber.x, level.LevelNumber.y);
             }
         }
-        return new Vector3Int(1, 1, 0);
+        return new Vector3Int(1, 15, 0);
 
 
     }

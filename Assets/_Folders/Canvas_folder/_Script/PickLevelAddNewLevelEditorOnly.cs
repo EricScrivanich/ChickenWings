@@ -73,6 +73,7 @@ public class PickLevelAddNewLevelEditorOnly : MonoBehaviour
     public void ClickAddButton()
     {
         if (dataIsValid)
+        
             parent.AddNewLevel(levelNumbers, levelName);
 
     }

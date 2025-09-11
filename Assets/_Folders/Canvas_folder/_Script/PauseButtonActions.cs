@@ -293,7 +293,7 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
             case (3):
                 // GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint = 0;
                 Time.timeScale = FrameRateManager.TargetTimeScale;
-                SceneManager.LoadScene("MainMenu");
+                SceneManager.LoadScene("LevelPicker");
 
                 // sceneLoader.LoadLevel(GameObject.Find("LevelManager").GetComponent<LevelManager>().LevelIndex + 1);
                 break;

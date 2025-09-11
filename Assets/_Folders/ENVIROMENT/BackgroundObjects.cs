@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class BackgroundObjects : MonoBehaviour
 {
     public float baseSpeedMultiplier = 1f;
+    [SerializeField] private int layerNumber;
     [Header("Cloud Settings")]
     [SerializeField] private Sprite[] cloudSprites;
     [SerializeField] private GameObject cloudPrefab;
@@ -60,6 +61,7 @@ public class BackgroundObjects : MonoBehaviour
         for (int i = 0; i < poolSize; i++)
         {
             var c = Instantiate(cloudPrefab, transform).GetComponent<SpriteRenderer>();
+            c.sortingOrder = layerNumber;
             c.gameObject.SetActive(false);
             pool.Add(c);
         }

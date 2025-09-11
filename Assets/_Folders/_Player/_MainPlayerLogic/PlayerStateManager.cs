@@ -297,7 +297,7 @@ public class PlayerStateManager : MonoBehaviour
     #region Base
     private void Awake()
     {
-
+        ID.SetTransform(transform);
 
 
         if (mutePlayerAudio)
@@ -436,6 +436,13 @@ public class PlayerStateManager : MonoBehaviour
         currentState.EnterState(this);
 
     }
+
+    void EnterStart()
+    {
+        currentState = StartingState;
+        currentState.EnterState(this);
+
+    }
     void Start()
     {
 
@@ -564,8 +571,10 @@ public class PlayerStateManager : MonoBehaviour
             rb.simulated = false;
             ChangeCollider(-1);
         }
-        // currentWeaponState = AmmoStateHidden;
 
+        // rb.simulated = false;
+        // ChangeCollider(-1);
+        // currentWeaponState = AmmoStateHidden;
         if (ammoManager != null)
         {
             ammoManager.Initialize();
@@ -661,16 +670,26 @@ public class PlayerStateManager : MonoBehaviour
 
     public void SetAddForceAtBoundaries(bool isActive)
     {
+
+
         if (isActive)
         {
-            playerBoundaries.enabled = true;
-            if (!addedArrow)
-            {
-                playerBoundaries.CreateArrow(arrowPlayerPosition);
-                addedArrow = true;
-            }
+            StartCoroutine(SetAddForceAtBoundariesDelay(.5f));
 
         }
+    }
+
+    public IEnumerator SetAddForceAtBoundariesDelay(float time)
+    {
+        yield return new WaitForSeconds(time);
+        playerBoundaries.enabled = true;
+        if (!addedArrow)
+        {
+            playerBoundaries.CreateArrow(arrowPlayerPosition);
+            addedArrow = true;
+        }
+
+
     }
     // void OnCollisionEnter2D(Collision2D collision)
     // {
@@ -2630,6 +2649,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnReleaseCenter += HandleReleaseWeaponButton;
         ID.globalEvents.KillPlayer += Die;
         ID.events.OnCollision += ImmediateRotation;
+        ID.events.OnStartPlayer += EnterStart;
 
         // ID.events.OnTrackParrySwipe += HandleShowSwipeTracker;
 
@@ -2658,7 +2678,7 @@ public class PlayerStateManager : MonoBehaviour
         ID.events.OnPerformParry -= HandleEnterParryState;
 
 
-
+        ID.events.OnStartPlayer -= EnterStart;
 
         ID.events.OnJump -= HandleJump;
         ID.events.OnWater -= HitWater;

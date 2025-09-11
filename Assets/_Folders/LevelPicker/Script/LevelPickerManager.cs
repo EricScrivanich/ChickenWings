@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 public class LevelPickerManager : MonoBehaviour
 {
+    public float xHillMult;
+    public float yHillMult;
+    public float scaleHillMult;
     private InputController controls;
     [SerializeField] private PathCreator[] paths;
     [SerializeField] private PlayerLevelPickerPathFollwer playerPathFollower;
@@ -50,9 +53,15 @@ public class LevelPickerManager : MonoBehaviour
     [SerializeField] private Transform backHillParent;
 
     [SerializeField] private Vector2 backHillStartPos;
+    [Header("Cam Movement Settings")]
+    [SerializeField] private float delayToMoveCam;
+    [SerializeField] private float moveCamDuration;
 
+    [Header("Additonal Parralax Objects")]
 
-
+    [SerializeField] private Transform[] additionalParralaxObjects;
+    [SerializeField] private Vector2[] parralaxMovementMultipliers;
+    public Vector2[] additionalParralaxObjectPositions;
 
     private readonly Vector3[] rotations = new Vector3[]
       {
@@ -72,9 +81,12 @@ public class LevelPickerManager : MonoBehaviour
     private Sequence signXSeq;
 
     private int currentPopupIndex;
+    public Vector4 BaseCameraData { get; private set; } = new Vector4(0, 0, -10, 5.5f);
+    [SerializeField] private float frontHillMultiplier;
+    private int currentPathIndex;
 
 
-
+    private Camera cam;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -127,13 +139,28 @@ public class LevelPickerManager : MonoBehaviour
 
 
     }
+    public void SetAdditionalObjectPostions()
+    {
+        additionalParralaxObjectPositions = new Vector2[additionalParralaxObjects.Length];
+        for (int i = 0; i < additionalParralaxObjects.Length; i++)
+        {
+            additionalParralaxObjectPositions[i] = additionalParralaxObjects[i].localPosition;
+        }
+    }
 
     private void Start()
     {
+
         string s = PlayerPrefs.GetString("LastLevel", "1-1-0");
         Vector3Int lastLevel = ReturnLevelAsVector(s);
         LevelDataConverter.instance.ReturnAndLoadWorldLevelData(null, lastLevel.x);
         Vector3Int numberToCheck = LevelDataConverter.instance.CurrentFurthestLevel();
+        frontHillParent.position = frontHillStartPos;
+        backHillParent.position = backHillStartPos;
+        frontHillParent.localScale = Vector3.one;
+        Camera.main.transform.position = new Vector3(0, 0, -10);
+
+
 
         List<ILevelPickerPathObject> pathObjects = new List<ILevelPickerPathObject>();
 
@@ -142,16 +169,16 @@ public class LevelPickerManager : MonoBehaviour
         {
             var l = levelPickerPathObjects[i].GetComponent<ILevelPickerPathObject>();
             l.SetLastSelectable(numberToCheck);
-            if (l.ReturnWorldNumber() == lastLevel)
+            if (l.WorldNumber == lastLevel)
             {
                 Debug.Log("Last level found: " + lastLevel);
-                Vector3Int data = l.Return_Type_PathIndex_Order();
+                Vector3Int data = l.Type_PathIndex_Order;
 
                 float d = paths[data.y].path.GetClosestDistanceAlongPath(l.ReturnLinePostion());
                 playerPathFollower.SetInitialPostionAndLayer(paths[data.y], d);
             }
 
-            var nums = l.ReturnWorldNumber();
+            var nums = l.WorldNumber;
             if (nums.y < numberToCheck.y)
             {
                 pathObjects.Add(l);
@@ -189,25 +216,52 @@ public class LevelPickerManager : MonoBehaviour
                 currentTarget.SetSelected(false);
             }
             currentTarget = obj;
-            CreateLastSave(obj.ReturnWorldNumber());
+            CreateLastSave(obj.WorldNumber);
 
 
             currentTarget.SetSelected(true);
-            Vector3Int data = obj.Return_Type_PathIndex_Order();
+            Vector3Int data = obj.Type_PathIndex_Order;
 
             float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
-            playerPathFollower.DoPathToPoint(paths[data.y], d);
-            Debug.LogError("Moving to level: " + obj.ReturnWorldNumber());
-            DoLevelPopupSeq(true, obj.ReturnWorldNumber());
 
-            Vector3 front = obj.ReturnPosScaleFrontHill();
-            Vector3 back = obj.ReturnPosScaleBackHill();
-            if (front == Vector3.zero || back == Vector3.zero)
+
+            if (data.y != currentPathIndex)
             {
-                MoveHillSeq(true, new Vector2(front.x, front.y), front.z, back.z, new Vector2(back.x, back.y), 1.3f);
+                float inbetweenDistance = 0;
+                if (currentPathIndex < data.y)
+                {
+                    inbetweenDistance = paths[currentPathIndex].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
+
+                }
+                else
+                {
+                    inbetweenDistance = 0;
+                }
+
+                playerPathFollower.DoPathToPoint(paths[currentPathIndex], inbetweenDistance, paths[data.y], d);
             }
             else
-                MoveHillSeq(false, new Vector2(front.x, front.y), front.z, back.z, new Vector2(back.x, back.y), 1.3f);
+            {
+                playerPathFollower.DoPathToPoint(paths[data.y], d);
+            }
+
+
+            currentPathIndex = data.y;
+
+
+            Debug.LogError("Moving to level: " + obj.WorldNumber);
+            DoLevelPopupSeq(true, obj.WorldNumber);
+
+            ZoomSeq(currentTarget.CameraPositionAndOrhtoSize, currentTarget.layersShownFrom);
+
+            // Vector3 front = obj.PosScaleFrontHill;
+            // Vector3 back = obj.PosScaleBackHill;
+            // if (front == Vector3.zero || back == Vector3.zero)
+            // {
+            //     MoveHillSeq(true, new Vector2(front.x, front.y), front.z, back.z, new Vector2(back.x, back.y), 1.3f);
+            // }
+            // else
+            //     MoveHillSeq(false, new Vector2(front.x, front.y), front.z, back.z, new Vector2(back.x, back.y), 1.3f);
 
 
 
@@ -229,9 +283,64 @@ public class LevelPickerManager : MonoBehaviour
 
         }
     }
+    private Sequence zoomSeq;
+    [SerializeField] private Ease easeType;
+    private void ZoomSeq(Vector4 data, int layerShownFrom = 0)
+    {
+        if (zoomSeq != null && zoomSeq.IsActive())
+        {
+            zoomSeq.Kill();
+        }
+        zoomSeq = DOTween.Sequence();
+        if (data == Vector4.zero)
+            data = BaseCameraData;
+        float mult = BaseCameraData.w / data.w;
+        Vector2 move = new Vector2(data.x * xHillMult, data.y * yHillMult) * -mult;
+        move += frontHillStartPos;
+        float dur = moveCamDuration;
+        DoLayerStuff(layerShownFrom, delayToMoveCam + dur, easeType);
+
+
+
+        zoomSeq.AppendInterval(delayToMoveCam);
+        zoomSeq.Append(frontHillParent.DOLocalMove(move, dur));
+        zoomSeq.Join(frontHillParent.DOScale(mult * scaleHillMult, dur));
+        zoomSeq.Join(Camera.main.DOOrthoSize(data.w, dur));
+        zoomSeq.Join(Camera.main.transform.DOMove(new Vector3(data.x, data.y, data.z), dur));
+        for (int i = 0; i < additionalParralaxObjects.Length; i++)
+        {
+            zoomSeq.Join(additionalParralaxObjects[i].DOLocalMove(additionalParralaxObjectPositions[i] - new Vector2(data.x * parralaxMovementMultipliers[i].x, data.y * parralaxMovementMultipliers[i].y), dur));
+        }
+        zoomSeq.Play().SetEase(easeType).SetUpdate(true);
+
+
+    }
+    public void DoLayerStuff(int layer, float dur, Ease ease)
+    {
+        foreach (var n in levelPickerObjs)
+        {
+            n.SetLayerFades(layer, dur, ease);
+        }
+    }
+    public void SetHillPos(Vector4 data)
+    {
+        if (data == Vector4.zero)
+            data = BaseCameraData;
+        float mult = BaseCameraData.w / data.w;
+        Vector2 move = new Vector2(data.x * xHillMult, data.y * yHillMult) * -mult;
+        move += frontHillStartPos;
+        frontHillParent.localPosition = move;
+        frontHillParent.localScale = mult * scaleHillMult * Vector3.one;
+        for (int i = 0; i < additionalParralaxObjects.Length; i++)
+        {
+            additionalParralaxObjects[i].localPosition = additionalParralaxObjectPositions[i] - (new Vector2(data.x * parralaxMovementMultipliers[i].x, data.y * parralaxMovementMultipliers[i].y) * mult);
+        }
+
+    }
 
     private void MoveHillSeq(bool revert, Vector2 frontPos, float frontScale, float zoom, Vector2 backPos, float dur)
     {
+        return;
         dur = 1.5f;
         if (adjustHillSeq != null && adjustHillSeq.IsActive())
         {
@@ -241,21 +350,30 @@ public class LevelPickerManager : MonoBehaviour
         if (revert)
         {
             frontPos = frontHillStartPos;
-            backPos = backHillStartPos;
+            // backPos = backHillStartPos;
             frontScale = 1;
             zoom = 5.2f;
         }
         else
         {
             frontPos = new Vector2(frontHillStartPos.x + frontPos.x, frontHillStartPos.y + frontPos.y);
-            backPos = new Vector2(backHillStartPos.x + backPos.x, backHillStartPos.y + backPos.y);
+            // backPos = new Vector2(backHillStartPos.x + backPos.x, backHillStartPos.y + backPos.y);
         }
         adjustHillSeq.AppendInterval(.3f);
         adjustHillSeq.Append(frontHillParent.DOLocalMove(frontPos, dur));
         adjustHillSeq.Join(frontHillParent.DOScale(frontScale, dur));
         adjustHillSeq.Join(Camera.main.DOOrthoSize(zoom, dur));
-        adjustHillSeq.Join(backHillParent.DOLocalMove(backPos, dur));
+        // adjustHillSeq.Join(backHillParent.DOLocalMove(backPos, dur));
         adjustHillSeq.Play().SetEase(Ease.InOutSine).SetUpdate(true);
+    }
+
+    public void BackOutSpecial(float dur)
+    {
+        var target = currentPopup.GetComponent<RectTransform>();
+        Sequence hideSeq = DOTween.Sequence();
+        // hideSeq.Append(target.DOAnchorPosY(normalY - overShootY, overshootUpDuration));
+        hideSeq.Append(target.DOAnchorPosY(topHiddenY, dur));
+        hideSeq.Play();
     }
 
     private void HandleSignY(RectTransform target, bool reverse)
@@ -336,7 +454,8 @@ public class LevelPickerManager : MonoBehaviour
     public void BackOut()
     {
         HapticFeedbackManager.instance.PressUIButton();
-        MoveHillSeq(true, Vector2.zero, 0, 0, Vector2.zero, 1.3f);
+        // MoveHillSeq(true, Vector2.zero, 0, 0, Vector2.zero, 1.3f);
+        ZoomSeq(Vector4.zero);
         currentTarget.SetSelected(false);
         currentTarget = null;
         DoLevelPopupSeq(false, Vector3Int.zero, true);
@@ -406,7 +525,11 @@ public class LevelPickerManager : MonoBehaviour
         nextPopup = Instantiate(levelUiPopupPrefab, levelPopupParent).GetComponent<CanvasGroup>();
         nextPopup.GetComponent<RectTransform>().anchoredPosition = startPos;
 
-        nextPopup.GetComponent<LevelPickerUIPopup>().ShowData(LevelDataConverter.instance.ReturnLevelData(), this, 1, false);
+        int dif = 1;
+        if (currentTarget.difficultyType == 3) dif = 3;
+        if (currentTarget.message != null && currentTarget.message != "")
+            nextPopup.GetComponent<LevelPickerUIPopup>().ShowMessage(currentTarget.message);
+        nextPopup.GetComponent<LevelPickerUIPopup>().ShowData(LevelDataConverter.instance.ReturnLevelData(), this, dif, false);
         nextPopup.gameObject.SetActive(true);
 
 
@@ -480,18 +603,18 @@ public class LevelPickerManager : MonoBehaviour
             {
                 var obj = o.GetComponent<ILevelPickerPathObject>();
 
-                if (obj.ReturnWorldNumber() == nextLevel)
+                if (obj.WorldNumber == nextLevel)
                 {
                     currentTarget = obj;
-                    CreateLastSave(obj.ReturnWorldNumber());
+                    CreateLastSave(obj.WorldNumber);
 
 
                     currentTarget.SetSelected(true);
-                    Vector3Int data = obj.Return_Type_PathIndex_Order();
+                    Vector3Int data = obj.Type_PathIndex_Order;
 
                     float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
                     playerPathFollower.DoPathToPoint(paths[data.y], d);
-                    DoLevelPopupSeq(true, obj.ReturnWorldNumber());
+                    DoLevelPopupSeq(true, obj.WorldNumber);
                     PlayerPrefs.SetString("NextLevel", "Menu");
                     PlayerPrefs.Save();
                     yield break;

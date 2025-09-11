@@ -131,7 +131,7 @@ public class PauseMenuManager : MonoBehaviour
     public void ShowChallenges()
     {
         var c = LevelDataConverter.instance.ReturnLevelData().GetLevelChallenges(false, null);
-        if (c.LevelDifficulty > 0)
+        if (c != null && c.LevelDifficulty > 0)
             challenges.ShowChallengesForLevelPicker(c, LevelDataConverter.instance.ReturnLevelSavedData());
         else
             challenges.gameObject.SetActive(false);

@@ -4,12 +4,15 @@ using TMPro;
 using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System.Collections;
 public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 {
     [SerializeField] private ChallengesUIManager challengeManager;
     [SerializeField] private GameObject badgeObject;
     [SerializeField] private RectTransform chickenObject;
     [SerializeField] private ButtonTouchByIndex[] difficultyButtons;
+
+    [SerializeField] private GameObject lockedDifficultyObject;
 
     [SerializeField] private LevelData levelData;
     [SerializeField] private string sceneLoadOvverride;
@@ -30,6 +33,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 
     [SerializeField] private TextMeshProUGUI levelNameText;
     [SerializeField] private TextMeshProUGUI levelNumberText;
+    [SerializeField] private TextBox messageText;
     private Sequence moveStatSequence;
     [SerializeField] private RectTransform statDisplayParent;
     private RectTransform[] statDisplays;
@@ -113,11 +117,17 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
     }
 
 
-
-    public void ShowData(LevelData data, LevelPickerManager manager, int levelDifficulty = 1, bool redo = false, bool isChallenge = false)
+    public void ShowMessage(string msg)
+    {
+        // messageText.gameObject.SetActive(true);
+        messageText.SetText(msg);
+    }
+    public void ShowData(LevelData data, LevelPickerManager manager, int levelDifficulty = 1, bool redo = false)
     {
         // if (levelDifficulty == 2) levelDifficulty = 1; // Master difficulty is treated as normal difficulty in this context
         data.Difficulty = levelDifficulty;
+        bool isChallenge = false;
+        if (levelDifficulty == 3) isChallenge = true;
         if (redo)
         {
             foreach (Transform child in statDisplayParent)
@@ -293,6 +303,9 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
                     script.SetData(3, this, false, false);
                     script.CheckIfIndex(3);
                     script.SetText(difficultyText[3]);
+                    levelDifficultyText.text = difficultyText[3];
+                    difficultyPanel.gameObject.GetComponent<Button>().interactable = false;
+                    lockedDifficultyObject.SetActive(true);
 
                 }
                 else
@@ -322,6 +335,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 
 
                 }
+                difficultyPanelsParent.gameObject.SetActive(false);
 
 
                 levelNumberText.text = $"{data.levelWorldAndNumber.x}-{data.levelWorldAndNumber.y}";
@@ -371,9 +385,11 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 
 
     }
-
+    private bool playingLevel = false;
     public void PlayLevel()
     {
+        if (playingLevel) return;
+        playingLevel = true;
         HapticFeedbackManager.instance.PressUIButton();
 
         if (LevelDataConverter.instance.ReturnAllCheckPointDataForLevel() == null || willOverwriteCheckPointSave)
@@ -384,15 +400,32 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
         {
             LevelDataConverter.instance.OverwriteCheckPoint((short)checkPointToLoad);
         }
+        // TransitionDirector.instance.SetRectParent(challengeManager.GetComponent<RectTransform>());
+        StartCoroutine(DelayToTransition());
+
+
+    }
+    private IEnumerator DelayToTransition()
+    {
+        levelPickerManager.BackOutSpecial(.8f);
+        yield return new WaitForSeconds(.7f);
         if (levelData.tutorialData == null)
         {
+            // TransitionDirector.instance.GoTo("MainLevelPlayer", levelData.tutorialData.ReturnButtonType());
+            TransitionDirector.instance.UndoDestroy();
             SceneManager.LoadScene("MainLevelPlayer");
+            Destroy(TransitionDirector.instance.gameObject);
+
         }
         else
         {
-            SceneManager.LoadScene("MainLevelPlayTutorial");
-        }
+            TransitionDirector.instance.UndoDestroy();
 
+            SceneManager.LoadScene("MainLevelPlayTutorial");
+            Destroy(TransitionDirector.instance.gameObject);
+
+            // TransitionDirector.instance.GoTo("MainLevelPlayTutorial");
+        }
     }
     public void ExitView()
     {
@@ -423,7 +456,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
             progressData = checkpointData.LevelCheckPointData[index];
         }
 
-        challengeManager?.ShowChallengesForLevelPicker(levelData.GetLevelChallenges(true, progressData), LevelDataConverter.instance.ReturnLevelSavedData());
+        challengeManager?.ShowChallengesForLevelPicker(levelData.GetLevelChallenges(true, progressData), LevelDataConverter.instance.ReturnLevelSavedData(), false);
 
     }
 
@@ -480,12 +513,17 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
     private bool isDifficultyShown = false;
     public void ShowDifficultys()
     {
-        if (isDifficultyShown) return;
+        if (isDifficultyShown)
+        {
+            HideDifficultys(false);
+            return;
+        }
 
         if (difficultySeq != null && difficultySeq.IsActive())
         {
             difficultySeq.Complete();
         }
+        difficultyPanelsParent.gameObject.SetActive(true);
         difficultySeq = DOTween.Sequence();
 
 

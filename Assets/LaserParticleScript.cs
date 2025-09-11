@@ -7,13 +7,15 @@ public class LaserParticleScript : MonoBehaviour
     [SerializeField] private ParticleSystem laserParticle;
     [SerializeField] private float startParticleSpeed;
     [SerializeField] private float startBlurAlpha;
+    [SerializeField] private int maxParticles = 50;
     private float endBlurAlpha = .95f;
     private float minVolume = 0;
     private float maxVolume = .3f;
     private float midVolume = .15f;
+    [SerializeField] private float basePitch = 1;
 
 
-    private float baseMaxVolume = .3f;
+    [SerializeField] private float baseMaxVolume = .3f;
     private float baseMidVolume = .3f;
 
     private SpriteRenderer blurSprite;
@@ -95,14 +97,14 @@ public class LaserParticleScript : MonoBehaviour
     public void ChangeAudioPitch(float pitch)
     {
 
-        audioSource.pitch = pitch;
+        audioSource.pitch = pitch * basePitch;
     }
     private void OnEnable()
     {
 
         Ticker.OnTickAction015 += ChangeVolume;
         AudioManager.instance.OnSetAudioPitch += ChangeAudioPitch;
-        audioSource.pitch = AudioManager.instance.SfxPitch;
+        audioSource.pitch = AudioManager.instance.SfxPitch * basePitch;
         audioSource.volume = 0;
 
     }
@@ -152,7 +154,7 @@ public class LaserParticleScript : MonoBehaviour
 
 
 
-        main.maxParticles = 50;
+        main.maxParticles = maxParticles;
         maxVolume = baseMaxVolume * AudioManager.instance.SfxVolume;
     }
 
@@ -166,6 +168,34 @@ public class LaserParticleScript : MonoBehaviour
         audioSource.volume = 0;
 
 
+
+    }
+    public void FadeOut(float dur)
+    {
+        StartCoroutine(LaserFadeCoroutine(dur));
+    }
+    public IEnumerator LaserFadeCoroutine(float timeLeft)
+    {
+        float t = 0;
+        var main = laserParticle.main;
+        var color = blurSprite.color;
+        while (t < timeLeft)
+        {
+            t += Time.deltaTime;
+
+            maxVolume = Mathf.Lerp(0, midVolume, t / timeLeft);
+
+            // if (amount < .3f) yield return null;
+
+
+            // main.simulationSpeed = Mathf.Lerp(startParticleSpeed, 1, t / timeLeft);
+            // main.startColor = Color.Lerp(startParticleColor, particleColor, t / timeLeft);
+            main.maxParticles = Mathf.RoundToInt(Mathf.Lerp(maxParticles, 3, t / timeLeft));
+            color.a = Mathf.Lerp(endBlurAlpha, 0, t / timeLeft);
+            blurSprite.color = color;
+
+            yield return null;
+        }
 
     }
 

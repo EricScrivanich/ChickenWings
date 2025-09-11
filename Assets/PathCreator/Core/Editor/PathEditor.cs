@@ -100,6 +100,21 @@ namespace PathCreationEditor
                     break;
             }
 
+            if (GUILayout.Button("TransferToLine"))
+            {
+                Vector3[] points = data.ReturnPoints();
+                var l = creator.gameObject.GetComponent<LineRenderer>();
+                l.positionCount = points.Length;
+                for (int i = 0; i < points.Length; i++)
+                {
+                    Vector3 pos = points[i];
+
+                    l.SetPosition(i, pos);
+                    EditorUtility.SetDirty(l);
+
+                }
+            }
+
             // Notify of undo/redo that might modify the path
             if (Event.current.type == EventType.ValidateCommand && Event.current.commandName == "UndoRedoPerformed")
             {

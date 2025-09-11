@@ -7,12 +7,12 @@ public class ShotgunBlast : MonoBehaviour
 {
 
     [SerializeField] private float forceAmount;
-    [SerializeField] private int xForceMultiplier;
+    [SerializeField] private float xForceMultiplier;
     private Rigidbody2D rb;
     private Sequence shotgunBlastSeq;
 
     private Color startColor = new Color(1, 1, 1, 1);
-    private Color endColor = new Color(.4f, .35f, .35f, 0f);
+    private Color endColor = new Color(.35f, .3f, .3f, 0.05f);
     private BoxCollider2D col;
 
     public Sprite[] img;
@@ -31,7 +31,7 @@ public class ShotgunBlast : MonoBehaviour
     private int id;
     private SpriteRenderer sr;
 
-    
+
 
     private void Awake()
     {
@@ -132,7 +132,7 @@ public class ShotgunBlast : MonoBehaviour
 
             if (i == scales.Length - 1)
             {
-                shotgunBlastSeq.AppendCallback(() => Invoke("DisableCollider", .15f));
+                shotgunBlastSeq.AppendCallback(() => Invoke("DisableCollider", .12f));
                 shotgunBlastSeq.Append(transform.DOScale(scales[i], scaleDelays[i]).SetEase(Ease.OutSine));
                 shotgunBlastSeq.Join(sr.DOColor(endColor, scaleDelays[i]).SetEase(Ease.OutSine));
             }
@@ -145,7 +145,7 @@ public class ShotgunBlast : MonoBehaviour
 
         }
 
-        shotgunBlastSeq.Play().OnComplete(() => gameObject.SetActive(false));
+        shotgunBlastSeq.Play().SetUpdate(UpdateType.Fixed).OnComplete(() => gameObject.SetActive(false));
 
         // Once the sequence is complete, mark the animation as finished
         // sequence.OnComplete(() => gameObject.SetActive(false));

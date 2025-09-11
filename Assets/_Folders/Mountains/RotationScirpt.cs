@@ -5,13 +5,14 @@ using UnityEngine;
 public class RotationScirpt : MonoBehaviour
 {
     [SerializeField] private float rotationSpeed;
+    [SerializeField] private float startRotation;
     private Rigidbody2D rb;
     private float currentRotation;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        currentRotation = 0;
+        currentRotation = startRotation;
 
     }
 

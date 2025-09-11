@@ -28,6 +28,11 @@ public class RecordableObjectPool : ScriptableObject
 
             return;
         }
+        else if (size <= 0)
+        {
+
+            return;
+        }
         spawnNumber = 0;
 
         pool = new SpawnedObject[size];
@@ -161,6 +166,11 @@ public class RecordableObjectPool : ScriptableObject
     }
     public void SpawnFloatTwo(DataStructFloatTwo data)
     {
+        if (instantiateOnly)
+        {
+            var o = Instantiate(prefab, data.startPos, Quaternion.identity);
+            o.GetComponent<SpawnedObject>().ApplyFloatTwoData(data);
+        }
         if (pool == null || pool.Length == 0)
         {
 
