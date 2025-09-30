@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 2808384833284924014}
   - component: {fileID: 8661429249817697154}
-  - component: {fileID: 6846138357543624332}
   - component: {fileID: 3585975904208268959}
   - component: {fileID: -2792674135863931971}
-  m_Layer: 28
-  m_Name: GasCloud_0
-  m_TagString: Plane
+  - component: {fileID: 6846138357543624332}
+  m_Layer: 15
+  m_Name: GasCloud
+  m_TagString: Explosive
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -76,9 +76,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -781766449
-  m_SortingLayer: 5
-  m_SortingOrder: 0
+  m_SortingLayerID: 1625503205
+  m_SortingLayer: 7
+  m_SortingOrder: -2
   m_Sprite: {fileID: 1024440197, guid: 167332cd4920a41cdad5b361aee5dff9, type: 3}
   m_Color: {r: 0.45490196, g: 1, b: 0.21176471, a: 1}
   m_FlipX: 0
@@ -90,20 +90,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6846138357543624332
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7501168065405726369}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0f113ba2243744a2accc8bbc53fbe2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animData: {fileID: 11400000, guid: d11fd86dafbb943c5b9d14e3ca82add7, type: 2}
-  maxYSpeed: 3
 --- !u!58 &3585975904208268959
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -138,8 +124,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.009865522}
-  m_Radius: 0.2569976
+  m_Offset: {x: 0, y: -0.0048261285}
+  m_Radius: 0.30107254
 --- !u!50 &-2792674135863931971
 Rigidbody2D:
   serializedVersion: 5
@@ -167,3 +153,17 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &6846138357543624332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7501168065405726369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0f113ba2243744a2accc8bbc53fbe2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animData: {fileID: 11400000, guid: d11fd86dafbb943c5b9d14e3ca82add7, type: 2}
+  subParticlePool: {fileID: 11400000, guid: 1a3be9a544db54d248969bfd199a8011, type: 2}

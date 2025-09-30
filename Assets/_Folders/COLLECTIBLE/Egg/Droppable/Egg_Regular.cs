@@ -124,8 +124,10 @@ public class Egg_Regular : SpawnedQueuedObject
             }
 
 
-
-
+        }
+        else if (other.CompareTag("Explosive"))
+        {
+            other.gameObject.GetComponent<IExplodable>().Explode(false);
         }
     }
     public void EggPig()

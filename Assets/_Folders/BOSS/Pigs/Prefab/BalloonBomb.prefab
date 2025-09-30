@@ -191,10 +191,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893808f128e50421f98c1a4b1b4645ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalExplosionScale: {x: 1, y: 1, z: 1}
-  groundExplosionScale: {x: 0.9, y: 0.9, z: 0.9}
+  groundExplosionScale: {x: 1, y: 1, z: 1}
+  yOffsetGround: 0.1
+  airExplosionScale: 1
   isBomberBomb: 1
   ID: {fileID: 11400000, guid: 1d0c68d6da83a453188ddafa7d20cb8a, type: 2}
+  groundExplosionPool: {fileID: 11400000, guid: 4e73834824bd94baaaf79adc271ef49f, type: 2}
+  normalExplosionPool: {fileID: 11400000, guid: b3ede6ba69fcc4943a05631bd19f5545, type: 2}
 --- !u!50 &7611185947430149999
 Rigidbody2D:
   serializedVersion: 5

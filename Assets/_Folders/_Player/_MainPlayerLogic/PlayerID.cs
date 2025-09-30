@@ -17,6 +17,7 @@ public class PlayerID : ScriptableObject
     public bool pressingSwitchButton;
     public bool pressingHideButton;
 
+
     public bool scytheIsStuck;
     public int PlayerLoadType { get; private set; }
 
@@ -41,6 +42,7 @@ public class PlayerID : ScriptableObject
 
     public LevelChallenges LevelChallenges { get; private set; }
     public Transform _transform { get; private set; }
+    public Rigidbody2D playerRB { get; private set; }
 
 
 
@@ -82,9 +84,10 @@ public class PlayerID : ScriptableObject
     public int livesToLoseOnStart = 0;
 
 
-    public void SetTransform(Transform player)
+    public void SetTransformAndRB(Transform player, Rigidbody2D rb)
     {
         _transform = player;
+        playerRB = rb;
     }
     public int Lives
     {
@@ -415,6 +418,19 @@ public class PlayerID : ScriptableObject
     }
     public void SetPlayerLoadType()
     {
+
+    }
+
+    public Vector2 ReturnFuturePosition(float predictionTime)
+    {
+
+
+
+        // Calculate the future position of the player based on current velocity and gravity
+        Vector2 futurePosition = (Vector2)playerRB.position + playerRB.linearVelocity * predictionTime;
+        futurePosition += Vector2.up * Physics2D.gravity.y * playerRB.gravityScale * Mathf.Pow(predictionTime, 2) / 2;
+        return futurePosition;
+
 
     }
 

@@ -11,6 +11,9 @@ public class ShotgunBlast : MonoBehaviour
     private Rigidbody2D rb;
     private Sequence shotgunBlastSeq;
 
+    [SerializeField] private Rigidbody2D[] bulletParticles;
+    [SerializeField] private Vector3[] countAndVelocitys;
+
     private Color startColor = new Color(1, 1, 1, 1);
     private Color endColor = new Color(.35f, .3f, .3f, 0.05f);
     private BoxCollider2D col;
@@ -68,9 +71,17 @@ public class ShotgunBlast : MonoBehaviour
         Vector2 finalForce = new Vector2(force.x - addedX, force.y);
 
 
-        rb.linearVelocity = finalForce;
+        // rb.linearVelocity = finalForce;
 
         ScaleAndOpacity();
+
+        for (int i = 0; i < countAndVelocitys.Length; i++)
+        {
+            for (int n = (int)countAndVelocitys[i].x; n < (int)countAndVelocitys[i].y; n++)
+            {
+                bulletParticles[n].linearVelocity = bulletParticles[n].transform.right * countAndVelocitys[i].z;
+            }
+        }
 
 
     }
@@ -169,8 +180,18 @@ public class ShotgunBlast : MonoBehaviour
             int type = 1;
             if (isChained) type = 2;
             damageableEntity.Damage(1, type, id);
+            return;
 
         }
+        IExplodable explodable = collider.gameObject.GetComponent<IExplodable>();
+        if (explodable != null && !hasBeenBlocked)
+        {
+
+            explodable.Explode(false);
+            return;
+
+        }
+
     }
 
     private void DisableCollider()

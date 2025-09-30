@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : SpawnedQueuedObject
 {
-    private Rigidbody2D rb;
+
     private float lifeTime = 4.5f;
     private float time = 0;
     private TrailRenderer trail;
@@ -13,13 +13,12 @@ public class Bullet : MonoBehaviour
         trail = GetComponent<TrailRenderer>();
     }
 
-    private void OnEnable()
+    void OnDisable()
     {
-
-        // rb.angularVelocity = 0f;
+        ReturnToPool();
     }
 
-    public void Fire(Vector2 pos, float z, float speed,int flip)
+    public void Fire(Vector2 pos, float z, float speed, int flip)
     {
         transform.position = pos;
         transform.rotation = Quaternion.Euler(0, 0, z);

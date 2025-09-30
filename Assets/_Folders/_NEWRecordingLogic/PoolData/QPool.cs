@@ -20,9 +20,9 @@ public class QPool : ScriptableObject
     }
     public SpawnedQueuedObject GetObject()
     {
-        Debug.Log("Current queue size1 : " + q.Count);
+       
         var obj = q.Dequeue();
-        Debug.Log("Current queue size 2: " + q.Count);
+        
         if (q.Count <= 0)
         {
             Debug.LogWarning("QPool is empty, creating a new object.");
@@ -47,6 +47,12 @@ public class QPool : ScriptableObject
         obj.ResetRB();
         obj.Spawn(pos);
     }
+    public void SpawnWithRotationAndSpeed(Vector2 pos, Quaternion rot, float speed = 0, ushort side = 5)
+    {
+        var obj = GetObject();
+        obj.ResetRB();
+        obj.SpawnWithRotationAndSpeed(pos, rot, speed, side);
+    }
     public void SpawnWithVelocity(Vector2 pos, Vector2 velocity)
     {
         var obj = GetObject();
@@ -54,11 +60,19 @@ public class QPool : ScriptableObject
         obj.SpawnWithVelocity(pos, velocity);
     }
 
-    public void SpawnWithVelocityAndRotation(Vector2 pos, Vector2 velocity, float rotation)
+    public void SpawnSpecial(Vector2 pos, float speed, bool flipped)
     {
         var obj = GetObject();
         obj.ResetRB();
-        obj.SpawnWithVelocityAndRotation(pos, velocity, rotation);
+        obj.SpawnSpecial(pos, speed, flipped);
+
+    }
+
+    public void SpawnWithVelocityAndRotation(Vector2 pos, Vector2 velocity, float rotation, float angularVelocity = 0)
+    {
+        var obj = GetObject();
+        obj.ResetRB();
+        obj.SpawnWithVelocityAndRotation(pos, velocity, rotation, angularVelocity);
     }
     public void SpawnWithVelocityAndRotationAndScale(Vector2 pos, Vector2 velocity, float rotation, float scale)
     {

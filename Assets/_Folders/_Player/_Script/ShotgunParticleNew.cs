@@ -4,10 +4,12 @@ public class ShotgunParticleNew : MonoBehaviour
 {
     [SerializeField] private ShotgunParticleID particleID;
     private SpriteRenderer spriteRenderer;
+    private Rigidbody2D rb;
     float timer = 0f;
 
     void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -39,12 +41,15 @@ public class ShotgunParticleNew : MonoBehaviour
     {
         if (collider.gameObject.CompareTag("Block"))
         {
-            // hasBeenBlocked = true;
-            // AudioManager.instance.PlayParrySound();
-            // rb.linearVelocity *= .4f;
-            // DisableCollider();
-            // Debug.Log("Attack was blocked boi");
-            // return;
+            hasBeenBlocked = true;
+            AudioManager.instance.PlayParrySound();
+
+            Vector2 normal = (transform.position - collider.transform.position).normalized;
+
+            // Reflect current velocity across that normal
+            rb.linearVelocity = Vector2.Reflect(rb.linearVelocity * .7f, normal);
+
+            return;
         }
 
         IDamageable damageableEntity = collider.gameObject.GetComponent<IDamageable>();

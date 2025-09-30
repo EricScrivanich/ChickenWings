@@ -9,6 +9,10 @@ public class SpawnedQueuedObject : MonoBehaviour
     {
         pool = p;
     }
+    public virtual void OnSpawnLogic()
+    {
+
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void Spawn(Vector2 pos)
     {
@@ -16,13 +20,52 @@ public class SpawnedQueuedObject : MonoBehaviour
 
 
         gameObject.SetActive(true);
+        OnSpawnLogic();
+
     }
+
+    public void SpawnWithRotationAndSpeed(Vector2 pos, Quaternion ang, float speed, ushort side)
+    {
+        transform.SetPositionAndRotation(pos, ang);
+        gameObject.SetActive(true);
+
+        switch (side)
+        {
+            case 5:
+                break;
+            case 0:
+
+                rb.linearVelocity = transform.right * speed;
+                break;
+
+            case 1:
+                rb.linearVelocity = transform.up * speed;
+                break;
+
+            case 2:
+                rb.linearVelocity = -transform.up * speed;
+                break;
+
+            case 3:
+                rb.linearVelocity = -transform.right * speed;
+                break;
+
+        }
+    }
+
+    public virtual void SpawnSpecial(Vector2 pos, float speed, bool flipped)
+    {
+
+    }
+
+
     public void ResetRB()
     {
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0;
+            rb.SetRotation(0);
         }
 
     }
@@ -34,11 +77,14 @@ public class SpawnedQueuedObject : MonoBehaviour
 
 
     }
-    public void SpawnWithVelocityAndRotation(Vector2 pos, Vector2 velocity, float rotation)
+    public void SpawnWithVelocityAndRotation(Vector2 pos, Vector2 velocity, float rotation, float angularVelocity = 0)
     {
-        Spawn(pos);
+        transform.SetPositionAndRotation(pos, Quaternion.Euler(Vector3.forward * rotation));
+        gameObject.SetActive(true);
+        OnSpawnLogic();
         rb.linearVelocity = velocity;
-        rb.SetRotation(rotation);
+        // rb.rotation = rotation;
+        if (angularVelocity != 0) rb.angularVelocity = angularVelocity;
 
     }
     public virtual void SpawnWithVelocityAndRotationAndScale(Vector2 pos, Vector2 velocity, float rotation, float scale)

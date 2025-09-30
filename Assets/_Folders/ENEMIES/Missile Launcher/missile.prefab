@@ -193,8 +193,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   normalExplosionScale: {x: 1, y: 1, z: 1}
   groundExplosionScale: {x: 1.4, y: 1.4, z: 1.4}
+  airExplosionScale: 1
   isBomberBomb: 0
   ID: {fileID: 0}
+  groundExplosionPool: {fileID: 11400000, guid: 4e73834824bd94baaaf79adc271ef49f, type: 2}
+  normalExplosionPool: {fileID: 11400000, guid: b3ede6ba69fcc4943a05631bd19f5545, type: 2}
 --- !u!1001 &916972381623192790
 PrefabInstance:
   m_ObjectHideFlags: 0

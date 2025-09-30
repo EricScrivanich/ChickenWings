@@ -21,6 +21,7 @@ public class GasPig : SpawnedObject, IRecordableObject
     [SerializeField] private Transform cloudSpawn;
 
     [SerializeField] private SpriteRenderer gasTexture;
+    [SerializeField] private QPool gasCloudPool;
 
 
 
@@ -159,7 +160,8 @@ public class GasPig : SpawnedObject, IRecordableObject
 
 
             // Instantiate(cloud, cloudSpawn.position, Quaternion.identity, transform);
-            SmokeTrailPool.GetGasCloud?.Invoke(cloudSpawn.position, -speed, flipped);
+            // SmokeTrailPool.GetGasCloud?.Invoke(cloudSpawn.position, -speed, flipped);
+            gasCloudPool.SpawnSpecial(cloudSpawn.position, -speed, flipped);
 
             yield return new WaitForSeconds(delay);
 

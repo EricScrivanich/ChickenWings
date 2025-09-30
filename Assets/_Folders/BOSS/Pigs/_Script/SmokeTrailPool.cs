@@ -11,7 +11,7 @@ public class SmokeTrailPool : MonoBehaviour
     private SmokeTrailLineNew[] jetPackSmokeTrails;
     private SmokeTrailLineNew[] gasSmokeTrails;
 
-    private GasCloud[] gasClouds;
+    // private GasCloud[] gasClouds;
 
     private GameObject[] gasCloudHitParticles = new GameObject[3];
     private Vector2 eggFieldOffset = new Vector2(.15f, .7f);
@@ -39,8 +39,7 @@ public class SmokeTrailPool : MonoBehaviour
 
 
     public static Action<Vector2, float, int> GetJetpackSmokeTrail;
-    public static Action<Vector2, float, bool> GetGasCloud;
-    public static Action<Vector2> GetGasCloudHitParicles;
+   
     public static Action<Vector2, Vector2> GetPlayerParticleCollider;
     public static Action<Vector2, Vector2> GetEggParticleCollider;
     public static Action<Vector2, float, float, int> GetGasSmokeTrail;
@@ -73,17 +72,17 @@ public class SmokeTrailPool : MonoBehaviour
     void Start()
     {
         jetPackSmokeTrails = new SmokeTrailLineNew[10];
-        gasClouds = new GasCloud[gasCloudPoolSize];
+        // gasClouds = new GasCloud[gasCloudPoolSize];
 
 
-        for (int i = 0; i < gasCloudPoolSize; i++)
-        {
-            var obj = Instantiate(gasCloudPrefab);
+        // for (int i = 0; i < gasCloudPoolSize; i++)
+        // {
+        //     var obj = Instantiate(gasCloudPrefab);
 
-            gasClouds[i] = obj.GetComponent<GasCloud>();
-            obj.SetActive(false);
+        //     gasClouds[i] = obj.GetComponent<GasCloud>();
+        //     obj.SetActive(false);
 
-        }
+        // }
 
         if (gasCloudPoolSize > 0)
         {
@@ -141,20 +140,16 @@ public class SmokeTrailPool : MonoBehaviour
         }
     }
 
-    private void GetGasCloudFunc(Vector2 pos, float speed, bool flipped)
-    {
-        var obj = gasClouds[currentGasCloudIndex];
-        obj.transform.position = pos;
-        obj.Eject(speed, flipped);
-        currentGasCloudIndex++;
-        if (currentGasCloudIndex >= gasCloudPoolSize) currentGasCloudIndex = 0;
+    // private void GetGasCloudFunc(Vector2 pos, float speed, bool flipped)
+    // {
+    //     var obj = gasClouds[currentGasCloudIndex];
+    //     obj.transform.position = pos;
+    //     obj.Eject(speed, flipped);
+    //     currentGasCloudIndex++;
+    //     if (currentGasCloudIndex >= gasCloudPoolSize) currentGasCloudIndex = 0;
 
-    }
-    private void GetGasCloudHitPariclesFunc(Vector2 pos)
-    {
-        gasCloudHitParticles[currentGasCloudHitParticlesIndex].transform.position = pos;
-        gasCloudHitParticles[currentGasCloudHitParticlesIndex].SetActive(true);
-    }
+    // }
+   
 
     private void GetPlayerParticleColldierFunc(Vector2 pos, Vector2 vel)
     {
@@ -255,8 +250,8 @@ public class SmokeTrailPool : MonoBehaviour
         SmokeTrailPool.OnDisableGasTrail += DisableGasTrail;
         SmokeTrailPool.GetPlayerParticleCollider += GetPlayerParticleColldierFunc;
         SmokeTrailPool.GetEggParticleCollider += GetEggParticleColldierFunc;
-        SmokeTrailPool.GetGasCloud += GetGasCloudFunc;
-        SmokeTrailPool.GetGasCloudHitParicles += GetGasCloudHitPariclesFunc;
+        // SmokeTrailPool.GetGasCloud += GetGasCloudFunc;
+        
 
 
 
@@ -271,8 +266,8 @@ public class SmokeTrailPool : MonoBehaviour
         SmokeTrailPool.OnDisableGasTrail -= DisableGasTrail;
         SmokeTrailPool.GetPlayerParticleCollider -= GetPlayerParticleColldierFunc;
         SmokeTrailPool.GetEggParticleCollider -= GetEggParticleColldierFunc;
-        SmokeTrailPool.GetGasCloud -= GetGasCloudFunc;
-        SmokeTrailPool.GetGasCloudHitParicles -= GetGasCloudHitPariclesFunc;
+        // SmokeTrailPool.GetGasCloud -= GetGasCloudFunc;
+      
 
 
 

@@ -1125,7 +1125,7 @@ SpriteRenderer:
   m_SortingLayerID: -884308203
   m_SortingLayer: 4
   m_SortingOrder: 4
-  m_Sprite: {fileID: 56435863, guid: bc78af1f649714894b26549ea26b2150, type: 3}
+  m_Sprite: {fileID: -6200004193795556738, guid: ef887454a4e754ca09df031cb2af135d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1575,6 +1575,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   turn_speed: 5
   pupil: {fileID: 7822003516759810369}
+  missilePool: {fileID: 11400000, guid: 7c309aefabbcf4ac997f720c84d8bd4b, type: 2}
   movementType: 0
   missileType: 0
   flippedPig: 1
@@ -1680,6 +1681,7 @@ MonoBehaviour:
   - {fileID: 7038030422047428354}
   - {fileID: 5965919679269796104}
   - {fileID: 2836467362049434700}
+  - {fileID: 6049435038662740005}
   pigMaterial: {fileID: 2100000, guid: fab0f028bdfc64ad1b5819a0ef65651d, type: 2}
   defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!210 &8102597127563045429
@@ -2429,6 +2431,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d65cf513d8f549a788b2260f2be90f6, type: 3}
+--- !u!212 &6049435038662740005 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 5748338819200951555, guid: 6d65cf513d8f549a788b2260f2be90f6, type: 3}
+  m_PrefabInstance: {fileID: 2032771251919187238}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7912086875844666517 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8212520323997010355, guid: 6d65cf513d8f549a788b2260f2be90f6, type: 3}

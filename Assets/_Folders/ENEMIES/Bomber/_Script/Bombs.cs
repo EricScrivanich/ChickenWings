@@ -1,14 +1,15 @@
 using UnityEngine;
 
-public class Bombs : MonoBehaviour
+public class Bombs : SpawnedQueuedObject
 {
     public PlaneManagerID ID;
     // private DropBomb dropBombController;
     private Animator anim;
 
     private Vector2 dropForceAverage = new Vector2(.2f, .2f);
+    
 
-    private Rigidbody2D rb;
+   
 
     private bool isDropped;
 
@@ -30,6 +31,10 @@ public class Bombs : MonoBehaviour
 
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, rotationSpeed * Time.fixedDeltaTime);
         }
+    }
+    private void OnDisable()
+    {
+        ReturnToPool();
     }
 
     public void GetBomb(float force, bool dropped, int side)

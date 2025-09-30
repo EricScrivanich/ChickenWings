@@ -46,55 +46,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolName: ExplosionPool
-  poolType: 1
+  poolType: 2
   poolWasJustCreatedByAPI: 0
   enablePoolEvents: 0
   enablePoolProtection: 0
   dontDestroyOnLoad: 0
   poolItems:
-  - prefabToPool: {fileID: 7542614907565986036, guid: b3f7b40842fcd4769b77e8d150574559, type: 3}
-    poolSizeOptions: 0
-    poolSize: 8
-    limitPoolSize: 100
-    keepOrganized: 0
-    recycleSpawnedObjects: 0
-    resetScaleOnEverySpawn: 0
-    spawnedItemScale: 0
-    customSpawnScale: {x: 1, y: 1, z: 1}
-    customSpawnScaleMin: {x: 0, y: 0, z: 0}
-    customSpawnScaleMax: {x: 1, y: 1, z: 1}
-    customSpawnScaleProportionalMin: 0
-    customSpawnScaleProportionalMax: 1
-    resetLayerOnEverySpawn: 0
-    spawnedItemLayer: 0
-    customSpawnLayer: 0
-    useLazyPreloading: 0
-    lazyPreloadingInstancesOnAwake: 1
-    lazyPreloadingInitialDelay: 1
-    lazyPreloadingInstancesPerPass: 1
-    lazyPreloadingDelayBetweenPasses: 0.2
-    enableAutoDespawn: 0
-    despawnMode: 0
-    despawnAfterHowManySeconds: 5
-    despawnRandomRangeMin: 2
-    despawnRandomRangeMax: 5
-    notifications: 0
-    enableInstantiateDelegates: 0
-    enableDestroyDelegates: 0
-    maxInstancesSpawnedAtOnce: 0
-    totalNumberOfSpawns: 0
-    totalNumberOfDespawns: 0
-    timeSincePoolLastInitializedAnInstance: 0
-    timeSincePoolLastSpawnedAnInstance: 0
-    timeSincePoolLastDespawnedAnInstance: 0
-    tab: 0
-    instanceSpawnedProgressBar: 0
-    instanceSpawnedProgressBarLerped: 0
-    prefabTabIsOpen: 1
   - prefabToPool: {fileID: 3979571776137083320, guid: 1369303fd6ad24720ae7f0e30aec5fb3, type: 3}
-    poolSizeOptions: 0
-    poolSize: 4
-    limitPoolSize: 100
+    poolSizeOptions: 2
+    poolSize: 0
+    limitPoolSize: 4
     keepOrganized: 0
     recycleSpawnedObjects: 0
     resetScaleOnEverySpawn: 0
@@ -132,7 +93,7 @@ MonoBehaviour:
     prefabTabIsOpen: 1
   - prefabToPool: {fileID: 8271352619531328320, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
     poolSizeOptions: 0
-    poolSize: 6
+    poolSize: 8
     limitPoolSize: 100
     keepOrganized: 0
     recycleSpawnedObjects: 1
@@ -165,13 +126,13 @@ MonoBehaviour:
     timeSincePoolLastInitializedAnInstance: 0
     timeSincePoolLastSpawnedAnInstance: 0
     timeSincePoolLastDespawnedAnInstance: 0
-    tab: 1
+    tab: 2
     instanceSpawnedProgressBar: 0
     instanceSpawnedProgressBarLerped: 0
     prefabTabIsOpen: 1
   - prefabToPool: {fileID: 785694925829598545, guid: 83a64e926b8db416fa6bf87798d2196b, type: 3}
-    poolSizeOptions: 0
-    poolSize: 8
+    poolSizeOptions: 2
+    poolSize: 0
     limitPoolSize: 100
     keepOrganized: 0
     recycleSpawnedObjects: 0
@@ -204,16 +165,16 @@ MonoBehaviour:
     timeSincePoolLastInitializedAnInstance: 0
     timeSincePoolLastSpawnedAnInstance: 0
     timeSincePoolLastDespawnedAnInstance: 0
-    tab: 2
+    tab: 0
     instanceSpawnedProgressBar: 0
     instanceSpawnedProgressBarLerped: 0
     prefabTabIsOpen: 1
   - prefabToPool: {fileID: 1580950385546501464, guid: 1d64e9d2d546542bcbf1e71750d601ac, type: 3}
-    poolSizeOptions: 0
-    poolSize: 7
+    poolSizeOptions: 2
+    poolSize: 1
     limitPoolSize: 100
     keepOrganized: 0
-    recycleSpawnedObjects: 0
+    recycleSpawnedObjects: 1
     resetScaleOnEverySpawn: 0
     spawnedItemScale: 0
     customSpawnScale: {x: 1, y: 1, z: 1}
@@ -243,7 +204,7 @@ MonoBehaviour:
     timeSincePoolLastInitializedAnInstance: 0
     timeSincePoolLastSpawnedAnInstance: 0
     timeSincePoolLastDespawnedAnInstance: 0
-    tab: 2
+    tab: 0
     instanceSpawnedProgressBar: 0
     instanceSpawnedProgressBarLerped: 0
     prefabTabIsOpen: 1

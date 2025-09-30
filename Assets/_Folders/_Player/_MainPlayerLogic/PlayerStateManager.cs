@@ -297,7 +297,7 @@ public class PlayerStateManager : MonoBehaviour
     #region Base
     private void Awake()
     {
-        ID.SetTransform(transform);
+
 
 
         if (mutePlayerAudio)
@@ -366,6 +366,8 @@ public class PlayerStateManager : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+
+        ID.SetTransformAndRB(transform, rb);
         if (shotgunObj != null)
             shotgunObj.SetActive(false);
 

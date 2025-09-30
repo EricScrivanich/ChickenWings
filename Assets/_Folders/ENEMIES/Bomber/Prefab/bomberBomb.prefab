@@ -165,7 +165,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.2806438}
+  m_Offset: {x: -0.007654302, y: 0.25767964}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5211224, y: 0.21685942}
@@ -175,7 +175,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.29566494, y: 0.7630517}
+  m_Size: {x: 0.3262831, y: 0.7171234}
   m_EdgeRadius: 0
 --- !u!114 &6265668242767182787
 MonoBehaviour:
@@ -189,7 +189,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893808f128e50421f98c1a4b1b4645ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalExplosionScale: {x: 0.8, y: 0.8, z: 0.8}
-  groundExplosionScale: {x: 0.8, y: 0.65, z: 1}
+  groundExplosionScale: {x: 1, y: 1.1, z: 1}
+  yOffsetGround: -0.15
+  airExplosionScale: 0.8
   isBomberBomb: 1
   ID: {fileID: 11400000, guid: 1d0c68d6da83a453188ddafa7d20cb8a, type: 2}
+  groundExplosionPool: {fileID: 11400000, guid: 4e73834824bd94baaaf79adc271ef49f, type: 2}
+  normalExplosionPool: {fileID: 11400000, guid: b3ede6ba69fcc4943a05631bd19f5545, type: 2}

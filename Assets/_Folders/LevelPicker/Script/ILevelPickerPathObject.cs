@@ -4,6 +4,7 @@ public class ILevelPickerPathObject : MonoBehaviour
 {
     [SerializeField] private Transform pathTransform;
     public int layerID = 1;
+    public int challengeType = 0;
     public int layersShownFrom = 0;
 
     public int difficultyType;

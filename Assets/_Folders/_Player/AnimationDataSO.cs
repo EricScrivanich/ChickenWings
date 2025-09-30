@@ -6,6 +6,7 @@ using UnityEngine;
 public class AnimationDataSO : ScriptableObject
 {
     public Sprite[] sprites;
+ 
     public Vector2 RandomDelaySpriteSwitch;
     public float constantSwitchTime;
     public float[] opacityTargets;

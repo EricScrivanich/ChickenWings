@@ -9,6 +9,9 @@ public class Gun : MonoBehaviour
     private SpriteRenderer smokeSprite;
     [SerializeField] private SpriteRenderer gunSprite;
     [SerializeField] private ExplosivesPool pool;
+    [SerializeField] private QPool bulletPool;
+    // [SerializeField] private QPool bulletPool;
+    [SerializeField] private float bulletScale;
 
     private enum RecoilType
     {
@@ -76,6 +79,8 @@ public class Gun : MonoBehaviour
         }
         int f = flipped ? -1 : 1;
         pool.GetBullet(bulletSpawnPoint.position, moveRecoil.eulerAngles.z + shootingAngleAdjustment, bulletSpeed, f);
+        // bulletPool.SpawnWithRotationAndSpeed(ulletSpawnPoint.position,moveRecoil,bulletSpeed)
+        // bulletPool.SpawnWithVelocityAndRotationAndScale(bulletSpawnPoint.position,)
 
         if (kickRange != Vector2.zero)
         {

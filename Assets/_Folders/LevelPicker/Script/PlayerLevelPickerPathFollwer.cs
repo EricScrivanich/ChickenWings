@@ -7,7 +7,7 @@ using DG.Tweening;
 public class PlayerLevelPickerPathFollwer : MonoBehaviour
 {
 
-    [SerializeField] private PathCreator[] paths;
+  
 
     private float speed;
 
@@ -36,6 +36,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     [SerializeField] private int pathIndex;
 
     private LevelPickerPathData pathData;
+    private LevelPickerManager pathManager;
     private Animator anim;
     private Coroutine followPathCoroutine;
 
@@ -45,6 +46,10 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         sortingGroup = GetComponent<SortingGroup>();
+    }
+    public void SetPathManager(LevelPickerManager p)
+    {
+        pathManager = p;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -119,14 +124,15 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         Debug.Log("Set initial position and layer: " + currentLayer + " at distance: " + currentDistance);
 
     }
-
-    public void DoPathToPoint(PathCreator path, float distance, PathCreator path2 = null, float distanceToTravel2 = 0)
+    private int currentPathIndex;
+    private int futurePathIndex;
+    public void DoPathToPoint(PathCreator path, float distance, PathCreator path2 = null, float distanceToTravel2 = 0, int pathIndex2 = 0)
     {
         if (followPathCoroutine != null)
         {
             StopCoroutine(followPathCoroutine);
         }
-        followPathCoroutine = StartCoroutine(DoPath(path, distance, path2, distanceToTravel2));
+        followPathCoroutine = StartCoroutine(DoPath(path, distance, path2, distanceToTravel2, pathIndex2));
         hitZoom = false;
 
 
@@ -160,7 +166,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     private float targetZoom;
     private bool hitZoom = true;
 
-    private IEnumerator DoPath(PathCreator path, float distanceToTravel, PathCreator path2 = null, float distanceToTravel2 = 0)
+    private IEnumerator DoPath(PathCreator path, float distanceToTravel, PathCreator path2 = null, float distanceToTravel2 = 0, int pathIndex2 = 0)
     {
         if (path == null) yield break;
 
@@ -239,6 +245,8 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         if (path2 != null)
         {
             currentDistance = path2.path.GetClosestDistanceAlongPath(transform.position);
+            path2.ReturnLayerForStart(currentDistance / path2.path.length);
+            pathManager.SetCurrentPathIndex(pathIndex2);
             followPathCoroutine = StartCoroutine(DoPath(path2, distanceToTravel2));
 
         }

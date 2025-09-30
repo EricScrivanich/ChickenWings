@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using HellTap.PoolKit;
+
 
 public class MissilePigScript : SpawnedObject, IRecordableObject
 {
     [SerializeField] private float turn_speed;
 
     [SerializeField] private Transform pupil;
+    [SerializeField] private QPool missilePool;
 
     public int movementType;
     public int missileType;
@@ -67,7 +68,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
 
     private bool isInitialized = false;
 
-    private Pool pool; // Drag your pool reference here in the inspector
+    // private Pool pool; // Drag your pool reference here in the inspector
 
 
     // Start is called before the first frame update
@@ -75,7 +76,7 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
     {
 
 
-        pool = PoolKit.GetPool("ExplosionPool");
+        // pool = PoolKit.GetPool("ExplosionPool");
         if (GameObject.Find("Player") != null)
             player = GameObject.Find("Player").GetComponent<Transform>();
     }
@@ -178,80 +179,14 @@ public class MissilePigScript : SpawnedObject, IRecordableObject
         yield return new WaitForSeconds(.2f);
 
         // Spawn the missile from the pool with the final rotation
-        pool.Spawn("missile", missileImage.transform.position, launchAim.rotation);
+        // pool.Spawn("missile", missileImage.transform.position, launchAim.rotation);
+        missilePool.SpawnWithRotationAndSpeed(missileImage.transform.position, launchAim.rotation);
         missileImage.enabled = false;
         yield return new WaitForSeconds(.2f);
         Reload();
     }
 
-    private IEnumerator LaunchMissile()
-    {
-        float elapsedTime = 0f;
-        bool playerInRange = true;
-        Quaternion targetRotation;
-        Quaternion initialRotation = launchAim.rotation;
-        Vector2 direction = player.position - launchAim.position;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 270;
-
-        if (flipped)
-        {
-            angle -= 270;
-            targetRotation = Quaternion.Euler(0f, 180, angle);
-        }
-        else
-            targetRotation = Quaternion.Euler(0f, 0, angle);
-
-
-
-
-
-        while (elapsedTime < aimTime)
-        {
-            elapsedTime += Time.deltaTime;
-
-            // Check if the player is still in range
-            float distance = player.transform.position.x - transform.position.x;
-            playerInRange = (distance > rangesMinMaxVar.x && distance < rangesMinMaxVar.y);
-
-            if (playerInRange)
-            {
-
-
-                // Adjust the direction based on the flipped state
-
-
-                // Calculate the rotation angle
-
-
-                // Clamp the rotation to not exceed 90 degrees and not go below 10 degrees
-                if (flippedPig)
-                {
-                    angle = Mathf.Clamp(angle, -90f, -10f);  // Adjust clamping for flipped pig
-                }
-                else
-                    // {
-                    angle = Mathf.Clamp(angle, 10f, 90f);
-                // }
-
-
-
-                launchAim.rotation = Quaternion.Slerp(initialRotation, targetRotation, elapsedTime / aimTime);
-            }
-
-            yield return null;
-        }
-        if (!canAttack) yield break;
-
-        ps.Play();
-        yield return new WaitForSeconds(.2f);
-
-        // Spawn the missile from the pool with the final rotation
-        pool.Spawn("missile", missileImage.transform.position, launchAim.rotation);
-        missileImage.enabled = false;
-        yield return new WaitForSeconds(.2f);
-        Reload();
-    }
-
+   
     private IEnumerator ReloadCoroutine()
     {
         float elapsedTime = 0f;

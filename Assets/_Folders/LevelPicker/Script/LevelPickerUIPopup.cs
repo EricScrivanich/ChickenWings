@@ -337,8 +337,12 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
                 }
                 difficultyPanelsParent.gameObject.SetActive(false);
 
+                if (LevelDataConverter.currentChallengeType != 0)
+                    levelNumberText.text = $" {data.levelWorldAndNumber.x}-{data.levelWorldAndNumber.y}-<sprite name=\"{LevelDataConverter.currentChallengeType}\">";
+                else
+                    levelNumberText.text = $"{data.levelWorldAndNumber.x}-{data.levelWorldAndNumber.y}";
 
-                levelNumberText.text = $"{data.levelWorldAndNumber.x}-{data.levelWorldAndNumber.y}";
+
                 if (data.checkPointSteps != null && data.checkPointSteps.Length > 0)
                 {
                     for (int i = 0; i < data.checkPointSteps.Length; i++)

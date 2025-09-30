@@ -58,8 +58,8 @@ public class PopUpsDisplay : MonoBehaviour
 
     private string levelName;
     private int levelNum;
-    private float fadeInDurationFroz = .7f;
-    private float fadeOutDurationFroz = .2f;
+    private float fadeInDurationFroz = .45f;
+    private float fadeOutDurationFroz = .25f;
     [SerializeField] private float frozenTime = .2f;
 
 
@@ -143,8 +143,10 @@ public class PopUpsDisplay : MonoBehaviour
             showScore = false;
             if (levelData.levelWorldAndNumber != Vector3Int.zero)
             {
-
-                textLevelNum.text = "Level " + levelData.levelWorldAndNumber.x.ToString() + "-" + levelData.levelWorldAndNumber.y.ToString();
+                if (LevelDataConverter.currentChallengeType != 0)
+                    textLevelNum.text = $" {levelData.levelWorldAndNumber.x}-{levelData.levelWorldAndNumber.y}-<sprite name=\"{LevelDataConverter.currentChallengeType}\">";
+                else
+                    textLevelNum.text = "Level " + levelData.levelWorldAndNumber.x.ToString() + "-" + levelData.levelWorldAndNumber.y.ToString();
                 LvlID.LevelTitle = textLevelNum.text;
                 textLevelName.text = levelData.LevelName;
 
@@ -287,7 +289,7 @@ public class PopUpsDisplay : MonoBehaviour
 
     void OnEnable()
     {
-        ID.globalEvents.Frozen += FrozenEvent;
+        ID.globalEvents.OnPlayerFrozen += FrozenEvent;
         ID.globalEvents.OnFinishedLevel += ShowFinishLevelPopup;
 
         if (LvlID != null)
@@ -309,7 +311,7 @@ public class PopUpsDisplay : MonoBehaviour
 
     void OnDisable()
     {
-        ID.globalEvents.Frozen -= FrozenEvent;
+        ID.globalEvents.OnPlayerFrozen -= FrozenEvent;
         ID.globalEvents.OnFinishedLevel -= ShowFinishLevelPopup;
         if (newHighScoreSeq != null && newHighScoreSeq.IsPlaying())
             newHighScoreSeq.Kill();
@@ -377,17 +379,21 @@ public class PopUpsDisplay : MonoBehaviour
     //     }
     // }
 
-    private void FrozenEvent()
+    private bool isFrozen = false;
+
+    private void FrozenEvent(bool frozen)
     {
-        StartCoroutine(FadeInFrozenUI());
+        isFrozen = frozen;
+        if (frozen)
+            StartCoroutine(ShowFrozen());
     }
 
-    private IEnumerator FadeInFrozenUI()
+    private IEnumerator ShowFrozen()
     {
         Frozen.SetActive(true);
         // FrozenOverlay.SetActive(true);
         float elapsedTime = 0;
-        while (elapsedTime < fadeInDuration)
+        while (isFrozen && elapsedTime < fadeInDurationFroz)
         {
             float fadeAmount = Mathf.Lerp(1, 0, elapsedTime / fadeInDurationFroz);
             frozenMaterial.SetFloat("_FadeAmount", fadeAmount);
@@ -395,8 +401,22 @@ public class PopUpsDisplay : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        yield return new WaitForSeconds(frozenTime);
-        StartCoroutine(FadeOutFrozenUI());
+        if (isFrozen)
+            while (isFrozen)
+            {
+                yield return null;
+            }
+
+        elapsedTime = 0;
+        while (elapsedTime < fadeOutDurationFroz)
+        {
+            float fadeAmount = Mathf.Lerp(0, 1, elapsedTime / fadeOutDurationFroz);
+            frozenMaterial.SetFloat("_FadeAmount", fadeAmount);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        Frozen.SetActive(false);
     }
 
     private IEnumerator FadeOutFrozenUI()

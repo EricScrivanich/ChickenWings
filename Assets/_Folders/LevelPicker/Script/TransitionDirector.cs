@@ -23,10 +23,10 @@ public class TransitionDirector : MonoBehaviour
     [SerializeField] private bool lockInputs = true;
     public bool mainMenuStarted = false;
     private string lastScene;
-    
+
     public Action<bool> OnHandleGameUI;
     public Action<float, Ease, float> OnDoUITween;
-   
+
 
     bool busy;
 
@@ -43,8 +43,10 @@ public class TransitionDirector : MonoBehaviour
     }
     public void UndoDestroy()
     {
-        mainCam.transform.parent = null;
-       
+        var o = GameObject.Find("Background").transform;
+        if (o != null)
+            mainCam.transform.parent = o;
+
     }
     void Start()
     {
@@ -153,62 +155,6 @@ public class TransitionDirector : MonoBehaviour
         yield return null;
 
 
-        // SetObjectsActiveInNewScene("ExplosionPool"); 
-        // SetObjectsActiveInNewScene("PigPool");
-        // yield return null;
-
-
-
-
-
-
-
-
-        //         load.allowSceneActivation = true;
-        //     }
-        //     yield return null;
-        // }
-
-        // while (!unload.isDone) yield return null;
-
-
-
-
-        // set scene active
-
-
-
-
-
-        // 3) Set next scene active and unload previous (except our DDOL objects)
-        // for (int i = 0; i < SceneManager.sceneCount; i++)
-        // {
-        //     Scene s = SceneManager.GetSceneAt(i);
-        //     if (s.isLoaded && s.name != sceneName && s.rootCount > 0)
-        //     {
-        //         // skip DontDestroyOnLoad scene (it has no unload API)
-
-        //         SceneManager.UnloadSceneAsync(s);
-        //     }
-        // }
-
-
-        // Unload any other non-persistent scenes (optional: track previous scene name yourself)
-
-
-        // Give one frame for objects to initialize so the camera reference is valid
-        // yield return null;
-
-        // 4) Reacquire camera reference if the new scene has a different one
-
-
-        // Align camera X/Z with the new scene’s starting point if needed
-        // (You can keep same X/Z; we only move Y down.)
-        // Vector3 targetDownPos = mainCam.transform.position;
-        // targetDownPos.y = upPos.y - travelUpDistance; // down to original offset
-        // mainCam.transform.position = new Vector3(startPos.x, upPos.y, startPos.z); // keep XZ consistent
-
-        // 5) Move camera down into new scene
         if (sceneName == "MainMenu")
         {
             var objToKeepDown = GameObject.Find("MenuButtons").GetComponent<RectTransform>();
@@ -222,21 +168,11 @@ public class TransitionDirector : MonoBehaviour
 
         // }
         mainCam.DOOrthoSize(5.5f, downDuration - .2f).SetEase(ease);
+        Debug.LogError("Doing Screen Ortho");
         // OnDoUITween?.Invoke(downDuration, ease, travelUpDistance);
         // OnLoadNewScene?.Invoke();
         yield return mainCam.transform.DOMoveY(0, downDuration).SetEase(ease).WaitForCompletion();
-        // yield return new WaitForSeconds(downDuration - .5f);
-        // // ShowPlayerUI?.Invoke(true, buttonsToShow);
-        // yield return new WaitForSeconds(.4f);
-        // player.events.OnStartPlayer?.Invoke();
-        // yield return new WaitForSecondsRealtime(0.4f);
-        // if (sceneName == "MainMenu" || sceneName == "LevelPicker") // Only unload for these scenes since it does not break anything
 
-        // else
-        // {
-        //     yield return new WaitForSecondsRealtime(5f);
-        //     SceneManager.UnloadSceneAsync("LoadScreen");
-        // }
         SceneManager.UnloadSceneAsync("LoadScreen");
 
 

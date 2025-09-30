@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 269157914743974884}
   - component: {fileID: 1757340996715640026}
   - component: {fileID: 19286034931686636}
-  - component: {fileID: 4456695130022949790}
   m_Layer: 0
   m_Name: ExplosionBlemish
   m_TagString: Untagged
@@ -29,10 +28,9 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.78, y: -4.58, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.4, z: 1}
+  m_LocalScale: {x: 1, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7407119869202521708}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1757340996715640026
@@ -80,7 +78,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 48a8cef368afb4897b02ca2e8455f0cd, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -102,172 +100,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a929ac7b5c5d2495c9ab1011dd4ca0b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: {fileID: 11400000, guid: 1d0c68d6da83a453188ddafa7d20cb8a, type: 2}
-  animData: {fileID: 11400000, guid: 3860b4daa0d8c435e916c5edc9853033, type: 2}
-  smoke: {fileID: 5044998609489296459}
---- !u!114 &4456695130022949790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1580950385546501464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfeb76cabbfdd47a1b1db9ef7bdd0e66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tab: 0
-  pool: {fileID: 0}
-  aliveTime: 0
-  despawnMode: 4
-  despawnCountdown: 5
-  despawnCountdownRandomMin: 4
-  despawnCountdownRandomMax: 6
-  particleSystemToUse: 0
-  useThisParticleSystem: {fileID: 0}
-  playParticleSystemOnSpawn: 1
-  audioSourceToUse: 0
-  useThisAudioSource: {fileID: 0}
-  playAudioSourceOnSpawn: 1
-  overlapType: 3
-  overlapOffset: {x: 0, y: 0, z: 0}
-  overlapRadius: 1
-  overlapScale: {x: 0.6, y: 0.3, z: 1}
-  overlapAlsoDespawnAfterCountdown: 0
-  overlapCountdown: 5
-  colliderAlsoDespawnAfterCountdown: 1
-  colliderCountdown: 5
-  useCollisionEnter: 1
-  useCollisionStay: 0
-  useCollisionExit: 0
-  triggerAlsoDespawnAfterCountdown: 1
-  triggerCountdown: 5
-  useTriggerEnter: 1
-  useTriggerStay: 0
-  useTriggerExit: 0
-  collider2DAlsoDespawnAfterCountdown: 1
-  collider2DCountdown: 5
-  useCollisionEnter2D: 1
-  useCollisionStay2D: 0
-  useCollisionExit2D: 0
-  trigger2DAlsoDespawnAfterCountdown: 1
-  trigger2DCountdown: 5
-  useTriggerEnter2D: 1
-  useTriggerStay2D: 0
-  useTriggerExit2D: 0
-  raycast3DAlsoDespawnAfterCountdown: 1
-  raycast3DCountdown: 5
-  raycast3DmaxHits: 30
-  raycast3DDistance: 1.5
-  raycast3DDirection: {x: 0, y: 0, z: 1}
-  raycast2DAlsoDespawnAfterCountdown: 1
-  raycast2DCountdown: 5
-  raycast2DmaxHits: 30
-  raycast2DDistance: 1.5
-  raycast2DDirection: {x: 1, y: 0}
-  raycast2DMinZDepth: -Infinity
-  raycast2DMaxZDepth: Infinity
-  sourceOfCollisions: 0
-  collisionSourceGameObject: {fileID: 0}
-  resetRigidbodyVelocitiesOnSpawn: 0
-  filterLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  filterTags: []
-  queryTriggerInteraction: 0
-  lastCollisionPoint: {x: 0, y: 0, z: 0}
-  lastCollidedPhysicsGameObject: {fileID: 0}
-  chainableSpawns: []
-  enableDespawnerEvents: 0
-  useOnDespawnUnityEvent: 0
-  OnDespawnUnityEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  useOnChainSpawnUnityEvent: 0
-  OnChainSpawnUnityEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  useOnPhysicsCollidedUnityEvent: 0
-  OnPhysicsCollidedUnityEvent:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!1001 &3917319422525454488
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 269157914743974884}
-    m_Modifications:
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.2499999
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.29
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8097035365957551315, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-    - target: {fileID: 8271352619531328320, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-      propertyPath: m_Name
-      value: GroundExplosion
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
---- !u!212 &5044998609489296459 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 8097035365957551315, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-  m_PrefabInstance: {fileID: 3917319422525454488}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7407119869202521708 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5806966227013461748, guid: 4f89a5ab0610c4caea6b1ac1500fed87, type: 3}
-  m_PrefabInstance: {fileID: 3917319422525454488}
-  m_PrefabAsset: {fileID: 0}

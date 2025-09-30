@@ -1,21 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 
-public class BalloonBomb : MonoBehaviour
+
+public class BalloonBomb : SpawnedQueuedObject
 {
-    private Rigidbody2D rb;
+
 
     [SerializeField] private AnimationDataSO animData;
 
     private int currentSpriteIndex = 0;
-    private static readonly Vector3 StartScale = new Vector3(.5f, .4f, 1);
-    private static readonly Vector3 EndScale = new Vector3(1f, 1.4f, 1);
+    private static readonly Vector3 StartScale = new Vector3(.4f, .3f, 1);
+    private static readonly Vector3 EndScale = new Vector3(1f, 1.45f, 1);
 
     private readonly float spriteSwitchTime = .07f;
     private float time = 0;
-    private float totalTime = 0;
+    private float scaleTimer;
     [SerializeField] private SpriteRenderer sr;
     // Start is called before the first frame update
 
@@ -27,16 +27,28 @@ public class BalloonBomb : MonoBehaviour
 
     private void OnEnable()
     {
+        scaleTimer = 0;
+        time = 0;
         currentSpriteIndex = Random.Range(0, animData.sprites.Length - 1);
         sr.sprite = animData.sprites[currentSpriteIndex];
+        sr.transform.localScale = StartScale;
 
-        sr.transform.DOScale(EndScale, 1.35f).From(StartScale).SetEase(Ease.InSine);
+        // sr.transform.DOScale(EndScale, 1.35f).From(StartScale).SetEase(Ease.InSine);
     }
+
 
     private void Update()
     {
         time += Time.deltaTime;
-        totalTime += Time.deltaTime;
+
+
+        if (scaleTimer < 1.6f)
+        {
+            scaleTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(scaleTimer / 1.6f);
+            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f); // InSine ease
+            sr.transform.localScale = Vector3.Lerp(StartScale, EndScale, easedT);
+        }
 
         if (time > spriteSwitchTime)
         {
@@ -54,16 +66,17 @@ public class BalloonBomb : MonoBehaviour
 
     private void OnDisable()
     {
-       
 
-        DOTween.Kill(this);
+
+        // DOTween.Kill(sr.transform);
+        ReturnToPool();
     }
 
     // Update is called once per frame
     public void Initilaize(Vector2 force)
     {
         gameObject.SetActive(true);
-       
+
         rb.linearVelocity = force;
     }
 }

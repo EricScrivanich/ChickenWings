@@ -150,15 +150,17 @@ public class LevelPickerManager : MonoBehaviour
 
     private void Start()
     {
+        playerPathFollower.SetPathManager(this);
 
         string s = PlayerPrefs.GetString("LastLevel", "1-1-0");
         Vector3Int lastLevel = ReturnLevelAsVector(s);
         LevelDataConverter.instance.ReturnAndLoadWorldLevelData(null, lastLevel.x);
         Vector3Int numberToCheck = LevelDataConverter.instance.CurrentFurthestLevel();
-        frontHillParent.position = frontHillStartPos;
-        backHillParent.position = backHillStartPos;
         frontHillParent.localScale = Vector3.one;
-        Camera.main.transform.position = new Vector3(0, 0, -10);
+
+        frontHillParent.localPosition = frontHillStartPos;
+        backHillParent.localPosition = backHillStartPos;
+        // Camera.main.transform.position = new Vector3(0, 0, -10);
 
 
 
@@ -176,6 +178,7 @@ public class LevelPickerManager : MonoBehaviour
 
                 float d = paths[data.y].path.GetClosestDistanceAlongPath(l.ReturnLinePostion());
                 playerPathFollower.SetInitialPostionAndLayer(paths[data.y], d);
+                currentPathIndex = data.y;
             }
 
             var nums = l.WorldNumber;
@@ -199,9 +202,15 @@ public class LevelPickerManager : MonoBehaviour
     private int currentPlayerPath;
     private ILevelPickerPathObject currentTarget;
 
+    public void SetCurrentPathIndex(int index)
+    {
+        currentPathIndex = index;
+        Debug.LogError("Setting Current Path Index to: " + index);
+    }
+
     private void HandleClickObject(Vector2 screenPosition)
     {
-        Debug.LogError("Screen Position: " + screenPosition);
+        // Debug.LogError("Screen Position: " + screenPosition);
 
 
         Vector2 worldPoint = Camera.main.ScreenToWorldPoint(screenPosition);
@@ -220,6 +229,7 @@ public class LevelPickerManager : MonoBehaviour
 
 
             currentTarget.SetSelected(true);
+            LevelDataConverter.currentChallengeType = currentTarget.challengeType;
             Vector3Int data = obj.Type_PathIndex_Order;
 
             float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
@@ -238,7 +248,7 @@ public class LevelPickerManager : MonoBehaviour
                     inbetweenDistance = 0;
                 }
 
-                playerPathFollower.DoPathToPoint(paths[currentPathIndex], inbetweenDistance, paths[data.y], d);
+                playerPathFollower.DoPathToPoint(paths[currentPathIndex], inbetweenDistance, paths[data.y], d, data.y);
             }
             else
             {
@@ -246,7 +256,7 @@ public class LevelPickerManager : MonoBehaviour
             }
 
 
-            currentPathIndex = data.y;
+            // currentPathIndex = data.y;
 
 
             Debug.LogError("Moving to level: " + obj.WorldNumber);
@@ -299,13 +309,18 @@ public class LevelPickerManager : MonoBehaviour
         move += frontHillStartPos;
         float dur = moveCamDuration;
         DoLayerStuff(layerShownFrom, delayToMoveCam + dur, easeType);
+        float scale = mult * scaleHillMult;
 
 
 
         zoomSeq.AppendInterval(delayToMoveCam);
-        zoomSeq.Append(frontHillParent.DOLocalMove(move, dur));
-        zoomSeq.Join(frontHillParent.DOScale(mult * scaleHillMult, dur));
-        zoomSeq.Join(Camera.main.DOOrthoSize(data.w, dur));
+        zoomSeq.Append(Camera.main.DOOrthoSize(data.w, dur));
+
+        if ((Vector2)frontHillParent.localPosition != move)
+            zoomSeq.Join(frontHillParent.DOLocalMove(move, dur));
+        if (frontHillParent.localScale.x != scale)
+            zoomSeq.Join(frontHillParent.DOScale(scale, dur));
+
         zoomSeq.Join(Camera.main.transform.DOMove(new Vector3(data.x, data.y, data.z), dur));
         for (int i = 0; i < additionalParralaxObjects.Length; i++)
         {
@@ -610,6 +625,7 @@ public class LevelPickerManager : MonoBehaviour
 
 
                     currentTarget.SetSelected(true);
+                    LevelDataConverter.currentChallengeType = currentTarget.challengeType;
                     Vector3Int data = obj.Type_PathIndex_Order;
 
                     float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());

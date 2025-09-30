@@ -15,11 +15,15 @@ public class AllObjectData : ScriptableObject
     [field: SerializeField] public RecordableObjectPool[] positionerPools { get; private set; }
     [field: SerializeField] public RingPool ringPool { get; private set; }
 
+    [Header("Queues")]
+    [field: SerializeField] public QPool[] QPools { get; private set; }
+    [field: SerializeField] public QEffectPool[] QEffectPools { get; private set; }
+
     [Header("Prefabs")]
     [field: SerializeField] public GameObject cageObject { get; private set; }
     [field: SerializeField] public CheckPointFlag checkPointFlag { get; private set; }
     [field: SerializeField] public GameObject finishLine { get; private set; }
-    [field: SerializeField] public QPool[] QPools { get; private set; }
+
 
     public void InitializeQPools()
     {
@@ -27,6 +31,11 @@ public class AllObjectData : ScriptableObject
         {
             qPool.Initialize();
         }
+        foreach (var qPool in QEffectPools)
+        {
+            qPool.Initialize();
+        }
+
     }
 
     public RecordableObjectPool[] GetPoolArrayByObjectType(int objectType)

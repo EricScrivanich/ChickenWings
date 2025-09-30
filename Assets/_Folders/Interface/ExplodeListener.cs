@@ -3,43 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using HellTap.PoolKit;
 
-public class ExplodeListener : MonoBehaviour, IExplodable, IDamageable
+public class ExplodeListener : MonoBehaviour, IExplodable
 {
-    [SerializeField] private Vector3 normalExplosionScale;
+
     [SerializeField] private Vector3 groundExplosionScale;
+    [SerializeField] private float yOffsetGround;
+    [SerializeField] private float airExplosionScale;
     [SerializeField] private bool isBomberBomb;
     [SerializeField] private PlaneManagerID ID;
 
-    private Pool pool;
+    [SerializeField] private QEffectPool groundExplosionPool;
+    [SerializeField] private QEffectPool normalExplosionPool;
+
+    // private Pool pool;
 
     public bool CanPerfectScythe => false;
 
-    private void Start()
-    {
-        pool = PoolKit.GetPool("ExplosionPool");
+    // private void Start()
+    // {
+    //     pool = PoolKit.GetPool("ExplosionPool");
 
 
 
-    }
-    public void Damage(int damageAmount, int none, int none2)
-    {
-        pool.Spawn("NormalExplosion", transform.position, Vector3.zero, normalExplosionScale, null);
-        if (isBomberBomb) gameObject.SetActive(false);
-        else pool.Despawn(this.gameObject);
+    // }
 
-    }
 
     public void Explode(bool isGround)
     {
         if (isGround)
         {
             // pool.Spawn("GroundExplosion", transform.position, Vector3.zero, groundExplosionScale, null);
-            pool.Spawn("ExplosionBlemish", transform.position, Vector3.zero, groundExplosionScale, null);
+            // pool.Spawn("ExplosionBlemish", transform.position, Vector3.zero, groundExplosionScale, null);
+            groundExplosionPool.SpawnSpecificScale((Vector2)transform.position + (Vector2.up * yOffsetGround), groundExplosionScale);
 
             AudioManager.instance.PlayBombExplosionSound();
 
-            if (isBomberBomb) gameObject.SetActive(false);
-            else pool.Despawn(this.gameObject);
+
         }
         // else if (isGround && isBomberBomb)
         // {
@@ -51,13 +50,16 @@ public class ExplodeListener : MonoBehaviour, IExplodable, IDamageable
         // }
         else
         {
-            pool.Spawn("NormalExplosion", transform.position, Vector3.zero, normalExplosionScale, null);
+            AudioManager.instance.PlayBombExplosionSound();
+            // pool.Spawn("NormalExplosion", transform.position, Vector3.zero, normalExplosionScale, null);
+            normalExplosionPool.SpawnUniformScale(transform.position, airExplosionScale);
 
-            if (isBomberBomb) gameObject.SetActive(false);
-            else pool.Despawn(this.gameObject);
+            // if (isBomberBomb) gameObject.SetActive(false);
+            // else pool.Despawn(this.gameObject);
 
 
         }
+        gameObject.SetActive(false);
 
     }
 

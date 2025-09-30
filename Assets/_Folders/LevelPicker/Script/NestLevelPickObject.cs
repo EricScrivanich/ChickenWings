@@ -10,6 +10,7 @@ public class NestLevelPickObject : ILevelPickerPathObject
     // [SerializeField] private Animator pigAnim;
     [SerializeField] private GameObject sleepingPig;
     [SerializeField] private GameObject flappingPig;
+    [SerializeField] private Transform flipObjects;
     [SerializeField] private Transform stars;
     [SerializeField] private SpriteRenderer badge;
     [SerializeField] private SpriteRenderer badgeInside;
@@ -79,6 +80,8 @@ public class NestLevelPickObject : ILevelPickerPathObject
             nestBlur.enabled = true;
             pigBlur.enabled = true;
             selectedArrowTransform.gameObject.SetActive(true);
+
+            
         }
         else
         {
@@ -118,8 +121,7 @@ public class NestLevelPickObject : ILevelPickerPathObject
 
             if (transform.localScale.x < 0)
             {
-                stars.localScale = new Vector3(-1, 1, 1);
-                badge.transform.localScale = new Vector3(-badge.transform.localScale.x, badge.transform.localScale.y, badge.transform.localScale.z);
+                flipObjects.localScale = new Vector3(-1, 1, 1);
             }
 
             ReadyStarSeq();

@@ -15,6 +15,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
     [SerializeField] private bool ignoreBoundaries = false;
 
     [SerializeField] private bool destroyOnDeath = false;
+    private bool isBoss = false;
 
 
     [SerializeField] private int health = 1;
@@ -35,7 +36,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
     private Pool explosionPool;
 
     [SerializeField] private Collider2D[] colls;
-    private float initialScale;
+
     private bool isHit;
     [SerializeField] private SpriteRenderer[] sprites;
     [SerializeField] private Material pigMaterial;
@@ -48,12 +49,20 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
 
     public bool CanPerfectScythe => !isHit;
     private SpawnedObject thisObject;
+    private SpawnedBoss thisBoss;
 
     private void Awake()
     {
         isHit = false;
 
-        thisObject = GetComponent<SpawnedObject>();
+        if (GetComponent<SpawnedObject>() != null)
+            thisObject = GetComponent<SpawnedObject>();
+        else if (GetComponent<SpawnedBoss>() != null)
+        {
+            thisBoss = GetComponent<SpawnedBoss>();
+            health = thisBoss.startingLives + 1;
+            isBoss = true;
+        }
 
 
     }
@@ -113,7 +122,7 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
 
 
         currentHealth = health;
-        initialScale = transform.localScale.x;
+
 
         hasCrossedScreen = false;
         if (isHit)
@@ -234,16 +243,19 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
                 }
 
 
-                StartCoroutine(Explode(.45f, type));
+                StartCoroutine(Explode(.5f, type));
 
             }
             else
             {
+
                 foreach (var col in colls)
                 {
                     col.enabled = false;
                 }
                 StartCoroutine(DamageCor(totalDamageTime));
+
+                if (isBoss) thisBoss.Hit(type);
             }
 
 
@@ -255,11 +267,11 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
     private IEnumerator Explode(float time, int type)
     {
         float elapsedTime = 0.0f;
-        float endScale = initialScale * 1.2f;
+        Vector3 endScale = transform.localScale * 1.55f;
         float hitEffectBlendStart = 0f;
-        float hitEffectBlendEnd = 0.1f;
-        float fadeAmountStart = 0.0f;
-        float fadeAmountEnd = .7f;
+        float hitEffectBlendEnd = 0.08f;
+        float fadeAmountStart = 0.1f;
+        float fadeAmountEnd = .95f;
         bool hasExploded = false;
 
         if (GetComponent<CageAttatchment>() != null)
@@ -276,12 +288,12 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
 
         }
         else
-            transform.DOScale(transform.localScale * 1.25f, .65f);
+            transform.DOScale(endScale, .65f).SetEase(Ease.OutSine);
 
         while (elapsedTime < .15f)
         {
             elapsedTime += Time.deltaTime;
-            float t = elapsedTime / time;
+            float t = elapsedTime / .15f;
 
             // Interpolate _HitEffectBlend and _FadeAmount
             float currentHitEffectBlend = Mathf.Lerp(hitEffectBlendStart, hitEffectBlendEnd, t);
@@ -293,8 +305,8 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
             yield return null;
         }
         elapsedTime = 0;
-        if (type != -2)
-            explosionPool.Spawn("NormalExplosion", transform.position, Vector3.zero, explosionScale);
+        // if (type != -2)
+        //     explosionPool.Spawn("NormalExplosion", transform.position, Vector3.zero, explosionScale);
 
         while (elapsedTime < time)
         {

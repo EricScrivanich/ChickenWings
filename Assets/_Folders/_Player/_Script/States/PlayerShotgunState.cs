@@ -36,6 +36,12 @@ public class PlayerShotgunState : PlayerBaseState
         player.maxFallSpeed = fallSpeed;
         player.rb.angularDamping = .35f;
         player.rb.gravityScale *= .95f;
+        player.anim.SetTrigger(player.FlipTrigger);
+        // if (player.isDropping)
+        // {
+        //     player.isDropping = false;
+
+        // }
 
         if (player.transform.rotation.eulerAngles.z > 270 || player.transform.rotation.eulerAngles.z < 90)
         {

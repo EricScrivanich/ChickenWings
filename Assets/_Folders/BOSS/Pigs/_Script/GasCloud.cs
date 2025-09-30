@@ -4,11 +4,12 @@ using UnityEngine;
 
 using DG.Tweening;
 
-public class GasCloud : MonoBehaviour
+public class GasCloud : SpawnedQueuedObject, IExplodable
 {
 
     [SerializeField] private AnimationDataSO animData;
-    [SerializeField] private float maxYSpeed;
+    [SerializeField] private QEffectPool subParticlePool;
+    private readonly float maxYSpeed = 3;
 
 
     private readonly int spriteCount = 3;
@@ -18,9 +19,9 @@ public class GasCloud : MonoBehaviour
     private readonly float spriteSwitchTime = .1f;
     private float time = 0;
     private readonly float tweenTime = .6f;
-    private Rigidbody2D rb;
+
     private float endSpeed;
-    private float forceAdded = .7f;
+    private readonly float forceAdded = .7f;
     private float forceAddedVar;
     private bool hitTarget = false;
 
@@ -50,17 +51,17 @@ public class GasCloud : MonoBehaviour
 
     private void OnDisable()
     {
-        DOTween.Kill(this);
+        DOTween.Kill(this.transform);
+        ReturnToPool();
     }
 
-    public void Eject(float endSpeedVar, bool f)
+    public override void SpawnSpecial(Vector2 pos, float endSpeedVar, bool f)
     {
         flipped = f;
-        gameObject.SetActive(true);
         float rand = Random.Range(.95f, 1.05f);
+        transform.position = pos;
+        gameObject.SetActive(true);
 
-
-        transform.DOScale(animData.endScale * rand, tweenTime).From(animData.startScale).SetEase(Ease.InSine);
 
         rb.angularVelocity = Random.Range(-60, 60);
 
@@ -77,17 +78,14 @@ public class GasCloud : MonoBehaviour
 
 
         endSpeed = endSpeedVar;
+        transform.DOScale(animData.endScale * rand, tweenTime).From(animData.startScale).SetEase(Ease.InSine);
 
 
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
 
-        SmokeTrailPool.GetGasCloudHitParicles(transform.position);
-        gameObject.SetActive(false);
 
-    }
+
 
     private void FixedUpdate()
     {
@@ -95,7 +93,7 @@ public class GasCloud : MonoBehaviour
 
         rb.AddForce(Vector2.left * forceAddedVar);
 
-        if (transform.position.y > 7) gameObject.SetActive(false);
+        if (transform.position.y > BoundariesManager.TopViewBoundary + .5f) gameObject.SetActive(false);
 
         if (!flipped)
             rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, endSpeed, 5), Mathf.Clamp(rb.linearVelocity.y, -3, maxYSpeed));
@@ -126,6 +124,13 @@ public class GasCloud : MonoBehaviour
         }
 
 
+
+    }
+
+    public void Explode(bool isGround)
+    {
+        subParticlePool.Spawn(transform.position);
+        gameObject.SetActive(false);
 
     }
 }

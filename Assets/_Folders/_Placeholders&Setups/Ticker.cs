@@ -10,11 +10,14 @@ public class Ticker : MonoBehaviour
 
 
     public delegate void TickAction015();
+    
+
 
 
     private float tickerTime015 = 0;
 
     public static event TickAction015 OnTickAction015;
+    public static Action OnDespawnAction;
     public static Action<Vector2> OnSendPlayerPosition;
     private Transform playerTransform;
 

@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ec5cdc658774fadb8730e2026d7251, type: 3}
   m_Name: 01-04_Drop & Flop
   m_EditorClassIdentifier: 
+  <StartingAmmos>k__BackingField: 00000000000000000000
+  <StartingLives>k__BackingField: 3
   <easyStartingAmmos>k__BackingField: 
   <easyStartingLives>k__BackingField: 5
-  tutorialData: {fileID: 11400000, guid: a35e344c7c8434c3dbe8f36b767da59e, type: 2}
   AvailableAmmos: 00000000
   objData: {fileID: 11400000, guid: 39c7fc890c47e46058b8b922c162fb46, type: 2}
   startingStats: {fileID: 11400000, guid: d10dd9036610a46658e0229299e97856, type: 2}
   levelChallenges: {fileID: 11400000, guid: 53e57c9268c584f0c9beaafbff65e046, type: 2}
+  tutorialData: {fileID: 11400000, guid: a35e344c7c8434c3dbe8f36b767da59e, type: 2}
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: Drop & Flop
   levelWorldAndNumber: {x: 1, y: 4, z: 0}
@@ -203,8 +205,6 @@ MonoBehaviour:
   ringPoolSizes: 08000100
   cageAttachments: 
   checkPointSteps: 9000
-  <StartingAmmos>k__BackingField: 19000000000000000000
-  <StartingLives>k__BackingField: 3
   postionerData:
   - ID: 0
     type: 0

@@ -9,13 +9,21 @@ public class ConstantSpriteSwitch : MonoBehaviour
 
     private float time;
     private ushort currentFrameIndex;
+    [SerializeField] private Vector2Int startFrame;
 
+    private void OnEnable()
+    {
+        currentFrameIndex = (ushort)Random.Range(startFrame.x, startFrame.y);
+        spriteRenderer.sprite = animData.sprites[currentFrameIndex];
+        time = 0;
+    }
 
-    private void Update() {
+    private void Update()
+    {
         time += Time.deltaTime;
         if (time >= animData.constantSwitchTime)
         {
-            
+
             currentFrameIndex++;
             if (currentFrameIndex >= animData.sprites.Length)
             {
@@ -26,9 +34,9 @@ public class ConstantSpriteSwitch : MonoBehaviour
             time = 0f;
 
 
-            
 
-            
+
+
         }
     }
 

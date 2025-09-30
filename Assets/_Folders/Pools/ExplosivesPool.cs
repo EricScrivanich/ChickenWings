@@ -26,26 +26,26 @@ public class ExplosivesPool : ScriptableObject
 
     public void MakePools()
     {
-        bombPool = new Bombs[bombPoolSize];
-        balloonBombPool = new BalloonBomb[balloonBombPoolSize];
+        // bombPool = new Bombs[bombPoolSize];
+        // balloonBombPool = new BalloonBomb[balloonBombPoolSize];
         bullets = new Queue<Bullet>();
 
 
-        for (int i = 0; i < bombPoolSize; i++)
-        {
-            var obj = Instantiate(bombPrefab);
+        // for (int i = 0; i < bombPoolSize; i++)
+        // {
+        //     var obj = Instantiate(bombPrefab);
 
-            bombPool[i] = obj.GetComponent<Bombs>();
-            obj.SetActive(false);
-        }
+        //     bombPool[i] = obj.GetComponent<Bombs>();
+        //     obj.SetActive(false);
+        // }
 
-        for (int i = 0; i < balloonBombPoolSize; i++)
-        {
-            var obj = Instantiate(balloonBombPrefab);
+        // for (int i = 0; i < balloonBombPoolSize; i++)
+        // {
+        //     var obj = Instantiate(balloonBombPrefab);
 
-            balloonBombPool[i] = obj.GetComponent<BalloonBomb>();
-            obj.SetActive(false);
-        }
+        //     balloonBombPool[i] = obj.GetComponent<BalloonBomb>();
+        //     obj.SetActive(false);
+        // }
 
         for (int i = 0; i < 10; i++)
         {

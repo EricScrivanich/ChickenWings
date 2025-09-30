@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MissileScript : MonoBehaviour
+public class MissileScript : SpawnedQueuedObject
 {
-    private Rigidbody2D rb;
+
 
     public float force;
     public float accelerationTime = 0.3f; // Time to reach the desired force speed
@@ -17,6 +17,10 @@ public class MissileScript : MonoBehaviour
     void OnEnable()
     {
         StartCoroutine(LaunchMissile());
+    }
+    void OnDisable()
+    {
+        ReturnToPool();
     }
 
 

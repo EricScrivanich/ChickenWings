@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &241518578575716180
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4594159080886435752}
+  m_Layer: 0
+  m_Name: FlipObjects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4594159080886435752
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 241518578575716180}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8047303405104217685}
+  - {fileID: 8943697953971914356}
+  - {fileID: 527787060703092351}
+  - {fileID: 4339650248391000113}
+  m_Father: {fileID: 1646050658580544923}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &561427750919567261
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,7 +133,7 @@ GameObject:
   - component: {fileID: 527787060703092351}
   - component: {fileID: 4925742259727098385}
   m_Layer: 0
-  m_Name: Shadow1 (1)
+  m_Name: ShadowFront
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,11 +148,11 @@ Transform:
   m_GameObject: {fileID: 948270525265310260}
   serializedVersion: 2
   m_LocalRotation: {x: -0.5735764, y: -0, z: -0, w: 0.8191521}
-  m_LocalPosition: {x: 0.11, y: -0.466, z: -1}
-  m_LocalScale: {x: 2.4829545, y: 2.4829545, z: 2.4829545}
+  m_LocalPosition: {x: 0.109999895, y: -0.46600008, z: 2}
+  m_LocalScale: {x: 2.4829545, y: 2.4829547, z: 2.4829547}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 1646050658580544923}
+  m_Father: {fileID: 4594159080886435752}
   m_LocalEulerAnglesHint: {x: -70, y: 0, z: 0}
 --- !u!212 &4925742259727098385
 SpriteRenderer:
@@ -229,7 +264,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1935673868966739785}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -237,7 +272,7 @@ Transform:
   - {fileID: 5118160919395654385}
   - {fileID: 4618253823309767875}
   - {fileID: 4199385674949013532}
-  m_Father: {fileID: 1646050658580544923}
+  m_Father: {fileID: 4594159080886435752}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3111988441048391689
 GameObject:
@@ -850,7 +885,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4932399991851842500}
-  m_Father: {fileID: 1646050658580544923}
+  m_Father: {fileID: 4594159080886435752}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6263412332737451654
 SpriteRenderer:
@@ -1031,15 +1066,12 @@ Transform:
   - {fileID: 8562316461038929076}
   - {fileID: 4965871726539821762}
   - {fileID: 1969161823990133163}
-  - {fileID: 4339650248391000113}
-  - {fileID: 527787060703092351}
   - {fileID: 7444289270912295392}
   - {fileID: 4042778052864583170}
   - {fileID: 6940338462204052509}
   - {fileID: 8898936293294111605}
   - {fileID: 862579068514444124}
-  - {fileID: 8047303405104217685}
-  - {fileID: 8943697953971914356}
+  - {fileID: 4594159080886435752}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &2795057541178774021
@@ -1142,6 +1174,7 @@ MonoBehaviour:
   order: 0
   sleepingPig: {fileID: 8718582612936097752}
   flappingPig: {fileID: 3761331652074380635}
+  flipObjects: {fileID: 4594159080886435752}
   stars: {fileID: 8047303405104217685}
   badge: {fileID: 6263412332737451654}
   badgeInside: {fileID: 1580873173497070845}
@@ -1623,7 +1656,7 @@ GameObject:
   - component: {fileID: 3545193007018061659}
   - component: {fileID: 4831253042648401619}
   m_Layer: 0
-  m_Name: NestBack (1)
+  m_Name: ShadowBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1638,11 +1671,11 @@ Transform:
   m_GameObject: {fileID: 8695111878035559592}
   serializedVersion: 2
   m_LocalRotation: {x: -0.4497685, y: -0.06177058, z: -0.121231616, w: 0.8827206}
-  m_LocalPosition: {x: 0.256, y: 0.027, z: 0}
-  m_LocalScale: {x: 1, y: 1.54, z: 1}
+  m_LocalPosition: {x: 0.24, y: -0.04, z: 2}
+  m_LocalScale: {x: 1, y: 1.81, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1646050658580544923}
+  m_Father: {fileID: 4594159080886435752}
   m_LocalEulerAnglesHint: {x: -54, y: 0, z: -15.64}
 --- !u!212 &3545193007018061659
 SpriteRenderer:
@@ -1878,7 +1911,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1522215826720137370, guid: 63efc3da13bc5416a884fecd93adceba, type: 3}
       propertyPath: m_Color.a
-      value: 0.19607843
+      value: 0.12941177
       objectReference: {fileID: 0}
     - target: {fileID: 2000603603351541052, guid: 63efc3da13bc5416a884fecd93adceba, type: 3}
       propertyPath: endLocalY

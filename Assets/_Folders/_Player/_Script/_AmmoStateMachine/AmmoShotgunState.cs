@@ -134,6 +134,8 @@ public class AmmoShotgunState : AmmoBaseState
         if (player.ID.ShotgunAmmo > 0 || (usingChainedAmmo && player.ID.ChainedShotgunAmmo > 0))
         {
             rotatingToTarget = false;
+            if (player.rb.freezeRotation)
+                player.rb.freezeRotation = false;
 
             HapticFeedbackManager.instance.PressShotgunButton();
             player.shotgunRotationTarget = 0;

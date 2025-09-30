@@ -23,14 +23,49 @@ public class ShotgunParticleID : ScriptableObject
     [SerializeField] private float innerRadiusArc;
     [SerializeField] private float innerRadiusAngleDamp;
     [SerializeField] private int outerRadiusCount;
+
+    [Header("New Data")]
+    [SerializeField] private float outerYPosAmount;
+    [SerializeField] private float innerYPosAmount;
+    [SerializeField] private float outerRotateAmount;
+    [SerializeField] private float innerRotateAmount;
+
+    [SerializeField] private float outerBulletCount;
+    [SerializeField] private float innerBulletCount;
+    private float yChangeOutside;
+    private float yChangeInside;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     public void SetTransformData()
     {
         positionData = new Vector2[bulletCount];
         rotationData = new float[bulletCount];
+        yChangeOutside = (outerYPosAmount * 2) / outerBulletCount;
+        yChangeInside = (innerYPosAmount * 2) / innerBulletCount;
         SetPostionsAndRoations(false);
         SetPostionsAndRoations(true);
+    }
+
+    public void SetPostionAndSpeed(ref Rigidbody2D rb, int index)
+    {
+        Transform t = rb.transform;
+
+        rb.linearVelocity = Vector2.zero;
+        float y = 0;
+        if (index < outerBulletCount)
+        {
+            y = outerYPosAmount - (index * yChangeOutside);
+        }
+        else
+        {
+            y = innerYPosAmount - ((index - outerBulletCount) * yChangeInside);
+        }
+
+        // t.localPosition = Vector2.up *
+
+
+
     }
 
     private void SetPostionsAndRoations(bool inner)

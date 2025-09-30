@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using HellTap.PoolKit;
+
 using DG.Tweening;
 
 public class DropBomb : SpawnedObject, IRecordableObject
@@ -11,12 +11,14 @@ public class DropBomb : SpawnedObject, IRecordableObject
     public float xDropPosition;
     public float dropAreaScaleMultiplier;
     public float speedTarget;
+    [SerializeField] private Transform dropPos;
 
 
 
 
 
     [SerializeField] private ExplosivesPool pool;
+    [SerializeField] private QPool bombPool;
 
     [SerializeField] private GameObject dropZonePrefab;
     private DropZone dropZone;
@@ -39,7 +41,7 @@ public class DropBomb : SpawnedObject, IRecordableObject
 
 
 
-    
+
 
     private bool hasEnteredTriggerArea = false;
 
@@ -450,6 +452,7 @@ public class DropBomb : SpawnedObject, IRecordableObject
 
     }
     private WaitForSeconds wait = new WaitForSeconds(.08f);
+    private Vector2 dropForceAverage = new Vector2(.2f, .2f);
 
     private IEnumerator DropBombs()
     {
@@ -465,7 +468,8 @@ public class DropBomb : SpawnedObject, IRecordableObject
 
             if (!dropping) break;
 
-            pool.GetBomb(dropArea.transform.position, bombRotation * sideSwitchInteger, dropCount, true);
+            // pool.GetBomb(dropArea.transform.position, bombRotation * sideSwitchInteger, dropCount, true);
+            bombPool.SpawnWithVelocityAndRotation(dropPos.position, dropCount * dropForceAverage, 120 * sideSwitchInteger, 50 * sideSwitchInteger);
             yield return wait;
             if (sideSwitchInteger == 1) dropCount--;
 
@@ -484,7 +488,7 @@ public class DropBomb : SpawnedObject, IRecordableObject
         movePlaneSeq = DOTween.Sequence();
         movePlaneSeq.Append(transform.DOLocalMoveY(StartY, exitDuration).SetEase(Ease.InBack));
         movePlaneSeq.Join(transform.DORotate(endRot, exitDuration).OnComplete(() => gameObject.SetActive(false)));
-        movePlaneSeq.Play();
+        movePlaneSeq.Play().SetUpdate(UpdateType.Fixed);
 
 
 
@@ -521,20 +525,21 @@ public class DropBomb : SpawnedObject, IRecordableObject
         dropAreaScaleMultiplier = data.float1;
         if (data.type == 0)
         {
-
+            sideSwitchInteger = 1;
             speedTarget = 8;
         }
         else
         {
 
             speedTarget = -7;
+            sideSwitchInteger = -1;
 
         }
         gameObject.SetActive(true);
         OnSpawned();
 
     }
-   
+
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
         hasEnteredTriggerArea = true;

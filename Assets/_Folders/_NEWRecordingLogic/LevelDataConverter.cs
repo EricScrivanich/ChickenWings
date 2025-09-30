@@ -9,6 +9,8 @@ public class LevelDataConverter : MonoBehaviour
 
     public LevelContainer Levels;
     private int maxTempLevelSaves;
+    public static int currentChallengeType = 0;
+
 
     public static int currentLevelInstance { get; private set; } = -1;
 

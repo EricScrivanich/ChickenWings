@@ -1,21 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 
-public class BlemishScript : MonoBehaviour
+
+public class BlemishScript : SpawnedQueuedEffect
 {
-    [SerializeField] private PlaneManagerID ID;
-    [SerializeField] private AnimationDataSO animData;
-    [SerializeField] private SpriteRenderer smoke;
+
     private SpriteRenderer sprite;
-    private float time;
-    private float duration = 3;
+    private float timer;
 
-    private int spriteLength;
+    // private float time;
+    // private float duration = 3;
 
-    private int currentSmokeIndex = 0;
-    private bool finishedSpriteAnim;
+    // private int spriteLength;
+
+    // private int currentSmokeIndex = 0;
+    // private bool finishedSpriteAnim;
 
 
     // Start is called before the first frame update
@@ -25,43 +25,70 @@ public class BlemishScript : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
 
     }
+    void CheckForDespawn()
+    {
+        if (transform.position.x < BoundariesManager.leftBoundary)
+        {
+            gameObject.SetActive(false);
+
+        }
+
+    }
     // Update is called once per frame
     void Update()
     {
         transform.Translate(Vector2.left * BoundariesManager.GroundSpeed * Time.deltaTime);
 
-        if (!finishedSpriteAnim)
-            time += Time.deltaTime;
-
-
-        if (time > animData.constantSwitchTime && !finishedSpriteAnim)
+        if (timer < .25f)
         {
-            time = 0;
-            currentSmokeIndex++;
+            timer += Time.deltaTime;
+            sprite.color = Color.black * timer * 4;
 
-            if (currentSmokeIndex >= animData.sprites.Length)
-            {
-                smoke.DOFade(0, .2f).SetEase(Ease.OutSine);
-                finishedSpriteAnim = true;
-                return;
-            }
-            smoke.sprite = animData.sprites[currentSmokeIndex];
 
         }
+
+        // if (!finishedSpriteAnim)
+        //     time += Time.deltaTime;
+
+
+        // if (time > animData.constantSwitchTime && !finishedSpriteAnim)
+        // {
+        //     time = 0;
+        //     currentSmokeIndex++;
+
+        //     if (currentSmokeIndex >= animData.sprites.Length)
+        //     {
+        //         smoke.DOFade(0, .2f).SetEase(Ease.OutSine);
+        //         finishedSpriteAnim = true;
+        //         return;
+        //     }
+        //     smoke.sprite = animData.sprites[currentSmokeIndex];
+
+        // }
 
 
 
 
 
     }
+    void OnDisable()
+    {
+        Ticker.OnTickAction015 -= CheckForDespawn;
+        sprite.color = Color.clear;
+        ReturnToPool();
+    }
     private void OnEnable()
     {
-        finishedSpriteAnim = false;
-        currentSmokeIndex = 0;
-        smoke.sprite = animData.sprites[0];
-        smoke.DOFade(1, 0);
+        Ticker.OnTickAction015 += CheckForDespawn;
 
-        smoke.transform.DOScale(animData.endScale, .5f).SetEase(Ease.OutSine);
+        timer = 0;
+
+        // finishedSpriteAnim = false;
+        // currentSmokeIndex = 0;
+        // smoke.sprite = animData.sprites[0];
+        // smoke.DOFade(1, 0);
+
+        // smoke.transform.DOScale(animData.endScale, .5f).SetEase(Ease.OutSine);
     }
 
 

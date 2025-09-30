@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3313502577148879755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5350973473345486632}
+  m_Layer: 11
+  m_Name: DropPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5350973473345486632
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3313502577148879755}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: 0.14780942, w: 0.9890159}
+  m_LocalPosition: {x: 1.016, y: -0.266, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5853323229975334557}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 17}
 --- !u!1 &4398728256518002235
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,6 +188,7 @@ Transform:
   - {fileID: 168652554148965338}
   - {fileID: 647062825027335723}
   - {fileID: 4110406384218638902}
+  - {fileID: 5350973473345486632}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 11.763}
 --- !u!50 &886126263254285567
@@ -256,7 +288,9 @@ MonoBehaviour:
   xDropPosition: 0
   dropAreaScaleMultiplier: 0
   speedTarget: 8
+  dropPos: {fileID: 5350973473345486632}
   pool: {fileID: 11400000, guid: f589c2cd9877c4b6597ee259d04c7c5d, type: 2}
+  bombPool: {fileID: 11400000, guid: 5d83800655f6f40b5b6bccfde0b22d23, type: 2}
   dropZonePrefab: {fileID: 3135845109433156913, guid: 482cd75ef6c8c4d4e851e854b95ca46a, type: 3}
   delayToFlyOverSound: 1.5
   delayToBomberGoing: 0.4

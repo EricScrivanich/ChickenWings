@@ -16,7 +16,7 @@ public class PlayerFrozenState : PlayerBaseState
         time = 0;
         rotate = false;
         player.rb.angularVelocity = 0;
-        player.ID.globalEvents.Frozen?.Invoke();
+        // player.ID.globalEvents.Frozen?.Invoke();
         AudioManager.instance.PlayFrozenSound();
         player.ID.globalEvents.OnPlayerFrozen?.Invoke(true);
         player.anim.SetBool(player.FrozenBool, true);

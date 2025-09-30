@@ -7,6 +7,7 @@ public class SpawnStateManager : MonoBehaviour
 {
     [SerializeField] private bool isTestPlayer = false;
     [SerializeField] private bool mainLevel = false;
+    [SerializeField] private bool disableAfterStart = false;
     [SerializeField] private LevelManagerID LvlID;
     [SerializeField] private AllObjectData allObjectData;
 
@@ -447,7 +448,10 @@ public class SpawnStateManager : MonoBehaviour
 
 
 
-
+        if (disableAfterStart)
+        {
+            enabled = false;
+        }
 
 
     }
