@@ -309,7 +309,7 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (menu)
         {
-            PlayerPrefs.SetString("NextLevel", "Menu");
+            PlayerPrefs.SetString("Menu", "Menu");
             PlayerPrefs.Save();
             return;
         }

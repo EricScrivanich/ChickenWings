@@ -7,7 +7,7 @@ public class BoundariesManager : MonoBehaviour
     public static int rightBoundary = 15;
 
     public static Vector3 vectorThree1 = new Vector3(1, 1, 1);
-    
+
 
     public static bool isDay = true;
     public static int leftBoundary = -15;
@@ -39,7 +39,7 @@ public class BoundariesManager : MonoBehaviour
 
     }
 
-   
+
     // Update is called once per frame
 
 }

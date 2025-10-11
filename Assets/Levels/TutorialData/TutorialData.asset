@@ -17,7 +17,7 @@ MonoBehaviour:
   startButtonHidden: 1
   startInputsLocked: 1
   messages:
-  - Press INPUT to Flip Left and Right, don't go too high or you will FREEZE.
+  - Press INPUT to Flip Left and Right, don't go too high or you will FREEZE!
   - HOLD a Flip to fly Further and Faster!
   inputReplaceKeyboard:
   - '"A" and "D"'
@@ -28,15 +28,19 @@ MonoBehaviour:
   allowedInput:
   - FlipLeft FlipRight
   - FlipLeft FlipRight
+  shownAmmos: 
   bubblePrefab: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
   messagePrefab: {fileID: 9156284010655330016, guid: f81248dd664e04cd693cbf1b01a0def4, type: 3}
-  stepsForActions: 01000100ae00ae00
+  stepsForActions: 010001009e009e00
   actionsForStep: 01000000040000000100000004000000
   actionsForEnterBubble: 0900000006000000
   actionsForExitBubble: 0600000000000000
+  actionsForDelays: 
   vectorValues:
   - {x: -3, y: 0}
   - {x: -2.2, y: -1}
   bubbleSuctionAndDelayDurations:
   - {x: 2, y: 1.5}
   - {x: 2.6, y: 1.5}
+  delayValues: []
+  handGestureType: 0

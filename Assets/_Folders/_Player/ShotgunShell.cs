@@ -1,17 +1,16 @@
 using UnityEngine;
 
-public class ShotgunShell : MonoBehaviour
+public class ShotgunShell : SpawnedQueuedObject
 {
     [SerializeField] private AnimationDataSO AnimData;
-    [SerializeField] private float angularVel;
-    [SerializeField] private float globalForce;
-    [SerializeField] private Vector3 relativeForce;
-    [SerializeField] private Vector2 contactForce;
-    [SerializeField] private float groundSpeed = -4.7f;
-    [SerializeField] private float bounceThreshold = 0.1f;
-    [SerializeField] private int maxBounces = 3;
 
-    private Rigidbody2D rb;
+
+
+
+    private float bounceThreshold = 0.1f;
+    private ushort maxBounces = 3;
+
+
     private SpriteRenderer sr;
     private int spriteIndex;
     private float time;
@@ -28,8 +27,8 @@ public class ShotgunShell : MonoBehaviour
     private void OnEnable()
     {
         spriteIndex = Random.Range(0, 4);
-        rb.linearVelocity = (transform.up * globalForce) + relativeForce;
-        rb.angularVelocity = angularVel;
+
+
         delay = Random.Range(AnimData.RandomDelaySpriteSwitch.x, AnimData.RandomDelaySpriteSwitch.y);
         sr.sprite = AnimData.sprites[spriteIndex];
         time = 0;
@@ -58,9 +57,18 @@ public class ShotgunShell : MonoBehaviour
             // Shell has stopped bouncing, set it to grounded
             isGrounded = true;
             AudioManager.instance.PlayShotgunShell(3);
-            rb.linearVelocity = new Vector2(groundSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(-BoundariesManager.GroundSpeed, .2f);
             rb.angularVelocity = 0;
         }
+        else if (isGrounded && transform.position.x < BoundariesManager.leftBoundary)
+            gameObject.SetActive(false);
+
+
+
+    }
+    void OnDisable()
+    {
+        ReturnToPool();
     }
 
     private void UpdateSprite()
@@ -96,7 +104,7 @@ public class ShotgunShell : MonoBehaviour
 
             foreach (ContactPoint2D contact in collision.contacts)
             {
-                rb.AddForceAtPosition(contactForce, contact.point, ForceMode2D.Impulse);
+                rb.AddForceAtPosition(Vector2.left, contact.point, ForceMode2D.Impulse);
             }
         }
     }

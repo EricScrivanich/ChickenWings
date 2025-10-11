@@ -143,8 +143,8 @@ public class MainMenuScript : MonoBehaviour
 
             MenuTypes[i].gameObject.SetActive(false);
         }
-        if (PlayerPrefs.GetString("NextLevel", "Menu") != "Menu")
-            MenuTypes[0].gameObject.SetActive(false);
+        // if (PlayerPrefs.GetString("NextLevel", "Menu") != "Menu")
+        //     MenuTypes[0].gameObject.SetActive(false);
 
         environmentMaterials = new List<Material>();
 
@@ -210,7 +210,11 @@ public class MainMenuScript : MonoBehaviour
         RectTransform menuToMoveIn = null;
 
         if (switchTo == -2)
+        {
+            HapticFeedbackManager.instance.PressUIButton();
             switchTo = 0;
+        }
+
 
         else
             HapticFeedbackManager.instance.PressUIButton();

@@ -91,7 +91,7 @@ public class LevelData : ScriptableObject
     {
         LoadLevelSaveData(LevelDataConverter.instance.ConvertDataFromJson());
     }
-    public void InitializeData(SpawnStateManager s, ushort startingStep, int difficulty = 1, TemporaryLevelCheckPointData checkPointData = null, bool isLevel = false)
+    public void InitializeData(SpawnStateManager s, ushort startingStep, int difficulty = 1, TemporaryLevelCheckPointData checkPointData = null, bool isLevel = false, bool endlessMode = false)
     {
         spawner = s;
         Difficulty = difficulty;
@@ -122,33 +122,49 @@ public class LevelData : ScriptableObject
         {
             if (difficulty < 1)
             {
-                foreach (int a2 in easyStartingAmmos)
-                {
-                    if (a2 > 0)
+                if (easyStartingAmmos != null && easyStartingAmmos.Length > 0)
+                    foreach (int a2 in easyStartingAmmos)
                     {
-                        hasCollectables = true;
-                        break;
+                        if (a2 > 0)
+                        {
+                            hasCollectables = true;
+                            break;
+                        }
                     }
-                }
             }
             else
             {
-                foreach (int a2 in easyStartingAmmos)
-                {
-                    if (a2 > 0)
+                if (StartingAmmos != null && StartingAmmos.Length > 0)
+                    foreach (int a2 in StartingAmmos)
                     {
-                        hasCollectables = true;
-                        break;
+                        if (a2 > 0)
+                        {
+                            hasCollectables = true;
+                            break;
+                        }
                     }
-                }
 
             }
         }
+
 
         if (!hasCollectables)
         {
             Debug.Log("No collectables found, hiding EggCanvas");
             GameObject.Find("EggCanvas").SetActive(false);
+        }
+        int shownEgg = -1;
+        if (hasCollectables)
+        {
+
+            if (StartingAmmos[0] > 0 && collectablePoolSizes[0] > 0)
+            {
+                shownEgg = 0;
+            }
+            else if (StartingAmmos[1] > 0 && collectablePoolSizes[1] > 0)
+            {
+                shownEgg = 1;
+            }
         }
 
         // Load your level save data first. This sets spawnSteps, idList, etc.
@@ -161,11 +177,11 @@ public class LevelData : ScriptableObject
 
             if (difficulty == 1)
             {
-                startingStats.SetData(StartingLives, checkPointData.CurrentAmmos);
+                startingStats.SetData(StartingLives, checkPointData.CurrentAmmos, shownEgg);
             }
             else if (difficulty == 0)
             {
-                startingStats.SetData(easyStartingLives, checkPointData.CurrentAmmos);
+                startingStats.SetData(easyStartingLives, checkPointData.CurrentAmmos, shownEgg);
 
                 // Normal or Hard difficulty, use default values
 
@@ -193,13 +209,13 @@ public class LevelData : ScriptableObject
                 Debug.LogError("Setting Starting Stats for normal Difficulty");
                 // normal difficulty
 
-                startingStats.SetData(StartingLives, StartingAmmos);
+                startingStats.SetData(StartingLives, StartingAmmos, shownEgg);
                 if (levelChallenges != null)
                     levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
             }
             else if (difficulty == 2)
             {
-                startingStats.SetData(1, StartingAmmos);
+                startingStats.SetData(1, StartingAmmos, shownEgg);
                 if (levelChallenges != null)
                     levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
             }
@@ -208,7 +224,7 @@ public class LevelData : ScriptableObject
             else if (difficulty == 0)
             {
                 // Normal or Hard difficulty, use default values
-                startingStats.SetData(easyStartingLives, easyStartingAmmos);
+                startingStats.SetData(easyStartingLives, easyStartingAmmos, shownEgg);
                 if (levelChallenges != null)
                     levelChallenges.ResetData(levelWorldAndNumber, difficulty, easyStartingAmmos, easyStartingLives);
             }
@@ -494,7 +510,7 @@ public class LevelData : ScriptableObject
             StartingAmmos[0] = 3;
             StartingAmmos[1] = 3;
             StartingLives = 3;
-            startingStats.SetData(StartingLives, StartingAmmos);
+            startingStats.SetData(StartingLives, StartingAmmos, -1);
             pigPoolSizes = new ushort[0];
             aiPoolSizes = new ushort[0];
             buildingPoolSizes = new ushort[0];
@@ -557,7 +573,7 @@ public class LevelData : ScriptableObject
         else
             StartingLives = lds.StartingLives;
 
-        startingStats.SetData(StartingLives, StartingAmmos);
+        startingStats.SetData(StartingLives, StartingAmmos, -1);
 
 
         Debug.LogError("Finished loading data for level: " + "Starting Lives" + StartingLives + LevelName + " with " + spawnSteps.Length + " spawn steps and " + idList.Length + " objects.");

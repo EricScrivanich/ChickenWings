@@ -3,46 +3,68 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class ShotgunBlast : MonoBehaviour
+public class ShotgunBlast : SpawnedQueuedObject
 {
 
     [SerializeField] private float forceAmount;
     [SerializeField] private float xForceMultiplier;
-    private Rigidbody2D rb;
+    // private Rigidbody2D rb;
     private Sequence shotgunBlastSeq;
-
-    [SerializeField] private Rigidbody2D[] bulletParticles;
-    [SerializeField] private Vector3[] countAndVelocitys;
-
-    private Color startColor = new Color(1, 1, 1, 1);
-    private Color endColor = new Color(.35f, .3f, .3f, 0.05f);
-    private BoxCollider2D col;
-
-    public Sprite[] img;
-    public float[] spriteDelays;
-    public Vector2[] scales;
-
-    private Vector3 StartScale = new Vector3(.25f, .5f, 1);
-
-    public float[] opacities;
-    public float[] scaleDelays;
-    private float time;
-    private int currentSpriteDelayIndex;
-    private int currentScaleDelayIndex;
-    private bool finished = false;
-    private bool isChained;
-    private int id;
+    [SerializeField] private AnimationDataSO animData;
     private SpriteRenderer sr;
 
 
+    [SerializeField] private Vector3[] countAndVelocitys;
+
+
+
+    private BoxCollider2D col;
+
+
+
+
+
+
+
+
+    private float time;
+    private int currentSpriteDelayIndex;
+
+    private bool finished = false;
+    private bool isChained;
+    private int id;
+
+    [SerializeField] private ShotgunParticleID data;
+    [SerializeField] private GameObject shotgunParticlePrefab;
+    [SerializeField] private AnimationDataSO particleSprites;
+    [SerializeField] private AnimationDataSO muzzleFlashSprites;
+    private ShotgunParticleNew[] bulletParticles;
+
+    private readonly Vector3 baseScale = new Vector3(1.2f, 1, 1);
+
+    private readonly float startFlashScale = 1.1f;
+    private readonly float endFlashScale = 1.3f;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
+        // rb = GetComponent<Rigidbody2D>();
+        sr = GetComponentInChildren<SpriteRenderer>();
         col = GetComponent<BoxCollider2D>();
+        lifeTime = new WaitForSeconds(data.lifeTime);
+        bulletParticles = new ShotgunParticleNew[data.TotalBulletCount()];
+        for (int i = 0; i < data.TotalBulletCount(); i++)
+        {
+            var obj = Instantiate(shotgunParticlePrefab, this.transform);
+            bulletParticles[i] = obj.GetComponent<ShotgunParticleNew>();
+            if (obj == null) Debug.LogError("No ShotgunParticleNew script found on prefab!");
+            if (data == null) Debug.LogError("No ShotgunParticleID data assigned!");
+            obj.transform.localEulerAngles = new Vector3(0, 0, data.bulletRotationsAndYPositions[i].y);
+            obj.SetActive(false);
+
+        }
+
+
     }
-    // Start is called before the first frame update
 
     public void Initialize(bool chained, int iD)
     {
@@ -53,11 +75,124 @@ public class ShotgunBlast : MonoBehaviour
 
     private void OnEnable()
     {
-        col.enabled = true;
-        transform.localScale = StartScale;
-        sr.color = startColor;
+
+
+
+
+
+
+        // rb.linearVelocity = finalForce;
+
+        // ScaleAndOpacity();
+
+        // for (int i = 0; i < countAndVelocitys.Length; i++)
+        // {
+        //     for (int n = (int)countAndVelocitys[i].x; n < (int)countAndVelocitys[i].y; n++)
+        //     {
+        //         bulletParticles[n].linearVelocity = bulletParticles[n].transform.right * countAndVelocitys[i].z;
+        //     }
+        // }
+
+
+    }
+
+    private WaitForSeconds bulletLayerDelay = new WaitForSeconds(.07f);
+
+    private WaitForSeconds lifeTime;
+
+    private IEnumerator Shoot()
+    {
+        for (int i = 0; i < data.outerBulletCount; i++)
+        {
+            bulletParticles[i].transform.localPosition = data.bulletRotationsAndYPositions[i].x * Vector2.up + (Vector2.right * data.xOffsetBullets[i]);
+            bulletParticles[i].gameObject.SetActive(true);
+            bulletParticles[i].SetVelocity(data.outerBulletVel, id);
+
+        }
+        yield return bulletLayerDelay;
+        for (int i = data.outerBulletCount; i < data.TotalBulletCount(); i++)
+        {
+            bulletParticles[i].transform.localPosition = data.bulletRotationsAndYPositions[i].x * Vector2.up + (Vector2.right * data.xOffsetBullets[i]);
+            bulletParticles[i].gameObject.SetActive(true);
+            bulletParticles[i].SetVelocity(data.innerBulletVel, id);
+
+
+        }
+        yield return lifeTime;
+
+
+        for (int i = 1; i < particleSprites.sprites.Length; i++)
+        {
+
+            foreach (var p in bulletParticles)
+            {
+                p.SetSprite(particleSprites.sprites[i], i);
+            }
+            yield return bulletLayerDelay;
+
+        }
+        foreach (var p in bulletParticles)
+        {
+            p.SetSprite(particleSprites.sprites[0], -1);
+        }
+
+
+
+        gameObject.SetActive(false);
+
+    }
+
+
+    private void OnDisable()
+    {
+
+        finished = false;
+        sr.enabled = true;
+        sr.sprite = muzzleFlashSprites.sprites[0];
+        sr.transform.localScale = baseScale * startFlashScale;
+
+        ReturnToPool();
+    }
+
+    private void Update()
+    {
+
+        if (finished) return;
+        else time += Time.deltaTime;
+        if (time > muzzleFlashSprites.constantSwitchTime)
+        {
+            currentSpriteDelayIndex++;
+            if (currentSpriteDelayIndex > muzzleFlashSprites.sprites.Length - 1)
+            {
+                currentSpriteDelayIndex = 0;
+                finished = true;
+                time = 0;
+                sr.enabled = false;
+                return;
+
+
+            }
+            float p = (float)currentSpriteDelayIndex / (float)(muzzleFlashSprites.sprites.Length - 1);
+            sr.transform.localScale = baseScale * Mathf.Lerp(startFlashScale, endFlashScale, p);
+            sr.color = Color.Lerp(data.startFlashColor, data.endFlashColor, p);
+            sr.sprite = muzzleFlashSprites.sprites[currentSpriteDelayIndex];
+            time = 0;
+
+        }
+    }
+
+    public override void SpawnTransformOverride(Vector2 pos, float rotation, int ID, bool other)
+    {
+        transform.position = pos;
+        transform.eulerAngles = new Vector3(0, 0, rotation);
+        gameObject.SetActive(true);
+
+        StartCoroutine(Shoot());
+        // col.enabled = true;
+        // transform.localScale = StartScale;
+        sr.color = data.startFlashColor;
         time = 0;
-        sr.sprite = img[0];
+
         Vector2 force = transform.right * forceAmount;
         hasBeenBlocked = false;
 
@@ -71,133 +206,46 @@ public class ShotgunBlast : MonoBehaviour
         Vector2 finalForce = new Vector2(force.x - addedX, force.y);
 
 
-        // rb.linearVelocity = finalForce;
-
-        ScaleAndOpacity();
-
-        for (int i = 0; i < countAndVelocitys.Length; i++)
-        {
-            for (int n = (int)countAndVelocitys[i].x; n < (int)countAndVelocitys[i].y; n++)
-            {
-                bulletParticles[n].linearVelocity = bulletParticles[n].transform.right * countAndVelocitys[i].z;
-            }
-        }
-
-
     }
 
-    // public void Initilaize(Vector2 direction)
+
+    private bool hasBeenBlocked;
+    // private void OnTriggerEnter2D(Collider2D collider)
     // {
-    //     transform.localScale = StartScale;
-    //     sr.color = startColor;
-    //     gameObject.SetActive(true);
-    //     rb.velocity = direction * forceAmount;
+    //     if (collider.gameObject.CompareTag("Block"))
+    //     {
+    //         hasBeenBlocked = true;
+    //         AudioManager.instance.PlayParrySound();
+    //         rb.linearVelocity *= .4f;
+    //         DisableCollider();
+    //         Debug.Log("Attack was blocked boi");
+    //         return;
+    //     }
+
+    //     IDamageable damageableEntity = collider.gameObject.GetComponent<IDamageable>();
+    //     if (damageableEntity != null && !hasBeenBlocked)
+    //     {
+    //         int type = 1;
+    //         if (isChained) type = 2;
+    //         damageableEntity.Damage(1, type, id);
+    //         return;
+
+    //     }
+    //     IExplodable explodable = collider.gameObject.GetComponent<IExplodable>();
+    //     if (explodable != null && !hasBeenBlocked)
+    //     {
+
+    //         explodable.Explode(false);
+    //         return;
+
+    //     }
 
     // }
-    private void OnDisable()
-    {
-        rb.linearVelocity = Vector2.zero;
-        finished = false;
-        currentScaleDelayIndex = 0;
-    }
 
-    private void Update()
-    {
-
-        if (finished) return;
-        else time += Time.deltaTime;
-        if (time > spriteDelays[currentScaleDelayIndex] && !finished)
-        {
-            currentSpriteDelayIndex++;
-            sr.sprite = img[currentSpriteDelayIndex];
-            time = 0;
-            if (currentSpriteDelayIndex > spriteDelays.Length - 1)
-            {
-                currentSpriteDelayIndex = 0;
-                finished = true;
-                time = 0;
-                return;
-
-            }
-        }
-    }
-
-    private void ScaleAndOpacity()
-    {
-        // Ensure to kill any previous sequence if it's still running
-        // if (sequence != null && sequence.IsActive())
-        // {
-        //     sequence.Kill();
-        // }
-
-        // Create a new sequence
-        if (shotgunBlastSeq != null && shotgunBlastSeq.IsActive())
-        {
-            shotgunBlastSeq.Kill();
-        }
-        shotgunBlastSeq = DOTween.Sequence();
-
-        // Iterate over the scales, opacities, and scaleDelays arrays
-        for (int i = 0; i < scales.Length; i++)
-        {
-
-            if (i == scales.Length - 1)
-            {
-                shotgunBlastSeq.AppendCallback(() => Invoke("DisableCollider", .12f));
-                shotgunBlastSeq.Append(transform.DOScale(scales[i], scaleDelays[i]).SetEase(Ease.OutSine));
-                shotgunBlastSeq.Join(sr.DOColor(endColor, scaleDelays[i]).SetEase(Ease.OutSine));
-            }
-            else
-            {
-                shotgunBlastSeq.Append(transform.DOScale(scales[i], scaleDelays[i]));
-                shotgunBlastSeq.Join(sr.DOFade(opacities[i], scaleDelays[i]));
-
-            }
-
-        }
-
-        shotgunBlastSeq.Play().SetUpdate(UpdateType.Fixed).OnComplete(() => gameObject.SetActive(false));
-
-        // Once the sequence is complete, mark the animation as finished
-        // sequence.OnComplete(() => gameObject.SetActive(false));
-    }
-    private bool hasBeenBlocked;
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        if (collider.gameObject.CompareTag("Block"))
-        {
-            hasBeenBlocked = true;
-            AudioManager.instance.PlayParrySound();
-            rb.linearVelocity *= .4f;
-            DisableCollider();
-            Debug.Log("Attack was blocked boi");
-            return;
-        }
-
-        IDamageable damageableEntity = collider.gameObject.GetComponent<IDamageable>();
-        if (damageableEntity != null && !hasBeenBlocked)
-        {
-            int type = 1;
-            if (isChained) type = 2;
-            damageableEntity.Damage(1, type, id);
-            return;
-
-        }
-        IExplodable explodable = collider.gameObject.GetComponent<IExplodable>();
-        if (explodable != null && !hasBeenBlocked)
-        {
-
-            explodable.Explode(false);
-            return;
-
-        }
-
-    }
-
-    private void DisableCollider()
-    {
-        col.enabled = false;
-    }
+    // private void DisableCollider()
+    // {
+    //     col.enabled = false;
+    // }
 
 
 }

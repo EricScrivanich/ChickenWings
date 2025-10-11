@@ -14,6 +14,7 @@ public class PlayerShotgunState : PlayerBaseState
 
     public override void EnterState(PlayerStateManager player)
     {
+        player.rb.linearDamping = 0f;
         // ignoringTime = true;
 
         // ignoreParticleTimer = 0;

@@ -183,10 +183,10 @@ public class Pignosorous : SpawnedBoss
             case 1:
 
                 currentBackForthAmount = 0;
-                anim.SetTrigger("Accelerate");
+
                 rotationScript.SetMaxRotation(360);
                 rotationScript.enabled = false;
-                StartCoroutine(BackAndForth());
+                StartCoroutine(BackAndForth(true));
 
                 return;
 
@@ -238,10 +238,10 @@ public class Pignosorous : SpawnedBoss
         {
 
             currentBackForthAmount = 0;
-            anim.SetTrigger("Accelerate");
+
             rotationScript.SetMaxRotation(360);
             rotationScript.enabled = false;
-            StartCoroutine(BackAndForth());
+            StartCoroutine(BackAndForth(true));
         }
 
         else if (doChase)
@@ -299,8 +299,8 @@ public class Pignosorous : SpawnedBoss
         ejectSpeed = speed;
         currentVelPercent = velPercent;
         additionalVel = addedVel;
-        leftJetPack.SetMaxRotation(maxRotation);
-        rightJetPack.SetMaxRotation(maxRotation);
+        // leftJetPack.SetMaxRotation(maxRotation);
+        // rightJetPack.SetMaxRotation(maxRotation);
     }
     private Vector2 addedBackForthY = new Vector2(0, .2f);
     private IEnumerator BackAndForth(bool firstTime = true)
@@ -314,7 +314,7 @@ public class Pignosorous : SpawnedBoss
 
 
         rb.linearVelocity = Vector2.zero;
-        rb.position = new Vector2((BoundariesManager.rightBoundary - .5f) * flipValue, currentBackForthY);
+        rb.position = new Vector2((BoundariesManager.rightBoundary) * flipValue, currentBackForthY);
 
         if (firstTime)
         {
@@ -322,7 +322,9 @@ public class Pignosorous : SpawnedBoss
             rightJetPack.SetConstantRotation(0, rightJetPack.transform);
             leftJetPack.SetOffset(1.5f, -1);
             rightJetPack.SetOffset(1, .4f);
+
             yield return new WaitForSeconds(1f);
+            anim.SetTrigger("Accelerate");
         }
 
 

@@ -12,10 +12,14 @@ public class PlayerStateManager : MonoBehaviour
     [ExposedScriptableObject]
     public PlayerID ID;
 
+    [SerializeField] private QPool shotgunShellPool;
+
 
 
 
     [SerializeField] private bool bounceOffGround;
+
+
 
 
     [SerializeField] private Material invincibleMat;
@@ -488,14 +492,11 @@ public class PlayerStateManager : MonoBehaviour
 
         if (cursorPrefab != null)
         {
-
             var obj = Instantiate(cursorPrefab).GetComponent<CursorTracker>();
-
             if (obj != null)
             {
                 obj.player = ID;
             }
-
         }
         if (ScythePrefab != null)
         {
@@ -854,7 +855,7 @@ public class PlayerStateManager : MonoBehaviour
         // if (!rotatingPositive && angleDifference > 0) rotationDirection = -1f;
 
         // Move towards the target at the specified speed
-        float newRotation = Mathf.MoveTowardsAngle(currentRotation, targetRotation, rotateToTargetSpeed * Time.deltaTime);
+        float newRotation = Mathf.MoveTowardsAngle(currentRotation, targetRotation, rotateToTargetSpeed * Time.fixedDeltaTime);
         rb.MoveRotation(newRotation);
 
         // Stop rotating when we reach the target
@@ -1007,6 +1008,7 @@ public class PlayerStateManager : MonoBehaviour
 
                 specificWeapon = val;
             }
+            HapticFeedbackManager.instance.SwitchAmmo();
         }
 
 
@@ -1014,6 +1016,8 @@ public class PlayerStateManager : MonoBehaviour
 
         if (specificWeapon >= 0)
         {
+
+
             ammoButtonPressed = false;
 
             currentWeaponIndex = System.Array.IndexOf(ammoManager.AvailableAmmos, specificWeapon);
@@ -1058,6 +1062,7 @@ public class PlayerStateManager : MonoBehaviour
         }
         else
         {
+
             HapticFeedbackManager.instance.SwitchAmmo();
 
             currentWeaponIndex += direction;
@@ -1893,7 +1898,7 @@ public class PlayerStateManager : MonoBehaviour
 
         if (useChainedAmmo || justSwitchedUsingChainedShotgun) c = true;
 
-        ammoManager.GetShotgunBlast(blastPoint.position, shotgunObj.transform.rotation, c);
+        ammoManager.GetShotgunBlast(blastPoint.position, shotgunObj.transform.eulerAngles.z, chainShot);
         // sdfsadfs
         // asdfsf
         // asdfdsaf
@@ -1944,7 +1949,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public void GetShell()
     {
-        pool.Spawn("ShotgunShell", shellSpawnPoint.position, shellSpawnPoint.rotation);
+        shotgunShellPool.SpawnWithVelocityAndRotation(shellSpawnPoint.position, (Vector2.up * 2) + (rb.linearVelocity * .4f), shellSpawnPoint.eulerAngles.z, 800);
+
         AudioManager.instance.PlayShoutgunNoise(1);
     }
 

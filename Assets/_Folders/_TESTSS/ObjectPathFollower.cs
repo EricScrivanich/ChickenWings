@@ -65,7 +65,7 @@ public class ObjectPathFollower : MonoBehaviour
 
 
 
-        targetFollow.DOLocalMove(endTargetFollow * transform.localScale.y, dur * .9f);
+        targetFollow.DOLocalMove(endTargetFollow * transform.localScale.y, dur);
 
     }
 

@@ -15,7 +15,7 @@ public class Bullet : SpawnedQueuedObject
 
     void OnDisable()
     {
-        ReturnToPool();
+
     }
 
     public void Fire(Vector2 pos, float z, float speed, int flip)

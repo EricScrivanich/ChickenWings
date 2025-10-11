@@ -18,6 +18,8 @@ public class TutorialData : ScriptableObject
     [SerializeField] private bool startButtonHidden = true;
     [SerializeField] private bool startInputsLocked;
 
+    
+
 
 
     [Header("Message String, replace with INPUT text")]
@@ -64,6 +66,7 @@ public class TutorialData : ScriptableObject
         StopAllButtons,
         ShowHiddenButtons,
         ResumeWaveTimeAndShowHidden,
+        ResumeWaveTimeAndShowHiddenAndShowHand,
         StartDelayedAction,
         ShowHandForSlide,
         HideHandForSlide,
@@ -80,6 +83,8 @@ public class TutorialData : ScriptableObject
     [SerializeField] private Vector2[] vectorValues;
     [SerializeField] private Vector2[] bubbleSuctionAndDelayDurations;
     [SerializeField] private float[] delayValues;
+
+    [SerializeField] private int handGestureType;
 
 
 
@@ -125,7 +130,7 @@ public class TutorialData : ScriptableObject
             // {
 
 
-            //     // GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>().InitializeTutorialButtons(buttonType, false);
+            //     GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>().InitializeTutorialButtons(buttonType, false);
 
             // }
             return;
@@ -153,13 +158,13 @@ public class TutorialData : ScriptableObject
                 currentStepIndex = i;
                 Debug.Log("Current step index set to: " + currentStepIndex);
                 m.HandleCheckForTutorial(true);
-                // if (buttonHandler == null && GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>() != null)
-                // {
+                if (buttonHandler == null && GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>() != null)
+                {
 
-                //     // buttonHandler = GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>();
-                //     // buttonHandler.InitializeTutorialButtons(buttonType, hideButton);
+                    buttonHandler = GameObject.Find("Buttons").GetComponent<TutorialButtonHandler>();
+                    // buttonHandler.InitializeTutorialButtons(buttonType, hideButton);
 
-                // }
+                }
                 if (inputSystem != null)
                 {
 
@@ -259,6 +264,16 @@ public class TutorialData : ScriptableObject
 
                 break;
 
+            case Type.ResumeWaveTimeAndShowHiddenAndShowHand:
+
+                DoAction(Type.ResumeWaveTime);
+                DoAction(Type.ShowHiddenButtons);
+                DoAction(Type.ShowHandForSlide);
+                inputSystem.SetTempLockInput(-1);
+
+                break;
+
+
             case Type.SpawnBubble:
                 var b = Instantiate(bubblePrefab, vectorValues[currentVectorIndex], Quaternion.identity);
                 b.GetComponent<TriggerNextSection>().InitiliazeBubble(this, currentBubbleIndex, bubbleSuctionAndDelayDurations[currentBubbleIndex].x, bubbleSuctionAndDelayDurations[currentBubbleIndex].y);
@@ -308,10 +323,10 @@ public class TutorialData : ScriptableObject
                 }
                 break;
             case Type.ShowHandForSlide:
-                buttonHandler.DoHandSlide(false);
+                buttonHandler.DoHandSlide(false, handGestureType, deviceType);
                 break;
             case Type.HideHandForSlide:
-                buttonHandler.DoHandSlide(true);
+                buttonHandler.DoHandSlide(true, handGestureType, "");
                 break;
 
                 // case Type.DelayForInput:

@@ -95,6 +95,7 @@ public class PickLevelEditorOnly : MonoBehaviour
     public void AddNewLevel(Vector3Int numbers, string name)
     {
         LevelData asset = ScriptableObject.CreateInstance<LevelData>();
+
         LevelChallenges challenges = ScriptableObject.CreateInstance<LevelChallenges>();
         challenges.Editor_SetChallenges();
 

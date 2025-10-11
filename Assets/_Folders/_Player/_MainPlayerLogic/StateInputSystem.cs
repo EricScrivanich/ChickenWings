@@ -207,8 +207,8 @@ public class StateInputSystem : MonoBehaviour
 
         }
 
-
-        HapticFeedbackManager.instance.SetDeviceType(type);
+        if (HapticFeedbackManager.instance != null)
+            HapticFeedbackManager.instance.SetDeviceType(type);
 
     }
     private void SetSwipesActive(bool doubleTap, Vector2 pos)

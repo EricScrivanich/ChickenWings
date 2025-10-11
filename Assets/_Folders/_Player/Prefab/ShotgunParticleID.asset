@@ -12,24 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29ef4b85d642a44adb0e8c62d33bf914, type: 3}
   m_Name: ShotgunParticleID
   m_EditorClassIdentifier: 
-  sprites: []
   bulletCount: 7
-  startScale: 0.4
-  endScale: 1
   speed: 15
-  startColor: {r: 1, g: 0.8537736, b: 0.8537736, a: 1}
-  endColor: {r: 0.5566038, g: 0.034131378, b: 0.034131378, a: 0.24705882}
-  lifeTime: 0.4
-  outerRadius: 0.2
-  outerRadiusArc: 30
-  outerRadiusAngleDamp: 0.45
-  innerRadius: 0
-  innerRadiusArc: 20
-  innerRadiusAngleDamp: 0.3
-  outerRadiusCount: 5
-  outerYPosAmount: 0
-  innerYPosAmount: 0
-  outerRotateAmount: 0
-  innerRotateAmount: 0
-  outerBulletCount: 0
-  innerBulletCount: 0
+  lifeTime: 0.22
+  <startFlashColor>k__BackingField: {r: 0.990566, g: 0.79140544, b: 0.58406013, a: 0.92941177}
+  <endFlashColor>k__BackingField: {r: 1, g: 0.5695867, b: 0.3254717, a: 0.7882353}
+  <outerBulletCount>k__BackingField: 5
+  <innerBulletCount>k__BackingField: 2
+  <outerBulletVel>k__BackingField: 11.5
+  <innerBulletVel>k__BackingField: 8.2
+  <bulletRotationsAndYPositions>k__BackingField:
+  - {x: -0.38, y: -20}
+  - {x: -0.19, y: -10}
+  - {x: 0, y: 0}
+  - {x: 0.19, y: 10}
+  - {x: 0.38, y: 20}
+  - {x: -0.17, y: -10}
+  - {x: 0.17, y: 10}
+  <xOffsetBullets>k__BackingField:
+  - -0.2
+  - 0
+  - 0.2
+  - 0
+  - -0.2
+  - 0
+  - 0

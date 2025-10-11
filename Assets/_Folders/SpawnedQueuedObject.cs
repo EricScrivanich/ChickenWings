@@ -87,6 +87,11 @@ public class SpawnedQueuedObject : MonoBehaviour
         if (angularVelocity != 0) rb.angularVelocity = angularVelocity;
 
     }
+    public virtual void SpawnTransformOverride(Vector2 pos, float rotation, int ID, bool other)
+    {
+       
+    }
+   
     public virtual void SpawnWithVelocityAndRotationAndScale(Vector2 pos, Vector2 velocity, float rotation, float scale)
     {
         Spawn(pos);
@@ -98,10 +103,10 @@ public class SpawnedQueuedObject : MonoBehaviour
     }
 
     public void ReturnToPool()
-    {
-        pool.ReturnObject(this);
+{
+    pool.ReturnObject(this);
 
-    }
+}
 
 
 

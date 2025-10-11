@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneChanger : MonoBehaviour
 {
     [SerializeField] private string LoadSceneWithTransition;
+    [SerializeField] private bool DoFeedback = false;
     public void LoadCreatorScene(bool test)
     {
         if (test)
@@ -45,7 +46,10 @@ public class SceneChanger : MonoBehaviour
 
     public void PressForSceneTransition()
     {
+
         TransitionDirector.instance.GoTo(LoadSceneWithTransition);
+        if (DoFeedback)
+            HapticFeedbackManager.instance.PressUIButton();
     }
 
     public void ShowPlayView(bool show)

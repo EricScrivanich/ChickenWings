@@ -403,6 +403,7 @@ public class SpawnStateManager : MonoBehaviour
         {
             addWaveTime = false;
             GameObject.Find("Player").GetComponent<PlayerStateManager>().ID.UiEvents.OnShowPlayerUI?.Invoke(true, 10, 0);
+            levelData?.InitializeData(this, currentSpawnStep, isLevel: false);
             // LvlID.outputEvent.OnGetLevelTime?.Invoke(TotalTime());
             SpawnPools();
             if (startDelay > 0)

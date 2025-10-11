@@ -123,6 +123,12 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
 
     private static readonly Vector2 minMaxMagntiude = new Vector2(10f, 6.5f);
     private static readonly Vector2 minMaxMass = new Vector2(0.59f, 1.05f);
+    [SerializeField] private Transform headTransform;
+    [SerializeField] private Transform bodyTransform;
+    [SerializeField] private Transform armsTransform;
+    [SerializeField] private Transform armLeftTransform;
+    [SerializeField] private Transform armRightTransform;
+
 
 
     void Start()
@@ -154,6 +160,53 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
         rb = GetComponent<Rigidbody2D>();
         // lineRenderer = GetComponent<LineRenderer>();
     }
+    private bool setRotationTarget = false;
+
+
+    public void RevertToNormalRotation()
+    {
+        anim.SetTrigger("Flap");
+        armLeftTransform.DOLocalRotate(Vector3.forward * -40, .4f).SetEase(Ease.OutSine);
+        armRightTransform.DOLocalRotate(Vector3.forward * 40, .4f).SetEase(Ease.OutSine);
+        bodyTransform.DORotate(Vector3.zero, .5f).SetEase(Ease.OutSine);
+
+       
+   // sprite.DORotate(Vector3.zero, .6f).SetEase(Ease.OutSine).OnComplete(() => setRotationTarget = false);
+    headTransform.DORotate(Vector3.zero, .6f).SetEase(Ease.OutSine).OnComplete(FinishRotation);
+
+    }
+    public void FinishRotation()
+    {
+        setRotationTarget = false;
+        
+    }
+
+    public void SetRotationTargets(float dur, float mainTarget, float mainArm, float otherArm, bool aimLeft)
+    {
+        setRotationTarget = true;
+       
+
+        if (aimLeft)
+        {
+            anim.SetTrigger("TurnLeft");
+            armLeftTransform.DOLocalRotate(Vector3.forward * mainArm, dur).SetEase(Ease.OutSine);
+            armRightTransform.DOLocalRotate(Vector3.forward * otherArm, dur).SetEase(Ease.OutSine);
+        }
+        else
+        {
+            anim.SetTrigger("TurnRight");
+            armRightTransform.DOLocalRotate(Vector3.forward * mainArm, dur).SetEase(Ease.OutSine);
+            armLeftTransform.DOLocalRotate(Vector3.forward * (otherArm + 180), dur).SetEase(Ease.OutSine);
+        }
+        armsTransform.DOLocalRotate(Vector3.zero, .4f).SetEase(Ease.OutSine);
+        bodyTransform.DORotate(Vector3.forward * mainTarget, dur * 1.1f, RotateMode.FastBeyond360).SetEase(Ease.OutSine);
+        headTransform.DORotate(Vector3.forward * mainTarget, dur * 1.3f, RotateMode.FastBeyond360).SetEase(Ease.OutSine);
+      
+
+
+
+
+    }
 
 
 
@@ -166,7 +219,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
         yolkSR.enabled = true;
         eggYolkUsed = true;
         yolkSR.sprite = animData.sprites[0];
-        yolkSeq.Append(sprite.DORotate(Vector3.zero, yolkDripDuration));
+        yolkSeq.Append(headTransform.DORotate(Vector3.zero, yolkDripDuration));
         yolkSeq.Join(yolkSR.transform.DOScale(yolkEndScale, yolkDripDuration).From(yolkStartScale).SetEase(Ease.OutSine));
         yolkSeq.Join(yolkSR.transform.DOLocalMoveY(yolkEndY, yolkDripDuration).From(yolkStartY).SetEase(Ease.OutSine));
         yolkSeq.Play();
@@ -186,7 +239,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
             yolkSeq.Kill();
         yolkSeq = DOTween.Sequence();
 
-        yolkSeq.Append(sprite.DOShakeRotation(.3f, 80, 10, 50));
+        yolkSeq.Append(headTransform.DOShakeRotation(.3f, 80, 10, 50));
         yolkSeq.Join(yolkSR.transform.DOScale(yolkEndScale * yolkScaleMultiplier, .3f));
         yolkSeq.Play();
 
@@ -320,13 +373,6 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
             return;
         }
 
-        // tickTimer += Time.deltaTime;
-        // if (tickTimer >= tickTime)
-        // {
-        //     MoveEyesWithTicker();
-        //     tickTimer = 0;
-        // }
-
 
 
         cackleTime += Time.deltaTime;
@@ -344,15 +390,6 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
     private void MoveEyesWithTicker()
     {
         if (blinded) return;
-        float xRange = transform.position.x - playerTarget.position.x;
-
-        float rotTarget = Mathf.Lerp(0, maxRotation, Mathf.Abs(xRange) * .06f);
-
-        if (xRange < 0)
-            rotTarget *= -1;
-
-
-        sprite.eulerAngles = Vector3.forward * rotTarget;
 
         Vector2 direction = playerTarget.position - pupilStartPositions.position; // Calculate the direction to the player
 
@@ -367,6 +404,22 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
 
     void FixedUpdate()
     {
+        if (!blinded && !setRotationTarget)
+        {
+            float xRange = transform.position.x - playerTarget.position.x;
+
+            float rotTarget = Mathf.Lerp(0, maxRotation, Mathf.Abs(xRange) * .07f);
+            float rotTarget2 = Mathf.Lerp(0, maxRotation, Mathf.Abs(xRange) * .03f);
+
+            if (xRange < 0)
+                rotTarget *= -1;
+
+
+            headTransform.eulerAngles = Vector3.forward * rotTarget;
+            bodyTransform.eulerAngles = Vector3.forward * rotTarget * 1.08f;
+            armsTransform.localEulerAngles = Vector3.forward * rotTarget * .3f;
+        }
+
 
 
         col.offset = new Vector2(0, sprite.localPosition.y);
@@ -420,7 +473,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
 
         }
 
-
+        if (setRotationTarget) return;
         if (!isTargetReached)
         {
             targetPosition = Vector2.MoveTowards(targetPosition, playerTarget.position, lerpSpeed * Time.fixedDeltaTime);
@@ -459,7 +512,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
     }
     private void UpdateTargetPosition(Vector2 playerVelocity, float playerGravityScale)
     {
-        if (!isTargetReached || playerTarget == null) return;
+        if (!isTargetReached || playerTarget == null || setRotationTarget) return;
 
         if (!hasFullyEntered)
         {

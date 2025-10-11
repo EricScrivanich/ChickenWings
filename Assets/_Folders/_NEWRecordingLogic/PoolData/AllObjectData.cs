@@ -24,9 +24,13 @@ public class AllObjectData : ScriptableObject
     [field: SerializeField] public CheckPointFlag checkPointFlag { get; private set; }
     [field: SerializeField] public GameObject finishLine { get; private set; }
 
+    [Header("Other")]
+    private ShotgunParticleID shotgunID;
+
 
     public void InitializeQPools()
     {
+        
         foreach (var qPool in QPools)
         {
             qPool.Initialize();

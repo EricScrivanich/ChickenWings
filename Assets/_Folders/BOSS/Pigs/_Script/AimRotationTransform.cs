@@ -86,7 +86,7 @@ public class AimRotationTransform : MonoBehaviour
     {
         Vector2 directionToPlayer = targetPos - (Vector2)transform.position;
         float o = normalOffset;
-        // if (isFlipped) o -= 180;
+        if (isFlipped) o -= 180;
 
         targetAngle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg + o;
 

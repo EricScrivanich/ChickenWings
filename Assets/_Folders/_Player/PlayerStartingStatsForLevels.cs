@@ -9,6 +9,9 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     [SerializeField] private GameObject shotgunPrefab;
     [SerializeField] private bool startHidden = false;
 
+    [SerializeField] private ShotgunParticleID shotgunParticleData;
+    [SerializeField] private QPool shotgunParticlePool;
+
     private Egg_Regular[] eggPool;
 
     [SerializeField] private QPool eggPoolNew;
@@ -33,12 +36,14 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     public int[] AvailableAmmos;
     public int[] ChangedAvailableAmmos;
 
-
-    public void SetData(short startingLives, short[] ammos, int maxLive = -1)
+    private int startingAmmo = -1;
+    public void SetData(short startingLives, short[] ammos, int shownAmmo, int maxLive = -1)
     {
         startingAmmos = ammos;
 
         this.StartingLives = startingLives;
+        startingAmmo = shownAmmo;
+        // shotgunParticleData.SetTransformData();
         Debug.Log("Starting Lives in stat ID: " + StartingLives);
 
 
@@ -48,6 +53,7 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     public void Initialize()
     {
         numberOfWeapons = 0;
+
 
         currentEggIndex = 0;
         currentShotgunIndex = 0;
@@ -69,14 +75,14 @@ public class PlayerStartingStatsForLevels : ScriptableObject
 
         // }
 
-        shotgunPool = new ShotgunBlast[shotgunPoolSize];
-        for (int i = 0; i < shotgunPoolSize; i++)
-        {
-            var obj = Instantiate(shotgunPrefab).GetComponent<ShotgunBlast>();
-            shotgunPool[i] = obj;
-            obj.gameObject.SetActive(false);
+        // shotgunPool = new ShotgunBlast[shotgunPoolSize];
+        // for (int i = 0; i < shotgunPoolSize; i++)
+        // {
+        //     var obj = Instantiate(shotgunPrefab).GetComponent<ShotgunBlast>();
+        //     shotgunPool[i] = obj;
+        //     obj.gameObject.SetActive(false);
 
-        }
+        // }
 
         if (eggPoolSize > 0) numberOfWeapons++;
         if (shotgunPoolSize > 0) numberOfWeapons++;
@@ -84,6 +90,8 @@ public class PlayerStartingStatsForLevels : ScriptableObject
 
     public int ReturnStartingEquipedAmmo()
     {
+        if (startingAmmo > -1) return startingAmmo;
+
         if ((startingNormalEggAmmo <= 0 && startingShotgunAmmo <= 0) || startHidden) return 0;
         else if (startingNormalEggAmmo > startingShotgunAmmo) return 0;
         else if (startingShotgunAmmo >= startingNormalEggAmmo) return 1;
@@ -91,27 +99,30 @@ public class PlayerStartingStatsForLevels : ScriptableObject
     }
     // public int ReturnNextAva
 
-    public void GetShotgunBlast(Vector2 pos, Quaternion rotation, bool chained)
+    public void GetShotgunBlast(Vector2 pos, float rot, bool chained)
     {
-        if (currentShotgunIndex >= shotgunPoolSize) currentShotgunIndex = 0;
-        if (shotgunPool[currentShotgunIndex].gameObject.activeInHierarchy)
-        {
-            var s = Instantiate(shotgunPrefab, pos, rotation).GetComponent<ShotgunBlast>();
-            // s.transform.position = pos;
-            // s.transform.rotation = rotation;
-            s.Initialize(chained, shotgunID);
+        shotgunParticlePool.SpawnTransformOverride(pos, rot, shotgunID, chained);
 
 
-        }
-        else
-        {
-            var s = shotgunPool[currentShotgunIndex];
-            s.transform.position = pos;
-            s.transform.rotation = rotation;
-            s.Initialize(chained, shotgunID);
-            s.gameObject.SetActive(true);
-            currentShotgunIndex++;
-        }
+        // if (currentShotgunIndex >= shotgunPoolSize) currentShotgunIndex = 0;
+        // if (shotgunPool[currentShotgunIndex].gameObject.activeInHierarchy)
+        // {
+        //     var s = Instantiate(shotgunPrefab, pos, rotation).GetComponent<ShotgunBlast>();
+        //     // s.transform.position = pos;
+        //     // s.transform.rotation = rotation;
+        //     s.Initialize(chained, shotgunID);
+
+
+        // }
+        // else
+        // {
+        //     var s = shotgunPool[currentShotgunIndex];
+        //     s.transform.position = pos;
+        //     s.transform.rotation = rotation;
+        //     s.Initialize(chained, shotgunID);
+        //     s.gameObject.SetActive(true);
+        //     currentShotgunIndex++;
+        // }
 
         shotgunID++;
 

@@ -137,6 +137,8 @@ public class AmmoShotgunState : AmmoBaseState
             if (player.rb.freezeRotation)
                 player.rb.freezeRotation = false;
 
+            player.rb.linearDamping = 2f;
+
             HapticFeedbackManager.instance.PressShotgunButton();
             player.shotgunRotationTarget = 0;
             Debug.LogError("Pressed");
@@ -180,9 +182,10 @@ public class AmmoShotgunState : AmmoBaseState
 
 
     }
+    private WaitForSeconds shellDelay = new WaitForSeconds(.2f);
     private IEnumerator Timer(PlayerStateManager player)
     {
-        yield return new WaitForSeconds(.2f);
+        yield return shellDelay;
         player.GetShell();
 
         AudioManager.instance.PlayShoutgunNoise(1);
@@ -263,6 +266,8 @@ public class AmmoShotgunState : AmmoBaseState
         // }
         HapticFeedbackManager.instance.ReleaseShotgunButton();
 
+
+
         player.StartCoroutine(Timer(player));
 
         player.GetShotgunBlast(usingChainedAmmo);
@@ -341,7 +346,7 @@ public class AmmoShotgunState : AmmoBaseState
                 rotationTarget = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 if (rotationTarget < 0) rotationTarget += 360;
                 rotatingToTarget = true;
-                player.RotateToTargetFromWeaponState(rotationTarget, 550);
+                player.RotateToTargetFromWeaponState(rotationTarget, 620);
                 isPressed = false;
 
             }

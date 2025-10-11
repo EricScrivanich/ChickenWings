@@ -9,20 +9,20 @@ public class QPool : ScriptableObject
 
     public void Initialize()
     {
-
-
         Debug.Log("Initializing QPool: " + prefab.name);
         q = new Queue<SpawnedQueuedObject>();
         var obj = Instantiate(prefab, initialSpawnPosition, Quaternion.identity).GetComponent<SpawnedQueuedObject>();
         obj.Initialize(this);
         obj.gameObject.SetActive(false);
+        if (q.Count <= 0) q.Enqueue(obj);
+
 
     }
     public SpawnedQueuedObject GetObject()
     {
-       
+
         var obj = q.Dequeue();
-        
+
         if (q.Count <= 0)
         {
             Debug.LogWarning("QPool is empty, creating a new object.");
@@ -66,6 +66,12 @@ public class QPool : ScriptableObject
         obj.ResetRB();
         obj.SpawnSpecial(pos, speed, flipped);
 
+    }
+    public void SpawnTransformOverride(Vector2 pos, float rotation, int ID = 0, bool other = false)
+    {
+        var obj = GetObject();
+
+        obj.SpawnTransformOverride(pos, rotation, ID, other);
     }
 
     public void SpawnWithVelocityAndRotation(Vector2 pos, Vector2 velocity, float rotation, float angularVelocity = 0)
