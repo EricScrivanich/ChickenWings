@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TenderizerPig : SpawnedObject, ICollectible, IRecordableObject
+public class TenderizerPig : SpawnedPigObject, ICollectible, IRecordableObject
 {
     public float speed;
     public bool hasHammer;

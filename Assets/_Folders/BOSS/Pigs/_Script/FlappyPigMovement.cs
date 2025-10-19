@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
+public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
 {
+    [SerializeField] private bool isEnemySubType;
     public float scaleFactor;
     private bool hasFullyEntered;
     private Sequence flapSeq;
@@ -102,7 +103,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
     private static readonly float addUpForceAmount = 3.8f;
 
     private static readonly float bounceForceMagnitude = 4f;
-    private static readonly float eggForceMagnitude = 8.4f;
+    private static readonly float eggForceMagnitude = 8.3f;
 
     private static readonly float moveFreeDurationBounce = 0.3f;
     private static readonly float moveFreeDurationEgg = 0.1f;
@@ -111,7 +112,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
     private static readonly float inverseMagnitude = -6f;
 
     private static readonly float minYVelocity = -1.5f;
-    private static readonly float maxRotation = 20f;
+    private static readonly float maxRotation = 25f;
 
     private static readonly Vector2 minMaxScale = new Vector2(0.7f, 1.1f);
     private static readonly Vector2 minMaxTimeScale = new Vector2(1.1f, 0.9f);
@@ -128,6 +129,11 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
     [SerializeField] private Transform armsTransform;
     [SerializeField] private Transform armLeftTransform;
     [SerializeField] private Transform armRightTransform;
+
+    [SerializeField] private Transform wingsTransform;
+
+
+    private bool turnedAnimation = false;
 
 
 
@@ -165,43 +171,65 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
 
     public void RevertToNormalRotation()
     {
-        anim.SetTrigger("Flap");
-        armLeftTransform.DOLocalRotate(Vector3.forward * -40, .4f).SetEase(Ease.OutSine);
-        armRightTransform.DOLocalRotate(Vector3.forward * 40, .4f).SetEase(Ease.OutSine);
-        bodyTransform.DORotate(Vector3.zero, .5f).SetEase(Ease.OutSine);
+        anim.SetTrigger("RevertTurn");
 
-       
-   // sprite.DORotate(Vector3.zero, .6f).SetEase(Ease.OutSine).OnComplete(() => setRotationTarget = false);
-    headTransform.DORotate(Vector3.zero, .6f).SetEase(Ease.OutSine).OnComplete(FinishRotation);
+        // float xRange = transform.position.x - playerTarget.position.x;
+
+        // float rotTarget = Mathf.Lerp(0, maxRotation, Mathf.Abs(xRange) * .07f);
+        // float rotTarget2 = Mathf.Lerp(0, maxRotation, Mathf.Abs(xRange) * .03f);
+
+        // if (xRange < 0)
+        //     rotTarget *= -1;
+
+
+        // headTransform.eulerAngles = Vector3.forward * rotTarget;
+        // bodyTransform.eulerAngles = Vector3.forward * rotTarget * 1.08f;
+        // armsTransform.localEulerAngles = Vector3.forward * rotTarget * .3f;
+
+        armLeftTransform.DOLocalRotate(Vector3.forward * -40, .3f).SetEase(Ease.OutSine);
+        armRightTransform.DOLocalRotate(Vector3.forward * 40, .3f).SetEase(Ease.OutSine);
+        bodyTransform.DORotate(Vector3.zero, .4f).SetEase(Ease.OutSine);
+
+
+        // sprite.DORotate(Vector3.zero, .6f).SetEase(Ease.OutSine).OnComplete(() => setRotationTarget = false);
+        headTransform.DORotate(Vector3.zero, .5f).SetEase(Ease.OutSine).OnComplete(FinishRotation);
 
     }
     public void FinishRotation()
     {
         setRotationTarget = false;
-        
+
     }
 
     public void SetRotationTargets(float dur, float mainTarget, float mainArm, float otherArm, bool aimLeft)
     {
         setRotationTarget = true;
-       
+        waitingOnDelay = true;
+        if (flapSeq != null && flapSeq.IsPlaying())
+            flapSeq.Kill();
+
 
         if (aimLeft)
         {
-            anim.SetTrigger("TurnLeft");
+
             armLeftTransform.DOLocalRotate(Vector3.forward * mainArm, dur).SetEase(Ease.OutSine);
             armRightTransform.DOLocalRotate(Vector3.forward * otherArm, dur).SetEase(Ease.OutSine);
         }
         else
         {
-            anim.SetTrigger("TurnRight");
+            wingsTransform.localScale = new Vector3(-1, 1, 1);
             armRightTransform.DOLocalRotate(Vector3.forward * mainArm, dur).SetEase(Ease.OutSine);
             armLeftTransform.DOLocalRotate(Vector3.forward * (otherArm + 180), dur).SetEase(Ease.OutSine);
         }
-        armsTransform.DOLocalRotate(Vector3.zero, .4f).SetEase(Ease.OutSine);
-        bodyTransform.DORotate(Vector3.forward * mainTarget, dur * 1.1f, RotateMode.FastBeyond360).SetEase(Ease.OutSine);
-        headTransform.DORotate(Vector3.forward * mainTarget, dur * 1.3f, RotateMode.FastBeyond360).SetEase(Ease.OutSine);
-      
+
+
+        anim.speed = 1;
+        anim.SetTrigger("Turn");
+        armsTransform.DOLocalRotate(Vector3.zero, dur * .6f).SetEase(Ease.OutSine);
+        sprite.DOLocalMoveY(0, .3f);
+        bodyTransform.DORotate(Vector3.forward * mainTarget, dur * .8f, RotateMode.FastBeyond360).SetEase(Ease.OutSine);
+        headTransform.DORotate(Vector3.forward * mainTarget, dur * 1.1f, RotateMode.FastBeyond360);
+
 
 
 
@@ -253,6 +281,10 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
         yolkSR.sprite = animData.sprites[4];
         yield return new WaitForSeconds(.1f);
         yolkSR.enabled = false;
+        if (isEnemySubType)
+        {
+            GetComponent<IEnemySubType>().Egged(false);
+        }
         blinded = false;
 
 
@@ -291,7 +323,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
 
     }
 
-    private void OnEnable()
+    public override void OnEnableLogic()
     {
         // rb.simulated = false;
         // rb.simulated = true;
@@ -325,59 +357,87 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
         delayDuration = Random.Range(0f, sineTime);
         sprite.localScale = BoundariesManager.vectorThree1;
         rb.simulated = true;
+        StartCoroutine(AnimationDelay());
 
     }
 
     private void OnDisable()
     {
         Ticker.OnTickAction015 -= MoveEyesWithTicker;
+
         if (flapSeq != null && flapSeq.IsPlaying())
             flapSeq.Kill();
         if (yolkSeq != null && yolkSeq.IsPlaying())
             yolkSeq.Kill();
         player.globalEvents.OnPlayerVelocityChange -= UpdateTargetPosition;
+        triggerWhenDead = false;
 
 
     }
 
     private void TweenPig()
     {
+        if (flapSeq != null && flapSeq.IsPlaying())
+        {
+            flapSeq.Kill();
+        }
+
+
         flapSeq = DOTween.Sequence();
-        flapSeq.Append(sprite.DOLocalMoveY(tweenUpAmount, tweenUpDuration)).SetEase(Ease.OutSine);
+        flapSeq.Append(sprite.DOLocalMoveY(tweenUpAmount, tweenUpDuration).From(0)).SetEase(Ease.OutSine);
         flapSeq.Append(sprite.DOLocalMoveY(0, tweenDownDuration)).SetEase(Ease.InSine);
         flapSeq.Play().SetLoops(-1);
 
+    }
+
+    private IEnumerator AnimationDelay()
+    {
+        yield return new WaitForSeconds(delayDuration);
+        DoFlapAnim();
+
+    }
+    public void DoFlapAnim()
+    {
+        anim.speed = 1 * timeScale;
+        sprite.localPosition = Vector3.zero;
+        anim.SetTrigger("Flap");
+
+        wingsTransform.localScale = Vector3.one;
+
+        cackleTime = 0;
+        // anim.speed = 1;
+        TweenPig();
+        waitingOnDelay = false;
     }
 
 
     void Update()
     {
 
-        if (waitingOnDelay)
-        {
-            delayTime += Time.deltaTime;
+        // if (waitingOnDelay)
+        // {
+        //     delayTime += Time.deltaTime;
 
-            if (delayTime > delayDuration)
-            {
-                waitingOnDelay = false;
+        //     if (delayTime > delayDuration)
+        //     {
+        //         waitingOnDelay = false;
 
-                anim.speed = 1 * timeScale;
-                // anim.speed = 1;
-                TweenPig();
-                // Time.timeScale = .4f;
+        //         anim.speed = 1 * timeScale;
+        //         // anim.speed = 1;
+        //         TweenPig();
+        //         // Time.timeScale = .4f;
 
 
 
-            }
+        //     }
 
-            return;
-        }
-
+        //     return;
+        // }
 
 
         cackleTime += Time.deltaTime;
 
-        if (cackleTime > sineTime)
+        if (!waitingOnDelay && cackleTime > sineTime)
         {
             AudioManager.instance.PlayFlappyPigCackleSound();
             cackleTime = 0;
@@ -408,16 +468,19 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
         {
             float xRange = transform.position.x - playerTarget.position.x;
 
-            float rotTarget = Mathf.Lerp(0, maxRotation, Mathf.Abs(xRange) * .07f);
-            float rotTarget2 = Mathf.Lerp(0, maxRotation, Mathf.Abs(xRange) * .03f);
+            float rotTarget = Mathf.Lerp(0, maxRotation, Mathf.Abs(xRange) * 0.07f);
+
 
             if (xRange < 0)
                 rotTarget *= -1;
 
+            float headZ = Mathf.MoveTowardsAngle(headTransform.eulerAngles.z, rotTarget, 35 * Time.deltaTime);
+            float bodyZ = Mathf.MoveTowardsAngle(bodyTransform.eulerAngles.z, rotTarget * 1.08f, 40 * Time.deltaTime);
+            float armsZ = Mathf.MoveTowardsAngle(armsTransform.localEulerAngles.z, rotTarget * 0.3f, 50 * Time.deltaTime);
 
-            headTransform.eulerAngles = Vector3.forward * rotTarget;
-            bodyTransform.eulerAngles = Vector3.forward * rotTarget * 1.08f;
-            armsTransform.localEulerAngles = Vector3.forward * rotTarget * .3f;
+            headTransform.eulerAngles = Vector3.forward * headZ;
+            bodyTransform.eulerAngles = Vector3.forward * bodyZ;
+            armsTransform.localEulerAngles = Vector3.forward * armsZ;
         }
 
 
@@ -453,6 +516,10 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
         {
             rb.AddForce(Vector2.up * addUpForceAmount);
 
+        }
+        else if (rb.linearVelocityY > 0 && transform.position.y > BoundariesManager.TopViewBoundary)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * .8f);
         }
 
         OnDirectionTime += Time.fixedDeltaTime;
@@ -564,27 +631,37 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
 
         if (other.gameObject.CompareTag("Floor") && blinded)
         {
-            if (EggYolkRoutine != null)
-                StopCoroutine(EggYolkRoutine);
-            if (flapSeq != null && flapSeq.IsPlaying())
-                flapSeq.Kill();
+            Damage(1, 0, -1);
 
-            // flapSeq = DOTween.Sequence();
-            rb.simulated = false;
-            this.enabled = false;
-            anim.enabled = false;
-            // flapSeq.Append(sprite.DOScale(new Vector3(1.15f, .8f, 1), .25f).SetEase(Ease.OutSine));
-            // flapSeq.Join(sprite.DOLocalMoveY(-.4f, .25f).SetEase(Ease.OutSine));
-            // flapSeq.Play();
-
-
-            pigMatHandler.Damage(1, 0, -1);
-            if (other.gameObject.GetComponent<groundExplosion>() != null)
+            if (lives <= 0)
             {
-                other.gameObject.GetComponent<groundExplosion>().SetYolkTransform(yolkSR.transform);
-                yolkSR.enabled = false;
+
+                if (EggYolkRoutine != null)
+                    StopCoroutine(EggYolkRoutine);
+                if (flapSeq != null && flapSeq.IsPlaying())
+                    flapSeq.Kill();
+
+                flapSeq = DOTween.Sequence();
+                flapSeq.Append(sprite.DOLocalMoveY(-tweenUpAmount, tweenUpDuration));
+
+                // flapSeq = DOTween.Sequence();
+                rb.simulated = false;
+                this.enabled = false;
+                anim.enabled = false;
+                // flapSeq.Append(sprite.DOScale(new Vector3(1.15f, .8f, 1), .25f).SetEase(Ease.OutSine));
+                // flapSeq.Join(sprite.DOLocalMoveY(-.4f, .25f).SetEase(Ease.OutSine));
+                // flapSeq.Play();
+
+
+                // pigMatHandler.Damage(1, 0, -1);
+                if (other.gameObject.GetComponent<groundExplosion>() != null)
+                {
+                    other.gameObject.GetComponent<groundExplosion>().SetYolkTransform(yolkSR.transform);
+                    yolkSR.enabled = false;
+                }
+                return;
+
             }
-            return;
 
         }
         // Check for the first contact point
@@ -618,7 +695,7 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
     }
 
 
-    public void OnEgged()
+    public override void OnPigEgged()
     {
         blindDurationVar = blindedTime;
 
@@ -627,10 +704,14 @@ public class FlappyPigMovement : SpawnedObject, IEggable, IRecordableObject
             moveFreeDuration = moveFreeDurationEgg + .15f;
             rb.linearVelocity = Vector2.zero;
             // rb.velocity *= .4f;
-            rb.AddForce(Vector2.down * eggForceMagnitude * 1.28f, ForceMode2D.Impulse);
+            rb.AddForce(Vector2.down * eggForceMagnitude * 1.2f, ForceMode2D.Impulse);
         }
         else
         {
+            if (isEnemySubType)
+            {
+                GetComponent<IEnemySubType>().Egged(true);
+            }
             // rb.velocity *= .2f;
             rb.linearVelocity = Vector2.zero;
 

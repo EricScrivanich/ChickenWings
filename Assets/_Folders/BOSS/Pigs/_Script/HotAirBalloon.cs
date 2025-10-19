@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class HotAirBalloon : SpawnedObject, IRecordableObject
+public class HotAirBalloon : SpawnedPigObject, IRecordableObject
 {
 
     [SerializeField] private int balloonType;
@@ -20,7 +20,7 @@ public class HotAirBalloon : SpawnedObject, IRecordableObject
     [SerializeField] private float gunRotationSpeedAiming;
     [SerializeField] private float minShootAngle;
     [SerializeField] private QPool bombPool;
-    
+
 
 
 
@@ -340,12 +340,12 @@ public class HotAirBalloon : SpawnedObject, IRecordableObject
 
     }
 
-   
-  
 
 
 
-    
+
+
+
     public void DropBomb()
     {
         if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)

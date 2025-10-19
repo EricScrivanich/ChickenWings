@@ -76,7 +76,7 @@ public class EggCollectableMovement : SpawnedObject, ICollectible, IRecordableOb
     [SerializeField] private PigsScriptableObject pigID;
     Vector2 _position;
 
-    
+
 
     private readonly Vector2 minMaxAmp = new Vector2(.2f, 4f);
     private readonly Vector2 maxFreqBasedOnAmp = new Vector2(.1f, 3.4f);
@@ -105,6 +105,14 @@ public class EggCollectableMovement : SpawnedObject, ICollectible, IRecordableOb
             startColor = blueColorStart;
             endColor = blueColorEnd;
 
+        }
+    }
+
+    private void CheckPosition()
+    {
+        if (transform.position.x < BoundariesManager.leftPlayerBoundary && speed > 0 || transform.position.x > BoundariesManager.rightPlayerBoundary && speed < 0)
+        {
+            gameObject.SetActive(false);
         }
     }
     public void EnableAmmo(Sprite mainImage, Sprite ThreeImage, bool mana, float speedVar)
@@ -272,18 +280,21 @@ public class EggCollectableMovement : SpawnedObject, ICollectible, IRecordableOb
         // Animation trigger logic
 
     }
-
+    private void OnEnable()
+    {
+        Ticker.OnTickAction015 += CheckPosition;
+    }
     private void OnDisable()
     {
 
-        int t = 0;
-        if (isMana) t = 1;
 
-        ID.globalEvents.OnAmmoEvent?.Invoke(t);
+
+        ID.globalEvents.OnAmmoEvent?.Invoke(type);
         blur.enabled = false;
         mainSprite.enabled = true;
         bursted = false;
         isCollected = false;
+        Ticker.OnTickAction015 -= CheckPosition;
         // hasCrossedScreen = false;
 
     }
@@ -419,7 +430,7 @@ public class EggCollectableMovement : SpawnedObject, ICollectible, IRecordableOb
 
 
 
-   
+
     public override void ApplyFloatFiveData(DataStructFloatFive data)
     {
         _position = data.startPos;

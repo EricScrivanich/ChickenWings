@@ -85,6 +85,8 @@ public class BarnAndEggSpawner : MonoBehaviour
     private static System.Action<Vector2, int> OnGetAmmoParticles;
 
     private bool justSpawnedEnemies = false;
+    [SerializeField] private RecordableObjectPool eggPool;
+    [SerializeField] private RecordableObjectPool shotgunPool;
 
     // Start is called before the first frame update
 
@@ -266,29 +268,44 @@ public class BarnAndEggSpawner : MonoBehaviour
     // Update is called once per frame
     public void GetEggCollectable(Vector2 pos, bool isShotgun, bool isThree, float speed)
     {
-
-        if (currentEggCollectableIndex >= eggCollectableCount) currentEggCollectableIndex = 0;
-        var obj = eggCollectables[currentEggCollectableIndex];
-        obj.transform.position = pos;
-
+        if (speed == 0) speed = Random.Range(4.7f, 5.7f);
+        float _sineFrequency = Random.Range(.25f, .35f);
+        float _sineMagnitude = Random.Range(.05f, .22f);
+        float offset = Random.Range(0, 1);
+        ushort type = (ushort)(isThree ? 1 : 0);
+        bool flipX = (Random.Range(0f, 1f) < (isShotgun ? SpawnData.flipXChanceShotgun : SpawnData.flipXChanceEgg));
+        if (flipX)
+        {
+            pos.x = -pos.x;
+            speed *= -.9f;
+        }
+        // speed, size, mag, freq, offset
         if (isShotgun)
-        {
-            if (isThree)
-                obj.EnableAmmo(shotgunImage, shotgunThreeImage, isShotgun, speed);
-            else
-                obj.EnableAmmo(shotgunImage, null, isShotgun, speed);
-        }
+            shotgunPool.SpawnOverride(pos, type, new float[] { speed, 1, _sineMagnitude, _sineFrequency, offset });
         else
-        {
-            if (isThree)
-                obj.EnableAmmo(eggImage, eggThreeImage, isShotgun, speed);
-            else
-                obj.EnableAmmo(eggImage, null, isShotgun, speed);
+            eggPool.SpawnOverride(pos, type, new float[] { speed, 1, _sineMagnitude, _sineFrequency, offset });
+        // if (currentEggCollectableIndex >= eggCollectableCount) currentEggCollectableIndex = 0;
+        // var obj = eggCollectables[currentEggCollectableIndex];
+        // obj.transform.position = pos;
 
-        }
+        // if (isShotgun)
+        // {
+        //     if (isThree)
+        //         obj.EnableAmmo(shotgunImage, shotgunThreeImage, isShotgun, speed);
+        //     else
+        //         obj.EnableAmmo(shotgunImage, null, isShotgun, speed);
+        // }
+        // else
+        // {
+        //     if (isThree)
+        //         obj.EnableAmmo(eggImage, eggThreeImage, isShotgun, speed);
+        //     else
+        //         obj.EnableAmmo(eggImage, null, isShotgun, speed);
+
+        // }
 
 
-        currentEggCollectableIndex++;
+        // currentEggCollectableIndex++;
 
     }
 
@@ -500,6 +517,17 @@ public class BarnAndEggSpawner : MonoBehaviour
     public void SetNewData(CollectableSpawnData data)
     {
         SpawnData = data;
+        if (data == null)
+        {
+            if (spawningEgg && EggRoutine != null)
+                StopCoroutine(EggRoutine);
+            if (spawningShotgun && ShotgunRoutine != null)
+                StopCoroutine(ShotgunRoutine);
+            if (spawningBarn && BarnRoutine != null)
+                StopCoroutine(BarnRoutine);
+            return;
+
+        }
 
 
 

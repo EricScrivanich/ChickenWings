@@ -22,6 +22,7 @@ public class AmmoScytheState : AmmoBaseState
         Debug.LogError("In Egg State");
 
         player.ID.UiEvents.OnSwitchDisplayedWeapon?.Invoke(3, 1, direction);
+        player.ID.UiEvents.OnShowSyctheLine?.Invoke(true);
 
         // if (player.ID.Ammo <= 0)
         //     player.ID.UiEvents.OnSetAmmoZero?.Invoke(false);
@@ -34,6 +35,7 @@ public class AmmoScytheState : AmmoBaseState
 
     public override void ExitState(PlayerStateManager player)
     {
+        player.ID.UiEvents.OnShowSyctheLine?.Invoke(false);
 
     }
 

@@ -29,6 +29,6 @@ public interface IRecordableObject
 
 public interface ISimpleRecordableObject
 {
-    void ApplyTypeData(ushort type);
+   
 
 }

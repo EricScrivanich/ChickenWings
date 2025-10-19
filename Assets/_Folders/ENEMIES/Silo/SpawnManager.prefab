@@ -75,6 +75,8 @@ MonoBehaviour:
   manaTimeRange: {x: 17, y: 25}
   ammoParticlePrefab: {fileID: 6982175600085930321, guid: 384f1b05875fa4f5b87dd972f848869d, type: 3}
   manaParticlePrefab: {fileID: 6982175600085930321, guid: 40a90e8fd351a400a96c42aa6f9a799c, type: 3}
+  eggPool: {fileID: 11400000, guid: 8297fd70a73fb4736b80127bd19dd273, type: 2}
+  shotgunPool: {fileID: 11400000, guid: 9934d23756f9f4ae1b85372cf0db1d9d, type: 2}
 --- !u!114 &181520417636617702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,6 +91,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isTestPlayer: 0
   mainLevel: 0
+  disableAfterStart: 0
   LvlID: {fileID: 11400000, guid: 7bbf4b6db28164ef58011dde777895aa, type: 2}
   allObjectData: {fileID: 11400000, guid: 39c7fc890c47e46058b8b922c162fb46, type: 2}
   startingState: 3
@@ -224,6 +227,10 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  Overlay: {fileID: 0}
+  UiElementOverlay: []
+  Screen: {fileID: 0}
+  UiElementScreen: []
 --- !u!114 &5076868968221451896
 MonoBehaviour:
   m_ObjectHideFlags: 0

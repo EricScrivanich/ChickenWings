@@ -84,6 +84,7 @@ public class LevelDataConverter : MonoBehaviour
 
     public LevelData ReturnLevelData(int index = -1)
     {
+        Debug.Log("Returning Level Data for index: " + index);
 
         if (index == -1)
         {
@@ -249,6 +250,9 @@ public class LevelDataConverter : MonoBehaviour
         List<ushort> cageAttachments = new List<ushort>();
         List<RecordedObjectPositionerDataSave> positionerData = new List<RecordedObjectPositionerDataSave>();
 
+        bool isEditor = editorData != null;
+        List<Vector2Int> specialTriggerIndexAndType = new List<Vector2Int>();
+
 
         for (int i = 0; i < obj.Count; i++)
         {
@@ -273,6 +277,11 @@ public class LevelDataConverter : MonoBehaviour
             {
                 typeList.Add(obj[i].Data.type);
                 posList.Add(obj[i].Data.startPos);
+
+                if (isEditor && obj[i].Data.triggerType != 0)
+                {
+                    specialTriggerIndexAndType.Add(new Vector2Int(i, obj[i].Data.triggerType));
+                }
             }
 
 
@@ -315,9 +324,33 @@ public class LevelDataConverter : MonoBehaviour
         // for (int i = 0; i < poolSizes.Length; i++)
         // {
         //     poolData[i] = (ushort)poolSizes[i];
+
         // }
-        if (editorData != null) title = editorData.LevelName; // Use the editor data title if available
-        LevelDataSave save = new LevelDataSave(title, objectTypeList.ToArray(), idList.ToArray(), spawnedStepList.ToArray(), typeList.ToArray(), dataTypes.ToArray(), finalSpawnStep, posList.ToArray(), floatList.ToArray(), plSizes, ammos, lives);
+
+
+        if (isEditor)
+        {
+            title = editorData.LevelName;
+            var extraData = editorData.levelDataBossAndRandomLogic.ReturnCollectableSpawnData();
+            if (extraData != null)
+            {
+                if (extraData.SpawnEggs)
+                {
+
+                    plSizes[3][0] += 2;
+                }
+                if (extraData.SpawnShotgun)
+                {
+
+                    plSizes[3][1] += 2;
+                }
+            }
+
+        }  // Use the editor data title if available
+        LevelDataSave save = new LevelDataSave(title, objectTypeList.ToArray(),
+        idList.ToArray(), spawnedStepList.ToArray(), typeList.ToArray(),
+        dataTypes.ToArray(), finalSpawnStep, posList.ToArray(),
+        floatList.ToArray(), plSizes, ammos, lives);
 
 
 
@@ -328,6 +361,7 @@ public class LevelDataConverter : MonoBehaviour
         {
 
             editorData.LoadLevelSaveData(save);
+            editorData.specialTriggerIndexAndType = specialTriggerIndexAndType.ToArray();
             UnityEditor.EditorUtility.SetDirty(editorData);
             UnityEditor.AssetDatabase.SaveAssets();
             UnityEditor.AssetDatabase.Refresh();
@@ -375,6 +409,7 @@ public class LevelDataConverter : MonoBehaviour
         int floatIndex = 0;
         int positionerIndex = 0;
         int subrtactIndex = 0;
+        int specialTriggerIndex = 0;
 
 
         int currentCageIndex = 0;
@@ -412,7 +447,16 @@ public class LevelDataConverter : MonoBehaviour
 
             float[] values = new float[5];
             int type = data.dataTypes[i];
+            short triggerType = 0;
+
+            if (specialTriggerIndex < data.specialTriggerIndexAndType.Length && i == data.specialTriggerIndexAndType[specialTriggerIndex].x)
+            {
+                triggerType = (short)data.specialTriggerIndexAndType[specialTriggerIndex].y;
+                specialTriggerIndex++;
+            }
+
             Debug.Log("Loading Data Type: " + type);
+
             if (type <= 5 && type >= 0)
             {
                 for (int j = 0; j < type; j++)
@@ -420,11 +464,12 @@ public class LevelDataConverter : MonoBehaviour
                     values[j] = data.floatList[floatIndex];
                     floatIndex++;
                 }
-                l.Add(new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], data.typeList[i - subrtactIndex], data.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, hasCageAttachment));
+
+                l.Add(new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], data.typeList[i - subrtactIndex], data.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, hasCageAttachment, triggerType));
             }
             else if (type < 0)
             {
-                var d = new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, hasCageAttachment);
+                var d = new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, hasCageAttachment, triggerType);
                 d.positionerData = data.postionerData[positionerIndex];
                 subrtactIndex++;
                 positionerIndex++;

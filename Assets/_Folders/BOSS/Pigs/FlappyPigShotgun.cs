@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 
-public class FlappyPigShotgun : MonoBehaviour
+public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
 {
     private FlappyPigMovement movementScript;
     [SerializeField] private QPool shotgunBlasts;
@@ -30,6 +30,7 @@ public class FlappyPigShotgun : MonoBehaviour
     [SerializeField] private Vector2 speedRef;
     [SerializeField] private Transform Target;
     [SerializeField] private Vector2 offset;
+    private Coroutine shootCoroutine;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -76,7 +77,8 @@ public class FlappyPigShotgun : MonoBehaviour
                 // timer = 0;
                 canShoot = false;
                 timer = 0;
-                StartCoroutine(Shoot(playerTarget.position.x < transform.position.x));
+                doTimer = false;
+                shootCoroutine = StartCoroutine(Shoot(playerTarget.position.x < transform.position.x));
 
             }
         }
@@ -130,9 +132,11 @@ public class FlappyPigShotgun : MonoBehaviour
             dur -= .1f;
         }
     }
+    private bool doingLogic = false;
     private IEnumerator Shoot(bool flipped)
     {
-        float timer = 0;
+        doingLogic = true;
+        float t = 0;
         SpriteRenderer sr = flipped ? leftShotgunAimSprite : rightShotgunAimSprite;
         sr.color = new Color(1, .29f, .8f, 0);
         sr.transform.localScale = Vector3.one;
@@ -174,12 +178,12 @@ public class FlappyPigShotgun : MonoBehaviour
 
         movementScript.SetRotationTargets(dur, rot + direction, 0, 80, flipped);
         sr.enabled = true;
-        while (timer < aimDelay)
+        while (t < aimDelay)
         {
             // fade the sprite in over time 
-            sr.color = new Color(1, .29f, .8f, timer / aimDelay);
-            sr.transform.localScale = Vector3.one * Mathf.Lerp(1, 1.8f, timer / aimDelay);
-            timer += Time.deltaTime;
+            sr.color = new Color(1, .29f, .8f, t / aimDelay);
+            sr.transform.localScale = Vector3.one * Mathf.Lerp(1, 1.8f, t / aimDelay);
+            t += Time.deltaTime;
             yield return null;
 
         }
@@ -197,12 +201,40 @@ public class FlappyPigShotgun : MonoBehaviour
         timer = 0;
 
         yield return new WaitForSeconds(.15f);
+        doingLogic = false;
         movementScript.RevertToNormalRotation();
 
         yield return new WaitForSeconds(.6f);
 
 
         doTimer = true;
+
+
+    }
+
+    public void Egged(bool isEgged)
+    {
+        if (isEgged)
+        {
+            if (!doTimer)
+            {
+                StopCoroutine(shootCoroutine);
+                if (doingLogic)
+                    movementScript.RevertToNormalRotation();
+            }
+            moveToPos = false;
+            doingLogic = false;
+            doTimer = false;
+            canShoot = false;
+            timer = 0;
+
+        }
+        else
+        {
+            timer = 0;
+            doTimer = true;
+
+        }
 
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class MissilePigScript : SpawnedObject, IRecordableObject
+public class MissilePigScript : SpawnedPigObject, IRecordableObject
 {
     [SerializeField] private float turn_speed;
 

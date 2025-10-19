@@ -5,20 +5,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "RecordableObjectPool", menuName = "ScriptableObjects/RecordableObjectPool")]
 public class RecordableObjectPool : ScriptableObject
 {
-    [SerializeField] private GameObject prefab;
+    [SerializeField] protected GameObject prefab;
 
-    [SerializeField] private bool instantiateOnly = false;
+    [SerializeField] protected bool instantiateOnly = false;
 
-
-    [SerializeField] private IRecordableObject[] objectVarients;
-    [SerializeField] private bool useObjectVarients = false;
-
-
-    private SpawnedObject[] pool;
-    private ObjectPositioner[] positionerPool;
-    private int currentIndex;
+    protected SpawnedObject[] pool;
+    protected ObjectPositioner[] positionerPool;
+    protected int currentIndex;
     public int poolSize;
-    private ushort spawnNumber;
+    protected ushort spawnNumber;
 
     public void CreatePool(int size)
     {
@@ -49,6 +44,22 @@ public class RecordableObjectPool : ScriptableObject
         }
     }
 
+    // public void GenericObjectLogic(GameObject obj, short trigger)
+    // {
+    //     if (trigger != 0) 
+    //     {
+    //         switch (trigger)
+    //         {
+    //             case 1:
+    //                obj.GetComponent<SpawnedPigBossObject>()?.SetTriggerWhenDead();
+    //                 break;
+    //             default:
+    //                 Debug.LogWarning("Unhandled generic object logic trigger: " + trigger);
+    //                 break;
+    //         }
+    //     }
+    // }
+
     // public void SpawnItem(RecordedDataStruct data)
     // {
     //     if (pool == null || pool.Length == 0)
@@ -63,6 +74,34 @@ public class RecordableObjectPool : ScriptableObject
     //         currentIndex = 0;
     //     }
     // }
+
+    public void SpawnOverride(Vector2 pos, ushort type, float[] floatData)
+    {
+        switch (floatData.Length)
+        {
+            case 0:
+                Spawn(new DataStructSimple(0, type, pos));
+                break;
+            case 1:
+                Spawn(new DataStructFloatOne(0, type, pos, floatData[0]));
+                break;
+            case 2:
+                Spawn(new DataStructFloatTwo(0, type, pos, floatData[0], floatData[1]));
+                break;
+            case 3:
+                Spawn(new DataStructFloatThree(0, type, pos, floatData[0], floatData[1], floatData[2]));
+                break;
+            case 4:
+                Spawn(new DataStructFloatFour(0, type, pos, floatData[0], floatData[1], floatData[2], floatData[3]));
+                break;
+            case 5:
+                Spawn(new DataStructFloatFive(0, type, pos, floatData[0], floatData[1], floatData[2], floatData[3], floatData[4]));
+                break;
+            default:
+                Debug.LogError("Invalid float data length: " + floatData.Length);
+                break;
+        }
+    }
     public void SpawnPositionerData(RecordedObjectPositionerDataSave data)
     {
         if (pool == null || pool.Length == 0)
@@ -134,14 +173,77 @@ public class RecordableObjectPool : ScriptableObject
         }
 
     }
-    public void SpawnSimpleObject(DataStructSimple data)
+    // public void SpawnSimpleObject(DataStructSimple data)
+    // {
+    //     var obj = Instantiate(prefab, data.startPos, Quaternion.identity);
+    //     obj.GetComponent<SpawnedObject>()?.ApplyTypeData(data.type);
+
+
+    // }
+
+    public virtual void Spawn<T>(T data) where T : ISpawnData
     {
-        var obj = Instantiate(prefab, data.startPos, Quaternion.identity);
-        obj.GetComponent<ISimpleRecordableObject>()?.ApplyTypeData(data.type);
+
+        SpawnedObject obj;
+        if (instantiateOnly)
+        {
+            Debug.Log("Instantiating object at position: " + data.GetStartPos());
+            obj = Instantiate(prefab, data.GetStartPos(), Quaternion.identity).GetComponent<SpawnedObject>();
 
 
+        }
+        else if (pool != null || pool.Length > 0)
+        {
+            obj = pool[currentIndex];
+            currentIndex = (currentIndex + 1) % pool.Length;
+
+        }
+
+        else
+            return;
+
+
+
+        obj.InitialSpawnCheck(spawnNumber, instantiateOnly);
+
+        data.ApplyTo(obj);
+
+
+        spawnNumber++;
     }
-    public void SpawnFloatOne(DataStructFloatOne data, bool addCage = false)
+
+    public void SpawnBoss<T>(T data, LevelDataBossAndRandomLogic logic) where T : ISpawnData
+    {
+
+        SpawnedObject obj;
+        if (instantiateOnly)
+        {
+            Debug.Log("Instantiating object at position: " + data.GetStartPos());
+            obj = Instantiate(prefab, data.GetStartPos(), Quaternion.identity).GetComponent<SpawnedObject>();
+
+
+        }
+        else if (pool != null || pool.Length > 0)
+        {
+            obj = pool[currentIndex];
+            currentIndex = (currentIndex + 1) % pool.Length;
+
+        }
+
+        else
+            return;
+
+
+
+        obj.InitialSpawnCheck(spawnNumber, instantiateOnly);
+        obj.GetComponent<SpawnedPigBossObject>()?.SetTriggerWhenDead(logic);
+
+        data.ApplyTo(obj);
+
+
+        spawnNumber++;
+    }
+    public void SpawnFloatOne(DataStructFloatOne data)
     {
 
         if (pool == null || pool.Length == 0)

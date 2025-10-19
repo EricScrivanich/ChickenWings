@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PigWaveMovement : SpawnedObject, IRecordableObject
+public class PigWaveMovement : SpawnedPigObject, IRecordableObject
 {
 
     [SerializeField] private bool useDynamicMag;

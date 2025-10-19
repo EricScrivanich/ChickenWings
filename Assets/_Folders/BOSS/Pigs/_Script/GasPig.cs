@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GasPig : SpawnedObject, IRecordableObject
+public class GasPig : SpawnedPigObject, IRecordableObject
 {
     public float speed;
     public float delay = 0;

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class PogoPig : MonoBehaviour, ISimpleRecordableObject
+public class PogoPig : SpawnedPigBossObject, ISimpleRecordableObject
 {
     private Animator anim;
     [SerializeField] private float groundDelay;
@@ -9,7 +9,7 @@ public class PogoPig : MonoBehaviour, ISimpleRecordableObject
     [SerializeField] private float yForceSmall;
     [SerializeField] private float yForceBig;
     [SerializeField] private float angularVelocity;
-    private Rigidbody2D rb;
+
     private bool isGrounded;
 
 
@@ -76,8 +76,9 @@ public class PogoPig : MonoBehaviour, ISimpleRecordableObject
         bigJumpFastCutoff = BoundariesManager.TopViewBoundary - bigJumpFastCutoff;
         bigJumpSlowCutoff = BoundariesManager.TopViewBoundary - bigJumpSlowCutoff;
         groundCheckOffset = BoundariesManager.GroundPosition + groundCheckOffset;
+
     }
-    private void OnEnable()
+    public override void OnEnableLogic()
     {
         Ticker.OnTickAction015 += MoveEyesWithTicker;
     }

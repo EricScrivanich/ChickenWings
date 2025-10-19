@@ -4,7 +4,7 @@ using UnityEngine;
 using HellTap.PoolKit;
 using DG.Tweening;
 
-public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
+public class PigMaterialHandler : MonoBehaviour
 {
     // 0 normal, 1 jetPack, 2 bigPig, 3 tenderizer
 
@@ -48,19 +48,18 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
     private bool canPerfectScythe;
 
     public bool CanPerfectScythe => !isHit;
-    private SpawnedObject thisObject;
-    private SpawnedBoss thisBoss;
+
+    private SpawnedPigBossObject thisBoss;
 
     private void Awake()
     {
         isHit = false;
 
-        if (GetComponent<SpawnedObject>() != null)
-            thisObject = GetComponent<SpawnedObject>();
-        else if (GetComponent<SpawnedBoss>() != null)
+
+        if (GetComponent<SpawnedPigBossObject>() != null)
         {
-            thisBoss = GetComponent<SpawnedBoss>();
-            health = thisBoss.startingLives + 1;
+            thisBoss = GetComponent<SpawnedPigBossObject>();
+
             isBoss = true;
         }
 
@@ -191,6 +190,61 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
 
     }
 
+    public void KillEnemy(int damageAmount, int type, int id)
+    {
+        Debug.Log("KillEnemy called");
+        if (damageAmount == -1)
+        {
+            AudioManager.instance.PlayScytheHitNoise(true);
+            isStuck = true;
+            player.globalEvents.OnScythePig?.Invoke(this, pigType);
+            return;
+        }
+
+        if (type == 3) AudioManager.instance.PlayScytheHitNoise(false);
+        isHit = true;
+
+        if (type != 0)
+            DoPigHitActivation();
+
+
+        AudioManager.instance.PlayPigDeathSound(pigTypeAudio);
+
+        player.AddKillPig(pigType, type, id);
+
+
+
+
+        foreach (var col in colls)
+        {
+            col.enabled = false;
+        }
+
+
+        instanceMaterial = new Material(pigMaterial);
+
+        foreach (var pig in sprites)
+        {
+            pig.material = instanceMaterial;
+        }
+
+
+
+
+        StartCoroutine(Explode(.5f, type));
+
+
+    }
+
+    public void DamageEnemy(int damageAmount, int type, int id)
+    {
+        foreach (var col in colls)
+        {
+            col.enabled = false;
+        }
+        StartCoroutine(DamageCor(totalDamageTime));
+    }
+
     public void Damage(int damageAmount, int type, int id)
     {
         if (!isHit && (!isStuck || type == 4))
@@ -255,12 +309,17 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
                 }
                 StartCoroutine(DamageCor(totalDamageTime));
 
-                if (isBoss) thisBoss.Hit(type);
+                // if (isBoss) thisBoss.Hit(type);
             }
 
 
         }
         // instanceMaterial.SetColor("_ColorChangeNewCol", new Color(Random.Range(250, 255), Random.Range(80, 170), Random.Range(160, 180), 1));
+    }
+    public void KillPig(int type)
+    {
+
+
     }
     private Vector3 groundHitPercent = new Vector3(1.4f, .5f, 1);
 
@@ -393,12 +452,13 @@ public class PigMaterialHandler : MonoBehaviour, IDamageable, IEggable
             col.enabled = true;
         }
         isStuck = false;
+        if (isBoss) thisBoss.isHit = false;
         isHit = false;
     }
 
     public void OnEgged()
     {
-        thisObject.enabled = false;
+        GetComponent<SpawnedObject>().enabled = false;
         // if (recordableObject != null)
         // {
         //     recordableObject.enabled = false;

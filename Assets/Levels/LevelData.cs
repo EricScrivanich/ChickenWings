@@ -20,6 +20,8 @@ public class LevelData : ScriptableObject
     [SerializeField] private AllObjectData objData;
     public PlayerStartingStatsForLevels startingStats;
 
+    public LevelDataBossAndRandomLogic levelDataBossAndRandomLogic;
+
     [ExposedScriptableObject]
     [SerializeField] private LevelChallenges levelChallenges;
     [ExposedScriptableObject]
@@ -35,6 +37,8 @@ public class LevelData : ScriptableObject
     public short[] objectTypes;
 
     public short[] idList;
+
+    public Vector2Int[] specialTriggerIndexAndType;
     public short[] dataTypes;
 
     public Vector2[] posList;
@@ -63,7 +67,7 @@ public class LevelData : ScriptableObject
 
     public ushort[] checkPointSteps;
 
-    private SpawnStateManager spawner;
+    public SpawnStateManager spawner { get; private set; }
 
 
     private RecordedDataStruct[] Data;
@@ -79,6 +83,7 @@ public class LevelData : ScriptableObject
     private bool checkForCheckpoint = false;
     public bool usedCheckPoint { get; private set; } = false;
     public int Difficulty = 1;
+    private int currentSpecialTriggerIndex;
 
 
     private bool checkForCage = false;
@@ -95,9 +100,18 @@ public class LevelData : ScriptableObject
     {
         spawner = s;
         Difficulty = difficulty;
+        currentSpecialTriggerIndex = 0;
+        if (levelDataBossAndRandomLogic != null)
+        {
+            levelDataBossAndRandomLogic.Initialize(this);
+            checkBossAndRandomData = true;
+        }
+        else
+            checkBossAndRandomData = false;
+
+
+
         this.isRealLevel = isLevel;
-
-
         checkPointHasBeenCollected = false;
         playerID.livesToLoseOnStart = 0;
         currentCheckpointIndex = 0;
@@ -254,6 +268,8 @@ public class LevelData : ScriptableObject
 
         currentSpawnStep = startingStep;
 
+
+
         currentCageIndex = 0;
 
         // Find the first index in spawnSteps where the step is >= startingStep.
@@ -314,6 +330,10 @@ public class LevelData : ScriptableObject
                 dataTypeIndexes[3]++;
 
             }
+            if (i >= specialTriggerIndexAndType[currentSpecialTriggerIndex].x)
+            {
+                currentSpecialTriggerIndex++;
+            }
 
 
         }
@@ -325,38 +345,14 @@ public class LevelData : ScriptableObject
 
 
         // Create pools for each object type if needed.
-        List<ushort[]> poolList = new List<ushort[]>
-        {
-            pigPoolSizes,
-            aiPoolSizes,
-            buildingPoolSizes,
-            collectablePoolSizes,
-            positionerPoolSizes,
-            ringPoolSizes
-        };
 
-        for (int i = 0; i < poolList.Count; i++)
-        {
-            if (i == 5) // ring pool
-            {
-                objData.ringPool.Initialize(ringPoolSizes[0], ringPoolSizes[1], s);
-            }
-            else if (poolList[i] != null && poolList[i].Length > 0)
-            {
-                var poolToPopulate = objData.GetPoolArrayByObjectType(i);
-                for (int j = 0; j < poolList[i].Length; j++)
-                {
-                    poolToPopulate[j].CreatePool(poolList[i][j]);
-                }
-            }
-        }
         // for (int i = 0; i < poolSizes.Length; i++)
         // {
         //     if (objData.pools[i] != null && poolSizes[i] > 0)
         //         objData.pools[i].CreatePool(poolSizes[i]);
         // }
 
-        CreateDataStructs();
+        CreatePoolsAndDataStructs(s);
         GetSpawnSizeForNextTimeStep();
     }
 
@@ -383,8 +379,34 @@ public class LevelData : ScriptableObject
 
     }
 
-    private void CreateDataStructs()
+    private void CreatePoolsAndDataStructs(SpawnStateManager s)
     {
+
+        List<ushort[]> poolList = new List<ushort[]>
+        {
+            pigPoolSizes,
+            aiPoolSizes,
+            buildingPoolSizes,
+            collectablePoolSizes,
+            positionerPoolSizes,
+            ringPoolSizes
+        };
+
+        for (int i = 0; i < poolList.Count; i++)
+        {
+            if (i == 5) // ring pool
+            {
+                objData.ringPool.Initialize(ringPoolSizes[0], ringPoolSizes[1], s);
+            }
+            else if (poolList[i] != null && poolList[i].Length > 0)
+            {
+                var poolToPopulate = objData.GetPoolArrayByObjectType(i);
+                for (int j = 0; j < poolList[i].Length; j++)
+                {
+                    poolToPopulate[j].CreatePool(poolList[i][j]);
+                }
+            }
+        }
         int simpleStructSize = 0;
         int[] floatSizes = new int[5];
         for (int i = 0; i < dataTypes.Length; i++)
@@ -580,7 +602,7 @@ public class LevelData : ScriptableObject
     }
 
 
-
+    private bool checkBossAndRandomData = false;
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
@@ -644,28 +666,43 @@ public class LevelData : ScriptableObject
                     var poolArray = objData.GetPoolArrayByObjectType(objectTypes[i]);
                     var pool = poolArray[idList[i]];
 
-                    switch (dataTypes[i])
+                    if (currentSpecialTriggerIndex < specialTriggerIndexAndType.Length && i == specialTriggerIndexAndType[currentSpecialTriggerIndex].x)
                     {
-                        case 0:
-                            pool.SpawnSimpleObject(dataStructSimple[dataTypeIndexes[0]]);
-                            break;
-                        case 1:
-                            pool.SpawnFloatOne(dataStructFloatOne[dataTypeIndexes[1]]);
-                            break;
-                        case 2:
-                            pool.SpawnFloatTwo(dataStructFloatTwo[dataTypeIndexes[2]]);
-                            break;
-                        case 3:
-                            pool.SpawnFloatThree(dataStructFloatThree[dataTypeIndexes[3]]);
-                            break;
-                        case 4:
-                            pool.SpawnFloatFour(dataStructFloatFour[dataTypeIndexes[4]]);
-                            break;
-                        case 5:
-                            pool.SpawnFloatFive(dataStructFloatFive[dataTypeIndexes[5]]);
-                            break;
+                        switch (specialTriggerIndexAndType[currentSpecialTriggerIndex].y)
+                        {
+                            case 1:
+                                pool.SpawnBoss(GetDataByType(dataTypes[i]), levelDataBossAndRandomLogic);
+                                break;
 
+
+                        }
+                        currentSpecialTriggerIndex++;
                     }
+
+                    else pool.Spawn(GetDataByType(dataTypes[i]));
+
+                    // switch (dataTypes[i])
+                    // {
+                    //     case 0:
+                    //         pool.SpawnSimpleObject(dataStructSimple[dataTypeIndexes[0]]);
+                    //         break;
+                    //     case 1:
+                    //         pool.SpawnFloatOne(dataStructFloatOne[dataTypeIndexes[1]]);
+                    //         break;
+                    //     case 2:
+                    //         pool.SpawnFloatTwo(dataStructFloatTwo[dataTypeIndexes[2]]);
+                    //         break;
+                    //     case 3:
+                    //         pool.SpawnFloatThree(dataStructFloatThree[dataTypeIndexes[3]]);
+                    //         break;
+                    //     case 4:
+                    //         pool.SpawnFloatFour(dataStructFloatFour[dataTypeIndexes[4]]);
+                    //         break;
+                    //     case 5:
+                    //         pool.SpawnFloatFive(dataStructFloatFive[dataTypeIndexes[5]]);
+                    //         break;
+
+                    // }
 
                     if (checkForCage && i == cageAttachments[currentCageIndex])
                     {
@@ -713,8 +750,30 @@ public class LevelData : ScriptableObject
             currentSpawnIndex = nextSpawnIndex;
 
             GetSpawnSizeForNextTimeStep();
+
+            if (checkBossAndRandomData)
+            {
+                levelDataBossAndRandomLogic.CheckIfSpawnStep(ss);
+
+            }
         }
 
+    }
+
+    private ISpawnData GetDataByType(int dataType)
+    {
+        switch (dataType)
+        {
+            case 0: return dataStructSimple[dataTypeIndexes[0]];
+            case 1: return dataStructFloatOne[dataTypeIndexes[1]];
+            case 2: return dataStructFloatTwo[dataTypeIndexes[2]];
+            case 3: return dataStructFloatThree[dataTypeIndexes[3]];
+            case 4: return dataStructFloatFour[dataTypeIndexes[4]];
+            case 5: return dataStructFloatFive[dataTypeIndexes[5]];
+            default:
+                Debug.LogWarning($"Unknown data type {dataType}");
+                return default;
+        }
     }
 
     public void GetSpawnSizeForNextTimeStep()
@@ -773,6 +832,8 @@ public class LevelData : ScriptableObject
 
         return levelChallenges;
     }
+
+
 
 
 

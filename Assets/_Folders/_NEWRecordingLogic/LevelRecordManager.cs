@@ -1418,7 +1418,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             {
                 if (RecordedObjects[i].spawnedTimeStep == s)
                 {
-                    if (RecordedObjects[i].ID >= 0)
+                    if (RecordedObjects[i].ID >= 0 && (!RecordedObjects[i].typeIsVarient || (RecordedObjects[i].typeIsVarient && RecordedObjects[i].Data.type == 0)))
                     {
                         activeObjects.Add(RecordedObjects[i]);
                         addedMore = true;

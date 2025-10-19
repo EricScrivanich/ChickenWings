@@ -477,6 +477,15 @@ public class SpawnStateManager : MonoBehaviour
     private float waveTime = 0;
     private float timeToWait = LevelRecordManager.TimePerStep;
     private bool addWaveTime = true;
+
+    public void SetCurrentStep(ushort step)
+    {
+        currentSpawnStep = step;
+        IterateSpawnStep();
+        waveTime = 0;
+        addWaveTime = true;
+
+    }
     private void Update()
     {
         if (!addWaveTime) return;
@@ -503,13 +512,18 @@ public class SpawnStateManager : MonoBehaviour
     {
 
 
-        if (play)
+        if (play && !addWaveTime)
         {
             IterateSpawnStep();
             waveTime = 0;
         }
         addWaveTime = play;
 
+
+    }
+    public void HandleRandomCollectableSpawning(CollectableSpawnData data)
+    {
+        GetComponent<BarnAndEggSpawner>().SetNewData(data);
 
     }
     public void HandleCheckForTutorial(bool check)

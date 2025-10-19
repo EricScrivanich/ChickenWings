@@ -4,7 +4,7 @@ using DG.Tweening;
 
 public class EggableCollider : MonoBehaviour
 {
-    private SpawnedObject thisObject;
+    private SpawnedPigObject thisObject;
     [SerializeField] private AnimationDataSO animData;
     [SerializeField] private float blindedDuration;
 
@@ -73,14 +73,14 @@ public class EggableCollider : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         // try and get the SpawnedObject component int parent, if null check nextparent, and do one more if still null
-        thisObject = GetComponentInParent<SpawnedObject>();
+        thisObject = GetComponentInParent<SpawnedPigObject>();
         int tryCount = 0;
         if (thisObject == null)
         {
             Transform parent = transform.parent;
             while (parent != null && thisObject == null && tryCount < 3)
             {
-                thisObject = parent.GetComponent<SpawnedObject>();
+                thisObject = parent.GetComponent<SpawnedPigObject>();
                 parent = parent.parent;
                 tryCount++;
             }

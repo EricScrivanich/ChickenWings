@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PigMovementBasic : SpawnedObject, IRecordableObject
+public class PigMovementBasic : SpawnedPigObject, IRecordableObject
 {
     [SerializeField] private short id;
     [SerializeField] private SpriteRenderer headSprite;

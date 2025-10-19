@@ -12,26 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ec5cdc658774fadb8730e2026d7251, type: 3}
   m_Name: 01-10_Windy Ways
   m_EditorClassIdentifier: 
-  <StartingAmmos>k__BackingField: 00000100000000000000
+  <StartingAmmos>k__BackingField: 0a000100000000000000
   <StartingLives>k__BackingField: 3
   <easyStartingAmmos>k__BackingField: 
   <easyStartingLives>k__BackingField: 0
   AvailableAmmos: 0000000001000000
   objData: {fileID: 11400000, guid: 39c7fc890c47e46058b8b922c162fb46, type: 2}
   startingStats: {fileID: 11400000, guid: d10dd9036610a46658e0229299e97856, type: 2}
+  levelDataBossAndRandomLogic: {fileID: 11400000, guid: 1ddc3989df7ae4b9b97d0c4f6d3ae711, type: 2}
   levelChallenges: {fileID: 11400000, guid: 278164ab8abe24bb0bc97a278279bc6c, type: 2}
   tutorialData: {fileID: 0}
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: Windy Ways
   levelWorldAndNumber: {x: 1, y: 10, z: 0}
-  spawnSteps: 000000000a0022002200220022002c002c003800
+  spawnSteps: 0a0022002200220022002c002c003800690069006a00
   finalSpawnStep: 300
-  objectTypes: 0100010002000000000000000000000000000200
-  idList: 0000000001000100010001000100090009000100
-  dataTypes: 0100010003000200020002000200050005000300
+  objectTypes: 02000000000000000000000000000200010001000000
+  idList: 01000100010001000100090009000100000000000600
+  specialTriggerIndexAndType:
+  - {x: 8, y: 1}
+  - {x: 9, y: 1}
+  dataTypes: 03000200020002000200050005000300010001000100
   posList:
-  - {x: 14.400001, y: 0.4}
-  - {x: -16, y: 2}
   - {x: 16.2, y: 2.2}
   - {x: 16.2, y: 1.4}
   - {x: 16.2, y: -1.2}
@@ -40,9 +42,10 @@ MonoBehaviour:
   - {x: 14, y: 4.4}
   - {x: 19.6, y: 4.4}
   - {x: 16.2, y: 1.6}
+  - {x: 15.8, y: 2.2}
+  - {x: 18.4, y: -1.4}
+  - {x: 4, y: 0}
   floatList:
-  - 0.8
-  - 0.96
   - 120
   - 1
   - -0
@@ -67,12 +70,15 @@ MonoBehaviour:
   - 135
   - 1.08
   - -0
-  typeList: 0000000000000000000000000000000000000100
+  - 0.92
+  - 1
+  - 1
+  typeList: 00000000000000000000000000000100000000000000
   poolSizes: 
-  pigPoolSizes: 0000040000000000000000000000000000000200
+  pigPoolSizes: 0000040000000000000000000100000000000200
   aiPoolSizes: 02000000
   buildingPoolSizes: 000001000000
-  collectablePoolSizes: 000000000000
+  collectablePoolSizes: 020002000000
   positionerPoolSizes: 0000
   ringPoolSizes: 00000000
   cageAttachments: 

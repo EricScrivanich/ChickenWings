@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System;
 
 public class RecordableObjectPlacer : MonoBehaviour
 {
@@ -36,6 +37,9 @@ public class RecordableObjectPlacer : MonoBehaviour
     [SerializeField] private bool floatOneIsSpeed;
     private float speed;
 
+    public bool typeIsVarient;
+    public bool useHealth;
+
 
 
 
@@ -49,6 +53,8 @@ public class RecordableObjectPlacer : MonoBehaviour
     private LineRenderer line;
 
     public RecordedDataStructDynamic Data;
+
+    public Action<ushort> OnChangeVarientType;
 
     public enum EditableData
     {
@@ -178,7 +184,10 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
         RestoreArrowsDefault();
-
+        if (typeIsVarient)
+        {
+            OnChangeVarientType?.Invoke(Data.type);
+        }
 
 
 
@@ -578,7 +587,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
-        ValueEditorManager.instance.ResetRectList();
+        ValueEditorManager.instance.ResetRectList(Data.triggerType);
 
 
 
@@ -956,26 +965,36 @@ public class RecordableObjectPlacer : MonoBehaviour
         obj.ApplyCustomizedData(Data);
 
 
-        if (lastSavedType != Data.type && Title == "Balloon")
+        if (lastSavedType != Data.type)
         {
-            if (Data.type == 0)
+            if (typeIsVarient)
             {
-                skipProjectileLines = false;
-                ValueEditorManager.instance.SetNewFloatSize(2);
-            }
-            else if (Data.type == 1)
-            {
-                skipProjectileLines = true;
-                ValueEditorManager.instance.SetNewFloatSize(-2);
-
-
+                OnChangeVarientType?.Invoke(Data.type);
             }
 
 
-            SetProjectileLines();
+            if (Title == "Balloon")
+            {
+                if (Data.type == 0)
+                {
+                    skipProjectileLines = false;
+                    ValueEditorManager.instance.SetNewFloatSize(2);
+                }
+                else if (Data.type == 1)
+                {
+                    skipProjectileLines = true;
+                    ValueEditorManager.instance.SetNewFloatSize(-2);
 
-            lastSavedType = Data.type;
-            return;
+
+                }
+
+
+                SetProjectileLines();
+
+                lastSavedType = Data.type;
+                return;
+            }
+
         }
         lastSavedType = Data.type;
 

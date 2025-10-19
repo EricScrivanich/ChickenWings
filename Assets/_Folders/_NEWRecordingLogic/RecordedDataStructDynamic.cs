@@ -7,6 +7,7 @@ public struct RecordedDataStructDynamic
     public short ObjectType;
     public short ID;
     public ushort type;
+    
 
     public ushort spawnedStep;
     public ushort unspawnedStep;
@@ -18,6 +19,8 @@ public struct RecordedDataStructDynamic
     public float float4;
     public float float5;
 
+    public short triggerType;
+
     public bool hasCageAttachment;
 
     public RecordedObjectPositionerDataSave positionerData;
@@ -26,7 +29,7 @@ public struct RecordedDataStructDynamic
 
 
 
-    public RecordedDataStructDynamic(short objectType, short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, bool hasCage = false)
+    public RecordedDataStructDynamic(short objectType, short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, bool hasCage = false, short triggerType = 0)
     {
         this.ObjectType = objectType;
         this.ID = id;
@@ -38,11 +41,13 @@ public struct RecordedDataStructDynamic
         this.float4 = f4;
         this.float5 = f5;
 
+
         positionerData = null;
 
         this.spawnedStep = spawnStep;
         this.unspawnedStep = unspawnStep;
         this.hasCageAttachment = hasCage;
+        this.triggerType = triggerType;
 
     }
 }

@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[CreateAssetMenu(fileName = "CollectableSpawnIntensities", menuName = "Randomspawning/CollectableIntensity", order = 2)]
+[CreateAssetMenu(fileName = "CollectableSpawnIntensities", menuName = "Setups/CollectableIntensity", order = 2)]
 public class CollectableSpawnData : ScriptableObject
 {
 
     [Header("Eggs")]
     public bool SpawnEggs;
+    public float flipXChanceEgg = .2f;
     public float BaseEggSpawnRate;
     public Vector2 AddedRandomEgg;
     public float EggThreeChance;
@@ -20,8 +21,9 @@ public class CollectableSpawnData : ScriptableObject
 
 
     [Header("Shotgun")]
+   
     public bool SpawnShotgun;
-
+    public float flipXChanceShotgun = .2f;
     public float BaseShotgunSpawnRate;
     public Vector2 AddedRandomShotgun;
     public float ShotgunThreeChance;
@@ -84,7 +86,7 @@ public class CollectableSpawnData : ScriptableObject
         int diff = eggAmount - TargetEggAmmo;
         float addedTime = 0;
 
-        
+
         if (diff > 0) addedTime = diff * AboveEggTargetTimeChange;
         else if (diff < 0) addedTime = diff * BelowEggTargetTimeChange;
 

@@ -80,7 +80,10 @@ public class TouchInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             flashStuckSeq.Play();
         }
     }
-
+    private void ShowScytheLines(bool show)
+    {
+        scytheSwipeRect.gameObject.SetActive(show);
+    }
     private void StuckInitialTween(bool stuck)
     {
         if (stuckSeq != null && stuckSeq.IsPlaying())
@@ -115,11 +118,14 @@ public class TouchInputSystem : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     private void OnEnable()
     {
         player.UiEvents.StuckPigScythe += HandleStuckScythe;
+        player.UiEvents.OnShowSyctheLine += ShowScytheLines;
 
     }
     private void OnDisable()
     {
         player.UiEvents.StuckPigScythe -= HandleStuckScythe;
+        player.UiEvents.OnShowSyctheLine -= ShowScytheLines;
+
 
     }
 

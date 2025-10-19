@@ -16,6 +16,7 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
 
 
 
+
     private bool openListButton = false;
 
     private bool isListPanel = false;
@@ -63,6 +64,13 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
     {
         ValueEditorManager.instance.OnSetSelectedType -= SetIfSelected;
 
+    }
+    private bool specialType = false;
+    public void SetDataAgain(int index)
+    {
+        currentType = (ushort)index;
+        text.text = typesByIndex[currentType];
+        specialType = true;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -128,10 +136,16 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
         ushort val = (ushort)nextIndex;
         currentType = val;
 
+
         if (isListPanel)
         {
             DynamicValueAdder.instance.EditTypeValue(Type, currentType);
 
+        }
+        else if (specialType)
+        {
+            Debug.LogError("trying to set trigger type to: " + (short)val);
+            LevelRecordManager.instance.currentSelectedObject.Data.triggerType = (short)val;
         }
         else
         {

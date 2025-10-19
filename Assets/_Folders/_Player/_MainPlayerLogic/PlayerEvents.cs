@@ -73,6 +73,7 @@ public struct PlayerEvents
 public struct UiEvents
 {
     public Action<bool, int, float> OnShowPlayerUI;
+    public Action<bool> OnShowSyctheLine;
     public Action<bool> OnAllowSwipe;
     public Action<float> OnPressWeaponButton;
     public Action<int> OnCollectAmmo;

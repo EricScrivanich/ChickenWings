@@ -31,12 +31,27 @@ public readonly struct RecordedDataStruct
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 4)]
-public readonly struct DataStructSimple
+public readonly struct DataStructSimple : ISpawnData
 {
     public readonly short ID;         // 2 bytes
     public readonly ushort type;      // 2 bytes
     public readonly Vector2 startPos; // 8 bytes (x, y)
 
+
+
+    public void ApplyTo(SpawnedObject obj) => obj.ApplySimpleData(this);
+
+
+
+    public Vector2 GetStartPos()
+    {
+        return startPos;
+    }
+
+    ushort ISpawnData.GetType()
+    {
+        return type;
+    }
 
     public DataStructSimple(short id, ushort type, Vector2 startPos)
     {
@@ -48,13 +63,21 @@ public readonly struct DataStructSimple
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 4)]
-public readonly struct DataStructFloatOne
+public readonly struct DataStructFloatOne : ISpawnData
 {
     public readonly short ID;         // 2 bytes
     public readonly ushort type;      // 2 bytes
     public readonly Vector2 startPos; // 8 bytes (x, y)
     public readonly float float1;     // 4 bytes
-
+    public void ApplyTo(SpawnedObject obj) => obj.ApplyFloatOneData(this);
+    public Vector2 GetStartPos()
+    {
+        return startPos;
+    }
+    ushort ISpawnData.GetType()
+    {
+        return type;
+    }
     public DataStructFloatOne(short id, ushort type, Vector2 startPos, float float1)
     {
         this.ID = id;
@@ -65,13 +88,23 @@ public readonly struct DataStructFloatOne
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 4)]
-public readonly struct DataStructFloatTwo
+public readonly struct DataStructFloatTwo : ISpawnData
 {
     public readonly short ID;         // 2 bytes
     public readonly ushort type;      // 2 bytes
     public readonly Vector2 startPos; // 8 bytes
     public readonly float float1;     // 4 bytes
     public readonly float float2;     // 4 bytes
+    public void ApplyTo(SpawnedObject obj) => obj.ApplyFloatTwoData(this);
+    public Vector2 GetStartPos()
+    {
+        return startPos;
+    }
+
+    ushort ISpawnData.GetType()
+    {
+        return type;
+    }
 
     public DataStructFloatTwo(short id, ushort type, Vector2 startPos, float float1, float float2)
     {
@@ -84,7 +117,7 @@ public readonly struct DataStructFloatTwo
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 4)]
-public readonly struct DataStructFloatThree
+public readonly struct DataStructFloatThree : ISpawnData
 {
     public readonly short ID;         // 2 bytes
     public readonly ushort type;      // 2 bytes
@@ -92,7 +125,15 @@ public readonly struct DataStructFloatThree
     public readonly float float1;     // 4 bytes
     public readonly float float2;     // 4 bytes
     public readonly float float3;     // 4 bytes
-
+    public void ApplyTo(SpawnedObject obj) => obj.ApplyFloatThreeData(this);
+    public Vector2 GetStartPos()
+    {
+        return startPos;
+    }
+    ushort ISpawnData.GetType()
+    {
+        return type;
+    }
     public DataStructFloatThree(short id, ushort type, Vector2 startPos, float float1, float float2, float float3)
     {
         this.ID = id;
@@ -105,7 +146,7 @@ public readonly struct DataStructFloatThree
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 4)]
-public readonly struct DataStructFloatFour
+public readonly struct DataStructFloatFour : ISpawnData
 {
     public readonly short ID;         // 2 bytes
     public readonly ushort type;      // 2 bytes
@@ -114,7 +155,15 @@ public readonly struct DataStructFloatFour
     public readonly float float2;     // 4 bytes
     public readonly float float3;     // 4 bytes
     public readonly float float4;     // 4 bytes
-
+    public void ApplyTo(SpawnedObject obj) => obj.ApplyFloatFourData(this);
+    public Vector2 GetStartPos()
+    {
+        return startPos;
+    }
+    ushort ISpawnData.GetType()
+    {
+        return type;
+    }
     public DataStructFloatFour(short id, ushort type, Vector2 startPos, float float1, float float2, float float3, float float4)
     {
         this.ID = id;
@@ -128,7 +177,7 @@ public readonly struct DataStructFloatFour
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 4)]
-public readonly struct DataStructFloatFive
+public readonly struct DataStructFloatFive : ISpawnData
 {
     public readonly short ID;         // 2 bytes
     public readonly ushort type;      // 2 bytes
@@ -138,7 +187,15 @@ public readonly struct DataStructFloatFive
     public readonly float float3;     // 4 bytes
     public readonly float float4;     // 4 bytes
     public readonly float float5;     // 4 bytes
-
+    public void ApplyTo(SpawnedObject obj) => obj.ApplyFloatFiveData(this);
+    public Vector2 GetStartPos()
+    {
+        return startPos;
+    }
+    ushort ISpawnData.GetType()
+    {
+        return type;
+    }
     public DataStructFloatFive(short id, ushort type, Vector2 startPos, float float1, float float2, float float3, float float4, float float5)
     {
         this.ID = id;

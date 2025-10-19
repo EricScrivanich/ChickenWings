@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Pignosorous : SpawnedBoss
+public class Pignosorous : SpawnedPigBossObject
 {
 
     [SerializeField] private PlayerID player;
@@ -107,6 +107,7 @@ public class Pignosorous : SpawnedBoss
     [SerializeField] private Vector2 shootDelayChangeRotate;
     [SerializeField] private Vector2 shootAmountChangeRotate;
     [SerializeField] private Vector2 attackChanceRotate;
+    private PigHeartPositioner heartPositioner;
 
 
     void CalculateScreenPercents()
@@ -202,8 +203,8 @@ public class Pignosorous : SpawnedBoss
     }
     public override void Hit(int type)
     {
-        lives--;
-        if (lives < 0) return;
+        // lives--;
+        // if (lives < 0) return;
 
 
 
@@ -221,6 +222,7 @@ public class Pignosorous : SpawnedBoss
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        heartPositioner = heart.gameObject.GetComponentInParent<PigHeartPositioner>();
         attackChances = new float[3];
         SetPhaseVariables(0);
         lives = startingLives;
@@ -263,7 +265,7 @@ public class Pignosorous : SpawnedBoss
         if (flip) flipValue = -1;
         else flipValue = 1;
         isFlipped = flip;
-
+        heartPositioner.FlipScale(flip);
         rotationScript.SetIsFlipped(flip);
         leftJetPack.SetIsFlipped(flip);
         rightJetPack.SetIsFlipped(flip);

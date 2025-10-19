@@ -30,6 +30,7 @@ public class ValueEditorManager : MonoBehaviour
     [field: SerializeField] public Slider valueSliderHorizontal { get; private set; }
     [field: SerializeField] public TextMeshProUGUI valueSliderText { get; private set; }
     [SerializeField] private ObjectTypeEditor typeEditor;
+    [SerializeField] private ObjectTypeEditor triggerTypeEditor;
 
     [SerializeField] private ObjectTypeEditor[] listEditors;
     [SerializeField] private TextMeshProUGUI timeText;
@@ -41,9 +42,11 @@ public class ValueEditorManager : MonoBehaviour
     private bool isShowingCage = false;
 
     private int lastUsedFloatIndex;
+    private bool isEditor = false;
     public Action<string> OnSetSelectedType;
     private void Awake()
     {
+        isEditor = false;
         Debug.Log("ValueEditorManager Awake");
         if (instance == null)
         {
@@ -72,6 +75,18 @@ public class ValueEditorManager : MonoBehaviour
         canvasGroup = GetComponent<CanvasGroup>();
         typeEditor.gameObject.SetActive(false);
         ShowMainPanel();
+#if UNITY_EDITOR
+        isEditor = true;
+#endif
+
+        if (isEditor)
+        {
+            triggerTypeEditor.SetData("Trigger Types", new string[] { "None", "Boss", "Challenge" });
+            triggerTypeEditor.gameObject.SetActive(false);
+
+        }
+        else
+            Destroy(triggerTypeEditor.gameObject);
 
     }
 
@@ -87,10 +102,22 @@ public class ValueEditorManager : MonoBehaviour
     //             i.SetIfSelected(type);
     //     }
     // }
-    public void ResetRectList()
+    public void ResetRectList(int triggerType)
     {
+        Debug.LogError("Reseting Rect List");
         activeRects.Clear();
         lastUsedFloatIndex = 0;
+
+        if (isEditor && LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+        {
+            triggerTypeEditor.gameObject.SetActive(false);
+        }
+        else if (isEditor)
+        {
+            triggerTypeEditor.SetDataAgain(triggerType);
+            triggerTypeEditor.gameObject.SetActive(true);
+
+        }
 
     }
 
@@ -191,11 +218,13 @@ public class ValueEditorManager : MonoBehaviour
         {
             floatEditors[index].gameObject.SetActive(false);
 
+
         }
 
         else if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
         {
             var l = LevelRecordManager.instance.MultipleSelectedObjects;
+
             int id = l[0].ID;
             float checkVal = 0;
             switch (index)
@@ -270,6 +299,7 @@ public class ValueEditorManager : MonoBehaviour
             floatEditors[index].gameObject.SetActive(true);
             floatEditors[index].SetDataForFloatSlider(type, false);
             activeRects.Add(floatEditors[index].GetComponent<RectTransform>());
+
         }
 
 
@@ -294,6 +324,8 @@ public class ValueEditorManager : MonoBehaviour
         ValueEditorManager.instance.OnSetSelectedType?.Invoke("none");
 
     }
+
+
 
     public void ChangeAddedValueOnList(float v)
     {

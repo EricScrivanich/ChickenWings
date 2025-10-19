@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JetPackPigMovement : SpawnedObject, IRecordableObject
+public class JetPackPigMovement : SpawnedPigObject, IRecordableObject
 {
     public float speed;
     private bool hasPlayedAudio;
