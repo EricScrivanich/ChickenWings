@@ -1362,30 +1362,32 @@ public class PlayerStateManager : MonoBehaviour
         float x;
         float y = 0;
         float playerY = 0;
+        float rbX = rb.linearVelocityX;
 
-        if (rb.linearVelocity.x < 0)
+        if (rbX < 0)
         {
-            x = rb.linearVelocity.x * .7f;
+            x = rbX * .7f;
         }
         else
         {
-            x = rb.linearVelocity.x * .6f;
+            x = rbX * .6f;
         }
+        float rbY = rb.linearVelocityY;
 
-        if (rb.linearVelocity.y < 0)
+        if (rbY < 0)
         {
-            y = rb.linearVelocity.y * .4f;
+            y = rbY * .5f;
             playerY = .2f;
         }
         else
         {
-            playerY = rb.linearVelocity.y * .7f;
+            playerY = rbY * .7f;
         }
         // else
         // {
         //     y = rb.linearVelocity.y * .25f;
         // }
-        Vector2 force = new Vector2(x, y - 1.5f);
+        Vector2 force = new Vector2(x, y - 2f);
         ammoManager.GetEgg(transform.position, force);
         EnterIdleStateWithVel(new Vector2(rb.linearVelocityX * .9f, playerY + 3f));
 
@@ -1462,9 +1464,13 @@ public class PlayerStateManager : MonoBehaviour
 
     }
 
-    private void HandleDragWeaponButton(Vector2 pos)
+    private void HandleDragWeaponButton(Vector2 pos, bool isJoystick = false)
     {
-        currentWeaponState.SwipeButton(this, pos);
+        currentWeaponState.SwipeButton(this, pos, isJoystick);
+    }
+    private void HandleJoyStickShotgun()
+    {
+
     }
 
     private void HandleReleaseWeaponButton()

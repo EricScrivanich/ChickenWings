@@ -14,7 +14,7 @@ public abstract class AmmoBaseState
     public abstract void ReleaseButton(PlayerStateManager player);
 
     public abstract void CollectAmmo(PlayerStateManager player, int type);
-    public abstract void SwipeButton(PlayerStateManager player, Vector2 currentPos);
+    public abstract void SwipeButton(PlayerStateManager player, Vector2 currentPos, bool isJoystick = false);
 
 
 

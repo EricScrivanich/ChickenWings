@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ChildCollider : MonoBehaviour, IDamageable
 {
-    private PigMaterialHandler parentScript;
+    private SpawnedPigObject parentScript;
 
     public bool CanPerfectScythe => true;
 
@@ -16,7 +16,7 @@ public class ChildCollider : MonoBehaviour, IDamageable
     // Start is called before the first frame update
     void Start()
     {
-        parentScript = GetComponentInParent<PigMaterialHandler>();
+        parentScript = GetComponentInParent<SpawnedPigObject>();
     }
 
     // Update is called once per frame

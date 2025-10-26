@@ -20,7 +20,7 @@ public class CustomTimeSlider : MonoBehaviour
 
     [SerializeField] private int fullLength = 1600;
     [SerializeField] private int normalLength = 1200;
-    private int shownLength;
+    private float shownLength;
 
     [Header("Time Control")]
     private int absoluteMax;
@@ -876,7 +876,7 @@ public class CustomTimeSlider : MonoBehaviour
                 else
                 {
                     lastMultSelectRightIndex = currentMultSelectRightIndex;
-                    Debug.Log("Setting Last Right Index to: " + lastMultSelectRightIndex);
+
                     currentIndex = lastMultSelectRightIndex;
                     LevelRecordManager.instance.UpdateTime((ushort)currentIndex);
 
@@ -1202,7 +1202,6 @@ public class CustomTimeSlider : MonoBehaviour
 
 
 
-        Debug.Log("Average Step: " + averageStep + " Min: " + multipleSelectMinMaxChange.x + " Max: " + multipleSelectMinMaxChange.y);
 
 
 
@@ -1321,7 +1320,10 @@ public class CustomTimeSlider : MonoBehaviour
     {
         float l = Mathf.InverseLerp(minRange, maxRange, index);
         float offset = l * (shownLength - 40);
+
+
         return ((-shownLength + 40) * .5f) + offset;
+
 
 
 

@@ -75,7 +75,7 @@ public class AmmoBoomerangState : AmmoBaseState
 
     }
 
-    public override void SwipeButton(PlayerStateManager player, Vector2 currentPos)
+    public override void SwipeButton(PlayerStateManager player, Vector2 currentPos, bool isJoystick = false)
     {
         if (isPressed)
         {

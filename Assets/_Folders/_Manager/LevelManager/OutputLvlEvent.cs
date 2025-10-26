@@ -42,6 +42,7 @@ public struct OutputLvlEvent
   
 
     public Action<float> SetLevelProgress;
+    public Action<int> SetLevelProgressTriggerType;
 
 
 

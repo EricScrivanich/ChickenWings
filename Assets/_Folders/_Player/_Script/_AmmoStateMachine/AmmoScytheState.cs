@@ -56,7 +56,7 @@ public class AmmoScytheState : AmmoBaseState
     {
         if (type == ammoType) player.ID.UiEvents.OnUseAmmo?.Invoke(player.ID.Ammo);
     }
-    public override void SwipeButton(PlayerStateManager player, Vector2 pos)
+    public override void SwipeButton(PlayerStateManager player, Vector2 pos, bool isJoystick = false)
     {
         if (sentSwipeData) return;
         float dragDistance = Vector2.Distance(startPoint, pos);

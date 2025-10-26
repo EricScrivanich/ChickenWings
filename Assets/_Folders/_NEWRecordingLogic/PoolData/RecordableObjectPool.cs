@@ -11,12 +11,14 @@ public class RecordableObjectPool : ScriptableObject
 
     protected SpawnedObject[] pool;
     protected ObjectPositioner[] positionerPool;
+    protected LevelData levelData;
     protected int currentIndex;
     public int poolSize;
     protected ushort spawnNumber;
 
-    public void CreatePool(int size)
+    public void CreatePool(int size, LevelData levelData)
     {
+        this.levelData = levelData;
         currentIndex = 0;
         if (instantiateOnly)
         {
@@ -77,6 +79,12 @@ public class RecordableObjectPool : ScriptableObject
 
     public void SpawnOverride(Vector2 pos, ushort type, float[] floatData)
     {
+        int l;
+        if (floatData == null)
+            l = 0;
+        else
+            l = floatData.Length;
+
         switch (floatData.Length)
         {
             case 0:
@@ -212,7 +220,7 @@ public class RecordableObjectPool : ScriptableObject
         spawnNumber++;
     }
 
-    public void SpawnBoss<T>(T data, LevelDataBossAndRandomLogic logic) where T : ISpawnData
+    public virtual void SpawnBoss<T>(T data, bool hasTrigger) where T : ISpawnData
     {
 
         SpawnedObject obj;
@@ -236,7 +244,10 @@ public class RecordableObjectPool : ScriptableObject
 
 
         obj.InitialSpawnCheck(spawnNumber, instantiateOnly);
-        obj.GetComponent<SpawnedPigBossObject>()?.SetTriggerWhenDead(logic);
+        var pigBoss = obj.GetComponent<SpawnedPigBossObject>();
+        if (hasTrigger)
+            pigBoss?.SetTriggerWhenDead(levelData.levelDataBossAndRandomLogic);
+        pigBoss?.SetHealth(data.GetID());
 
         data.ApplyTo(obj);
 

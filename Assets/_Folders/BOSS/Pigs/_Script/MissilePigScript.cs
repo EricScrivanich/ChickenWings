@@ -173,10 +173,12 @@ public class MissilePigScript : SpawnedPigObject, IRecordableObject
 
             yield return null;
         }
+        if (!canAttack) yield break;
         AudioManager.instance.PlayMissileLaucnh();
 
         ps.Play();
         yield return new WaitForSeconds(.2f);
+        if (!canAttack) yield break;
 
         // Spawn the missile from the pool with the final rotation
         // pool.Spawn("missile", missileImage.transform.position, launchAim.rotation);

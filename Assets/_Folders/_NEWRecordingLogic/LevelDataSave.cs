@@ -19,15 +19,21 @@ public class LevelDataSave
     public ushort[] aiPoolSizes;
     public ushort[] buildingPoolSizes;
     public ushort[] collectablePoolSizes;
-    public ushort[] positonerPoolSizes;
+    public ushort[] positionerPoolSizes;
     public ushort[] ringPoolSizes;
+    public short[] indexAndHealth; // For enemies that have health, store index of enemy and then health value
 
 
-
+    public Vector2[] posListRand;
+    public float[] floatListRand;
+    public ushort[] typeListRand;
+    public ushort[] randomLogicSizes;
+    public Vector3Int[] randomSpawnDataTypeObjectTypeAndID;
+    public ushort[] spawnStepsRandom;
 
     public ushort[] cageAttachments;
 
-    
+
 
 
 
@@ -37,7 +43,17 @@ public class LevelDataSave
 
     public RecordedObjectPositionerDataSave[] postionerData = null;
 
-    public LevelDataSave(string levelName, short[] objectTypes, short[] idList, ushort[] spawnSteps, ushort[] typeList, short[] dataTypeList, ushort finalStep, Vector2[] posList, float[] floats, List<ushort[]> plList, short[] ammos, short lives, ushort[] plSizes = null)
+    public void SetRandomData(Vector2[] posListRand, float[] floatListRand, ushort[] typeListRand, ushort[] randomLogicSizes, Vector3Int[] randomSpawnDataTypeObjectTypeAndID, ushort[] spawnStepsRandom)
+    {
+        this.posListRand = posListRand;
+        this.floatListRand = floatListRand;
+        this.typeListRand = typeListRand;
+        this.randomLogicSizes = randomLogicSizes;
+        this.randomSpawnDataTypeObjectTypeAndID = randomSpawnDataTypeObjectTypeAndID;
+        this.spawnStepsRandom = spawnStepsRandom;
+    }
+
+    public LevelDataSave(string levelName, short[] objectTypes, short[] idList, ushort[] spawnSteps, ushort[] typeList, short[] dataTypeList, ushort finalStep, Vector2[] posList, float[] floats, List<ushort[]> plList, short[] ammos, short lives, short[] inxAndHlth)
     {
         this.levelName = levelName;
         this.objectTypes = objectTypes;
@@ -48,17 +64,18 @@ public class LevelDataSave
         this.spawnSteps = spawnSteps;
         this.finalSpawnStep = finalStep;
         this.floatList = floats;
-        this.poolSizes = plSizes;
+
         this.pigPoolSizes = plList[0];
         this.aiPoolSizes = plList[1];
         this.buildingPoolSizes = plList[2];
         this.collectablePoolSizes = plList[3];
-        this.positonerPoolSizes = plList[4];
+        this.positionerPoolSizes = plList[4];
         this.ringPoolSizes = plList[5];
         this.startingAmmos = ammos;
         this.StartingLives = lives;
         this.cageAttachments = null;
         this.postionerData = null;
+        this.indexAndHealth = inxAndHlth;
 
     }
     public void SetPositionerData(RecordedObjectPositionerDataSave[] data)

@@ -20,6 +20,7 @@ public class FinishLineEgg : MonoBehaviour, ICollectible
 
         Invoke("InvokedFinish", .35f);
         AudioManager.instance.PlayCrackSound(1);
+
         anim.SetTrigger("Burst");
 
 
@@ -29,6 +30,7 @@ public class FinishLineEgg : MonoBehaviour, ICollectible
     {
         // levelManagerID.inputEvent.OnEggFinishLine?.Invoke();
         player.globalEvents.OnFinishedLevel?.Invoke();
+        AudioManager.instance.PlayLevelFinishSounds(0);
 
     }
 

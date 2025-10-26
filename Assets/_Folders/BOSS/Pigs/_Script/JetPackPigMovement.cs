@@ -13,7 +13,7 @@ public class JetPackPigMovement : SpawnedPigObject, IRecordableObject
     [HideInInspector]
     public int id;
 
-   
+
 
     [SerializeField] private Transform smokePoint;
     // Start is called before the first frame update
@@ -73,8 +73,8 @@ public class JetPackPigMovement : SpawnedPigObject, IRecordableObject
     }
 
 
-    
-   
+
+
     public override void ApplyFloatTwoData(DataStructFloatTwo data)
     {
         transform.position = data.startPos;
@@ -85,10 +85,11 @@ public class JetPackPigMovement : SpawnedPigObject, IRecordableObject
         if (speed < 0) scaleFlip = -1;
         transform.localScale = new Vector3(data.float2 * scaleFlip * .9f, (.9f * data.float2) + addedYScale, 1);
         gameObject.SetActive(true);
+
     }
 
-    
- 
+
+
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)
     {
@@ -99,7 +100,7 @@ public class JetPackPigMovement : SpawnedPigObject, IRecordableObject
         if (speed < 0) scaleFlip = -1;
         transform.localScale = new Vector3(data.float2 * scaleFlip * .9f, (.9f * data.float2) + addedYScale, 1);
     }
-   
+
 
 
 

@@ -36,7 +36,7 @@
                     "name": "Drop",
                     "type": "Button",
                     "id": "03838bde-c4e5-4a85-b37a-f61f8f371e17",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -63,7 +63,7 @@
                     "name": "JumpHold",
                     "type": "Button",
                     "id": "7a1b2628-cdb6-44df-96c2-b30778de634d",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Hold(duration=0.2)",
                     "initialStateCheck": false
@@ -144,7 +144,7 @@
                     "name": "Finger1",
                     "type": "Value",
                     "id": "f3dba7fd-62b8-4eca-8fb3-d7282a84aded",
-                    "expectedControlType": "",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -153,7 +153,7 @@
                     "name": "Finger2",
                     "type": "Value",
                     "id": "bdb83564-aa55-43f1-9528-78b208745e8a",
-                    "expectedControlType": "",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -199,9 +199,18 @@
                     "type": "Value",
                     "id": "f467a2e1-3b7a-4f5e-82ec-910d70491803",
                     "expectedControlType": "Vector2",
-                    "processors": "",
+                    "processors": "NormalizeVector2",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Trigger",
+                    "type": "Button",
+                    "id": "cdd2efe0-b639-40b2-9f91-354981990b5f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -219,10 +228,10 @@
                 {
                     "name": "",
                     "id": "355bd070-138f-4545-96cf-bdcafae4e0e9",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/dpad/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Mobile",
+                    "groups": ";Mobile",
                     "action": "JumpHold",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -285,7 +294,7 @@
                 {
                     "name": "",
                     "id": "6985edf9-1ce9-497d-a597-f45b7275fa2c",
-                    "path": "<Gamepad>/buttonNorth",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "Mobile",
@@ -406,7 +415,7 @@
                 {
                     "name": "",
                     "id": "71785b00-5b5a-4d60-a60a-bfe45c783bc6",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/dpad/up",
                     "interactions": "",
                     "processors": "",
                     "groups": "Mobile",
@@ -450,10 +459,10 @@
                 {
                     "name": "",
                     "id": "9f4be38a-3bd6-42be-b8dd-b1d9cd33a48c",
-                    "path": "<Gamepad>/leftStick",
+                    "path": "<Gamepad>/rightStick",
                     "interactions": "",
                     "processors": "NormalizeVector2",
-                    "groups": "Mobile",
+                    "groups": "",
                     "action": "EggJoystick",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -465,6 +474,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
+                    "action": "SwitchAmmoRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7c4195f9-5d8c-484e-81f1-28d1fd5e785e",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard;Mobile",
                     "action": "SwitchAmmoRight",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -486,7 +506,7 @@
                     "path": "<Touchscreen>/touch0/position",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Mobile",
                     "action": "Finger1",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -497,7 +517,7 @@
                     "path": "<Touchscreen>/touch1/position",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Mobile",
                     "action": "Finger2",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -551,9 +571,20 @@
                     "id": "0eb466c8-22a1-4b84-a9d1-a0544dc66093",
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "StickDeadzone",
                     "groups": "",
                     "action": "ScytheStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ebccc469-00fb-4065-80b7-c0f616635379",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard;Mobile",
+                    "action": "Trigger",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

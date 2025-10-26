@@ -308,6 +308,10 @@ PrefabInstance:
       value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: heart
+      value: 
+      objectReference: {fileID: 6163646743109416442}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: pigID
       value: 
       objectReference: {fileID: 0}
@@ -322,6 +326,10 @@ PrefabInstance:
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: typeTitle
       value: Varient
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
+      propertyPath: useHealth
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2569126147295069097, guid: 76c26b41327cb4cc1bbd72fdcedb5972, type: 3}
       propertyPath: typeIsVarient
@@ -715,6 +723,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4208296762343230983, guid: e2f0635f46b0c4ca485bde04bfc61c25, type: 3}
   m_PrefabInstance: {fileID: 9150215275464060043}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6163646743109416442 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3131607433276086641, guid: e2f0635f46b0c4ca485bde04bfc61c25, type: 3}
+  m_PrefabInstance: {fileID: 9150215275464060043}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 626aa972279534868a9d99a55013efce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6354555804630799593 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2797846451001571426, guid: e2f0635f46b0c4ca485bde04bfc61c25, type: 3}

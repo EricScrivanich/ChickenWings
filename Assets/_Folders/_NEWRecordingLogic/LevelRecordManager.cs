@@ -8,6 +8,7 @@ using System.Collections.Generic;
 // using UnityEditor;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 {
@@ -1276,6 +1277,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
         RecordedObjects = new List<RecordableObjectPlacer>();
         string addedTitleText = "";
+        LevelDataArrays dataArrays = null;
         if (isEditor)
         {
 #if UNITY_EDITOR
@@ -1284,6 +1286,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             if (LevelDataConverter.instance.ReturnLevelData() != null && LevelDataConverter.currentLevelInstance > 0)
             {
                 levelData = LevelDataConverter.instance.ReturnLevelData();
+                dataArrays = levelData.ReturnDataArrays();
                 dataLoaded = true;
 
                 OpenLevelPicker(false);
@@ -1314,7 +1317,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         {
             levelData = LevelDataConverter.instance.ReturnLevelData(0);
 
-            levelData.LoadJsonToMemory();
+            dataArrays = levelData.ReturnDataArrays(LevelDataConverter.instance.ConvertDataFromJson(), true);
+
         }
 
 
@@ -1328,7 +1332,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         LevelDataConverter.instance.SetCurrentLevelInstance(levelData.levelWorldAndNumber);
 
         LevelTitleText.text = addedTitleText + levelData.LevelName;
-        var data = LevelDataConverter.instance.ReturnDynamicData(levelData);
+        var data = LevelDataConverter.instance.ReturnDynamicData(levelData, dataArrays);
 
         // logic to set min and max view
         finalSpawnStep = levelData.finalSpawnStep;
@@ -1406,7 +1410,20 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
+        List<RecordableObjectPlacer> randomObjects = new List<RecordableObjectPlacer>();
 
+        //remove random spawn objects from RecordedObjects and add to randomObjects list
+        for (int i = RecordedObjects.Count - 1; i >= 0; i--)
+        {
+            if (RecordedObjects[i].Data.randomSpawnData != Vector2Int.zero)
+            {
+                randomObjects.Add(RecordedObjects[i]);
+                RecordedObjects.RemoveAt(i);
+            }
+        }
+
+        // reorganize RandomObjects by randomSPawnData.x then .y
+        randomObjects = randomObjects.OrderBy(o => o.Data.randomSpawnData.x).ThenBy(o => o.Data.randomSpawnData.y).ToList();
 
 
         List<RecordableObjectPlacer> activeObjects = new List<RecordableObjectPlacer>();
@@ -1454,7 +1471,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             for (int o = 0; o < activeObjects.Count; o++)
             {
                 // Debug.Log("Checking object: " + activeObjects[o].name + " with ID: " + activeObjects[o].ID + " and pool size: " + poolSizes.Length);
-                if (!activeObjects[o].CheckForPoolSizes(s)) activeObjects[o] = null;
+                if (!activeObjects[o].CheckForPoolSizes(s) || activeObjects[o].Data.randomSpawnData != Vector2Int.zero) activeObjects[o] = null;
 
                 // else poolSizeCompare[activeObjects[o].ID]++;
 
@@ -1513,7 +1530,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
-            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, "", poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives, levelData);
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, randomObjects, "", poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives, levelData);
             // Level data added at end to save it directly to scriptable object
 
         }
@@ -1527,7 +1544,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             }
 
 
-            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, path, poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives);
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, randomObjects, path, poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives);
             Debug.Log("Saved with final spawn step: " + finalSpawnStep);
 
         }

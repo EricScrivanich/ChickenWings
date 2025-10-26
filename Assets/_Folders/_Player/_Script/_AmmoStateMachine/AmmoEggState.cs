@@ -68,7 +68,7 @@ public class AmmoEggState : AmmoBaseState
     {
         if (type == ammoType) player.ID.UiEvents.OnUseAmmo?.Invoke(player.ID.Ammo);
     }
-    public override void SwipeButton(PlayerStateManager player, Vector2 direction)
+    public override void SwipeButton(PlayerStateManager player, Vector2 direction, bool isJoystick = false)
     {
 
     }

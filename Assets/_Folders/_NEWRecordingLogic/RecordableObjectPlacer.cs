@@ -39,6 +39,8 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     public bool typeIsVarient;
     public bool useHealth;
+    public short healthDefault = 1;
+    [SerializeField] private EnemyHeart heart;
 
 
 
@@ -346,7 +348,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
-        Data = new RecordedDataStructDynamic(ObjectType, ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0);
+        Data = new RecordedDataStructDynamic(ObjectType, ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0, Vector2Int.zero,health: healthDefault);
         lastSavedType = type;
 
         if (_pType == PostionType.Position)
@@ -390,6 +392,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         }
         spawnedTimeStep = LevelRecordManager.CurrentTimeStep;
         unspawnedTimeStep = 40000;
+        if (useHealth) SetHealth(healthDefault);
 
         UpdateBasePosition(Data.startPos);
 
@@ -494,6 +497,7 @@ public class RecordableObjectPlacer : MonoBehaviour
                 }
             }
         }
+        SetHealth(data.health);
         UpdateBasePosition(Data.startPos, false, true);
 
         // UpdateObjectData();
@@ -574,6 +578,14 @@ public class RecordableObjectPlacer : MonoBehaviour
         if (_pType == PostionType.Grounded || _pType == PostionType.CenterOnly) yArrow.gameObject.SetActive(false);
     }
 
+    public void SetHealth(int lives)
+    {
+        if (!useHealth) return;
+
+        heart.SetHealthForRecording(lives);
+        Data.health = (short)lives;
+    }
+
     public void SetSelectedObject()
     {
 
@@ -603,6 +615,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         else ValueEditorManager.instance.DeactivateFloatEditors();
 
 
+        ValueEditorManager.instance.SendHealthValue(useHealth);
         ValueEditorManager.instance.SendTypeValues(typeTitle, typeOptions);
 
         if (positionerTypes != null && positionerTypes.Length > 0)

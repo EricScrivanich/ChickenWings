@@ -298,9 +298,14 @@ public class SpawnStateManager : MonoBehaviour
             if (LevelRecordManager.CurrentPlayTimeStep == LevelRecordManager.PreloadObjectsTimeStep)
             {
 
-                if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
+                // if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
                 if (levelData != null)
-                    levelData.InitializeData(this, currentSpawnStep);
+                {
+                    if (LevelDataConverter.currentLevelInstance == 0) levelData.InitializeData(this, currentSpawnStep, lds: LevelDataConverter.instance.ConvertDataFromJson());
+                    else
+                        levelData.InitializeData(this, currentSpawnStep);
+                }
+
 
                 StartCoroutine(PreloadScene(1, true));
                 GetComponent<PreloadSpawner>().DestoryLoadingScreen();
@@ -328,8 +333,9 @@ public class SpawnStateManager : MonoBehaviour
             // float loadDuration = initialDur / spedScale;
             if (levelData != null)
             {
-                if (LevelDataConverter.currentLevelInstance == 0) levelData.LoadJsonToMemory();
-                levelData.InitializeData(this, LevelRecordManager.PreloadObjectsTimeStep);
+                if (LevelDataConverter.currentLevelInstance == 0) levelData.InitializeData(this, LevelRecordManager.PreloadObjectsTimeStep, lds: LevelDataConverter.instance.ConvertDataFromJson());
+                else
+                    levelData.InitializeData(this, LevelRecordManager.PreloadObjectsTimeStep);
             }
 
 
@@ -344,8 +350,8 @@ public class SpawnStateManager : MonoBehaviour
             {
                 LevelDataConverter.instance.SetCurrentLevelInstance(Vector3Int.zero);
                 levelData = LevelDataConverter.instance.ReturnLevelData();
-                levelData.LoadJsonToMemory();
-                levelData.InitializeData(this, currentSpawnStep, isLevel: true);
+
+                levelData.InitializeData(this, currentSpawnStep, lds: LevelDataConverter.instance.ConvertDataFromJson(), isLevel: true);
             }
             else
             {
@@ -359,12 +365,12 @@ public class SpawnStateManager : MonoBehaviour
                 {
                     currentSpawnStep = levelData.checkPointSteps[checkPointData.CurrentCheckPoint];
                     Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
-                    levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, checkPointData, true);
+                    levelData.InitializeData(this, currentSpawnStep, null, null, allCheckPointData.LevelDifficulty, checkPointData, true);
                 }
                 else
                 {
                     currentSpawnStep = 0;
-                    levelData.InitializeData(this, currentSpawnStep, allCheckPointData.LevelDifficulty, null, true);
+                    levelData.InitializeData(this, currentSpawnStep, null, null, allCheckPointData.LevelDifficulty, null, true);
                 }
 
             }
@@ -488,7 +494,16 @@ public class SpawnStateManager : MonoBehaviour
     }
     private void Update()
     {
-        if (!addWaveTime) return;
+        if (!addWaveTime)
+        {
+            waveTime += Time.deltaTime;
+            if (waveTime >= timeToWait)
+            {
+                levelData.CheckRandomSpawnStep();
+                waveTime -= timeToWait;
+            }
+            return;
+        }
 
         waveTime += Time.deltaTime;
         if (waveTime >= timeToWait)
@@ -508,15 +523,18 @@ public class SpawnStateManager : MonoBehaviour
 
     }
     private bool checkForMessage = false;
-    public void HandleWaveTime(bool play)
+    public void HandleWaveTime(bool play, bool doProgressBar = false)
     {
 
 
         if (play && !addWaveTime)
         {
+            if (doProgressBar) LvlID.outputEvent.SetLevelProgressTriggerType?.Invoke(0);
             IterateSpawnStep();
             waveTime = 0;
         }
+        else if (doProgressBar)
+            LvlID.outputEvent.SetLevelProgressTriggerType?.Invoke(-1);
         addWaveTime = play;
 
 
@@ -550,7 +568,9 @@ public class SpawnStateManager : MonoBehaviour
 
         //     return;
         // }
+
         levelData.NextSpawnStep(currentSpawnStep);
+        levelData.CheckRandomSpawnStep();
         LvlID.outputEvent.SetLevelProgress?.Invoke((float)currentSpawnStep / (float)levelData.finalSpawnStep);
 
         currentSpawnStep++;

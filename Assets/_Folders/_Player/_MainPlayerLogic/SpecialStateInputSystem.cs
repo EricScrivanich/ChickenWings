@@ -279,6 +279,9 @@ public class SpecialStateInputSystem : MonoBehaviour
         controls = new InputController();
     }
 
+    private bool isStickUsed = false;
+    private bool sentPressButtonEvent = false;
+
     public void InitializeInputs()
     {
         Debug.LogError("Initializing inputs in SpecialStateInputSystem with useFlips: " + useFlips + ", useDash: " + useDash + ", useDrop: " + useDrop + ", useEgg: " + useEgg);
@@ -291,15 +294,94 @@ public class SpecialStateInputSystem : MonoBehaviour
 
 
 
-
-
-
         if (useEgg) controls.Movement.ScytheStick.performed += ctx =>
-         {
-             ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
-             // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+             {
+                 // ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
+                 // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
 
-         };
+                 if (!isStickUsed)
+                 {
+                     var p = ctx.ReadValue<Vector2>();
+                     if (!sentPressButtonEvent && p.magnitude > 0.4f)
+                     {
+                         sentPressButtonEvent = true;
+                         if (!ButtonsEnabled || tempLockInput == 3 || !useEgg) return;
+                         if (!trackingInputs)
+                         {
+                             ID.events.OnTouchCenter?.Invoke(Vector2.zero);
+                         }
+
+                         else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
+                         {
+                             ID.events.OnTouchCenter?.Invoke(Vector2.zero);
+                             if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+                         }
+
+
+                         else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
+                         {
+                             ID.events.OnTouchCenter?.Invoke(Vector2.zero);
+                             if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+                         }
+                     }
+                     else if (p.magnitude > 0.9f)
+                     {
+                         isStickUsed = true;
+                         sentPressButtonEvent = false;
+                         ID.events.OnDragCenter?.Invoke(p, true);
+                     }
+
+                 }
+
+             };
+
+        if (useEgg) controls.Movement.ScytheStick.canceled += ctx =>
+        {
+            // ID.events.OnReleaseStick?.Invoke();
+            ID.events.OnReleaseCenter?.Invoke();
+            isStickUsed = false;
+
+            // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+        };
+
+        if (useEgg) controls.Movement.Trigger.performed += ctx =>
+        {
+
+            if (!ButtonsEnabled || tempLockInput == 3 || !useEgg) return;
+            if (!trackingInputs)
+            {
+                ID.events.OnTouchCenter?.Invoke(Vector2.zero);
+            }
+
+            else if (currentEquipedAmmo == 0 && CheckInputs("Egg"))
+            {
+                ID.events.OnTouchCenter?.Invoke(Vector2.zero);
+                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+            }
+
+
+            else if (currentEquipedAmmo == 1 && CheckInputs("Shotgun"))
+            {
+                ID.events.OnTouchCenter?.Invoke(Vector2.zero);
+                if (!mustHold && !lockAfterInputCheck) trackingInputs = false;
+            }
+
+
+
+        };
+
+        if (useEgg) controls.Movement.Trigger.canceled += ctx =>
+        {
+            ID.events.OnReleaseCenter?.Invoke();
+        };
+
+
+        // if (useEgg) controls.Movement.ScytheStick.performed += ctx =>
+        //  {
+        //      ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
+        //      // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+
+        //  };
 
         // controls.Movement.ScytheStick.canceled += ctx =>
         // {
@@ -385,7 +467,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             {
                 Vector2 p = ctx.ReadValue<Vector2>();
                 ID.events.SendParrySwipeData?.Invoke(p);
-                ID.events.OnDragCenter?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p, false);
             }
 
 
@@ -400,7 +482,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
                 Vector2 p = ctx.ReadValue<Vector2>();
                 ID.events.SendParrySwipeData?.Invoke(p);
-                ID.events.OnDragCenter?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p, false);
 
 
             }
@@ -428,7 +510,7 @@ public class SpecialStateInputSystem : MonoBehaviour
           {
               Vector2 p = ctx.ReadValue<Vector2>();
               ID.events.SendParrySwipeData?.Invoke(p);
-              ID.events.OnDragCenter?.Invoke(p);
+              ID.events.OnDragCenter?.Invoke(p, false);
 
           }
 
@@ -1556,6 +1638,8 @@ public class SpecialStateInputSystem : MonoBehaviour
     }
     private bool trackingCenterTouch = false;
     private bool trackingTwoFingerTouch = false;
+
+
     private void SetSwipesActive(bool doubleTap, Vector2 pos)
     {
         if (tempLockInput == 3 || !useEgg) return;

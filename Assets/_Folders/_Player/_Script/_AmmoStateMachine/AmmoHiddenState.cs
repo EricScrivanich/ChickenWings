@@ -34,7 +34,7 @@ public class AmmoHiddenState : AmmoBaseState
     {
 
     }
-    public override void SwipeButton(PlayerStateManager player, Vector2 direction)
+    public override void SwipeButton(PlayerStateManager player, Vector2 direction, bool isJoystick = false)
     {
 
     }

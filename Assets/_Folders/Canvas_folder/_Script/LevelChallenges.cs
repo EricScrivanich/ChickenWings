@@ -23,7 +23,8 @@ public class LevelChallenges : ScriptableObject
         CheckCompletedRings,
         CheckTotalBarns,
         CheckSpecificBarn,
-        CheckEachBarn
+        CheckEachBarn,
+        CheckTime
     }
 
 

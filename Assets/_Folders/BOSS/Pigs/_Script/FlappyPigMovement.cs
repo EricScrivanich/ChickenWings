@@ -27,6 +27,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     private Transform playerTarget;
     private float eyeRadius = .03f;
     [SerializeField] private CircleCollider2D col;
+    [SerializeField] private CircleCollider2D colRigid;
 
     private bool blinded = false;
 
@@ -103,10 +104,10 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     private static readonly float addUpForceAmount = 3.8f;
 
     private static readonly float bounceForceMagnitude = 4f;
-    private static readonly float eggForceMagnitude = 8.3f;
+    private static readonly float eggForceMagnitude = 8.76f;
 
     private static readonly float moveFreeDurationBounce = 0.3f;
-    private static readonly float moveFreeDurationEgg = 0.1f;
+    private static readonly float moveFreeDurationEgg = 0.52f;
     private static readonly float moveFreeDurationInverse = 0.7f;
 
     private static readonly float inverseMagnitude = -6f;
@@ -339,6 +340,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
         // Debug.LogError($"Pooled Enemy - ScaleFactor: {scaleFactor}, Mass: {rb.mass}, Velocity: {rb.velocity}");
         waitingOnDelay = true;
         col.offset = Vector2.zero;
+        if (colRigid != null) colRigid.offset = Vector2.zero;
         sprite.localPosition = Vector2.zero;
 
 
@@ -485,7 +487,8 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
 
 
 
-        col.offset = new Vector2(0, sprite.localPosition.y);
+        col.offset = Vector2.up * sprite.localPosition.y;
+
 
         if (moveFree)
         {
@@ -498,11 +501,19 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
             if (moveFreeDuration <= 0)
             {
                 moveFree = false;
+                if (blinded)
+                {
+                    rb.linearVelocityY *= .3f;
+                    flapSeq = DOTween.Sequence();
+                    flapSeq.Append(sprite.DOLocalMoveY(0, tweenUpDuration * 1.2f)).SetEase(Ease.InSine).OnComplete(TweenPig);
+                }
                 moveFreeDuration = 0;
             }
             else
                 return;
         }
+        else
+            colRigid.offset = Vector2.up * sprite.localPosition.y;
 
 
         if (blinded && blindDurationVar > blindDurationVar * .5f && transform.position.y < -2.5)
@@ -640,14 +651,15 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
                     StopCoroutine(EggYolkRoutine);
                 if (flapSeq != null && flapSeq.IsPlaying())
                     flapSeq.Kill();
-
-                flapSeq = DOTween.Sequence();
-                flapSeq.Append(sprite.DOLocalMoveY(-tweenUpAmount, tweenUpDuration));
-
-                // flapSeq = DOTween.Sequence();
                 rb.simulated = false;
                 this.enabled = false;
                 anim.enabled = false;
+
+                sprite.DOLocalMoveY(-tweenUpAmount * 1.6f, .25f).SetEase(Ease.OutSine);
+
+                // flapSeq = DOTween.Sequence();
+
+
                 // flapSeq.Append(sprite.DOScale(new Vector3(1.15f, .8f, 1), .25f).SetEase(Ease.OutSine));
                 // flapSeq.Join(sprite.DOLocalMoveY(-.4f, .25f).SetEase(Ease.OutSine));
                 // flapSeq.Play();
@@ -661,6 +673,20 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
                 }
                 return;
 
+            }
+            else
+            {
+                float xVal = 0;
+                float r = Random.Range(4f, 5.5f);
+                if (transform.position.x < -7f) xVal = r;
+
+                else if (transform.position.x > 7f) xVal = -r;
+
+                else xVal = r * (Random.value < .5f ? 1 : -1);
+
+
+                Vector2 vel = new Vector2(xVal, Random.Range(1.2f, 2.5f));
+                rb.AddForce(vel, ForceMode2D.Impulse);
             }
 
         }
@@ -698,10 +724,11 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     public override void OnPigEgged()
     {
         blindDurationVar = blindedTime;
+        if (rb.linearVelocityY > 0) rb.linearVelocityY *= .4f;
 
         if (blinded)
         {
-            moveFreeDuration = moveFreeDurationEgg + .15f;
+            moveFreeDuration = moveFreeDurationEgg + .14f;
             rb.linearVelocity = Vector2.zero;
             // rb.velocity *= .4f;
             rb.AddForce(Vector2.down * eggForceMagnitude * 1.2f, ForceMode2D.Impulse);
@@ -718,12 +745,18 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
             moveFreeDuration = moveFreeDurationEgg;
             rb.AddForce(Vector2.down * eggForceMagnitude, ForceMode2D.Impulse);
 
-            Debug.LogError("Force added is: " + (Vector2.down * eggForceMagnitude) + "New Velocity is: " + rb.linearVelocity);
+
         }
+        if (flapSeq != null && flapSeq.IsPlaying())
+            flapSeq.Kill();
 
-        Debug.LogError("Move free duration is: " + moveFreeDuration);
+        flapSeq = DOTween.Sequence();
+        flapSeq.Append(sprite.DOLocalMoveY(-tweenUpAmount * 1.1f, moveFreeDuration * .9f));
+        colRigid.offset = Vector2.up * -tweenUpAmount * 1.1f;
 
-        inverseDirection = Vector2.zero;
+
+
+        inverseDirection = Vector2.up * 1.9f;
         moveFree = true;
         if (blinded && !eggYolkUsed)
         {

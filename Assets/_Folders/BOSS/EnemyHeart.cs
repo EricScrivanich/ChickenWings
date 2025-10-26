@@ -16,11 +16,13 @@ public class EnemyHeart : MonoBehaviour
     private Coroutine loseLifeCoroutine;
     private Sequence heartSeq;
     private float startScale;
+    private bool skipStart = false;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (skipStart) return;
         sr = GetComponent<SpriteRenderer>();
         startScale = transform.localScale.x;
 
@@ -28,11 +30,33 @@ public class EnemyHeart : MonoBehaviour
 
 
     }
+    public void SetHealthForRecording(int lives)
+    {
+        skipStart = true;
+        Debug.Log("Set Health For Recording: " + lives);
+        if (lives > 1)
+        {
+            heartText.text = lives.ToString();
+            if (!this.gameObject.activeInHierarchy)
+                this.gameObject.SetActive(true);
+
+        }
+        else
+        {
+            this.gameObject.SetActive(false);
+        }
+    }
 
     // Update is called once per frame
     public void SetHearts(int lives)
     {
-        if (lives <= 1) Destroy(gameObject);
+        if (skipStart) return;
+        if (lives <= 1)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+        else gameObject.SetActive(true);
         totalLives = lives;
         heartText.text = totalLives.ToString();
 

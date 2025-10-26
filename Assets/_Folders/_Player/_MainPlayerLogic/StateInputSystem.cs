@@ -121,6 +121,7 @@ public class StateInputSystem : MonoBehaviour
 
     private Vector2 touchStartPosition;
     private float originalDropY;
+    private bool doneStick = false;
     private float touchStartTime;
     private const float swipeThreshold = 0.3f; // Adjust as needed
     private const float tapTimeThreshold = 0.2f; // Adjust as needed
@@ -239,6 +240,8 @@ public class StateInputSystem : MonoBehaviour
             trackingCenterTouch = false;
         }
     }
+    private bool isStickUsed = false;
+    private bool sentPressButtonEvent = false;
     private void Awake()
     {
 
@@ -257,9 +260,48 @@ public class StateInputSystem : MonoBehaviour
 
         controls.Movement.ScytheStick.performed += ctx =>
         {
-            ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
+            // ID.events.OnStuckScytheSwipe?.Invoke(ctx.ReadValue<Vector2>());
             // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+            if (!ButtonsEnabled) return;
 
+            if (!isStickUsed)
+            {
+                var p = ctx.ReadValue<Vector2>();
+                if (!sentPressButtonEvent && p.magnitude > 0.4f)
+                {
+                    sentPressButtonEvent = true;
+                    ID.events.OnTouchCenter?.Invoke(Vector2.zero);
+                }
+                else if (p.magnitude > 0.9f)
+                {
+                    isStickUsed = true;
+                    sentPressButtonEvent = false;
+                    ID.events.OnDragCenter?.Invoke(p, true);
+                }
+
+            }
+
+        };
+
+        controls.Movement.ScytheStick.canceled += ctx =>
+        {
+            // ID.events.OnReleaseStick?.Invoke();
+            ID.events.OnReleaseCenter?.Invoke();
+            isStickUsed = false;
+
+            // Debug.Log("Joystick Value: " + ctx.ReadValue<Vector2>());
+        };
+
+        controls.Movement.Trigger.performed += ctx =>
+        {
+            if (!ButtonsEnabled) return;
+            ID.events.OnTouchCenter?.Invoke(Vector2.zero);
+
+        };
+
+        controls.Movement.Trigger.canceled += ctx =>
+        {
+            ID.events.OnReleaseCenter?.Invoke();
         };
 
         // controls.Movement.ScytheStick.canceled += ctx =>
@@ -283,6 +325,7 @@ public class StateInputSystem : MonoBehaviour
             }
         };
 
+
         controls.Movement.Cursor.performed += ctx =>
         {
 
@@ -290,7 +333,7 @@ public class StateInputSystem : MonoBehaviour
             {
                 Vector2 p = ctx.ReadValue<Vector2>();
                 ID.events.SendParrySwipeData?.Invoke(p);
-                ID.events.OnDragCenter?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p, false);
 
             }
 
@@ -308,33 +351,41 @@ public class StateInputSystem : MonoBehaviour
         // controls.Movement.Parry.canceled += ctx =>
         // {
         //     ID.events.OnPerformParry?.Invoke(false);
+
+
         // };
 
+
+
+
+
+
+
         controls.Movement.Finger1.performed += ctx =>
-      {
+        {
 
-          if (trackingCenterTouch && trackedTouchIndex == 1)
-          {
-              Vector2 p = ctx.ReadValue<Vector2>();
-              ID.events.SendParrySwipeData?.Invoke(p);
-              ID.events.OnDragCenter?.Invoke(p);
-          }
+            if (trackingCenterTouch && trackedTouchIndex == 1)
+            {
+                Vector2 p = ctx.ReadValue<Vector2>();
+                ID.events.SendParrySwipeData?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p, false);
+            }
 
-      };
+        };
 
 
         controls.Movement.Finger1Press.canceled += ctx =>
-       {
+        {
 
 
-           if (trackingCenterTouch && trackedTouchIndex == 1)
-           {
-               trackingCenterTouch = false;
-               ID.events.OnReleaseCenter?.Invoke();
-           }
+            if (trackingCenterTouch && trackedTouchIndex == 1)
+            {
+                trackingCenterTouch = false;
+                ID.events.OnReleaseCenter?.Invoke();
+            }
 
 
-       };
+        };
 
         controls.Movement.Finger2.performed += ctx =>
         {
@@ -342,7 +393,7 @@ public class StateInputSystem : MonoBehaviour
             {
                 Vector2 p = ctx.ReadValue<Vector2>();
                 ID.events.SendParrySwipeData?.Invoke(p);
-                ID.events.OnDragCenter?.Invoke(p);
+                ID.events.OnDragCenter?.Invoke(p, false);
             }
 
 
@@ -350,16 +401,16 @@ public class StateInputSystem : MonoBehaviour
         };
 
         controls.Movement.Finger2Press.canceled += ctx =>
-       {
-           trackingTwoFingerTouch = false;
-           if (trackingCenterTouch && trackedTouchIndex == 2)
-           {
-               trackingCenterTouch = false;
-               ID.events.OnReleaseCenter?.Invoke();
-           }
+        {
+            trackingTwoFingerTouch = false;
+            if (trackingCenterTouch && trackedTouchIndex == 2)
+            {
+                trackingCenterTouch = false;
+                ID.events.OnReleaseCenter?.Invoke();
+            }
 
 
-       };
+        };
 
         controls.Movement.Finger1Press.performed += ctx =>
         {
@@ -380,11 +431,11 @@ public class StateInputSystem : MonoBehaviour
         };
 
         controls.Movement.Finger2Press.performed += ctx =>
-       {
-           if (!trackingCenterTouch)
-               trackedTouchIndex = 2;
+        {
+            if (!trackingCenterTouch)
+                trackedTouchIndex = 2;
 
-       };
+        };
 
         controls.Movement.Parry.performed += ctx =>
          {
@@ -710,14 +761,14 @@ public class StateInputSystem : MonoBehaviour
         };
 
         controls.Movement.DropEgg.canceled += ctx =>
-       {
-           ID.pressingEggButton = false;
-           //    if (ID.canPressEggButton)
-           ID.events.OnPressAmmo?.Invoke(false);
+        {
+            ID.pressingEggButton = false;
+            //    if (ID.canPressEggButton)
+            ID.events.OnPressAmmo?.Invoke(false);
 
-           //    if (usingShotgun)
-           //        ID.events.OnAttack?.Invoke(false);
-       };
+            //    if (usingShotgun)
+            //        ID.events.OnAttack?.Invoke(false);
+        };
 
         controls.Movement.JumpHold.performed += ctx =>
         {

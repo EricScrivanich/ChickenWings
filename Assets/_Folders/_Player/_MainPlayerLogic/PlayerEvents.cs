@@ -57,7 +57,7 @@ public struct PlayerEvents
     public Action<Vector2> OnTouchCenter;
     public Action OnReleaseCenter;
 
-    public Action<Vector2> OnDragCenter;
+    public Action<Vector2, bool> OnDragCenter;
     public Action TwoFingerCenterTouch;
 
     public Action<bool, Vector2> OnPointerCenter;

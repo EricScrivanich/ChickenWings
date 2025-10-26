@@ -221,12 +221,16 @@ public class PigMaterialHandler : MonoBehaviour
         }
 
 
-        instanceMaterial = new Material(pigMaterial);
-
-        foreach (var pig in sprites)
+        if (instanceMaterial == null)
         {
-            pig.material = instanceMaterial;
+            instanceMaterial = new Material(pigMaterial);
+
+            foreach (var pig in sprites)
+            {
+                pig.material = instanceMaterial;
+            }
         }
+
 
 
 
@@ -238,10 +242,21 @@ public class PigMaterialHandler : MonoBehaviour
 
     public void DamageEnemy(int damageAmount, int type, int id)
     {
+
         foreach (var col in colls)
         {
             col.enabled = false;
         }
+        if (instanceMaterial == null)
+        {
+            instanceMaterial = new Material(pigMaterial);
+
+            foreach (var pig in sprites)
+            {
+                pig.material = instanceMaterial;
+            }
+        }
+        if (totalDamageTime <= .1f) totalDamageTime = .8f;
         StartCoroutine(DamageCor(totalDamageTime));
     }
 
@@ -307,6 +322,7 @@ public class PigMaterialHandler : MonoBehaviour
                 {
                     col.enabled = false;
                 }
+                if (totalDamageTime <= .1f) totalDamageTime = .6f;
                 StartCoroutine(DamageCor(totalDamageTime));
 
                 // if (isBoss) thisBoss.Hit(type);

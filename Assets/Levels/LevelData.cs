@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Level Data", menuName = "Setups/LevelData")]
 public class LevelData : ScriptableObject
 {
+
+    private int spawnStepsPerRandom;
+    private LevelDataRandomSpawnData[] randomSpawnData;
+    private int currentSpawnStepCount = 0;
     [Header("Starting Stats")]
     [field: SerializeField] public short[] StartingAmmos { get; private set; }
     [field: SerializeField] public short StartingLives { get; private set; }
@@ -78,6 +82,8 @@ public class LevelData : ScriptableObject
     private DataStructFloatFour[] dataStructFloatFour;
     private DataStructFloatFive[] dataStructFloatFive;
     public RecordedObjectPositionerDataSave[] postionerData = null;
+
+
     private int currentPositionerObjectIndex = 0;
     private int currentCheckpointIndex = 0;
     private bool checkForCheckpoint = false;
@@ -92,14 +98,19 @@ public class LevelData : ScriptableObject
 
 
 
-    public void LoadJsonToMemory()
+    public void SetRandomEnemySpawnSteps(int stepsPerSpawn)
     {
-        LoadLevelSaveData(LevelDataConverter.instance.ConvertDataFromJson());
+        currentSpawnStepCount = 0;
+        spawnStepsPerRandom = stepsPerSpawn;
     }
-    public void InitializeData(SpawnStateManager s, ushort startingStep, int difficulty = 1, TemporaryLevelCheckPointData checkPointData = null, bool isLevel = false, bool endlessMode = false)
+    public void InitializeData(SpawnStateManager s, ushort startingStep, LevelDataArrays dataArrays = null, LevelDataSave lds = null, int difficulty = 1, TemporaryLevelCheckPointData checkPointData = null, bool isLevel = false, bool endlessMode = false)
     {
+        if (lds != null)
+            LoadLevelSaveData(lds);
         spawner = s;
         Difficulty = difficulty;
+        currentSpawnStepCount = 0;
+        spawnStepsPerRandom = 0;
         currentSpecialTriggerIndex = 0;
         if (levelDataBossAndRandomLogic != null)
         {
@@ -121,16 +132,14 @@ public class LevelData : ScriptableObject
             levelChallenges.skipShowChallenges = !isLevel;
             Debug.Log("Setting skipShowChallenges to: " + levelChallenges.skipShowChallenges);
         }
-        bool hasCollectables = false;
 
-        foreach (int a in collectablePoolSizes)
-        {
-            if (a > 0)
-            {
-                hasCollectables = true;
-                break;
-            }
-        }
+
+        int shownEgg = -1;
+        int collectableSize0 = 0;
+        int collectableSize1 = 0;
+        int livesAmount = 0;
+        short[] ammos = null;
+        bool hasCollectables = false;
 
         if (!hasCollectables)
         {
@@ -162,25 +171,6 @@ public class LevelData : ScriptableObject
         }
 
 
-        if (!hasCollectables)
-        {
-            Debug.Log("No collectables found, hiding EggCanvas");
-            GameObject.Find("EggCanvas").SetActive(false);
-        }
-        int shownEgg = -1;
-        if (hasCollectables)
-        {
-
-            if (StartingAmmos[0] > 0 && collectablePoolSizes[0] > 0)
-            {
-                shownEgg = 0;
-            }
-            else if (StartingAmmos[1] > 0 && collectablePoolSizes[1] > 0)
-            {
-                shownEgg = 1;
-            }
-        }
-
         // Load your level save data first. This sets spawnSteps, idList, etc.
 
         if (checkPointData != null && playerID != null)
@@ -191,19 +181,25 @@ public class LevelData : ScriptableObject
 
             if (difficulty == 1)
             {
-                startingStats.SetData(StartingLives, checkPointData.CurrentAmmos, shownEgg);
+                livesAmount = StartingLives;
+
+                // startingStats.SetData(StartingLives, checkPointData.CurrentAmmos, shownEgg);
             }
             else if (difficulty == 0)
             {
-                startingStats.SetData(easyStartingLives, checkPointData.CurrentAmmos, shownEgg);
+                livesAmount = easyStartingLives;
+                //  startingStats.SetData(easyStartingLives, checkPointData.CurrentAmmos, shownEgg);
 
                 // Normal or Hard difficulty, use default values
 
             }
-            if (startingStats.StartingLives > checkPointData.CurrentLives)
+
+            ammos = checkPointData.CurrentAmmos.Clone() as short[];
+
+            if (livesAmount > checkPointData.CurrentLives)
             {
 
-                playerID.livesToLoseOnStart = startingStats.StartingLives - checkPointData.CurrentLives;
+                playerID.livesToLoseOnStart = livesAmount - checkPointData.CurrentLives;
             }
 
 
@@ -221,15 +217,20 @@ public class LevelData : ScriptableObject
             if (difficulty == 1 || difficulty == 3)
             {
                 Debug.LogError("Setting Starting Stats for normal Difficulty");
-                // normal difficulty
+                // normal difficulty\ammo\
 
-                startingStats.SetData(StartingLives, StartingAmmos, shownEgg);
+                ammos = StartingAmmos.Clone() as short[]; ;
+                livesAmount = StartingLives;
+
+                // startingStats.SetData(StartingLives, StartingAmmos, shownEgg);
                 if (levelChallenges != null)
                     levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
             }
             else if (difficulty == 2)
             {
                 startingStats.SetData(1, StartingAmmos, shownEgg);
+                ammos = StartingAmmos.Clone() as short[]; ;
+                livesAmount = 1;
                 if (levelChallenges != null)
                     levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
             }
@@ -237,8 +238,10 @@ public class LevelData : ScriptableObject
 
             else if (difficulty == 0)
             {
+                ammos = easyStartingAmmos.Clone() as short[]; ;
+                livesAmount = easyStartingLives;
                 // Normal or Hard difficulty, use default values
-                startingStats.SetData(easyStartingLives, easyStartingAmmos, shownEgg);
+                // startingStats.SetData(easyStartingLives, easyStartingAmmos, shownEgg);
                 if (levelChallenges != null)
                     levelChallenges.ResetData(levelWorldAndNumber, difficulty, easyStartingAmmos, easyStartingLives);
             }
@@ -260,7 +263,7 @@ public class LevelData : ScriptableObject
             playerID.UiEvents.OnShowPlayerUI?.Invoke(true, 10, 0);
         }
         startingStats.AvailableAmmos = AvailableAmmos;
-        playerID.SetDataForLevel(startingStats, levelChallenges);
+
         dataTypeIndexes = new int[6];
 
         // Set currentSpawnStep to the specified starting step.
@@ -330,7 +333,7 @@ public class LevelData : ScriptableObject
                 dataTypeIndexes[3]++;
 
             }
-            if (i >= specialTriggerIndexAndType[currentSpecialTriggerIndex].x)
+            if (specialTriggerIndexAndType != null && currentSpecialTriggerIndex < specialTriggerIndexAndType.Length && i >= specialTriggerIndexAndType[currentSpecialTriggerIndex].x)
             {
                 currentSpecialTriggerIndex++;
             }
@@ -352,7 +355,82 @@ public class LevelData : ScriptableObject
         //         objData.pools[i].CreatePool(poolSizes[i]);
         // }
 
-        CreatePoolsAndDataStructs(s);
+        // if (dataArrays == null && lds == null)
+        // {
+        //     if (levelWorldAndNumber == Vector3Int.zero)
+        //         dataArrays = Resources.Load<LevelDataArrays>(LevelDataConverter.GetLevelNumberStringFormat(levelWorldAndNumber) + LevelName + "_DataArrays");
+
+        //     else
+        //         dataArrays = Resources.Load<LevelDataArrays>(LevelDataConverter.GetLevelNumberStringFormat(levelWorldAndNumber) + LevelName + "_DataArrays");
+
+        // }
+        if (dataArrays == null && lds == null)
+        {
+
+            dataArrays = Resources.Load<LevelDataArrays>(LevelDataConverter.GetLevelNumberStringFormat(levelWorldAndNumber) + LevelName + "_DataArrays");
+            if (dataArrays == null)
+            {
+                Debug.LogError("Data Arrays is null for level: " + LevelName + " at path: " + "Levels/MainLevelDataArrays/" + levelWorldAndNumber + "_" + LevelName + "_DataArrays");
+                return;
+            }
+            else
+            {
+                foreach (int a in dataArrays.collectablePoolSizes)
+                {
+                    if (a > 0)
+                    {
+                        hasCollectables = true;
+                        break;
+                    }
+                }
+                CreatePoolsAndDataStructs(dataArrays, s);
+            }
+
+        }
+        else if (lds != null)
+        {
+            foreach (int a in lds.collectablePoolSizes)
+            {
+                if (a > 0)
+                {
+                    hasCollectables = true;
+                    break;
+                }
+            }
+            CreatePoolsAndDataStructs(lds, s);
+        }
+
+
+
+
+
+
+
+        if (!hasCollectables)
+        {
+            Debug.Log("No collectables found, hiding EggCanvas");
+            GameObject.Find("EggCanvas").SetActive(false);
+        }
+        else
+        {
+            if (StartingAmmos[0] > 0 && collectableSize0 > 0)
+            {
+                shownEgg = 0;
+            }
+            else if (StartingAmmos[1] > 0 && collectableSize1 > 0)
+            {
+                shownEgg = 1;
+            }
+            startingStats.SetData((short)livesAmount, ammos, shownEgg);
+        }
+
+        playerID.SetDataForLevel(startingStats, levelChallenges);
+
+
+
+
+
+
         GetSpawnSizeForNextTimeStep();
     }
 
@@ -379,120 +457,7 @@ public class LevelData : ScriptableObject
 
     }
 
-    private void CreatePoolsAndDataStructs(SpawnStateManager s)
-    {
 
-        List<ushort[]> poolList = new List<ushort[]>
-        {
-            pigPoolSizes,
-            aiPoolSizes,
-            buildingPoolSizes,
-            collectablePoolSizes,
-            positionerPoolSizes,
-            ringPoolSizes
-        };
-
-        for (int i = 0; i < poolList.Count; i++)
-        {
-            if (i == 5) // ring pool
-            {
-                objData.ringPool.Initialize(ringPoolSizes[0], ringPoolSizes[1], s);
-            }
-            else if (poolList[i] != null && poolList[i].Length > 0)
-            {
-                var poolToPopulate = objData.GetPoolArrayByObjectType(i);
-                for (int j = 0; j < poolList[i].Length; j++)
-                {
-                    poolToPopulate[j].CreatePool(poolList[i][j]);
-                }
-            }
-        }
-        int simpleStructSize = 0;
-        int[] floatSizes = new int[5];
-        for (int i = 0; i < dataTypes.Length; i++)
-        {
-            if (dataTypes[i] == 0)
-            {
-                simpleStructSize++;
-
-            }
-            else if (dataTypes[i] <= floatSizes.Length && dataTypes[i] > 0)
-                floatSizes[dataTypes[i] - 1]++;
-            else
-                Debug.LogError("Data Type: " + dataTypes[i] + " is not valid. Please check the data type.");
-
-        }
-        dataStructSimple = new DataStructSimple[simpleStructSize];
-        dataStructFloatOne = new DataStructFloatOne[floatSizes[0]];
-        dataStructFloatTwo = new DataStructFloatTwo[floatSizes[1]];
-        dataStructFloatThree = new DataStructFloatThree[floatSizes[2]];
-        dataStructFloatFour = new DataStructFloatFour[floatSizes[3]];
-        dataStructFloatFive = new DataStructFloatFive[floatSizes[4]];
-
-        // foreach (int n in floatSizes)
-        // {
-
-        // }
-
-        int floatListIndex = 0;
-        int subrtactIndex = 0;
-        int simpleStructIndex = 0;
-        int float1Index = 0;
-        int float2Index = 0;
-        int float3Index = 0;
-        int float4Index = 0;
-        int float5Index = 0;
-        for (int i = 0; i < dataTypes.Length; i++)
-        {
-
-            if (dataTypes[i] < 0)
-            {
-                // This is a positioner object
-                subrtactIndex++;
-                continue;
-            }
-
-            switch (dataTypes[i])
-            {
-                case 0:
-                    dataStructSimple[simpleStructIndex] = new DataStructSimple(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex]);
-
-                    simpleStructIndex++;
-                    // This is a simple object, already handled above
-                    break;
-                case 1:
-                    dataStructFloatOne[float1Index] = new DataStructFloatOne(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex]);
-                    float1Index++;
-                    floatListIndex++;
-                    break;
-                case 2:
-                    dataStructFloatTwo[float2Index] = new DataStructFloatTwo(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1]);
-                    float2Index++;
-                    floatListIndex += 2;
-                    break;
-                case 3:
-
-                    dataStructFloatThree[float3Index] = new DataStructFloatThree(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2]);
-                    float3Index++;
-                    floatListIndex += 3;
-                    break;
-                case 4:
-                    dataStructFloatFour[float4Index] = new DataStructFloatFour(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2], floatList[floatListIndex + 3]);
-                    float4Index++;
-                    floatListIndex += 4;
-                    break;
-                case 5:
-                    dataStructFloatFive[float5Index] = new DataStructFloatFive(idList[i], typeList[i - subrtactIndex], posList[i - subrtactIndex], floatList[floatListIndex], floatList[floatListIndex + 1], floatList[floatListIndex + 2], floatList[floatListIndex + 3], floatList[floatListIndex + 4]);
-                    float5Index++;
-                    floatListIndex += 5;
-                    break;
-
-            }
-
-        }
-
-
-    }
 
     public void SaveLevelCheckPoint(ushort checkPointIndex)
     {
@@ -525,13 +490,18 @@ public class LevelData : ScriptableObject
             spawnSteps = new ushort[0];
             objectTypes = new short[0];
             idList = new short[0];
-            posList = new Vector2[0];
             dataTypes = new short[0];
+
+            posList = new Vector2[0];
             floatList = new float[0];
             StartingAmmos = new short[5];
+            easyStartingAmmos = new short[5];
             StartingAmmos[0] = 3;
             StartingAmmos[1] = 3;
+            easyStartingAmmos[0] = 3;
+            easyStartingAmmos[1] = 3;
             StartingLives = 3;
+            easyStartingLives = 5;
             startingStats.SetData(StartingLives, StartingAmmos, -1);
             pigPoolSizes = new ushort[0];
             aiPoolSizes = new ushort[0];
@@ -553,22 +523,19 @@ public class LevelData : ScriptableObject
         objectTypes = lds.objectTypes;
         idList = lds.idList;
         cageAttachments = lds.cageAttachments;
-        pigPoolSizes = lds.pigPoolSizes;
-        aiPoolSizes = lds.aiPoolSizes;
-        buildingPoolSizes = lds.buildingPoolSizes;
-        collectablePoolSizes = lds.collectablePoolSizes;
-        positionerPoolSizes = lds.positonerPoolSizes;
-        ringPoolSizes = lds.ringPoolSizes;
-
-        posList = lds.posList;
         dataTypes = lds.dataTypes;
-        // speedList = lds.speeds;
-        // scaleList = lds.scaleList;
-        // magList = lds.magList;
-        // timeList = lds.timeList;
-        // delayList = lds.delayList;
-        typeList = lds.typeList;
-        poolSizes = lds.poolSizes;
+        // pigPoolSizes = lds.pigPoolSizes;
+        // aiPoolSizes = lds.aiPoolSizes;
+        // buildingPoolSizes = lds.buildingPoolSizes;
+        // collectablePoolSizes = lds.collectablePoolSizes;
+        // positionerPoolSizes = lds.positionerPoolSizes;
+        // ringPoolSizes = lds.ringPoolSizes;
+
+        // posList = lds.posList;
+
+
+        // typeList = lds.typeList;
+        // poolSizes = lds.poolSizes;
         if (lds.postionerData != null)
         {
             Debug.LogError("Postioner Data is not null with length: " + lds.postionerData.Length);
@@ -603,9 +570,28 @@ public class LevelData : ScriptableObject
 
 
     private bool checkBossAndRandomData = false;
+
+    public void CheckRandomSpawnStep()
+    {
+        if (spawnStepsPerRandom <= 0) return;
+        if (currentSpawnStepCount >= spawnStepsPerRandom)
+        {
+            foreach (var rsd in randomSpawnData)
+            {
+                rsd.GenerateRandomEnemySpawn(0);
+
+            }
+            currentSpawnStepCount = 0;
+
+        }
+        currentSpawnStepCount++;
+    }
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
+        currentSpawnStepCount++;
+
+
 
         if (ss > finalSpawnStep)
         {
@@ -613,6 +599,8 @@ public class LevelData : ScriptableObject
             spawner.FinishLevel();
             return;
         }
+
+
 
         if (checkForCheckpoint && ss == checkPointSteps[currentCheckpointIndex])
         {
@@ -666,20 +654,36 @@ public class LevelData : ScriptableObject
                     var poolArray = objData.GetPoolArrayByObjectType(objectTypes[i]);
                     var pool = poolArray[idList[i]];
 
-                    if (currentSpecialTriggerIndex < specialTriggerIndexAndType.Length && i == specialTriggerIndexAndType[currentSpecialTriggerIndex].x)
+
+                    // if (currentSpecialTriggerIndex < specialTriggerIndexAndType.Length && i == specialTriggerIndexAndType[currentSpecialTriggerIndex].x)
+                    // {
+                    //     switch (specialTriggerIndexAndType[currentSpecialTriggerIndex].y)
+                    //     {
+                    //         case 1:
+                    //             pool.SpawnBoss(GetDataByType(dataTypes[i]), levelDataBossAndRandomLogic);
+                    //             break;
+
+
+                    //     }
+                    //     currentSpecialTriggerIndex++;
+                    // }
+                    if (objectTypes[i] == 1) // Boss Type
                     {
-                        switch (specialTriggerIndexAndType[currentSpecialTriggerIndex].y)
+                        bool hasTrigger = false;
+                        Debug.LogError("Spawning Boss for ID: " + idList[i] + " at index: " + i);
+                        if (currentSpecialTriggerIndex < specialTriggerIndexAndType.Length && i == specialTriggerIndexAndType[currentSpecialTriggerIndex].x)
                         {
-                            case 1:
-                                pool.SpawnBoss(GetDataByType(dataTypes[i]), levelDataBossAndRandomLogic);
-                                break;
-
-
+                            hasTrigger = true;
+                            currentSpecialTriggerIndex++;
                         }
-                        currentSpecialTriggerIndex++;
-                    }
+                        pool.SpawnBoss(GetDataByType(dataTypes[i]), hasTrigger);
 
+                    }
                     else pool.Spawn(GetDataByType(dataTypes[i]));
+
+
+
+
 
                     // switch (dataTypes[i])
                     // {
@@ -833,8 +837,404 @@ public class LevelData : ScriptableObject
         return levelChallenges;
     }
 
+    public LevelDataArrays ReturnDataArrays(LevelDataSave lds = null, bool returnDefualt = false)
+    {
+        LevelDataArrays dataArrays = null;
+        if (returnDefualt)
+        {
+            dataArrays = Resources.Load<LevelDataArrays>(LevelDataConverter.GetLevelNumberStringFormat(Vector3Int.zero) + "_DataArrays");
+
+        }
+        else
+        {
+            dataArrays = Resources.Load<LevelDataArrays>(LevelDataConverter.GetLevelNumberStringFormat(levelWorldAndNumber) + LevelName + "_DataArrays");
+        }
+
+        if (lds != null)
+        {
+            dataArrays.LoadLevelSaveData(lds);
+        }
+
+        return dataArrays;
+    }
+
+    #region  Pool And Data Creation
+    private void CreatePoolsAndDataStructs(LevelDataArrays d, SpawnStateManager s)
+    {
+
+        List<ushort[]> poolList = new List<ushort[]>
+        {
+            d.pigPoolSizes,
+            d.aiPoolSizes,
+            d.buildingPoolSizes,
+            d.collectablePoolSizes,
+            d.positionerPoolSizes,
+            d.ringPoolSizes
+        };
+
+        for (int i = 0; i < poolList.Count; i++)
+        {
+            if (i == 5) // ring pool
+            {
+                objData.ringPool.Initialize(d.ringPoolSizes[0], d.ringPoolSizes[1], s);
+            }
+            else if (poolList[i] != null && poolList[i].Length > 0)
+            {
+                var poolToPopulate = objData.GetPoolArrayByObjectType(i);
+                for (int j = 0; j < poolList[i].Length; j++)
+                {
+                    Debug.LogError("Creating Pool for Object Type: " + i + " with size: " + poolList[i][j] + " and ID: " + j);
+                    poolToPopulate[j].CreatePool(poolList[i][j], this);
+                    Debug.LogError("Created Pool");
+                }
+            }
+        }
+        int simpleStructSize = 0;
+        int[] floatSizes = new int[5];
+        for (int i = 0; i < dataTypes.Length; i++)
+        {
+            if (dataTypes[i] == 0)
+            {
+                simpleStructSize++;
+
+            }
+            else if (dataTypes[i] <= floatSizes.Length && dataTypes[i] > 0)
+                floatSizes[dataTypes[i] - 1]++;
+            else
+                Debug.LogError("Data Type: " + dataTypes[i] + " is not valid. Please check the data type.");
+
+        }
+        dataStructSimple = new DataStructSimple[simpleStructSize];
+        dataStructFloatOne = new DataStructFloatOne[floatSizes[0]];
+        dataStructFloatTwo = new DataStructFloatTwo[floatSizes[1]];
+        dataStructFloatThree = new DataStructFloatThree[floatSizes[2]];
+        dataStructFloatFour = new DataStructFloatFour[floatSizes[3]];
+        dataStructFloatFive = new DataStructFloatFive[floatSizes[4]];
+
+        // foreach (int n in floatSizes)
+        // {
+
+        // }
+
+        int floatListIndex = 0;
+        int subrtactIndex = 0;
+        int simpleStructIndex = 0;
+        int float1Index = 0;
+        int float2Index = 0;
+        int float3Index = 0;
+        int float4Index = 0;
+        int float5Index = 0;
+        int healthIndex = 0;
+        for (int i = 0; i < dataTypes.Length; i++)
+        {
+            short id = idList[i];
+            if (objectTypes[i] == 1) // boss object, replace ID with health
+            {
+                id = 1;
+                if (d.indexAndHealth != null && healthIndex * 2 < d.indexAndHealth.Length - 1 && i == d.indexAndHealth[healthIndex * 2])
+                {
+                    id = d.indexAndHealth[(healthIndex * 2) + 1];
+                    healthIndex++;
+                }
+            }
+
+            if (dataTypes[i] < 0)
+            {
+                // This is a positioner object
+                subrtactIndex++;
+                continue;
+            }
+
+            switch (dataTypes[i])
+            {
+                case 0:
+                    dataStructSimple[simpleStructIndex] = new DataStructSimple(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex]);
+
+                    simpleStructIndex++;
+                    // This is a simple object, already handled above
+                    break;
+                case 1:
+                    dataStructFloatOne[float1Index] = new DataStructFloatOne(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex]);
+                    float1Index++;
+                    floatListIndex++;
+                    break;
+                case 2:
+                    dataStructFloatTwo[float2Index] = new DataStructFloatTwo(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex], d.floatList[floatListIndex + 1]);
+                    float2Index++;
+                    floatListIndex += 2;
+                    break;
+                case 3:
+
+                    dataStructFloatThree[float3Index] = new DataStructFloatThree(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex], d.floatList[floatListIndex + 1], d.floatList[floatListIndex + 2]);
+                    float3Index++;
+                    floatListIndex += 3;
+                    break;
+                case 4:
+                    dataStructFloatFour[float4Index] = new DataStructFloatFour(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex], d.floatList[floatListIndex + 1], d.floatList[floatListIndex + 2], d.floatList[floatListIndex + 3]);
+                    float4Index++;
+                    floatListIndex += 4;
+                    break;
+                case 5:
+                    dataStructFloatFive[float5Index] = new DataStructFloatFive(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex], d.floatList[floatListIndex + 1], d.floatList[floatListIndex + 2], d.floatList[floatListIndex + 3], d.floatList[floatListIndex + 4]);
+                    float5Index++;
+                    floatListIndex += 5;
+                    break;
+
+            }
+
+        }
+
+        // do logic if there is random Enemy Spawn Data
+        if (d.randomSpawnDataTypeObjectTypeAndID != null && d.randomSpawnDataTypeObjectTypeAndID.Length > 0)
+        {
+            Debug.LogError("Creating Random Spawn Data with length: " + d.randomSpawnDataTypeObjectTypeAndID.Length);
+            randomSpawnData = new LevelDataRandomSpawnData[d.randomSpawnDataTypeObjectTypeAndID.Length];
+
+            floatListIndex = 0;
+            int spawnIndex = 0;
+
+            for (int i = 0; i < d.randomSpawnDataTypeObjectTypeAndID.Length; i++)
+            {
+                LevelDataRandomSpawnData newData = new LevelDataRandomSpawnData();
+                List<ISpawnData> spawnDataList = new List<ISpawnData>();
 
 
+                for (int j = 0; j < d.randomLogicSizes[i]; j++)
+                {
+
+
+                    switch (d.randomSpawnDataTypeObjectTypeAndID[i].x)
+                    {
+                        case 0:
+                            spawnDataList.Add(new DataStructSimple(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex]));
+
+                            break;
+                        case 1:
+                            spawnDataList.Add(new DataStructFloatOne(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex]));
+
+                            floatListIndex++;
+                            break;
+                        case 2:
+                            spawnDataList.Add(new DataStructFloatTwo(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1]));
+
+                            floatListIndex += 2;
+                            break;
+                        case 3:
+                            spawnDataList.Add(new DataStructFloatThree(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2]));
+
+                            floatListIndex += 3;
+                            break;
+                        case 4:
+                            spawnDataList.Add(new DataStructFloatFour(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3]));
+                            floatListIndex += 4;
+                            break;
+                        case 5:
+                            spawnDataList.Add(new DataStructFloatFive(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3], d.floatListRand[floatListIndex + 4]));
+                            floatListIndex += 5;
+                            break;
+
+
+                    }
+                    spawnIndex++;
+                }
+
+
+                // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
+                newData.Initialize(spawnDataList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x);
+                randomSpawnData[i] = newData;
+            }
+        }
+        Resources.UnloadAsset(d);
+    }
+
+    private void CreatePoolsAndDataStructs(LevelDataSave d, SpawnStateManager s)
+    {
+
+        List<ushort[]> poolList = new List<ushort[]>
+        {
+            d.pigPoolSizes,
+            d.aiPoolSizes,
+            d.buildingPoolSizes,
+            d.collectablePoolSizes,
+            d.positionerPoolSizes,
+            d.ringPoolSizes
+        };
+
+        for (int i = 0; i < poolList.Count; i++)
+        {
+            if (i == 5) // ring pool
+            {
+                objData.ringPool.Initialize(d.ringPoolSizes[0], d.ringPoolSizes[1], s);
+            }
+            else if (poolList[i] != null && poolList[i].Length > 0)
+            {
+                var poolToPopulate = objData.GetPoolArrayByObjectType(i);
+                for (int j = 0; j < poolList[i].Length; j++)
+                {
+                    poolToPopulate[j].CreatePool(poolList[i][j], this);
+                }
+            }
+        }
+        int simpleStructSize = 0;
+        int[] floatSizes = new int[5];
+        for (int i = 0; i < dataTypes.Length; i++)
+        {
+            if (dataTypes[i] == 0)
+            {
+                simpleStructSize++;
+
+            }
+            else if (dataTypes[i] <= floatSizes.Length && dataTypes[i] > 0)
+                floatSizes[dataTypes[i] - 1]++;
+            else
+                Debug.LogError("Data Type: " + dataTypes[i] + " is not valid. Please check the data type.");
+
+        }
+        dataStructSimple = new DataStructSimple[simpleStructSize];
+        dataStructFloatOne = new DataStructFloatOne[floatSizes[0]];
+        dataStructFloatTwo = new DataStructFloatTwo[floatSizes[1]];
+        dataStructFloatThree = new DataStructFloatThree[floatSizes[2]];
+        dataStructFloatFour = new DataStructFloatFour[floatSizes[3]];
+        dataStructFloatFive = new DataStructFloatFive[floatSizes[4]];
+
+        // foreach (int n in floatSizes)
+        // {
+
+        // }
+
+        int floatListIndex = 0;
+        int subrtactIndex = 0;
+        int simpleStructIndex = 0;
+        int float1Index = 0;
+        int float2Index = 0;
+        int float3Index = 0;
+        int float4Index = 0;
+        int float5Index = 0;
+        int healthIndex = 0;
+        for (int i = 0; i < dataTypes.Length; i++)
+        {
+
+            short id = idList[i];
+            if (objectTypes[i] == 1) // boss object, replace ID with health
+            {
+                id = 1;
+                if (d.indexAndHealth != null && healthIndex < d.indexAndHealth.Length - 1 && d.indexAndHealth[i * 2] == i)
+                {
+                    id = d.indexAndHealth[(i * 2) + 1];
+                    healthIndex++;
+                }
+            }
+
+            if (dataTypes[i] < 0)
+            {
+                // This is a positioner object
+                subrtactIndex++;
+                continue;
+            }
+
+            switch (dataTypes[i])
+            {
+                case 0:
+                    dataStructSimple[simpleStructIndex] = new DataStructSimple(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex]);
+
+                    simpleStructIndex++;
+                    // This is a simple object, already handled above
+                    break;
+                case 1:
+                    dataStructFloatOne[float1Index] = new DataStructFloatOne(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex]);
+                    float1Index++;
+                    floatListIndex++;
+                    break;
+                case 2:
+                    dataStructFloatTwo[float2Index] = new DataStructFloatTwo(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1]);
+                    float2Index++;
+                    floatListIndex += 2;
+                    break;
+                case 3:
+
+                    dataStructFloatThree[float3Index] = new DataStructFloatThree(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2]);
+                    float3Index++;
+                    floatListIndex += 3;
+                    break;
+                case 4:
+                    dataStructFloatFour[float4Index] = new DataStructFloatFour(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3]);
+                    float4Index++;
+                    floatListIndex += 4;
+                    break;
+                case 5:
+                    dataStructFloatFive[float5Index] = new DataStructFloatFive(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3], d.floatListRand[floatListIndex + 4]);
+                    float5Index++;
+                    floatListIndex += 5;
+                    break;
+
+            }
+
+        }
+        if (d.randomSpawnDataTypeObjectTypeAndID != null && d.randomSpawnDataTypeObjectTypeAndID.Length > 0)
+        {
+            randomSpawnData = new LevelDataRandomSpawnData[d.randomSpawnDataTypeObjectTypeAndID.Length];
+
+            floatListIndex = 0;
+            int spawnIndex = 0;
+
+
+            for (int i = 0; i < d.randomSpawnDataTypeObjectTypeAndID.Length; i++)
+            {
+                LevelDataRandomSpawnData newData = new LevelDataRandomSpawnData();
+                List<ISpawnData> spawnDataList = new List<ISpawnData>();
+
+                for (int j = 0; j < d.randomLogicSizes[i]; j++)
+                {
+
+
+                    switch (d.randomSpawnDataTypeObjectTypeAndID[i].x)
+                    {
+                        case 0:
+                            spawnDataList.Add(new DataStructSimple(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex]));
+
+                            break;
+                        case 1:
+                            spawnDataList.Add(new DataStructFloatOne(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex]));
+
+                            floatListIndex++;
+                            break;
+                        case 2:
+                            spawnDataList.Add(new DataStructFloatTwo(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1]));
+
+                            floatListIndex += 2;
+                            break;
+                        case 3:
+                            spawnDataList.Add(new DataStructFloatThree(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2]));
+
+                            floatListIndex += 3;
+                            break;
+                        case 4:
+                            spawnDataList.Add(new DataStructFloatFour(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3]));
+                            floatListIndex += 4;
+                            break;
+                        case 5:
+                            spawnDataList.Add(new DataStructFloatFive(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3], d.floatListRand[floatListIndex + 4]));
+                            floatListIndex += 5;
+                            break;
+
+
+                    }
+                    spawnIndex++;
+                }
+
+
+                // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
+                newData.Initialize(spawnDataList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x);
+                randomSpawnData[i] = newData;
+            }
+        }
+
+        // Resources.UnloadAsset(d);
+
+
+    }
+
+    #endregion
 
 
 

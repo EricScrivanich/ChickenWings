@@ -99,15 +99,14 @@ public class PickLevelEditorOnly : MonoBehaviour
         LevelChallenges challenges = ScriptableObject.CreateInstance<LevelChallenges>();
         challenges.Editor_SetChallenges();
 
-        string numberString = "";
+        string numberString = LevelDataConverter.GetLevelNumberStringFormat(numbers);
 
-        if (numbers.z <= 0)
-            numberString = $"{numbers.x:00}-{numbers.y:00}_";
-        else
-            numberString = $"{numbers.x:00}-{numbers.y:00}-{numbers.z:00}_";
+        LevelDataArrays arrayAsset = ScriptableObject.CreateInstance<LevelDataArrays>();
+        string arrayPath = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/Resources/" + LevelDataConverter.GetLevelNumberStringFormat(numbers) + name + "_DataArrays" + ".asset");
+        AssetDatabase.CreateAsset(arrayAsset, arrayPath);
 
         string n = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/Main/" + numberString + name + ".asset");
-        string challengePath = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/Challenges/" + numberString + name + "Challenge" + ".asset");
+        string challengePath = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/Challenges/" + numberString + name + "_Challenge" + ".asset");
         AssetDatabase.CreateAsset(asset, n);
         AssetDatabase.CreateAsset(challenges, challengePath);
 
@@ -118,10 +117,12 @@ public class PickLevelEditorOnly : MonoBehaviour
 
         asset.SetDefaults(objData, startingStats, playerID, challenges);
         asset.LoadLevelSaveData(null);
+        arrayAsset.LoadLevelSaveData(null);
         asset.LevelName = name;
         asset.levelWorldAndNumber = numbers;
         UnityEditor.EditorUtility.SetDirty(asset);
         UnityEditor.EditorUtility.SetDirty(challenges);
+        UnityEditor.EditorUtility.SetDirty(arrayAsset);
 
         UnityEditor.AssetDatabase.SaveAssets();
         UnityEditor.AssetDatabase.Refresh();
@@ -199,17 +200,26 @@ public class PickLevelEditorOnly : MonoBehaviour
             }
         }
 
-        string[] guids = AssetDatabase.FindAssets("t:LevelData", new[] { "Assets/Levels/Main" });
+        List<string> guids = AssetDatabase.FindAssets("t:LevelData", new[] { "Assets/Levels/Main" }).ToList();
+
+        //remove any duplicate levels with same path in guids
+        guids = guids.Distinct().ToList();
+
         int currentLevelCount = 0;
         int currentLevelParent = 0;
+
+        //remove any levels where ld.LevelWorldAndNumber.x <= 0
+        //remove any dupllicate levels with same path in guids
         sortedLevels = guids
             .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
-            .Where(ld => ld != null)
+            .Where(ld => ld != null && ld.levelWorldAndNumber.x > 0)
             .OrderBy(ld => ld.levelWorldAndNumber.x)
             .ThenBy(ld => ld.levelWorldAndNumber.y)
             .ThenBy(ld => ld.levelWorldAndNumber.z)
             .ThenBy(ld => ld.LevelName) // Assuming you want to sort by title/levelName
             .ToArray();
+
+
 
         foreach (var level in sortedLevels)
         {

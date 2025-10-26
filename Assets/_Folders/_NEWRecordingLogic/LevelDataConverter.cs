@@ -237,7 +237,7 @@ public class LevelDataConverter : MonoBehaviour
         }
     }
 
-    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, string title, List<ushort[]> plSizes, ushort finalSpawnStep, short[] ammos, short lives, LevelData editorData = null)
+    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, List<RecordableObjectPlacer> randomObj, string title, List<ushort[]> plSizes, ushort finalSpawnStep, short[] ammos, short lives, LevelData editorData = null)
     {
 
         List<short> objectTypeList = new List<short>();
@@ -248,6 +248,15 @@ public class LevelDataConverter : MonoBehaviour
         List<float> floatList = new List<float>();
         List<short> dataTypes = new List<short>();
         List<ushort> cageAttachments = new List<ushort>();
+        List<short> indexAndHealth = new List<short>();
+
+
+
+
+
+
+
+
         List<RecordedObjectPositionerDataSave> positionerData = new List<RecordedObjectPositionerDataSave>();
 
         bool isEditor = editorData != null;
@@ -256,36 +265,43 @@ public class LevelDataConverter : MonoBehaviour
 
         for (int i = 0; i < obj.Count; i++)
         {
-            objectTypeList.Add(obj[i].ObjectType);
-            idList.Add(obj[i].Data.ID);
-            spawnedStepList.Add(obj[i].Data.spawnedStep);
-            dataTypes.Add(obj[i].DataType);
+            var o = obj[i];
 
-            if (obj[i].Data.hasCageAttachment)
+            objectTypeList.Add(o.ObjectType);
+            idList.Add(o.Data.ID);
+            spawnedStepList.Add(o.Data.spawnedStep);
+            dataTypes.Add(o.DataType);
+
+            if (o.Data.hasCageAttachment)
             {
                 cageAttachments.Add((ushort)i);
             }
-
-            if (obj[i].IsPositionerObject())
+            if (o.Data.health > 1)
             {
-                Debug.LogError("Positioner Object Found: " + obj[i].Data.ID);
-                positionerData.Add(obj[i].ReturnPositionerDataSave());
+                indexAndHealth.Add((short)i);
+                indexAndHealth.Add(o.Data.health);
+            }
+
+            if (o.IsPositionerObject())
+            {
+                Debug.LogError("Positioner Object Found: " + o.Data.ID);
+                positionerData.Add(o.ReturnPositionerDataSave());
 
             }
 
             else
             {
-                typeList.Add(obj[i].Data.type);
-                posList.Add(obj[i].Data.startPos);
+                typeList.Add(o.Data.type);
+                posList.Add(o.Data.startPos);
 
-                if (isEditor && obj[i].Data.triggerType != 0)
+                if (isEditor && o.Data.triggerType != 0)
                 {
-                    specialTriggerIndexAndType.Add(new Vector2Int(i, obj[i].Data.triggerType));
+                    specialTriggerIndexAndType.Add(new Vector2Int(i, o.Data.triggerType));
                 }
             }
 
 
-            int dataType = obj[i].DataType;
+            int dataType = o.DataType;
             if (dataType > 0 && dataType <= 5)
             {
                 float[] values = new float[dataType];
@@ -294,19 +310,19 @@ public class LevelDataConverter : MonoBehaviour
                     switch (j)
                     {
                         case 0:
-                            values[j] = obj[i].Data.float1;
+                            values[j] = o.Data.float1;
                             break;
                         case 1:
-                            values[j] = obj[i].Data.float2;
+                            values[j] = o.Data.float2;
                             break;
                         case 2:
-                            values[j] = obj[i].Data.float3;
+                            values[j] = o.Data.float3;
                             break;
                         case 3:
-                            values[j] = obj[i].Data.float4;
+                            values[j] = o.Data.float4;
                             break;
                         case 4:
-                            values[j] = obj[i].Data.float5;
+                            values[j] = o.Data.float5;
                             break;
                     }
                 }
@@ -320,6 +336,10 @@ public class LevelDataConverter : MonoBehaviour
 
         }
 
+        bool hasRandom = (randomObj != null && randomObj.Count > 0);
+
+
+
         // ushort[] poolData = new ushort[poolSizes.Length];
         // for (int i = 0; i < poolSizes.Length; i++)
         // {
@@ -331,26 +351,107 @@ public class LevelDataConverter : MonoBehaviour
         if (isEditor)
         {
             title = editorData.LevelName;
-            var extraData = editorData.levelDataBossAndRandomLogic.ReturnCollectableSpawnData();
-            if (extraData != null)
+            if (editorData.levelDataBossAndRandomLogic != null)
             {
-                if (extraData.SpawnEggs)
+                var extraData = editorData.levelDataBossAndRandomLogic.ReturnCollectableSpawnData();
+                if (extraData != null)
                 {
+                    if (extraData.SpawnEggs)
+                    {
 
-                    plSizes[3][0] += 2;
-                }
-                if (extraData.SpawnShotgun)
-                {
+                        plSizes[3][0] += 2;
+                    }
+                    if (extraData.SpawnShotgun)
+                    {
 
-                    plSizes[3][1] += 2;
+                        plSizes[3][1] += 2;
+                    }
                 }
             }
+
 
         }  // Use the editor data title if available
         LevelDataSave save = new LevelDataSave(title, objectTypeList.ToArray(),
         idList.ToArray(), spawnedStepList.ToArray(), typeList.ToArray(),
         dataTypes.ToArray(), finalSpawnStep, posList.ToArray(),
-        floatList.ToArray(), plSizes, ammos, lives);
+        floatList.ToArray(), plSizes, ammos, lives, indexAndHealth.ToArray());
+
+        if (hasRandom)
+        {
+            List<float> floatListRand = new List<float>();
+            List<Vector2> posListRand = new List<Vector2>();
+            List<ushort> objectTypeListRand = new List<ushort>();
+            List<ushort> randomLogicSizes = new List<ushort>();
+            List<Vector3Int> randomSpawnDataTypeObjectTypeAndID = new List<Vector3Int>();
+            List<ushort> spawnStepsRandom = new List<ushort>();
+
+
+            for (int i = 0; i < randomObj.Count; i++)
+            {
+                var o = randomObj[i];
+                int currentSpawnSet = o.Data.randomSpawnData.x - 1;
+                if (currentSpawnSet >= randomLogicSizes.Count)
+                {
+                    randomLogicSizes.Add(1);
+                    Vector3Int v = new Vector3Int();
+
+                    spawnStepsRandom.Add(o.Data.spawnedStep);
+                    v.x = o.DataType;
+                    v.y = o.ObjectType;
+                    v.z = o.Data.ID;
+                    randomSpawnDataTypeObjectTypeAndID.Add(v);
+                }
+                if (o.Data.randomSpawnData.y >= randomLogicSizes[currentSpawnSet])
+                {
+                    randomLogicSizes[currentSpawnSet]++;
+                }
+
+                objectTypeListRand.Add(o.Data.type);
+                posListRand.Add(o.Data.startPos);
+
+                int dataType = o.DataType;
+                if (dataType > 0 && dataType <= 5)
+                {
+                    float[] values = new float[dataType];
+                    for (int j = 0; j < dataType; j++)
+                    {
+                        switch (j)
+                        {
+                            case 0:
+                                values[j] = o.Data.float1;
+                                break;
+                            case 1:
+                                values[j] = o.Data.float2;
+                                break;
+                            case 2:
+                                values[j] = o.Data.float3;
+                                break;
+                            case 3:
+                                values[j] = o.Data.float4;
+                                break;
+                            case 4:
+                                values[j] = o.Data.float5;
+                                break;
+                        }
+                    }
+
+                    for (int n = 0; n < values.Length; n++)
+                    {
+                        floatListRand.Add(values[n]);
+                    }
+
+                }
+
+
+            }
+
+
+            save.SetRandomData(posListRand.ToArray(), floatListRand.ToArray(), objectTypeListRand.ToArray(), randomLogicSizes.ToArray(), randomSpawnDataTypeObjectTypeAndID.ToArray(), spawnStepsRandom.ToArray());
+
+
+        }
+
+
 
 
 
@@ -361,8 +462,10 @@ public class LevelDataConverter : MonoBehaviour
         {
 
             editorData.LoadLevelSaveData(save);
+            var arrayData = editorData.ReturnDataArrays(save);
             editorData.specialTriggerIndexAndType = specialTriggerIndexAndType.ToArray();
             UnityEditor.EditorUtility.SetDirty(editorData);
+            UnityEditor.EditorUtility.SetDirty(arrayData);
             UnityEditor.AssetDatabase.SaveAssets();
             UnityEditor.AssetDatabase.Refresh();
             return;
@@ -403,13 +506,25 @@ public class LevelDataConverter : MonoBehaviour
 
 
     }
-    public List<RecordedDataStructDynamic> ReturnDynamicData(LevelData data)
+
+    public static string GetLevelNumberStringFormat(Vector3Int n)
     {
+        string world = n.x.ToString("00");
+        string level = n.y.ToString("00");
+        string sub = n.z.ToString("00");
+        // Combine with dashes
+        string formatted = $"{world}-{level}-{sub}_";
+        return formatted;
+    }
+    public List<RecordedDataStructDynamic> ReturnDynamicData(LevelData data, LevelDataArrays dataArrays)
+    {
+
 
         int floatIndex = 0;
         int positionerIndex = 0;
         int subrtactIndex = 0;
         int specialTriggerIndex = 0;
+        int healthIndex = 0;
 
 
         int currentCageIndex = 0;
@@ -447,6 +562,8 @@ public class LevelDataConverter : MonoBehaviour
 
             float[] values = new float[5];
             int type = data.dataTypes[i];
+            short health = 1;
+
             short triggerType = 0;
 
             if (specialTriggerIndex < data.specialTriggerIndexAndType.Length && i == data.specialTriggerIndexAndType[specialTriggerIndex].x)
@@ -454,6 +571,15 @@ public class LevelDataConverter : MonoBehaviour
                 triggerType = (short)data.specialTriggerIndexAndType[specialTriggerIndex].y;
                 specialTriggerIndex++;
             }
+            if (data.objectTypes[i] == 1) // boss type
+            {
+                if (dataArrays.indexAndHealth != null && healthIndex * 2 < dataArrays.indexAndHealth.Length - 1 && i == dataArrays.indexAndHealth[healthIndex * 2])
+                {
+                    health = dataArrays.indexAndHealth[(healthIndex * 2) + 1];
+                    healthIndex++;
+                }
+            }
+
 
             Debug.Log("Loading Data Type: " + type);
 
@@ -461,15 +587,15 @@ public class LevelDataConverter : MonoBehaviour
             {
                 for (int j = 0; j < type; j++)
                 {
-                    values[j] = data.floatList[floatIndex];
+                    values[j] = dataArrays.floatList[floatIndex];
                     floatIndex++;
                 }
 
-                l.Add(new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], data.typeList[i - subrtactIndex], data.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, hasCageAttachment, triggerType));
+                l.Add(new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], dataArrays.typeList[i - subrtactIndex], dataArrays.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, Vector2Int.zero, hasCageAttachment, triggerType, health));
             }
             else if (type < 0)
             {
-                var d = new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, hasCageAttachment, triggerType);
+                var d = new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, Vector2Int.zero, hasCageAttachment, triggerType);
                 d.positionerData = data.postionerData[positionerIndex];
                 subrtactIndex++;
                 positionerIndex++;
@@ -478,6 +604,45 @@ public class LevelDataConverter : MonoBehaviour
             }
 
 
+        }
+
+        if (dataArrays.randomSpawnDataTypeObjectTypeAndID != null && dataArrays.randomSpawnDataTypeObjectTypeAndID.Length > 0)
+        {
+            int floatRandIndex = 0;
+            int currentSpawnSet = 0;
+            int spawnSetCounter = 0;
+
+            for (int i = 0; i < dataArrays.randomSpawnDataTypeObjectTypeAndID.Length; i++)
+            {
+                var v = dataArrays.randomSpawnDataTypeObjectTypeAndID[i];
+                int dataType = v.x;
+                ushort spawnStep = dataArrays.spawnStepsRandom[i];
+                ushort objectType = (ushort)v.y;
+                short id = (short)v.z;
+
+
+
+                for (int n = 0; n < dataArrays.randomLogicSizes[i]; n++)
+                {
+                    float[] values = new float[5];
+                    for (int j = 0; j < dataType; j++)
+                    {
+                        values[j] = dataArrays.floatListRand[floatRandIndex];
+                        floatRandIndex++;
+                    }
+                    l.Add(new RecordedDataStructDynamic((short)v.y, id, dataArrays.typeListRand[i], dataArrays.posListRand[spawnSetCounter], values[0], values[1], values[2], values[3], values[4], spawnStep, 0, new Vector2Int(i + 1, n), false, 0));
+                    spawnSetCounter++;
+                }
+
+
+
+                // spawnSetCounter++;
+                // if (spawnSetCounter >= dataArrays.randomLogicSizes[currentSpawnSet])
+                // {
+                //     currentSpawnSet++;
+                //     spawnSetCounter = 0;
+                // }
+            }
         }
         return l;
     }

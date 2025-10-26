@@ -42,7 +42,10 @@ public readonly struct DataStructSimple : ISpawnData
     public void ApplyTo(SpawnedObject obj) => obj.ApplySimpleData(this);
 
 
-
+    public short GetID()
+    {
+        return ID;
+    }
     public Vector2 GetStartPos()
     {
         return startPos;
@@ -51,6 +54,10 @@ public readonly struct DataStructSimple : ISpawnData
     ushort ISpawnData.GetType()
     {
         return type;
+    }
+    float[] ISpawnData.GetFloatData()
+    {
+        return null;
     }
 
     public DataStructSimple(short id, ushort type, Vector2 startPos)
@@ -78,6 +85,14 @@ public readonly struct DataStructFloatOne : ISpawnData
     {
         return type;
     }
+    public short GetID()
+    {
+        return ID;
+    }
+    float[] ISpawnData.GetFloatData()
+    {
+        return new float[] { float1 };
+    }
     public DataStructFloatOne(short id, ushort type, Vector2 startPos, float float1)
     {
         this.ID = id;
@@ -100,10 +115,17 @@ public readonly struct DataStructFloatTwo : ISpawnData
     {
         return startPos;
     }
-
+    public short GetID()
+    {
+        return ID;
+    }
     ushort ISpawnData.GetType()
     {
         return type;
+    }
+    float[] ISpawnData.GetFloatData()
+    {
+        return new float[] { float1, float2 };
     }
 
     public DataStructFloatTwo(short id, ushort type, Vector2 startPos, float float1, float float2)
@@ -134,6 +156,14 @@ public readonly struct DataStructFloatThree : ISpawnData
     {
         return type;
     }
+    public short GetID()
+    {
+        return ID;
+    }
+    float[] ISpawnData.GetFloatData()
+    {
+        return new float[] { float1, float2, float3 };
+    }
     public DataStructFloatThree(short id, ushort type, Vector2 startPos, float float1, float float2, float float3)
     {
         this.ID = id;
@@ -160,9 +190,17 @@ public readonly struct DataStructFloatFour : ISpawnData
     {
         return startPos;
     }
+    public short GetID()
+    {
+        return ID;
+    }
     ushort ISpawnData.GetType()
     {
         return type;
+    }
+    float[] ISpawnData.GetFloatData()
+    {
+        return new float[] { float1, float2, float3, float4 };
     }
     public DataStructFloatFour(short id, ushort type, Vector2 startPos, float float1, float float2, float float3, float float4)
     {
@@ -195,6 +233,14 @@ public readonly struct DataStructFloatFive : ISpawnData
     ushort ISpawnData.GetType()
     {
         return type;
+    }
+    public short GetID()
+    {
+        return ID;
+    }
+    float[] ISpawnData.GetFloatData()
+    {
+        return new float[] { float1, float2, float3, float4, float5 };
     }
     public DataStructFloatFive(short id, ushort type, Vector2 startPos, float float1, float float2, float float3, float float4, float float5)
     {

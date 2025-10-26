@@ -28,7 +28,7 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
     [SerializeField] private float maxSpeed;
     [SerializeField] private float smoothSpeed;
     [SerializeField] private Vector2 speedRef;
-    [SerializeField] private Transform Target;
+
     [SerializeField] private Vector2 offset;
     private Coroutine shootCoroutine;
 
@@ -54,7 +54,7 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
     {
         if (moveToPos)
         {
-            Vector2 targetPos = (Vector2)(Target.position) + offset;
+            Vector2 targetPos = (Vector2)(playerTarget.position) + offset;
             if (targetPos.y < BoundariesManager.GroundPosition + .5f) targetPos.y = BoundariesManager.GroundPosition + .5f;
             Vector2.SmoothDamp(transform.position, targetPos, ref speedRef, smoothSpeed, maxSpeed);
             rb.linearVelocity = speedRef;

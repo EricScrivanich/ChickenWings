@@ -63,6 +63,7 @@ public class ProgressBar : MonoBehaviour
         // levelManagerID.outputEvent.OnGetLevelTimeNew += SetDurationNew;
         levelManagerID.outputEvent.SetLevelProgress += SetProgress;
         ResetManager.GameOverEvent += OnGameOver;
+        levelManagerID.outputEvent.SetLevelProgressTriggerType += TriggerEventLogic;
 
     }
 
@@ -97,6 +98,7 @@ public class ProgressBar : MonoBehaviour
 
     }
 
+
     // private void Update()
     // {
     //     if (stopUpdate) return;
@@ -124,10 +126,31 @@ public class ProgressBar : MonoBehaviour
 
     // }
 
+
+    private void TriggerEventLogic(int type)
+    {
+        if (type == 0)
+        {
+            if (finishSeq != null && finishSeq.IsPlaying())
+                finishSeq.Kill();
+            fill.color = fillColor;
+        }
+        if (type == -1)
+        {
+            finishSeq = DOTween.Sequence();
+            finishSeq.Append(fill.DOColor(colorSO.disabledButtonColor, .5f).SetEase(Ease.InSine).From(fillColor));
+            finishSeq.Append(fill.DOColor(fillColor, .6f).SetEase(Ease.OutSine));
+            finishSeq.Play().SetLoops(-1);
+        }
+
+    }
+
     public void SetProgress(float progressValue)
     {
 
         if (stopUpdate) return;
+
+
 
         if (progressValue > 1)
         {
@@ -193,6 +216,7 @@ public class ProgressBar : MonoBehaviour
         // levelManagerID.outputEvent.OnGetLevelTime -= SetDuration;
         // levelManagerID.outputEvent.OnGetLevelTimeNew -= SetDurationNew;
         levelManagerID.outputEvent.SetLevelProgress -= SetProgress;
+        levelManagerID.outputEvent.SetLevelProgressTriggerType -= TriggerEventLogic;
 
         ResetManager.GameOverEvent -= OnGameOver;
 

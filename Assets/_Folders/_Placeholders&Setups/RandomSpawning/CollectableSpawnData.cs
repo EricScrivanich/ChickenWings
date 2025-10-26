@@ -95,7 +95,7 @@ public class CollectableSpawnData : ScriptableObject
         Debug.LogError("Calcualted egg time is: " + finalTime);
         int isThree = 0;
 
-        if (RandomVal() >= EggThreeChance && diff < 0)
+        if (RandomVal() <= EggThreeChance && diff < 0)
             isThree = 1;
 
         return new Vector2(finalTime, isThree);

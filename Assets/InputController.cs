@@ -58,7 +58,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""Drop"",
                     ""type"": ""Button"",
                     ""id"": ""03838bde-c4e5-4a85-b37a-f61f8f371e17"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -85,7 +85,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""JumpHold"",
                     ""type"": ""Button"",
                     ""id"": ""7a1b2628-cdb6-44df-96c2-b30778de634d"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""Hold(duration=0.2)"",
                     ""initialStateCheck"": false
@@ -166,7 +166,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""Finger1"",
                     ""type"": ""Value"",
                     ""id"": ""f3dba7fd-62b8-4eca-8fb3-d7282a84aded"",
-                    ""expectedControlType"": """",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -175,7 +175,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""name"": ""Finger2"",
                     ""type"": ""Value"",
                     ""id"": ""bdb83564-aa55-43f1-9528-78b208745e8a"",
-                    ""expectedControlType"": """",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -221,9 +221,18 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""type"": ""Value"",
                     ""id"": ""f467a2e1-3b7a-4f5e-82ec-910d70491803"",
                     ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
+                    ""processors"": ""NormalizeVector2"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Trigger"",
+                    ""type"": ""Button"",
+                    ""id"": ""cdd2efe0-b639-40b2-9f91-354981990b5f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -241,10 +250,10 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""355bd070-138f-4545-96cf-bdcafae4e0e9"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/dpad/up"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Mobile"",
+                    ""groups"": "";Mobile"",
                     ""action"": ""JumpHold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -307,7 +316,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""6985edf9-1ce9-497d-a597-f45b7275fa2c"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Mobile"",
@@ -428,7 +437,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""71785b00-5b5a-4d60-a60a-bfe45c783bc6"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/dpad/up"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Mobile"",
@@ -472,10 +481,10 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9f4be38a-3bd6-42be-b8dd-b1d9cd33a48c"",
-                    ""path"": ""<Gamepad>/leftStick"",
+                    ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": ""NormalizeVector2"",
-                    ""groups"": ""Mobile"",
+                    ""groups"": """",
                     ""action"": ""EggJoystick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -487,6 +496,17 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
+                    ""action"": ""SwitchAmmoRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7c4195f9-5d8c-484e-81f1-28d1fd5e785e"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard;Mobile"",
                     ""action"": ""SwitchAmmoRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -508,7 +528,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""path"": ""<Touchscreen>/touch0/position"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Mobile"",
                     ""action"": ""Finger1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -519,7 +539,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""path"": ""<Touchscreen>/touch1/position"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Mobile"",
                     ""action"": ""Finger2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -573,9 +593,20 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""id"": ""0eb466c8-22a1-4b84-a9d1-a0544dc66093"",
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""StickDeadzone"",
                     ""groups"": """",
                     ""action"": ""ScytheStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ebccc469-00fb-4065-80b7-c0f616635379"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard;Mobile"",
+                    ""action"": ""Trigger"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -779,6 +810,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_Movement_Finger1Press = m_Movement.FindAction("Finger1Press", throwIfNotFound: true);
         m_Movement_Finger2Press = m_Movement.FindAction("Finger2Press", throwIfNotFound: true);
         m_Movement_ScytheStick = m_Movement.FindAction("ScytheStick", throwIfNotFound: true);
+        m_Movement_Trigger = m_Movement.FindAction("Trigger", throwIfNotFound: true);
         // LevelCreator
         m_LevelCreator = asset.FindActionMap("LevelCreator", throwIfNotFound: true);
         m_LevelCreator_Finger1Press = m_LevelCreator.FindAction("Finger1Press", throwIfNotFound: true);
@@ -877,6 +909,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private readonly InputAction m_Movement_Finger1Press;
     private readonly InputAction m_Movement_Finger2Press;
     private readonly InputAction m_Movement_ScytheStick;
+    private readonly InputAction m_Movement_Trigger;
     public struct MovementActions
     {
         private @InputController m_Wrapper;
@@ -903,6 +936,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         public InputAction @Finger1Press => m_Wrapper.m_Movement_Finger1Press;
         public InputAction @Finger2Press => m_Wrapper.m_Movement_Finger2Press;
         public InputAction @ScytheStick => m_Wrapper.m_Movement_ScytheStick;
+        public InputAction @Trigger => m_Wrapper.m_Movement_Trigger;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -978,6 +1012,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @ScytheStick.started += instance.OnScytheStick;
             @ScytheStick.performed += instance.OnScytheStick;
             @ScytheStick.canceled += instance.OnScytheStick;
+            @Trigger.started += instance.OnTrigger;
+            @Trigger.performed += instance.OnTrigger;
+            @Trigger.canceled += instance.OnTrigger;
         }
 
         private void UnregisterCallbacks(IMovementActions instance)
@@ -1048,6 +1085,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @ScytheStick.started -= instance.OnScytheStick;
             @ScytheStick.performed -= instance.OnScytheStick;
             @ScytheStick.canceled -= instance.OnScytheStick;
+            @Trigger.started -= instance.OnTrigger;
+            @Trigger.performed -= instance.OnTrigger;
+            @Trigger.canceled -= instance.OnTrigger;
         }
 
         public void RemoveCallbacks(IMovementActions instance)
@@ -1201,6 +1241,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnFinger1Press(InputAction.CallbackContext context);
         void OnFinger2Press(InputAction.CallbackContext context);
         void OnScytheStick(InputAction.CallbackContext context);
+        void OnTrigger(InputAction.CallbackContext context);
     }
     public interface ILevelCreatorActions
     {

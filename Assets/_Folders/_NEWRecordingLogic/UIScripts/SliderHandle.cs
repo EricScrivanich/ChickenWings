@@ -144,7 +144,12 @@ public class SliderHandle : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
 
 
 
-        float deltaX = eventData.position.x - lastPointerPos.x;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+     (RectTransform)transform.parent, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            (RectTransform)transform.parent, lastPointerPos, eventData.pressEventCamera, out Vector2 lastLocalPoint);
+
+        float deltaX = localPoint.x - lastLocalPoint.x;
 
 
         if (type == HandleType.StartTween || type == HandleType.EndTween || type == HandleType.TweenDisplay)

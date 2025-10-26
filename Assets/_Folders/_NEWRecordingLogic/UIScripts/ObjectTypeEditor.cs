@@ -81,7 +81,8 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
         if (unkown)
         {
             isUnknown = true;
-            text.text = "?";
+            if (type == "Health") text.text = "Health: ?";
+            else text.text = "?";
             fillImage.color = LevelRecordManager.instance.colorSO.UnSelctableUIColor;
             fillImage.enabled = true;
             return;
@@ -94,7 +95,7 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
         }
 
 
-        if (s == null || s.Length <= 0)
+        if ((s == null || s.Length <= 0) && type != "Health")
         {
             openListButton = true;
 
@@ -105,7 +106,8 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
         typesByIndex = s;
         if (setIndex == -1)
         {
-            currentType = LevelRecordManager.instance.currentSelectedObject.Data.type;
+            if (type != "Trigger" && type != "Health")
+                currentType = LevelRecordManager.instance.currentSelectedObject.Data.type;
             isListPanel = false;
         }
         else
@@ -113,8 +115,15 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
             currentType = (ushort)setIndex;
             isListPanel = true;
         }
+        if (type == "Health")
+        {
+            currentType = (ushort)LevelRecordManager.instance.currentSelectedObject.Data.health;
+            text.text = "Health: " + currentType.ToString();
 
-        text.text = typesByIndex[currentType];
+
+        }
+        else
+            text.text = typesByIndex[currentType];
     }
 
     public void ClickArrow(bool right)
@@ -127,9 +136,19 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
         if (!right) addedIndex = -1;
 
         int nextIndex = currentType + addedIndex;
+        if (Type == "Health")
+        {
+            if (nextIndex < 1) nextIndex = 1;
+            else if (nextIndex > 99) nextIndex = 99;
 
-        if (nextIndex < 0) nextIndex = typesByIndex.Length - 1;
-        else if (nextIndex >= typesByIndex.Length) nextIndex = 0;
+        }
+        else
+        {
+            if (nextIndex < 0) nextIndex = typesByIndex.Length - 1;
+            else if (nextIndex >= typesByIndex.Length) nextIndex = 0;
+
+        }
+
 
 
 
@@ -147,6 +166,13 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
             Debug.LogError("trying to set trigger type to: " + (short)val);
             LevelRecordManager.instance.currentSelectedObject.Data.triggerType = (short)val;
         }
+        else if (Type == "Health")
+        {
+            LevelRecordManager.instance.currentSelectedObject.SetHealth((int)val);
+            text.text = "Health: " + val.ToString();
+            return;
+        }
+
         else
         {
             if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)

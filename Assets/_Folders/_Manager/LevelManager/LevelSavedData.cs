@@ -232,6 +232,7 @@ public class TemporaryLevelCheckPointData
     public int[] PlayerInputs;
     public int[] CompletedRings;
     public int[] CurrentEggedBarns;
+    public float TimeAtCheckPoint;
 
     public TemporaryLevelCheckPointData(LevelChallenges data)
     {

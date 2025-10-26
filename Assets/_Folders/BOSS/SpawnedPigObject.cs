@@ -17,6 +17,7 @@ public class SpawnedPigObject : SpawnedObject, IDamageable, IEggable
     {
 
         this.enabled = false;
+        canAttack = false;
 
         //set rb to dynamic
         rb.gravityScale = 1.25f;
@@ -63,6 +64,7 @@ public class SpawnedPigObject : SpawnedObject, IDamageable, IEggable
     private bool isHit = false;
     public void Damage(int damageAmount = 1, int type = -1, int id = -1)
     {
+        canAttack = false;
         GetComponent<PigMaterialHandler>().KillEnemy(damageAmount, type, id);
 
     }

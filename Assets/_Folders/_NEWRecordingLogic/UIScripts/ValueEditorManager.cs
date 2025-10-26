@@ -30,6 +30,7 @@ public class ValueEditorManager : MonoBehaviour
     [field: SerializeField] public Slider valueSliderHorizontal { get; private set; }
     [field: SerializeField] public TextMeshProUGUI valueSliderText { get; private set; }
     [SerializeField] private ObjectTypeEditor typeEditor;
+    [SerializeField] private ObjectTypeEditor healthEditor;
     [SerializeField] private ObjectTypeEditor triggerTypeEditor;
 
     [SerializeField] private ObjectTypeEditor[] listEditors;
@@ -81,7 +82,7 @@ public class ValueEditorManager : MonoBehaviour
 
         if (isEditor)
         {
-            triggerTypeEditor.SetData("Trigger Types", new string[] { "None", "Boss", "Challenge" });
+            triggerTypeEditor.SetData("Trigger", new string[] { "None", "Boss", "Challenge" });
             triggerTypeEditor.gameObject.SetActive(false);
 
         }
@@ -393,6 +394,26 @@ public class ValueEditorManager : MonoBehaviour
 
 
 
+
+    }
+    public void SendHealthValue(bool hasHealth)
+    {
+        if (LevelRecordManager.instance.multipleObjectsSelected && LevelRecordManager.instance.MultipleSelectedObjects.Count > 1)
+        {
+            healthEditor.gameObject.SetActive(false);
+            return;
+        }
+        if (hasHealth)
+        {
+            activeRects.Add(healthEditor.GetComponent<RectTransform>());
+            healthEditor.SetData("Health", null);
+            healthEditor.gameObject.SetActive(true);
+
+        }
+        else
+        {
+            healthEditor.gameObject.SetActive(false);
+        }
 
     }
 

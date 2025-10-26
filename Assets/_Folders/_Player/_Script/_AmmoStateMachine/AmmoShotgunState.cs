@@ -333,25 +333,43 @@ public class AmmoShotgunState : AmmoBaseState
         }
     }
 
-    public override void SwipeButton(PlayerStateManager player, Vector2 currentPos)
+    public override void SwipeButton(PlayerStateManager player, Vector2 currentPos, bool isJoystick = false)
     {
         if (isPressed)
         {
-            float dragAmount = Vector2.Distance(player.centerTouchStartPos, currentPos);
+           
 
-            if (dragAmount >= dragThreshold)
+            if (!isJoystick)
             {
-                // rotationTarget = 
-                Vector2 direction = (currentPos - player.centerTouchStartPos).normalized;
+                float dragAmount = Vector2.Distance(player.centerTouchStartPos, currentPos);
+
+                if (dragAmount >= dragThreshold)
+                {
+                    // rotationTarget = 
+                    Vector2 direction = (currentPos - player.centerTouchStartPos).normalized;
+                    rotationTarget = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    if (rotationTarget < 0) rotationTarget += 360;
+                    rotatingToTarget = true;
+                    player.RotateToTargetFromWeaponState(rotationTarget, 620);
+                    isPressed = false;
+
+                }
+
+            }
+            else
+            {
+                Vector2 direction = currentPos;
                 rotationTarget = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 if (rotationTarget < 0) rotationTarget += 360;
                 rotatingToTarget = true;
+
                 player.RotateToTargetFromWeaponState(rotationTarget, 620);
                 isPressed = false;
 
             }
 
         }
+       
 
 
 

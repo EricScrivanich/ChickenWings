@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -7.444, y: 1.43, z: 0}
-  m_LocalScale: {x: 0.65, y: 0.6, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8356562664934338153}
@@ -106,7 +106,7 @@ Rigidbody2D:
   m_Mass: 0.05
   m_LinearDamping: 0.3
   m_AngularDamping: 0
-  m_GravityScale: 1.6
+  m_GravityScale: 1.7
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -117,7 +117,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &-8411989719637922897
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -152,7 +152,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0061157346, y: -0.008862346}
+  m_Offset: {x: -0.010439932, y: 0.03871894}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -162,7 +162,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.0690652, y: 1.5244589}
+  m_Size: {x: 1.2347237, y: 1.4292963}
   m_EdgeRadius: 0
 --- !u!114 &-1766277696447703265
 MonoBehaviour:
@@ -179,7 +179,6 @@ MonoBehaviour:
   yolkPool: {fileID: 11400000, guid: e9fb8e8a8060a481f8232f3b5676790b, type: 2}
   shellPool: {fileID: 11400000, guid: 341e68176fe674b5088cdba23a91961b, type: 2}
   player: {fileID: 9107346555159015033, guid: 4d60310f404d6473c872d23c83b10116, type: 3}
-  ID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
 --- !u!1001 &9101787435610469545
 PrefabInstance:
   m_ObjectHideFlags: 0

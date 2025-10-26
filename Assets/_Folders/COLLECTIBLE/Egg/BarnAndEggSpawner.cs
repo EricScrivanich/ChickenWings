@@ -92,55 +92,56 @@ public class BarnAndEggSpawner : MonoBehaviour
 
     private void Awake()
     {
-        spawningBarn = false;
-        spawningEgg = false;
-        spawningShotgun = false;
+        // 
+        //     spawningBarn = false;
+        //     spawningEgg = false;
+        //     spawningShotgun = false;
 
-        if (usingEgg || usingShotgun)
-        {
-            eggCollectables = new EggCollectableMovement[eggCollectableCount];
-            currentEggCollectableIndex = 0;
-            for (int i = 0; i < eggCollectableCount; i++)
-            {
-                var obj = Instantiate(eggCollectablePrefab);
-                var script = obj.GetComponent<EggCollectableMovement>();
-                script.spawner = this;
-                eggCollectables[i] = script;
-                script.gameObject.SetActive(false);
-            }
-            if (usingEgg)
-            {
+        //     if (usingEgg || usingShotgun)
+        //     {
+        //         eggCollectables = new EggCollectableMovement[eggCollectableCount];
+        //         currentEggCollectableIndex = 0;
+        //         for (int i = 0; i < eggCollectableCount; i++)
+        //         {
+        //             var obj = Instantiate(eggCollectablePrefab);
+        //             var script = obj.GetComponent<EggCollectableMovement>();
+        //             script.spawner = this;
+        //             eggCollectables[i] = script;
+        //             script.gameObject.SetActive(false);
+        //         }
+        //         if (usingEgg)
+        //         {
 
-                for (int i = 0; i < 2; i++)
-                {
-                    var ps = Instantiate(ammoParticlePrefab);
-                    ammoParticles[i] = ps;
+        //             for (int i = 0; i < 2; i++)
+        //             {
+        //                 var ps = Instantiate(ammoParticlePrefab);
+        //                 ammoParticles[i] = ps;
 
-                }
+        //             }
 
-            }
+        //         }
 
 
-            if (usingShotgun)
-            {
-                for (int i = 0; i < 2; i++)
-                {
-                    var ps = Instantiate(manaParticlePrefab);
-                    manaParticles[i] = ps;
+        //         if (usingShotgun)
+        //         {
+        //             for (int i = 0; i < 2; i++)
+        //             {
+        //                 var ps = Instantiate(manaParticlePrefab);
+        //                 manaParticles[i] = ps;
 
-                }
-            }
-        }
-        if (usingBarn)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                var barnObj = Instantiate(barnPrefab);
-                barnScript[i] = barnObj.GetComponent<BarnMovement>();
-                barnObj.SetActive(false);
-            }
+        //             }
+        //         }
+        //     }
+        //     if (usingBarn)
+        //     {
+        //         for (int i = 0; i < 2; i++)
+        //         {
+        //             var barnObj = Instantiate(barnPrefab);
+        //             barnScript[i] = barnObj.GetComponent<BarnMovement>();
+        //             barnObj.SetActive(false);
+        //         }
 
-        }
+        //     }
 
 
     }
@@ -186,11 +187,11 @@ public class BarnAndEggSpawner : MonoBehaviour
     }
     void Start()
     {
-        if (usingBarn)
-            barnSpawnPos = new Vector2(13.5f, BoundariesManager.GroundPosition - .1f);
+        // if (usingBarn)
+        //     barnSpawnPos = new Vector2(13.5f, BoundariesManager.GroundPosition - .1f);
 
-        if (SpawnData != null)
-            SetNewData(SpawnData);
+        // if (SpawnData != null)
+        //     SetNewData(SpawnData);
 
 
 
@@ -528,6 +529,8 @@ public class BarnAndEggSpawner : MonoBehaviour
             return;
 
         }
+        if (this.enabled == false)
+            this.enabled = true;
 
 
 

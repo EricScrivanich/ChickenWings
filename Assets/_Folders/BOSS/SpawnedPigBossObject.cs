@@ -20,11 +20,20 @@ public class SpawnedPigBossObject : SpawnedObject, IDamageable, IEggable
     }
     public void SetTriggerWhenDead(LevelDataBossAndRandomLogic logic)
     {
+
         triggerWhenDead = true;
         Debug.LogError("Adding Trigger Component");
         var comp = this.gameObject.AddComponent<EnemyBossTrigger>();
         comp.Init(logic);
 
+    }
+    public void SetHealth(short health)
+    {
+        Debug.LogError("SetHealth for pig in Class: " + health);
+        if (health < 1) health = 1;
+        startingLives = health;
+        lives = startingLives;
+        if (heart != null) heart.SetHearts(startingLives);
     }
 
     public virtual void EggPig(int type, Vector2 vector, float offset)
@@ -69,8 +78,9 @@ public class SpawnedPigBossObject : SpawnedObject, IDamageable, IEggable
     public void Damage(int damageAmount = 1, int type = -1, int id = -1)
     {
         if (isHit) return;
-        Debug.Log("Damage: " + damageAmount);
         isHit = true;
+        Debug.Log("Damage: " + damageAmount + " Is hit: " + isHit);
+
         // Hit(type);
         lives -= damageAmount;
 
@@ -99,7 +109,7 @@ public class SpawnedPigBossObject : SpawnedObject, IDamageable, IEggable
     {
         OnEnableLogic();
         lives = startingLives;
-        if (heart != null) heart.SetHearts(startingLives);
+
         isHit = false;
         canAttack = true;
     }

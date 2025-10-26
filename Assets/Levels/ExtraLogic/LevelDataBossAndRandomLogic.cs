@@ -8,6 +8,8 @@ public class LevelDataBossAndRandomLogic : ScriptableObject
     [SerializeField] private CollectableSpawnData collectableSpawnData;
     [SerializeField] private int amountOfBosses;
 
+    [SerializeField] private int stepsPerEnemySpawn;
+
     [SerializeField] private short finishCondition;
     private int bossesDefeated;
 
@@ -20,8 +22,9 @@ public class LevelDataBossAndRandomLogic : ScriptableObject
     {
         if (step == spawnStep)
         {
-            levelData.spawner.HandleWaveTime(!stopWaveTime);
+            levelData.spawner.HandleWaveTime(!stopWaveTime, true);
             levelData.spawner.HandleRandomCollectableSpawning(collectableSpawnData);
+            levelData.SetRandomEnemySpawnSteps(stepsPerEnemySpawn);
         }
 
     }
@@ -34,21 +37,21 @@ public class LevelDataBossAndRandomLogic : ScriptableObject
             if (finishCondition > 0)
             {
                 levelData.spawner.SetCurrentStep((ushort)finishCondition);
-                return;
+
             }
-            switch (finishCondition)
+            else
             {
-                case -1:
-                    levelData.spawner.HandleWaveTime(true);
-                    return;
-
+                switch (finishCondition)
+                {
+                    case -1:
+                        levelData.spawner.HandleWaveTime(true, true);
+                        break;
+                }
             }
-
-
-
-
-
+            levelData.spawner.HandleRandomCollectableSpawning(null);
+            levelData.SetRandomEnemySpawnSteps(0);
         }
+
     }
 
     public CollectableSpawnData ReturnCollectableSpawnData()
