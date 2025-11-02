@@ -237,7 +237,6 @@ public class ChallengesUIManager : MonoBehaviour
             doMoveCardSeq = false;
             certifiedBadgePrev.SetActive(false);
             certifiedBadge.gameObject.SetActive(false);
-
             return;
 
         }

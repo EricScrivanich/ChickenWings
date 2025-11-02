@@ -931,16 +931,16 @@ public class SpecialStateInputSystem : MonoBehaviour
 
         if (useDrop && GameObject.Find("DropButton") != null)
         {
-            dropIcon = GameObject.Find("DropICON")?.GetComponent<RectTransform>();
-            DropButton = dropIcon.GetComponent<Image>();
-            // DropButton.color = normalButtonColor;
-            dropCooldownIN = GameObject.Find("DropCooldownIN")?.GetComponent<Image>();
+            // dropIcon = GameObject.Find("DropICON")?.GetComponent<RectTransform>();
+            // DropButton = dropIcon.GetComponent<Image>();
+            // // DropButton.color = normalButtonColor;
+            // dropCooldownIN = GameObject.Find("DropCooldownIN")?.GetComponent<Image>();
 
-            dropCooldownOUT = GameObject.Find("DropCooldownOUT")?.GetComponent<Image>();
-            originalDropY = dropIcon.anchoredPosition.y;
-            dropCooldownIN.color = ColorSO.disabledButtonColorFull;
-            dropCooldownIN.gameObject.SetActive(false);
-            dropCooldownOUT.gameObject.SetActive(false);
+            // dropCooldownOUT = GameObject.Find("DropCooldownOUT")?.GetComponent<Image>();
+            // originalDropY = dropIcon.anchoredPosition.y;
+            // dropCooldownIN.color = ColorSO.disabledButtonColorFull;
+            // dropCooldownIN.gameObject.SetActive(false);
+            // dropCooldownOUT.gameObject.SetActive(false);
 
             canDrop = true;
             usingDrop = true;
@@ -964,9 +964,9 @@ public class SpecialStateInputSystem : MonoBehaviour
             dashCooldownGroup = GameObject.Find("DashCooldownGroup")?.GetComponent<CanvasGroup>();
 
             startingDashIconX = dashIcon.anchoredPosition.x;
-            dashCooldownIN.color = ColorSO.disabledButtonColorFull;
+            // dashCooldownIN.color = ColorSO.disabledButtonColorFull;
 
-            dashCooldownGroup.alpha = 0;
+            // dashCooldownGroup.alpha = 0;
             canDashSlash = false;
             coolingDownDash = false;
             // usingDash = true;
@@ -1088,33 +1088,34 @@ public class SpecialStateInputSystem : MonoBehaviour
     {
         coolingDownDrop = true;
         canDrop = false;
+        ID.UiEvents.OnDropUI?.Invoke();
 
         // dashButtonIMG.DOColor(DisabledButtonColor, .25f);
-        DropButton.DOColor(ColorSO.highlightButtonColor, .15f);
-        dropIcon.DOScale(largeIconScale, .3f).SetEase(Ease.OutSine);
-        dropIcon.DOAnchorPosY(originalDropY - 30, .2f).SetEase(Ease.OutSine);
-        dropCooldownIN.color = ColorSO.disabledButtonColorFull;
-        dropCooldownIN.gameObject.SetActive(true);
-        dropCooldownOUT.gameObject.SetActive(true);
+        // DropButton.DOColor(ColorSO.highlightButtonColor, .15f);
+        // dropIcon.DOScale(largeIconScale, .3f).SetEase(Ease.OutSine);
+        // dropIcon.DOAnchorPosY(originalDropY - 30, .2f).SetEase(Ease.OutSine);
+        // dropCooldownIN.color = ColorSO.disabledButtonColorFull;
+        // dropCooldownIN.gameObject.SetActive(true);
+        // dropCooldownOUT.gameObject.SetActive(true);
 
 
-        dropCooldownIN.DOFillAmount(0, 2.25f).From(1);
+        // dropCooldownIN.DOFillAmount(0, 2.25f).From(1);
         yield return new WaitForSeconds(.2f);
-        DropButton.DOColor(ColorSO.disabledButtonColor, .2f);
-        dropIcon.DOScale(smallIconScale, .15f).SetEase(Ease.InSine);
-        dropIcon.DOAnchorPosY(originalDropY, .3f).SetEase(Ease.OutSine);
+        // DropButton.DOColor(ColorSO.disabledButtonColor, .2f);
+        // dropIcon.DOScale(smallIconScale, .15f).SetEase(Ease.InSine);
+        // dropIcon.DOAnchorPosY(originalDropY, .3f).SetEase(Ease.OutSine);
         yield return new WaitForSeconds(.15f);
-        dropIcon.DOScale(smallIconScale2, .25f).SetEase(Ease.InOutSine);
+        // dropIcon.DOScale(smallIconScale2, .25f).SetEase(Ease.InOutSine);
 
 
 
         yield return new WaitForSeconds(1.67f);
-        dropCooldownIN.gameObject.SetActive(false);
-        dropCooldownOUT.gameObject.SetActive(false);
+        // dropCooldownIN.gameObject.SetActive(false);
+        // dropCooldownOUT.gameObject.SetActive(false);
 
-        // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
-        DropButton.DOColor(ColorSO.normalButtonColor, .13f);
-        dropIcon.DOScale(normalIconScale, .13f);
+        // // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
+        // DropButton.DOColor(ColorSO.normalButtonColor, .13f);
+        // dropIcon.DOScale(normalIconScale, .13f);
 
 
         yield return new WaitForSeconds(.1f);
@@ -1126,6 +1127,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     private void IconTween(int type)
     {
+        return;
         if (dashIconSequence != null && dashIconSequence.IsPlaying())
         {
             dashIconSequence.Kill();
@@ -1175,6 +1177,8 @@ public class SpecialStateInputSystem : MonoBehaviour
                 StartCoroutine(CalcualteDashTimeLeft());
                 Debug.Log("Doing Dash Icon Tween");
                 IconTween(1);
+                ID.UiEvents.OnDashUI?.Invoke(true);
+
                 Debug.Log("fibsih tween");
 
 
@@ -1232,6 +1236,8 @@ public class SpecialStateInputSystem : MonoBehaviour
 
             // }
             IconTween(2);
+            ID.UiEvents.OnDashUI?.Invoke(false);
+
 
         }
         else
@@ -1245,7 +1251,7 @@ public class SpecialStateInputSystem : MonoBehaviour
             }
             else
             {
-                dashImageMana.color = fillingManaColor;
+                // dashImageMana.color = fillingManaColor;
 
             }
 
@@ -1268,59 +1274,70 @@ public class SpecialStateInputSystem : MonoBehaviour
         StopAllCoroutines();
 
 
-
         if (useDash)
-
         {
-            ID.events.OnDash?.Invoke(false);
-
-            dashCooldownGroup.alpha = 0;
-            if (dashIconSequence != null && dashIconSequence.IsPlaying())
-                dashIconSequence.Kill();
-
-            dashIcon.DOAnchorPosX(startingDashIconX, .2f).SetEase(Ease.OutSine).SetUpdate(true);
-            dashIcon.DOScale(dashIconNormalScale, .2f).SetUpdate(true);
-            // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
-            dashImage.DOColor(ColorSO.normalButtonColor, .15f).SetUpdate(true).OnComplete(FlashDashToPress);
-
             canDash = true;
 
             coolingDownDash = false;
-            if (manaFull)
-            {
-                // canDashSlash = true;
-                dashCooldownIN.color = ColorSO.coolDownColorBlue;
-                if (flashSequence != null && flashSequence.IsPlaying())
-                    flashSequence.Kill();
-
-                flashSequence = DOTween.Sequence();
-                flashSequence.Append(dashImageMana.DOColor(canUseDashSlashImageColor1, flashDuration).SetEase(Ease.OutSine).From(canUseDashSlashImageColor2));
-                flashSequence.Append(dashImageMana.DOColor(canUseDashSlashImageColor2, flashDuration).SetEase(Ease.OutSine));
-
-                flashSequence.Play().SetLoops(-1).SetUpdate(true);
-
-
-            }
-            else if (manaUsed)
-            {
-                dashImageMana.color = fillingManaColor;
-
-                StartCoroutine(RegenerateMana());
-
-            }
         }
-
         if (useDrop)
         {
-            dropCooldownIN.gameObject.SetActive(false);
-            dropCooldownOUT.gameObject.SetActive(false);
-
-            // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
-            DropButton.DOColor(ColorSO.normalButtonColor, .13f).SetUpdate(true).OnComplete(FlashDropToPress);
-            dropIcon.DOScale(normalIconScale, .13f).SetUpdate(true);
             coolingDownDrop = false;
             canDrop = true;
         }
+        ID.UiEvents.OnFinishDashAndDropCooldown?.Invoke(useDash, useDrop);
+        // if (useDash)
+
+        // {
+        //     ID.events.OnDash?.Invoke(false);
+
+        //     dashCooldownGroup.alpha = 0;
+        //     if (dashIconSequence != null && dashIconSequence.IsPlaying())
+        //         dashIconSequence.Kill();
+
+        //     dashIcon.DOAnchorPosX(startingDashIconX, .2f).SetEase(Ease.OutSine).SetUpdate(true);
+        //     dashIcon.DOScale(dashIconNormalScale, .2f).SetUpdate(true);
+        //     // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
+        //     dashImage.DOColor(ColorSO.normalButtonColor, .15f).SetUpdate(true).OnComplete(FlashDashToPress);
+
+        //     canDash = true;
+
+        //     coolingDownDash = false;
+        //     if (manaFull)
+        //     {
+        //         // canDashSlash = true;
+        //         dashCooldownIN.color = ColorSO.coolDownColorBlue;
+        //         if (flashSequence != null && flashSequence.IsPlaying())
+        //             flashSequence.Kill();
+
+        //         flashSequence = DOTween.Sequence();
+        //         flashSequence.Append(dashImageMana.DOColor(canUseDashSlashImageColor1, flashDuration).SetEase(Ease.OutSine).From(canUseDashSlashImageColor2));
+        //         flashSequence.Append(dashImageMana.DOColor(canUseDashSlashImageColor2, flashDuration).SetEase(Ease.OutSine));
+
+        //         flashSequence.Play().SetLoops(-1).SetUpdate(true);
+
+
+        //     }
+        //     else if (manaUsed)
+        //     {
+        //         dashImageMana.color = fillingManaColor;
+
+        //         StartCoroutine(RegenerateMana());
+
+        //     }
+        // }
+
+        // if (useDrop)
+        // {
+        //     dropCooldownIN.gameObject.SetActive(false);
+        //     dropCooldownOUT.gameObject.SetActive(false);
+
+        //     // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
+        //     DropButton.DOColor(ColorSO.normalButtonColor, .13f).SetUpdate(true).OnComplete(FlashDropToPress);
+        //     dropIcon.DOScale(normalIconScale, .13f).SetUpdate(true);
+        //     coolingDownDrop = false;
+        //     canDrop = true;
+        // }
 
     }
 
@@ -1356,7 +1373,8 @@ public class SpecialStateInputSystem : MonoBehaviour
         yield return new WaitForSeconds(dashTimeLeft);
         Debug.Log("Dash Cooldown 1");
 
-        IconTween(2);
+        //  // IconTween(2);
+        ID.UiEvents.OnDashUI?.Invoke(false);
         Debug.Log("Dash Cooldown 2");
 
         // else
@@ -1364,28 +1382,28 @@ public class SpecialStateInputSystem : MonoBehaviour
         //     dashImageMana.color = DashImageManaDisabledFilling;
         // }
         // dashButtonIMG.DOColor(DisabledButtonColor, .25f);
-        dashImage.DOColor(ColorSO.disabledButtonColor, .25f);
+        // dashImage.DOColor(ColorSO.disabledButtonColor, .25f);
 
 
-        dashCooldownGroup.DOFade(1, .15f);
+        // dashCooldownGroup.DOFade(1, .15f);
 
-        dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
+        // dashCooldownIN.DOFillAmount(0, 1.3f).From(1);
         yield return new WaitForSeconds(1.1f);
         Debug.Log("Dash Cooldown 3");
 
 
 
-        dashCooldownGroup.DOFade(0, .15f);
+        //    // dashCooldownGroup.DOFade(0, .15f);
 
-        // dashButtonIMG.DOColor(ButtonNormalColor, .15f);
-        dashImage.DOColor(ColorSO.normalButtonColor, .15f);
+
+        //  // dashImage.DOColor(ColorSO.normalButtonColor, .15f);
         Debug.Log("Dash Cooldown 4");
         IconTween(0);
 
         canDash = true;
 
         coolingDownDash = false;
-        // ExitDash(true);
+        ExitDash(true);
 
     }
 

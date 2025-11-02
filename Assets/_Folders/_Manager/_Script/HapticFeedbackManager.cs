@@ -10,6 +10,7 @@ public class HapticFeedbackManager : MonoBehaviour
     private int deviceType;
 
     private int vibrationStrength;
+ 
     // 0 touchscren, 1 gamepad 2 keyboard
     public void SetDeviceType(int type)
     {
@@ -76,8 +77,11 @@ public class HapticFeedbackManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         SetDeviceType();
         vibrationStrength = PlayerPrefs.GetInt("VibrationStrength", 2);
+
+     
     }
 
+ 
     public void LoadSavedData()
     {
         vibrationStrength = PlayerPrefs.GetInt("VibrationStrength", 2);

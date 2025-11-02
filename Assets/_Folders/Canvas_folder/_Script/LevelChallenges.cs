@@ -188,7 +188,7 @@ public class LevelChallenges : ScriptableObject
     }
     public void AddBarnHitWithEgg(int id)
     {
-        if (skipShowChallenges) return; // If skipping challenges, do nothing
+        if (skipShowChallenges || BarnsHitWithEgg == null) return; // If skipping challenges, do nothing
 
         if (id >= BarnsHitWithEgg.Count)
         {

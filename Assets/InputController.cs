@@ -759,6 +759,54 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""GamepadCursor"",
+            ""id"": ""3f801783-8d0a-455d-a220-7bd0355104c1"",
+            ""actions"": [
+                {
+                    ""name"": ""MoveCursor"",
+                    ""type"": ""Value"",
+                    ""id"": ""ce542715-01ed-4248-9314-75738a6ebd53"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""8b2a06f1-1f50-453c-8998-297366de19c3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""e2e454a4-53cf-4140-957e-e3de14336bf3"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": ""StickDeadzone"",
+                    ""groups"": "";Keyboard;Mobile"",
+                    ""action"": ""MoveCursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b05097a7-15d4-4e82-b158-9249b0eab997"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard;Mobile"",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -820,12 +868,17 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_LevelCreator_Finger2Press = m_LevelCreator.FindAction("Finger2Press", throwIfNotFound: true);
         m_LevelCreator_Finger2Pos = m_LevelCreator.FindAction("Finger2Pos", throwIfNotFound: true);
         m_LevelCreator_ShiftClick = m_LevelCreator.FindAction("ShiftClick", throwIfNotFound: true);
+        // GamepadCursor
+        m_GamepadCursor = asset.FindActionMap("GamepadCursor", throwIfNotFound: true);
+        m_GamepadCursor_MoveCursor = m_GamepadCursor.FindAction("MoveCursor", throwIfNotFound: true);
+        m_GamepadCursor_Select = m_GamepadCursor.FindAction("Select", throwIfNotFound: true);
     }
 
     ~@InputController()
     {
         UnityEngine.Debug.Assert(!m_Movement.enabled, "This will cause a leak and performance issues, InputController.Movement.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_LevelCreator.enabled, "This will cause a leak and performance issues, InputController.LevelCreator.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_GamepadCursor.enabled, "This will cause a leak and performance issues, InputController.GamepadCursor.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -1199,6 +1252,60 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         }
     }
     public LevelCreatorActions @LevelCreator => new LevelCreatorActions(this);
+
+    // GamepadCursor
+    private readonly InputActionMap m_GamepadCursor;
+    private List<IGamepadCursorActions> m_GamepadCursorActionsCallbackInterfaces = new List<IGamepadCursorActions>();
+    private readonly InputAction m_GamepadCursor_MoveCursor;
+    private readonly InputAction m_GamepadCursor_Select;
+    public struct GamepadCursorActions
+    {
+        private @InputController m_Wrapper;
+        public GamepadCursorActions(@InputController wrapper) { m_Wrapper = wrapper; }
+        public InputAction @MoveCursor => m_Wrapper.m_GamepadCursor_MoveCursor;
+        public InputAction @Select => m_Wrapper.m_GamepadCursor_Select;
+        public InputActionMap Get() { return m_Wrapper.m_GamepadCursor; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(GamepadCursorActions set) { return set.Get(); }
+        public void AddCallbacks(IGamepadCursorActions instance)
+        {
+            if (instance == null || m_Wrapper.m_GamepadCursorActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_GamepadCursorActionsCallbackInterfaces.Add(instance);
+            @MoveCursor.started += instance.OnMoveCursor;
+            @MoveCursor.performed += instance.OnMoveCursor;
+            @MoveCursor.canceled += instance.OnMoveCursor;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
+        }
+
+        private void UnregisterCallbacks(IGamepadCursorActions instance)
+        {
+            @MoveCursor.started -= instance.OnMoveCursor;
+            @MoveCursor.performed -= instance.OnMoveCursor;
+            @MoveCursor.canceled -= instance.OnMoveCursor;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
+        }
+
+        public void RemoveCallbacks(IGamepadCursorActions instance)
+        {
+            if (m_Wrapper.m_GamepadCursorActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IGamepadCursorActions instance)
+        {
+            foreach (var item in m_Wrapper.m_GamepadCursorActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_GamepadCursorActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public GamepadCursorActions @GamepadCursor => new GamepadCursorActions(this);
     private int m_KeyboardSchemeIndex = -1;
     public InputControlScheme KeyboardScheme
     {
@@ -1252,5 +1359,10 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         void OnFinger2Press(InputAction.CallbackContext context);
         void OnFinger2Pos(InputAction.CallbackContext context);
         void OnShiftClick(InputAction.CallbackContext context);
+    }
+    public interface IGamepadCursorActions
+    {
+        void OnMoveCursor(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
     }
 }

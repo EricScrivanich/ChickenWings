@@ -34,7 +34,7 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private RectTransform target;
 
 
-    private Vector2 endPosition = new Vector2(0, -830);
+    private Vector2 endPosition = new Vector2(0, -850);
     private Vector2 startPos = new Vector2(0, 80);
 
     private Sequence sequence;
@@ -96,20 +96,20 @@ public class PauseMenuManager : MonoBehaviour
         target.anchoredPosition = startPos;
 
         // Create the main drop tween
-        Tweener mainDropTween = target.DOAnchorPos(endPosition, .6f)
-            .SetEase(Ease.Linear)
+        Tweener mainDropTween = target.DOAnchorPos(endPosition, 1f)
+            .SetEase(Ease.OutBack)
             .SetUpdate(true);
 
         // Create the overshoot tween
-        Vector3 overshootPosition = endPosition - new Vector2(0, 40);
-        Tweener overshootTween = target.DOAnchorPos(overshootPosition, .9f)
-            .SetEase(Ease.OutElastic)
-            .SetUpdate(true);
+        // Vector3 overshootPosition = endPosition - new Vector2(0, 40);
+        // Tweener overshootTween = target.DOAnchorPos(overshootPosition, .6f)
+        //     .SetEase(Ease.OutElastic)
+        //     .SetUpdate(true);
 
         // Chain the tweens together
         sequence = DOTween.Sequence();
         sequence.Append(mainDropTween)
-                .Append(overshootTween)
+                // .Append(overshootTween)
                 .SetUpdate(true);
     }
 

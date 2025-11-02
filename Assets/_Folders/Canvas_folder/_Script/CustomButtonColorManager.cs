@@ -156,7 +156,9 @@ public class CustomButtonColorManager : MonoBehaviour
         {
             foreach (var t in texts)
             {
-                t.color = tempSO.disabledButtonColorFull;
+                if (t != null)
+
+                    t.color = tempSO.disabledButtonColorFull;
             }
         }
     }
@@ -227,31 +229,31 @@ public class CustomButtonColorManager : MonoBehaviour
 
     public void SetNewColor(int t, int i)
     {
-        if (type == 0)
-        {
+        // if (type == 0)
+        // {
 
-            foreach (var tt in texts)
-            {
-                tt.color = tempSO.disabledButtonColorFull;
-
-
-            }
-            if (playerS.ReturnCurrentAmmo() == 1)
-            {
-                ringFill.color = tempSO.disabledButtonColorFull;
-                scopeFill.color = tempSO.DisabledScopeFillColor;
-
-            }
-
-            else
-            {
-                scopeFill.color = tempSO.normalButtonColor;
-                ringFill.color = tempSO.normalButtonColor;
-            }
+        //     foreach (var tt in texts)
+        //     {
+        //         tt.color = tempSO.disabledButtonColorFull;
 
 
+        //     }
+        //     if (playerS.ReturnCurrentAmmo() == 1)
+        //     {
+        //         ringFill.color = tempSO.disabledButtonColorFull;
+        //         scopeFill.color = tempSO.DisabledScopeFillColor;
 
-        }
+        //     }
+
+        //     else
+        //     {
+        //         scopeFill.color = tempSO.normalButtonColor;
+        //         ringFill.color = tempSO.normalButtonColor;
+        //     }
+
+
+
+        // }
         if (t == type)
         {
             int p = 0;

@@ -3,11 +3,12 @@ using PathCreation;
 using System.Collections;
 using UnityEngine.Rendering;
 using DG.Tweening;
+using System.Collections.Generic;
 
 public class PlayerLevelPickerPathFollwer : MonoBehaviour
 {
 
-  
+
 
     private float speed;
 
@@ -119,6 +120,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         {
             currentLayer = l;
             sortingGroup.sortingOrder = currentLayer;
+            transform.SetParent(pathManager.RetrunPlayerParentByLayer(currentLayer));
 
         }
         Debug.Log("Set initial position and layer: " + currentLayer + " at distance: " + currentDistance);
@@ -126,13 +128,13 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     }
     private int currentPathIndex;
     private int futurePathIndex;
-    public void DoPathToPoint(PathCreator path, float distance, PathCreator path2 = null, float distanceToTravel2 = 0, int pathIndex2 = 0)
+    public void DoPathToPoint(PathCreator path, float distance, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots)
     {
         if (followPathCoroutine != null)
         {
             StopCoroutine(followPathCoroutine);
         }
-        followPathCoroutine = StartCoroutine(DoPath(path, distance, path2, distanceToTravel2, pathIndex2));
+        followPathCoroutine = StartCoroutine(DoPath(path, distance, addedPaths, addedDistancesToTravel, addedPathIndices, addedPathRoots));
         hitZoom = false;
 
 
@@ -166,7 +168,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     private float targetZoom;
     private bool hitZoom = true;
 
-    private IEnumerator DoPath(PathCreator path, float distanceToTravel, PathCreator path2 = null, float distanceToTravel2 = 0, int pathIndex2 = 0)
+    private IEnumerator DoPath(PathCreator path, float distanceToTravel, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots)
     {
         if (path == null) yield break;
 
@@ -193,7 +195,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
             float t = Mathf.Clamp01(remainingDist / 1.3f); // <= Easing radius 
             float easeFactor = 1;
 
-            if (path2 != null) easeFactor = Mathf.SmoothStep(0.8f, 1f, t);
+            if (addedPaths != null) easeFactor = Mathf.SmoothStep(0.8f, 1f, t);
             else easeFactor = Mathf.SmoothStep(0.2f, 1f, t);
 
             if (currentFootstepTime <= 0)
@@ -237,17 +239,31 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
                 if (currentLayer < l) ps.Clear();
                 currentLayer = l;
                 sortingGroup.sortingOrder = currentLayer;
+                transform.SetParent(pathManager.RetrunPlayerParentByLayer(currentLayer));
             }
 
             yield return null;
         }
 
-        if (path2 != null)
+        if (addedPaths != null)
         {
-            currentDistance = path2.path.GetClosestDistanceAlongPath(transform.position);
-            path2.ReturnLayerForStart(currentDistance / path2.path.length);
-            pathManager.SetCurrentPathIndex(pathIndex2);
-            followPathCoroutine = StartCoroutine(DoPath(path2, distanceToTravel2));
+            PathCreator nextPath = addedPaths[0];
+            float distanceToTravel2 = addedDistancesToTravel[0];
+            int nextIndex = addedPathIndices[0];
+            int nextRoot = addedPathRoots[0];
+            currentDistance = nextPath.path.GetClosestDistanceAlongPath(transform.position);
+            nextPath.ReturnLayerForStart(currentDistance / nextPath.path.length);
+            pathManager.SetCurrentPathIndexAndRoot(nextIndex, nextRoot);
+            addedPaths.RemoveAt(0);
+            if (addedPaths.Count <= 0) addedPaths = null;
+
+            addedDistancesToTravel.RemoveAt(0);
+            if (addedDistancesToTravel.Count <= 0) addedDistancesToTravel = null;
+            addedPathIndices.RemoveAt(0);
+            if (addedPathIndices.Count <= 0) addedPathIndices = null;
+            addedPathRoots.RemoveAt(0);
+            if (addedPathRoots.Count <= 0) addedPathRoots = null;
+            followPathCoroutine = StartCoroutine(DoPath(nextPath, distanceToTravel2, addedPaths, addedDistancesToTravel, addedPathIndices, addedPathRoots));
 
         }
         else

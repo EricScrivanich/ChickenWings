@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 
 public class LevelPickerManager : MonoBehaviour
@@ -84,6 +85,8 @@ public class LevelPickerManager : MonoBehaviour
     public Vector4 BaseCameraData { get; private set; } = new Vector4(0, 0, -10, 5.5f);
     [SerializeField] private float frontHillMultiplier;
     private int currentPathIndex;
+    private int currentPathRoot = -2;
+    private int nextPathRoot;
 
 
     private Camera cam;
@@ -148,6 +151,17 @@ public class LevelPickerManager : MonoBehaviour
         }
     }
 
+    public Transform RetrunPlayerParentByLayer(int layer)
+    {
+        if (layer == 3)
+            return frontHillParent;
+        else if (layer == -1)
+            return backHillParent;
+
+        else
+            return backHillParent;
+    }
+
     private void Start()
     {
         playerPathFollower.SetPathManager(this);
@@ -174,11 +188,12 @@ public class LevelPickerManager : MonoBehaviour
             if (l.WorldNumber == lastLevel)
             {
                 Debug.Log("Last level found: " + lastLevel);
-                Vector3Int data = l.Type_PathIndex_Order;
+                Vector3Int data = l.RootIndex_PathIndex_Order;
 
                 float d = paths[data.y].path.GetClosestDistanceAlongPath(l.ReturnLinePostion());
                 playerPathFollower.SetInitialPostionAndLayer(paths[data.y], d);
                 currentPathIndex = data.y;
+                currentPathRoot = data.x;
             }
 
             var nums = l.WorldNumber;
@@ -202,16 +217,38 @@ public class LevelPickerManager : MonoBehaviour
     private int currentPlayerPath;
     private ILevelPickerPathObject currentTarget;
 
-    public void SetCurrentPathIndex(int index)
+    public void SetCurrentPathIndexAndRoot(int index, int pathRoot)
     {
         currentPathIndex = index;
+        currentPathRoot = pathRoot;
         Debug.LogError("Setting Current Path Index to: " + index);
+    }
+    private bool IsPointerOverUI(Vector2 screenPos)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = screenPos;
+
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (var result in results)
+        {
+            if (result.gameObject.CompareTag("Block"))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void HandleClickObject(Vector2 screenPosition)
     {
         // Debug.LogError("Screen Position: " + screenPosition);
-
+        if (IsPointerOverUI(screenPosition))
+        {
+            Debug.Log("Clicked on UI element, ignoring level picker click.");
+            return;
+        }
 
         Vector2 worldPoint = Camera.main.ScreenToWorldPoint(screenPosition);
 
@@ -230,58 +267,75 @@ public class LevelPickerManager : MonoBehaviour
 
             currentTarget.SetSelected(true);
             LevelDataConverter.currentChallengeType = currentTarget.challengeType;
-            Vector3Int data = obj.Type_PathIndex_Order;
+            Vector3Int data = obj.RootIndex_PathIndex_Order;
 
             float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
 
 
             if (data.y != currentPathIndex)
             {
+
+                List<PathCreator> addedPaths = new List<PathCreator>();
+                List<float> dists = new List<float>();
+                List<int> pathIndices = new List<int>();
+                List<int> pathRoots = new List<int>();
+
+
                 float inbetweenDistance = 0;
-                if (currentPathIndex < data.y)
+
+                if (currentPathRoot == data.x)
                 {
-                    inbetweenDistance = paths[currentPathIndex].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
+
+                    inbetweenDistance = 0;
+                    float distanceFirst = paths[currentPathRoot].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
+                    dists.Add(distanceFirst);
+                    dists.Add(d);
+                    pathIndices.Add(currentPathRoot);
+                    pathIndices.Add(data.y);
+                    addedPaths.Add(this.paths[currentPathRoot]);
+                    addedPaths.Add(this.paths[data.y]);
+                    pathRoots.Add(currentPathRoot - 1);
+                    pathRoots.Add(currentPathRoot);
+
+
+
+
+
 
                 }
                 else
                 {
-                    inbetweenDistance = 0;
+                    dists.Add(d);
+                    pathIndices.Add(data.y);
+                    addedPaths.Add(paths[data.y]);
+                    pathRoots.Add(data.x);
+                    if (currentPathIndex < data.y)
+                    {
+                        Debug.LogError("Current Path Index: " + currentPathIndex + " is less than target path index: " + data.y);
+                        inbetweenDistance = paths[currentPathIndex].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
+
+
+
+                    }
+                    else
+                    {
+                        inbetweenDistance = 0;
+                    }
                 }
 
-                playerPathFollower.DoPathToPoint(paths[currentPathIndex], inbetweenDistance, paths[data.y], d, data.y);
+
+
+                playerPathFollower.DoPathToPoint(paths[currentPathIndex], inbetweenDistance, addedPaths, dists, pathIndices, pathRoots);
             }
             else
             {
-                playerPathFollower.DoPathToPoint(paths[data.y], d);
+                playerPathFollower.DoPathToPoint(paths[data.y], d, null, null, null, null);
             }
-
-
-            // currentPathIndex = data.y;
-
 
             Debug.LogError("Moving to level: " + obj.WorldNumber);
             DoLevelPopupSeq(true, obj.WorldNumber);
 
             ZoomSeq(currentTarget.CameraPositionAndOrhtoSize, currentTarget.layersShownFrom);
-
-            // Vector3 front = obj.PosScaleFrontHill;
-            // Vector3 back = obj.PosScaleBackHill;
-            // if (front == Vector3.zero || back == Vector3.zero)
-            // {
-            //     MoveHillSeq(true, new Vector2(front.x, front.y), front.z, back.z, new Vector2(back.x, back.y), 1.3f);
-            // }
-            // else
-            //     MoveHillSeq(false, new Vector2(front.x, front.y), front.z, back.z, new Vector2(back.x, back.y), 1.3f);
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -626,10 +680,10 @@ public class LevelPickerManager : MonoBehaviour
 
                     currentTarget.SetSelected(true);
                     LevelDataConverter.currentChallengeType = currentTarget.challengeType;
-                    Vector3Int data = obj.Type_PathIndex_Order;
+                    Vector3Int data = obj.RootIndex_PathIndex_Order;
 
                     float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
-                    playerPathFollower.DoPathToPoint(paths[data.y], d);
+                    playerPathFollower.DoPathToPoint(paths[data.y], d, null, null, null, null);
                     DoLevelPopupSeq(true, obj.WorldNumber);
                     PlayerPrefs.SetString("NextLevel", "Menu");
                     PlayerPrefs.Save();

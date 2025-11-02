@@ -11,6 +11,8 @@ public class LevelPickerZoom : Editor
     private static readonly Dictionary<int, bool> s_ShowMoveHandle = new();
     private static readonly Dictionary<int, bool> s_ShowOutline = new();
 
+    
+
     // Static copy buffer
     private static bool s_HasCopy = false;
     private static Vector4 s_CopyBuffer;

@@ -139,6 +139,7 @@ public class PlayerFlipLeftState : PlayerBaseState
         // rotationSpeedVar = rotationSpeed;
 
         AudioManager.instance.PlayCluck();
+        player.ID.UiEvents.OnHandleFlip?.Invoke(false, false);
         Tween();
     }
     private void TweenAngVel(float dur, float start)
@@ -154,15 +155,15 @@ public class PlayerFlipLeftState : PlayerBaseState
     }
     private void Tween()
     {
-        if (flipLeftSeq != null && flipLeftSeq.IsPlaying())
-            flipLeftSeq.Kill();
+        // if (flipLeftSeq != null && flipLeftSeq.IsPlaying())
+        //     flipLeftSeq.Kill();
 
-        flipLeftSeq = DOTween.Sequence();
-        // <-- Added this
+        // flipLeftSeq = DOTween.Sequence();
+        // // <-- Added this
 
-        flipLeftSeq.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime).SetEase(Ease.InSine))
-                .Join(flipImage.DOScale(1.2f, .35f));
-        flipLeftSeq.Play();
+        // flipLeftSeq.Append(flipImage.DORotate(flipImageTargetRotation, addForceTime).SetEase(Ease.InSine))
+        //         .Join(flipImage.DOScale(1.2f, .35f));
+        // flipLeftSeq.Play();
     }
 
     public void StopTweens()
@@ -187,7 +188,7 @@ public class PlayerFlipLeftState : PlayerBaseState
         {
 
             player.ID.events.OnStopJumpAir?.Invoke(jumpAirIndex);
-
+            player.ID.UiEvents.OnHandleFlip?.Invoke(false, true);
 
             SwingJumpImage();
         }
@@ -283,7 +284,7 @@ public class PlayerFlipLeftState : PlayerBaseState
             hasFadedJumpAir = true;
 
             player.ID.events.OnStopJumpAir?.Invoke(jumpAirIndex);
-
+            player.ID.UiEvents.OnHandleFlip?.Invoke(false, true);
             SwingJumpImage();
 
         }
@@ -292,21 +293,21 @@ public class PlayerFlipLeftState : PlayerBaseState
 
     private void SwingJumpImage()
     {
-        if (flipLeftSeq != null && flipLeftSeq.IsPlaying())
-        {
-            flipLeftSeq.Kill();
-        }
+        // if (flipLeftSeq != null && flipLeftSeq.IsPlaying())
+        // {
+        //     flipLeftSeq.Kill();
+        // }
 
-        flipLeftSeq = DOTween.Sequence();
-        // <-- Added this
+        // flipLeftSeq = DOTween.Sequence();
+        // // <-- Added this
 
-        flipImage.DOScale(1, .2f);
-        foreach (var rotation in rotations)
-        {
-            flipLeftSeq.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
-        }
+        // flipImage.DOScale(1, .2f);
+        // foreach (var rotation in rotations)
+        // {
+        //     flipLeftSeq.Append(flipImage.DORotate(rotation, 0.15f).SetEase(Ease.OutSine));
+        // }
 
-        flipLeftSeq.Play();
+        // flipLeftSeq.Play();
     }
     public void CachVariables(Vector2 jf, Vector2 afv, Vector2 afdv, float at, float adt)
     {

@@ -97,4 +97,10 @@ public struct UiEvents
     public Action<float> ChangeScythePowerPitch;
     public Action<bool, float> ShowScythePower;
     public Action<int> OnSetStartingLives;
+
+    public Action<bool, bool> OnHandleFlip;
+    public Action<bool> OnDashUI;
+
+    public Action<bool, bool> OnFinishDashAndDropCooldown;
+    public Action OnDropUI;
 }

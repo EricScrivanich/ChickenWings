@@ -272,11 +272,24 @@ namespace PathCreationEditor
         private Vector2 ChangedOrders = Vector2.zero;
         private float currentDeltaValue = 0f;
         private float currentDeltaDistance = 0f;
-
+        private bool maintainCustomPointPostition = false;
         void DrawCustomPointInInspector()
         {
             EditorGUILayout.Space(15);
             EditorGUILayout.LabelField("Custom Points", EditorStyles.boldLabel);
+
+            EditorGUILayout.Space(10);
+            GUI.backgroundColor = maintainCustomPointPostition ? Color.green : Color.white;
+
+            if (GUILayout.Button(
+                    maintainCustomPointPostition ? "✓ Maintain Custom Point Position (ON)" : "Maintain Custom Point Position (OFF)",
+                    GUILayout.Height(25)))
+            {
+                Undo.RecordObject(creator, "Toggle Maintain Custom Point Position");
+                maintainCustomPointPostition = !maintainCustomPointPostition;
+                EditorUtility.SetDirty(creator);
+            }
+
 
             // Ensure list exists
             if (data.customPoints != null && data.customPoints.Count > 0)
@@ -329,6 +342,7 @@ namespace PathCreationEditor
                     float newDistance = EditorGUILayout.FloatField("Distance", point.distance);
                     Vector2Int layerChange = EditorGUILayout.Vector2IntField("Layer Change", point.layerChanges);
                     int newOrder = EditorGUILayout.IntField("Order", i);
+                    Vector3 pointPosition = EditorGUILayout.Vector3Field("Point Position", point.position);
 
                     EditorGUILayout.BeginHorizontal();
                     if (GUILayout.Button("-", GUILayout.Width(25)))
@@ -527,9 +541,27 @@ namespace PathCreationEditor
                 for (int i = 0; i < data.customPoints.Count; i++)
                 {
                     var point = data.customPoints[i];
-                    float t = Mathf.Clamp01(point.value);
 
+                    float t;
+
+
+                    if (maintainCustomPointPostition)
+                    {
+
+                        t = creator.path.GetClosestDistanceAlongPath(point.position) / creator.path.length;
+
+                        point.value = Mathf.Clamp01(t);
+
+                    }
+
+                    t = Mathf.Clamp01(point.value);
                     Vector3 pos = creator.path.GetPointAtTime(t);
+                    point.position = pos;
+
+
+
+
+
 
 
 

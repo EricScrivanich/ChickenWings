@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class ILevelPickerPathObject : MonoBehaviour
 {
     [SerializeField] private Transform pathTransform;
@@ -17,7 +18,12 @@ public class ILevelPickerPathObject : MonoBehaviour
 
     // Start is called once before the first exe
     // cution of Update after the MonoBehaviour is created
-    public Vector3Int Type_PathIndex_Order;
+
+
+    public Vector3Int RootIndex_PathIndex_Order;
+
+
+
     public Vector3Int WorldNumber;
     public string message;
 

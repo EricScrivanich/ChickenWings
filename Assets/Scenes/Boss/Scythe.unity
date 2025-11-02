@@ -6191,7 +6191,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.5
+  orthographic size: 5.8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -12314,6 +12314,22 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2114603592825526647, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2114603592825526647, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2114603592825526647, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2114603592825526647, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2491993091442655211, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 469
@@ -12421,6 +12437,10 @@ PrefabInstance:
     - target: {fileID: 5786400660972932674, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -7.233
+      objectReference: {fileID: 0}
+    - target: {fileID: 5989069542739495219, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
+      propertyPath: m_Alpha
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6624661900190361452, guid: a365f1e0a4dd4437c9af5a781c5a7598, type: 3}
       propertyPath: m_LocalScale.x
@@ -13493,6 +13513,10 @@ PrefabInstance:
     - target: {fileID: 8542822706815906780, guid: 3e05a04b84d9c4cf982bb3e384603a84, type: 3}
       propertyPath: m_Name
       value: FlappyPigShotgun
+      objectReference: {fileID: 0}
+    - target: {fileID: 8542822706815906780, guid: 3e05a04b84d9c4cf982bb3e384603a84, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

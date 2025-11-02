@@ -31,6 +31,7 @@ public class PreloadSpawner : MonoBehaviour
         loadingScreen.StartLoadingTextSeq();
 
         loadingScreen.SetLoadingBarValue(0);
+        AudioManager.instance.LoadVolume(0, 0);
 
     }
 
@@ -146,5 +147,7 @@ public class PreloadSpawner : MonoBehaviour
         enabled = false;
         loadingScreen.StopLoad();
         spawnStateManager.FinishPreload(waveTime);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f));
+
     }
 }

@@ -37,7 +37,7 @@ public class LevelCreatorNew : Editor
 
                 string numberString = LevelDataConverter.GetLevelNumberStringFormat(Parent.levelWorldAndNumber);
 
-                string path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/TutorialData/" + "TutuorialData" + numberString + Parent.LevelName + ".asset");
+                string path = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/TutorialData/" + numberString + Parent.LevelName + "_TutuorialData" + ".asset");
                 AssetDatabase.CreateAsset(asset, path);
                 UnityEditor.EditorUtility.SetDirty(asset);
                 UnityEditor.AssetDatabase.SaveAssets();

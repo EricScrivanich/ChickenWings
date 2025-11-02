@@ -5,6 +5,7 @@ public class QPool : ScriptableObject
 {
     private Queue<SpawnedQueuedObject> q;
     [SerializeField] private GameObject prefab;
+
     private Vector3 initialSpawnPosition = new Vector3(0, BoundariesManager.GroundPosition - 10, 0);
 
     public void Initialize()
@@ -18,6 +19,8 @@ public class QPool : ScriptableObject
 
 
     }
+
+
     public SpawnedQueuedObject GetObject()
     {
 
@@ -57,6 +60,14 @@ public class QPool : ScriptableObject
     {
         var obj = GetObject();
         obj.ResetRB();
+        obj.SpawnWithVelocity(pos, velocity);
+    }
+
+    public void SpawnWithVelocityAndScale(Vector2 pos, Vector2 velocity, Vector3 scale)
+    {
+        var obj = GetObject();
+        obj.ResetRB();
+        obj.transform.localScale = scale;
         obj.SpawnWithVelocity(pos, velocity);
     }
 

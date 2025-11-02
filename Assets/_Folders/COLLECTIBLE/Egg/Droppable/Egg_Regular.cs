@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Egg_Regular : SpawnedQueuedObject
 {
-    private Vector2 startVelocity;
+   
     [SerializeField] private QPool yolkPool;
     [SerializeField] private QPool shellPool;
-    [SerializeField] private GameObject player;
-    private Rigidbody2D playerRB;
+   
+ 
 
 
     private BoxCollider2D coll2D;
@@ -39,11 +39,7 @@ public class Egg_Regular : SpawnedQueuedObject
 
 
     }
-    private void Start()
-    {
-        // pool = PoolKit.GetPool("EggPool");
-    }
-
+   
     // private void OnEnable()
     // {
 
@@ -51,12 +47,7 @@ public class Egg_Regular : SpawnedQueuedObject
     //     //     coll2D.size = normalColSize;
     // }
 
-    public void Initialize(float force)
-    {
-
-        rb.linearVelocity = new Vector2(force, -1);
-
-    }
+   
     void OnEnable()
     {
         hasHit = false;

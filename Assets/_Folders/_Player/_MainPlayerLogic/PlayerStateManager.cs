@@ -296,6 +296,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public Rigidbody2D rb { get; private set; }
     public Animator anim { get; private set; }
+
+
     // 
 
     #region Base
@@ -304,34 +306,36 @@ public class PlayerStateManager : MonoBehaviour
 
 
 
-        if (mutePlayerAudio)
-            FrameRateManager.TargetTimeScale = .95f;
-        else if (!isLevelTester)
-        {
-            float newScale = PlayerPrefs.GetFloat("GameSpeed", 1);
-            if (newScale < .85f)
-            {
-                FrameRateManager.under085 = true;
-                FrameRateManager.under1 = true;
+        // if (mutePlayerAudio)
+        //     FrameRateManager.TargetTimeScale = .95f;
 
-            }
-            else if (newScale < 1)
-            {
-                FrameRateManager.under085 = false;
-                FrameRateManager.under1 = true;
-            }
-            else
-            {
-                FrameRateManager.under085 = false;
-                FrameRateManager.under1 = false;
-            }
+        // else if (!isLevelTester)
+        // {
+        //     float newScale = PlayerPrefs.GetFloat("GameSpeed", 1);
+        //     if (newScale < .85f)
+        //     {
+        //         FrameRateManager.under085 = true;
+        //         FrameRateManager.under1 = true;
+
+        //     }
+        //     else if (newScale < 1)
+        //     {
+        //         FrameRateManager.under085 = false;
+        //         FrameRateManager.under1 = true;
+        //     }
+        //     else
+        //     {
+        //         FrameRateManager.under085 = false;
+        //         FrameRateManager.under1 = false;
+        //     }
 
 
-            FrameRateManager.TargetTimeScale = FrameRateManager.BaseTimeScale * newScale;
-            Time.timeScale = FrameRateManager.TargetTimeScale;
+        //     FrameRateManager.TargetTimeScale = FrameRateManager.BaseTimeScale * newScale;
+        //     Time.timeScale = FrameRateManager.TargetTimeScale;
 
-        }
-
+        // }
+        FrameRateManager.TargetTimeScale = FrameRateManager.BaseTimeScale;
+        Time.timeScale = FrameRateManager.TargetTimeScale;
 
 
         justSwitchedUsingChainedShotgun = false;
@@ -448,6 +452,38 @@ public class PlayerStateManager : MonoBehaviour
         currentState = StartingState;
         currentState.EnterState(this);
 
+    }
+    private float eggDownForce = 2f;
+    public void HandleSteroids()
+    {
+        var steroidData = LevelDataConverter.instance.LoadSteroidData();
+        bounceOffGround = false;
+        bool hasBigEgg = false;
+        eggDownForce = 2.4f;
+
+        for (int i = 0; i < steroidData.equippedSteroids.Length; i++)
+        {
+            Debug.Log("EQUIPPED STEROIDS: " + steroidData.equippedSteroids[i]);
+            switch (steroidData.equippedSteroids[i])
+            {
+                case 0:
+                    bounceOffGround = true;
+                    break;
+                case 1:
+                    eggDownForce = 8.3f;
+                    break;
+                case 2:
+                    if (ammoManager != null) ammoManager.DoSteroidAction(2);
+                    hasBigEgg = true;
+                    break;
+
+            }
+        }
+
+        if (!hasBigEgg)
+        {
+            if (ammoManager != null) ammoManager.DoSteroidAction(0);
+        }
     }
     void Start()
     {
@@ -669,6 +705,8 @@ public class PlayerStateManager : MonoBehaviour
         {
             GameObject.Find("EggButton")?.SetActive(false);
         }
+
+        HandleSteroids();
     }
 
     public void SetAddForceAtBoundaries(bool isActive)
@@ -1387,7 +1425,7 @@ public class PlayerStateManager : MonoBehaviour
         // {
         //     y = rb.linearVelocity.y * .25f;
         // }
-        Vector2 force = new Vector2(x, y - 2f);
+        Vector2 force = new Vector2(x, y - eggDownForce);
         ammoManager.GetEgg(transform.position, force);
         EnterIdleStateWithVel(new Vector2(rb.linearVelocityX * .9f, playerY + 3f));
 
@@ -2366,7 +2404,7 @@ public class PlayerStateManager : MonoBehaviour
             if (bounceOffGround)
             {
                 AudioManager.instance.PlayBoingSound();
-                float x = rb.linearVelocity.x * Random.Range(.8f, 1.2f);
+                float x = rb.linearVelocity.x * Random.Range(.9f, 1f);
                 if (Mathf.Abs(x) < 2f)
                 {
                     x = Random.Range(.5f, 3.3f);
@@ -2384,7 +2422,7 @@ public class PlayerStateManager : MonoBehaviour
                 else
                     rb.angularVelocity = -r;
 
-                AdjustForce(new Vector2(x, Random.Range(11.5f, 14.3f)));
+                AdjustForce(new Vector2(x, Random.Range(9f, 11f)));
             }
             else
             {

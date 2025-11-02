@@ -737,6 +737,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "GamepadCursor",
+            "id": "3f801783-8d0a-455d-a220-7bd0355104c1",
+            "actions": [
+                {
+                    "name": "MoveCursor",
+                    "type": "Value",
+                    "id": "ce542715-01ed-4248-9314-75738a6ebd53",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "8b2a06f1-1f50-453c-8998-297366de19c3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e2e454a4-53cf-4140-957e-e3de14336bf3",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "StickDeadzone",
+                    "groups": ";Keyboard;Mobile",
+                    "action": "MoveCursor",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b05097a7-15d4-4e82-b158-9249b0eab997",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard;Mobile",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

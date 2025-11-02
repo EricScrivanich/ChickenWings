@@ -1141,7 +1141,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     void Start()
     {
         Debug.Log("Left View and Right view boundaries: " + BoundariesManager.leftViewBoundary + " " + BoundariesManager.rightViewBoundary);
-        AudioManager.instance.LoadVolume(1, 0);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), 0);
+
         HandleReleaseClick();
 
 

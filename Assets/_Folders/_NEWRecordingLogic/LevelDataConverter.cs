@@ -7,7 +7,7 @@ public class LevelDataConverter : MonoBehaviour
     public static LevelDataConverter instance;
     private UserCreatedLevels userCreatedLevels;
 
-    public LevelContainer Levels;
+
     private int maxTempLevelSaves;
     public static int currentChallengeType = 0;
 
@@ -44,12 +44,15 @@ public class LevelDataConverter : MonoBehaviour
 
 #if UNITY_EDITOR
         {
+            var Levels = Resources.Load<LevelContainer>("LevelContainer");
+
             if (Levels.CheckNullItems())
             {
                 UnityEditor.EditorUtility.SetDirty(Levels);
                 UnityEditor.AssetDatabase.SaveAssets();
                 UnityEditor.AssetDatabase.Refresh();
             }
+            Resources.UnloadAsset(Levels);
         }
 #endif
 
@@ -85,6 +88,8 @@ public class LevelDataConverter : MonoBehaviour
     public LevelData ReturnLevelData(int index = -1)
     {
         Debug.Log("Returning Level Data for index: " + index);
+        var Levels = Resources.Load<LevelContainer>("LevelContainer");
+
 
         if (index == -1)
         {
@@ -92,30 +97,40 @@ public class LevelDataConverter : MonoBehaviour
             if (currentLevelInstance == -1 || currentLevelInstance >= Levels.levels.Length)
             {
                 Debug.LogWarning("Current level instance is not set or out of bounds. Returning null.");
-
+                Resources.UnloadAsset(Levels);
                 return null;
             }
-            return Levels.levels[currentLevelInstance];
+            var levelData = Levels.levels[currentLevelInstance];
+            Resources.UnloadAsset(Levels);
+            return levelData;
         }
 
         else
         {
+            var l = Levels.levels[index];
+            Resources.UnloadAsset(Levels);
 
-            return Levels.levels[index];
+            return l;
         }
+
 
     }
     public LevelData ReturnLevelDataByNum(Vector3Int levelNumber)
     {
         if (levelNumber == Vector3.zero) return null;
+
+        var Levels = Resources.Load<LevelContainer>("LevelContainer");
         for (int i = 0; i < Levels.levels.Length; i++)
         {
             if (Levels.levels[i].levelWorldAndNumber == levelNumber)
             {
                 Debug.Log("Returning Level Data for: " + levelNumber);
-                return Levels.levels[i];
+                var levelData = Levels.levels[i];
+                Resources.UnloadAsset(Levels);
+                return levelData;
             }
         }
+        Resources.UnloadAsset(Levels);
         Debug.LogWarning("No level found for: " + levelNumber);
         return null;
     }
@@ -125,11 +140,13 @@ public class LevelDataConverter : MonoBehaviour
     public void SetCurrentLevelInstance(Vector3Int levelNumber)
     {
         if (levelNumber == Vector3.zero) currentLevelInstance = -1;
+        var Levels = Resources.Load<LevelContainer>("LevelContainer");
         for (int i = 0; i < Levels.levels.Length; i++)
         {
             if (Levels.levels[i].levelWorldAndNumber == levelNumber)
             {
                 currentLevelInstance = i;
+                Resources.UnloadAsset(Levels);
                 Debug.Log("Current Level Instance set to: " + currentLevelInstance);
                 return;
             }
@@ -141,10 +158,12 @@ public class LevelDataConverter : MonoBehaviour
     {
 #if UNITY_EDITOR
         Debug.Log("Adding level: " + level.LevelName);
+        var Levels = Resources.Load<LevelContainer>("LevelContainer");
         Levels.AddLevel(level);
         UnityEditor.EditorUtility.SetDirty(Levels);
         UnityEditor.AssetDatabase.SaveAssets();
         UnityEditor.AssetDatabase.Refresh();
+        Resources.UnloadAsset(Levels);
 #endif
     }
 
@@ -1272,6 +1291,135 @@ public class LevelDataConverter : MonoBehaviour
     }
 
 
+
+    #endregion
+
+    #region Steroid Data
+
+    public string GetSteroidDataSaveDirectory()
+    {
+
+        string directory = Path.Combine(Application.persistentDataPath, "SteroidDataSaves");
+
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+            Debug.Log("Created save directory: " + directory);
+        }
+
+        return directory;
+    }
+
+    public void SaveSteroidData(ushort[] equippedSteroids = null, int addedUnlockedSteroid = -1)
+    {
+        // Use a writeable path and build a valid file path
+        string path = Path.Combine(Application.persistentDataPath, "SteroidData.json");
+
+        try
+        {
+            SteroidSavedData data;
+
+            // If file doesn't exist (or is empty), create a new one with defaults
+            if (!File.Exists(path) || new FileInfo(path).Length == 0)
+            {
+                data = new SteroidSavedData();
+            }
+            else
+            {
+                string existing = File.ReadAllText(path);
+                data = string.IsNullOrWhiteSpace(existing)
+                    ? new SteroidSavedData()
+                    : JsonUtility.FromJson<SteroidSavedData>(existing) ?? new SteroidSavedData();
+            }
+
+            // Ensure arrays are non-null
+            if (data.equippedSteroids == null) data.equippedSteroids = new ushort[0];
+            if (data.unlockedSteroids == null) data.unlockedSteroids = new ushort[0];
+
+            // Apply changes
+            if (equippedSteroids != null)
+            {
+                data.equippedSteroids = (ushort[])equippedSteroids.Clone();
+            }
+
+            if (addedUnlockedSteroid >= 0)
+            {
+                var unlockedList = new List<ushort>(data.unlockedSteroids);
+                if (!unlockedList.Contains((ushort)addedUnlockedSteroid))
+                    unlockedList.Add((ushort)addedUnlockedSteroid);
+                data.unlockedSteroids = unlockedList.ToArray();
+            }
+
+            // Write back to disk (pretty-printed)
+            string json = JsonUtility.ToJson(data, true);
+            File.WriteAllText(path, json);
+
+#if UNITY_EDITOR
+            Debug.Log($"Steroid data saved: {path}");
+#endif
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Failed to save steroid data: {ex.Message}");
+        }
+    }
+
+
+    public SteroidSavedData LoadSteroidData()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "SteroidData.json");
+
+        try
+        {
+            // If the file doesn't exist, create it with default data
+            if (!File.Exists(path))
+            {
+                var newData = new SteroidSavedData();
+                string json = JsonUtility.ToJson(newData, true);
+                File.WriteAllText(path, json);
+#if UNITY_EDITOR
+                Debug.Log($"Created new SteroidData file at: {path}");
+#endif
+                return newData;
+            }
+
+            // Read and parse file
+            string jsonText = File.ReadAllText(path);
+
+            // Handle empty or invalid file contents
+            if (string.IsNullOrWhiteSpace(jsonText))
+            {
+                var newData = new SteroidSavedData();
+                File.WriteAllText(path, JsonUtility.ToJson(newData, true));
+                return newData;
+            }
+
+            SteroidSavedData data = JsonUtility.FromJson<SteroidSavedData>(jsonText);
+
+            // If parsing failed or data is null, recreate file
+            if (data == null)
+            {
+                data = new SteroidSavedData();
+                File.WriteAllText(path, JsonUtility.ToJson(data, true));
+#if UNITY_EDITOR
+                Debug.LogWarning("Steroid data file was corrupted or invalid — recreated default file.");
+#endif
+            }
+
+            // Ensure no null arrays
+            if (data.equippedSteroids == null) data.equippedSteroids = new ushort[0];
+            if (data.unlockedSteroids == null) data.unlockedSteroids = new ushort[0];
+
+            return data;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Error loading SteroidData: {ex.Message}");
+            var fallback = new SteroidSavedData();
+            File.WriteAllText(path, JsonUtility.ToJson(fallback, true));
+            return fallback;
+        }
+    }
 
     #endregion
 

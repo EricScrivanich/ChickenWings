@@ -206,11 +206,11 @@ public class AudioManager : MonoBehaviour
     private WaitForSeconds minWindmillWait = new WaitForSeconds(.25f);
 
 
-
+    private bool hasLoadedVolume = false;
     public void LoadVolume(float musicVol, float sfxVolume, bool mutePlayerInputVolume = false)
     {
 
-
+        hasLoadedVolume = true;
         audioSource.Stop();
         chickenSource.Stop();
         nonSlowSource.Stop();
@@ -264,6 +264,9 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         PlayMusic();
+        
+       
+          
     }
 
     private IEnumerator JetPackNoiseWait()

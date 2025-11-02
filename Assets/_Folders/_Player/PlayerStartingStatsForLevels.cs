@@ -35,6 +35,8 @@ public class PlayerStartingStatsForLevels : ScriptableObject
 
     public int[] AvailableAmmos;
     public int[] ChangedAvailableAmmos;
+    Vector3 baseEggScale = new Vector3(.76f, .7f, .7f);
+
 
     private int startingAmmo = -1;
     public void SetData(short startingLives, short[] ammos, int shownAmmo, int maxLive = -1)
@@ -50,11 +52,24 @@ public class PlayerStartingStatsForLevels : ScriptableObject
 
     }
 
+    public void DoSteroidAction(ushort type)
+    {
+        if (type == 2)
+        {
+            baseEggScale = new Vector3(.76f * 1.28f, .7f * 1.26f, .7f);
+        }
+        else if (type == 0)
+        {
+            baseEggScale = new Vector3(.76f, .7f, .7f);
+        }
+    }
+
     public void Initialize()
     {
         numberOfWeapons = 0;
 
-
+        // eggScaleMultiplier = 1;
+        baseEggScale = new Vector3(.76f, .7f, .7f);
         currentEggIndex = 0;
         currentShotgunIndex = 0;
         eggID = 0;
@@ -151,7 +166,7 @@ public class PlayerStartingStatsForLevels : ScriptableObject
         // Vector2 n = force.normalized;
 
         // eggPoolNew.SpawnWithVelocityAndRotation(pos, force, Mathf.Atan2(n.x, -n.y) * Mathf.Rad2Deg * .5f);
-        eggPoolNew.SpawnWithVelocity(pos, force);
+        eggPoolNew.SpawnWithVelocityAndScale(pos, force, baseEggScale);
 
 
 

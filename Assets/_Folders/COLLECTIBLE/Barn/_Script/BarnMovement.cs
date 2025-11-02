@@ -167,21 +167,21 @@ public class BarnMovement : SpawnedObject, IRecordableObject
         lastDataType = data.type;
         switch (data.type)
         {
-            case 1:
+            case 0:
                 leftSide.gameObject.SetActive(true);
                 rightSide.gameObject.SetActive(true);
                 break;
-            case 2:
+            case 1:
                 leftSide.gameObject.SetActive(true);
                 rightSide.gameObject.SetActive(false);
 
                 break;
-            case 3:
+            case 2:
                 leftSide.gameObject.SetActive(false);
                 rightSide.gameObject.SetActive(true);
 
                 break;
-            case 4:
+            case 3:
                 leftSide.gameObject.SetActive(false);
                 rightSide.gameObject.SetActive(false);
 
