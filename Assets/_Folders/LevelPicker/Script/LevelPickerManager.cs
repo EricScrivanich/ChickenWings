@@ -6,14 +6,23 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System;
 
 
-public class LevelPickerManager : MonoBehaviour
+
+public class LevelPickerManager : MonoBehaviour, INavigationUI
 {
     public float xHillMult;
     public float yHillMult;
     public float scaleHillMult;
     private InputController controls;
+    [SerializeField] private GameObject uiButton;
+
+    public static Action<ILevelPickerPathObject> OnLevelPickerObjectSelected;
+
+
+
+
     [SerializeField] private PathCreator[] paths;
     [SerializeField] private PlayerLevelPickerPathFollwer playerPathFollower;
     [SerializeField] private GameObject levelUiPopupPrefab;
@@ -64,6 +73,8 @@ public class LevelPickerManager : MonoBehaviour
     [SerializeField] private Vector2[] parralaxMovementMultipliers;
     public Vector2[] additionalParralaxObjectPositions;
 
+    public Action OnUpdateUIPostions;
+
     private readonly Vector3[] rotations = new Vector3[]
       {
         new Vector3(0, 0, 7.5f),
@@ -87,9 +98,23 @@ public class LevelPickerManager : MonoBehaviour
     private int currentPathIndex;
     private int currentPathRoot = -2;
     private int nextPathRoot;
+    private List<LevelButtonUI> levelButtons = new List<LevelButtonUI>();
 
 
     private Camera cam;
+
+    void OnEnable()
+    {
+        controls.LevelCreator.Enable();
+        StartCoroutine(HandleStarTweens());
+        OnLevelPickerObjectSelected += HandleSelectObject;
+    }
+    void OnDisable()
+    {
+        OnLevelPickerObjectSelected -= HandleSelectObject;
+    }
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -162,9 +187,12 @@ public class LevelPickerManager : MonoBehaviour
             return backHillParent;
     }
 
+    private GameObject firstSelectedUI;
+
     private void Start()
     {
         playerPathFollower.SetPathManager(this);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f));
 
         string s = PlayerPrefs.GetString("LastLevel", "1-1-0");
         Vector3Int lastLevel = ReturnLevelAsVector(s);
@@ -180,10 +208,15 @@ public class LevelPickerManager : MonoBehaviour
 
         List<ILevelPickerPathObject> pathObjects = new List<ILevelPickerPathObject>();
 
+        Transform canvasTransform = GameObject.Find("Canvas").transform;
+
 
         for (int i = 0; i < levelPickerPathObjects.Length; i++)
         {
             var l = levelPickerPathObjects[i].GetComponent<ILevelPickerPathObject>();
+            var ui = Instantiate(uiButton, canvasTransform).GetComponent<RectTransform>();
+            levelButtons.Add(ui.GetComponent<LevelButtonUI>());
+            l.SetButtonRect(ui);
             l.SetLastSelectable(numberToCheck);
             if (l.WorldNumber == lastLevel)
             {
@@ -194,6 +227,8 @@ public class LevelPickerManager : MonoBehaviour
                 playerPathFollower.SetInitialPostionAndLayer(paths[data.y], d);
                 currentPathIndex = data.y;
                 currentPathRoot = data.x;
+                firstSelectedUI = ui.gameObject;
+
             }
 
             var nums = l.WorldNumber;
@@ -207,10 +242,22 @@ public class LevelPickerManager : MonoBehaviour
 
         }
 
+
+
         levelPickerObjs = pathObjects.ToArray();
         StartCoroutine(WaitToDoNextLevel());
 
 
+    }
+
+    public GameObject GetFirstSelected()
+    {
+        return firstSelectedUI;
+    }
+
+    public GameObject GetNextSelected()
+    {
+        throw new NotImplementedException();
     }
 
 
@@ -241,18 +288,32 @@ public class LevelPickerManager : MonoBehaviour
         return false;
     }
 
-    private void HandleClickObject(Vector2 screenPosition)
+    private void HandleSelectObject(ILevelPickerPathObject obj)
     {
+        HandleClickObject(Vector2.zero, obj);
+    }
+
+    private void HandleClickObject(Vector2 screenPosition, ILevelPickerPathObject manualSelect = null)
+    {
+        ILevelPickerPathObject obj;
         // Debug.LogError("Screen Position: " + screenPosition);
-        if (IsPointerOverUI(screenPosition))
+        if (manualSelect == null)
         {
-            Debug.Log("Clicked on UI element, ignoring level picker click.");
-            return;
+            if (IsPointerOverUI(screenPosition))
+            {
+                Debug.Log("Clicked on UI element, ignoring level picker click.");
+                return;
+            }
+
+            Vector2 worldPoint = Camera.main.ScreenToWorldPoint(screenPosition);
+
+            obj = GetObjectFromTouchPosition(worldPoint);
+        }
+        else
+        {
+            obj = manualSelect;
         }
 
-        Vector2 worldPoint = Camera.main.ScreenToWorldPoint(screenPosition);
-
-        var obj = GetObjectFromTouchPosition(worldPoint);
 
         if (obj != null && obj != currentTarget)
         {
@@ -365,6 +426,13 @@ public class LevelPickerManager : MonoBehaviour
         DoLayerStuff(layerShownFrom, delayToMoveCam + dur, easeType);
         float scale = mult * scaleHillMult;
 
+        if (UpdateUIPositionsCoroutine != null)
+        {
+            StopCoroutine(UpdateUIPositionsCoroutine);
+        }
+
+        UpdateUIPositionsCoroutine = StartCoroutine(UpdateUIPositions(delayToMoveCam + dur));
+
 
 
         zoomSeq.AppendInterval(delayToMoveCam);
@@ -381,6 +449,33 @@ public class LevelPickerManager : MonoBehaviour
             zoomSeq.Join(additionalParralaxObjects[i].DOLocalMove(additionalParralaxObjectPositions[i] - new Vector2(data.x * parralaxMovementMultipliers[i].x, data.y * parralaxMovementMultipliers[i].y), dur));
         }
         zoomSeq.Play().SetEase(easeType).SetUpdate(true);
+
+
+    }
+    private Coroutine UpdateUIPositionsCoroutine;
+
+
+    private IEnumerator UpdateUIPositions(float dur)
+    {
+        float delay = .2f;
+        int steps = Mathf.CeilToInt(dur / delay);
+        for (int i = 0; i < steps; i++)
+        {
+            yield return new WaitForSeconds(delay);
+            foreach (var b in levelButtons)
+            {
+                b.UpdateRectPosition();
+            }
+
+        }
+        yield return new WaitForSeconds(delay);
+        foreach (var b in levelButtons)
+        {
+            b.UpdateRectPosition();
+        }
+
+
+
 
 
     }
@@ -668,14 +763,17 @@ public class LevelPickerManager : MonoBehaviour
         {
             Vector3Int nextLevel = ReturnLevelAsVector(PlayerPrefs.GetString("NextLevel", "Menu"));
 
-            foreach (var o in levelPickerPathObjects)
+            for (int i = 0; i < levelPickerObjs.Length; i++)
             {
-                var obj = o.GetComponent<ILevelPickerPathObject>();
+
+                var obj = levelPickerObjs[i].GetComponent<ILevelPickerPathObject>();
+
 
                 if (obj.WorldNumber == nextLevel)
                 {
                     currentTarget = obj;
                     CreateLastSave(obj.WorldNumber);
+                    firstSelectedUI = levelButtons[i].gameObject;
 
 
                     currentTarget.SetSelected(true);
@@ -693,6 +791,7 @@ public class LevelPickerManager : MonoBehaviour
 
 
         }
+        InputSystemSelectionManager.instance.SetNewWindow(this);
         PlayerPrefs.SetString("NextLevel", "Menu");
         PlayerPrefs.Save();
 
@@ -781,26 +880,9 @@ public class LevelPickerManager : MonoBehaviour
         return null;
     }
 
-    private void OnEnable()
-    {
-        controls.LevelCreator.Enable();
-        StartCoroutine(HandleStarTweens());
-        // LevelRecordManager.AddNewObject += SetObjectToBeAdded;
-
-    }
-
-    private void OnDisable()
-    {
-        controls.LevelCreator.Disable();
-
-        // timeSlider.onValueChanged.RemoveAllListeners();
-        // LevelRecordManager.AddNewObject -= SetObjectToBeAdded;
 
 
 
-
-
-    }
     private void CreateLastSave(Vector3Int worldNum)
     {
         string l = $"{worldNum.x}-{worldNum.y}-{worldNum.z}";
@@ -815,6 +897,8 @@ public class LevelPickerManager : MonoBehaviour
         return new Vector3Int(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
 
     }
+
+
 
 
     // private int prevPopupIndex = 1;

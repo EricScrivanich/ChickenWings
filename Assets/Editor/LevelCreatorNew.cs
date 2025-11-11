@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
+
 [CustomEditor(typeof(LevelData))]
 public class LevelCreatorNew : Editor
 {
@@ -12,10 +13,14 @@ public class LevelCreatorNew : Editor
     public GameObject recorder;
     [SerializeField] private TutorialData baseTutorialData;
 
+    private bool[] challengeCompletionTest;
+    private bool masterLevel;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private string newLevelName;
     private Vector3Int newLevelNumbers;
     private bool dropdownOpen = false;
+    private bool testCompletionDropdownOpen = false;
     public override void OnInspectorGUI()
     {
         Parent = (LevelData)target;
@@ -77,6 +82,38 @@ public class LevelCreatorNew : Editor
 
             EditorGUILayout.EndVertical();
         }
+        testCompletionDropdownOpen = EditorGUILayout.Foldout(testCompletionDropdownOpen, "Edit Test Completion For Levels");
+        if (testCompletionDropdownOpen)
+        {
+            EditorGUILayout.BeginVertical("box");
+            GUILayout.Label("Set Level Test Completion", EditorStyles.boldLabel);
+
+            var challengeData = Parent.GetLevelChallenges(false, null);
+
+            if (challengeCompletionTest == null)
+                challengeCompletionTest = new bool[challengeData.challengeTexts.Length];
+
+            for (int i = 0; i < challengeData.challengeTexts.Length; i++)
+            {
+                challengeCompletionTest[i] = EditorGUILayout.Toggle(challengeData.challengeTexts[i], challengeCompletionTest[i]);
+            }
+
+            masterLevel = EditorGUILayout.Toggle("Is Master Level", masterLevel);
+
+
+            if (GUILayout.Button("Submit", GUILayout.Height(20)))
+            {
+                LevelDataConverter.instance.SetLevelCompletionManual(Parent, false, masterLevel, challengeCompletionTest.Clone() as bool[]);
+            }
+            if (GUILayout.Button("Clear", GUILayout.Height(20)))
+            {
+                LevelDataConverter.instance.SetLevelCompletionManual(Parent, true, false, null);
+            }
+
+            EditorGUILayout.EndVertical();
+
+        }
+
         if (GUILayout.Button("RedoName", GUILayout.Height(20)))
         {
             newLevelName = Parent.LevelName;

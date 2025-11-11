@@ -935,6 +935,54 @@ public class LevelDataConverter : MonoBehaviour
 
         return directory;
     }
+#if UNITY_EDITOR
+
+    public void SetLevelCompletionManual(LevelData data, bool clearData, bool mastered, bool[] challengeCompletion)
+    {
+
+        LoadLevelSavedData(data);
+
+
+
+        if (clearData)
+        {
+            currentLoadedSavedLevelData.FurthestCompletion = 0;
+            currentLoadedSavedLevelData.FurthestCompletionEasy = 0;
+            for (int i = 0; i < currentLoadedSavedLevelData.ChallengeCompletion.Length; i++)
+            {
+                currentLoadedSavedLevelData.ChallengeCompletion[i] = false;
+            }
+
+            currentLoadedSavedLevelData.CompletedLevel = false;
+
+            currentLoadedSavedLevelData.MasteredLevel = false;
+        }
+
+        else
+        {
+            currentLoadedSavedLevelData.CompletedLevel = true;
+            currentLoadedSavedLevelData.FurthestCompletion = data.finalSpawnStep;
+            currentLoadedSavedLevelData.MasteredLevel = mastered;
+
+            if (challengeCompletion != null)
+            {
+                for (int i = 0; i < challengeCompletion.Length; i++)
+                {
+                    if (i < currentLoadedSavedLevelData.ChallengeCompletion.Length)
+                    {
+                        currentLoadedSavedLevelData.ChallengeCompletion[i] = challengeCompletion[i];
+                    }
+                }
+            }
+
+        }
+
+
+        SavePermanentLevelData();
+    }
+
+#endif
+
 
     public void LoadLevelSavedData(LevelData data)
     {

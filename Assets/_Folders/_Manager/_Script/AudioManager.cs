@@ -11,6 +11,7 @@ public class AudioManager : MonoBehaviour
 
 
     public float SfxVolume { get; private set; } = 1f;
+    [SerializeField] private float baseMusicVolume = 0.7f;
     private float currentWindmillPitch;
     public float SfxPitch { get; private set; } = 1f; // Default value for newPitchSlow
     public static AudioManager instance;
@@ -219,7 +220,7 @@ public class AudioManager : MonoBehaviour
         windMillAudioSource.Stop();
         AudioListener.pause = false;
 
-        musicSource.volume = musicVol;
+        musicSource.volume = musicVol * baseMusicVolume;
         audioSource.volume = sfxVolume;
         this.SfxVolume = sfxVolume; // Update the sfxVolume field
         nonSlowSource.volume = sfxVolume;
@@ -264,9 +265,9 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         PlayMusic();
-        
-       
-          
+
+
+
     }
 
     private IEnumerator JetPackNoiseWait()

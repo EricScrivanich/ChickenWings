@@ -18,7 +18,7 @@ public class BoundariesManager : MonoBehaviour
     public static float TopViewBoundary = 6.8f;
     public static float leftPlayerBoundary = -11.8f;
 
-    public static float GroundSpeed = 4.7f;
+    public static float GroundSpeed = 4.7f;  // 4.7f normal
 
     public static readonly Vector3 FlippedXScale = new Vector3(-1, 1, 1);
 

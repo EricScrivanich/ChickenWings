@@ -4,6 +4,9 @@ using DG.Tweening;
 
 public class ButtonTweenFromSide : MonoBehaviour
 {
+
+    [SerializeField] private bool moveX = true;
+    [SerializeField] private float moveAmount;
     [SerializeField] private Vector2 normalAnchoredPosition;
     [SerializeField] public PlayerID player;
     [SerializeField] private int type;
@@ -52,17 +55,39 @@ public class ButtonTweenFromSide : MonoBehaviour
 
 #endif
 
-    void OnEnable()
+    void Awake()
     {
         player.UiEvents.OnShowPlayerUI += DoMove;
+        gameObject.SetActive(false);
     }
-    void OnDisable()
+    void OnDestroy()
     {
         player.UiEvents.OnShowPlayerUI -= DoMove;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
+
+    // public void DoMove(bool show, int t, float mult)
+    // {
+    //     if (hasTransitioned) return;
+    //     if (type <= t)
+    //     {
+    //         float dur = duration;
+    //         if (mult != 0) dur *= mult;
+    //         hasTransitioned = true;
+    //         var rect = GetComponent<RectTransform>();
+    //         Vector2 target = normalAnchoredPosition;
+
+
+    //         Debug.LogError("Doing Move for: " + gameObject.name + " to position: " + target);
+    //         normalAnchoredPosition = rect.anchoredPosition;
+
+    //         rect.DOAnchorPos(target, dur).SetEase(Ease.OutBack);
+
+    //     }
+
+    // }
 
     public void DoMove(bool show, int t, float mult)
     {
@@ -73,9 +98,17 @@ public class ButtonTweenFromSide : MonoBehaviour
             if (mult != 0) dur *= mult;
             hasTransitioned = true;
             var rect = GetComponent<RectTransform>();
-            Vector2 target = normalAnchoredPosition;
+            Vector2 target = rect.anchoredPosition;
+
+            if (moveX) rect.anchoredPosition = new Vector2(rect.anchoredPosition.x - moveAmount, rect.anchoredPosition.y);
+            else rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, rect.anchoredPosition.y - moveAmount);
+
+
+
             Debug.LogError("Doing Move for: " + gameObject.name + " to position: " + target);
             normalAnchoredPosition = rect.anchoredPosition;
+            gameObject.SetActive(true);
+
             rect.DOAnchorPos(target, dur).SetEase(Ease.OutBack);
 
         }

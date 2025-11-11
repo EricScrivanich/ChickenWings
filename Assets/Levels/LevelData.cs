@@ -228,7 +228,7 @@ public class LevelData : ScriptableObject
             }
             else if (difficulty == 2)
             {
-                startingStats.SetData(1, StartingAmmos, shownEgg);
+                // startingStats.SetData(1, StartingAmmos, shownEgg);
                 ammos = StartingAmmos.Clone() as short[]; ;
                 livesAmount = 1;
                 if (levelChallenges != null)
@@ -410,14 +410,19 @@ public class LevelData : ScriptableObject
         {
             Debug.Log("No collectables found, hiding EggCanvas");
             GameObject.Find("EggCanvas").SetActive(false);
+            startingStats.SetData((short)livesAmount, ammos, 0);
         }
         else
         {
-            if (StartingAmmos[0] > 0 && collectableSize0 > 0)
+            if (ammos[0] == 0 && ammos[1] == 0)
             {
                 shownEgg = 0;
             }
-            else if (StartingAmmos[1] > 0 && collectableSize1 > 0)
+            else if (ammos[0] > ammos[1])
+            {
+                shownEgg = 0;
+            }
+            else
             {
                 shownEgg = 1;
             }

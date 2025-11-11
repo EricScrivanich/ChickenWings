@@ -240,7 +240,14 @@ public class TemporaryLevelCheckPointData
 
         CurrentCheckPoint = data.CurrentCheckPoint;
         CurrentLives = (short)data.Lives;
-        CurrentAmmos = data.Ammos;
+
+        
+        if (data.Ammos != null)
+            CurrentAmmos = (short[])data.Ammos.Clone();
+
+
+
+
         if (data.KilledPigs != null)
             KilledPigs = data.KilledPigs.ToArray();
         if (data.PlayerInputs != null)

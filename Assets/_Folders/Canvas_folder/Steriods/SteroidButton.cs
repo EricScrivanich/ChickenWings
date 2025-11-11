@@ -8,5 +8,6 @@ public class SteroidButton : MonoBehaviour
     public void OnPress()
     {
         Instantiate(steroidUI, GameObject.Find("Canvas").transform);
+        HapticFeedbackManager.instance.PressUIButton();
     }
 }

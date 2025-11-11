@@ -132,7 +132,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8b7269e55fe4fe48c41d31c577d497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Levels: {fileID: 11400000, guid: adeae665bc9dd4b57a795426e0430e00, type: 2}
 --- !u!4 &2910296017393254545 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2558809831669598180, guid: c3cdede725f7e4e54929864f2666e2ab, type: 3}
@@ -344,6 +343,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: badgeSlapVolume
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: baseMusicVolume
       value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 2833841457656160554, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
@@ -690,6 +693,10 @@ PrefabInstance:
       propertyPath: 'flappyPigCackles.Array.data[3]'
       value: 
       objectReference: {fileID: 8300000, guid: a620e841a2b5046f184c795143bea5c4, type: 3}
+    - target: {fileID: 4951571917034972469, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
+      propertyPath: Priority
+      value: 174
+      objectReference: {fileID: 0}
     - target: {fileID: 8478620467019488244, guid: b947e90d3ce3643bfbec1674a93b4ed4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
