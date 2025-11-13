@@ -13,6 +13,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
     [SerializeField] private ButtonTouchByIndex[] difficultyButtons;
 
     [SerializeField] private GameObject lockedDifficultyObject;
+    [SerializeField] private GameObject playButton;
 
     [SerializeField] private LevelData levelData;
     [SerializeField] private string sceneLoadOvverride;
@@ -386,6 +387,8 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
         else
             levelNumberText.gameObject.SetActive(false);
 
+        InputSystemSelectionManager.instance.SetNextSelectedByDirection(playButton, Vector2.up);
+
 
 
     }
@@ -433,6 +436,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
     }
     public void ExitView()
     {
+        InputSystemSelectionManager.instance.SetNextSelectedByDirection(null, Vector2.zero);
         if (levelPickerManager != null)
         {
             levelPickerManager.BackOut();

@@ -208,13 +208,13 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
         List<ILevelPickerPathObject> pathObjects = new List<ILevelPickerPathObject>();
 
-        Transform canvasTransform = GameObject.Find("Canvas").transform;
+
 
 
         for (int i = 0; i < levelPickerPathObjects.Length; i++)
         {
             var l = levelPickerPathObjects[i].GetComponent<ILevelPickerPathObject>();
-            var ui = Instantiate(uiButton, canvasTransform).GetComponent<RectTransform>();
+            var ui = Instantiate(uiButton, levelPopupParent).GetComponent<RectTransform>();
             levelButtons.Add(ui.GetComponent<LevelButtonUI>());
             l.SetButtonRect(ui);
             l.SetLastSelectable(numberToCheck);

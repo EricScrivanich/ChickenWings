@@ -351,6 +351,8 @@ public class SteroidUI : MonoBehaviour, INavigationUI
         audioSource.pitch = 1;
         audioSource.PlayOneShot(openMenuSound, openMenuSoundVolume);
 
+        InputSystemSelectionManager.instance.HandleGroup(0, true);
+
         if (GameObject.Find("Player") != null)
         {
             var player = GameObject.Find("Player").GetComponent<PlayerStateManager>();

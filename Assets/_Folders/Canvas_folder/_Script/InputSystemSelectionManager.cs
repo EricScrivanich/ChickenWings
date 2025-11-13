@@ -3,12 +3,16 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class InputSystemSelectionManager : MonoBehaviour
 {
     public static InputSystemSelectionManager instance;
     private InputSystemUIInputModule inputModule;
+
+    [SerializeField] private CanvasGroup[] menuGroups;
     private GameObject lastSelected;
+    private GameObject lastSelectedByMenu;
     private string checkTag = "none";
 
     void Awake()
@@ -42,17 +46,42 @@ public class InputSystemSelectionManager : MonoBehaviour
     private void OnNavigatePerformed(InputAction.CallbackContext ctx)
     {
         // 🔹 Navigation just happened (D-pad or left stick)
-        GameObject current = EventSystem.current.currentSelectedGameObject;
+
         var direction = ctx.ReadValue<Vector2>();
+        if (direction == Vector2.zero)
+            return; // No movement
+        lastSelected = EventSystem.current.currentSelectedGameObject;
+
+
+        if (CheckIfDirection(direction))
+        {
+            Debug.Log("Direction matched: " + direction + " Selecting: " + nextSelectedByDirection.gameObject);
+            StartCoroutine(WaitAndSetSelected(nextSelectedByDirection));
+            // nextSelectedByDirection = null;
+            checkDirection = Vector2.zero;
+
+        }
+
         Debug.Log("Navigation input: " + direction);
 
         // Check if current is invalid, and skip if needed
-        if (current == null || ShouldSkip(current))
-        {
-            GameObject next = FindNextValidSelectable(current);
-            if (next != null)
-                EventSystem.current.SetSelectedGameObject(next);
-        }
+        // if (current == null || ShouldSkip(current))
+        // {
+        //     GameObject next = FindNextValidSelectable(current);
+        //     if (next != null)
+        //         EventSystem.current.SetSelectedGameObject(next);
+        // }
+    }
+    private bool isSetting = false;
+    private IEnumerator WaitAndSetSelected(GameObject obj)
+    {
+        if (isSetting) yield break;
+        isSetting = true;
+
+        yield return null; // Wait one frame
+        EventSystem.current.SetSelectedGameObject(obj);
+        lastSelected = obj;
+        isSetting = false;
     }
 
     private bool ShouldSkip(GameObject obj)
@@ -108,28 +137,50 @@ public class InputSystemSelectionManager : MonoBehaviour
     private Vector2 checkDirection = Vector2.zero;
     private GameObject nextSelectedByDirection = null;
 
-    public Vector2 GetCheckDirection(Vector2 rawInput)
+    public bool CheckIfDirection(Vector2 rawInput)
     {
+        Vector2 c = Vector2.zero;
+
         if (rawInput != Vector2.zero)
         {
             if (rawInput.x > 0.5f)
-                return Vector2.right;
+                c = Vector2.right;
             else if (rawInput.x < -0.5f)
-                return Vector2.left;
+                c = Vector2.left;
             else if (rawInput.y > 0.5f)
-                return Vector2.up;
+                c = Vector2.up;
             else if (rawInput.y < -0.5f)
-                return Vector2.down;
+                c = Vector2.down;
             else
-                return Vector2.zero;
+                c = Vector2.zero;
         }
+
+        Debug.Log("CheckIfDirection: " + c + " vs " + checkDirection);
+
+
+        if (checkDirection == Vector2.zero || c != checkDirection || nextSelectedByDirection == null)
+            return false;
+        else
+            return true;
+    }
+    public void HandleGroup(int index, bool enable)
+    {
+        if (menuGroups == null || index < 0 || index >= menuGroups.Length) return;
+
+        if (enable && lastSelectedByMenu != null)
+            EventSystem.current.SetSelectedGameObject(lastSelectedByMenu);
         else
         {
-            return Vector2.zero;
+            lastSelectedByMenu = EventSystem.current.currentSelectedGameObject;
+
         }
+
+        menuGroups[index].blocksRaycasts = enable;
+        menuGroups[index].interactable = enable;
     }
-    public void SetNextSelectedDirection(GameObject nextObj, Vector2 direction)
+    public void SetNextSelectedByDirection(GameObject nextObj, Vector2 direction)
     {
+        Debug.Log("Set next selected by direction: " + direction);
         nextSelectedByDirection = nextObj;
         checkDirection = direction;
     }

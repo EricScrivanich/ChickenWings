@@ -39,7 +39,7 @@ public class LevelButtonUI : UIButton
     public void UpdateRectPosition()
     {
         Vector2 canvasPoint = Camera.main.WorldToScreenPoint(level.transform.position);
-        Debug.Log("Updating button position to: " + canvasPoint);
+
         buttonRect.position = canvasPoint;
 
     }

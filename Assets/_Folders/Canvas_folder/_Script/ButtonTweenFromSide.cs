@@ -11,6 +11,9 @@ public class ButtonTweenFromSide : MonoBehaviour
     [SerializeField] public PlayerID player;
     [SerializeField] private int type;
     [SerializeField] private float duration;
+    private Vector2 normalPosition;
+
+
     private bool hasTransitioned = false;
 
 #if UNITY_EDITOR
@@ -58,7 +61,13 @@ public class ButtonTweenFromSide : MonoBehaviour
     void Awake()
     {
         player.UiEvents.OnShowPlayerUI += DoMove;
-        gameObject.SetActive(false);
+        var rect = GetComponent<RectTransform>();
+        normalPosition = rect.anchoredPosition;
+
+        if (moveX) rect.anchoredPosition = new Vector2(rect.anchoredPosition.x - moveAmount, rect.anchoredPosition.y);
+        else rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, rect.anchoredPosition.y - moveAmount);
+        // gameObject.SetActive(false);
+
     }
     void OnDestroy()
     {
@@ -98,18 +107,10 @@ public class ButtonTweenFromSide : MonoBehaviour
             if (mult != 0) dur *= mult;
             hasTransitioned = true;
             var rect = GetComponent<RectTransform>();
-            Vector2 target = rect.anchoredPosition;
 
-            if (moveX) rect.anchoredPosition = new Vector2(rect.anchoredPosition.x - moveAmount, rect.anchoredPosition.y);
-            else rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, rect.anchoredPosition.y - moveAmount);
-
-
-
-            Debug.LogError("Doing Move for: " + gameObject.name + " to position: " + target);
-            normalAnchoredPosition = rect.anchoredPosition;
             gameObject.SetActive(true);
 
-            rect.DOAnchorPos(target, dur).SetEase(Ease.OutBack);
+            rect.DOAnchorPos(normalPosition, dur).SetEase(Ease.OutBack);
 
         }
 

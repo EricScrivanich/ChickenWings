@@ -69,7 +69,7 @@ public class Fence : SpawnedObject, IRecordableObject
 
         sr.size = new Vector2(currentWidth, sr.size.y);
         blurOutline.size = new Vector2(blurOutline.size.x, 1.2f + (data.float1 * 100 * widthPerSection));
-        blurOutline.transform.localPosition = new Vector3(currentWidth * .5f, .82f, 0);
+        // blurOutline.transform.localPosition = new Vector3(currentWidth * .5f, .82f, 0);
     }
     private bool move = false;
     // void Update()
