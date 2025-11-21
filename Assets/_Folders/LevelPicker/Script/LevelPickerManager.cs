@@ -24,6 +24,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
 
     [SerializeField] private PathCreator[] paths;
+    [SerializeField] private UnlockableMapItem[] unlockableMapItems;
     [SerializeField] private PlayerLevelPickerPathFollwer playerPathFollower;
     [SerializeField] private GameObject levelUiPopupPrefab;
     private CanvasGroup[] levelPopups;
@@ -103,6 +104,14 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
     private Camera cam;
 
+    [Header("Camera settings")]
+    private Vector2 camVelRef;
+    private float camOrthoRef;
+    [SerializeField] private float camSmoothTime;
+    [SerializeField] private float camMaxSpeed;
+    [SerializeField] private float updatePathDistanceTime;
+    [SerializeField] private float updatePathDistanceThreshold;
+
     void OnEnable()
     {
         controls.LevelCreator.Enable();
@@ -111,6 +120,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     }
     void OnDisable()
     {
+        controls.LevelCreator.Disable();
         OnLevelPickerObjectSelected -= HandleSelectObject;
     }
 
@@ -188,15 +198,106 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     }
 
     private GameObject firstSelectedUI;
+    private bool ignoreAll;
+
+    public void DoNextLevelAfterUnlock()
+    {
+        ignoreAll = false;
+        StartCoroutine(WaitToDoNextLevel(-1));
+    }
+
+    private IEnumerator WaitToDoNextLevel(short NextUnlockedItem)
+    {
+
+        yield return new WaitForSecondsRealtime(.1f);
+
+        if (NextUnlockedItem >= 0)
+        {
+            if (currentTarget != null)
+                ZoomSeq(currentTarget.CameraPositionAndOrhtoSize, currentTarget.layersShownFrom);
+            Debug.Log("Next unlocked item to unlock: " + NextUnlockedItem);
+            for (short i = 0; i < unlockableMapItems.Length; i++)
+            {
+
+                if (unlockableMapItems[i].mapItemID == NextUnlockedItem)
+                {
+                    unlockableMapItems[i].UnlockItem(playerPathFollower.unlockableTargetTransform.position);
+                    ignoreAll = true;
+
+                    yield break;
+
+
+                }
+            }
+        }
+
+
+
+        else if (PlayerPrefs.GetString("NextLevel", "Menu") != "Menu")
+        {
+            Vector3Int nextLevel = ReturnLevelAsVector(PlayerPrefs.GetString("NextLevel", "Menu"));
+            Debug.LogError("Loading next level: " + nextLevel);
+
+            for (int i = 0; i < levelPickerObjs.Length; i++)
+            {
+
+                var obj = levelPickerObjs[i].GetComponent<ILevelPickerPathObject>();
+
+
+                if (obj.WorldNumber == nextLevel)
+                {
+                    // currentTarget = obj;
+                    // CreateLastSave(obj.WorldNumber);
+                    firstSelectedUI = levelButtons[i].gameObject;
+
+
+                    HandleSelectObject(obj);
+                    // LevelDataConverter.currentChallengeType = currentTarget.challengeType;
+                    // Vector3Int data = obj.RootIndex_PathIndex_Order;
+
+                    // float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
+                    // playerPathFollower.DoPathToPoint(paths[data.y], d, null, null, null, null);
+                    // DoLevelPopupSeq(true, obj.WorldNumber);
+                    InputSystemSelectionManager.instance.SetNewWindow(this, false);
+                    PlayerPrefs.SetString("NextLevel", "Menu");
+                    PlayerPrefs.Save();
+                    yield break;
+                }
+            }
+
+            InputSystemSelectionManager.instance.SetNewWindow(this, false);
+            PlayerPrefs.SetString("NextLevel", "Menu");
+            PlayerPrefs.Save();
+        }
+        else if (currentTarget != null)
+        {
+            // InputSystemSelectionManager.instance.SetNewWindow(this, false);
+
+            ZoomSeq(currentTarget.CameraPositionAndOrhtoSize, currentTarget.layersShownFrom);
+            InputSystemSelectionManager.instance.SetNewWindow(this, false);
+            // yield return new WaitForSecondsRealtime(.1f);
+            // currentTarget.SetSelected(false);
+        }
+        // yield return new WaitForSecondsRealtime(.1f);
+        currentTarget = null;
+
+
+
+
+
+    }
 
     private void Start()
     {
         playerPathFollower.SetPathManager(this);
-        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f));
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .5f), PlayerPrefs.GetFloat("SFXVolume", 1.0f));
 
         string s = PlayerPrefs.GetString("LastLevel", "1-1-0");
         Vector3Int lastLevel = ReturnLevelAsVector(s);
-        LevelDataConverter.instance.ReturnAndLoadWorldLevelData(null, lastLevel.x);
+        LevelDataConverter.instance.LoadWorldData(lastLevel.x);
+        // LevelDataConverter.instance.ReturnAndLoadWorldLevelData(null, lastLevel.x); // loading current world
+
+        short NextUnlockedItem = LevelDataConverter.instance.GetNextUnlockedItem((ushort)lastLevel.x);
         Vector3Int numberToCheck = LevelDataConverter.instance.CurrentFurthestLevel();
         frontHillParent.localScale = Vector3.one;
 
@@ -208,6 +309,24 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
         List<ILevelPickerPathObject> pathObjects = new List<ILevelPickerPathObject>();
 
+        List<short> unlockedItems = LevelDataConverter.instance.ReturnUnlockedItems();
+
+        if (unlockedItems != null && unlockedItems.Count > 0)
+        {
+            for (int i = 0; i < unlockableMapItems.Length; i++)
+            {
+                unlockableMapItems[i].Initializeitem(this, unlockedItems.Contains(unlockableMapItems[i].mapItemID) && unlockableMapItems[i].mapItemID != NextUnlockedItem);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < unlockableMapItems.Length; i++)
+            {
+
+                unlockableMapItems[i]?.Initializeitem(this, false);
+            }
+        }
+
 
 
 
@@ -217,7 +336,38 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
             var ui = Instantiate(uiButton, levelPopupParent).GetComponent<RectTransform>();
             levelButtons.Add(ui.GetComponent<LevelButtonUI>());
             l.SetButtonRect(ui);
-            l.SetLastSelectable(numberToCheck);
+
+            int beatenType = 0;
+
+            if (LevelDataConverter.instance.CheckIfLevelCompleted(i, new Vector2Int(l.WorldNumber.y, l.WorldNumber.z)))
+            {
+                beatenType = 2;
+            }
+            else if (i > 0)
+            {
+                if (l.WorldNumber.z > 0)
+                {
+                    if (LevelDataConverter.instance.CheckIfLevelCompleted(i - 1, new Vector2Int(l.WorldNumber.y, l.WorldNumber.z - 1)))
+                    {
+                        beatenType = 1;
+                    }
+                }
+
+                else
+                {
+                    if (LevelDataConverter.instance.CheckIfLevelCompleted(i - 1, new Vector2Int(l.WorldNumber.y - 1, l.WorldNumber.z)))
+                    {
+                        beatenType = 1;
+                    }
+
+                }
+
+            }
+            else
+            {
+                beatenType = 1;
+            }
+            l.SetLastSelectable(numberToCheck, beatenType);
             if (l.WorldNumber == lastLevel)
             {
                 Debug.Log("Last level found: " + lastLevel);
@@ -228,14 +378,16 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                 currentPathIndex = data.y;
                 currentPathRoot = data.x;
                 firstSelectedUI = ui.gameObject;
+                currentTarget = l;
 
             }
 
             var nums = l.WorldNumber;
-            if (nums.y < numberToCheck.y)
-            {
-                pathObjects.Add(l);
-            }
+            // if (nums.y < numberToCheck.y)
+            // {
+
+            // }
+            pathObjects.Add(l);
 
 
 
@@ -245,7 +397,9 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
 
         levelPickerObjs = pathObjects.ToArray();
-        StartCoroutine(WaitToDoNextLevel());
+        Debug.LogError("Next Unlocked Item in LevelPickerManager: " + NextUnlockedItem);
+
+        StartCoroutine(WaitToDoNextLevel(NextUnlockedItem));
 
 
     }
@@ -295,6 +449,8 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
     private void HandleClickObject(Vector2 screenPosition, ILevelPickerPathObject manualSelect = null)
     {
+        if (ignoreAll)
+            return;
         ILevelPickerPathObject obj;
         // Debug.LogError("Screen Position: " + screenPosition);
         if (manualSelect == null)
@@ -315,9 +471,10 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
         }
 
 
-        if (obj != null && obj != currentTarget)
+        if (obj != null && (obj != currentTarget || manualSelect != null))
         {
-            HapticFeedbackManager.instance.PressUIButton();
+            if (manualSelect == null)
+                HapticFeedbackManager.instance.PressUIButton();
             if (currentTarget != null)
             {
                 currentTarget.SetSelected(false);
@@ -358,11 +515,6 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                     pathRoots.Add(currentPathRoot - 1);
                     pathRoots.Add(currentPathRoot);
 
-
-
-
-
-
                 }
                 else
                 {
@@ -375,8 +527,6 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                         Debug.LogError("Current Path Index: " + currentPathIndex + " is less than target path index: " + data.y);
                         inbetweenDistance = paths[currentPathIndex].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
 
-
-
                     }
                     else
                     {
@@ -386,11 +536,11 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
 
 
-                playerPathFollower.DoPathToPoint(paths[currentPathIndex], inbetweenDistance, addedPaths, dists, pathIndices, pathRoots);
+                playerPathFollower.DoPathToPoint(paths[currentPathIndex], inbetweenDistance, addedPaths, dists, pathIndices, pathRoots, currentTarget.GetPathTransform());
             }
             else
             {
-                playerPathFollower.DoPathToPoint(paths[data.y], d, null, null, null, null);
+                playerPathFollower.DoPathToPoint(paths[data.y], d, null, null, null, null, currentTarget.GetPathTransform());
             }
 
             Debug.LogError("Moving to level: " + obj.WorldNumber);
@@ -410,7 +560,8 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     }
     private Sequence zoomSeq;
     [SerializeField] private Ease easeType;
-    private void ZoomSeq(Vector4 data, int layerShownFrom = 0)
+    [SerializeField] private bool useOldZoomSeq;
+    private void ZoomSeqOld(Vector4 data, int layerShownFrom = 0)
     {
         if (zoomSeq != null && zoomSeq.IsActive())
         {
@@ -452,12 +603,106 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
 
     }
+    private void ZoomSeq(Vector4 data, int layerShownFrom = 0)
+    {
+        if (useOldZoomSeq)
+        {
+            ZoomSeqOld(data, layerShownFrom);
+            return;
+        }
+        if (data == Vector4.zero)
+            data = BaseCameraData;
+
+        float mult = BaseCameraData.w / data.w;
+        float dur = moveCamDuration;
+
+        // === Hill ===
+        Vector2 hillPos = new Vector2(data.x * xHillMult, data.y * yHillMult) * -mult;
+        hillPos += frontHillStartPos;
+
+        float hillScale = mult * scaleHillMult;
+
+        // === Stop UI Reposition coroutine ===
+        if (UpdateUIPositionsCoroutine != null)
+            StopCoroutine(UpdateUIPositionsCoroutine);
+
+        UpdateUIPositionsCoroutine = StartCoroutine(UpdateUIPositions(delayToMoveCam + dur));
+
+        // === Camera & Hills tween — INTERRUPTIBLE AND SMOOTH === //
+
+        // Camera zoom
+        Camera.main.DOOrthoSize(data.w, dur)
+                   .SetEase(easeType)
+                   .SetUpdate(true);
+
+        // Camera move
+        Camera.main.transform.DOMove(
+            new Vector3(data.x, data.y, data.z),
+            dur
+        )
+        .SetEase(easeType)
+        .SetUpdate(true);
+
+        // Hill move
+        frontHillParent.DOLocalMove(hillPos, dur)
+                       .SetEase(easeType)
+                       .SetUpdate(true);
+
+        // Hill scale
+        frontHillParent.DOScale(hillScale, dur)
+                       .SetEase(easeType)
+                       .SetUpdate(true);
+
+        // Additional parallax objects
+        for (int i = 0; i < additionalParralaxObjects.Length; i++)
+        {
+            Vector3 target = additionalParralaxObjectPositions[i] -
+                             new Vector2(data.x * parralaxMovementMultipliers[i].x,
+                                         data.y * parralaxMovementMultipliers[i].y);
+
+            additionalParralaxObjects[i].DOLocalMove(target, dur)
+                       .SetEase(easeType)
+                       .SetUpdate(true);
+        }
+
+        // Layers fade
+        DoLayerStuff(layerShownFrom, delayToMoveCam + dur, easeType);
+    }
+
+    // private Coroutine camMoveCoroutine;
+    // private Vector2 cameraTargetPos;
+    // private Vector2 hillFrontTargetPos;
+    // private Vector2 hillBackTargetPos;
+    // private float hillFrontTargetScale;
+    // private float cameraTargetOrtho;
+    // private bool movingCamera = false;
+    // private Vector2 hillFrontVelRef;
+    // private Vector2 hillBackVelRef;
+    // private float hillFrontScaleRef;
+
+    // private IEnumerator MoveCamaeraToTarget()
+    // {
+    //     movingCamera = true;
+    //     while (Vector2.Distance((Vector2)cam.transform.position, cameraTargetPos) > 0.1f)
+    //     {
+    //         cam.transform.position = Vector2.SmoothDamp((Vector2)cam.transform.position, cameraTargetPos, ref camVelRef, camSmoothTime, camMaxSpeed, Time.unscaledDeltaTime);
+    //         cameraTargetOrtho = Mathf.SmoothDamp(Camera.main.orthographicSize, cameraTargetOrtho, ref camOrthoRef, camSmoothTime, camMaxSpeed, Time.unscaledDeltaTime);
+
+    //         yield return null;
+    //     }
+    //     cam.transform.position = new Vector3(cameraTargetPos.x, cameraTargetPos.y, cam.transform.position.z);
+    //     Camera.main.orthographicSize = cameraTargetOrtho;
+    //     camMoveCoroutine = null;
+    //     movingCamera = false;
+    // }
     private Coroutine UpdateUIPositionsCoroutine;
 
 
     private IEnumerator UpdateUIPositions(float dur)
     {
         float delay = .2f;
+        playerPathFollower.SetRecheckPathDistance(true);
+
         int steps = Mathf.CeilToInt(dur / delay);
         for (int i = 0; i < steps; i++)
         {
@@ -473,6 +718,8 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
         {
             b.UpdateRectPosition();
         }
+        playerPathFollower.SetRecheckPathDistance(false);
+
 
 
 
@@ -754,49 +1001,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     private float tweenInInterval = .35f;
     private float tweenOutInterval = .3f;
 
-    private IEnumerator WaitToDoNextLevel()
-    {
 
-        yield return new WaitForSecondsRealtime(.1f);
-
-        if (PlayerPrefs.GetString("NextLevel", "Menu") != "Menu")
-        {
-            Vector3Int nextLevel = ReturnLevelAsVector(PlayerPrefs.GetString("NextLevel", "Menu"));
-
-            for (int i = 0; i < levelPickerObjs.Length; i++)
-            {
-
-                var obj = levelPickerObjs[i].GetComponent<ILevelPickerPathObject>();
-
-
-                if (obj.WorldNumber == nextLevel)
-                {
-                    currentTarget = obj;
-                    CreateLastSave(obj.WorldNumber);
-                    firstSelectedUI = levelButtons[i].gameObject;
-
-
-                    currentTarget.SetSelected(true);
-                    LevelDataConverter.currentChallengeType = currentTarget.challengeType;
-                    Vector3Int data = obj.RootIndex_PathIndex_Order;
-
-                    float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
-                    playerPathFollower.DoPathToPoint(paths[data.y], d, null, null, null, null);
-                    DoLevelPopupSeq(true, obj.WorldNumber);
-                    PlayerPrefs.SetString("NextLevel", "Menu");
-                    PlayerPrefs.Save();
-                    yield break;
-                }
-            }
-
-
-        }
-        InputSystemSelectionManager.instance.SetNewWindow(this);
-        PlayerPrefs.SetString("NextLevel", "Menu");
-        PlayerPrefs.Save();
-
-
-    }
     private IEnumerator HandleStarTweens()
     {
 

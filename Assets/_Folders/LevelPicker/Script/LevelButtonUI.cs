@@ -44,11 +44,11 @@ public class LevelButtonUI : UIButton
 
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public override void OnPress()
+    public override void OnPress(bool fromCursor = false)
     {
-        level.OnPress();
+        level.OnPress(fromCursor);
     }
-    public override void OnHighlight(bool highlight)
+    public override void OnHighlight(bool highlight, bool fromCursor = false)
     {
         level.OnHighlight(highlight);
     }

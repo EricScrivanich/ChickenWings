@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class UIButton : MonoBehaviour, IDeselectHandler, ISelectHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, ISubmitHandler
 {
     // private Button button;
+
+    [field: SerializeField] public bool skipReselect { get; private set; }
     [SerializeField] private int buttonType = 0;
     protected bool uiSelected = false;
 
@@ -54,14 +56,14 @@ public class UIButton : MonoBehaviour, IDeselectHandler, ISelectHandler, IPointe
         if (returnAll) return;
 
         uiSelected = true;
-        OnHighlight(true);
+        OnHighlight(true, true);
     }
     public virtual void OnPointerExit(PointerEventData eventData)
     {
         if (returnAll) return;
 
         uiSelected = false;
-        OnHighlight(false);
+        OnHighlight(false, true);
     }
 
     // 🔹 Called when the button is clicked (mouse)
@@ -69,7 +71,7 @@ public class UIButton : MonoBehaviour, IDeselectHandler, ISelectHandler, IPointe
     {
         if (returnAll) return;
 
-        OnPress();
+        OnPress(true);
     }
 
     // 🔹 Called when "Submit" (A button, Enter key, etc.) is triggered while selected
@@ -80,7 +82,7 @@ public class UIButton : MonoBehaviour, IDeselectHandler, ISelectHandler, IPointe
         OnPress();
     }
 
-    public virtual void OnHighlight(bool isSelected) { }
+    public virtual void OnHighlight(bool isSelected, bool pointer = false) { }
 
-    public virtual void OnPress() { }
+    public virtual void OnPress(bool fromCursor = false) { }
 }

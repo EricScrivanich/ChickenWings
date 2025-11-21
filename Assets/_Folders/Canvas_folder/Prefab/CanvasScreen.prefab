@@ -650,12 +650,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: -1
   duration: 0.8
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!224 &5317979588019344817 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4882014330020326392, guid: 24b77305a0f91471483059ef767b12e8, type: 3}
@@ -893,12 +887,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: -1
   duration: 1.2
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!224 &6609210827147918026 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1465214727300934074, guid: 0978ef163c1144c74929b270ae5c8d76, type: 3}
@@ -985,11 +973,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7204420102590815704, guid: d1f3ced01efa94e978d26a7a3789729e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 401
+      value: 393
       objectReference: {fileID: 0}
     - target: {fileID: 7204420102590815704, guid: d1f3ced01efa94e978d26a7a3789729e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -154
+      value: -134
       objectReference: {fileID: 0}
     - target: {fileID: 7204420102590815704, guid: d1f3ced01efa94e978d26a7a3789729e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1033,17 +1021,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveX: 1
-  moveAmount: 700
+  moveAmount: 800
   normalAnchoredPosition: {x: -851, y: 458}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: -1
   duration: 0.8
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!224 &4307837661182398340 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7204420102590815704, guid: d1f3ced01efa94e978d26a7a3789729e, type: 3}

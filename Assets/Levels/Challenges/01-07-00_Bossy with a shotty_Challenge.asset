@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 58def7dd2d7aa4e7f90f39993f49d3dd, type: 3}
-  m_Name: 01-100-00_TestingBuh_Challenge
+  m_Name: 01-07-00_Bossy with a shotty_Challenge
   m_EditorClassIdentifier: 
   lvlID: {fileID: 0}
-  challenges: 010000000300000008000000
+  challenges: 010000000000000002000000
   challengeTexts:
-  - Completye
-  - Kill Pig
-  - GetBUCKK
+  - Complete Level
+  - Egg 5 Pigs
+  - Lose Zero Lives
   challengeDifficulties:
   - 
   - 
@@ -25,11 +25,15 @@ MonoBehaviour:
   LifeTarget: 0
   EggAmmoTarget: 0
   ShotgunAmmoTarget: 0
-  TrackedPigs: 00000000
-  TrackedPigAmounts: 01000000
-  TrackedPigsByBulletTypeWithPigType: []
+  TrackedPigs: 
+  TrackedPigAmounts: 
+  TrackedPigsByBulletType_PigType_Amount: []
   TrackedPigAmountsByBullet: 
   TrackedPigIDWithPigType: 
   TrackedPigAmountsByID: 
   CertainNonAllowedInputs: 
-  ringsTypeAndAmount: {x: 2, y: 1}
+  ringsTypeAndAmount: {x: 0, y: 0}
+  totalBarnEggAmount: 0
+  specificBarnEggAmount: 0
+  eachBarnAmount: {x: 0, y: 0}
+  skipShowChallenges: 0

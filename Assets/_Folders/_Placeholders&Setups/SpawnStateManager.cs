@@ -404,7 +404,7 @@ public class SpawnStateManager : MonoBehaviour
 
         }
 
-
+        
         if (!isTestPlayer)
         {
             GameObject.Find("Player").GetComponent<PlayerStateManager>().ID.UiEvents.OnShowPlayerUI?.Invoke(true, 10, 0);

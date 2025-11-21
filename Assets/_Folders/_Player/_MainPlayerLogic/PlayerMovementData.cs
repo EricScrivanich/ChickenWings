@@ -45,6 +45,16 @@ public class PlayerMovementData : ScriptableObject
     public float flipLeftDownForceTime;
 
 
+    [Header("Dash")]
+    [field: SerializeField] public float dashForce { get; private set; }
+    [field: SerializeField] public float dashDurationTap { get; private set; }
+    [field: SerializeField] public float dashDurationMax { get; private set; }
+    [field: SerializeField] public float dashCooldown { get; private set; }
+
+    [Header("Drop")]
+    [field: SerializeField] public float dropCooldown { get; private set; }
+
+
     [Header("Whirlpool Variables")]
 
     public float maxAmpRadRatio = 0.5f;

@@ -18,7 +18,7 @@ public class TutorialData : ScriptableObject
     [SerializeField] private bool startButtonHidden = true;
     [SerializeField] private bool startInputsLocked;
 
-    
+
 
 
 
@@ -310,7 +310,7 @@ public class TutorialData : ScriptableObject
 
             case Type.ShowHiddenButtons:
                 // buttonHandler.FinishTween();
-                playerID.UiEvents.OnShowPlayerUI?.Invoke(true, buttonType, 2.5f);
+                playerID.UiEvents.OnShowPlayerUI?.Invoke(true, buttonType, 1.75f);
                 inputSystem.SetTempLockInput(-1);
 
                 break;
@@ -358,6 +358,8 @@ public class TutorialData : ScriptableObject
     {
         if (entered)
         {
+
+            PauseMenuButton.DisablePause?.Invoke(true);
             string[] i = ReturnAllowedInputs();
             if (i == null)
                 inputSystem.SetAllowedInputs(true, null);
@@ -381,6 +383,8 @@ public class TutorialData : ScriptableObject
         }
         else
         {
+
+            PauseMenuButton.DisablePause?.Invoke(false);
             if (ID < actionsForExitBubble.Length)
                 DoAction(actionsForExitBubble[ID]);
         }

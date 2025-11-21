@@ -64,11 +64,11 @@ public class MainMenuScript : MonoBehaviour
     void Awake()
     {
         isDay = BoundariesManager.isDay;
-        if (TransitionDirector.instance.mainMenuStarted)
-        {
-            MenuTypes[0].gameObject.SetActive(false);
+        // if (TransitionDirector.instance.mainMenuStarted)
+        // {
+        //     MenuTypes[0].gameObject.SetActive(false);
 
-        }
+        // }
 
 
         buttonPressed = false;
@@ -90,17 +90,20 @@ public class MainMenuScript : MonoBehaviour
     {
         coverPanel.SetActive(true);
         yield return new WaitForSeconds(.08f);
-        if (!TransitionDirector.instance.mainMenuStarted)
-        {
-            IntitialMenuTween(titleRect, 0, false);
+        // if (!TransitionDirector.instance.mainMenuStarted)
+        // {
+        //     IntitialMenuTween(titleRect, 0, false);
 
-        }
-        else
-        {
-            titleRect.anchoredPosition = new Vector2(titleRect.anchoredPosition.x, 0);
-            MenuTypes[0].gameObject.SetActive(true);
-        }
-        TransitionDirector.instance.mainMenuStarted = true;
+        // }
+        // else
+        // {
+        //     titleRect.anchoredPosition = new Vector2(titleRect.anchoredPosition.x, 0);
+        //     MenuTypes[0].gameObject.SetActive(true);
+        // }
+        // titleRect.anchoredPosition = new Vector2(titleRect.anchoredPosition.x, 0);
+        // MenuTypes[0].gameObject.SetActive(true);
+        IntitialMenuTween(titleRect, 0, false);
+        // TransitionDirector.instance.mainMenuStarted = true;
 
 
         for (int i = 0; i < buttonRects.Length; i++)

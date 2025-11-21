@@ -178,7 +178,17 @@ public class LevelCreatorNew : Editor
     private void DoAction(bool delete)
     {
         string name = newLevelName;
+        if (string.IsNullOrEmpty(name))
+        {
+            newLevelName = Parent.LevelName;
+            name = Parent.LevelName;
+        }
         Vector3 numbers = newLevelNumbers;
+        if (numbers == Vector3.zero)
+        {
+            newLevelNumbers = Parent.levelWorldAndNumber;
+            numbers = Parent.levelWorldAndNumber;
+        }
 
         if (ReturnLevelName(newLevelName, newLevelNumbers, false) != null || delete)
         {

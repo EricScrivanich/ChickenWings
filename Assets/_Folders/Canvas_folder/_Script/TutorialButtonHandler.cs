@@ -82,30 +82,36 @@ public class TutorialButtonHandler : MonoBehaviour
         }
         handGroup.GetComponent<RectTransform>().position = start;
 
+        handGroup.alpha = 0;
+
         handGroup.gameObject.SetActive(true);
-        handGroup.DOFade(1, .6f).From(0).SetEase(Ease.InSine).SetUpdate(true);
+        Sequence fadeSeq = DOTween.Sequence();
+        fadeSeq.AppendInterval(.4f);
+        fadeSeq.Append(handGroup.DOFade(.9f, .9f).SetEase(Ease.InSine).SetUpdate(true));
 
 
 
         if (tap)
         {
+            handSlideSeq.AppendInterval(0.4f);
             handSlideSeq.Append(handImage.rectTransform.DOScale(.7f, .45f).From(1).SetEase(Ease.InSine));
             handSlideSeq.Join(circleImage.rectTransform.DOScale(1.2f, 1.1f).From(.2f).SetEase(Ease.InSine));
             handSlideSeq.Join(circleImage.DOFade(0f, 1.4f).From(1).SetEase(Ease.InBack));
 
-            if (type == 0)
-            {
-                handSlideSeq.Join(centerImage.DOFade(.4f, .6f).From(0));
-            }
+            // if (type == 0)
+            // {
+            //     handSlideSeq.Join(centerImage.DOFade(.4f, .6f).From(0));
+            // }
             handSlideSeq.Append(handImage.rectTransform.DOScale(1, .6f).SetEase(Ease.OutSine));
-            if (type == 0)
-            {
-                handSlideSeq.Join(centerImage.DOFade(0, .6f));
-            }
+            // if (type == 0)
+            // {
+            //     handSlideSeq.Join(centerImage.DOFade(0, .6f));
+            // }
 
         }
         else
         {
+            handSlideSeq.AppendInterval(0.4f);
             handSlideSeq.Append(handImage.rectTransform.DOAnchorPosY(160, 0));
             handSlideSeq.Join(handImage.DOFade(1, 0.8f).From(0).SetEase(Ease.InSine));
             handSlideSeq.Join(handImage.rectTransform.DOScale(.9f, 0.8f).From(1.4f).SetEase(Ease.InOutSine));

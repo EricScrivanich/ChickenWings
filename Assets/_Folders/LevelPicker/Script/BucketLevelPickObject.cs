@@ -40,7 +40,7 @@ public class BucketLevelPickObject : ILevelPickerPathObject
 
 
 
-    public override void SetLastSelectable(Vector3Int num)
+    public override void SetLastSelectable(Vector3Int num, int beatenType)
     {
         if (LevelDataConverter.instance.CheckIfCompletedLevel(WorldNumber))
         {

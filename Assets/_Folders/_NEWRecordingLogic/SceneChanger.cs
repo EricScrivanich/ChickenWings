@@ -47,9 +47,10 @@ public class SceneChanger : MonoBehaviour
     public void PressForSceneTransition()
     {
 
-        TransitionDirector.instance.GoTo(LoadSceneWithTransition);
-        if (DoFeedback)
-            HapticFeedbackManager.instance.PressUIButton();
+        // TransitionDirector.instance.GoTo(LoadSceneWithTransition);
+        // if (DoFeedback)
+        //     HapticFeedbackManager.instance.PressUIButton();
+        SceneManagerScript.instance.LoadScene(LoadSceneWithTransition);
     }
 
     public void ShowPlayView(bool show)

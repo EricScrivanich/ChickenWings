@@ -91,7 +91,7 @@ public class AmmoShotgunState : AmmoBaseState
 
                 player.anim.SetBool(player.AimShotgunBool, false);
 
-                player.SetTimeScale(false, speedTimeDuration);
+                // player.SetTimeScale(false, speedTimeDuration);
 
             }
 
@@ -212,7 +212,7 @@ public class AmmoShotgunState : AmmoBaseState
 
         player.anim.SetBool(player.AimShotgunBool, false);
 
-        player.SetTimeScale(false, speedTimeDuration);
+        // player.SetTimeScale(false, speedTimeDuration);
         if (player.ID.ShotgunAmmo > 0)
         {
             player.ID.ShotgunAmmo--;

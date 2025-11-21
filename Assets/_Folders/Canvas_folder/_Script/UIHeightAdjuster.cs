@@ -72,7 +72,7 @@ public class UIHeightAdjuster : MonoBehaviour
 
     public void SetChallenge(LevelChallenges challengeSO, int i, string challenge, string difficulty, bool hasCompleted)
     {
-        Debug.LogError("Setting challenge: " + challenge + " with difficulty: " + difficulty + " at index: " + i);
+      
         if (rect == null) rect = GetComponent<RectTransform>();
         if (fillImage == null) fillImage = GetComponent<Image>();
         currentChallengeSO = challengeSO;
@@ -294,6 +294,6 @@ public class UIHeightAdjuster : MonoBehaviour
 
         // Apply the new height to the image
         rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
-        Debug.LogError("Adjusted height to: " + newHeight + " for text: " + targetText.text);
+       
     }
 }

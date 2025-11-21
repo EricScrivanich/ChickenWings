@@ -74,8 +74,12 @@ namespace KingdomOfNight
         public static void LoadFlappyFrenzy() { OpenScene("Assets/scenes/Main/FlappyFrenzy.unity"); }
         [MenuItem("Scenes/Main/LevelPicker")]
         public static void LoadLevelPicker() { OpenScene("Assets/scenes/Main/LevelPicker.unity"); }
+        [MenuItem("Scenes/Main/LoadScreen")]
+        public static void LoadLoadScreen() { OpenScene("Assets/scenes/Main/LoadScreen.unity"); }
         [MenuItem("Scenes/Main/MainMenu")]
         public static void LoadMainMenu() { OpenScene("Assets/scenes/Main/MainMenu.unity"); }
+        [MenuItem("Scenes/Main/ShaderWarmupScene")]
+        public static void LoadShaderWarmupScene() { OpenScene("Assets/scenes/Main/ShaderWarmupScene.unity"); }
         [MenuItem("Scenes/Main/TinyWingsTest")]
         public static void LoadTinyWingsTest() { OpenScene("Assets/scenes/Main/TinyWingsTest.unity"); }
         [MenuItem("Scenes/Main/TutorialVideos")]

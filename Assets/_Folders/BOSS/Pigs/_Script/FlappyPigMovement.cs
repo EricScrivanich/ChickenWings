@@ -6,6 +6,7 @@ using DG.Tweening;
 public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
 {
     [SerializeField] private bool isEnemySubType;
+    [SerializeField] private bool FallEasy;
     public float scaleFactor;
     private bool hasFullyEntered;
     private Sequence flapSeq;
@@ -107,7 +108,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     private static readonly float eggForceMagnitude = 8.76f;
 
     private static readonly float moveFreeDurationBounce = 0.3f;
-    private static readonly float moveFreeDurationEgg = 0.52f;
+    private float moveFreeDurationEgg = 0.52f;
     private static readonly float moveFreeDurationInverse = 0.7f;
 
     private static readonly float inverseMagnitude = -6f;
@@ -135,6 +136,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
 
 
     private bool turnedAnimation = false;
+    private bool stopMovement = false;
 
 
 
@@ -165,6 +167,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+
         // lineRenderer = GetComponent<LineRenderer>();
     }
     private bool setRotationTarget = false;
@@ -466,6 +469,8 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
 
     void FixedUpdate()
     {
+        if (stopMovement) return;
+
         if (!blinded && !setRotationTarget)
         {
             float xRange = transform.position.x - playerTarget.position.x;
@@ -515,10 +520,15 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
         else
             colRigid.offset = Vector2.up * sprite.localPosition.y;
 
-
-        if (blinded && blindDurationVar > blindDurationVar * .5f && transform.position.y < -2.5)
+        if (blinded && FallEasy)
         {
-            rb.AddForce(Vector2.up * addUpForceAmountBlinded);
+            rb.AddForce(Vector2.down * 1.5f);
+        }
+        else if (blinded && transform.position.y < -2.5)
+        {
+            if (!FallEasy)
+                rb.AddForce(Vector2.up * addUpForceAmountBlinded);
+
             Debug.LogError("Adding blinded up force of: " + Vector2.up * addUpForceAmountBlinded + " with duration of: " + blindDurationVar * .5f);
             return;
 
@@ -640,9 +650,12 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     private void OnCollisionEnter2D(Collision2D other)
     {
 
-        if (other.gameObject.CompareTag("Floor") && blinded)
+        if (blinded && other.gameObject.CompareTag("Floor"))
         {
+            moveFree = false;
             Damage(1, 0, -1);
+            stopMovement = false;
+            rb.gravityScale = 0;
 
             if (lives <= 0)
             {
@@ -753,6 +766,11 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
         flapSeq = DOTween.Sequence();
         flapSeq.Append(sprite.DOLocalMoveY(-tweenUpAmount * 1.1f, moveFreeDuration * .9f));
         colRigid.offset = Vector2.up * -tweenUpAmount * 1.1f;
+        if (FallEasy)
+        {
+            rb.gravityScale = 1f;
+            stopMovement = true;
+        }
 
 
 

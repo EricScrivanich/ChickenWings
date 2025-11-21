@@ -11,7 +11,7 @@ public class LevelPickerZoom : Editor
     private static readonly Dictionary<int, bool> s_ShowMoveHandle = new();
     private static readonly Dictionary<int, bool> s_ShowOutline = new();
 
-    
+    private static bool s_MoveOnSelect;
 
     // Static copy buffer
     private static bool s_HasCopy = false;
@@ -190,7 +190,15 @@ public class LevelPickerZoom : Editor
                 }
             }
         }
+        // --- Move On Select toggle ---
+        EditorGUILayout.Space(6);
 
+        s_MoveOnSelect = GUILayout.Toggle(
+            s_MoveOnSelect,
+            s_MoveOnSelect ? "Disable Move On Select" : "Enable Move On Select",
+            "Button",
+            GUILayout.Height(22)
+        );
 
 
         EditorGUILayout.HelpBox(
@@ -229,6 +237,16 @@ public class LevelPickerZoom : Editor
 
         var picker = (ILevelPickerPathObject)target;
         int id = picker.GetInstanceID();
+
+
+        if (s_MoveOnSelect)
+        {
+            Camera.main.transform.position = new Vector3(picker.CameraPositionAndOrhtoSize.x, picker.CameraPositionAndOrhtoSize.y, picker.CameraPositionAndOrhtoSize.z);
+            Camera.main.orthographicSize = picker.CameraPositionAndOrhtoSize.w;
+            lpMan.SetHillPos(picker.CameraPositionAndOrhtoSize);
+            EditorUtility.SetDirty(lpMan);
+            SceneView.RepaintAll();
+        }
 
         if (!s_ShowGizmo.TryGetValue(id, out bool show) || !show)
             return;

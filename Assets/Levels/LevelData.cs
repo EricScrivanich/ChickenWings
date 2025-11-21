@@ -7,6 +7,7 @@ public class LevelData : ScriptableObject
 {
 
     private int spawnStepsPerRandom;
+    [field: SerializeField] public short unlockItemOnComplete { get; private set; } = -1;
     private LevelDataRandomSpawnData[] randomSpawnData;
     private int currentSpawnStepCount = 0;
     [Header("Starting Stats")]

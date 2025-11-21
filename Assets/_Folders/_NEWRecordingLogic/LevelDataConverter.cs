@@ -137,6 +137,7 @@ public class LevelDataConverter : MonoBehaviour
 
 
 
+
     public void SetCurrentLevelInstance(Vector3Int levelNumber)
     {
         if (levelNumber == Vector3.zero) currentLevelInstance = -1;
@@ -152,6 +153,9 @@ public class LevelDataConverter : MonoBehaviour
             }
         }
     }
+
+
+
 
 
     public void AddLevel(LevelData level)
@@ -984,6 +988,9 @@ public class LevelDataConverter : MonoBehaviour
 #endif
 
 
+
+
+
     public void LoadLevelSavedData(LevelData data)
     {
         for (int i = 0; i < currentLoadedSavedLevelDataByWorld.levels.Length; i++)
@@ -1089,6 +1096,7 @@ public class LevelDataConverter : MonoBehaviour
             // }
 
         }
+        AddUnlockedItem(data.unlockItemOnComplete, data.levelWorldAndNumber.x, true);
 
         SavePermanentLevelData();
 
@@ -1096,12 +1104,23 @@ public class LevelDataConverter : MonoBehaviour
 
     }
 
-    public void SavePermanentLevelData()
+    public void SavePermanentLevelData(int levelWorld = -1)
     {
         string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
-        string savePath = Path.Combine(GetPermanentLevelSaveDirectory(currentLoadedSavedLevelDataByWorld.LevelWorld), ".json");
+        string savePath = "";
+        if (levelWorld >= 0)
+            savePath = Path.Combine(GetPermanentLevelSaveDirectory(levelWorld), ".json");
+        else
+            savePath = Path.Combine(GetPermanentLevelSaveDirectory(currentLoadedSavedLevelDataByWorld.LevelWorld), ".json");
+
         File.WriteAllText(savePath, json);
-        Debug.Log("Saved level data to: " + savePath);
+
+        Debug.LogError("Saved level data to: " + savePath);
+        Debug.LogError("Saved Level Unlocked item is: " + currentLoadedSavedLevelDataByWorld.NextUnlockedItem);
+        for (int i = 0; i < currentLoadedSavedLevelDataByWorld.unlockedMapItems.Count; i++)
+        {
+            Debug.LogError("Unlocked Map Item of : " + i + " is: " + currentLoadedSavedLevelDataByWorld.unlockedMapItems[i]);
+        }
     }
     public void SaveLevelDataForDeath(int difficulty, ushort step)
     {
@@ -1160,58 +1179,162 @@ public class LevelDataConverter : MonoBehaviour
 
     }
 
-    public LevelSavedData ReturnAndLoadWorldLevelData(LevelData data, int world = 0)
+    public bool CheckIfLevelCompleted(int indexCheck, Vector2Int levelNumber)
     {
-        if (world > 0)
-        {
-            string path = Path.Combine(GetPermanentLevelSaveDirectory(world), ".json");
-            if (!File.Exists(path))
-            {
-
-
-
-                if (data == null && world > 0)
-                    currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)world);
-                else
-                    currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
-
-                string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
-                File.WriteAllText(path, json);
-
-
-            }
-            else
-            {
-                string json = File.ReadAllText(path);
-                currentLoadedSavedLevelDataByWorld = JsonUtility.FromJson<SavedLevelDataByWorld>(json);
-
-
-            }
-            return null;
-        }
         if (currentLoadedSavedLevelDataByWorld == null)
         {
-            string path = Path.Combine(GetPermanentLevelSaveDirectory(data.levelWorldAndNumber.x), ".json");
-            if (!File.Exists(path))
+            Debug.LogError("No current loaded saved level data by world to check level completion.");
+            return false;
+        }
+        if (currentLoadedSavedLevelDataByWorld.levels == null || currentLoadedSavedLevelDataByWorld.levels.Length <= indexCheck)
+        {
+            return false;
+        }
+        if (currentLoadedSavedLevelDataByWorld.levels[indexCheck].LevelNumber == levelNumber)
+        {
+            return currentLoadedSavedLevelDataByWorld.levels[indexCheck].CompletedLevel;
+        }
+        else
+        {
+            Debug.LogError("Level number mismatch at index: " + indexCheck + ". Expected: " + levelNumber + ", Found: " + currentLoadedSavedLevelDataByWorld.levels[indexCheck].LevelNumber);
+
+            for (int i = 0; i < currentLoadedSavedLevelDataByWorld.levels.Length; i++)
             {
-                Debug.Log("No saved data found for world: " + data.levelWorldAndNumber.x + ". Creating new save file." + " save path: " + path);
-
-                LevelSavedData save = new LevelSavedData(data);
-
-                currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
-                currentLoadedSavedLevelDataByWorld.AddLevel(save);
-                string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
-                File.WriteAllText(path, json);
-
-
+                if (currentLoadedSavedLevelDataByWorld.levels[i].LevelNumber == levelNumber)
+                {
+                    Debug.LogError("Found matching level number at index: " + i);
+                    return currentLoadedSavedLevelDataByWorld.levels[i].CompletedLevel;
+                }
             }
-            else
+            return false;
+        }
+    }
+    public short GetNextUnlockedItem(ushort worldIndex)
+    {
+        if (currentLoadedSavedLevelDataByWorld != null)
+        {
+            if (currentLoadedSavedLevelDataByWorld.unlockedMapItems == null || currentLoadedSavedLevelDataByWorld.unlockedMapItems.Count == 0)
             {
-                string json = File.ReadAllText(path);
-                currentLoadedSavedLevelDataByWorld = JsonUtility.FromJson<SavedLevelDataByWorld>(json);
-
-
+                Debug.LogError("No unlocked map items found for world: " + worldIndex);
+                return -1;
             }
+            return currentLoadedSavedLevelDataByWorld.NextUnlockedItem;
+        }
+        else return -1;
+
+
+
+    }
+    public void ResetNextUnlockedIndex(int worldIndex)
+    {
+        if (currentLoadedSavedLevelDataByWorld == null)
+        {
+            Debug.LogError("No current loaded saved level data by world to reset next unlocked index.");
+            return;
+        }
+        currentLoadedSavedLevelDataByWorld.AddUnlockableMapItems(-1);
+        SavePermanentLevelData(worldIndex);
+    }
+
+    public void AddUnlockedItem(short itemID, int worldIndex, bool ignoreSave = false)
+    {
+        if (currentLoadedSavedLevelDataByWorld == null)
+        {
+            Debug.LogError("No current loaded saved level data by world to add unlocked item.");
+            return;
+        }
+        currentLoadedSavedLevelDataByWorld.AddUnlockableMapItems(itemID);
+        Debug.LogError("Added unlocked item: " + itemID + " to world: " + worldIndex);
+        // if (!ignoreSave)
+        SavePermanentLevelData(worldIndex);
+    }
+
+    public List<short> ReturnUnlockedItems()
+    {
+        if (currentLoadedSavedLevelDataByWorld == null)
+        {
+            Debug.LogError("No current loaded saved level data by world to return unlocked items.");
+            return new List<short>();
+        }
+        return currentLoadedSavedLevelDataByWorld.unlockedMapItems;
+    }
+
+    public void LoadWorldData(int worldNumber)
+    {
+        string path = Path.Combine(GetPermanentLevelSaveDirectory(worldNumber), ".json");
+        if (!File.Exists(path))
+        {
+            Debug.Log("No saved data found for world: " + worldNumber + ". Creating new save file." + " save path: " + path);
+
+            currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)worldNumber);
+            string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
+            File.WriteAllText(path, json);
+        }
+        else
+        {
+            string json = File.ReadAllText(path);
+            Debug.Log("Loading level data for world: " + worldNumber + " from path: " + path);
+            currentLoadedSavedLevelDataByWorld = JsonUtility.FromJson<SavedLevelDataByWorld>(json);
+        }
+    }
+
+    public LevelSavedData ReturnAndLoadWorldLevelData(LevelData data, int world = 0)
+    {
+        // if (world > 0)
+        // {
+        //     string path = Path.Combine(GetPermanentLevelSaveDirectory(world), ".json");
+        //     if (!File.Exists(path))
+        //     {
+
+
+
+        //         // if (data == null && world > 0)
+        //         //     currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)world);
+        //         // else
+        //         //     currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
+
+        //         // string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
+        //         // File.WriteAllText(path, json);
+        //         Debug.LogError("No saved data found for world: " + world + ". Creating new save file." + " save path: " + path);
+        //         return null;
+
+
+        //     }
+        //     else
+        //     {
+        //         string json = File.ReadAllText(path);
+        //         Debug.LogError("Loading level data for world: " + world + " from path: " + path);
+        //         currentLoadedSavedLevelDataByWorld = JsonUtility.FromJson<SavedLevelDataByWorld>(json);
+
+
+        //     }
+        //     return null;
+        // }
+        if (currentLoadedSavedLevelDataByWorld == null)
+        {
+            Debug.Log("No saved data loaded yet for world: " + data.levelWorldAndNumber.x + ". Loading now.");
+            return null;
+            // string path = Path.Combine(GetPermanentLevelSaveDirectory(data.levelWorldAndNumber.x), ".json");
+            // if (!File.Exists(path))
+            // {
+            //     Debug.Log("No saved data found for world: " + data.levelWorldAndNumber.x + ". Creating new save file." + " save path: " + path);
+
+            //     LevelSavedData save = new LevelSavedData(data);
+
+            //     currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
+            //     currentLoadedSavedLevelDataByWorld.AddLevel(save);
+            //     string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
+            //     File.WriteAllText(path, json);
+
+
+            // }
+            // else
+            // {
+            //     string json = File.ReadAllText(path);
+            //     currentLoadedSavedLevelDataByWorld = JsonUtility.FromJson<SavedLevelDataByWorld>(json);
+
+
+            // }
         }
 
         else if (currentLoadedSavedLevelDataByWorld != null && currentLoadedSavedLevelDataByWorld.LevelWorld != (short)data.levelWorldAndNumber.x)
@@ -1223,7 +1346,7 @@ public class LevelDataConverter : MonoBehaviour
 
                 LevelSavedData save = new LevelSavedData(data);
 
-                currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
+                // currentLoadedSavedLevelDataByWorld = new SavedLevelDataByWorld((short)data.levelWorldAndNumber.x);
                 currentLoadedSavedLevelDataByWorld.AddLevel(save);
                 string json = JsonUtility.ToJson(currentLoadedSavedLevelDataByWorld, true);
                 File.WriteAllText(path, json);
@@ -1358,7 +1481,7 @@ public class LevelDataConverter : MonoBehaviour
         return directory;
     }
 
-    public void SaveSteroidData(ushort[] equippedSteroids = null, int addedUnlockedSteroid = -1)
+    public void SaveSteroidData(ushort[] equippedSteroids = null, int lastEditedIndex = -1, int addedUnlockedSteroid = -1)
     {
         // Use a writeable path and build a valid file path
         string path = Path.Combine(Application.persistentDataPath, "SteroidData.json");
@@ -1383,6 +1506,7 @@ public class LevelDataConverter : MonoBehaviour
             // Ensure arrays are non-null
             if (data.equippedSteroids == null) data.equippedSteroids = new ushort[0];
             if (data.unlockedSteroids == null) data.unlockedSteroids = new ushort[0];
+            if (data.lastEditedIndex >= 0) data.lastEditedIndex = (ushort)lastEditedIndex;
 
             // Apply changes
             if (equippedSteroids != null)

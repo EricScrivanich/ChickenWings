@@ -9,6 +9,7 @@ public class PlayerDropState : PlayerBaseState
     private bool switchedToBounce;
     public override void EnterState(PlayerStateManager player)
     {
+        player.DoDropCooldown();
 
         player.ChangeCollider(2);
         player.SetHingeTargetAngle(180);
@@ -30,6 +31,7 @@ public class PlayerDropState : PlayerBaseState
 
     }
 
+   
 
     public override void ExitState(PlayerStateManager player)
 

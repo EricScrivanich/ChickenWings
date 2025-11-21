@@ -13,6 +13,7 @@ public class NestLevelPickObject : ILevelPickerPathObject
     [SerializeField] private Transform flipObjects;
     [SerializeField] private Transform stars;
     [SerializeField] private SpriteRenderer badge;
+    [SerializeField] private Transform badgeTransform;
     [SerializeField] private SpriteRenderer badgeInside;
     private bool doBadgeSeq = false;
 
@@ -23,16 +24,21 @@ public class NestLevelPickObject : ILevelPickerPathObject
     [SerializeField] private Transform linePosition;
     // private Sequence arrowSequence;
     [SerializeField] private Vector3 level_World_Number_Special;
-   
+
 
     [SerializeField] private Transform selectedArrowTransform;
     [SerializeField] private float seqDur;
-    private bool isSelected = false;
+
 
 
 
     [SerializeField] private SpriteRenderer[] starSprites;
     [SerializeField] private SpriteRenderer[] starBlurSprites;
+
+    private Vector2 inverseParentScale = new Vector2(.5f, .3f);
+
+    private Vector2 badgeScaleByParentScale => new Vector2(1f, 1.75f);
+    private Vector2 starScaleByParentScale => new Vector2(1, 1.5f);
 
 
 
@@ -45,6 +51,11 @@ public class NestLevelPickObject : ILevelPickerPathObject
     {
         blurOther.color = unbeatenColor;
         blurMain.color = unbeatenColor;
+
+        float p = Mathf.InverseLerp(inverseParentScale.x, inverseParentScale.y, transform.localScale.y);
+        Debug.Log("P value: " + p + " for scale: " + transform.localScale);
+        badgeTransform.localScale = Vector3.one * Mathf.Lerp(badgeScaleByParentScale.x, badgeScaleByParentScale.y, p);
+        stars.transform.localScale = Vector3.one * Mathf.Lerp(starScaleByParentScale.x, starScaleByParentScale.y, p);
         // selectedArrowTransform.GetComponent<SpriteRenderer>().color = unbeatenColor;
         // nestBlur.enabled = false;
         // pigBlur.enabled = false;
@@ -80,7 +91,7 @@ public class NestLevelPickObject : ILevelPickerPathObject
     //         pigBlur.enabled = true;
     //         selectedArrowTransform.gameObject.SetActive(true);
 
-            
+
     //     }
     //     else
     //     {
@@ -93,27 +104,38 @@ public class NestLevelPickObject : ILevelPickerPathObject
     //     // For example, change color or scale to indicate selection
     // }
 
-    public override void SetLastSelectable(Vector3Int num)
+    public override void SetLastSelectable(Vector3Int num, int type)
     {
-        if (WorldNumber.x > num.x)
+        // type 0 = sleep, type 1 = awake, type 2 = beaten
+        if (type == 0)
         {
-            sleepingPig.SetActive(true);
-            flappingPig.SetActive(false);
+            if (sleepingPig == null)
+            {
+                flappingPig.SetActive(true);
+            }
+            else
+            {
+                sleepingPig.SetActive(true);
+                flappingPig.SetActive(false);
+            }
+
             stars.gameObject.SetActive(false);
             return;
 
         }
 
-        if (WorldNumber.y == num.y)
+        if (type == 1)
         {
-            sleepingPig.SetActive(false);
+            if (sleepingPig != null)
+                sleepingPig.SetActive(false);
             flappingPig.SetActive(true);
             stars.gameObject.SetActive(false);
 
         }
-        else if (WorldNumber.y < num.y)
+        else if (type == 2)
         {
-            sleepingPig.SetActive(false);
+            if (sleepingPig != null)
+                sleepingPig.SetActive(false);
             flappingPig.SetActive(false);
             blurMain.color = beatenColor;
             // selectedArrowTransform.GetComponent<SpriteRenderer>().color = beatenColor;
@@ -127,10 +149,74 @@ public class NestLevelPickObject : ILevelPickerPathObject
         }
         else
         {
-            sleepingPig.SetActive(true);
-            flappingPig.SetActive(false);
+            if (sleepingPig == null)
+            {
+                flappingPig.SetActive(true);
+            }
+            else
+            {
+                sleepingPig.SetActive(true);
+                flappingPig.SetActive(false);
+            }
             stars.gameObject.SetActive(false);
         }
+
+
+
+
+        // if (WorldNumber.x > num.x)
+        // {
+        //     if (sleepingPig == null)
+        //     {
+        //         flappingPig.SetActive(true);
+        //     }
+        //     else
+        //     {
+        //         sleepingPig.SetActive(true);
+        //         flappingPig.SetActive(false);
+        //     }
+
+        //     stars.gameObject.SetActive(false);
+        //     return;
+
+        // }
+
+        // if (WorldNumber.y == num.y)
+        // {
+        //     if (sleepingPig != null)
+        //         sleepingPig.SetActive(false);
+        //     flappingPig.SetActive(true);
+        //     stars.gameObject.SetActive(false);
+
+        // }
+        // else if (WorldNumber.y < num.y)
+        // {
+        //     if (sleepingPig != null)
+        //         sleepingPig.SetActive(false);
+        //     flappingPig.SetActive(false);
+        //     blurMain.color = beatenColor;
+        //     // selectedArrowTransform.GetComponent<SpriteRenderer>().color = beatenColor;
+
+        //     if (transform.localScale.x < 0)
+        //     {
+        //         flipObjects.localScale = new Vector3(-1, 1, 1);
+        //     }
+
+        //     ReadyStarSeq();
+        // }
+        // else
+        // {
+        //     if (sleepingPig == null)
+        //     {
+        //         flappingPig.SetActive(true);
+        //     }
+        //     else
+        //     {
+        //         sleepingPig.SetActive(true);
+        //         flappingPig.SetActive(false);
+        //     }
+        //     stars.gameObject.SetActive(false);
+        // }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -315,7 +401,7 @@ public class NestLevelPickObject : ILevelPickerPathObject
         }
     }
 
-  
+
     [SerializeField] private Vector2 backHillPos;
     [SerializeField] private float backHillScale;
     [SerializeField] private Vector2 frontHillPos;

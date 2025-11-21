@@ -222,6 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 5316091639143918078}
+  doFlap: 1
   inTime: 0.6
   inEase: 3
   outTime: 0.5
@@ -231,7 +232,7 @@ MonoBehaviour:
   pigTransform: {fileID: 1406789089851505711}
   animationSpeed: 0.9
   shadow: {fileID: 7698767416221386283}
-  shadowStartEndY: {x: -0.74, y: -0.1}
+  shadowEnd: {fileID: 0}
   shadowStartEndScale: {x: 0.95, y: 0.75}
 --- !u!210 &7911071157503630330
 SortingGroup:

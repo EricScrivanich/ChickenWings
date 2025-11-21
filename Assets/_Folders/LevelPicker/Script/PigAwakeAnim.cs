@@ -5,6 +5,7 @@ using DG.Tweening;
 public class PigAwakeAnim : MonoBehaviour
 {
     [SerializeField] private Animator anim;
+    [SerializeField] private bool doFlap;
     [SerializeField] private float inTime;
     [SerializeField] private Ease inEase;
     [SerializeField] private float outTime;
@@ -32,12 +33,21 @@ public class PigAwakeAnim : MonoBehaviour
         sequence.Append(pigTransform.DOLocalMoveY(endLocalY, inTime).SetEase(inEase).From(startLocalY));
 
         sequence.JoinCallback(DoFlap);
-        sequence.Join(shadow.DOLocalMove(shadowEnd.localPosition, inTime).SetEase(inEase).From(Vector2.zero));
-        sequence.Join(shadow.DOScale(shadowStartEndScale.y, inTime).SetEase(inEase).From(shadowStartEndScale.x));
+        if (shadow != null)
+        {
+            sequence.Join(shadow.DOLocalMove(shadowEnd.localPosition, inTime).SetEase(inEase).From(Vector2.zero));
+            sequence.Join(shadow.DOScale(shadowStartEndScale.y, inTime).SetEase(inEase).From(shadowStartEndScale.x));
+        }
+
 
         sequence.Append(pigTransform.DOLocalMoveY(startLocalY, outTime).SetEase(outEase));
-        sequence.Join(shadow.DOLocalMove(Vector2.zero, outTime).SetEase(outEase));
-        sequence.Join(shadow.DOScale(shadowStartEndScale.x, outTime).SetEase(outEase));
+
+        if (shadow != null)
+        {
+            sequence.Join(shadow.DOLocalMove(Vector2.zero, outTime).SetEase(outEase));
+            sequence.Join(shadow.DOScale(shadowStartEndScale.x, outTime).SetEase(outEase));
+        }
+
         sequence.Play().SetLoops(-1);
 
 
@@ -46,7 +56,8 @@ public class PigAwakeAnim : MonoBehaviour
 
     void DoFlap()
     {
-        anim.SetTrigger("Flap");
+        if (doFlap)
+            anim.SetTrigger("Flap");
     }
 
     // Update is called once per frame

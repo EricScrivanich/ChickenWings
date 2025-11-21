@@ -37,7 +37,7 @@ public class SteroidVial : UIButton
 
 
     private SteroidSO steroidData;
-    public Action<int> OnSteroidSelected;
+
     private Vector2 startPos;
     private Sequence selectSeq;
     private Sequence rotateSeq;
@@ -429,39 +429,62 @@ public class SteroidVial : UIButton
             rotateSeq.Kill();
     }
 
-    public override void OnHighlight(bool highlighted)
+    public override void OnHighlight(bool highlighted, bool fromPointer = false)
     {
-        if (highlighted)
+
+        if (fromPointer)
         {
-            if (!isEquippedSlot)
-                bgImageFill.color = uiParent.highlightVialBGFillColor;
-            else
-                bgImageFill.color = Color.white;
+            if (highlighted)
+            {
+                if (!isEquippedSlot)
+                    bgImageFill.color = uiParent.highlightVialBGFillColor;
+                else
+                    bgImageFill.color = Color.white;
+            }
+            else if (!isSelected)
+            {
+                if (!isEquippedSlot)
+                    bgImageFill.color = uiParent.normalVialBGFillColor;
+                else
+                    bgImageFill.color = Color.clear;
+            }
+            else if (isSelected)
+            {
+                if (!isEquippedSlot)
+                    bgImageFill.color = uiParent.selectedVialBGFillColor;
+                else
+                    bgImageFill.color = uiParent.equippedVialBGBlurColor;
+            }
         }
-        else if (!isSelected)
+        else
         {
-            if (!isEquippedSlot)
-                bgImageFill.color = uiParent.normalVialBGFillColor;
-            else
-                bgImageFill.color = Color.clear;
+            uiParent.SelectVial(index);
         }
-        else if (isSelected)
-        {
-            if (!isEquippedSlot)
-                bgImageFill.color = uiParent.selectedVialBGFillColor;
-            else
-                bgImageFill.color = uiParent.equippedVialBGBlurColor;
-        }
+
 
 
     }
 
-    public override void OnPress()
+    public override void OnPress(bool fromCursor = false)
     {
         if (!isEquippedSlot)
-            OnSteroidSelected?.Invoke(index);
-        else
+        {
+
             uiParent.SelectVial(index);
+
+            // uiParent.SetEquipButton(canBeEquipped);
+        }
+
+        // OnSteroidSelected?.Invoke(index);
+
+        else
+        {
+            uiParent.SelectVial(index);
+        }
+
+        if (!fromCursor)
+            uiParent.HandleEquipButton();
+
 
     }
 

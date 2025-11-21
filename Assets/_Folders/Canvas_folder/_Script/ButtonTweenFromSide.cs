@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
+using PrimeTween;
 
 public class ButtonTweenFromSide : MonoBehaviour
 {
@@ -16,47 +16,7 @@ public class ButtonTweenFromSide : MonoBehaviour
 
     private bool hasTransitioned = false;
 
-#if UNITY_EDITOR
-    public bool setInitialPos;
-    public bool resetToInitial;
-    public float adjustXStartAmount;
-    public float adjustYStartAmount;
-    public bool adjustStart;
-    public bool adjustCurrent;
-
-    void OnValidate()
-    {
-        if (setInitialPos)
-        {
-            normalAnchoredPosition = GetComponent<RectTransform>().anchoredPosition;
-            setInitialPos = false;
-        }
-        if (resetToInitial)
-        {
-            GetComponent<RectTransform>().anchoredPosition = normalAnchoredPosition;
-            resetToInitial = false;
-        }
-        if (adjustStart)
-        {
-            var rect = GetComponent<RectTransform>();
-            if (rect.anchoredPosition.x < 0) adjustXStartAmount = -adjustXStartAmount;
-            normalAnchoredPosition = new Vector2(normalAnchoredPosition.x + adjustXStartAmount, normalAnchoredPosition.y + adjustYStartAmount);
-            adjustStart = false;
-            adjustXStartAmount = 0;
-            adjustYStartAmount = 0;
-        }
-        if (adjustCurrent)
-        {
-            var rect = GetComponent<RectTransform>();
-            if (rect.anchoredPosition.x < 0) adjustXStartAmount = -adjustXStartAmount;
-            rect.anchoredPosition = new Vector2(normalAnchoredPosition.x + adjustXStartAmount, normalAnchoredPosition.y + adjustYStartAmount);
-            adjustCurrent = false;
-            adjustXStartAmount = 0;
-            adjustYStartAmount = 0;
-        }
-    }
-
-#endif
+    // 
 
     void Awake()
     {
@@ -105,16 +65,63 @@ public class ButtonTweenFromSide : MonoBehaviour
         {
             float dur = duration;
             if (mult != 0) dur *= mult;
+            else dur *= 1.2f;
             hasTransitioned = true;
             var rect = GetComponent<RectTransform>();
 
             gameObject.SetActive(true);
 
-            rect.DOAnchorPos(normalPosition, dur).SetEase(Ease.OutBack);
+            Sequence seq = Sequence.Create(useUnscaledTime: true)
+            .ChainDelay(.9f)
+            .Chain(Tween.UIAnchoredPosition(rect, normalPosition, dur, Ease.OutBack));
+
+            // rect.DOAnchorPos(normalPosition, dur).SetEase(Ease.OutBack).SetUpdate(true);
 
         }
 
     }
+
+    // #if UNITY_EDITOR
+    //     public bool setInitialPos;
+    //     public bool resetToInitial;
+    //     public float adjustXStartAmount;
+    //     public float adjustYStartAmount;
+    //     public bool adjustStart;
+    //     public bool adjustCurrent;
+
+    //     void OnValidate()
+    //     {
+    //         if (setInitialPos)
+    //         {
+    //             normalAnchoredPosition = GetComponent<RectTransform>().anchoredPosition;
+    //             setInitialPos = false;
+    //         }
+    //         if (resetToInitial)
+    //         {
+    //             GetComponent<RectTransform>().anchoredPosition = normalAnchoredPosition;
+    //             resetToInitial = false;
+    //         }
+    //         if (adjustStart)
+    //         {
+    //             var rect = GetComponent<RectTransform>();
+    //             if (rect.anchoredPosition.x < 0) adjustXStartAmount = -adjustXStartAmount;
+    //             normalAnchoredPosition = new Vector2(normalAnchoredPosition.x + adjustXStartAmount, normalAnchoredPosition.y + adjustYStartAmount);
+    //             adjustStart = false;
+    //             adjustXStartAmount = 0;
+    //             adjustYStartAmount = 0;
+    //         }
+    //         if (adjustCurrent)
+    //         {
+    //             var rect = GetComponent<RectTransform>();
+    //             if (rect.anchoredPosition.x < 0) adjustXStartAmount = -adjustXStartAmount;
+    //             rect.anchoredPosition = new Vector2(normalAnchoredPosition.x + adjustXStartAmount, normalAnchoredPosition.y + adjustYStartAmount);
+    //             adjustCurrent = false;
+    //             adjustXStartAmount = 0;
+    //             adjustYStartAmount = 0;
+    //         }
+    //     }
+
+    // #endif
 
     // Update is called once per frame
 

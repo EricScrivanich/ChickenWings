@@ -193,6 +193,7 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
 
 
         Transform bulletSpawn = flipped ? bulletSpawnLeft : bulletSpawnRight;
+        AudioManager.instance.PlayShoutgunNoise(0);
         shotgunBlasts.SpawnTransformOverride(bulletSpawn.position, bulletSpawn.eulerAngles.z, -1);
 
         moveToPos = false;

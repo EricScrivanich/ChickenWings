@@ -217,7 +217,8 @@ public class ResetManager : MonoBehaviour
 
             Debug.Log("Check Point is: " + checkPoint);
         }
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManagerScript.instance.ReloadCurrentScene();
         lvlID.usingCheckPoint = true;
         // Unpause audio when resetting the game
 

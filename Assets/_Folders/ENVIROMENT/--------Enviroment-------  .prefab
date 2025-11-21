@@ -50,6 +50,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -97,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shaderTypes: 0
+  currentShaderType: 4
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0
@@ -150,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60cfa92679e9a42b5a71a6874a36fbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setActive: 0
   Prefabs:
   - {fileID: 5094126811466418310}
   - {fileID: 8586121124573146781}
@@ -205,6 +209,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -252,7 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shaderTypes: 0
+  currentShaderType: 3
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0

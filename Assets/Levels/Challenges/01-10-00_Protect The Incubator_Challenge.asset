@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 58def7dd2d7aa4e7f90f39993f49d3dd, type: 3}
-  m_Name: 01-06-00_Shotty Like a Melody_Challenge
+  m_Name: 01-10-00_Protect The Incubator_Challenge
   m_EditorClassIdentifier: 
   lvlID: {fileID: 0}
-  challenges: 010000000300000002000000
+  challenges: 010000000500000002000000
   challengeTexts:
   - Complete Level
-  - Kill 10 Pigs
+  - Complete Level With Three Shotgun Bullets
   - Lose Zero Lives
   challengeDifficulties:
   - 
@@ -24,12 +24,16 @@ MonoBehaviour:
   - 
   LifeTarget: 3
   EggAmmoTarget: 0
-  ShotgunAmmoTarget: 0
-  TrackedPigs: ffffffff
-  TrackedPigAmounts: 0a000000
-  TrackedPigsByBulletTypeWithPigType: []
+  ShotgunAmmoTarget: 3
+  TrackedPigs: 
+  TrackedPigAmounts: 
+  TrackedPigsByBulletType_PigType_Amount: []
   TrackedPigAmountsByBullet: 
   TrackedPigIDWithPigType: 
   TrackedPigAmountsByID: 
   CertainNonAllowedInputs: 
   ringsTypeAndAmount: {x: 0, y: 0}
+  totalBarnEggAmount: 0
+  specificBarnEggAmount: 0
+  eachBarnAmount: {x: 0, y: 0}
+  skipShowChallenges: 0

@@ -8,6 +8,7 @@ using System.Collections;
 public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 {
     [SerializeField] private ChallengesUIManager challengeManager;
+    [SerializeField] private TextMeshProUGUI levelLengthText;
     [SerializeField] private GameObject badgeObject;
     [SerializeField] private RectTransform chickenObject;
     [SerializeField] private ButtonTouchByIndex[] difficultyButtons;
@@ -240,7 +241,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
                 ammos = data.StartingAmmos;
                 maxLives = data.StartingLives;
             }
-            Debug.LogError("Amount: " + amount);
+
             int currentLives = maxLives;
             Vector2Int lives = new Vector2Int(currentLives, maxLives);
             for (int i = 0; i < amount; i++)
@@ -379,7 +380,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
             {
 
                 bool canPress = i - 1 < validCheckPoints;
-                Debug.Log($"Setting cp button {i} with index {i - 1}, canPress: {canPress}, redo: {redo}, validCheckPoints: {validCheckPoints}");
+
                 buttons[i].SetData(i - 1, this, !canPress, redo);
             }
             CheckCheckPoints(checkPointToLoad);
@@ -387,6 +388,18 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
         else
             levelNumberText.gameObject.SetActive(false);
 
+
+
+
+        float totalSeconds = (data.finalSpawnStep * LevelRecordManager.TimePerStep) / FrameRateManager.BaseTimeScale;
+
+        int minutes = Mathf.FloorToInt(totalSeconds / 60);
+        int seconds = Mathf.FloorToInt(totalSeconds % 60);
+        int decimals = Mathf.FloorToInt((totalSeconds - Mathf.Floor(totalSeconds)) * 100); // Get 2 decimal places
+
+
+
+        levelLengthText.text = $"{minutes:D2}:{seconds:D2}.{decimals:D2}";
         InputSystemSelectionManager.instance.SetNextSelectedByDirection(playButton, Vector2.up);
 
 
@@ -415,21 +428,24 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
     private IEnumerator DelayToTransition()
     {
         levelPickerManager.BackOutSpecial(.8f);
-        yield return new WaitForSeconds(.7f);
+        yield return new WaitForSeconds(.5f);
         if (levelData.tutorialData == null)
         {
             // TransitionDirector.instance.GoTo("MainLevelPlayer", levelData.tutorialData.ReturnButtonType());
-            TransitionDirector.instance.UndoDestroy();
-            SceneManager.LoadScene("MainLevelPlayer");
-            Destroy(TransitionDirector.instance.gameObject);
+            // TransitionDirector.instance.UndoDestroy();
+            // SceneManager.LoadScene("MainLevelPlayer");
+            SceneManagerScript.instance.LoadScene("MainLevelPlayer");
+
+            // Destroy(TransitionDirector.instance.gameObject);
 
         }
         else
         {
-            TransitionDirector.instance.UndoDestroy();
+            // TransitionDirector.instance.UndoDestroy();
 
-            SceneManager.LoadScene("MainLevelPlayTutorial");
-            Destroy(TransitionDirector.instance.gameObject);
+            // SceneManager.LoadScene("MainLevelPlayTutorial");
+            SceneManagerScript.instance.LoadScene("MainLevelPlayTutorial");
+            // Destroy(TransitionDirector.instance.gameObject);
 
             // TransitionDirector.instance.GoTo("MainLevelPlayTutorial");
         }

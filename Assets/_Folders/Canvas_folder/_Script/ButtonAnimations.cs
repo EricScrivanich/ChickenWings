@@ -74,6 +74,7 @@ public class ButtonAnimations : MonoBehaviour
         player.UiEvents.OnDashUI += DashSeq;
         player.UiEvents.OnDropUI += DropSeq;
         player.UiEvents.OnFinishDashAndDropCooldown += FinishCooldowns;
+        player.UiEvents.SetDashAndDropCooldownDurations += SetCooldown;
         dashCooldownIN.color = colorSO.disabledButtonColorFull;
         dashCooldownGroup.alpha = 0;
         dropCooldownIN.color = colorSO.disabledButtonColorFull;
@@ -86,12 +87,21 @@ public class ButtonAnimations : MonoBehaviour
         player.UiEvents.OnDashUI -= DashSeq;
         player.UiEvents.OnDropUI -= DropSeq;
         player.UiEvents.OnFinishDashAndDropCooldown -= FinishCooldowns;
+        player.UiEvents.SetDashAndDropCooldownDurations -= SetCooldown;
     }
 
     public void RedoCooldownColors()
     {
         dashCooldownIN.color = colorSO.disabledButtonColorFull;
         dropCooldownIN.color = colorSO.disabledButtonColorFull;
+    }
+
+    private void SetCooldown(float dashDur, float dropDur)
+    {
+        dashCooldownDur = dashDur;
+        dropCooldownDur = dropDur;
+        player.UiEvents.SetDashAndDropCooldownDurations -= SetCooldown;
+
     }
 
 
@@ -118,7 +128,7 @@ public class ButtonAnimations : MonoBehaviour
         int flip = isRight ? -1 : 1;
         if (isRight) scale.x *= -1;
 
-        img.color = colorSO.normalButtonColorFull;
+        img.color = colorSO.highlightButtonColor;
         if (seq.isAlive) seq.Stop();
 
         // store the new sequence back into the same ref
@@ -273,7 +283,19 @@ public class ButtonAnimations : MonoBehaviour
         }
         if (finishDrop)
         {
-            if (dropSeq.isAlive) dropSeq.Complete();
+            if (dropSeq.isAlive) dropSeq.Stop();
+            dropSeq = Sequence.Create().Group(Tween.Scale(dropImage.rectTransform, 1, 0.15f))
+
+        .Group(Tween.Color(dropImage, colorSO.normalButtonColor, 0.15f))
+         .Group(
+                Tween.Custom(
+                    target: dropCooldownGroup,
+                    1f,
+                    0f,
+                    .15f,
+                    (target, val) => target.alpha = val
+                )
+            );
         }
 
         if (isColorPicker)

@@ -37,6 +37,29 @@ public class SavedLevelDataByWorld
     public short LevelWorld;
     public LevelSavedData[] levels;
 
+    public List<short> unlockedMapItems = new List<short>();
+
+    public short NextUnlockedItem = -1;
+
+    public void AddUnlockableMapItems(short index)
+    {
+        if (index == -1)
+        {
+            NextUnlockedItem = -1;
+            return;
+        }
+        if (unlockedMapItems == null)
+        {
+            unlockedMapItems = new List<short>();
+        }
+        if (!unlockedMapItems.Contains(index))
+        {
+            unlockedMapItems.Add(index);
+            NextUnlockedItem = index;
+        }
+
+    }
+
     public SavedLevelDataByWorld(short levelWorld)
     {
         LevelWorld = levelWorld;
@@ -241,7 +264,7 @@ public class TemporaryLevelCheckPointData
         CurrentCheckPoint = data.CurrentCheckPoint;
         CurrentLives = (short)data.Lives;
 
-        
+
         if (data.Ammos != null)
             CurrentAmmos = (short[])data.Ammos.Clone();
 

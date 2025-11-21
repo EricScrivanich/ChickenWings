@@ -59,6 +59,15 @@ public class InputSystemSelectionManager : MonoBehaviour
             StartCoroutine(WaitAndSetSelected(nextSelectedByDirection));
             // nextSelectedByDirection = null;
             checkDirection = Vector2.zero;
+            return;
+
+        }
+
+        var obj = FindNextValidSelectable(lastSelected);
+
+        if (obj != null && !stopTrackingLastSelected && obj.GetComponent<UIButton>() != null && !obj.GetComponent<UIButton>().skipReselect)
+        {
+            lastSelectedByMenu = obj;
 
         }
 
@@ -80,6 +89,12 @@ public class InputSystemSelectionManager : MonoBehaviour
 
         yield return null; // Wait one frame
         EventSystem.current.SetSelectedGameObject(obj);
+        if (!stopTrackingLastSelected && obj.GetComponent<UIButton>() != null && !obj.GetComponent<UIButton>().skipReselect)
+        {
+            lastSelectedByMenu = obj;
+
+        }
+
         lastSelected = obj;
         isSetting = false;
     }
@@ -116,13 +131,15 @@ public class InputSystemSelectionManager : MonoBehaviour
         return null;
     }
 
-
-    public void SetNewWindow(INavigationUI newWindow, string tag = "none")
+    private bool stopTrackingLastSelected = false;
+    public void SetNewWindow(INavigationUI newWindow, bool stopTracking)
     {
-        checkTag = tag;
+        stopTrackingLastSelected = stopTracking;
 
-        EventSystem.current.SetSelectedGameObject(newWindow.GetFirstSelected());
-        lastSelected = EventSystem.current.currentSelectedGameObject;
+        StartCoroutine(WaitAndSetSelected(newWindow.GetFirstSelected()));
+
+        // EventSystem.current.SetSelectedGameObject(newWindow.GetFirstSelected());
+        // lastSelected = EventSystem.current.currentSelectedGameObject;
     }
 
     public void SetNextSelected(GameObject nextObj)
@@ -168,7 +185,12 @@ public class InputSystemSelectionManager : MonoBehaviour
         if (menuGroups == null || index < 0 || index >= menuGroups.Length) return;
 
         if (enable && lastSelectedByMenu != null)
+        {
             EventSystem.current.SetSelectedGameObject(lastSelectedByMenu);
+            stopTrackingLastSelected = false;
+
+        }
+
         else
         {
             lastSelectedByMenu = EventSystem.current.currentSelectedGameObject;

@@ -19,7 +19,9 @@ public class PauseMenuButton : MonoBehaviour
     private Image fillImage;
     [SerializeField] private ButtonColorsSO colorSO;
     public static Action<bool> OnPauseGame;
+    public static Action<bool> DisablePause;
     private float lastTimeScale;
+    private bool pauseDisabled = false;
 
 
 
@@ -49,10 +51,17 @@ public class PauseMenuButton : MonoBehaviour
         PauseMenu.SetActive(false);
 
     }
+    private void HandleDisablePause(bool disable)
+    {
+        pauseDisabled = disable;
+
+    }
 
     // Update is called once per frame
     public void InstantPause()
     {
+        if (pauseDisabled)
+            return;
         if (Time.timeScale == 0 || gameOver) return;
 
         PauseMenuButton.OnPauseGame?.Invoke(true);
@@ -71,6 +80,8 @@ public class PauseMenuButton : MonoBehaviour
     private float targetTime = 0;
     public void NormalPause()
     {
+        if (pauseDisabled)
+            return;
         // if (Time.timeScale < FrameRateManager.TargetTimeScale || gameOver) return;
         if (!isPaused && Time.timeScale != 0 && !gameOver)
         {
@@ -114,10 +125,12 @@ public class PauseMenuButton : MonoBehaviour
     private void OnEnable()
     {
         ResetManager.GameOverEvent += OnGameOveer;
+        DisablePause += HandleDisablePause;
     }
     private void OnDisable()
     {
         ResetManager.GameOverEvent -= OnGameOveer;
+        DisablePause -= HandleDisablePause;
 
     }
 

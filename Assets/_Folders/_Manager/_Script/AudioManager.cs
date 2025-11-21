@@ -11,7 +11,8 @@ public class AudioManager : MonoBehaviour
 
 
     public float SfxVolume { get; private set; } = 1f;
-    [SerializeField] private float baseMusicVolume = 0.7f;
+    [SerializeField] private float baseSfxVolume;
+    [SerializeField] private float baseMusicVolume;
     private float currentWindmillPitch;
     public float SfxPitch { get; private set; } = 1f; // Default value for newPitchSlow
     public static AudioManager instance;
@@ -219,17 +220,18 @@ public class AudioManager : MonoBehaviour
         pigAudioSource.Stop();
         windMillAudioSource.Stop();
         AudioListener.pause = false;
+        this.SfxVolume = sfxVolume * baseSfxVolume;
 
         musicSource.volume = musicVol * baseMusicVolume;
-        audioSource.volume = sfxVolume;
-        this.SfxVolume = sfxVolume; // Update the sfxVolume field
-        nonSlowSource.volume = sfxVolume;
-        ringPassSource.volume = sfxVolume;
-        pigAudioSource.volume = sfxVolume;
-        windMillAudioSource.volume = sfxVolume;
+        audioSource.volume = SfxVolume;
+        // Update the SfxVolume field
+        nonSlowSource.volume = SfxVolume;
+        ringPassSource.volume = SfxVolume;
+        pigAudioSource.volume = SfxVolume;
+        windMillAudioSource.volume = SfxVolume;
 
         if (!mutePlayerInputVolume)
-            chickenSource.volume = sfxVolume;
+            chickenSource.volume = SfxVolume;
         else
             chickenSource.volume = 0;
 

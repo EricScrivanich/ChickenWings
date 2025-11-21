@@ -240,7 +240,16 @@ public class PlayerStateManager : MonoBehaviour
     [HideInInspector]
     public bool canDrop;
     [HideInInspector]
+    public bool canCoyoteDrop = true;
+    [HideInInspector]
+
+    public bool holdingDashCoyote = true;
+    [HideInInspector]
+    public bool canCoyoteDash = true;
+    [HideInInspector]
     public bool stillDashing;
+    [HideInInspector]
+    public bool redropOnDash = false;
     [HideInInspector]
     public bool isDropping;
     [HideInInspector]
@@ -270,7 +279,7 @@ public class PlayerStateManager : MonoBehaviour
     private bool shootChainThenReset;
     private bool canShootShotgun = true;
     private bool inSlowMo = false;
-    private float dropCooldownTime = 2f;
+
     private readonly int rotationLerpSpeed = 20;
     private readonly int jumpRotSpeed = 200;
     private int frozenRotSpeed = 350;
@@ -460,7 +469,13 @@ public class PlayerStateManager : MonoBehaviour
         bounceOffGround = false;
         bool hasBigEgg = false;
         eggDownForce = 2.4f;
+        float dashDur = MovementData.dashCooldown;
+        float dashMinDuration = MovementData.dashDurationTap;
+        float dashMaxDuration = MovementData.dashDurationMax;
+        float dashForce = MovementData.dashForce;
+        float dropDur = MovementData.dropCooldown;
 
+        // 0. Bounce, 1. fast egg, 2. big egg, 3. fast dash, 4. fast Drop, 5. drop reset, 6. dash master
         for (int i = 0; i < steroidData.equippedSteroids.Length; i++)
         {
             Debug.Log("EQUIPPED STEROIDS: " + steroidData.equippedSteroids[i]);
@@ -476,6 +491,22 @@ public class PlayerStateManager : MonoBehaviour
                     if (ammoManager != null) ammoManager.DoSteroidAction(2);
                     hasBigEgg = true;
                     break;
+                case 3:
+                    dashDur *= .5f;
+
+                    break;
+                case 4:
+                    dropDur *= .7f;
+
+                    break;
+                case 5:
+                    redropOnDash = true;
+
+                    break;
+                case 6:
+                    dashForce *= 1.3f;
+
+                    break;
 
             }
         }
@@ -484,6 +515,11 @@ public class PlayerStateManager : MonoBehaviour
         {
             if (ammoManager != null) ammoManager.DoSteroidAction(0);
         }
+
+        DashState.CacheVariables(dashForce, dashMinDuration, dashMaxDuration);
+        dashCooldownWait = new WaitForSeconds(dashDur);
+        dropCooldownWait = new WaitForSeconds(dropDur);
+        ID.UiEvents.SetDashAndDropCooldownDurations?.Invoke(dashDur, dropDur);
     }
     void Start()
     {
@@ -498,7 +534,7 @@ public class PlayerStateManager : MonoBehaviour
         if (invincibleMat != null) invincibleMat.SetFloat("_Alpha", 0);
 
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
-        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), mutePlayerAudio);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .3f), PlayerPrefs.GetFloat("SFXVolume", .8f), mutePlayerAudio);
 
         if (mutePlayerAudio) Time.timeScale = .95f;
         HapticFeedbackManager.instance.LoadSavedData();
@@ -705,6 +741,11 @@ public class PlayerStateManager : MonoBehaviour
         {
             GameObject.Find("EggButton")?.SetActive(false);
         }
+
+
+
+
+
 
         HandleSteroids();
     }
@@ -1190,6 +1231,53 @@ public class PlayerStateManager : MonoBehaviour
 
     #region handle events
 
+    private WaitForSeconds dropCooldownWait;
+    private WaitForSeconds dashCooldownWait;
+    private WaitForSeconds coyoteTimeWait = new WaitForSeconds(0.08f);
+
+    private Coroutine dashCooldownCoroutine;
+    private Coroutine dropCooldownCoroutine;
+
+    public void DoDashCooldown()
+    {
+        canDash = false;
+        canCoyoteDash = false;
+        dashCooldownCoroutine = StartCoroutine(DashCooldown());
+    }
+    public void DoDropCooldown()
+    {
+        canDrop = false;
+        canCoyoteDrop = false;
+        dropCooldownCoroutine = StartCoroutine(DropCooldown());
+    }
+    private IEnumerator DropCooldown()
+    {
+        yield return dropCooldownWait;
+        canCoyoteDrop = true;
+        yield return coyoteTimeWait;
+        canDrop = true;
+        if (!canCoyoteDrop)
+            HandleDrop();
+    }
+
+    private IEnumerator DashCooldown()
+    {
+        yield return dashCooldownWait;
+        canCoyoteDash = true;
+        yield return coyoteTimeWait;
+        canDash = true;
+        if (!canCoyoteDash)
+        {
+            HandleDash(true);
+            if (!holdingDashCoyote)
+            {
+                HandleDash(false);
+            }
+        }
+
+
+    }
+
     void HandleJump()
     {
         // if (!disableButtons && !ID.IsTwoTouchPoints)
@@ -1317,6 +1405,18 @@ public class PlayerStateManager : MonoBehaviour
 
 
         // ResetHoldJump();
+
+        if (!canDrop)
+        {
+            if (canCoyoteDrop)
+                canCoyoteDrop = false;
+            else
+                HapticFeedbackManager.instance.PlayerButtonFailure();
+
+            return;
+        }
+        HapticFeedbackManager.instance.PlayerButtonPress();
+        ID.UiEvents.OnDropUI?.Invoke();
         isDropping = true;
         SetShotgunRotTarget(10);
 
@@ -1343,8 +1443,39 @@ public class PlayerStateManager : MonoBehaviour
         //     ID.globalEvents.SetCanDashSlash?.Invoke(false);
         //     ID.events.EnableButtons(false);
         // }
+
+        if (holding && !canDash)
+        {
+            if (!canCoyoteDash)
+            {
+                HapticFeedbackManager.instance.PlayerButtonFailure();
+            }
+            if (canCoyoteDash)
+            {
+                canCoyoteDash = false;
+                holdingDashCoyote = true;
+
+            }
+
+
+
+
+            return;
+        }
         if (holding)
         {
+            canDash = false;
+            canCoyoteDash = false;
+            HapticFeedbackManager.instance.PlayerButtonPress();
+            ID.UiEvents.OnDashUI?.Invoke(true);
+            if (redropOnDash && !canDrop)
+            {
+
+                StopCoroutine(dropCooldownCoroutine);
+                ID.UiEvents.OnFinishDashAndDropCooldown?.Invoke(false, true);
+                canDrop = true;
+            }
+
             SetShotgunRotTarget(5);
 
             SwitchState(DashState);
@@ -1352,6 +1483,8 @@ public class PlayerStateManager : MonoBehaviour
         }
         else
         {
+            if (holdingDashCoyote) holdingDashCoyote = false;
+
             isDashing = false;
         }
 

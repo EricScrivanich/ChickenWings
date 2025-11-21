@@ -65,7 +65,10 @@ public class ILevelPickerPathObject : MonoBehaviour
     }
 
 
-
+    public Transform GetPathTransform()
+    {
+        return pathTransform;
+    }
 
     public virtual void OnHighlight(bool highlight)
     {
@@ -73,9 +76,13 @@ public class ILevelPickerPathObject : MonoBehaviour
         DoHighlightSequence(highlight);
     }
 
-    public virtual void OnPress()
+    public virtual void OnPress(bool fromCursor)
     {
-        LevelPickerManager.OnLevelPickerObjectSelected?.Invoke(this);
+        if (!fromCursor)
+        {
+            LevelPickerManager.OnLevelPickerObjectSelected?.Invoke(this);
+        }
+
 
     }
 
@@ -95,7 +102,7 @@ public class ILevelPickerPathObject : MonoBehaviour
     public Vector3 PosScaleBackHill;
     public Vector3 PosScaleFrontHill;
 
-    public virtual void SetLastSelectable(Vector3Int num)
+    public virtual void SetLastSelectable(Vector3Int num, int type)
     {
 
     }
@@ -109,6 +116,7 @@ public class ILevelPickerPathObject : MonoBehaviour
         isSelected = selected;
         if (selected)
         {
+          
             Color col = new Color(blurMain.color.r, blurMain.color.g, blurMain.color.b, 1f);
             blurMain.color = col;
             blurMain.enabled = true;
@@ -162,24 +170,29 @@ public class ILevelPickerPathObject : MonoBehaviour
         }
         if (!doSeq)
         {
-            arrow.gameObject.SetActive(false);
+            // arrow.gameObject.SetActive(false);
             blurMain.enabled = false;
             if (blurOther != null) blurOther.enabled = false;
             return;
         }
         else
         {
-            arrow.gameObject.SetActive(true);
+            // arrow.gameObject.SetActive(true);
             blurMain.enabled = true;
             if (blurOther != null) blurOther.enabled = true;
         }
 
         arrowSequence = DOTween.Sequence();
-        arrowSequence.Append(arrow.DOLocalMoveY(1.3f, .3f).SetEase(Ease.OutQuad).From(1f));
-        arrowSequence.Join(blurMain.DOFade(.6f, .3f).From(0f));
+        // arrowSequence.Append(arrow.DOLocalMoveY(1.3f, .3f).SetEase(Ease.OutQuad).From(1f));
+        arrowSequence.Append(blurMain.DOFade(.75f, .3f).From(0f));
+        if (blurOther != null)
+            arrowSequence.Join(blurOther.DOFade(.75f, .3f).From(0f));
+
         // arrowSequence.Join(arrow.DORotate(new Vector3(0, 180, 0), .3f).SetEase(Ease.InSine).From(Vector3.zero));
-        arrowSequence.Append(arrow.DOLocalMoveY(1f, .3f).SetEase(Ease.InQuad));
-        arrowSequence.Join(blurMain.DOFade(0, .3f));
+        // arrowSequence.Append(arrow.DOLocalMoveY(1f, .3f).SetEase(Ease.InQuad));
+        arrowSequence.Append(blurMain.DOFade(.1f, .3f));
+        if (blurOther != null)
+            arrowSequence.Join(blurOther.DOFade(.1f, .3f));
 
         // arrowSequence.Join(selectedArrowTransform.DORotate(new Vector3(0, 360, 0), seqDur).SetEase(Ease.OutSine));
         arrowSequence.SetLoops(-1);

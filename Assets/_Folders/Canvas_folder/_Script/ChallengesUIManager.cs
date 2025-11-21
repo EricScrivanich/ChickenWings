@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class ChallengesUIManager : MonoBehaviour
 {
 
+
     private bool doBadgeSeq = false;
     [SerializeField] private RectTransform challengeCardParent;
     [SerializeField] private float moveCardDur;
@@ -171,7 +172,7 @@ public class ChallengesUIManager : MonoBehaviour
 
             // Calculate the new Y position for the next card
             float cardHeight = cardRect.sizeDelta.y;
-            Debug.Log("CARD HEIGHT" + cardHeight);
+         
             currentYPosition -= (cardHeight + padding); // Move down by height of card + padding
 
 
@@ -219,10 +220,10 @@ public class ChallengesUIManager : MonoBehaviour
             EasyModeText.SetActive(true);
         if (challenges == null || challenges.skipShowChallenges)
         {
-            if (challenges == null)
-                Debug.Log("No Challenges to Show ");
-            if (challenges.skipShowChallenges)
-                Debug.Log("Skipping Challenges Display");
+            // if (challenges == null)
+             
+            // if (challenges.skipShowChallenges)
+            //     Debug.Log("Skipping Challenges Display");
             gameObject.SetActive(false);
             return;
         }
@@ -259,14 +260,13 @@ public class ChallengesUIManager : MonoBehaviour
                 // Set the text for the challenge and difficulty
 
                 // setting completed to false since we are testing, (Last Bool parameter)
-                Debug.Log("Setting Challenge Card: " + i + " with text: " + currentLevelChallenge.challengeTexts[i] + " and difficulty: " + currentLevelChallenge.challengeDifficulties[i]);
+                // Debug.Log("Setting Challenge Card: " + i + " with text: " + currentLevelChallenge.challengeTexts[i] + " and difficulty: " + currentLevelChallenge.challengeDifficulties[i]);
                 challengeCard.SetChallenge(currentLevelChallenge, i,
                  currentLevelChallenge.challengeTexts[i],
                  currentLevelChallenge.challengeDifficulties[i],
                  savedLevelData.ChallengeCompletion[i]);
                 // log saved level data name and challenge completion
-                Debug.Log("Saved Level Data: " + savedLevelData.LevelName + " Challenge Completion: " + savedLevelData.ChallengeCompletion[i]);
-
+              
                 challengeCards[i] = challengeCard;
 
                 // Adjust the position of the newly instantiated challenge card
@@ -398,7 +398,7 @@ public class ChallengesUIManager : MonoBehaviour
     {
         badgeSeq = DOTween.Sequence();
         Image b = certifiedBadge.gameObject.GetComponentInChildren<Image>();
-        Debug.Log("Blur: " + b.name);
+      
 
         badgeSeq.Append(certifiedBadge.DOLocalMove(startBadgePos, .7f));
         badgeSeq.Join(b.DOFade(1, .7f).From(0));
@@ -431,7 +431,7 @@ public class ChallengesUIManager : MonoBehaviour
 
             rect.DOLocalMoveX(245, moveCardDur).SetEase(Ease.OutBack).SetUpdate(true);
             yield return new WaitForSecondsRealtime(moveCardDur - .1f);
-            Debug.LogError("Moving Card: " + i + " to position: " + rect.localPosition.x + " with size: " + rect.sizeDelta.y);
+           
 
             int c = currentLevelChallenge.ReturnChallengeCompletion(i, true);
             if (c <= 0)
@@ -464,7 +464,7 @@ public class ChallengesUIManager : MonoBehaviour
             RectTransform rect = challengeCards[i].GetComponent<RectTransform>();
             rect.localPosition = new Vector2(baseX, baseY);
             baseY -= (rect.sizeDelta.y + spacingBetweenCards);
-            Debug.Log("Setting Card Position: " + i + "With size: " + rect.sizeDelta.y + " and spacing: " + spacingBetweenCards);
+           
 
 
         }
@@ -537,7 +537,7 @@ public class ChallengesUIManager : MonoBehaviour
     {
         if (!hasSetCardHeights && currentLevelChallenge != null)
         {
-            Debug.Log("Setting Card Heights for");
+          
             StartCoroutine(DelayToLineCount());
             hasSetCardHeights = true;
         }

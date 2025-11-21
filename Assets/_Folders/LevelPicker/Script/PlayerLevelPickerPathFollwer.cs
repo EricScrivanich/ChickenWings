@@ -52,14 +52,32 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     {
         pathManager = p;
     }
+    [SerializeField] private UnlockableMapItem mapItem;
+    [field: SerializeField] public Transform unlockableTargetTransform { get; private set; }
+    [SerializeField] private bool doAnim;
+    [SerializeField] private bool resetAnim;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
 
 
+
         // transform.position = paths[pathIndex].path.GetPoint(2);
 
 
+    }
+    private void OnValidate()
+    {
+        if (doAnim)
+        {
+            doAnim = false;
+            mapItem.DoUnlockedAnimation(unlockableTargetTransform.position);
+        }
+        if (resetAnim)
+        {
+            resetAnim = false;
+            mapItem.ResetUnlockAnimation();
+        }
     }
 
     // private void OnValidate()
@@ -128,13 +146,13 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     }
     private int currentPathIndex;
     private int futurePathIndex;
-    public void DoPathToPoint(PathCreator path, float distance, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots)
+    public void DoPathToPoint(PathCreator path, float distance, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots, Transform finalPathTarget)
     {
         if (followPathCoroutine != null)
         {
             StopCoroutine(followPathCoroutine);
         }
-        followPathCoroutine = StartCoroutine(DoPath(path, distance, addedPaths, addedDistancesToTravel, addedPathIndices, addedPathRoots));
+        followPathCoroutine = StartCoroutine(DoPath(path, distance, addedPaths, addedDistancesToTravel, addedPathIndices, addedPathRoots, finalPathTarget));
         hitZoom = false;
 
 
@@ -150,29 +168,24 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     // }
 
     private Sequence zoomSequence;
-    private void ZoomCamera(float distancePercent, Vector2 pos, float time)
+    private bool recheckPathDistance = false;
+
+    public void SetRecheckPathDistance(bool r)
     {
-        if (zoomSequence != null && zoomSequence.IsActive() && zoomSequence.IsPlaying())
-        {
-            zoomSequence.Kill();
-        }
-
-        zoomSequence = DOTween.Sequence();
-        targetZoom = Mathf.Lerp(minMaxZoom.x, minMaxZoom.y, distancePercent * .01f);
-        zoomSequence.Append(Camera.main.DOOrthoSize(targetZoom, 0.5f))
-                    .OnComplete(() => Debug.Log("Camera zoomed to: " + targetZoom + " at distance percent: " + distancePercent))
-                    .SetUpdate(true);
-
-
+        recheckPathDistance = r;
     }
     private float targetZoom;
     private bool hitZoom = true;
 
-    private IEnumerator DoPath(PathCreator path, float distanceToTravel, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots)
+    private IEnumerator DoPath(PathCreator path, float distanceToTravel, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots, Transform finalPathTarget)
     {
         if (path == null) yield break;
 
+        bool addtionalPaths = addedPaths != null;
+
         anim.SetBool("Run", true);
+
+        Debug.LogError("Doing path on path: " + path.name + " to distance: " + distanceToTravel);
 
         pathData = path.GetComponent<LevelPickerPathData>();
         // transform.position = path.path.GetPointAtDistance(0);
@@ -189,7 +202,10 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
                (direction == -1 && currentDistance > distanceToTravel))
         {
 
-
+            if (!addtionalPaths && recheckPathDistance)
+            {
+                distanceToTravel = path.path.GetClosestDistanceAlongPath(finalPathTarget.position);
+            }
 
             float remainingDist = Mathf.Abs(distanceToTravel - currentDistance);
             float t = Mathf.Clamp01(remainingDist / 1.3f); // <= Easing radius 
@@ -263,7 +279,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
             if (addedPathIndices.Count <= 0) addedPathIndices = null;
             addedPathRoots.RemoveAt(0);
             if (addedPathRoots.Count <= 0) addedPathRoots = null;
-            followPathCoroutine = StartCoroutine(DoPath(nextPath, distanceToTravel2, addedPaths, addedDistancesToTravel, addedPathIndices, addedPathRoots));
+            followPathCoroutine = StartCoroutine(DoPath(nextPath, distanceToTravel2, addedPaths, addedDistancesToTravel, addedPathIndices, addedPathRoots, finalPathTarget));
 
         }
         else

@@ -19,7 +19,7 @@ public class PlayerDashState : PlayerBaseState
     // private float dashDurationMin = .35f;
     // private float dashDurationMax = .69f;
 
-    private readonly Vector2 dashForce = new Vector2(11.6f, 0);
+    private Vector2 dashForce = new Vector2(11.6f, 0);
     private float dragAmount = 2.2f;
     private float initialDragAmount = .35f;
     private float dashDurationMin = .32f;
@@ -31,10 +31,19 @@ public class PlayerDashState : PlayerBaseState
 
 
     private bool hasFinishedDash;
+    public void CacheVariables(float dashPower, float dashDurationMinInput, float dashDurationMaxInput)
+    {
+        dashForce = new Vector2(dashPower, 0);
+        // dashForce = new Vector2(dashPower, 0);
+        dashDurationMin = dashDurationMinInput;
+        dashDurationMax = dashDurationMaxInput;
+
+    }
 
 
     public override void EnterState(PlayerStateManager player)
     {
+
         player.rb.angularVelocity = 0;
         player.SetHingeTargetAngle(270);
 
@@ -79,6 +88,9 @@ public class PlayerDashState : PlayerBaseState
         if (!hasFinishedDash)
         {
             hasFinishedDash = true;
+            player.DoDashCooldown();
+            player.ID.UiEvents.OnDashUI?.Invoke(false);
+
             player.anim.SetTrigger(player.FinishDashTrigger);
             // player.rb.freezeRotation = false;
 
@@ -128,7 +140,7 @@ public class PlayerDashState : PlayerBaseState
     {
 
         dashingTime += Time.deltaTime;
-        if ((dashingTime > dashDurationMin && !player.isDashing || player.isDashing && dashingTime > dashDurationMax) && !passedTime)
+        if (!passedTime && (dashingTime > dashDurationMin && !player.isDashing || player.isDashing && dashingTime > dashDurationMax))
         {
 
 
@@ -137,7 +149,10 @@ public class PlayerDashState : PlayerBaseState
             if (!hasFinishedDash)
             {
                 hasFinishedDash = true;
+                player.DoDashCooldown();
                 player.anim.SetTrigger(player.FinishDashTrigger);
+
+                player.ID.UiEvents.OnDashUI?.Invoke(false);
 
                 if (player.isDashing)
                     player.ID.events.OnDash?.Invoke(false);
