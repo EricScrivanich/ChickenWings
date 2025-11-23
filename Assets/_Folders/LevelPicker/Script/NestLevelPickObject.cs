@@ -137,6 +137,7 @@ public class NestLevelPickObject : ILevelPickerPathObject
             if (sleepingPig != null)
                 sleepingPig.SetActive(false);
             flappingPig.SetActive(false);
+            stars.gameObject.SetActive(true);
             blurMain.color = beatenColor;
             // selectedArrowTransform.GetComponent<SpriteRenderer>().color = beatenColor;
 

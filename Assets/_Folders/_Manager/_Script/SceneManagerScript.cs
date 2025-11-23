@@ -41,14 +41,14 @@ public class SceneManagerScript : MonoBehaviour
     {
         if (loadingScene) return;
         loadingScene = true;
-       
+
         StartCoroutine(LoadSceneCoroutine(sceneName));
 
     }
     private IEnumerator LoadSceneCoroutine(string sceneName)
     {
         // OnFadeTranstion?.Invoke(true, fadeInDuration, sceneName);
-        yield return new WaitForSecondsRealtime(fadeInDuration + .2f);
+        // yield return new WaitForSecondsRealtime(fadeInDuration + .2f);
         yield return null;
         SceneManager.LoadScene(sceneName);
         if (Time.timeScale == 0 && (sceneName == "MainMenu" || sceneName == "LevelPicker"))

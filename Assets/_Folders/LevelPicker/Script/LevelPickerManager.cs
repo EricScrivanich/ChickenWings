@@ -610,6 +610,11 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
             ZoomSeqOld(data, layerShownFrom);
             return;
         }
+
+        Ease ease = easeType;
+
+        if (doingZoomSeq)
+            ease = Ease.OutSine;
         if (data == Vector4.zero)
             data = BaseCameraData;
 
@@ -632,7 +637,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
         // Camera zoom
         Camera.main.DOOrthoSize(data.w, dur)
-                   .SetEase(easeType)
+                   .SetEase(ease)
                    .SetUpdate(true);
 
         // Camera move
@@ -640,17 +645,17 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
             new Vector3(data.x, data.y, data.z),
             dur
         )
-        .SetEase(easeType)
+        .SetEase(ease)
         .SetUpdate(true);
 
         // Hill move
         frontHillParent.DOLocalMove(hillPos, dur)
-                       .SetEase(easeType)
+                       .SetEase(ease)
                        .SetUpdate(true);
 
         // Hill scale
         frontHillParent.DOScale(hillScale, dur)
-                       .SetEase(easeType)
+                       .SetEase(ease)
                        .SetUpdate(true);
 
         // Additional parallax objects
@@ -661,12 +666,12 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                                          data.y * parralaxMovementMultipliers[i].y);
 
             additionalParralaxObjects[i].DOLocalMove(target, dur)
-                       .SetEase(easeType)
+                       .SetEase(ease)
                        .SetUpdate(true);
         }
 
         // Layers fade
-        DoLayerStuff(layerShownFrom, delayToMoveCam + dur, easeType);
+        DoLayerStuff(layerShownFrom, delayToMoveCam + dur, ease);
     }
 
     // private Coroutine camMoveCoroutine;
@@ -697,10 +702,11 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     // }
     private Coroutine UpdateUIPositionsCoroutine;
 
-
+    private bool doingZoomSeq = false;
     private IEnumerator UpdateUIPositions(float dur)
     {
         float delay = .2f;
+        doingZoomSeq = true;
         playerPathFollower.SetRecheckPathDistance(true);
 
         int steps = Mathf.CeilToInt(dur / delay);
@@ -718,6 +724,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
         {
             b.UpdateRectPosition();
         }
+        doingZoomSeq = false;
         playerPathFollower.SetRecheckPathDistance(false);
 
 
