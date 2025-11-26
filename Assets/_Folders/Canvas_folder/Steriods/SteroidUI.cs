@@ -23,6 +23,7 @@ public class SteroidUI : MonoBehaviour, INavigationUI
 
 
     [Header("Syringe Variables")]
+    [SerializeField] private bool useUnlockTestArray;
     [SerializeField] private ushort[] unlockedSyringes;
 
 
@@ -169,9 +170,15 @@ public class SteroidUI : MonoBehaviour, INavigationUI
 
         unlockedAmountText.text = "(" + savedData.unlockedSteroids.Length.ToString() + "/" + steroidsData.Length.ToString() + ")";
         List<ushort> equippedList = new List<ushort>(savedData.equippedSteroids);
+        List<ushort> unlockedList;
 
+        if (useUnlockTestArray)
+        {
+            unlockedList = new List<ushort>(unlockedSyringes);
 
-        List<ushort> unlockedList = new List<ushort>(savedData.unlockedSteroids);
+        }
+        else
+           unlockedList = new List<ushort>(savedData.unlockedSteroids);
         // List<ushort> unlockedList = new List<ushort>(unlockedSyringes);
 
 
@@ -613,7 +620,7 @@ public class SteroidUI : MonoBehaviour, INavigationUI
             syringeRotateSeq.Append(syringeRect.DORotate(Vector3.forward * startRot, .15f).SetEase(Ease.OutBack));
 
             syringeRotateSeq.Play().SetUpdate(true);
-            LevelDataConverter.instance.SaveSteroidData(equippedSteroids.ConvertAll(i => (ushort)steroidsData[i].ID).ToArray(),selectedIndex);
+            LevelDataConverter.instance.SaveSteroidData(equippedSteroids.ConvertAll(i => (ushort)steroidsData[i].ID).ToArray(), selectedIndex);
             // var equippedVial = Instantiate(equippedVialPrefab, equippedVialParent);
             // equippedVial.transform.localScale = new Vector3(0, 1, 1);
             // var s = equippedVial.GetComponent<SteroidVial>();

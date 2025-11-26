@@ -11,6 +11,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
 
     private float speed;
+    [SerializeField] private Transform linePosition;
 
 
 
@@ -119,13 +120,21 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
     private float currentDistance;
 
+    private void SetPositionUsingLinePoint(Vector2 pointToMatch)
+    {
+        if (linePosition == null) return;
+
+        //transform.position = new Vector2(pointToMatch.x, pointToMatch.y - linePosition.localPosition.y);
+        transform.position = pointToMatch;
+    }
+
     public void SetInitialPostionAndLayer(PathCreator path, float distance)
     {
         if (path == null) return;
 
         currentDistance = distance;
 
-        transform.position = (Vector2)path.path.GetPointAtDistance(currentDistance);
+        SetPositionUsingLinePoint(path.path.GetPointAtDistance(currentDistance));
         lastDistance = path.GetCustomPointDistanceAtPercent(currentDistance / path.path.length, -1);
 
         float s = Mathf.Lerp(minMaxScale.y, minMaxScale.x, lastDistance / 100);
@@ -231,7 +240,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
                 currentDistance = distanceToTravel;
             }
 
-            transform.position = (Vector2)path.path.GetPointAtDistance(currentDistance);
+            SetPositionUsingLinePoint(path.path.GetPointAtDistance(currentDistance));
 
             float distSample = path.GetCustomPointDistanceAtPercent(currentDistance / path.path.length, direction);
             float scale = Mathf.Lerp(minMaxScale.y, minMaxScale.x, distSample / 100);

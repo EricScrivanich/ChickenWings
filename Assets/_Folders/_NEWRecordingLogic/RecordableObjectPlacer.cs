@@ -216,6 +216,12 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
     }
+
+    public void SetAsWave(int waveIndex, int subWaveIndex, int randomPointIndex)
+    {
+        Data.randomSpawnData = new Vector3Int(waveIndex, subWaveIndex, randomPointIndex);
+
+    }
     public void UpdateTimeStep(int step, bool multipleSelect = false)
     {
         spawnedTimeStep = (ushort)step;
@@ -348,7 +354,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
 
 
-        Data = new RecordedDataStructDynamic(ObjectType, ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0, Vector2Int.zero,health: healthDefault);
+        Data = new RecordedDataStructDynamic(ObjectType, ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0, Vector3Int.zero, health: healthDefault);
         lastSavedType = type;
 
         if (_pType == PostionType.Position)

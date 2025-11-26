@@ -4,6 +4,9 @@ public class LevelDataRandomSpawnData
 {
 
     private ISpawnData[] spawnDatas;
+    [SerializeField] private float[] spawnDataPercentages;
+
+    private short[] usedRandomDataIndices;
     private RecordableObjectPool pool;
 
     private ushort dataType;

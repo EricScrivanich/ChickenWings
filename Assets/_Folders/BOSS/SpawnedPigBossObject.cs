@@ -87,10 +87,7 @@ public class SpawnedPigBossObject : SpawnedObject, IDamageable, IEggable
 
         if (lives <= 0)
         {
-            GetComponent<PigMaterialHandler>().KillEnemy(damageAmount, type, id);
-
-            if (triggerWhenDead)
-                GetComponent<EnemyBossTrigger>()?.OnDeathTrigger();
+            Kill(damageAmount, type, id);
 
         }
         else
@@ -105,6 +102,16 @@ public class SpawnedPigBossObject : SpawnedObject, IDamageable, IEggable
 
 
     }
+
+    public virtual void Kill(int damageAmount = 1, int type = -1, int id = -1)
+    {
+        GetComponent<PigMaterialHandler>().KillEnemy(damageAmount, type, id);
+
+        if (triggerWhenDead)
+            GetComponent<EnemyBossTrigger>()?.OnDeathTrigger();
+    }
+
+
     public void OnEnable()
     {
         OnEnableLogic();

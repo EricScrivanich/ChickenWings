@@ -35,7 +35,17 @@ public class LevelPickerZoom : Editor
         EditorGUILayout.Space(20);
         EditorGUILayout.LabelField("Camera View Controls", EditorStyles.boldLabel);
         // simple 
+        if (GUILayout.Button("Reset All", GUILayout.Height(15)))
+        {
 
+            lpMan.SetHillPos(lpMan.BaseCameraData);
+            Camera.main.transform.position = new Vector3(lpMan.BaseCameraData.x, lpMan.BaseCameraData.y, lpMan.BaseCameraData.z);
+            Camera.main.orthographicSize = lpMan.BaseCameraData.w;
+            EditorUtility.SetDirty(lpMan);
+            SceneView.RepaintAll();
+            // Whatever you want to reset
+        }
+        EditorGUILayout.Space(20);
 
         using (new EditorGUILayout.HorizontalScope())
         {

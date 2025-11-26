@@ -348,10 +348,15 @@ public class PigMaterialHandler : MonoBehaviour
         float fadeAmountStart = 0.1f;
         float fadeAmountEnd = .95f;
         bool hasExploded = false;
+        // Time.timeScale = .3f;
+
+        // yield return new WaitForSecondsRealtime(.25f);
+        // Time.timeScale = FrameRateManager.TargetTimeScale;
 
         if (GetComponent<CageAttatchment>() != null)
         {
             GetComponent<CageAttatchment>().SetPigKilled();
+
         }
         if (type == 0)
         {

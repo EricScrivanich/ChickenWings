@@ -86,6 +86,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
 
 
     private float cackleTime;
+    private float eggedGravityScale = 2.4f;
 
     private float delayTime;
     private float delayDuration;
@@ -98,7 +99,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     private static readonly float yolkEndY = 0.9f;
     private static readonly float yolkDripDuration = 0.5f;
     private static readonly float yolkScaleMultiplier = 1.5f;
-    private static readonly float blindedTime = 2.2f;
+    private static readonly float blindedTime = 1.75f;
 
     private static readonly float addUpForceMinY = -2.9f;
     private static readonly float addUpForceAmountBlinded = 5.2f;
@@ -134,17 +135,25 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
 
     [SerializeField] private Transform wingsTransform;
 
+    private Sequence aimSeq;
+
 
     private bool turnedAnimation = false;
     private bool stopMovement = false;
 
+    [SerializeField] private WeaponDroppable[] weapons;
 
 
+    [SerializeField] private float angularVel;
     void Start()
     {
         if (GameObject.Find("Player") != null)
             playerTarget = GameObject.Find("Player").GetComponent<Transform>();
         pigMatHandler = GetComponent<PigMaterialHandler>();
+        rb.simulated = true;
+
+
+
 
 
 
@@ -176,6 +185,8 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     public void RevertToNormalRotation()
     {
         anim.SetTrigger("RevertTurn");
+        if (aimSeq != null && aimSeq.IsPlaying())
+            aimSeq.Kill();
 
         // float xRange = transform.position.x - playerTarget.position.x;
 
@@ -189,6 +200,8 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
         // headTransform.eulerAngles = Vector3.forward * rotTarget;
         // bodyTransform.eulerAngles = Vector3.forward * rotTarget * 1.08f;
         // armsTransform.localEulerAngles = Vector3.forward * rotTarget * .3f;
+
+        rb.DORotate(0, .3f).SetEase(Ease.OutSine).SetUpdate(UpdateType.Fixed);
 
         armLeftTransform.DOLocalRotate(Vector3.forward * -40, .3f).SetEase(Ease.OutSine);
         armRightTransform.DOLocalRotate(Vector3.forward * 40, .3f).SetEase(Ease.OutSine);
@@ -205,34 +218,79 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
 
     }
 
-    public void SetRotationTargets(float dur, float mainTarget, float mainArm, float otherArm, bool aimLeft)
+
+    public override void Kill(int damageAmount = 1, int type = -1, int id = -1)
+    {
+        base.Kill(damageAmount, type, id);
+        if (weapons != null && weapons.Length > 0)
+        {
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                weapons[i].DuplicateObject(rb.linearVelocity);
+            }
+        }
+    }
+
+
+    public void SetRotationTargets(float dur, float mainTarget, float mainArm, float otherArm, bool aimLeft, bool fullRot)
     {
         setRotationTarget = true;
         waitingOnDelay = true;
         if (flapSeq != null && flapSeq.IsPlaying())
             flapSeq.Kill();
 
+        if (aimSeq != null && aimSeq.IsPlaying())
+            aimSeq.Kill();
+
+        aimSeq = DOTween.Sequence();
+
+
 
         if (aimLeft)
         {
+            aimSeq.Join(armLeftTransform.DOLocalRotate(Vector3.forward * mainArm, dur));
+            aimSeq.Join(armRightTransform.DOLocalRotate(Vector3.forward * otherArm, dur));
 
-            armLeftTransform.DOLocalRotate(Vector3.forward * mainArm, dur).SetEase(Ease.OutSine);
-            armRightTransform.DOLocalRotate(Vector3.forward * otherArm, dur).SetEase(Ease.OutSine);
+
+
         }
         else
         {
             wingsTransform.localScale = new Vector3(-1, 1, 1);
-            armRightTransform.DOLocalRotate(Vector3.forward * mainArm, dur).SetEase(Ease.OutSine);
-            armLeftTransform.DOLocalRotate(Vector3.forward * (otherArm + 180), dur).SetEase(Ease.OutSine);
+            aimSeq.Join(armRightTransform.DOLocalRotate(Vector3.forward * mainArm, dur));
+            aimSeq.Join(armLeftTransform.DOLocalRotate(Vector3.forward * (otherArm + 180), dur));
+
+
+
+
+
         }
 
 
         anim.speed = 1;
         anim.SetTrigger("Turn");
-        armsTransform.DOLocalRotate(Vector3.zero, dur * .6f).SetEase(Ease.OutSine);
-        sprite.DOLocalMoveY(0, .3f);
-        bodyTransform.DORotate(Vector3.forward * mainTarget, dur * .8f, RotateMode.FastBeyond360).SetEase(Ease.OutSine);
-        headTransform.DORotate(Vector3.forward * mainTarget, dur * 1.1f, RotateMode.FastBeyond360);
+        aimSeq.Join(armsTransform.DOLocalRotate(Vector3.zero, dur * .6f));
+        aimSeq.Join(sprite.DOLocalMoveY(0, .3f));
+
+
+
+
+        if (fullRot)
+        {
+            aimSeq.Join(bodyTransform.DORotate(Vector3.forward * mainTarget, dur * .8f, RotateMode.FastBeyond360));
+            aimSeq.Join(headTransform.DORotate(Vector3.forward * mainTarget, dur * 1.1f, RotateMode.FastBeyond360));
+
+
+
+        }
+        else
+        {
+            aimSeq.Join(bodyTransform.DORotate(Vector3.forward * mainTarget, dur * .8f));
+            aimSeq.Join(headTransform.DORotate(Vector3.forward * mainTarget, dur * 1.1f));
+
+        }
+        aimSeq.Play().SetEase(Ease.OutSine);
+
 
 
 
@@ -466,10 +524,15 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     }
 
 
-
+    private float rot;
+    [SerializeField] private float rotSpeed;
+    [SerializeField] private float rotMultiplier;
     void FixedUpdate()
     {
+
         if (stopMovement) return;
+        rot += rotSpeed * Time.fixedDeltaTime;
+        rb.SetRotation(rot);
 
         if (!blinded && !setRotationTarget)
         {
@@ -481,9 +544,9 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
             if (xRange < 0)
                 rotTarget *= -1;
 
-            float headZ = Mathf.MoveTowardsAngle(headTransform.eulerAngles.z, rotTarget, 35 * Time.deltaTime);
-            float bodyZ = Mathf.MoveTowardsAngle(bodyTransform.eulerAngles.z, rotTarget * 1.08f, 40 * Time.deltaTime);
-            float armsZ = Mathf.MoveTowardsAngle(armsTransform.localEulerAngles.z, rotTarget * 0.3f, 50 * Time.deltaTime);
+            float headZ = Mathf.MoveTowardsAngle(headTransform.eulerAngles.z, rotTarget, 35 * Time.deltaTime * rotMultiplier);
+            float bodyZ = Mathf.MoveTowardsAngle(bodyTransform.eulerAngles.z, rotTarget * 1.08f, 40 * Time.deltaTime * rotMultiplier);
+            float armsZ = Mathf.MoveTowardsAngle(armsTransform.localEulerAngles.z, rotTarget * 0.3f, 50 * Time.deltaTime * rotMultiplier);
 
             headTransform.eulerAngles = Vector3.forward * headZ;
             bodyTransform.eulerAngles = Vector3.forward * bodyZ;
@@ -574,6 +637,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
         }
 
         CheckIfTargetReached();
+
     }
 
     private void MoveTowardsTarget(Vector2 target)
@@ -690,7 +754,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
             else
             {
                 float xVal = 0;
-                float r = Random.Range(4f, 5.5f);
+                float r = Random.Range(5f, 6.4f);
                 if (transform.position.x < -7f) xVal = r;
 
                 else if (transform.position.x > 7f) xVal = -r;
@@ -768,7 +832,7 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
         colRigid.offset = Vector2.up * -tweenUpAmount * 1.1f;
         if (FallEasy)
         {
-            rb.gravityScale = 1f;
+            rb.gravityScale = eggedGravityScale;
             stopMovement = true;
         }
 

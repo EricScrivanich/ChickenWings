@@ -69,6 +69,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public LevelData levelData;
 
     public List<RecordableObjectPlacer> RecordedObjects;
+    public List<RecordableObjectPlacer> RandomRecordedObjects;
 
     private List<CheckPointFlag> checkPointFlags = new List<CheckPointFlag>();
 
@@ -138,6 +139,9 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public static bool ShowFolders { get; private set; }
     public static bool ShowTime { get; private set; }
     public static bool ShowParameters { get; private set; }
+
+    public static bool UsingWaveCreator { get; private set; }
+    public static int WaveIndex { get; private set; } = -1;
 
     private bool showLinesTemp;
     private bool showParamsTemp;
@@ -307,6 +311,24 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         }
     }
+
+    public void OpenWaveEditor(bool open, int waveIndex)
+    {
+        UsingWaveCreator = open;
+        WaveIndex = waveIndex;
+        CustomTimeSlider.instance.gameObject.SetActive(!open);
+
+        for (int i = 0; i < RandomRecordedObjects.Count; i++)
+        {
+            if (RandomRecordedObjects[i].Data.randomSpawnData.x == waveIndex)
+            {
+                RandomRecordedObjects[i].gameObject.SetActive(open);
+            }
+        }
+
+
+
+    }
     public void SetStaticViewParameter(HideItemUI.Type type, bool show)
     {
         Debug.Log("Setting static bool of " + type + " to " + show);
@@ -381,6 +403,15 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
     public void DuplicateObject()
     {
+
+        if (UsingWaveCreator)
+        {
+            if (multipleObjectsSelected && MultipleSelectedObjects.Count > 0) return;
+
+            AddWavePoint();
+            return;
+
+        }
 
 
         if (multipleObjectsSelected && MultipleSelectedObjects.Count > 0)
@@ -762,6 +793,23 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         currentSelectedObject = null;
     }
 
+    public void AddWavePoint()
+    {
+        var obj = ReturnDuplicateObject(currentSelectedObject);
+        if (obj == null) return;
+        if (currentSelectedObject != null)
+        {
+            currentSelectedObject.SetIsSelected(false);
+        }
+        RandomRecordedObjects.Add(obj);
+        SortRandomRecordedObjects();
+        obj.SetAsWave(currentSelectedObject.Data.randomSpawnData.x, currentSelectedObject.Data.randomSpawnData.y + 1, 0);
+        currentSelectedObject = obj;
+        obj.SetSelectedObject();
+
+
+    }
+
     private void HandleMoveObject(Vector2 pos)
     {
         if (screenClicked && goingToAddObject && pos.y > -5.3f)
@@ -779,6 +827,13 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
             currentSelectedObject = Instantiate(objectToAdd, pos, Quaternion.identity).GetComponent<RecordableObjectPlacer>();
             currentSelectedObject.CreateNew(typeOvveride);
+
+            if (UsingWaveCreator && WaveIndex > -1)
+            {
+                currentSelectedObject.SetAsWave(WaveIndex, WaveCreator.instance.numberOfSubWaves, 0);
+                WaveCreator.instance.numberOfSubWaves++;
+
+            }
             AddNewObjectToList(currentSelectedObject);
 
             currentSelectedObject.SetSelectedObject();
@@ -1372,6 +1427,33 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
     }
+
+    public void SetRandomData(List<RecordedDataStructDynamic> data)
+    {
+        for (int i = 0; i < data.Count; i++)
+        {
+            // RecordableObjectPlacer obj;
+            // if (data[i].ID < 0)
+            // {
+            //     obj = Instantiate(recordableObjectsWithNegtiveID[Mathf.Abs(data[i].ID) - 1]);
+            // }
+            // else
+            //     obj = Instantiate(recordableObjectsByID[data[i].ID]);
+
+            RecordableObjectPlacer obj = Instantiate(ReturnObjectByPoolType(data[i].ObjectType, data[i].ID));
+
+            if (obj == null)
+            {
+                Debug.Log("No object found");
+                return;
+            }
+            obj.LoadAssetFromSave(data[i]);
+            obj.SetIsSelected(false);
+            obj.gameObject.SetActive(false);
+            RandomRecordedObjects.Add(obj);
+            Debug.Log("Tried adding object: " + i);
+        }
+    }
     public void SaveAsset()
     {
         currentSelectedObject = null;
@@ -1411,20 +1493,20 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
-        List<RecordableObjectPlacer> randomObjects = new List<RecordableObjectPlacer>();
+
 
         //remove random spawn objects from RecordedObjects and add to randomObjects list
         for (int i = RecordedObjects.Count - 1; i >= 0; i--)
         {
-            if (RecordedObjects[i].Data.randomSpawnData != Vector2Int.zero)
+            if (RecordedObjects[i].Data.randomSpawnData != Vector3Int.zero)
             {
-                randomObjects.Add(RecordedObjects[i]);
+                RandomRecordedObjects.Add(RecordedObjects[i]);
                 RecordedObjects.RemoveAt(i);
             }
         }
 
-        // reorganize RandomObjects by randomSPawnData.x then .y
-        randomObjects = randomObjects.OrderBy(o => o.Data.randomSpawnData.x).ThenBy(o => o.Data.randomSpawnData.y).ToList();
+        // reorganize RandomRecordedObjects by randomSPawnData.x then .y
+        RandomRecordedObjects = RandomRecordedObjects.OrderBy(o => o.Data.randomSpawnData.x).ThenBy(o => o.Data.randomSpawnData.y).ThenBy(o => o.Data.randomSpawnData.z).ToList();
 
 
         List<RecordableObjectPlacer> activeObjects = new List<RecordableObjectPlacer>();
@@ -1472,7 +1554,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             for (int o = 0; o < activeObjects.Count; o++)
             {
                 // Debug.Log("Checking object: " + activeObjects[o].name + " with ID: " + activeObjects[o].ID + " and pool size: " + poolSizes.Length);
-                if (!activeObjects[o].CheckForPoolSizes(s) || activeObjects[o].Data.randomSpawnData != Vector2Int.zero) activeObjects[o] = null;
+                if (!activeObjects[o].CheckForPoolSizes(s) || activeObjects[o].Data.randomSpawnData != Vector3Int.zero) activeObjects[o] = null;
 
                 // else poolSizeCompare[activeObjects[o].ID]++;
 
@@ -1531,7 +1613,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
-            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, randomObjects, "", poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives, levelData);
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, RandomRecordedObjects, "", poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives, levelData);
             // Level data added at end to save it directly to scriptable object
 
         }
@@ -1545,7 +1627,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             }
 
 
-            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, randomObjects, path, poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives);
+            LevelDataConverter.instance.SaveDataToDevice(RecordedObjects, RandomRecordedObjects, path, poolSizesList, finalSpawnStep, levelData.StartingAmmos, levelData.StartingLives);
             Debug.Log("Saved with final spawn step: " + finalSpawnStep);
 
         }
@@ -1605,8 +1687,22 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     // }
     private void AddNewObjectToList(RecordableObjectPlacer newObj)
     {
-        RecordedObjects.Add(newObj);
-        SortRecordedObjectsBySpawnTime();
+        if (UsingWaveCreator)
+        {
+            RandomRecordedObjects.Add(newObj);
+            SortRandomRecordedObjects();
+        }
+        else
+        {
+            RecordedObjects.Add(newObj);
+            SortRecordedObjectsBySpawnTime();
+        }
+
+    }
+
+    public void SortRandomRecordedObjects()
+    {
+        RandomRecordedObjects = RandomRecordedObjects.OrderBy(o => o.Data.randomSpawnData.x).ThenBy(o => o.Data.randomSpawnData.y).ThenBy(o => o.Data.randomSpawnData.z).ToList();
     }
     public void SortRecordedObjectsBySpawnTime()
     {

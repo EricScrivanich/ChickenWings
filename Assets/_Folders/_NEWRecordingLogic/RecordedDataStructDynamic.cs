@@ -24,7 +24,9 @@ public struct RecordedDataStructDynamic
     public bool hasCageAttachment;
     public short health;
 
-    public Vector2Int randomSpawnData;
+    //wave index, subWave index, pouint within subwave index
+    public Vector3Int randomSpawnData;
+
 
     public RecordedObjectPositionerDataSave positionerData;
 
@@ -32,7 +34,7 @@ public struct RecordedDataStructDynamic
 
 
 
-    public RecordedDataStructDynamic(short objectType, short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, Vector2Int randomSpawn, bool hasCage = false, short triggerType = 0, short health = 1)
+    public RecordedDataStructDynamic(short objectType, short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, Vector3Int randomSpawn, bool hasCage = false, short triggerType = 0, short health = 1)
     {
         this.ObjectType = objectType;
         this.ID = id;

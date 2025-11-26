@@ -20,8 +20,10 @@ public class LevelDataBossAndRandomLogic : ScriptableObject
     }
     public void CheckIfSpawnStep(ushort step)
     {
+        Debug.Log("Checking spawn step of: " + step);
         if (step == spawnStep)
         {
+            Debug.Log("Correct Spawn Step: " + step);
             levelData.spawner.HandleWaveTime(!stopWaveTime, true);
             levelData.spawner.HandleRandomCollectableSpawning(collectableSpawnData);
             levelData.SetRandomEnemySpawnSteps(stepsPerEnemySpawn);

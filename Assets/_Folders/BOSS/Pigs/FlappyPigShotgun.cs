@@ -21,8 +21,22 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
     private Rigidbody2D rb;
     private float timer = 0;
     private bool canShoot = true;
+
     [SerializeField] private AimRotationTransform shotgunAimRight;
     [SerializeField] private AimRotationTransform shotgunAimLeft;
+
+    [SerializeField] private Transform armLeft;
+    [SerializeField] private Transform armRight;
+
+    [SerializeField] private AimRotationTransform aimRotationTransformRightArm;
+    [SerializeField] private AimRotationTransform aimRotationTransformLeftArm;
+
+    private bool aimingWithLeft;
+
+    [SerializeField] private Transform body;
+
+
+    private Transform currentArm;
     [SerializeField] private float maxRotation;
     [SerializeField] private float moveSSpeed;
     [SerializeField] private float maxSpeed;
@@ -30,21 +44,31 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
     [SerializeField] private Vector2 speedRef;
 
     [SerializeField] private Vector2 offset;
+
+    [SerializeField] private float additionalAimSpeed;
     private Coroutine shootCoroutine;
+
+    private float currentAngle;
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         movementScript = GetComponent<FlappyPigMovement>();
+       
 
         shotgunBlasts.Initialize();
         playerTarget = player._transform;
-        shotgunAimLeft.SetConstantRotation(1, playerTarget);
-        // shotgunAimLeft.SetIsFlipped(true);
-        shotgunAimLeft.SetMaxRotation(maxRotation);
-        shotgunAimRight.SetConstantRotation(1, playerTarget);
-        shotgunAimRight.SetMaxRotation(maxRotation);
+        // shotgunAimLeft.SetConstantRotation(1, playerTarget);
+        // // shotgunAimLeft.SetIsFlipped(true);
+        // shotgunAimLeft.SetMaxRotation(maxRotation);
+        // shotgunAimRight.SetConstantRotation(1, playerTarget);
+        // shotgunAimRight.SetMaxRotation(maxRotation);
+        aimRotationTransformRightArm.SetConstantRotation(0, playerTarget);
+        aimRotationTransformLeftArm.SetConstantRotation(0, playerTarget);
+        aimRotationTransformRightArm.enabled = false;
+        aimRotationTransformLeftArm.enabled = false;
 
     }
 
@@ -58,6 +82,23 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
             if (targetPos.y < BoundariesManager.GroundPosition + .5f) targetPos.y = BoundariesManager.GroundPosition + .5f;
             Vector2.SmoothDamp(transform.position, targetPos, ref speedRef, smoothSpeed, maxSpeed);
             rb.linearVelocity = speedRef;
+
+            // Vector2 direction = (currentArm.position - playerTarget.position).normalized;
+            // float trueAngle = rb.rotation;
+            // float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            // // if (angle < 0) angle += 360;
+            // Debug.Log("body andle: " + body.eulerAngles.z + "true andle: " + trueAngle + " Other Angle: " + angle);
+
+            // if (angle < body.eulerAngles.z + trueAngle)
+            // {
+
+            //     trueAngle -= additionalAimSpeed * Time.fixedDeltaTime;
+            // }
+            // else
+            // {
+            //     trueAngle += additionalAimSpeed * Time.fixedDeltaTime;
+            // }
+            // rb.MoveRotation(trueAngle);
         }
 
 
@@ -141,8 +182,11 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
         sr.color = new Color(1, .29f, .8f, 0);
         sr.transform.localScale = Vector3.one;
         int direction = flipped ? 180 : 0;
-        float dur = aimDelay;
+        float dur = .8f;
+
         float rot = 90;
+        float arm = 80;
+        bool fullRot = true;
         // SetShootData(ref dur, ref rot);
         if (transform.position.x < playerTarget.position.x)
         {
@@ -151,11 +195,13 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
         }
         else
         {
+
             offset.x = 4f;
         }
         if (transform.position.y < playerTarget.position.y)
         {
             Debug.Log("Lower");
+
 
             offset.y = -2f;
             if (!flipped)
@@ -167,16 +213,42 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
         }
         else
         {
+            fullRot = false;
             if (!flipped)
                 rot = 60f;
             else
                 rot = 120f;
             offset.y = 2f;
-            dur += .15f;
+            dur += .23f;
         }
+        // aimingWithLeft = flipped;
+
+        if (flipped)
+            aimRotationTransformLeftArm.enabled = true;
+        else
+            aimRotationTransformRightArm.enabled = true;
+
+        speedRef = rb.linearVelocity;
         moveToPos = true;
 
-        movementScript.SetRotationTargets(dur, rot + direction, 0, 80, flipped);
+        rb.linearVelocity = Vector2.zero;
+
+        currentAngle = rot + direction;
+
+        if (flipped)
+        {
+            currentArm = armLeft;
+            //  if (additionalAimSpeed < 0) additionalAimSpeed *= -1;
+        }
+
+        else
+        {
+            currentArm = armRight;
+            //  if (additionalAimSpeed > 0) additionalAimSpeed *= -1;
+        }
+
+
+        movementScript.SetRotationTargets(dur, rot + direction, 0, 80, flipped, fullRot);
         sr.enabled = true;
         while (t < aimDelay)
         {
@@ -200,6 +272,10 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
 
         rb.AddForce(-bulletSpawn.transform.right * recoilForce, ForceMode2D.Impulse);
         timer = 0;
+        if (flipped)
+            aimRotationTransformLeftArm.ResetToZero();
+        else
+            aimRotationTransformRightArm.ResetToZero();
 
         yield return new WaitForSeconds(.15f);
         doingLogic = false;
@@ -227,12 +303,13 @@ public class FlappyPigShotgun : MonoBehaviour, IEnemySubType
             doingLogic = false;
             doTimer = false;
             canShoot = false;
-            timer = 0;
+
 
         }
         else
         {
-            timer = 0;
+            if (timer > minShootDelay) timer = minShootDelay;
+            timer *= .35f;
             doTimer = true;
 
         }

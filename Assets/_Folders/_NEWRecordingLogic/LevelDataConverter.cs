@@ -561,6 +561,7 @@ public class LevelDataConverter : MonoBehaviour
 
 
         var l = new List<RecordedDataStructDynamic>();
+        List<RecordedDataStructDynamic> randomData = new List<RecordedDataStructDynamic>();
         if (data.idList == null || data.idList.Length == 0)
         {
             Debug.LogError("No data found in the loaded LevelData.");
@@ -614,11 +615,11 @@ public class LevelDataConverter : MonoBehaviour
                     floatIndex++;
                 }
 
-                l.Add(new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], dataArrays.typeList[i - subrtactIndex], dataArrays.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, Vector2Int.zero, hasCageAttachment, triggerType, health));
+                l.Add(new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], dataArrays.typeList[i - subrtactIndex], dataArrays.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, Vector3Int.zero, hasCageAttachment, triggerType, health));
             }
             else if (type < 0)
             {
-                var d = new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, Vector2Int.zero, hasCageAttachment, triggerType);
+                var d = new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, Vector3Int.zero, hasCageAttachment, triggerType);
                 d.positionerData = data.postionerData[positionerIndex];
                 subrtactIndex++;
                 positionerIndex++;
@@ -628,6 +629,7 @@ public class LevelDataConverter : MonoBehaviour
 
 
         }
+
 
         if (dataArrays.randomSpawnDataTypeObjectTypeAndID != null && dataArrays.randomSpawnDataTypeObjectTypeAndID.Length > 0)
         {
@@ -653,7 +655,7 @@ public class LevelDataConverter : MonoBehaviour
                         values[j] = dataArrays.floatListRand[floatRandIndex];
                         floatRandIndex++;
                     }
-                    l.Add(new RecordedDataStructDynamic((short)v.y, id, dataArrays.typeListRand[i], dataArrays.posListRand[spawnSetCounter], values[0], values[1], values[2], values[3], values[4], spawnStep, 0, new Vector2Int(i + 1, n), false, 0));
+                    randomData.Add(new RecordedDataStructDynamic((short)v.y, id, dataArrays.typeListRand[i], dataArrays.posListRand[spawnSetCounter], values[0], values[1], values[2], values[3], values[4], spawnStep, 0, new Vector3Int(i + 1, n, 0), false, 0));
                     spawnSetCounter++;
                 }
 
@@ -667,6 +669,10 @@ public class LevelDataConverter : MonoBehaviour
                 // }
             }
         }
+        if (randomData != null && randomData.Count > 0)
+            LevelRecordManager.instance.SetRandomData(randomData);
+        else
+            Debug.LogError("No random Data found here");
         return l;
     }
 

@@ -336,7 +336,7 @@ public class CustomTimeSlider : MonoBehaviour
     }
     public void SetPixelDragFactor()
     {
-        pixelDragFactor = GetComponentInParent<Canvas>().scaleFactor * 1.35f;
+        pixelDragFactor = GetComponentInParent<Canvas>().scaleFactor;
     }
 
     public void NormalView()

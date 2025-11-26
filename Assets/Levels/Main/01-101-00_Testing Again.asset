@@ -20,18 +20,18 @@ MonoBehaviour:
   AvailableAmmos: 0000000001000000
   objData: {fileID: 11400000, guid: 39c7fc890c47e46058b8b922c162fb46, type: 2}
   startingStats: {fileID: 11400000, guid: d10dd9036610a46658e0229299e97856, type: 2}
-  levelDataBossAndRandomLogic: {fileID: 0}
+  levelDataBossAndRandomLogic: {fileID: 11400000, guid: d3c933c41d31f46be84eab343c060752, type: 2}
   levelChallenges: {fileID: 11400000, guid: cc9c226e53b0047f4bef645d7736e954, type: 2}
   tutorialData: {fileID: 0}
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: Testing Again
   levelWorldAndNumber: {x: 1, y: 101, z: 0}
-  spawnSteps: 0000
+  spawnSteps: 
   finalSpawnStep: 50
-  objectTypes: 0100
-  idList: 0000
+  objectTypes: 
+  idList: 
   specialTriggerIndexAndType: []
-  dataTypes: 0100
+  dataTypes: 
   posList:
   - {x: 14.6, y: 1.4}
   - {x: -14, y: 2.4}
@@ -49,8 +49,7 @@ MonoBehaviour:
   - {x: -14.2, y: 0.6}
   - {x: -14, y: 2.8}
   - {x: -15.400001, y: -1}
-  floatList:
-  - 0.99
+  floatList: []
   typeList: 0000000000000000000000000000000000000000000000000000000000000000
   poolSizes: 
   pigPoolSizes: 0000010001000100010000000200000000000200

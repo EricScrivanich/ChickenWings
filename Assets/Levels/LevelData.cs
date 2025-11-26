@@ -117,6 +117,7 @@ public class LevelData : ScriptableObject
         {
             levelDataBossAndRandomLogic.Initialize(this);
             checkBossAndRandomData = true;
+            Debug.Log("Checking for Random:");
         }
         else
             checkBossAndRandomData = false;
@@ -596,6 +597,9 @@ public class LevelData : ScriptableObject
     {
         currentSpawnStep = ss;
         currentSpawnStepCount++;
+        
+
+
 
 
 
@@ -759,14 +763,18 @@ public class LevelData : ScriptableObject
 
             currentSpawnIndex = nextSpawnIndex;
 
+
+
+
             GetSpawnSizeForNextTimeStep();
-
-            if (checkBossAndRandomData)
-            {
-                levelDataBossAndRandomLogic.CheckIfSpawnStep(ss);
-
-            }
         }
+
+        if (checkBossAndRandomData)
+        {
+            levelDataBossAndRandomLogic.CheckIfSpawnStep(ss);
+        }
+
+
 
     }
 

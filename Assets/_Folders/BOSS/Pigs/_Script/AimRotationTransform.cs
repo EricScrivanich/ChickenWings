@@ -14,12 +14,15 @@ public class AimRotationTransform : MonoBehaviour
     private float maxRotationSpeed;
     private float rotationRef;
 
-    private int frameSkips = -1;
+    [SerializeField] private int frameSkips = -1;
     private int currentFrameSkips;
     private Transform target;
     private Vector2 offset = Vector2.zero;
     private Vector2 baseOffset = Vector2.zero;
     private Transform parentTransform;
+    [SerializeField] private float maxRotation = 360;
+
+    [SerializeField] private bool useParentForMaxRotation = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -49,7 +52,17 @@ public class AimRotationTransform : MonoBehaviour
         offset = baseOffset;
 
     }
-    private float maxRotation = 360;
+
+    private bool isResseting = false;
+    public void ResetToZero()
+    {
+        isResseting = true;
+
+
+    }
+
+
+
     public void SetMaxRotation(float maxRot)
     {
         maxRotation = maxRot;
@@ -88,22 +101,35 @@ public class AimRotationTransform : MonoBehaviour
         float o = normalOffset;
         if (isFlipped) o -= 180;
 
+
+
+
         targetAngle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg + o;
 
 
 
         if (maxRotation < 360)
         {
-            float parentAngle = parentTransform.eulerAngles.z;
+            if (useParentForMaxRotation)
+            {
+                float parentAngle = parentTransform.eulerAngles.z;
 
-            // Convert desired global into local (relative to parent)
-            float desiredLocalAngle = Mathf.DeltaAngle(parentAngle, targetAngle);
+                // Convert desired global into local (relative to parent)
+                float desiredLocalAngle = Mathf.DeltaAngle(parentAngle, targetAngle);
 
-            // Clamp local angle
-            float clampedLocalAngle = Mathf.Clamp(desiredLocalAngle, -maxRotation, maxRotation);
+                // Clamp local angle
+                float clampedLocalAngle = Mathf.Clamp(desiredLocalAngle, -maxRotation, maxRotation);
 
-            // Convert back to global
-            targetAngle = parentAngle + clampedLocalAngle;
+                // Convert back to global
+                targetAngle = parentAngle + clampedLocalAngle;
+            }
+            else
+            {
+
+                targetAngle = Mathf.Clamp(targetAngle, -maxRotation, maxRotation);
+
+            }
+
         }
 
 
@@ -112,7 +138,23 @@ public class AimRotationTransform : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (frameSkips >= 0)
+        if (isResseting)
+        {
+            targetAngle = 0;
+            float angle = Mathf.SmoothDampAngle(transform.localEulerAngles.z, targetAngle, ref rotationRef, smoothRotationTime, maxRotationSpeed);
+            transform.localEulerAngles = Vector3.forward * angle;
+
+
+            if (Mathf.Abs(Mathf.DeltaAngle(transform.localEulerAngles.z, targetAngle)) < 0.5f)
+            {
+                isResseting = false;
+                transform.localEulerAngles = Vector3.zero;
+                this.enabled = false;
+            }
+            return;
+
+        }
+        else if (frameSkips >= 0)
         {
             if (currentFrameSkips >= frameSkips)
             {
@@ -124,7 +166,7 @@ public class AimRotationTransform : MonoBehaviour
                 currentFrameSkips++;
         }
 
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.z, targetAngle, ref rotationRef, smoothRotationTime, maxRotationSpeed);
+        // float angle
 
         // if (maxRotation < 360 && Mathf.Abs(angle - transform.localEulerAngles.z) > maxRotation)
         // {
@@ -132,7 +174,21 @@ public class AimRotationTransform : MonoBehaviour
 
         // }
 
-        transform.eulerAngles = Vector3.forward * angle;
+
+        if (!useParentForMaxRotation)
+        {
+            float angle = Mathf.SmoothDampAngle(transform.localEulerAngles.z, targetAngle, ref rotationRef, smoothRotationTime, maxRotationSpeed);
+            transform.localEulerAngles = Vector3.forward * angle;
+
+        }
+        else
+        {
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.z, targetAngle, ref rotationRef, smoothRotationTime, maxRotationSpeed);
+            transform.eulerAngles = Vector3.forward * angle;
+        }
+
+
+
     }
 
 

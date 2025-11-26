@@ -72,7 +72,7 @@ public class ButtonTweenFromSide : MonoBehaviour
             gameObject.SetActive(true);
 
             Sequence seq = Sequence.Create(useUnscaledTime: true)
-            .ChainDelay(.9f)
+            .ChainDelay(.2f)
             .Chain(Tween.UIAnchoredPosition(rect, normalPosition, dur, Ease.OutBack));
 
             // rect.DOAnchorPos(normalPosition, dur).SetEase(Ease.OutBack).SetUpdate(true);
