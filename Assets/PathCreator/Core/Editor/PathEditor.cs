@@ -65,6 +65,22 @@ namespace PathCreationEditor
         const int bezierPathTab = 0;
         const int vertexPathTab = 1;
 
+        // Clipboard for copy/paste functionality
+        static PathClipboard clipboard;
+
+        #endregion
+
+        #region Clipboard Data Structure
+
+        class PathClipboard
+        {
+            public List<Vector3> points = new List<Vector3>();
+            public List<float> perAnchorNormalsAngle = new List<float>();
+            public List<PathCreatorData.CustomPoint> customPoints = new List<PathCreatorData.CustomPoint>();
+            public PathSpace space;
+            public BezierPath.ControlMode controlMode;
+        }
+
         #endregion
 
         #region Inspectors
@@ -102,17 +118,29 @@ namespace PathCreationEditor
 
             if (GUILayout.Button("TransferToLine"))
             {
-                Vector3[] points = data.ReturnPoints();
-                var l = creator.gameObject.GetComponent<LineRenderer>();
-                l.positionCount = points.Length;
-                for (int i = 0; i < points.Length; i++)
-                {
-                    Vector3 pos = points[i];
+                TransferToLine();
+            }
 
-                    l.SetPosition(i, pos);
-                    EditorUtility.SetDirty(l);
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("Copy/Paste Path", EditorStyles.boldLabel);
 
-                }
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Copy"))
+            {
+                CopyPath();
+            }
+
+            GUI.enabled = clipboard != null && clipboard.points.Count > 0;
+            if (GUILayout.Button("Paste"))
+            {
+                PastePath();
+            }
+            GUI.enabled = true;
+            EditorGUILayout.EndHorizontal();
+
+            if (clipboard != null && clipboard.points.Count > 0)
+            {
+                EditorGUILayout.HelpBox($"Clipboard: {clipboard.points.Count} points, {clipboard.customPoints.Count} custom points", MessageType.Info);
             }
 
             // Notify of undo/redo that might modify the path
@@ -120,6 +148,23 @@ namespace PathCreationEditor
             {
                 data.PathModifiedByUndo();
             }
+        }
+
+        void TransferToLine()
+        {
+            if (creator.gameObject.GetComponent<LineRenderer>() == null) return;
+            Vector3[] points = data.ReturnPoints();
+            var l = creator.gameObject.GetComponent<LineRenderer>();
+            l.positionCount = points.Length;
+            for (int i = 0; i < points.Length; i++)
+            {
+                Vector3 pos = points[i];
+
+                l.SetPosition(i, pos);
+                EditorUtility.SetDirty(l);
+
+            }
+
         }
 
         void DrawBezierPathInspector()
@@ -490,6 +535,7 @@ namespace PathCreationEditor
             }
 
             EventType eventType = Event.current.type;
+            TransferToLine();
 
             using (var check = new EditorGUI.ChangeCheckScope())
             {
@@ -919,6 +965,127 @@ namespace PathCreationEditor
         #endregion
 
         #region Internal methods
+
+        void CopyPath()
+        {
+            clipboard = new PathClipboard();
+
+            // Copy all bezier path points
+            for (int i = 0; i < bezierPath.NumPoints; i++)
+            {
+                clipboard.points.Add(bezierPath.GetPoint(i));
+            }
+
+            // Copy per-anchor normal angles
+            for (int i = 0; i < bezierPath.NumAnchorPoints; i++)
+            {
+                clipboard.perAnchorNormalsAngle.Add(bezierPath.GetAnchorNormalAngle(i));
+            }
+
+            // Copy custom points with their distances
+            if (data.customPoints != null)
+            {
+                foreach (var customPoint in data.customPoints)
+                {
+                    clipboard.customPoints.Add(new PathCreatorData.CustomPoint
+                    {
+                        value = customPoint.value,
+                        distance = customPoint.distance,
+                        layerChanges = customPoint.layerChanges,
+                        position = customPoint.position
+                    });
+                }
+            }
+
+            clipboard.space = bezierPath.Space;
+            clipboard.controlMode = bezierPath.ControlPointMode;
+
+            Debug.Log($"Copied path with {clipboard.points.Count} points and {clipboard.customPoints.Count} custom points");
+        }
+
+        void PastePath()
+        {
+            if (clipboard == null || clipboard.points.Count == 0)
+            {
+                Debug.LogWarning("No path data in clipboard to paste");
+                return;
+            }
+
+            Undo.RecordObject(creator, "Paste Path");
+
+            // Store the current number of custom points so we can offset the pasted ones
+            int existingCustomPointCount = data.customPoints?.Count ?? 0;
+
+            // Get the last anchor point of the current path to calculate offset
+            Vector3 currentLastAnchor = bezierPath.GetPoint(bezierPath.NumPoints - 1);
+            Vector3 clipboardFirstAnchor = clipboard.points[0];
+            Vector3 offset = currentLastAnchor - clipboardFirstAnchor;
+
+            // Skip the first anchor point of clipboard since we'll connect to existing last anchor
+            // Add segments from clipboard path starting from first segment's control points
+            for (int i = 1; i < clipboard.points.Count; i++)
+            {
+                Vector3 point = clipboard.points[i] + offset;
+
+                // Check if this is an anchor point (every 3rd point starting from 0)
+                bool isAnchor = i % 3 == 0;
+
+                if (isAnchor)
+                {
+                    // Add a new segment ending at this anchor
+                    bezierPath.AddSegmentToEnd(point);
+                }
+            }
+
+            // Now we need to adjust the control points we just added
+            // The AddSegmentToEnd method creates its own control points, so we need to override them
+            int startingPointIndex = bezierPath.NumPoints - (clipboard.points.Count - 1);
+
+            // Manually set the control points from clipboard
+            for (int i = 1; i < clipboard.points.Count; i++)
+            {
+                int targetIndex = startingPointIndex + i - 1;
+                if (targetIndex >= 0 && targetIndex < bezierPath.NumPoints)
+                {
+                    Vector3 point = clipboard.points[i] + offset;
+                    bezierPath.SetPoint(targetIndex, point, true);
+                }
+            }
+
+            // Add custom points with adjusted index values
+            // The "value" represents position along the path (0-1), so we need to remap it
+            if (clipboard.customPoints.Count > 0 && data.customPoints != null)
+            {
+                // Calculate the proportion of the new combined path that the original path occupies
+                // This is approximate - uses anchor count as proxy for path length
+                int originalAnchorCount = (startingPointIndex + 2) / 3;
+                int totalAnchorCount = bezierPath.NumAnchorPoints;
+                float originalPathProportion = (float)originalAnchorCount / totalAnchorCount;
+
+                foreach (var clipboardPoint in clipboard.customPoints)
+                {
+                    // Remap the value from clipboard path space to combined path space
+                    // Clipboard value 0-1 maps to originalPathProportion-1 of combined path
+                    float remappedValue = originalPathProportion + clipboardPoint.value * (1f - originalPathProportion);
+
+                    var newPoint = new PathCreatorData.CustomPoint
+                    {
+                        value = remappedValue,
+                        distance = clipboardPoint.distance,
+                        layerChanges = clipboardPoint.layerChanges,
+                        position = clipboardPoint.position + offset
+                    };
+
+                    data.customPoints.Add(newPoint);
+                }
+            }
+
+            bezierPath.NotifyPathModified();
+            EditorUtility.SetDirty(creator);
+            SceneView.RepaintAll();
+
+            Debug.Log($"Pasted {clipboard.points.Count - 1} points and {clipboard.customPoints.Count} custom points");
+        }
 
         void OnDisable()
         {

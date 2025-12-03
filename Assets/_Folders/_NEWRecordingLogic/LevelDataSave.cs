@@ -27,11 +27,15 @@ public class LevelDataSave
     public Vector2[] posListRand;
     public float[] floatListRand;
     public ushort[] typeListRand;
+    public short[] usedRNGIndices;
     public ushort[] randomLogicSizes;
+    public ushort[] randomLogicWaveIndices;
     public Vector3Int[] randomSpawnDataTypeObjectTypeAndID;
     public ushort[] spawnStepsRandom;
 
     public ushort[] cageAttachments;
+
+    public byte[] randomSpawnRanges;
 
 
 
@@ -43,14 +47,18 @@ public class LevelDataSave
 
     public RecordedObjectPositionerDataSave[] postionerData = null;
 
-    public void SetRandomData(Vector2[] posListRand, float[] floatListRand, ushort[] typeListRand, ushort[] randomLogicSizes, Vector3Int[] randomSpawnDataTypeObjectTypeAndID, ushort[] spawnStepsRandom)
+    public void SetRandomData(Vector2[] posListRand, float[] floatListRand, ushort[] typeListRand, ushort[] randomLogicSizes, ushort[] randomLogicWaveIndices, Vector3Int[] randomSpawnDataTypeObjectTypeAndID, ushort[] spawnStepsRandom, short[] usedRNGIndices, byte[] randomSpawnRanges)
     {
         this.posListRand = posListRand;
         this.floatListRand = floatListRand;
         this.typeListRand = typeListRand;
         this.randomLogicSizes = randomLogicSizes;
+        this.randomLogicWaveIndices = randomLogicWaveIndices;
         this.randomSpawnDataTypeObjectTypeAndID = randomSpawnDataTypeObjectTypeAndID;
         this.spawnStepsRandom = spawnStepsRandom;
+        this.usedRNGIndices = usedRNGIndices;
+        this.randomSpawnRanges = randomSpawnRanges;
+
     }
 
     public LevelDataSave(string levelName, short[] objectTypes, short[] idList, ushort[] spawnSteps, ushort[] typeList, short[] dataTypeList, ushort finalStep, Vector2[] posList, float[] floats, List<ushort[]> plList, short[] ammos, short lives, short[] inxAndHlth)

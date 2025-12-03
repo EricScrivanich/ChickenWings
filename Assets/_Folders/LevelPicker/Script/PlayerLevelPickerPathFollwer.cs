@@ -96,10 +96,11 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
 
     //     }
     // }
-
+    private bool stopParticles = false;
     public void ShowParticles()
     {
-        if (ps != null)
+
+        if (isRunning && ps != null)
         {
             ps.Play();
         }
@@ -185,6 +186,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     }
     private float targetZoom;
     private bool hitZoom = true;
+    private bool isRunning = false;
 
     private IEnumerator DoPath(PathCreator path, float distanceToTravel, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots, Transform finalPathTarget)
     {
@@ -193,6 +195,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         bool addtionalPaths = addedPaths != null;
 
         anim.SetBool("Run", true);
+        isRunning = true;
 
         Debug.LogError("Doing path on path: " + path.name + " to distance: " + distanceToTravel);
 
@@ -294,6 +297,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         else
         {
             anim.SetBool("Run", false);
+            isRunning = false;
 
             HideParticles();
         }

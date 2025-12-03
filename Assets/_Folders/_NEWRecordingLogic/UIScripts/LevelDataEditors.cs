@@ -81,6 +81,8 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
 
 
+
+
         if (Type == "Speed")
         {
             v = (Mathf.Round(v * 10) / 10) * recordedObj.speedChanger;
@@ -237,6 +239,10 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     public void SetValueBasedOnTypeIndex(float val, bool isScale = false)
     {
+        if (typeIndex == -1)
+        {
+
+        }
         if (LevelRecordManager.instance.multipleObjectsSelected)
         {
             foreach (var obj in LevelRecordManager.instance.MultipleSelectedObjects)
@@ -303,7 +309,12 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
 
         }
         else
+        {
             SetDataForFloatSlider(this.Type, true);
+            if (LevelRecordManager.UsingWaveCreator)
+                WaveCreator.instance.ChangeBoxTypeData(this.Type, typeIndex + 3);
+        }
+
 
         ValueEditorManager.instance.ShowSlider(true);
 
@@ -323,6 +334,8 @@ public class LevelDataEditors : MonoBehaviour, IPointerDownHandler, IDragHandler
         {
             isSelected = false;
             fillImage.enabled = false;
+
+
 
 
         }

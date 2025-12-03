@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 01-101-00_Testing Again_DataArrays
   m_EditorClassIdentifier: 
   pigPoolSizes: 0000000000000000000000000000000000000000
-  aiPoolSizes: 00000000
-  buildingPoolSizes: 0000000000000000
+  aiPoolSizes: 03000000
+  buildingPoolSizes: 0000030000000000
   collectablePoolSizes: 02000000
   positionerPoolSizes: 0000
   ringPoolSizes: 00000000
@@ -24,15 +24,25 @@ MonoBehaviour:
   floatList: []
   typeList: 
   posListRand:
-  - {x: 16, y: 2.8}
-  - {x: 17, y: -2}
+  - {x: 14.6, y: 1.8000001}
+  - {x: 14.8, y: -1.2}
+  - {x: 18.2, y: 2}
+  - {x: 19.2, y: 2}
   floatListRand:
-  - 5.5
   - 1
-  - 5.5
   - 1
-  typeListRand: 00000000
-  randomLogicSizes: 0200
-  spawnStepsRandom: 0000
+  - 120
+  - 1
+  - -0
+  - 120
+  - 1
+  - -0
+  usedRNGIndices: ffffffffffffffffffffffffffffffffffffffff
+  randomSpawnRanges: 00500028
+  typeListRand: 0000000000000000
+  randomLogicSizes: 02000200
+  randomLogicWaveIndices: 01000100
+  spawnStepsRandom: 96009500
   randomSpawnDataTypeObjectTypeAndID:
-  - {x: 2, y: 0, z: 0}
+  - {x: 1, y: 1, z: 0}
+  - {x: 3, y: 2, z: 1}

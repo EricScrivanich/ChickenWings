@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c21eaf85768445e94055229912117c, type: 3}
   m_Name: 01-07-00_Bossy with a shotty_DataArrays
   m_EditorClassIdentifier: 
-  pigPoolSizes: 0200040001000000030000000000000000000300
+  pigPoolSizes: 0300040001000000010000000000000000000300
   aiPoolSizes: 00000000
   buildingPoolSizes: 0000000000000000
   collectablePoolSizes: 04000000
   positionerPoolSizes: 0000
   ringPoolSizes: 00000000
   cageAttachments: 
-  indexAndHealth: 15000500
+  indexAndHealth: 13000500
   posList:
   - {x: 14.400001, y: 2}
   - {x: -15.400001, y: -1.2}
@@ -27,19 +27,17 @@ MonoBehaviour:
   - {x: 16.4, y: -2.8}
   - {x: 15.8, y: 2.2}
   - {x: -15, y: -0.6}
-  - {x: -21, y: -0.6}
-  - {x: -27.2, y: -0.6}
   - {x: 15.6, y: -3}
-  - {x: 15.6, y: 0.6}
-  - {x: 13.6, y: 3.4}
+  - {x: 16.2, y: 1.8000001}
+  - {x: 13.6, y: 4.2000003}
   - {x: 14, y: -3}
   - {x: 16.800001, y: -1.4}
   - {x: 15.6, y: 3}
   - {x: 15.6, y: 4}
   - {x: -15.2, y: -3.2}
   - {x: 14, y: 3.4}
-  - {x: 16.2, y: 3}
-  - {x: 23.2, y: 2.8}
+  - {x: 16.2, y: 2.4}
+  - {x: 23.2, y: 2.2}
   - {x: 20, y: 3.4}
   - {x: 26.6, y: 3.4}
   - {x: 15.6, y: 1.4}
@@ -57,12 +55,6 @@ MonoBehaviour:
   - -3.6
   - 0.63
   - 0
-  - -3.6
-  - 0.63
-  - 0.22
-  - -3.6
-  - 0.63
-  - 0.44
   - 9.6
   - 1
   - 10
@@ -88,12 +80,12 @@ MonoBehaviour:
   - 0
   - 2.4
   - 1
-  - 0.2
+  - 0.12
   - 0.44
   - 0
   - 2.4
   - 1
-  - 0.2
+  - 0.12
   - 0.44
   - 0.5
   - 2.4
@@ -107,17 +99,27 @@ MonoBehaviour:
   - 0.99
   - 0.6
   - 1.1
-  typeList: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000100
+  typeList: 00000000000000000000000000000000000000000000000000000000000000000000000000000100
   posListRand:
-  - {x: 17.6, y: 2.8}
-  - {x: 21.2, y: -2.4}
+  - {x: 16.4, y: 3.2}
+  - {x: 16.800001, y: -3}
+  - {x: -15, y: 3}
+  - {x: -14.8, y: -3.4}
   floatListRand:
-  - 5.4
+  - 5.3
   - 1
-  - 5.9
-  - 1.08
-  typeListRand: 00000000
-  randomLogicSizes: 0200
-  spawnStepsRandom: e900
+  - 5.7
+  - 1
+  - -4.7
+  - 1
+  - -4.1
+  - 1
+  usedRNGIndices: 0000ffffffffffffffff0000ffffffffffffffff
+  randomSpawnRanges: 00505164
+  typeListRand: 0000000000000000
+  randomLogicSizes: 02000200
+  randomLogicWaveIndices: 01000100
+  spawnStepsRandom: 96009600
   randomSpawnDataTypeObjectTypeAndID:
+  - {x: 2, y: 0, z: 0}
   - {x: 2, y: 0, z: 0}

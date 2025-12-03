@@ -27,7 +27,7 @@ namespace AllIn1SpriteShader
 
 		private static bool IsPropertyTypeSuitable(MaterialProperty prop)
 		{
-			return prop.type == MaterialProperty.PropType.Texture;
+			return prop.propertyType == UnityEngine.Rendering.ShaderPropertyType.Texture;
 		}
 
 		private string TextureName(MaterialProperty prop) => $"z{prop.name}Tex";

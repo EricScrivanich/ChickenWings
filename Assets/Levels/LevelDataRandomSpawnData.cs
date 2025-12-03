@@ -1,9 +1,13 @@
+using System.Linq;
 using UnityEngine;
 
 public class LevelDataRandomSpawnData
 {
 
     private ISpawnData[] spawnDatas;
+    private short[] usedRNGIndices;
+    public int waveIndex { get; set; }
+
     [SerializeField] private float[] spawnDataPercentages;
 
     private short[] usedRandomDataIndices;
@@ -11,19 +15,61 @@ public class LevelDataRandomSpawnData
 
     private ushort dataType;
 
-    public void Initialize(ISpawnData[] spawnDatas, RecordableObjectPool pool, ushort dataType)
+    public int neededRNGAmount { get; private set; }
+    private byte minRngSpawnValue = 0;
+    private byte maxRngSpawnValue = 100;
+
+
+
+
+
+    public void Initialize(ISpawnData[] spawnDatas, short[] randomDataIndices, RecordableObjectPool pool, ushort dataType, int waveInd, byte min = 0, byte max = 100)
     {
         this.spawnDatas = spawnDatas;
+        this.usedRNGIndices = randomDataIndices;
         this.pool = pool;
         this.dataType = dataType;
+        this.waveIndex = waveInd;
+        this.minRngSpawnValue = min;
+        this.maxRngSpawnValue = max;
+        neededRNGAmount = usedRNGIndices.Max();
 
         Debug.Log("Initialized Random Spawn Data with " + spawnDatas.Length + " spawn datas and pool " + pool.name);
     }
 
-    public void GenerateRandomEnemySpawn(float r)
+    private float GetRNGPercent(short index)
     {
+        if (index < 0)
+            return Random.Range(0, 1f);
+        else
+        {
+            return (float)rngData[index] / 100f;
+        }
+
+    }
+    private byte[] rngData;
+
+    public void GenerateRandomEnemySpawn(byte[] _rngData)
+    {
+        byte rngValue = 0;
+
+        if (usedRNGIndices[0] == -1)
+            rngValue = (byte)Random.Range(0, 101);
+        else
+            rngValue = _rngData[usedRNGIndices[0]];
+
+        if (rngValue > maxRngSpawnValue || rngValue < minRngSpawnValue)
+        {
+            // Debug.LogError("RNG Data out of bounds: " + rngData[usedRNGIndices[0]]);
+            return;
+        }
         ushort t = spawnDatas[0].GetType();
-        Vector2 pos = new Vector2(Random.Range(spawnDatas[0].GetStartPos().x, spawnDatas[1].GetStartPos().x), Random.Range(spawnDatas[0].GetStartPos().y, spawnDatas[1].GetStartPos().y));
+        rngData = _rngData;
+
+        // Mathf.Lerp(spawnDatas[0].GetStartPos().x, spawnDatas[1].GetStartPos().x, GetRNGPercent(usedRNGIndices[0]));
+        // Vector2 pos = new Vector2(Random.Range(spawnDatas[0].GetStartPos().x, spawnDatas[1].GetStartPos().x), Random.Range(spawnDatas[0].GetStartPos().y, spawnDatas[1].GetStartPos().y));
+        Vector2 pos = new Vector2(Mathf.Lerp(spawnDatas[0].GetStartPos().x, spawnDatas[1].GetStartPos().x, GetRNGPercent(usedRNGIndices[1])),
+                                  Mathf.Lerp(spawnDatas[0].GetStartPos().y, spawnDatas[1].GetStartPos().y, GetRNGPercent(usedRNGIndices[1])));
         if (dataType > 0)
         {
             float[] floatDataSpawn1 = spawnDatas[0].GetFloatData();
@@ -34,7 +80,11 @@ public class LevelDataRandomSpawnData
 
             for (int i = 0; i < dataType; i++)
             {
-                values[i] = Random.Range(floatDataSpawn1[i], floatDataSpawn2[i]);
+                Debug.Log("RNG Index for value " + i + " with total length" + usedRNGIndices.Length);
+
+
+                values[i] = Mathf.Lerp(floatDataSpawn1[i], floatDataSpawn2[i], GetRNGPercent(usedRNGIndices[i + 3]));
+                // values[i] = Random.Range(floatDataSpawn1[i], floatDataSpawn2[i]);
                 Debug.Log("Value " + i + ": " + values[i]);
             }
             pool.SpawnOverride(pos, t, values);

@@ -3,49 +3,120 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public class LineDashTiling : MonoBehaviour
 {
-    public float dashWorldLength = 1f;   // how long one dash should be in world units
-    public bool updateEveryFrame = true; // or call UpdateTiling() manually
+    [SerializeField] private AnimationCurve tilingCurve = AnimationCurve.Linear(0, 1, 1, 3);
+    [SerializeField] private int segments = 50;
+    [SerializeField] private Vector3[] roadPath; // Define your road path points
+    [SerializeField] private float baseTiling = 5f; // Base texture repeat
 
-    LineRenderer lr;
-    Material matInstance;
+    private LineRenderer lineRenderer;
+    private Material lineMaterial;
 
-    void Awake()
+    void Start()
     {
-        lr = GetComponent<LineRenderer>();
-        // Use a material instance so we don't change the shared material for all lines
-        matInstance = Instantiate(lr.sharedMaterial);
-        lr.material = matInstance;
-        lr.textureMode = LineTextureMode.Tile;
-        UpdateTiling();
+        lineRenderer = GetComponent<LineRenderer>();
+
+        // Create material instance with custom shader
+        lineMaterial = new Material(lineRenderer.material);
+        lineRenderer.material = lineMaterial;
+
+        // Set texture mode to stretch
+        lineRenderer.textureMode = LineTextureMode.Stretch;
+
+        // Set base tiling in shader
+        lineMaterial.SetFloat("_BaseTiling", baseTiling);
+
+        UpdateLineTiling();
     }
 
-    void Update()
+    void UpdateLineTiling()
     {
-        if (updateEveryFrame)
+        // If no custom path, create a simple straight line
+        if (roadPath == null || roadPath.Length < 2)
         {
-            UpdateTiling();
+            roadPath = new Vector3[2];
+            roadPath[0] = Vector3.zero;
+            roadPath[1] = new Vector3(0, 0, 10);
+        }
+
+        lineRenderer.positionCount = segments;
+
+        // Create gradient to store tiling multiplier in alpha channel
+        Gradient colorGradient = new Gradient();
+
+        // Keep colors white (or your desired color)
+        GradientColorKey[] colorKeys = new GradientColorKey[2];
+        colorKeys[0] = new GradientColorKey(Color.white, 0);
+        colorKeys[1] = new GradientColorKey(Color.white, 1);
+
+        // Store tiling multipliers in alpha keys
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[segments];
+
+        // Calculate positions along the path
+        for (int i = 0; i < segments; i++)
+        {
+            float t = i / (float)(segments - 1);
+
+            // Interpolate position along path
+            Vector3 pos = EvaluatePath(t);
+            lineRenderer.SetPosition(i, pos);
+
+            // Sample tiling curve and store in alpha
+            float tilingMultiplier = tilingCurve.Evaluate(t);
+            alphaKeys[i] = new GradientAlphaKey(tilingMultiplier, t);
+        }
+
+        // Apply gradient
+        colorGradient.SetKeys(colorKeys, alphaKeys);
+        lineRenderer.colorGradient = colorGradient;
+    }
+
+    Vector3 EvaluatePath(float t)
+    {
+        // Simple linear interpolation between path points
+        if (roadPath.Length == 2)
+        {
+            return Vector3.Lerp(roadPath[0], roadPath[1], t);
+        }
+
+        // For multiple points, find which segment we're on
+        float scaledT = t * (roadPath.Length - 1);
+        int index = Mathf.FloorToInt(scaledT);
+
+        if (index >= roadPath.Length - 1)
+        {
+            return roadPath[roadPath.Length - 1];
+        }
+
+        float segmentT = scaledT - index;
+        return Vector3.Lerp(roadPath[index], roadPath[index + 1], segmentT);
+    }
+
+    void OnValidate()
+    {
+        if (Application.isPlaying && lineRenderer != null)
+        {
+            UpdateLineTiling();
         }
     }
 
-    public void UpdateTiling()
+    void OnDestroy()
     {
-        float length = 0f;
-
-        int count = lr.positionCount;
-        if (count < 2) return;
-
-        Vector3 prev = lr.GetPosition(0);
-        for (int i = 1; i < count; i++)
+        if (lineMaterial != null)
         {
-            Vector3 p = lr.GetPosition(i);
-            length += Vector3.Distance(prev, p);
-            prev = p;
+            Destroy(lineMaterial);
         }
+    }
 
-        if (dashWorldLength <= 0.0001f) dashWorldLength = 0.1f;
-        float repeats = length / dashWorldLength;
-
-        // X is along the line, Y is across the line
-        matInstance.mainTextureScale = new Vector2(repeats, 1f);
+    // Helper to visualize the path in editor
+    void OnDrawGizmos()
+    {
+        if (roadPath != null && roadPath.Length > 1)
+        {
+            Gizmos.color = Color.yellow;
+            for (int i = 0; i < roadPath.Length - 1; i++)
+            {
+                Gizmos.DrawLine(roadPath[i], roadPath[i + 1]);
+            }
+        }
     }
 }

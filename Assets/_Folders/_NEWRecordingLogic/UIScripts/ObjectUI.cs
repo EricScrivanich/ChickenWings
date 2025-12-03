@@ -18,6 +18,10 @@ public class ObjectUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     [SerializeField] private string type;
 
     [SerializeField] private int typeOvveride = -1;
+
+
+
+    private int randomWaveIndex = -1;
     private void Awake()
     {
         img = GetComponent<Image>();
@@ -31,8 +35,26 @@ public class ObjectUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
         }
     }
+
+    public void SetAsRandomWaveButton(int waveIndex)
+    {
+        randomWaveIndex = waveIndex;
+        GetComponentInChildren<TMPro.TextMeshProUGUI>().text = waveIndex.ToString();
+
+    }
+
+    public void PressWaveButton()
+    {
+        WaveCreator.instance.Open(randomWaveIndex);
+    }
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (randomWaveIndex > 0)
+        {
+            PressWaveButton();
+
+            return;
+        }
 
 
         if (type == "Cage")
@@ -42,6 +64,8 @@ public class ObjectUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         img.color = colorSO.SelctedUIColor;
         LevelRecordManager.instance.SetObjectToBeAdded(Prefab, typeOvveride);
+
+
 
     }
 

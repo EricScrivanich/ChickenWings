@@ -245,22 +245,22 @@ public class LevelDataConverter : MonoBehaviour
 
         return directory;
     }
-    public void ConvertDataToArrays(List<RecordableObjectPlacer> obj, LevelData so)
-    {
-        List<short> idList = new List<short>();
-        List<ushort> spawnedStepList = new List<ushort>();
-        List<ushort> typeList = new List<ushort>();
-        List<Vector2> posList = new List<Vector2>();
-        List<float> floatList = new List<float>();
-        List<ushort> dataTypes = new List<ushort>();
+    // public void ConvertDataToArrays(List<RecordableObjectPlacer> obj, LevelData so)
+    // {
+    //     List<short> idList = new List<short>();
+    //     List<ushort> spawnedStepList = new List<ushort>();
+    //     List<ushort> typeList = new List<ushort>();
+    //     List<Vector2> posList = new List<Vector2>();
+    //     List<float> floatList = new List<float>();
+    //     List<ushort> dataTypes = new List<ushort>();
 
-        for (int i = 0; i < obj.Count; i++)
-        {
+    //     for (int i = 0; i < obj.Count; i++)
+    //     {
 
-        }
-    }
+    //     }
+    // }
 
-    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, List<RecordableObjectPlacer> randomObj, string title, List<ushort[]> plSizes, ushort finalSpawnStep, short[] ammos, short lives, LevelData editorData = null)
+    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, List<RecordableObjectPlacer> randomObj, string title, List<ushort[]> plSizes, ushort finalSpawnStep, short[] ammos, short lives, byte[] randomSpawnRanges,LevelData editorData = null)
     {
 
         List<short> objectTypeList = new List<short>();
@@ -405,28 +405,48 @@ public class LevelDataConverter : MonoBehaviour
             List<Vector2> posListRand = new List<Vector2>();
             List<ushort> objectTypeListRand = new List<ushort>();
             List<ushort> randomLogicSizes = new List<ushort>();
+            List<ushort> randomLogicWaveIndices = new List<ushort>();
             List<Vector3Int> randomSpawnDataTypeObjectTypeAndID = new List<Vector3Int>();
             List<ushort> spawnStepsRandom = new List<ushort>();
+            List<short> usedRNG = new List<short>();
+            int savedSubWaveID = -2;
+            int currentTotalIndex = -1;
+            int currentSpawnWaveIndex = -1;
 
 
             for (int i = 0; i < randomObj.Count; i++)
             {
                 var o = randomObj[i];
+
+                Debug.Log("Saving Random Object: " + i + " with Random Set: " + o.Data.randomSpawnData.x + " SubWaveID: " + o.Data.randomSpawnData.y);
+
                 int currentSpawnSet = o.Data.randomSpawnData.x - 1;
-                if (currentSpawnSet >= randomLogicSizes.Count)
+                if (randomObj[i].Data.randomSpawnData.x > currentSpawnWaveIndex || savedSubWaveID != randomObj[i].Data.randomSpawnData.y)
                 {
+                    currentSpawnWaveIndex = o.Data.randomSpawnData.x;
+                    currentTotalIndex++;
                     randomLogicSizes.Add(1);
+                    randomLogicWaveIndices.Add((ushort)o.Data.randomSpawnData.x);
+
+
+
+                    savedSubWaveID = randomObj[i].Data.randomSpawnData.y;
                     Vector3Int v = new Vector3Int();
 
                     spawnStepsRandom.Add(o.Data.spawnedStep);
                     v.x = o.DataType;
                     v.y = o.ObjectType;
                     v.z = o.Data.ID;
+
+                    for (int r = 0; r < o.Data.usedRNGIndices.Length; r++)
+                    {
+                        usedRNG.Add(o.Data.usedRNGIndices[r]);
+                    }
                     randomSpawnDataTypeObjectTypeAndID.Add(v);
                 }
-                if (o.Data.randomSpawnData.y >= randomLogicSizes[currentSpawnSet])
+                if (o.Data.randomSpawnData.z >= randomLogicSizes[currentTotalIndex])
                 {
-                    randomLogicSizes[currentSpawnSet]++;
+                    randomLogicSizes[currentTotalIndex]++;
                 }
 
                 objectTypeListRand.Add(o.Data.type);
@@ -469,7 +489,7 @@ public class LevelDataConverter : MonoBehaviour
             }
 
 
-            save.SetRandomData(posListRand.ToArray(), floatListRand.ToArray(), objectTypeListRand.ToArray(), randomLogicSizes.ToArray(), randomSpawnDataTypeObjectTypeAndID.ToArray(), spawnStepsRandom.ToArray());
+            save.SetRandomData(posListRand.ToArray(), floatListRand.ToArray(), objectTypeListRand.ToArray(), randomLogicSizes.ToArray(), randomLogicWaveIndices.ToArray(), randomSpawnDataTypeObjectTypeAndID.ToArray(), spawnStepsRandom.ToArray(), usedRNG.ToArray(),randomSpawnRanges);
 
 
         }
@@ -562,11 +582,11 @@ public class LevelDataConverter : MonoBehaviour
 
         var l = new List<RecordedDataStructDynamic>();
         List<RecordedDataStructDynamic> randomData = new List<RecordedDataStructDynamic>();
-        if (data.idList == null || data.idList.Length == 0)
-        {
-            Debug.LogError("No data found in the loaded LevelData.");
-            return l; // Return an empty list if no data is found
-        }
+        // if (data.idList == null || data.idList.Length == 0)
+        // {
+        //     Debug.LogError("No data found in the loaded LevelData.");
+        //     return l; // Return an empty list if no data is found
+        // }
 
         for (int i = 0; i < data.idList.Length; i++)
         {
@@ -615,11 +635,11 @@ public class LevelDataConverter : MonoBehaviour
                     floatIndex++;
                 }
 
-                l.Add(new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], dataArrays.typeList[i - subrtactIndex], dataArrays.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, Vector3Int.zero, hasCageAttachment, triggerType, health));
+                l.Add(new RecordedDataStructDynamic(null, data.objectTypes[i], data.idList[i], dataArrays.typeList[i - subrtactIndex], dataArrays.posList[i - subrtactIndex], values[0], values[1], values[2], values[3], values[4], data.spawnSteps[i], 0, Vector3Int.zero, -1, hasCageAttachment, triggerType, health));
             }
             else if (type < 0)
             {
-                var d = new RecordedDataStructDynamic(data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, Vector3Int.zero, hasCageAttachment, triggerType);
+                var d = new RecordedDataStructDynamic(null, data.objectTypes[i], data.idList[i], 0, Vector2.zero, 0, 0, 0, 0, 0, data.spawnSteps[i], 0, Vector3Int.zero, -1, hasCageAttachment, triggerType);
                 d.positionerData = data.postionerData[positionerIndex];
                 subrtactIndex++;
                 positionerIndex++;
@@ -636,9 +656,12 @@ public class LevelDataConverter : MonoBehaviour
             int floatRandIndex = 0;
             int currentSpawnSet = 0;
             int spawnSetCounter = 0;
+            int rngIndex = 0;
+            int localRNGIndex = 0;
 
             for (int i = 0; i < dataArrays.randomSpawnDataTypeObjectTypeAndID.Length; i++)
             {
+
                 var v = dataArrays.randomSpawnDataTypeObjectTypeAndID[i];
                 int dataType = v.x;
                 ushort spawnStep = dataArrays.spawnStepsRandom[i];
@@ -649,15 +672,47 @@ public class LevelDataConverter : MonoBehaviour
 
                 for (int n = 0; n < dataArrays.randomLogicSizes[i]; n++)
                 {
+                    localRNGIndex = rngIndex;
+                    Debug.Log("Loading local RNG to index: " + localRNGIndex);
+                    Vector3Int randomWaveData = Vector3Int.zero;
+                    randomWaveData.x = dataArrays.randomLogicWaveIndices[i];
+                    randomWaveData.y = i;
+                    randomWaveData.z = n;
                     float[] values = new float[5];
+                    short[] usedRNG = new short[dataType + 3]; // set each to -1
+                    for (int r = 0; r < 3; r++)
+                    {
+                        Debug.Log("Loading Random RNG for position " + r + " with index: " + localRNGIndex);
+                        if (localRNGIndex >= dataArrays.usedRNGIndices.Length)
+                        {
+                            usedRNG[r] = -1;
+                        }
+                        else
+                            usedRNG[r] = dataArrays.usedRNGIndices[localRNGIndex];
+
+                        localRNGIndex++;
+                    }
                     for (int j = 0; j < dataType; j++)
                     {
+                        Debug.Log("Loading Random RNG for position " + (j + 3) + " with index: " + localRNGIndex);
+
                         values[j] = dataArrays.floatListRand[floatRandIndex];
+                        if (localRNGIndex >= dataArrays.usedRNGIndices.Length)
+                        {
+                            usedRNG[j + 3] = 0;
+                        }
+                        else
+                            usedRNG[j + 3] = dataArrays.usedRNGIndices[localRNGIndex];
+
+
+                        localRNGIndex++;
                         floatRandIndex++;
                     }
-                    randomData.Add(new RecordedDataStructDynamic((short)v.y, id, dataArrays.typeListRand[i], dataArrays.posListRand[spawnSetCounter], values[0], values[1], values[2], values[3], values[4], spawnStep, 0, new Vector3Int(i + 1, n, 0), false, 0));
+                    randomData.Add(new RecordedDataStructDynamic(usedRNG, (short)v.y, id, dataArrays.typeListRand[i], dataArrays.posListRand[spawnSetCounter], values[0], values[1], values[2], values[3], values[4], spawnStep, 0, randomWaveData, i, false, 0));
                     spawnSetCounter++;
                 }
+                rngIndex = localRNGIndex;
+
 
 
 
@@ -668,6 +723,7 @@ public class LevelDataConverter : MonoBehaviour
                 //     spawnSetCounter = 0;
                 // }
             }
+
         }
         if (randomData != null && randomData.Count > 0)
             LevelRecordManager.instance.SetRandomData(randomData);

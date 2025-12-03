@@ -200,7 +200,7 @@ public class RecordableObjectPool : ScriptableObject
 
 
         }
-        else if (pool != null || pool.Length > 0)
+        else if ((pool != null || pool.Length > 0) && !pool[currentIndex].gameObject.activeInHierarchy)
         {
             obj = pool[currentIndex];
             currentIndex = (currentIndex + 1) % pool.Length;
@@ -208,7 +208,33 @@ public class RecordableObjectPool : ScriptableObject
         }
 
         else
-            return;
+        {
+            Debug.LogError("Pool is null or empty");
+            obj = Instantiate(prefab, data.GetStartPos(), Quaternion.identity).GetComponent<SpawnedObject>();
+            // make pool a duplicatge of itself then add object
+            if (pool != null && pool.Length > 0)
+            {
+                SpawnedObject[] newPool = new SpawnedObject[poolSize + 1];
+                for (int i = 0; i < poolSize; i++)
+                {
+                    newPool[i] = pool[i];
+                }
+                newPool[poolSize] = obj;
+                pool = newPool;
+                poolSize++;
+
+            }
+            else
+            {
+                pool = new SpawnedObject[1];
+                pool[0] = obj;
+                poolSize = 1;
+            }
+
+
+
+
+        }
 
 
 

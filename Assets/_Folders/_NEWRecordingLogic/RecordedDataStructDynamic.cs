@@ -29,13 +29,17 @@ public struct RecordedDataStructDynamic
 
 
     public RecordedObjectPositionerDataSave positionerData;
+    public short[] usedRNGIndices; // firt position along line, then postion along width, then type, then all other flaots
+
+    public int RandomWaveIndex;
 
 
 
 
 
-    public RecordedDataStructDynamic(short objectType, short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, Vector3Int randomSpawn, bool hasCage = false, short triggerType = 0, short health = 1)
+    public RecordedDataStructDynamic(short[] usedRNG, short objectType, short id, ushort typ, Vector2 pos, float f1, float f2, float f3, float f4, float f5, ushort spawnStep, ushort unspawnStep, Vector3Int randomSpawn, int randomWaveIndex, bool hasCage = false, short triggerType = 0, short health = 1)
     {
+        this.usedRNGIndices = usedRNG;
         this.ObjectType = objectType;
         this.ID = id;
         this.type = typ;
@@ -55,6 +59,7 @@ public struct RecordedDataStructDynamic
         this.triggerType = triggerType;
         this.health = health;
         this.randomSpawnData = randomSpawn;
+        this.RandomWaveIndex = randomWaveIndex;
 
     }
 }

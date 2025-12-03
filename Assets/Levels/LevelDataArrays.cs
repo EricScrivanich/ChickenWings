@@ -21,8 +21,12 @@ public class LevelDataArrays : ScriptableObject
     public ushort[] typeList;
     public Vector2[] posListRand;
     public float[] floatListRand;
+    public short[] usedRNGIndices;
+    public byte[] randomSpawnRanges;
+
     public ushort[] typeListRand;
     public ushort[] randomLogicSizes;
+    public ushort[] randomLogicWaveIndices;
     public ushort[] spawnStepsRandom;
     public Vector3Int[] randomSpawnDataTypeObjectTypeAndID;
 
@@ -78,12 +82,15 @@ public class LevelDataArrays : ScriptableObject
 
         if (lds.randomSpawnDataTypeObjectTypeAndID != null && lds.randomSpawnDataTypeObjectTypeAndID.Length > 0)
         {
+            usedRNGIndices = lds.usedRNGIndices;
             posListRand = lds.posListRand;
             floatListRand = lds.floatListRand;
             typeListRand = lds.typeListRand;
             randomLogicSizes = lds.randomLogicSizes;
             randomSpawnDataTypeObjectTypeAndID = lds.randomSpawnDataTypeObjectTypeAndID;
             spawnStepsRandom = lds.spawnStepsRandom;
+            randomLogicWaveIndices = lds.randomLogicWaveIndices;
+            randomSpawnRanges = lds.randomSpawnRanges;
         }
 
 

@@ -24,6 +24,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
 
     [SerializeField] private PathCreator[] paths;
+    [SerializeField] private PathIntersection[] pathIntersections;
     [SerializeField] private UnlockableMapItem[] unlockableMapItems;
     [SerializeField] private PlayerLevelPickerPathFollwer playerPathFollower;
     [SerializeField] private GameObject levelUiPopupPrefab;
@@ -649,12 +650,12 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
         .SetUpdate(true);
 
         // Hill move
-        frontHillParent.DOLocalMove(hillPos, dur)
+        frontHillParent.DOLocalMove(hillPos, dur * .9f)
                        .SetEase(ease)
                        .SetUpdate(true);
 
         // Hill scale
-        frontHillParent.DOScale(hillScale, dur)
+        frontHillParent.DOScale(hillScale, dur * .9f)
                        .SetEase(ease)
                        .SetUpdate(true);
 

@@ -217,9 +217,13 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     }
 
-    public void SetAsWave(int waveIndex, int subWaveIndex, int randomPointIndex)
+    public void SetAsWave(int waveIndex, int subWaveIndex, int randomPointIndex, int totalWaveIndex)
     {
         Data.randomSpawnData = new Vector3Int(waveIndex, subWaveIndex, randomPointIndex);
+        if (totalWaveIndex >= 0)
+        {
+            Data.RandomWaveIndex = totalWaveIndex;
+        }
 
     }
     public void UpdateTimeStep(int step, bool multipleSelect = false)
@@ -349,12 +353,18 @@ public class RecordableObjectPlacer : MonoBehaviour
             floatValues[i] = FloatValues[i].z;
 
         }
+        short[] usedRNG = null;
 
+        if (LevelRecordManager.UsingWaveCreator)
+        {
+            usedRNG = new short[DataType + 3]; // set each to -1
+            for (int i = 0; i < usedRNG.Length; i++)
+            {
+                usedRNG[i] = -1;
+            }
+        }
 
-
-
-
-        Data = new RecordedDataStructDynamic(ObjectType, ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0, Vector3Int.zero, health: healthDefault);
+        Data = new RecordedDataStructDynamic(usedRNG, ObjectType, ID, type, transform.position, floatValues[0], floatValues[1], floatValues[2], floatValues[3], floatValues[4], LevelRecordManager.CurrentTimeStep, 0, Vector3Int.zero, -1, health: healthDefault);
         lastSavedType = type;
 
         if (_pType == PostionType.Position)
@@ -652,6 +662,10 @@ public class RecordableObjectPlacer : MonoBehaviour
 
         if (isSelected)
         {
+            if (LevelRecordManager.UsingWaveCreator)
+            {
+                WaveCreator.instance.SelectObject(Data);
+            }
             SetLineColor(colorSO.SelectedLineColor);
             iconSprites[1].gameObject.SetActive(true);
 
@@ -797,6 +811,7 @@ public class RecordableObjectPlacer : MonoBehaviour
         LevelRecordManager.SetGlobalTime -= UpdateObjectPosition;
         LevelRecordManager.CheckViewParameters -= ChangeViewParameters;
         LevelRecordManager.OnSendSpecialDataToActiveObjects -= CheckSpecialData;
+        LevelRecordManager.instance.RemoveActiveObject(this.gameObject);
 
 
         if (isSelected) LevelRecordManager.instance.UnactivateSelectedObject();
@@ -1090,6 +1105,12 @@ public class RecordableObjectPlacer : MonoBehaviour
 
     private void UpdateObjectPosition(ushort timeStep, float realTime)
     {
+        if (Data.randomSpawnData != Vector3Int.zero)
+        {
+            if (WaveCreator.instance == null) return;
+            WaveCreator.instance.UpdateLine();
+            // return;
+        }
         if (_pType == PostionType.AI || isSimpleObject)
         {
             if (timeStep < spawnedTimeStep && !(LevelRecordManager.instance.multipleObjectsSelected && isSelected))

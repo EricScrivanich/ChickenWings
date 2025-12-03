@@ -37,8 +37,13 @@ public class LevelPickerZoom : Editor
         // simple 
         if (GUILayout.Button("Reset All", GUILayout.Height(15)))
         {
+            if (s_MoveOnSelect)
+            {
+                s_MoveOnSelect = false;
+            }
 
             lpMan.SetHillPos(lpMan.BaseCameraData);
+
             Camera.main.transform.position = new Vector3(lpMan.BaseCameraData.x, lpMan.BaseCameraData.y, lpMan.BaseCameraData.z);
             Camera.main.orthographicSize = lpMan.BaseCameraData.w;
             EditorUtility.SetDirty(lpMan);

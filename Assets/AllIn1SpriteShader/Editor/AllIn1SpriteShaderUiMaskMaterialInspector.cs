@@ -703,19 +703,19 @@ public class AllIn1SpriteShaderUiMaskMaterialInspector : ShaderGUI
     private void ResetProperty(MaterialProperty targetProperty)
     {
         if(originalMaterialCopy == null) originalMaterialCopy = new Material(targetMat.shader);
-        if(targetProperty.type == MaterialProperty.PropType.Float || targetProperty.type == MaterialProperty.PropType.Range)
+        if(targetProperty.propertyType == ShaderPropertyType.Float || targetProperty.propertyType == ShaderPropertyType.Range)
         {
             targetProperty.floatValue = originalMaterialCopy.GetFloat(targetProperty.name);
         }
-        else if(targetProperty.type == MaterialProperty.PropType.Vector)
+        else if(targetProperty.propertyType == ShaderPropertyType.Vector)
         {
             targetProperty.vectorValue = originalMaterialCopy.GetVector(targetProperty.name);
         }
-        else if(targetProperty.type == MaterialProperty.PropType.Color)
+        else if(targetProperty.propertyType == ShaderPropertyType.Color)
         {
             targetProperty.colorValue = originalMaterialCopy.GetColor(targetProperty.name);
         }
-        else if(targetProperty.type == MaterialProperty.PropType.Texture)
+        else if(targetProperty.propertyType == ShaderPropertyType.Texture)
         {
             targetProperty.textureValue = originalMaterialCopy.GetTexture(targetProperty.name);
         }

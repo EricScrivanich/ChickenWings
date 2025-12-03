@@ -12,27 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ec5cdc658774fadb8730e2026d7251, type: 3}
   m_Name: 01-07-00_Bossy with a shotty
   m_EditorClassIdentifier: 
+  maxWaves: 1
   <unlockItemOnComplete>k__BackingField: -1
-  <StartingAmmos>k__BackingField: 02000300000000000000
+  <StartingAmmos>k__BackingField: 00000000000000000000
   <StartingLives>k__BackingField: 3
   <easyStartingAmmos>k__BackingField: 03000000000000000000
   <easyStartingLives>k__BackingField: 5
   AvailableAmmos: 00000000
   objData: {fileID: 11400000, guid: 39c7fc890c47e46058b8b922c162fb46, type: 2}
   startingStats: {fileID: 11400000, guid: d10dd9036610a46658e0229299e97856, type: 2}
-  levelDataBossAndRandomLogic: {fileID: 11400000, guid: 1ddc3989df7ae4b9b97d0c4f6d3ae711, type: 2}
+  levelDataBossAndRandomLogic: {fileID: 11400000, guid: f4769fe7191d549b2800f0c9d7adbb75, type: 2}
   levelChallenges: {fileID: 11400000, guid: 92448c31ad138422aa4782c9b9fb4852, type: 2}
   tutorialData: {fileID: 0}
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: Bossy with a shotty
   levelWorldAndNumber: {x: 1, y: 7, z: 0}
-  spawnSteps: 00000d001f001f002e003100310031003500400042004b004b0056006200700078007b007b007b007c00e900
-  finalSpawnStep: 255
-  objectTypes: 0000000000000000000000000000000000000000000000000000000000000000000003000300000000000100
-  idList: 0000000001000100010004000400040001000100010001000100010000000200090000000000090009000000
+  spawnSteps: 00000d001f001f002e0031003500400042004b004b0056006200700078007b007b007b007c00e200
+  finalSpawnStep: 235
+  objectTypes: 00000000000000000000000000000000000000000000000000000000000003000300000000000100
+  idList: 00000000010001000100040001000100010001000100010000000200090000000000090009000000
   specialTriggerIndexAndType:
-  - {x: 21, y: 1}
-  dataTypes: 0200020002000200020003000300030002000200020002000200020002000400050005000500050005000100
+  - {x: 19, y: 1}
+  dataTypes: 02000200020002000200030002000200020002000200020002000400050005000500050005000100
   posList: []
   floatList:
   - 5.5
@@ -48,12 +49,6 @@ MonoBehaviour:
   - -3.6
   - 0.63
   - 0
-  - -3.6
-  - 0.63
-  - 0.22
-  - -3.6
-  - 0.63
-  - 0.44
   - 9.6
   - 1
   - 10
@@ -79,12 +74,12 @@ MonoBehaviour:
   - 0
   - 2.4
   - 1
-  - 0.2
+  - 0.12
   - 0.44
   - 0
   - 2.4
   - 1
-  - 0.2
+  - 0.12
   - 0.44
   - 0.5
   - 2.4

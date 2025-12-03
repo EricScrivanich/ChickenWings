@@ -23,7 +23,10 @@ public class BackgroundObjects : MonoBehaviour
     [SerializeField] private Vector2 spawnDelayRange = new Vector2(1.25f, 2.5f); // seconds
     [SerializeField] private float minYSeparation = 0.6f;  // how different the next Y should be
     [SerializeField] private float rightSpawnOffset = 0.8f; // spawn just off-screen to the right
-    [SerializeField] private float leftDespawnOffset = 0.8f; // spawn just off-screen to the right
+    [SerializeField]
+    private float leftDespawnOffsetPig
+     = 0.8f; // spawn just off-screen to the right
+    [SerializeField] private float leftDespawnOffsetCloud = 0.8f; // spawn just off-screen to the right
     [SerializeField] private float initialEdgePadding = 0.6f; // keep away from edges
     [SerializeField] private float initialJitterX = 0.25f;    // tiny randomness per slot
     private float spawnTimer;
@@ -158,7 +161,7 @@ public class BackgroundObjects : MonoBehaviour
 
 
                 // If gone off-screen left, recycle it
-                if (t.position.x < BoundariesManager.leftBoundary - leftDespawnOffset + transform.position.x)
+                if (t.position.x < BoundariesManager.leftBoundary - leftDespawnOffsetCloud + transform.position.x)
                 {
                     RecycleAt(i);
                 }
@@ -168,7 +171,7 @@ public class BackgroundObjects : MonoBehaviour
             {
                 for (int i = 0; i < pigs.Length; i++)
                 {
-                    if (pigs[i].CheckForDespawn(BoundariesManager.leftBoundary - leftDespawnOffset + transform.position.x))
+                    if (pigs[i].CheckForDespawn(BoundariesManager.leftBoundary - leftDespawnOffsetPig + transform.position.x))
                     {
                         SpawnObject(false);
                         break;
@@ -204,14 +207,15 @@ public class BackgroundObjects : MonoBehaviour
         // ----- Even initial X distribution -----
 
         float x;
+        float leftDespawnOffset = cloud ? leftDespawnOffsetCloud : leftDespawnOffsetPig;
 
         if (initial && slotCount > 0)
         {
             float left = Mathf.Max(BoundariesManager.leftBoundary, cloudXRange.x);
             float right = Mathf.Min(BoundariesManager.rightBoundary, cloudXRange.y);
             // Place at the center of each segment, then add a small jitter
-            float usableLeft = left + initialEdgePadding;
-            float usableRight = right - initialEdgePadding;
+            float usableLeft = left - leftDespawnOffset;
+            float usableRight = right + rightSpawnOffset;
             float t = (slotIndex + 0.5f) / slotCount; // centers in each segment
             x = Mathf.Lerp(usableLeft, usableRight, t) + Random.Range(-initialJitterX, initialJitterX);
         }

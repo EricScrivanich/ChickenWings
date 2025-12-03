@@ -5,10 +5,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Level Data", menuName = "Setups/LevelData")]
 public class LevelData : ScriptableObject
 {
-
+    [SerializeField] private int maxWaves;
+    private int currentWave = 1;
+    public LevelDataRandomSpawnData[] randomSpawnData;
     private int spawnStepsPerRandom;
     [field: SerializeField] public short unlockItemOnComplete { get; private set; } = -1;
-    private LevelDataRandomSpawnData[] randomSpawnData;
+
+
     private int currentSpawnStepCount = 0;
     [Header("Starting Stats")]
     [field: SerializeField] public short[] StartingAmmos { get; private set; }
@@ -113,6 +116,8 @@ public class LevelData : ScriptableObject
         currentSpawnStepCount = 0;
         spawnStepsPerRandom = 0;
         currentSpecialTriggerIndex = 0;
+
+        currentWave = 1;
         if (levelDataBossAndRandomLogic != null)
         {
             levelDataBossAndRandomLogic.Initialize(this);
@@ -580,24 +585,49 @@ public class LevelData : ScriptableObject
 
     public void CheckRandomSpawnStep()
     {
-        if (spawnStepsPerRandom <= 0) return;
-        if (currentSpawnStepCount >= spawnStepsPerRandom)
-        {
-            foreach (var rsd in randomSpawnData)
-            {
-                rsd.GenerateRandomEnemySpawn(0);
 
+        if (spawnStepsPerRandom <= 0) return;
+
+        if (currentSpawnStepCount < spawnStepsPerRandom)
+            currentSpawnStepCount++;
+
+        else
+        {
+
+            byte[] rng = new byte[9];
+            for (int i = 0; i < 9; i++)
+            {
+                rng[i] = (byte)UnityEngine.Random.Range(0, 100);
+            }
+            for (int i = 0; i < randomSpawnData.Length; i++)
+            {
+                var rsd = randomSpawnData[i];
+                if (rsd == null || rsd.waveIndex != currentWave)
+                {
+                    Debug.LogError("Skipping Random Spawn Data at index: " + i + " for wave: " + currentWave);
+                    continue;
+                }
+
+                rsd.GenerateRandomEnemySpawn(rng);
             }
             currentSpawnStepCount = 0;
 
+            currentWave++;
+
+            if (currentWave > maxWaves)
+            {
+                currentWave = 1;
+
+            }
+
         }
-        currentSpawnStepCount++;
+
     }
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
         currentSpawnStepCount++;
-        
+
 
 
 
@@ -1006,15 +1036,30 @@ public class LevelData : ScriptableObject
 
             floatListIndex = 0;
             int spawnIndex = 0;
+            int usedRngIndex = 0;
 
             for (int i = 0; i < d.randomSpawnDataTypeObjectTypeAndID.Length; i++)
             {
                 LevelDataRandomSpawnData newData = new LevelDataRandomSpawnData();
                 List<ISpawnData> spawnDataList = new List<ISpawnData>();
+                List<short> rngUsedList = new List<short>();
+                int nextRNGIndex = 0;
+
+                for (int j = usedRngIndex; j < d.randomSpawnDataTypeObjectTypeAndID[i].x + 3 + usedRngIndex; j++)
+                {
+                    rngUsedList.Add(d.usedRNGIndices[j]);
+                    nextRNGIndex++;
+
+
+
+                }
+                usedRngIndex += nextRNGIndex;
 
 
                 for (int j = 0; j < d.randomLogicSizes[i]; j++)
                 {
+
+                    Debug.LogError("Creating random, spawn index: " + spawnIndex + ", floatListIndex: " + floatListIndex + ", type: " + d.randomSpawnDataTypeObjectTypeAndID[i].x);
 
 
                     switch (d.randomSpawnDataTypeObjectTypeAndID[i].x)
@@ -1052,9 +1097,13 @@ public class LevelData : ScriptableObject
                     spawnIndex++;
                 }
 
+                Debug.Log("Created Random Spawn Data with wave index: " + d.randomLogicWaveIndices[i]);
+
+
+
 
                 // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
-                newData.Initialize(spawnDataList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x);
+                newData.Initialize(spawnDataList.ToArray(), rngUsedList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x, d.randomLogicWaveIndices[i], d.randomSpawnRanges[i * 2], d.randomSpawnRanges[(i * 2) + 1]);
                 randomSpawnData[i] = newData;
             }
         }
@@ -1238,7 +1287,7 @@ public class LevelData : ScriptableObject
 
 
                 // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
-                newData.Initialize(spawnDataList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x);
+                newData.Initialize(spawnDataList.ToArray(), null, objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x, d.randomLogicWaveIndices[i]);
                 randomSpawnData[i] = newData;
             }
         }
