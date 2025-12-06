@@ -531,8 +531,8 @@ public class FlappyPigMovement : SpawnedPigBossObject, IRecordableObject
     {
 
         if (stopMovement) return;
-        rot += rotSpeed * Time.fixedDeltaTime;
-        rb.SetRotation(rot);
+        // rot += rotSpeed * Time.fixedDeltaTime;
+        // rb.SetRotation(rot);
 
         if (!blinded && !setRotationTarget)
         {

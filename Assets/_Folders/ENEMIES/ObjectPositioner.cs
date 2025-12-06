@@ -7,7 +7,7 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
     [SerializeField] private float testPathTime = 1f;
 
     [SerializeField] private Ease testPathEase;
-  
+
     private float currentRotation;
     [SerializeField] private float rotationSpeed = 1f;
     private IPositionerObject addedComponent;
@@ -83,6 +83,22 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
 
 
 
+
+    }
+
+    public void DestroyObject()
+    {
+        float x = transform.position.x;
+        if (x < BoundariesManager.rightViewBoundary && x > BoundariesManager.leftViewBoundary)
+        {
+            addedComponent.DestroyObject();
+            rb.bodyType = RigidbodyType2D.Dynamic;
+          
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
 
     }
 
@@ -249,6 +265,7 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
 
         DoMoveSequence();
         DoRotateSequence();
+        addedComponent = GetComponent<IPositionerObject>();
         addedComponent.SetData(data.type + 1, data.perecnt, interval2, duration2);
 
     }

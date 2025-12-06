@@ -51,6 +51,8 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     [SerializeField] private float initialLaserShootDelay;
     [SerializeField] private float laserStartFade;
     [SerializeField] private float laserInbetweenFade;
+    [SerializeField] private GameObject smokeParticles;
+    
 
 
 
@@ -93,6 +95,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     }
     void Awake()
     {
+       
 
         laserMaterial = new Material(baseLaserMaterial);
         timerMaterial = new Material(timerBaseMaterial);
@@ -168,6 +171,22 @@ public class LaserParent : MonoBehaviour, IPositionerObject
 
 
     }
+    private bool laserDestroyed = false;
+    public void DestroyObject()
+    {
+        smokeParticles.SetActive(true);
+        laserDestroyed = true;
+        if (currentLaserShootCoroutine != null)
+            StopCoroutine(currentLaserShootCoroutine);
+
+        if (isShooting)
+        {
+            currentLaserShootCoroutine = StartCoroutine(LaserShoot(true));
+        }
+       
+
+
+    }
 
 
 
@@ -180,7 +199,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         if (currentLaserOffset > laserLength)
         {
             currentLaserOffset = 0;
-            
+
         }
         zeroRotation.eulerAngles = Vector3.zero;
 
@@ -308,61 +327,72 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         laserSpeed = finalLaserSpeed;
 
 
-        StartCoroutine(LaserShoot());
+        currentLaserShootCoroutine = StartCoroutine(LaserShoot());
 
 
 
     }
+    private bool isShooting = false;
 
-    private IEnumerator LaserShoot()
+    private Coroutine currentLaserShootCoroutine;
+    private IEnumerator LaserShoot(bool skipToEnd = false)
     {
         float time = 0;
-        laserSpeed = finalLaserSpeed;
-        laserAudioSource.volume = laserShootingVolume;
-        laserAudioSource.Play();
-        laserAudioSource.PlayOneShot(laserBlastAudioClip, laserBlastAudioClipVolume);
-        while (time < initialLaserShootDelay)
+        if (!skipToEnd)
         {
-            time += Time.deltaTime;
-            laserMaterial.SetFloat("_FadeAmount", Mathf.Lerp(laserInbetweenFade, 0, time / initialLaserShootDelay));
-            Color c = Color.Lerp(laserCooldownColor, Color.white, time / initialLaserShootDelay);
-            laserMaterial.SetColor("_Color", c);
-            timerMaterial.SetColor("_Color", c);
+            isShooting = true;
+
+
+
+            laserSpeed = finalLaserSpeed;
+            laserAudioSource.volume = laserShootingVolume;
+            laserAudioSource.Play();
+            laserAudioSource.PlayOneShot(laserBlastAudioClip, laserBlastAudioClipVolume);
+            while (time < initialLaserShootDelay)
+            {
+                time += Time.deltaTime;
+                laserMaterial.SetFloat("_FadeAmount", Mathf.Lerp(laserInbetweenFade, 0, time / initialLaserShootDelay));
+                Color c = Color.Lerp(laserCooldownColor, Color.white, time / initialLaserShootDelay);
+                laserMaterial.SetColor("_Color", c);
+                timerMaterial.SetColor("_Color", c);
+
+                for (int i = 0; i < laserCount; i++)
+                {
+                    lasers[i].SetLaserScale(Mathf.Lerp(.7f, .9f, time / initialLaserShootDelay));
+                }
+
+                // laserMaterial.SetFloat("_ZoomUvAmount", Mathf.Lerp(1.2f, 1, time / initialLaserShootDelay));
+                yield return null;
+            }
+            for (int i = 0; i < laserCount; i++)
+            {
+                lasers[i].SetLaserScale(1);
+            }
+            laserMaterial.SetColor("_Color", Color.white);
+            timerMaterial.SetColor("_Color", Color.white);
 
             for (int i = 0; i < laserCount; i++)
             {
-                lasers[i].SetLaserScale(Mathf.Lerp(.7f, .9f, time / initialLaserShootDelay));
+                lasers[i].HandleShooting(true);
             }
 
-            // laserMaterial.SetFloat("_ZoomUvAmount", Mathf.Lerp(1.2f, 1, time / initialLaserShootDelay));
-            yield return null;
-        }
-        for (int i = 0; i < laserCount; i++)
-        {
-            lasers[i].SetLaserScale(1);
-        }
-        laserMaterial.SetColor("_Color", Color.white);
-        timerMaterial.SetColor("_Color", Color.white);
-
-        for (int i = 0; i < laserCount; i++)
-        {
-            lasers[i].HandleShooting(true);
-        }
-
-        time = 0;
-        float shootTime = 0;
-        if (laserShootingDurations != null && currentLaserShootingIndex < laserShootingDurations.Length)
-            shootTime = laserShootingDurations[currentLaserShootingIndex] - cooldownDuration - initialLaserShootDelay;
+            time = 0;
+            float shootTime = 0;
+            if (laserShootingDurations != null && currentLaserShootingIndex < laserShootingDurations.Length)
+                shootTime = laserShootingDurations[currentLaserShootingIndex] - cooldownDuration - initialLaserShootDelay;
 
 
-        while (time < shootTime)
-        {
-            time += Time.deltaTime;
-            timerMaterial.SetFloat("_RadialClip", Mathf.Lerp(0, 358, time / shootTime));
-            yield return null;
+            while (time < shootTime)
+            {
+                time += Time.deltaTime;
+                timerMaterial.SetFloat("_RadialClip", Mathf.Lerp(0, 358, time / shootTime));
+                yield return null;
+            }
+            timerMaterial.SetFloat("_RadialClip", 360);
+            currentLaserShootingIndex++;
+
         }
-        timerMaterial.SetFloat("_RadialClip", 360);
-        currentLaserShootingIndex++;
+        isShooting = false;
 
         for (int i = 0; i < laserCount; i++)
         {
@@ -386,7 +416,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
 
 
 
-        StartCoroutine(LaserCooldown());
+        currentLaserShootCoroutine = StartCoroutine(LaserCooldown());
 
 
     }
@@ -400,7 +430,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         {
             laserShootingIntervals = intervals;
             laserShootingDurations = times;
-            StartCoroutine(LaserCooldown());
+            currentLaserShootCoroutine = StartCoroutine(LaserCooldown());
         }
 
     }

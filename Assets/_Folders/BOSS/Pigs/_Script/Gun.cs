@@ -78,7 +78,8 @@ public class Gun : MonoBehaviour
             StartCoroutine(GunAnimation());
         }
         int f = flipped ? -1 : 1;
-        pool.GetBullet(bulletSpawnPoint.position, moveRecoil.eulerAngles.z + shootingAngleAdjustment, bulletSpeed, f);
+        // pool.GetBullet(bulletSpawnPoint.position, moveRecoil.eulerAngles.z + shootingAngleAdjustment, bulletSpeed, f);
+        bulletPool.SpawnWithVelocityAndRotationAndScale(bulletSpawnPoint.position, bulletSpeed * f, moveRecoil.eulerAngles.z + shootingAngleAdjustment, bulletScale, 1);
         // bulletPool.SpawnWithRotationAndSpeed(ulletSpawnPoint.position,moveRecoil,bulletSpeed)
         // bulletPool.SpawnWithVelocityAndRotationAndScale(bulletSpawnPoint.position,)
 

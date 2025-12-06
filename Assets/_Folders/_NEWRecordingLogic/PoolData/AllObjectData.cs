@@ -18,6 +18,7 @@ public class AllObjectData : ScriptableObject
     [Header("Queues")]
     [field: SerializeField] public QPool[] QPools { get; private set; }
     [field: SerializeField] public QEffectPool[] QEffectPools { get; private set; }
+    [field: SerializeField] public PooledQueue[] Other { get; private set; }
 
     [Header("Prefabs")]
     [field: SerializeField] public GameObject cageObject { get; private set; }
@@ -30,7 +31,7 @@ public class AllObjectData : ScriptableObject
 
     public void InitializeQPools()
     {
-        
+
         foreach (var qPool in QPools)
         {
             qPool.Initialize();
@@ -38,6 +39,10 @@ public class AllObjectData : ScriptableObject
         foreach (var qPool in QEffectPools)
         {
             qPool.Initialize();
+        }
+        foreach (var pq in Other)
+        {
+            pq.CreatePool();
         }
 
     }

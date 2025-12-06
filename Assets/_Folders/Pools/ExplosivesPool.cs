@@ -28,7 +28,7 @@ public class ExplosivesPool : ScriptableObject
     {
         // bombPool = new Bombs[bombPoolSize];
         // balloonBombPool = new BalloonBomb[balloonBombPoolSize];
-        bullets = new Queue<Bullet>();
+        // bullets = new Queue<Bullet>();
 
 
         // for (int i = 0; i < bombPoolSize; i++)
@@ -47,14 +47,14 @@ public class ExplosivesPool : ScriptableObject
         //     obj.SetActive(false);
         // }
 
-        for (int i = 0; i < 10; i++)
-        {
-            var obj = Instantiate(bulletPrefab);
-            var bullet = obj.GetComponent<Bullet>();
-            bullets.Enqueue(bullet);
-            obj.SetActive(false);
+        // for (int i = 0; i < 10; i++)
+        // {
+        //     var obj = Instantiate(bulletPrefab);
+        //     var bullet = obj.GetComponent<Bullet>();
+        //     bullets.Enqueue(bullet);
+        //     obj.SetActive(false);
 
-        }
+        // }
     }
 
     public void GetBomb(Vector2 pos, Vector3 rot, float force, bool dropped)

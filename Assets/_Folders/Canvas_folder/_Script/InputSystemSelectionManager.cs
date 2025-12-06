@@ -36,11 +36,18 @@ public class InputSystemSelectionManager : MonoBehaviour
         // Subscribe to the move action (D-pad / joystick navigation)
         inputModule.move.action.performed += OnNavigatePerformed;
     }
+    void OnDisable()
+    {
+
+        inputModule.move.action.performed -= OnNavigatePerformed;
+
+
+    }
 
     void OnDestroy()
     {
-        if (inputModule != null)
-            inputModule.move.action.performed -= OnNavigatePerformed;
+
+        inputModule.move.action.performed -= OnNavigatePerformed;
     }
 
     private void OnNavigatePerformed(InputAction.CallbackContext ctx)
@@ -71,7 +78,7 @@ public class InputSystemSelectionManager : MonoBehaviour
 
         }
 
-        Debug.Log("Navigation input: " + direction);
+        Debug.Log("Navigation input: " + direction + this.gameObject.name);
 
         // Check if current is invalid, and skip if needed
         // if (current == null || ShouldSkip(current))

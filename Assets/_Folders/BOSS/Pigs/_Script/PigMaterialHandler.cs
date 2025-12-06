@@ -424,6 +424,12 @@ public class PigMaterialHandler : MonoBehaviour
         {
             gameObject.SetActive(false);
 
+            if (pigType == 2) // solves very odd sprite renderer glitch when destroying mat
+                foreach (var pig in sprites)
+                {
+                    pig.material = defaultMat;
+                }
+
             Destroy(instanceMaterial);
 
 

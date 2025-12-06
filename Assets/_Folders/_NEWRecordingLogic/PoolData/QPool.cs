@@ -91,11 +91,11 @@ public class QPool : ScriptableObject
         obj.ResetRB();
         obj.SpawnWithVelocityAndRotation(pos, velocity, rotation, angularVelocity);
     }
-    public void SpawnWithVelocityAndRotationAndScale(Vector2 pos, Vector2 velocity, float rotation, float scale)
+    public void SpawnWithVelocityAndRotationAndScale(Vector2 pos, float vel, float rotation, float scale, byte type = 0)
     {
         var obj = GetObject();
         obj.ResetRB();
-        obj.SpawnWithVelocityAndRotationAndScale(pos, velocity, rotation, scale);
+        obj.SpawnWithVelocityAndRotationAndScale(pos, vel, rotation, scale, type);
     }
 
 }

@@ -24,6 +24,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
 
     [SerializeField] private PathCreator[] paths;
+    [SerializeField] private bool[] pathIntersectsCenter;
     [SerializeField] private PathIntersection[] pathIntersections;
     [SerializeField] private UnlockableMapItem[] unlockableMapItems;
     [SerializeField] private PlayerLevelPickerPathFollwer playerPathFollower;
@@ -498,6 +499,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                 List<float> dists = new List<float>();
                 List<int> pathIndices = new List<int>();
                 List<int> pathRoots = new List<int>();
+                List<bool> pathIntersectsCenters = new List<bool>();
 
 
                 float inbetweenDistance = 0;
@@ -526,7 +528,12 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                     if (currentPathIndex < data.y)
                     {
                         Debug.LogError("Current Path Index: " + currentPathIndex + " is less than target path index: " + data.y);
-                        inbetweenDistance = paths[currentPathIndex].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
+                        if (pathIntersectsCenter[data.y])
+
+                            inbetweenDistance = paths[currentPathIndex].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
+                        else
+                            inbetweenDistance = paths[currentPathIndex].path.length;
+
 
                     }
                     else

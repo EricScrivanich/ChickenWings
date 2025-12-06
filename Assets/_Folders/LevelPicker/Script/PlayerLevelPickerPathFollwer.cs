@@ -197,7 +197,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
         anim.SetBool("Run", true);
         isRunning = true;
 
-        Debug.LogError("Doing path on path: " + path.name + " to distance: " + distanceToTravel);
+        Debug.LogError("Doing path on path: " + path.name + " to distance: " + distanceToTravel / path.path.length);
 
         pathData = path.GetComponent<LevelPickerPathData>();
         // transform.position = path.path.GetPointAtDistance(0);
@@ -280,6 +280,11 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
             int nextIndex = addedPathIndices[0];
             int nextRoot = addedPathRoots[0];
             currentDistance = nextPath.path.GetClosestDistanceAlongPath(transform.position);
+            Debug.LogError("Switching to next path: " + nextPath.name + " to distance: " + distanceToTravel2 + " from position: " + transform.position + " at distance: " + currentDistance);
+            if (currentDistance < 5)
+                currentDistance = 0;
+            else if (currentDistance > nextPath.path.length - 5)
+                currentDistance = nextPath.path.length;
             nextPath.ReturnLayerForStart(currentDistance / nextPath.path.length);
             pathManager.SetCurrentPathIndexAndRoot(nextIndex, nextRoot);
             addedPaths.RemoveAt(0);

@@ -35,11 +35,12 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
 
     [SerializeField] private GameObject RingRim;
     private Transform ringTransform;
-    private Vector2 ringTransformOriginal;
+    private Vector2 ringTransformOriginal = new Vector2(.34f, -.02f);
     [SerializeField] private SpriteRenderer ringSpriteFront;
 
     [SerializeField] private SpriteRenderer ringSpriteBack;
     private Animator anim;
+
 
     private float slowDownDuration;
     // Start is called before the first frame update
@@ -48,13 +49,14 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        ringTransform = RingRim.GetComponent<Transform>();
+        ringTransform = RingRim.transform;
+
         colliders = GetComponents<Collider2D>();
         if (ID != null)
         {
             coloredParticleSprite = ColoredParticles.GetComponent<SpriteRenderer>();
             whiteParticleSprite = WhiteParticles.GetComponent<SpriteRenderer>();
-            ringTransformOriginal = ringTransform.localPosition;
+
         }
 
 
@@ -274,8 +276,15 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
     private IEnumerator SetUnactive(float time)
     {
         yield return new WaitForSeconds(time);
+        isExploded = false;
+
         anim.SetBool("RestartBool", true);
+
+
+
         gameObject.SetActive(false);
+        ringTransform.localPosition = ringTransformOriginal;
+
         ID.ringEvent.OnCreateNewSequence?.Invoke(true, index);
     }
 
@@ -339,7 +348,10 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
             ID.ringEvent.DisableRings += DisableBucket;
             EnableColliders();
             FadeChildren(1f);
-            StartCoroutine(ResetRing());
+            // StartCoroutine(ResetRing());
+           
+
+            SetCorrectRing();
 
 
 
@@ -369,13 +381,13 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
 
     private IEnumerator ResetRing()
     {
-        ringTransform.gameObject.SetActive(false);
-        yield return new WaitForSeconds(.3f);
-        ringTransform.localPosition = ringTransformOriginal;
-        yield return new WaitForSeconds(.2f);
 
-        ringTransform.gameObject.SetActive(true);
-        anim.SetBool("RestartBool", false);
+
+        yield return new WaitForSeconds(.1f);
+
+
+
+
 
     }
 
@@ -393,7 +405,10 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
             ID.ringEvent.OnCreateNewSequence -= NewSetup;
             ID.ringEvent.DisableRings -= DisableBucket;
 
+
+
         }
+
 
 
 
@@ -403,7 +418,7 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
     {
         return 0;
     }
-   
+
     public override void ApplyFloatThreeData(DataStructFloatThree data)
     {
         // transform.position = data.startPos;
@@ -416,7 +431,7 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
 
         gameObject.SetActive(true);
     }
-   
+
 
 
     public void ApplyCustomizedData(RecordedDataStructDynamic data)

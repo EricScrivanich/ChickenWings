@@ -223,6 +223,7 @@ public class DynamicValueAdder : MonoBehaviour
 
     public void Activate(string type, RecordedDataStructTweensDynamic data)
     {
+
         if (data == null)
         {
             Debug.LogError("Data is null");
@@ -245,8 +246,9 @@ public class DynamicValueAdder : MonoBehaviour
                 floatEditor.gameObject.SetActive(true);
                 // typeEditors[0].gameObject.SetActive(true);
                 // typeEditors[1].SetData("Rotations", rotationDirectionString, data.other[0]);
-                typeEditors[0].gameObject.SetActive(true);
+
                 typeEditors[0].SetData("Ease", easeTypeString, data.easeTypes[0]);
+                typeEditors[0].gameObject.SetActive(true);
                 typeEditors[1].gameObject.SetActive(false);
 
                 plusMinusText.text = "Rotations: 0";
@@ -261,8 +263,9 @@ public class DynamicValueAdder : MonoBehaviour
                 this.type = DynamicValueType.Positions;
                 plusMinusObject.SetActive(false);
                 floatEditor.gameObject.SetActive(false);
-                typeEditors[0].gameObject.SetActive(true);
+
                 typeEditors[0].SetData("Ease", easeTypeString, data.easeTypes[0]);
+                typeEditors[0].gameObject.SetActive(true);
                 positionCordinatesObject.SetActive(true);
 
 
@@ -273,7 +276,7 @@ public class DynamicValueAdder : MonoBehaviour
                 CreatePostionerObjects();
                 // SetUpperEditorSize(laserPositionEditorSize);
 
-                LevelRecordManager.instance.editingPostionerObject = true;
+
                 // LevelRecordManager.instance.SetUsingMultipleSelect(false);
 
 
@@ -389,6 +392,7 @@ public class DynamicValueAdder : MonoBehaviour
 
 
 
+
         switch (type)
         {
             case DynamicValueType.Rotations:
@@ -434,8 +438,10 @@ public class DynamicValueAdder : MonoBehaviour
                 break;
 
         }
+        LevelRecordManager.instance.UpdateTime((ushort)currentStep);
 
-        CustomTimeSlider.instance.OnPressTweenTime(true, handle, currentStep);
+        if (!handle)
+            CustomTimeSlider.instance.OnPressTweenTime(true, handle, currentStep);
 
     }
 

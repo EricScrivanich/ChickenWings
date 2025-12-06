@@ -116,7 +116,7 @@ public class ILevelPickerPathObject : MonoBehaviour
         isSelected = selected;
         if (selected)
         {
-          
+
             Color col = new Color(blurMain.color.r, blurMain.color.g, blurMain.color.b, 1f);
             blurMain.color = col;
             blurMain.enabled = true;
@@ -154,9 +154,9 @@ public class ILevelPickerPathObject : MonoBehaviour
         }
 
         arrowSequence = DOTween.Sequence();
-        arrowSequence.Append(arrow.DOLocalMoveY(2.7f, .3f).SetEase(Ease.OutQuad).From(2.5f));
+        arrowSequence.Append(arrow.DOLocalMoveY(2.4f, .3f).SetEase(Ease.OutQuad).From(2.2f));
         // arrowSequence.Join(arrow.DORotate(new Vector3(0, 180, 0), .3f).SetEase(Ease.InSine).From(Vector3.zero));
-        arrowSequence.Append(arrow.DOLocalMoveY(2.5f, .3f).SetEase(Ease.InQuad));
+        arrowSequence.Append(arrow.DOLocalMoveY(2.2f, .3f).SetEase(Ease.InQuad));
         // arrowSequence.Join(selectedArrowTransform.DORotate(new Vector3(0, 360, 0), seqDur).SetEase(Ease.OutSine));
         arrowSequence.SetLoops(-1);
     }

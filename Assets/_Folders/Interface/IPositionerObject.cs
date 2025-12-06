@@ -6,4 +6,6 @@ public interface IPositionerObject
 
     public void SetPercent(float percent);
     public void DoUpdateTransform();
+
+    public void DestroyObject();
 }

@@ -661,6 +661,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         }
         return false;
     }
+
     private void HandleClickObject(Vector2 pos)
     {
         if (ignoreAllClicks) return;
@@ -895,6 +896,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
         if (screenClicked && goingToAddObject && pos.y > -5.3f)
         {
+            if (currentSelectedPostionerObject != null) currentSelectedPostionerObject = null;
             if (!parameterUI.activeInHierarchy && ShowParameters)
             {
                 parameterUI.SetActive(true);

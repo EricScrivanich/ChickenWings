@@ -57,6 +57,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -78,6 +80,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1166210541
   m_SortingLayer: 6
   m_SortingOrder: 5
@@ -198,6 +201,8 @@ TrailRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -219,10 +224,11 @@ TrailRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1.7
+  m_Time: 0.25
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -305,7 +311,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893808f128e50421f98c1a4b1b4645ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalExplosionScale: {x: 0.5, y: 0.5, z: 0.5}
   groundExplosionScale: {x: 0.7, y: 0.7, z: 0.7}
+  yOffsetGround: 0
+  airExplosionScale: 0.7
   isBomberBomb: 1
   ID: {fileID: 0}
+  waitbeforeDespawnTime: 25
+  groundExplosionPool: {fileID: 11400000, guid: 4e73834824bd94baaaf79adc271ef49f, type: 2}
+  normalExplosionPool: {fileID: 11400000, guid: b3ede6ba69fcc4943a05631bd19f5545, type: 2}

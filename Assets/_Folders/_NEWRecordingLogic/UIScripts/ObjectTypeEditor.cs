@@ -102,6 +102,7 @@ public class ObjectTypeEditor : MonoBehaviour, IPointerDownHandler
 
             return;
         }
+        openListButton = false;
 
         typesByIndex = s;
         if (setIndex == -1)

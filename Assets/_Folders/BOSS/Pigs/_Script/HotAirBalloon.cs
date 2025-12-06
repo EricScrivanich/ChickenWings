@@ -400,7 +400,7 @@ public class HotAirBalloon : SpawnedPigObject, IRecordableObject
 
             usingGun = true;
             gunRotationSpeed = gunRotationSpeedAiming;
-            delay = .35f;
+            delay = .4f;
         }
     }
 

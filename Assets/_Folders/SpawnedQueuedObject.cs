@@ -24,6 +24,14 @@ public class SpawnedQueuedObject : MonoBehaviour
 
     }
 
+    public void SpawnWithRotation(Vector2 pos, float r)
+    {
+        transform.SetPositionAndRotation(pos, Quaternion.Euler(Vector3.forward * r));
+        gameObject.SetActive(true);
+        OnSpawnLogic();
+
+    }
+
     public void SpawnWithRotationAndSpeed(Vector2 pos, Quaternion ang, float speed, ushort side)
     {
         transform.SetPositionAndRotation(pos, ang);
@@ -89,24 +97,41 @@ public class SpawnedQueuedObject : MonoBehaviour
     }
     public virtual void SpawnTransformOverride(Vector2 pos, float rotation, int ID, bool other)
     {
-       
+
     }
-   
-    public virtual void SpawnWithVelocityAndRotationAndScale(Vector2 pos, Vector2 velocity, float rotation, float scale)
+
+    public virtual void SpawnWithVelocityAndRotationAndScale(Vector2 pos, float vel, float rotation, float scale, byte type = 0)
     {
-        Spawn(pos);
-        rb.linearVelocity = velocity;
-        rb.rotation = rotation;
         transform.localScale = Vector3.one * scale;
+        SpawnWithRotation(pos, rotation);
+
+
+
+        // rb.rotation = rotation;
+
+        switch (type)
+        {
+            // case 0:
+            //     // rb.linearVelocity = velocity;
+            //     break;
+            case 1:
+                rb.linearVelocity = -transform.right * vel;
+                break;
+            case 2:
+                rb.linearVelocity = transform.right * vel;
+                break;
+        }
+
+        // rb.linearVelocity = velocity;
 
 
     }
 
     public void ReturnToPool()
-{
-    pool.ReturnObject(this);
+    {
+        pool.ReturnObject(this);
 
-}
+    }
 
 
 

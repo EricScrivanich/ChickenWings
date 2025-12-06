@@ -15,7 +15,15 @@ public class Bullet : SpawnedQueuedObject
 
     void OnDisable()
     {
+        trail.emitting = false;
 
+        ReturnToPool();
+    }
+
+    public override void OnSpawnLogic()
+    {
+        trail.emitting = true;
+        time = 0;
     }
 
     public void Fire(Vector2 pos, float z, float speed, int flip)

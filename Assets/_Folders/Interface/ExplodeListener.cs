@@ -12,6 +12,8 @@ public class ExplodeListener : MonoBehaviour, IExplodable
     [SerializeField] private bool isBomberBomb;
     [SerializeField] private PlaneManagerID ID;
 
+    [SerializeField] private byte waitbeforeDespawnTime;
+
     [SerializeField] private QEffectPool groundExplosionPool;
     [SerializeField] private QEffectPool normalExplosionPool;
 
@@ -26,6 +28,14 @@ public class ExplodeListener : MonoBehaviour, IExplodable
 
 
     // }
+
+    private void Awake()
+    {
+        if (waitbeforeDespawnTime > 0)
+        {
+            waitDespawn = new WaitForSecondsRealtime((float)waitbeforeDespawnTime / 100);
+        }
+    }
 
 
     public void Explode(bool isGround)
@@ -59,7 +69,15 @@ public class ExplodeListener : MonoBehaviour, IExplodable
 
 
         }
-        gameObject.SetActive(false);
+
+        if (waitbeforeDespawnTime > 0)
+        {
+            GetComponent<Rigidbody2D>().simulated = false;
+            GetComponent<SpriteRenderer>().enabled = false;
+            StartCoroutine(DespawnAfterTime());
+        }
+        else
+            gameObject.SetActive(false);
 
     }
 
@@ -67,6 +85,17 @@ public class ExplodeListener : MonoBehaviour, IExplodable
     {
         float offset = (ID.bombsDropped * -.25f) + 1;
         return new Vector2(transform.position.x + offset, transform.position.y);
+
+    }
+
+    private WaitForSecondsRealtime waitDespawn;
+    private IEnumerator DespawnAfterTime()
+    {
+        yield return waitDespawn;
+
+        gameObject.SetActive(false);
+        GetComponent<Rigidbody2D>().simulated = true;
+        GetComponent<SpriteRenderer>().enabled = true;
 
     }
 

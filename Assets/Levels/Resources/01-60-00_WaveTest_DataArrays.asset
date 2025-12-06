@@ -12,41 +12,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c21eaf85768445e94055229912117c, type: 3}
   m_Name: 01-60-00_WaveTest_DataArrays
   m_EditorClassIdentifier: 
-  pigPoolSizes: 0300000003000000000000000000000000000000
+  pigPoolSizes: 0000000000000000000000000000000000000000
   aiPoolSizes: 00000000
   buildingPoolSizes: 0000000000000000
-  collectablePoolSizes: 02000000
+  collectablePoolSizes: 00000000
   positionerPoolSizes: 0000
-  ringPoolSizes: 00000000
+  ringPoolSizes: 01000100
   cageAttachments: 
   indexAndHealth: 
-  posList: []
-  floatList: []
-  typeList: 
-  posListRand:
-  - {x: 13.8, y: 2.8}
-  - {x: 14.400001, y: -1.8000001}
-  - {x: 14.2, y: -1.8000001}
-  - {x: 21.6, y: -2}
-  floatListRand:
-  - 5.5
+  posList:
+  - {x: 14, y: 0.2}
+  - {x: 15, y: 0.2}
+  - {x: 14, y: 0.8}
+  - {x: 14.6, y: 0.8}
+  floatList:
+  - 5
   - 1
-  - 6.3
-  - 1.05
-  - 6.3
-  - 1.05
-  - 0
-  - 0
-  - 9.5
+  - -0
+  - 5
   - 1
-  - 0
-  - 0
+  - -0
+  - 5
+  - 1
+  - -0
+  - 5
+  - 1
+  - -0
+  typeList: 0000000000000000
+  posListRand: []
+  floatListRand: []
   usedRNGIndices: 
-  typeListRand: 0000000000000000
-  randomLogicSizes: 0200020001000100
-  spawnStepsRandom: 9600960096009600
-  randomSpawnDataTypeObjectTypeAndID:
-  - {x: 2, y: 0, z: 0}
-  - {x: 2, y: 0, z: 0}
-  - {x: 4, y: 0, z: 2}
-  - {x: 4, y: 0, z: 2}
+  randomSpawnRanges: 
+  typeListRand: 
+  randomLogicSizes: 
+  randomLogicWaveIndices: 
+  spawnStepsRandom: 
+  randomSpawnDataTypeObjectTypeAndID: []

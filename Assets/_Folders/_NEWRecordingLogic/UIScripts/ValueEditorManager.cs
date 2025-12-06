@@ -457,8 +457,8 @@ public class ValueEditorManager : MonoBehaviour
 
         else
         {
-            typeEditor.gameObject.SetActive(true);
             typeEditor.SetData(type, s);
+            typeEditor.gameObject.SetActive(true);
             activeRects.Add(typeEditor.GetComponent<RectTransform>());
             lastUsedFloatIndex += 1;
 
@@ -501,11 +501,12 @@ public class ValueEditorManager : MonoBehaviour
 
     public void ShowMainPanel()
     {
+        if (isShowingList)
+            listPanel.GetComponent<DynamicValueAdder>().Deactivate();
         cagePanel.SetActive(false);
 
         mainPanel.SetActive(true);
-        if (isShowingList)
-            listPanel.GetComponent<DynamicValueAdder>().Deactivate();
+
 
         isShowingList = false;
         isShowingCage = false;
@@ -538,6 +539,7 @@ public class ValueEditorManager : MonoBehaviour
         }
         mainPanel.SetActive(false);
         cagePanel.SetActive(false);
+        LevelRecordManager.instance.editingPostionerObject = true;
         RecordedDataStructTweensDynamic d = null;
         switch (type)
         {
