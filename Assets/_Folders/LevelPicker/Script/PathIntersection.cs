@@ -4,18 +4,15 @@ using System.Collections.Generic;
 public class PathIntersection : MonoBehaviour
 {
 
-    [SerializeField] private List<int> connectedPathsIndices;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [field: SerializeField] public int[] connectedPathsIndices { get; private set; }
+    [field: SerializeField] public int[] connectedPathsDistances { get; private set; } //-1 for postion of connecttion, 0 for start, 1 for end 
+
     void Start()
     {
-
+        GetComponent<SpriteRenderer>().enabled = false;
     }
 
-    public bool CheckIfConnected(int pathIndex)
-    {
-        return connectedPathsIndices.Contains(pathIndex);
-    }
 
-    // Update is called once per frame
-   
+
+
 }

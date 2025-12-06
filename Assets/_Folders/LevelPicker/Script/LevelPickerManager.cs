@@ -420,10 +420,10 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     private int currentPlayerPath;
     private ILevelPickerPathObject currentTarget;
 
-    public void SetCurrentPathIndexAndRoot(int index, int pathRoot)
+    public void SetCurrentPathIndexAndRoot(int index)
     {
         currentPathIndex = index;
-        currentPathRoot = pathRoot;
+        // currentPathRoot = pathRoot;
         Debug.LogError("Setting Current Path Index to: " + index);
     }
     private bool IsPointerOverUI(Vector2 screenPos)
@@ -449,6 +449,256 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
         HandleClickObject(Vector2.zero, obj);
     }
 
+    public float GetPathDisntaceBasedOnIndexLogic(PathCreator path, int type)
+    {
+        switch (type)
+        {
+            case -1:
+                return -1;
+            case 0:
+                return 0;
+            case 1:
+                return path.path.length;
+            default:
+                return 0;
+        }
+    }
+
+    private void SendPathDataToPlayer(ILevelPickerPathObject obj)
+    {
+
+
+
+        if (currentTarget != null)
+        {
+            currentTarget.SetSelected(false);
+        }
+        currentTarget = obj;
+        CreateLastSave(obj.WorldNumber);
+
+
+        currentTarget.SetSelected(true);
+        LevelDataConverter.currentChallengeType = currentTarget.challengeType;
+        Vector3Int data = obj.RootIndex_PathIndex_Order;
+
+        float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
+
+
+        if (data.y != currentPathIndex)
+        {
+            var (pathRoute, intersectionDistances) = GetPathDataFromIntersections(obj);
+
+            List<PathCreator> addedPaths = new List<PathCreator>();
+            List<float> currentPlayerDistances = new List<float>();
+            List<float> dists = new List<float>();
+            List<int> pathIndices = new List<int>();
+            List<int> pathRoots = new List<int>();
+
+
+
+            float inbetweenDistance = 0;
+            PathCreator currentPath = paths[pathRoute[0]];
+            float initialDistance = intersectionDistances[0];
+
+            bool isPlayerDistance = true;
+
+            for (int i = 1; i < pathRoute.Count; i++)
+            {
+                addedPaths.Add(paths[pathRoute[i]]);
+                pathIndices.Add(pathRoute[i]);
+
+
+            }
+
+            for (int i = 1; i < intersectionDistances.Count; i++)
+            {
+                if (isPlayerDistance)
+                {
+                    currentPlayerDistances.Add(intersectionDistances[i]);
+
+
+                }
+                else
+                {
+                    dists.Add(intersectionDistances[i]);
+
+                }
+                isPlayerDistance = !isPlayerDistance;
+
+            }
+            dists.Add(d);
+
+
+            playerPathFollower.DoPathToPoint(currentPath, initialDistance, addedPaths, currentPlayerDistances, dists, pathIndices, pathRoots, currentTarget.GetPathTransform());
+
+
+
+
+
+
+            // if (currentPathRoot == data.x)
+            // {
+
+            //     inbetweenDistance = 0;
+            //     float distanceFirst = paths[currentPathRoot].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
+            //     dists.Add(distanceFirst);
+            //     dists.Add(d);
+            //     pathIndices.Add(currentPathRoot);
+            //     pathIndices.Add(data.y);
+            //     addedPaths.Add(this.paths[currentPathRoot]);
+            //     addedPaths.Add(this.paths[data.y]);
+            //     pathRoots.Add(currentPathRoot - 1);
+            //     pathRoots.Add(currentPathRoot);
+
+            // }
+            // else
+            // {
+            //     dists.Add(d);
+            //     pathIndices.Add(data.y);
+            //     addedPaths.Add(paths[data.y]);
+            //     pathRoots.Add(data.x);
+            //     if (currentPathIndex < data.y)
+            //     {
+            //         Debug.LogError("Current Path Index: " + currentPathIndex + " is less than target path index: " + data.y);
+            //         if (pathIntersectsCenter[data.y])
+
+            //             inbetweenDistance = paths[currentPathIndex].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
+            //         else
+            //             inbetweenDistance = paths[currentPathIndex].path.length;
+
+
+            //     }
+            //     else
+            //     {
+            //         inbetweenDistance = 0;
+            //     }
+            // }
+
+
+        }
+        else
+        {
+            playerPathFollower.DoPathToPoint(paths[currentPathIndex], d, null, null, null, null, null, currentTarget.GetPathTransform());
+
+        }
+
+        Debug.LogError("Moving to level: " + obj.WorldNumber);
+        DoLevelPopupSeq(true, obj.WorldNumber);
+
+        ZoomSeq(currentTarget.CameraPositionAndOrhtoSize, currentTarget.layersShownFrom);
+
+    }
+
+    private (List<int> pathRoute, List<float> intersectionDistances) GetPathDataFromIntersections(ILevelPickerPathObject obj)
+    {
+        int targetPathIndex = obj.RootIndex_PathIndex_Order.y;
+
+        // If we're already on the target path, no intersections needed
+        if (currentPathIndex == targetPathIndex)
+        {
+            return (new List<int> { currentPathIndex }, new List<float>());
+        }
+
+        // BFS to find the shortest path through intersections
+        // Each queue entry is a tuple: (path route, intersection distances in traversal order)
+        Queue<(List<int> paths, List<float> distances)> pathQueue = new Queue<(List<int>, List<float>)>();
+        HashSet<int> visitedPaths = new HashSet<int>();
+
+        // Start with current path
+        pathQueue.Enqueue((new List<int> { currentPathIndex }, new List<float>()));
+        visitedPaths.Add(currentPathIndex);
+
+        while (pathQueue.Count > 0)
+        {
+            var (currentPath, currentDistances) = pathQueue.Dequeue();
+            int lastPathInRoute = currentPath[currentPath.Count - 1];
+
+            // Search through all intersections to find connections from this path
+            for (int intersectionIdx = 0; intersectionIdx < pathIntersections.Length; intersectionIdx++)
+            {
+                var intersection = pathIntersections[intersectionIdx];
+                if (intersection == null || intersection.connectedPathsIndices == null)
+                    continue;
+
+                // Check if this intersection connects to our current path in the route
+                int fromIndex = -1;
+                for (int i = 0; i < intersection.connectedPathsIndices.Length; i++)
+                {
+                    if (intersection.connectedPathsIndices[i] == lastPathInRoute)
+                    {
+                        fromIndex = i;
+                        break;
+                    }
+                }
+
+                // If this intersection connects to our path, check all other connected paths
+                if (fromIndex >= 0)
+                {
+                    for (int toIndex = 0; toIndex < intersection.connectedPathsIndices.Length; toIndex++)
+                    {
+                        int connectedPathIndex = intersection.connectedPathsIndices[toIndex];
+
+                        // Skip the path we came from or already visited paths
+                        if (toIndex == fromIndex || visitedPaths.Contains(connectedPathIndex))
+                            continue;
+
+                        // Create new route with this path added
+                        List<int> newRoute = new List<int>(currentPath);
+                        newRoute.Add(connectedPathIndex);
+
+                        // Calculate actual distances based on connectedPathsDistances type
+                        // 0 = start (distance 0), 1 = end (path.length), -1 = intersection position
+                        List<float> newDistances = new List<float>(currentDistances);
+
+                        int fromType = intersection.connectedPathsDistances[fromIndex];
+                        int toType = intersection.connectedPathsDistances[toIndex];
+
+                        float fromDistance = fromType switch
+                        {
+                            0 => 0f,
+                            1 => paths[lastPathInRoute].path.length,
+                            -1 => paths[lastPathInRoute].path.GetClosestDistanceAlongPath(intersection.transform.position),
+                            _ => 0f
+                        };
+
+                        float toDistance = toType switch
+                        {
+                            0 => 0f,
+                            1 => paths[connectedPathIndex].path.length,
+                            -1 => paths[connectedPathIndex].path.GetClosestDistanceAlongPath(intersection.transform.position),
+                            _ => 0f
+                        };
+
+                        newDistances.Add(fromDistance);
+                        newDistances.Add(toDistance);
+
+                        // Found the target!
+                        if (connectedPathIndex == targetPathIndex)
+                        {
+                            for (int n = 0; n < newRoute.Count; n++)
+                            {
+                                Debug.LogWarning($"Path in route: {newRoute[n]}");
+                            }
+                            for (int n = 0; n < newDistances.Count; n += 2)
+                            {
+                                Debug.LogWarning($"Intersection distances: from={newDistances[n]}, to={newDistances[n + 1]}");
+                            }
+                            return (newRoute, newDistances);
+                        }
+
+                        // Otherwise, add to queue to continue searching
+                        visitedPaths.Add(connectedPathIndex);
+                        pathQueue.Enqueue((newRoute, newDistances));
+                    }
+                }
+            }
+        }
+
+        // No path found - return empty lists as fallback
+        Debug.LogWarning($"No path found from path {currentPathIndex} to path {targetPathIndex} using intersections");
+        return (new List<int>(), new List<float>());
+    }
+
     private void HandleClickObject(Vector2 screenPosition, ILevelPickerPathObject manualSelect = null)
     {
         if (ignoreAll)
@@ -472,92 +722,11 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
             obj = manualSelect;
         }
 
-
         if (obj != null && (obj != currentTarget || manualSelect != null))
         {
             if (manualSelect == null)
                 HapticFeedbackManager.instance.PressUIButton();
-            if (currentTarget != null)
-            {
-                currentTarget.SetSelected(false);
-            }
-            currentTarget = obj;
-            CreateLastSave(obj.WorldNumber);
-
-
-            currentTarget.SetSelected(true);
-            LevelDataConverter.currentChallengeType = currentTarget.challengeType;
-            Vector3Int data = obj.RootIndex_PathIndex_Order;
-
-            float d = paths[data.y].path.GetClosestDistanceAlongPath(obj.ReturnLinePostion());
-
-
-            if (data.y != currentPathIndex)
-            {
-
-                List<PathCreator> addedPaths = new List<PathCreator>();
-                List<float> dists = new List<float>();
-                List<int> pathIndices = new List<int>();
-                List<int> pathRoots = new List<int>();
-                List<bool> pathIntersectsCenters = new List<bool>();
-
-
-                float inbetweenDistance = 0;
-
-                if (currentPathRoot == data.x)
-                {
-
-                    inbetweenDistance = 0;
-                    float distanceFirst = paths[currentPathRoot].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
-                    dists.Add(distanceFirst);
-                    dists.Add(d);
-                    pathIndices.Add(currentPathRoot);
-                    pathIndices.Add(data.y);
-                    addedPaths.Add(this.paths[currentPathRoot]);
-                    addedPaths.Add(this.paths[data.y]);
-                    pathRoots.Add(currentPathRoot - 1);
-                    pathRoots.Add(currentPathRoot);
-
-                }
-                else
-                {
-                    dists.Add(d);
-                    pathIndices.Add(data.y);
-                    addedPaths.Add(paths[data.y]);
-                    pathRoots.Add(data.x);
-                    if (currentPathIndex < data.y)
-                    {
-                        Debug.LogError("Current Path Index: " + currentPathIndex + " is less than target path index: " + data.y);
-                        if (pathIntersectsCenter[data.y])
-
-                            inbetweenDistance = paths[currentPathIndex].path.GetClosestDistanceAlongPath(paths[data.y].path.GetPointAtDistance(0));
-                        else
-                            inbetweenDistance = paths[currentPathIndex].path.length;
-
-
-                    }
-                    else
-                    {
-                        inbetweenDistance = 0;
-                    }
-                }
-
-
-
-                playerPathFollower.DoPathToPoint(paths[currentPathIndex], inbetweenDistance, addedPaths, dists, pathIndices, pathRoots, currentTarget.GetPathTransform());
-            }
-            else
-            {
-                playerPathFollower.DoPathToPoint(paths[data.y], d, null, null, null, null, currentTarget.GetPathTransform());
-            }
-
-            Debug.LogError("Moving to level: " + obj.WorldNumber);
-            DoLevelPopupSeq(true, obj.WorldNumber);
-
-            ZoomSeq(currentTarget.CameraPositionAndOrhtoSize, currentTarget.layersShownFrom);
-
-
-
+            SendPathDataToPlayer(obj);
 
         }
         else
@@ -565,6 +734,9 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
             Debug.Log("No object found at the clicked position.");
 
         }
+
+
+
     }
     private Sequence zoomSeq;
     [SerializeField] private Ease easeType;

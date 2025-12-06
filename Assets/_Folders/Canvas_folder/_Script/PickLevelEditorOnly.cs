@@ -113,8 +113,6 @@ public class PickLevelEditorOnly : MonoBehaviour
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-
-
         asset.SetDefaults(objData, startingStats, playerID, challenges);
         asset.LoadLevelSaveData(null);
         arrayAsset.LoadLevelSaveData(null);
@@ -128,7 +126,6 @@ public class PickLevelEditorOnly : MonoBehaviour
         UnityEditor.AssetDatabase.Refresh();
         LevelDataConverter.instance.AddLevel(asset); // This will also reorder the levels
         LevelRecordManager.instance.LoadNewLevel(asset);
-
     }
 
     public void OpenAddLevelWindow(bool open)

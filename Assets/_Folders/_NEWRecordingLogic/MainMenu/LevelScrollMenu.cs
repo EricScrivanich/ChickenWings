@@ -174,14 +174,16 @@ public class LevelScrollMenu : MonoBehaviour
     public void LoadLevel()
     {
         // TransitionDirector.instance.UndoDestroy();
-        Destroy(TransitionDirector.instance.gameObject);
+        // Destroy(TransitionDirector.instance.gameObject);
         PlayerPrefs.SetString("LevelCreatorPath", currentSelectedLevelTitle);
         PlayerPrefs.Save();
         Debug.Log("Loading level: " + currentSelectedLevelTitle);
         Debug.Log("Checking prefs: " + PlayerPrefs.GetString("LevelCreatorPath"));
 
 
-        SceneManager.LoadScene("LevelCreator");
+        // SceneManager.LoadScene("LevelCreator");
+        SceneManagerScript.instance.LoadScene("LevelCreator");
+     
 
 
     }

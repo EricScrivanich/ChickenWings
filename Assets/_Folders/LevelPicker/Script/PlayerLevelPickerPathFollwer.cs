@@ -156,13 +156,13 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     }
     private int currentPathIndex;
     private int futurePathIndex;
-    public void DoPathToPoint(PathCreator path, float distance, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots, Transform finalPathTarget)
+    public void DoPathToPoint(PathCreator path, float distance, List<PathCreator> addedPaths, List<float> newCurrentDistances, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots, Transform finalPathTarget)
     {
         if (followPathCoroutine != null)
         {
             StopCoroutine(followPathCoroutine);
         }
-        followPathCoroutine = StartCoroutine(DoPath(path, distance, addedPaths, addedDistancesToTravel, addedPathIndices, addedPathRoots, finalPathTarget));
+        followPathCoroutine = StartCoroutine(DoPath(path, distance, addedPaths, newCurrentDistances, addedDistancesToTravel, addedPathIndices, addedPathRoots, finalPathTarget));
         hitZoom = false;
 
 
@@ -188,7 +188,7 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
     private bool hitZoom = true;
     private bool isRunning = false;
 
-    private IEnumerator DoPath(PathCreator path, float distanceToTravel, List<PathCreator> addedPaths, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots, Transform finalPathTarget)
+    private IEnumerator DoPath(PathCreator path, float distanceToTravel, List<PathCreator> addedPaths, List<float> newCurrentDistances, List<float> addedDistancesToTravel, List<int> addedPathIndices, List<int> addedPathRoots, Transform finalPathTarget)
     {
         if (path == null) yield break;
 
@@ -278,25 +278,37 @@ public class PlayerLevelPickerPathFollwer : MonoBehaviour
             PathCreator nextPath = addedPaths[0];
             float distanceToTravel2 = addedDistancesToTravel[0];
             int nextIndex = addedPathIndices[0];
-            int nextRoot = addedPathRoots[0];
-            currentDistance = nextPath.path.GetClosestDistanceAlongPath(transform.position);
-            Debug.LogError("Switching to next path: " + nextPath.name + " to distance: " + distanceToTravel2 + " from position: " + transform.position + " at distance: " + currentDistance);
-            if (currentDistance < 5)
-                currentDistance = 0;
-            else if (currentDistance > nextPath.path.length - 5)
-                currentDistance = nextPath.path.length;
+            // int nextRoot = addedPathRoots[0];
+            // currentDistance = nextPath.path.GetClosestDistanceAlongPath(transform.position);
+            // Debug.LogError("Switching to next path: " + nextPath.name + " to distance: " + distanceToTravel2 + " from position: " + transform.position + " at distance: " + currentDistance);
+            // if (currentDistance < 5)
+            //     currentDistance = 0;
+            // else if (currentDistance > nextPath.path.length - 5
+
+
+            // )
+            //     currentDistance = nextPath.path.length;
+            currentDistance = newCurrentDistances[0];
             nextPath.ReturnLayerForStart(currentDistance / nextPath.path.length);
-            pathManager.SetCurrentPathIndexAndRoot(nextIndex, nextRoot);
+            pathManager.SetCurrentPathIndexAndRoot(nextIndex);
             addedPaths.RemoveAt(0);
             if (addedPaths.Count <= 0) addedPaths = null;
 
+
             addedDistancesToTravel.RemoveAt(0);
+            if (newCurrentDistances != null && newCurrentDistances.Count > 0)
+            {
+
+                newCurrentDistances.RemoveAt(0);
+                if (newCurrentDistances.Count <= 0) newCurrentDistances = null;
+            }
             if (addedDistancesToTravel.Count <= 0) addedDistancesToTravel = null;
             addedPathIndices.RemoveAt(0);
-            if (addedPathIndices.Count <= 0) addedPathIndices = null;
-            addedPathRoots.RemoveAt(0);
-            if (addedPathRoots.Count <= 0) addedPathRoots = null;
-            followPathCoroutine = StartCoroutine(DoPath(nextPath, distanceToTravel2, addedPaths, addedDistancesToTravel, addedPathIndices, addedPathRoots, finalPathTarget));
+
+            // if (addedPathIndices.Count <= 0) addedPathIndices = null;
+            // addedPathRoots.RemoveAt(0);
+            // if (addedPathRoots.Count <= 0) addedPathRoots = null;
+            followPathCoroutine = StartCoroutine(DoPath(nextPath, distanceToTravel2, addedPaths, newCurrentDistances, addedDistancesToTravel, addedPathIndices, addedPathRoots, finalPathTarget));
 
         }
         else

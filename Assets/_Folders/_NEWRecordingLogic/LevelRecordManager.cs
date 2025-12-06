@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System.IO;
+
 
 public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 {
@@ -2433,6 +2435,49 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     public float ConvertLevelTimeToRealTime(float levelTime)
     {
         return levelTime / FrameRateManager.BaseTimeScale;
+    }
+
+    /// <summary>
+    /// Shares the current level's JSON file using the native share sheet (iOS/Android).
+    /// Call this after saving the level to share via AirDrop, email, etc.
+    /// </summary>
+    public void ShareFile()
+    {
+#if UNITY_EDITOR
+        Debug.Log("ShareFile() is only available on device builds, not in the Unity Editor.");
+        return;
+#else
+        string levelName = PlayerPrefs.GetString("LevelCreatorPath", "");
+
+        if (string.IsNullOrEmpty(levelName))
+        {
+            Debug.LogError("No level name found. Save the level first before sharing.");
+            return;
+        }
+
+        string filePath = Path.Combine(LevelDataConverter.instance.GetSaveDirectory(), levelName + ".json");
+
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError("Level file not found at: " + filePath);
+            return;
+        }
+
+        if (SunShineNativeShare.instance == null)
+        {
+            Debug.LogError("SunShineNativeShare instance not found. Make sure the NativeShare prefab is in your scene.");
+            return;
+        }
+
+        SunShineNativeShare.instance.ShareSingleFile(
+            filePath,
+            SunShineNativeShare.TYPE_FILE,
+            "ChickenWings Level: " + levelName,
+            "Share Level"
+        );
+
+        Debug.Log("Sharing level file: " + filePath);
+#endif
     }
 
 
