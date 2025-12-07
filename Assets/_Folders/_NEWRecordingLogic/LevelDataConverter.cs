@@ -260,7 +260,7 @@ public class LevelDataConverter : MonoBehaviour
     //     }
     // }
 
-    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, List<RecordableObjectPlacer> randomObj, string title, List<ushort[]> plSizes, ushort finalSpawnStep, short[] ammos, short lives, byte[] randomSpawnRanges,LevelData editorData = null)
+    public void SaveDataToDevice(List<RecordableObjectPlacer> obj, List<RecordableObjectPlacer> randomObj, string title, List<ushort[]> plSizes, ushort finalSpawnStep, short[] ammos, short lives, byte[] randomSpawnRanges, LevelData editorData = null)
     {
 
         List<short> objectTypeList = new List<short>();
@@ -489,7 +489,7 @@ public class LevelDataConverter : MonoBehaviour
             }
 
 
-            save.SetRandomData(posListRand.ToArray(), floatListRand.ToArray(), objectTypeListRand.ToArray(), randomLogicSizes.ToArray(), randomLogicWaveIndices.ToArray(), randomSpawnDataTypeObjectTypeAndID.ToArray(), spawnStepsRandom.ToArray(), usedRNG.ToArray(),randomSpawnRanges);
+            save.SetRandomData(posListRand.ToArray(), floatListRand.ToArray(), objectTypeListRand.ToArray(), randomLogicSizes.ToArray(), randomLogicWaveIndices.ToArray(), randomSpawnDataTypeObjectTypeAndID.ToArray(), spawnStepsRandom.ToArray(), usedRNG.ToArray(), randomSpawnRanges);
 
 
         }
@@ -534,20 +534,55 @@ public class LevelDataConverter : MonoBehaviour
 
         if (!File.Exists(loadPath))
         {
-            Debug.LogError("Save file not found: " + loadPath);
-            return null; // Return null if the file does not exist
+            // Create a new empty level save for newly created levels
+            Debug.Log("No save file found, creating new empty level: " + path);
+            LevelDataSave newSave = CreateDefaultLevelDataSave(path);
+
+            // Save the new empty level to disk so it persists
+            string json = JsonUtility.ToJson(newSave, true);
+            File.WriteAllText(loadPath, json);
+            Debug.Log("Created new level file at: " + loadPath);
+
+            return newSave;
         }
 
 
-        string json = File.ReadAllText(loadPath);
-        LevelDataSave loadedData = JsonUtility.FromJson<LevelDataSave>(json);
+        string jsonContent = File.ReadAllText(loadPath);
+        LevelDataSave loadedData = JsonUtility.FromJson<LevelDataSave>(jsonContent);
 
         Debug.Log("Level loaded from: " + loadPath);
         return loadedData;
+    }
 
+    private LevelDataSave CreateDefaultLevelDataSave(string levelName)
+    {
+        // Create empty arrays for a new level
+        short[] objectTypes = new short[0];
+        short[] idList = new short[0];
+        ushort[] spawnSteps = new ushort[0];
+        ushort[] typeList = new ushort[0];
+        short[] dataTypes = new short[0];
+        ushort finalStep = 300;
+        Vector2[] posList = new Vector2[0];
+        float[] floats = new float[0];
 
+        // Create default pool sizes (all empty)
+        List<ushort[]> poolSizes = new List<ushort[]>
+        {
+            new ushort[0], // pigPoolSizes
+            new ushort[0], // aiPoolSizes
+            new ushort[0], // buildingPoolSizes
+            new ushort[0], // collectablePoolSizes
+            new ushort[0], // positionerPoolSizes
+            new ushort[0]  // ringPoolSizes
+        };
 
+        // Default starting ammos and lives
+        short[] ammos = new short[] { 3, 3, 0, 0, 0 };
+        short lives = 3;
+        short[] indexAndHealth = new short[0];
 
+        return new LevelDataSave(levelName, objectTypes, idList, spawnSteps, typeList, dataTypes, finalStep, posList, floats, poolSizes, ammos, lives, indexAndHealth);
     }
 
     public static string GetLevelNumberStringFormat(Vector3Int n)
@@ -561,6 +596,7 @@ public class LevelDataConverter : MonoBehaviour
     }
     public List<RecordedDataStructDynamic> ReturnDynamicData(LevelData data, LevelDataArrays dataArrays)
     {
+        Debug.Log("Converting Level Data to Dynamic Data List: " + data.LevelName);
 
 
         int floatIndex = 0;
@@ -610,11 +646,13 @@ public class LevelDataConverter : MonoBehaviour
 
             short triggerType = 0;
 
-            if (specialTriggerIndex < data.specialTriggerIndexAndType.Length && i == data.specialTriggerIndexAndType[specialTriggerIndex].x)
-            {
-                triggerType = (short)data.specialTriggerIndexAndType[specialTriggerIndex].y;
-                specialTriggerIndex++;
-            }
+
+            if (data.specialTriggerIndexAndType != null && data.specialTriggerIndexAndType.Length > 0)
+                if (specialTriggerIndex < data.specialTriggerIndexAndType.Length && i == data.specialTriggerIndexAndType[specialTriggerIndex].x)
+                {
+                    triggerType = (short)data.specialTriggerIndexAndType[specialTriggerIndex].y;
+                    specialTriggerIndex++;
+                }
             if (data.objectTypes[i] == 1) // boss type
             {
                 if (dataArrays.indexAndHealth != null && healthIndex * 2 < dataArrays.indexAndHealth.Length - 1 && i == dataArrays.indexAndHealth[healthIndex * 2])

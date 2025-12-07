@@ -36,9 +36,8 @@ public class LevelImporterWindow : EditorWindow
 
         if (startingStats == null)
         {
-            string[] guids = AssetDatabase.FindAssets("t:PlayerStartingStatsForLevels");
-            if (guids.Length > 0)
-                startingStats = AssetDatabase.LoadAssetAtPath<PlayerStartingStatsForLevels>(AssetDatabase.GUIDToAssetPath(guids[0]));
+            // Use the specific EndlessStats 1 asset
+            startingStats = AssetDatabase.LoadAssetAtPath<PlayerStartingStatsForLevels>("Assets/_Folders/_Player/Prefab/EndlessStats 1.asset");
         }
 
         if (playerID == null)
@@ -266,6 +265,12 @@ public class LevelImporterWindow : EditorWindow
         string challengePath = AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/Challenges/" + numberString + levelName + "_Challenge.asset");
         AssetDatabase.CreateAsset(asset, levelPath);
         AssetDatabase.CreateAsset(challenges, challengePath);
+        var Levels = Resources.Load<LevelContainer>("LevelContainer");
+        Levels.AddLevel(asset);
+        UnityEditor.EditorUtility.SetDirty(Levels);
+        UnityEditor.AssetDatabase.SaveAssets();
+        UnityEditor.AssetDatabase.Refresh();
+        Resources.UnloadAsset(Levels);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();

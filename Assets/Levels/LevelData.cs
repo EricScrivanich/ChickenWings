@@ -1134,7 +1134,9 @@ public class LevelData : ScriptableObject
                 var poolToPopulate = objData.GetPoolArrayByObjectType(i);
                 for (int j = 0; j < poolList[i].Length; j++)
                 {
+                    Debug.LogError("Creating Pool for Object Type: " + i + " with size: " + poolList[i][j] + " and ID: " + j);
                     poolToPopulate[j].CreatePool(poolList[i][j], this);
+                    Debug.LogError("Created Pool");
                 }
             }
         }
@@ -1176,14 +1178,13 @@ public class LevelData : ScriptableObject
         int healthIndex = 0;
         for (int i = 0; i < dataTypes.Length; i++)
         {
-
             short id = idList[i];
             if (objectTypes[i] == 1) // boss object, replace ID with health
             {
                 id = 1;
-                if (d.indexAndHealth != null && healthIndex < d.indexAndHealth.Length - 1 && d.indexAndHealth[i * 2] == i)
+                if (d.indexAndHealth != null && healthIndex * 2 < d.indexAndHealth.Length - 1 && i == d.indexAndHealth[healthIndex * 2])
                 {
-                    id = d.indexAndHealth[(i * 2) + 1];
+                    id = d.indexAndHealth[(healthIndex * 2) + 1];
                     healthIndex++;
                 }
             }
@@ -1204,28 +1205,28 @@ public class LevelData : ScriptableObject
                     // This is a simple object, already handled above
                     break;
                 case 1:
-                    dataStructFloatOne[float1Index] = new DataStructFloatOne(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex]);
+                    dataStructFloatOne[float1Index] = new DataStructFloatOne(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex]);
                     float1Index++;
                     floatListIndex++;
                     break;
                 case 2:
-                    dataStructFloatTwo[float2Index] = new DataStructFloatTwo(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1]);
+                    dataStructFloatTwo[float2Index] = new DataStructFloatTwo(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex], d.floatList[floatListIndex + 1]);
                     float2Index++;
                     floatListIndex += 2;
                     break;
                 case 3:
 
-                    dataStructFloatThree[float3Index] = new DataStructFloatThree(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2]);
+                    dataStructFloatThree[float3Index] = new DataStructFloatThree(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex], d.floatList[floatListIndex + 1], d.floatList[floatListIndex + 2]);
                     float3Index++;
                     floatListIndex += 3;
                     break;
                 case 4:
-                    dataStructFloatFour[float4Index] = new DataStructFloatFour(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3]);
+                    dataStructFloatFour[float4Index] = new DataStructFloatFour(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex], d.floatList[floatListIndex + 1], d.floatList[floatListIndex + 2], d.floatList[floatListIndex + 3]);
                     float4Index++;
                     floatListIndex += 4;
                     break;
                 case 5:
-                    dataStructFloatFive[float5Index] = new DataStructFloatFive(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3], d.floatListRand[floatListIndex + 4]);
+                    dataStructFloatFive[float5Index] = new DataStructFloatFive(id, d.typeList[i - subrtactIndex], d.posList[i - subrtactIndex], d.floatList[floatListIndex], d.floatList[floatListIndex + 1], d.floatList[floatListIndex + 2], d.floatList[floatListIndex + 3], d.floatList[floatListIndex + 4]);
                     float5Index++;
                     floatListIndex += 5;
                     break;
@@ -1233,21 +1234,39 @@ public class LevelData : ScriptableObject
             }
 
         }
+
+        // do logic if there is random Enemy Spawn Data
         if (d.randomSpawnDataTypeObjectTypeAndID != null && d.randomSpawnDataTypeObjectTypeAndID.Length > 0)
         {
+            Debug.LogError("Creating Random Spawn Data with length: " + d.randomSpawnDataTypeObjectTypeAndID.Length);
             randomSpawnData = new LevelDataRandomSpawnData[d.randomSpawnDataTypeObjectTypeAndID.Length];
 
             floatListIndex = 0;
             int spawnIndex = 0;
-
+            int usedRngIndex = 0;
 
             for (int i = 0; i < d.randomSpawnDataTypeObjectTypeAndID.Length; i++)
             {
                 LevelDataRandomSpawnData newData = new LevelDataRandomSpawnData();
                 List<ISpawnData> spawnDataList = new List<ISpawnData>();
+                List<short> rngUsedList = new List<short>();
+                int nextRNGIndex = 0;
+
+                for (int j = usedRngIndex; j < d.randomSpawnDataTypeObjectTypeAndID[i].x + 3 + usedRngIndex; j++)
+                {
+                    rngUsedList.Add(d.usedRNGIndices[j]);
+                    nextRNGIndex++;
+
+
+
+                }
+                usedRngIndex += nextRNGIndex;
+
 
                 for (int j = 0; j < d.randomLogicSizes[i]; j++)
                 {
+
+                    Debug.LogError("Creating random, spawn index: " + spawnIndex + ", floatListIndex: " + floatListIndex + ", type: " + d.randomSpawnDataTypeObjectTypeAndID[i].x);
 
 
                     switch (d.randomSpawnDataTypeObjectTypeAndID[i].x)
@@ -1285,9 +1304,13 @@ public class LevelData : ScriptableObject
                     spawnIndex++;
                 }
 
+                Debug.Log("Created Random Spawn Data with wave index: " + d.randomLogicWaveIndices[i]);
+
+
+
 
                 // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
-                newData.Initialize(spawnDataList.ToArray(), null, objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x, d.randomLogicWaveIndices[i]);
+                newData.Initialize(spawnDataList.ToArray(), rngUsedList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x, d.randomLogicWaveIndices[i], d.randomSpawnRanges[i * 2], d.randomSpawnRanges[(i * 2) + 1]);
                 randomSpawnData[i] = newData;
             }
         }

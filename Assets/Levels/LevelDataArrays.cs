@@ -92,6 +92,18 @@ public class LevelDataArrays : ScriptableObject
             randomLogicWaveIndices = lds.randomLogicWaveIndices;
             randomSpawnRanges = lds.randomSpawnRanges;
         }
+        else
+        {
+            usedRNGIndices = null;
+            posListRand = null;
+            floatListRand = null;
+            typeListRand = null;
+            randomLogicSizes = null;
+            randomSpawnDataTypeObjectTypeAndID = null;
+            spawnStepsRandom = null;
+            randomLogicWaveIndices = null;
+            randomSpawnRanges = null;
+        }
 
 
 

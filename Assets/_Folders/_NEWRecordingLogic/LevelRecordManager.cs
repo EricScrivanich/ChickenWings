@@ -1494,8 +1494,10 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         else
         {
             levelData = LevelDataConverter.instance.ReturnLevelData(0);
+            var lds = LevelDataConverter.instance.ConvertDataFromJson();
+            levelData.LoadLevelSaveData(lds);
 
-            dataArrays = levelData.ReturnDataArrays(LevelDataConverter.instance.ConvertDataFromJson(), true);
+            dataArrays = levelData.ReturnDataArrays(lds, true);
 
         }
 
