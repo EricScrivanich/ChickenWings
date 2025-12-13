@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SpawnedPigBossObject : SpawnedObject, IDamageable, IEggable
 {
-    protected bool canAttack = true;
+    
     [SerializeField] protected int startingLives;
     protected int lives;
     [SerializeField] protected EnemyHeart heart;

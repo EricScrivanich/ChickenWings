@@ -8,6 +8,8 @@ public class SteroidUI : MonoBehaviour, INavigationUI
 
     [Header("Audio")]
     private AudioSource audioSource;
+
+    [SerializeField] private TutorialHand tutorialHand;
     [SerializeField] private AudioClip openMenuSound;
     [SerializeField] private AudioClip equipSound;
     [SerializeField] private AudioClip unequipSound;
@@ -124,6 +126,8 @@ public class SteroidUI : MonoBehaviour, INavigationUI
 
     [SerializeField] private Image backGround;
     private ushort firstSelectedIndex;
+
+    private bool isFirstEverSelection;
     public GameObject GetFirstSelected()
     {
         return vials[firstSelectedIndex].gameObject;
@@ -178,7 +182,7 @@ public class SteroidUI : MonoBehaviour, INavigationUI
 
         }
         else
-           unlockedList = new List<ushort>(savedData.unlockedSteroids);
+            unlockedList = new List<ushort>(savedData.unlockedSteroids);
         // List<ushort> unlockedList = new List<ushort>(unlockedSyringes);
 
 
@@ -248,6 +252,13 @@ public class SteroidUI : MonoBehaviour, INavigationUI
 
 
             }
+            if (i == 0 && InputSystemSelectionManager.instance.tutorialType == 0)
+            {
+                var h = Instantiate(tutorialHand.gameObject, vialComponent.transform);
+                h.GetComponent<TutorialHand>().Initialize(false, 1);
+                h.GetComponent<RectTransform>().anchoredPosition = new Vector2(5, 100);
+            }
+
         }
 
         for (int i = 0; i < vials.Count; i++)
@@ -261,11 +272,33 @@ public class SteroidUI : MonoBehaviour, INavigationUI
         firstSelectedIndex = savedData.lastEditedIndex;
 
 
+
+
+
     }
     void Start()
     {
         if (InputSystemSelectionManager.instance != null)
+        {
+
+
+            if (InputSystemSelectionManager.instance.tutorialType == 0)
+            {
+                InputSystemSelectionManager.instance.tutorialType = 1;
+
+                SteroidTutorial.instance.ShowNextHand(1);
+                isFirstEverSelection = true;
+
+                HapticFeedbackManager.instance.PressUIButton();
+
+
+            }
             InputSystemSelectionManager.instance.SetNewWindow(this, true);
+
+        }
+
+
+
 
         openMenuSoundVolume *= AudioManager.instance.SfxVolume * baseAudioVolume;
 
@@ -293,6 +326,22 @@ public class SteroidUI : MonoBehaviour, INavigationUI
 
     public void SelectVial(int index)
     {
+
+        if (InputSystemSelectionManager.instance.tutorialType == 1)
+        {
+            if (isFirstEverSelection)
+            {
+                isFirstEverSelection = false;
+                return;
+
+            }
+            else
+            {
+                InputSystemSelectionManager.instance.tutorialType = 2;
+                SteroidTutorial.instance.ShowNextHand(2);
+            }
+
+        }
         if (selectedIndex == index)
             return;
 
@@ -372,11 +421,28 @@ public class SteroidUI : MonoBehaviour, INavigationUI
     }
     public void Exit()
     {
+        if (InputSystemSelectionManager.instance != null && InputSystemSelectionManager.instance.tutorialType >= 0)
+        {
+
+            if (InputSystemSelectionManager.instance.tutorialType == 3)
+            {
+                InputSystemSelectionManager.instance.tutorialType = 4;
+                SteroidTutorial.instance.ShowNextHand(4);
+            }
+            else return;
+
+        }
+
         HapticFeedbackManager.instance.PressUIButton();
         audioSource.pitch = 1;
         audioSource.PlayOneShot(openMenuSound, openMenuSoundVolume);
 
         InputSystemSelectionManager.instance.HandleGroup(0, true);
+
+        if (LevelPickerManager.instance != null)
+        {
+            LevelPickerManager.instance.SetAsCurrentNavigationWindow();
+        }
 
         if (GameObject.Find("Player") != null)
         {
@@ -394,7 +460,7 @@ public class SteroidUI : MonoBehaviour, INavigationUI
         }
         var screenHeight = Screen.height;
         steroidLiquidSeq = DOTween.Sequence();
-        steroidLiquidSeq.Append(GetComponent<RectTransform>().DOAnchorPosY(screenHeight * 1.2f, .75f).SetEase(Ease.InBack));
+        steroidLiquidSeq.Append(GetComponent<RectTransform>().DOAnchorPosY(screenHeight * 1.5f, .75f).SetEase(Ease.InBack));
         steroidLiquidSeq.Append(backGround.DOFade(0, .55f).SetEase(Ease.OutCubic));
         steroidLiquidSeq.Play().SetUpdate(true).OnComplete(() =>
         {
@@ -409,6 +475,17 @@ public class SteroidUI : MonoBehaviour, INavigationUI
 
     public void HandleEquipButton()
     {
+        if (InputSystemSelectionManager.instance != null && InputSystemSelectionManager.instance.tutorialType >= 0)
+        {
+
+            if (InputSystemSelectionManager.instance.tutorialType == 2)
+            {
+                InputSystemSelectionManager.instance.tutorialType = 3;
+                SteroidTutorial.instance.ShowNextHand(3);
+            }
+            else return;
+
+        }
 
         if (equipShown)
         {
@@ -570,6 +647,7 @@ public class SteroidUI : MonoBehaviour, INavigationUI
     private Sequence syringeRotateSeq;
     private void EquipVial(bool start = false)
     {
+
         DoEquipButtonAnimation(false);
         int index = selectedIndex;
         var selectedSteroid = steroidsData[index];

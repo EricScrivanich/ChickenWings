@@ -553,6 +553,7 @@ GameObject:
   - component: {fileID: 6079842093041450270}
   - component: {fileID: 814022260511045507}
   - component: {fileID: 4108608601797385319}
+  - component: {fileID: 66481837457979964}
   m_Layer: 11
   m_Name: LaserShooter
   m_TagString: Plane
@@ -577,6 +578,7 @@ Transform:
   - {fileID: 4621856091296067804}
   - {fileID: 754821096328332560}
   - {fileID: 2534912317272815937}
+  - {fileID: 8099228695853950851}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &950731519908946369
@@ -652,8 +654,8 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_GravityScale: 1.4
+  m_Material: {fileID: 6200000, guid: fd2b99bd82c6e4d50a99138ff906ea72, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -723,6 +725,7 @@ MonoBehaviour:
   - {fileID: 5068603939486090227}
   - {fileID: 2289691533059206260}
   fadeArrowDur: 0.4
+  destroyTime: 5
 --- !u!114 &4792587693866604393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -749,6 +752,8 @@ MonoBehaviour:
   initialLaserShootDelay: 0.1
   laserStartFade: 0.75
   laserInbetweenFade: 0.5
+  smokeParticles: {fileID: 6148694081494969697}
+  brokenParticles: {fileID: 9165184308337846216}
   currentLaserFadeAmount: 1
   currentTimeLeft: 0
 --- !u!82 &6079842093041450270
@@ -964,6 +969,21 @@ MonoBehaviour:
   <useRotation>k__BackingField: 0
   rotationOffset: 0
   <adjustLerpSpeed>k__BackingField: 0
+--- !u!114 &66481837457979964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4853563944674963801}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f8d56f06f0614d389a309edce1e21fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDroppable
+  activateCollider: 0
+  contactForce: 0.7
+  destroyOnFinish: 0
 --- !u!1 &5441750711970191117
 GameObject:
   m_ObjectHideFlags: 0
@@ -6390,9 +6410,21 @@ PrefabInstance:
       propertyPath: EmissionModule.rateOverTime.scalar
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 5229840753589328604, guid: 1440243de596647cdbf976a452bceba1, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5229840753589328604, guid: 1440243de596647cdbf976a452bceba1, type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7791189156267300741, guid: 1440243de596647cdbf976a452bceba1, type: 3}
       propertyPath: m_Name
       value: JetPackSmokeParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 7791189156267300741, guid: 1440243de596647cdbf976a452bceba1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8340774595718855099, guid: 1440243de596647cdbf976a452bceba1, type: 3}
       propertyPath: m_SortingLayer
@@ -6412,4 +6444,84 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 1902349320967095205, guid: 1440243de596647cdbf976a452bceba1, type: 3}
   m_PrefabInstance: {fileID: 4128483586279865060}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6148694081494969697 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7791189156267300741, guid: 1440243de596647cdbf976a452bceba1, type: 3}
+  m_PrefabInstance: {fileID: 4128483586279865060}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4246479268553988371
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 409420740688260000}
+    m_Modifications:
+    - target: {fileID: 4385739555634651077, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034955066575863515, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_Name
+      value: CageParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034955066575863515, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+--- !u!4 &8099228695853950851 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5370749208112332432, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+  m_PrefabInstance: {fileID: 4246479268553988371}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &9165184308337846216 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5034955066575863515, guid: 59185b2a53ed144b38bf35f4e95c1284, type: 3}
+  m_PrefabInstance: {fileID: 4246479268553988371}
   m_PrefabAsset: {fileID: 0}

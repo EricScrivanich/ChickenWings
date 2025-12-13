@@ -210,16 +210,16 @@ public class ResetManager : MonoBehaviour
         onRestartGame?.Invoke();
         // controls.Special.Disable();
 
-        if (GameObject.Find("LevelManager") != null)
-        {
+        // if (GameObject.Find("LevelManager") != null)
+        // {
 
-            checkPoint = GameObject.Find("LevelManager").GetComponent<LevelManager>().reachedCheckpoint;
+        //     checkPoint = GameObject.Find("LevelManager").GetComponent<LevelManager>().reachedCheckpoint;
 
-            Debug.Log("Check Point is: " + checkPoint);
-        }
+        //     Debug.Log("Check Point is: " + checkPoint);
+        // }
         // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         SceneManagerScript.instance.ReloadCurrentScene();
-        lvlID.usingCheckPoint = true;
+        // lvlID.usingCheckPoint = true;
         // Unpause audio when resetting the game
 
     }

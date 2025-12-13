@@ -47,6 +47,38 @@ public class LevelPickerUIStatBar : MonoBehaviour
 
     }
 
+    public void CreateSelfNew(CheckPointSelection p, int numb, Vector2Int current_maxLives, short[] ammoAmounts, bool shown)
+    {
+        List<Image> imageList = new List<Image>();
+        List<TextMeshProUGUI> textList = new List<TextMeshProUGUI>();
+        checkPointNumber.text = numb.ToString() + ".";
+        var image = GetComponent<Image>();
+        liveText.text = $"{current_maxLives.x}/{current_maxLives.y}";
+        imageList.Add(image);
+        textList.Add(liveText);
+
+
+        for (int i = 0; i < ammoAmounts.Length; i++)
+        {
+            if (ammoAmounts[i] <= 0) continue;
+
+            var obj = Instantiate(ammoDisplayPrefab, ammoDisplayParent);
+            var im = obj.GetComponent<Image>();
+            im.sprite = p.ammoImages[i];
+            var t = obj.GetComponentInChildren<TextMeshProUGUI>();
+            t.text = ammoAmounts[i].ToString();
+            imageList.Add(im);
+            textList.Add(t);
+
+
+        }
+        texts = textList.ToArray();
+        images = imageList.ToArray();
+
+        SetColor(shown);
+
+    }
+
     public void SetColor(bool shown)
     {
         Color color = shown ? Color.white : Color.white * 0.65f;

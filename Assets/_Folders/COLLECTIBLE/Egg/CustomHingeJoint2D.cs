@@ -59,6 +59,9 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
     private Vector2 lastPosition;
     private bool justReleasedFromObject = false;
+    private LevelChallenges levelChallenges;
+
+
 
     // private void Awake()
     // {
@@ -69,6 +72,13 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     {
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+
+        if (playerPos == null)
+        {
+            playerPos = player._transform;
+        }
+
+        playerRb = player.playerRB;
     }
     void Start()
     {
@@ -115,12 +125,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         releaseCooldownVar = releaseCooldown;
         addedForceOnRelease = new Vector2(0, addedYForceOnRelease);
 
-        if (playerPos == null)
-        {
-            playerPos = GameObject.Find("Player").GetComponent<Transform>();
-        }
 
-        playerRb = playerPos.gameObject.GetComponent<Rigidbody2D>();
         boundaries = GetComponent<ForceBoundaries>();
         boundaries.Activate(false);
 
@@ -136,6 +141,35 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     private bool ignoreStart = false;
     private bool ignoreLerp = false;
     private bool justSpawnedInitial;
+
+    public void Initialize(LevelChallenges levelChallenges, byte currentType)
+    {
+        this.levelChallenges = levelChallenges;
+
+        switch (currentType)
+        {
+            case 1:
+                // attatchedToObject = true;
+
+                break;
+            case 2:
+                hasAttachment = false;
+                attatchedToObject = false;
+
+                Invoke("Collected", 0.15f);
+                break;
+            case 3:
+                hasAttachment = false;
+                attatchedToObject = false;
+
+
+                HitEffect(true);
+                Invoke("Collected", 0.15f);
+                break;
+        }
+
+
+    }
     public void SetAttatchedObject(CageAttatchment attatchedObject)
     {
         this.attatchedObject = attatchedObject;
@@ -144,14 +178,14 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         if (s > 0) rotationSpeedAttached = s;
         else if (s == -1) ignoreLerp = true; // -1 means no lerp, just instant rotation
 
-        if (playerPos == null)
-        {
-            playerPos = GameObject.Find("Player").GetComponent<Transform>();
-        }
+        // if (playerPos == null)
+        // {
+        //     playerPos = GameObject.Find("Player").GetComponent<Transform>();
+        // }
         justSpawned = true;
 
 
-        playerRb = playerPos.gameObject.GetComponent<Rigidbody2D>();
+        // playerRb = playerPos.gameObject.GetComponent<Rigidbody2D>();
         boundaries = GetComponent<ForceBoundaries>();
         boundaries.Activate(false);
         chicRb.transform.parent = null;
@@ -385,6 +419,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
     }
     private bool ignoreCollisions = false;
+    private bool ignoreEnemyCollisions = false;
     private void Explode()
     {
         ignoreCollisions = true;
@@ -397,7 +432,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     private WaitForSeconds animWait = new WaitForSeconds(0.06f);
     private IEnumerator CageExplode(bool ignore = false)
     {
-        if (!hitFloor)
+        if (!hasBeenHit)
         {
             sr.sprite = animDataSO.sprites[1];
             yield return animWait;
@@ -447,7 +482,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         // Set to kinematic when attached
     }
 
-    private bool hitFloor = false;
+    private bool hasBeenHit = false;
 
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -463,6 +498,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
                 chicRb.simulated = false;
                 chicRb.transform.SetParent(other.transform);
                 chicRb.GetComponent<ChicTween>().enabled = true;
+                levelChallenges.EditCageType(0);
                 AudioManager.instance.PlayScoreSound();
                 return;
             }
@@ -470,11 +506,11 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
             {
                 if (!isAttached && !attatchedToObject) //&& floorCollision
                 {
-                    if (hitFloor)
+                    if (hasBeenHit)
                     {
                         Explode();
                         return;
-                    } // Prevent multiple triggers
+                    }
                     rb.linearVelocity = new Vector2(rb.linearVelocity.x * .5f, 11f);
                     HitEffect();
                     return;
@@ -490,7 +526,16 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
                     // Debug.LogError("Explodable Detected: " + other.name);
                     other.GetComponent<IExplodable>().Explode(false);
                 }
-                Explode();
+                if (hasBeenHit)
+                {
+                    Explode();
+                    return;
+                }
+                else
+                {
+                    HitEffect();
+                    return;
+                }
             }
 
 
@@ -503,9 +548,19 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
             {
                 // Debug.LogError("Explodable Detected: " + other.name);
                 other.GetComponent<IExplodable>().Explode(false);
+                if (hasBeenHit)
+                {
+                    Explode();
+                    return;
+                }
+                else
+                {
+                    HitEffect();
+                    return;
+                }
             }
 
-            Explode();
+            //  Explode(); // moved from here
 
         }
         else if (!justReleased && !isAttached && !hasAttachment)
@@ -531,12 +586,32 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
 
     }
-    private void HitEffect()
+    private void HitEffect(bool ignoreSound = false)
     {
-        hitFloor = true;
+        if (ignoreEnemyCollisions) return;
+
+        ignoreEnemyCollisions = true;
         sr.sprite = animDataSO.sprites[1];
         cageParticles.Play();
-        AudioManager.instance.PlayCageHitSound();
+        if (!ignoreSound)
+        {
+            StartCoroutine(ResetEnemyCollision());
+            AudioManager.instance.PlayCageHitSound();
+            levelChallenges.EditCageType(3);
+
+        }
+        else
+        {
+            hasBeenHit = true;
+        }
+
+    }
+    private WaitForSeconds enemyCollisionWait = new WaitForSeconds(1f);
+    private IEnumerator ResetEnemyCollision()
+    {
+        yield return enemyCollisionWait;
+        ignoreEnemyCollisions = false;
+        hasBeenHit = true;
     }
     public void DetachFromObject(Vector2 vel)
     {

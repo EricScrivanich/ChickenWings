@@ -342,7 +342,8 @@ public class PigMaterialHandler : MonoBehaviour
     private IEnumerator Explode(float time, int type)
     {
         float elapsedTime = 0.0f;
-        Vector3 endScale = transform.localScale * 1.55f;
+        Vector3 initialScale = transform.localScale;
+        Vector3 endScale = initialScale * 1.55f;
         float hitEffectBlendStart = 0f;
         float hitEffectBlendEnd = 0.08f;
         float fadeAmountStart = 0.1f;
@@ -423,6 +424,7 @@ public class PigMaterialHandler : MonoBehaviour
         else
         {
             gameObject.SetActive(false);
+            transform.localScale = initialScale;
 
             if (pigType == 2) // solves very odd sprite renderer glitch when destroying mat
                 foreach (var pig in sprites)

@@ -3,6 +3,7 @@ using UnityEngine;
 public class SpawnedObject : MonoBehaviour
 {
     public Rigidbody2D rb { get; protected set; }
+    protected bool canAttack = true;
 
 
     protected ushort objectID;
@@ -18,6 +19,7 @@ public class SpawnedObject : MonoBehaviour
             this.enabled = true;
 
         objectID = id;
+        canAttack = true;
         // triggerType = trigger;
     }
 

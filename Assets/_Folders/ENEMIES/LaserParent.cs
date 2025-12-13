@@ -52,7 +52,8 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     [SerializeField] private float laserStartFade;
     [SerializeField] private float laserInbetweenFade;
     [SerializeField] private GameObject smokeParticles;
-    
+    [SerializeField] private GameObject brokenParticles;
+
 
 
 
@@ -95,7 +96,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     }
     void Awake()
     {
-       
+
 
         laserMaterial = new Material(baseLaserMaterial);
         timerMaterial = new Material(timerBaseMaterial);
@@ -120,6 +121,14 @@ public class LaserParent : MonoBehaviour, IPositionerObject
 
     private void OnDisable()
     {
+        smokeParticles.SetActive(false);
+        brokenParticles.SetActive(false);
+        laserDestroyed = false;
+        GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+        GetComponent<Collider2D>().isTrigger = true;
+        GetComponent<WeaponDroppable>().enabled = false;
+
+        gameObject.layer = LayerMask.NameToLayer("Plane");
 
         AudioManager.instance.OnSetAudioPitch -= ChangeAudioPitch;
     }
@@ -175,7 +184,13 @@ public class LaserParent : MonoBehaviour, IPositionerObject
     public void DestroyObject()
     {
         smokeParticles.SetActive(true);
+        brokenParticles.SetActive(true);
         laserDestroyed = true;
+        GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+        GetComponent<Collider2D>().isTrigger = false;
+        GetComponent<WeaponDroppable>().ActivateOnly();
+        gameObject.layer = LayerMask.NameToLayer("HitGroundOnly");
+        AudioManager.instance.PlayIncubatorHit(1.5f);
         if (currentLaserShootCoroutine != null)
             StopCoroutine(currentLaserShootCoroutine);
 
@@ -183,7 +198,7 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         {
             currentLaserShootCoroutine = StartCoroutine(LaserShoot(true));
         }
-       
+
 
 
     }
@@ -240,7 +255,11 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         if (laserShootingDurations != null && currentLaserShootingIndex < laserShootingDurations.Length)
             interval = laserShootingIntervals[currentLaserShootingIndex];
         else
+        {
+            GetComponent<ObjectPositioner>().DestroyObject();
             yield break;
+        }
+
         laserMaterial.SetColor("_Color", laserCooldownColor);
         timerMaterial.SetColor("_Color", laserCooldownColor);
         float duration = 0;
@@ -415,8 +434,8 @@ public class LaserParent : MonoBehaviour, IPositionerObject
         }
 
 
-
-        currentLaserShootCoroutine = StartCoroutine(LaserCooldown());
+        if (!skipToEnd)
+            currentLaserShootCoroutine = StartCoroutine(LaserCooldown());
 
 
     }

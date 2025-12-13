@@ -14,6 +14,8 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField] private SceneManagerSO sceneLoader;
     [SerializeField] private TextMeshProUGUI text;
     [SerializeField] private RectTransform imageRect;
+    [SerializeField] private RectTransform rotateRect;
+    [SerializeField] private float rotateAmount;
 
     public static bool lockButtons;
     private RectTransform rect;
@@ -95,6 +97,14 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void ResetGame()
     {
         type = 0;
+        if (lockButtons) return;
+        PressInitializedTween();
+
+    }
+
+    public void Map()
+    {
+        type = 4;
         if (lockButtons) return;
         PressInitializedTween();
 
@@ -238,12 +248,12 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         Sequence seq = DOTween.Sequence();
 
-        if (rotateOnFinalPress)
+        if (rotateRect != null)
         {
 
             seq.Append(imageRect.DOScale(imageScaleOnPress1, .15f));
             seq.Join(imageRect.DOAnchorPos(movedPosition1, .15f).SetEase(Ease.InOutSine));
-            seq.Append(imageRect.DORotate(new Vector3(0, 0, -360), .45f, RotateMode.FastBeyond360).SetEase(Ease.OutSine));
+            seq.Append(rotateRect.DORotate(new Vector3(0, 0, rotateAmount), .3f, RotateMode.FastBeyond360).SetEase(Ease.OutSine));
             seq.Play().SetUpdate(true).OnComplete(DoAction);
 
         }
@@ -276,12 +286,13 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
         switch (type)
         {
             case (0):
-                Time.timeScale = FrameRateManager.TargetTimeScale;
-                GameObject.Find("GameManager").GetComponent<ResetManager>().ResetGame();
+                // Time.timeScale = FrameRateManager.TargetTimeScale;
+                // GameObject.Find("GameManager").GetComponent<ResetManager>().ResetGame();
+                SceneManagerScript.instance.ReloadCurrentScene();
 
                 break;
             case (1):
-                GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint = 0;
+                // GameObject.Find("GameManager").GetComponent<ResetManager>().checkPoint = 0;
 
                 // SceneManager.LoadScene("MainMenu");
                 SceneManagerScript.instance.LoadScene("MainMenu");
@@ -300,6 +311,7 @@ public class PauseButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerE
                 // sceneLoader.LoadLevel(GameObject.Find("LevelManager").GetComponent<LevelManager>().LevelIndex + 1);
                 break;
             case (4):
+                SceneManagerScript.instance.LoadScene("LevelPicker");
 
                 break;
         }

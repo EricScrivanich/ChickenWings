@@ -294,6 +294,7 @@ public static class JsonDataTools
         {
             Debug.Log("Persistent data directory does not exist.");
         }
+        PlayerPrefs.DeleteAll();
     }
 }
 

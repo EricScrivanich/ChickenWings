@@ -27,12 +27,12 @@ MonoBehaviour:
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: TEEEESST
   levelWorldAndNumber: {x: 1, y: 18, z: 0}
-  spawnSteps: 
+  spawnSteps: 0000
   finalSpawnStep: 300
-  objectTypes: 
-  idList: 
+  objectTypes: 0400
+  idList: 0000
   specialTriggerIndexAndType: []
-  dataTypes: 
+  dataTypes: feff
   posList: []
   floatList: []
   typeList: 
@@ -45,5 +45,20 @@ MonoBehaviour:
   ringPoolSizes: 
   cageAttachments: 
   checkPointSteps: 
-  postionerData: []
+  postionerData:
+  - ID: 0
+    type: 0
+    startPos: {x: 0.2, y: 2}
+    startRot: -0
+    savedTimePerStep: 0.18
+    sizeByType: 000001000100
+    perecnt: 1
+    positions: []
+    values:
+    - -65
+    startingSteps: 00000000
+    endingSteps: 33001f00
+    easeTypes: 0300
+    staringSpawnStep: 0
+    finalSpawnStep: 0
   Difficulty: 1

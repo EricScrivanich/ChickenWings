@@ -330,9 +330,9 @@ public class AudioManager : MonoBehaviour
             footStepIndex = 0;
         }
     }
-    public void PlayIncubatorHit()
+    public void PlayIncubatorHit(float volumeMult = 1)
     {
-        audioSource.PlayOneShot(incubatorHit, incubatorHitVolume);
+        audioSource.PlayOneShot(incubatorHit, incubatorHitVolume * volumeMult);
     }
     public void PlayChicHappySound(int i)
     {
@@ -612,11 +612,11 @@ public class AudioManager : MonoBehaviour
     {
         audioSource.PlayOneShot(planeExplosionSound, planeExplosionVolume);
     }
-    public void PlayBombExplosionSound()
+    public void PlayBombExplosionSound(float volumeBasedOnDistance = 1)
     {
         if (canPlayBombNoise)
         {
-            audioSource.PlayOneShot(bombExplosionSound, bombExplosionVolume);
+            audioSource.PlayOneShot(bombExplosionSound, bombExplosionVolume * volumeBasedOnDistance);
             canPlayBombNoise = false;
             StartCoroutine(BombNoiseWait());
         }

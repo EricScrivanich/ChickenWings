@@ -13,7 +13,7 @@ public class SteroidButton : UIButton
         if (InputSystemSelectionManager.instance != null)
             InputSystemSelectionManager.instance.HandleGroup(0, false);
         Instantiate(steroidUI, GameObject.Find("Canvas").transform);
-        HapticFeedbackManager.instance.PressUIButton();
+        // HapticFeedbackManager.instance.PressUIButton();
         OnHighlight(false);
     }
 

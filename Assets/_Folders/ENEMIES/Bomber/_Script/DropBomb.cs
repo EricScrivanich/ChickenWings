@@ -4,7 +4,7 @@ using UnityEngine;
 
 using DG.Tweening;
 
-public class DropBomb : SpawnedObject, IRecordableObject
+public class DropBomb : SpawnedPigObject, IRecordableObject
 {
     // private Pool pool;
 
@@ -463,13 +463,15 @@ public class DropBomb : SpawnedObject, IRecordableObject
 
         while (dropping)
         {
-            // pool.Spawn("bomberBomb", dropArea.transform.position, bombRotation);
+
 
 
             if (!dropping) break;
 
-            // pool.GetBomb(dropArea.transform.position, bombRotation * sideSwitchInteger, dropCount, true);
-            bombPool.SpawnWithVelocityAndRotation(dropPos.position, dropCount * dropForceAverage, 120 * sideSwitchInteger, 50 * sideSwitchInteger);
+
+
+            if (canAttack)
+                bombPool.SpawnWithVelocityAndRotation(dropPos.position, dropCount * dropForceAverage, 120 * sideSwitchInteger, 50 * sideSwitchInteger);
             yield return wait;
             if (sideSwitchInteger == 1) dropCount--;
 

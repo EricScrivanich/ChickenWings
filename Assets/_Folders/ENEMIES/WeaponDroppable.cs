@@ -7,6 +7,7 @@ public class WeaponDroppable : MonoBehaviour
     private bool isDuplicated = false;
     private Rigidbody2D rb;
     [SerializeField] private float contactForce;
+    [SerializeField] private bool destroyOnFinish = true;
     public void DuplicateObject(Vector2 vel)
     {
 
@@ -25,6 +26,12 @@ public class WeaponDroppable : MonoBehaviour
         }
     }
 
+    public void ActivateOnly()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        this.enabled = true;
+    }
+
     void FixedUpdate()
     {
         if (onGround && rb.linearVelocity.x > -BoundariesManager.GroundSpeed)
@@ -35,6 +42,18 @@ public class WeaponDroppable : MonoBehaviour
 
             //     rb.linearVelocityX = -BoundariesManager.GroundSpeed;
             // }
+        }
+        if (transform.position.x < BoundariesManager.leftBoundary)
+        {
+            if (destroyOnFinish)
+                Destroy(gameObject);
+            else
+            {
+                this.enabled = false;
+                gameObject.SetActive(false);
+
+            }
+
         }
 
     }
@@ -47,6 +66,7 @@ public class WeaponDroppable : MonoBehaviour
         if (rb.linearVelocity.x > -BoundariesManager.GroundSpeed)
         {
             rb.AddForce(Vector2.right * contactForce * (-BoundariesManager.GroundSpeed - rb.linearVelocity.x), ForceMode2D.Impulse);
+            rb.angularVelocity += Random.Range(-90f, 90f);
         }
 
 

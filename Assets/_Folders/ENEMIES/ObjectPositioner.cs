@@ -60,6 +60,9 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
     [SerializeField] private float fadeArrowDur;
 
 
+    private bool isDestroyed = false;
+
+
 
 
 
@@ -88,12 +91,15 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
 
     public void DestroyObject()
     {
+        isDestroyed = true;
+        if (MoveSeq != null && MoveSeq.IsPlaying()) MoveSeq.Kill();
+        if (RotationSeq != null && RotationSeq.IsPlaying()) RotationSeq.Kill();
         float x = transform.position.x;
         if (x < BoundariesManager.rightViewBoundary && x > BoundariesManager.leftViewBoundary)
         {
             addedComponent.DestroyObject();
-            rb.bodyType = RigidbodyType2D.Dynamic;
-          
+
+
         }
         else
         {
@@ -105,7 +111,7 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
     private void DoRotateSequence()
     {
 
-        if (rotationList == null || rotationList.Length <= 0) return;
+        if (isDestroyed || rotationList == null || rotationList.Length <= 0) return;
 
         rotatingTween = true;
         currentRotationIndex = 0;
@@ -138,7 +144,7 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
 
     private void DoMoveSequence()
     {
-        if (positionList == null || positionList.Length <= 0) return;
+        if (isDestroyed || positionList == null || positionList.Length <= 0) return;
 
         MoveSeq = DOTween.Sequence();
 
@@ -166,10 +172,12 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
 
         MoveSeq.Play().SetUpdate(UpdateType.Fixed);
     }
+    
+
     int arrowIndex = 0;
     private void DoHandleArrows(int arrowIndex)
     {
-        if (arrowIndex >= positionList.Length) return;
+        if (isDestroyed || arrowIndex >= positionList.Length) return;
 
         moving = true;
         currentPostionIndex = arrowIndex;
@@ -216,10 +224,17 @@ public class ObjectPositioner : SpawnedObject, IRecordableObject
     // Update is called once per frame
     private void FixedUpdate()
     {
+        if (isDestroyed) return;
         if (addedComponent != null && (rotationSpeed != 0 || moving))
         {
             addedComponent.DoUpdateTransform();
         }
+        // destroyTimer += Time.fixedDeltaTime;
+        // if (destroyTimer >= destroyTime && !isDestroyed)
+        // {
+        //     isDestroyed = true;
+        //     DestroyObject();
+        // }
 
         // if (rotationSpeed == 0) return;
         // rb.MoveRotation(currentRotation);

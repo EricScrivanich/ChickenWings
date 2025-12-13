@@ -16,6 +16,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 {
     public static LevelRecordManager instance;
 
+    
+
 
     [SerializeField] private bool testNonEditorMode = false;
     [SerializeField] private GameObject DeleteButtonForMultSelectTime;

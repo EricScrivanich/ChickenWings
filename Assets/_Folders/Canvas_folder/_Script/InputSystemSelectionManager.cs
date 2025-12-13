@@ -15,6 +15,10 @@ public class InputSystemSelectionManager : MonoBehaviour
     private GameObject lastSelectedByMenu;
     private string checkTag = "none";
 
+    public bool trackSpecificGameObject = false;
+
+    public int tutorialType = -1;
+
     void Awake()
     {
         if (instance == null)
@@ -23,6 +27,14 @@ public class InputSystemSelectionManager : MonoBehaviour
         {
             Destroy(gameObject);
             return;
+        }
+        if (PlayerPrefs.GetInt("CompletedSteroidTutorial", 0) == 0)
+        {
+            tutorialType = 0; // Steroid tutorial
+        }
+        else
+        {
+            tutorialType = -1; // No tutorial
         }
 
         // Try to find the Input System UI Module (usually on EventSystem)
@@ -96,11 +108,11 @@ public class InputSystemSelectionManager : MonoBehaviour
 
         yield return null; // Wait one frame
         EventSystem.current.SetSelectedGameObject(obj);
-        if (!stopTrackingLastSelected && obj.GetComponent<UIButton>() != null && !obj.GetComponent<UIButton>().skipReselect)
-        {
-            lastSelectedByMenu = obj;
+        // if (!stopTrackingLastSelected && obj.GetComponent<UIButton>() != null && !obj.GetComponent<UIButton>().skipReselect)
+        // {
+        //     lastSelectedByMenu = obj;
 
-        }
+        // }
 
         lastSelected = obj;
         isSetting = false;
@@ -139,9 +151,11 @@ public class InputSystemSelectionManager : MonoBehaviour
     }
 
     private bool stopTrackingLastSelected = false;
+    private INavigationUI lastWindow = null;
     public void SetNewWindow(INavigationUI newWindow, bool stopTracking)
     {
         stopTrackingLastSelected = stopTracking;
+        lastWindow = newWindow;
 
         StartCoroutine(WaitAndSetSelected(newWindow.GetFirstSelected()));
 
@@ -191,18 +205,20 @@ public class InputSystemSelectionManager : MonoBehaviour
     {
         if (menuGroups == null || index < 0 || index >= menuGroups.Length) return;
 
-        if (enable && lastSelectedByMenu != null)
-        {
-            EventSystem.current.SetSelectedGameObject(lastSelectedByMenu);
-            stopTrackingLastSelected = false;
+        // if (enable && lastSelectedByMenu != null)
+        // {
+        //     EventSystem.current.SetSelectedGameObject(lastSelectedByMenu);
+        //     stopTrackingLastSelected = false;
 
-        }
+        // }
 
-        else
-        {
-            lastSelectedByMenu = EventSystem.current.currentSelectedGameObject;
+        // else
+        // {
+        //     if (lastWindow != null)
+        //     lastSelectedByMenu = lastWindow.GetNextSelected();
+        //     lastSelectedByMenu = EventSystem.current.currentSelectedGameObject;
 
-        }
+        // }
 
         menuGroups[index].blocksRaycasts = enable;
         menuGroups[index].interactable = enable;

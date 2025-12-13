@@ -83,7 +83,9 @@ public class SceneManagerScript : MonoBehaviour
     {
         if (loadingScene) return;
         loadingScene = true;
-        StartCoroutine(ReoadSceneCoroutine());
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        loadingScene = false;
+        // StartCoroutine(ReoadSceneCoroutine());
 
     }
     // Update is called once per frame

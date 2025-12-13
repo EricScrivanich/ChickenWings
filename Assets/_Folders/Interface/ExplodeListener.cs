@@ -46,7 +46,7 @@ public class ExplodeListener : MonoBehaviour, IExplodable
             // pool.Spawn("ExplosionBlemish", transform.position, Vector3.zero, groundExplosionScale, null);
             groundExplosionPool.SpawnSpecificScale((Vector2)transform.position + (Vector2.up * yOffsetGround), groundExplosionScale);
 
-            AudioManager.instance.PlayBombExplosionSound();
+            AudioManager.instance.PlayBombExplosionSound(1 - (Mathf.Abs(transform.position.x) / BoundariesManager.rightBoundary));
 
 
         }

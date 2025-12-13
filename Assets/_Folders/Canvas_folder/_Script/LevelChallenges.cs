@@ -71,12 +71,15 @@ public class LevelChallenges : ScriptableObject
     public bool skipShowChallenges;
     private bool ignoreAll = false;
 
+    public byte cageType { get; private set; } = 0;
+
 
     public void ResetData(Vector3Int lvlNum, int difficulty, short[] startingAmmos, int startingLives)
     {
         Debug.Log("Resetting LevelChallenges data for level: " + lvlNum + " with difficulty: " + difficulty);
         LevelWorldAndNumber = lvlNum;
         LevelDifficulty = difficulty;
+        cageType = 0;
 
 
 
@@ -150,6 +153,7 @@ public class LevelChallenges : ScriptableObject
 
         Lives = tempData.CurrentLives;
         Ammos = tempData.CurrentAmmos;
+        cageType = tempData.cageType;
         CurrentCheckPoint = tempData.CurrentCheckPoint;
         if (KilledPigs != null)
             KilledPigs = new List<Vector3Int>(tempData.KilledPigs);
@@ -199,6 +203,12 @@ public class LevelChallenges : ScriptableObject
 
         }
         BarnsHitWithEgg[id]++; // Increment the count for the specific barn ID
+    }
+
+    public void EditCageType(byte newCageType)
+    {
+        
+        cageType = newCageType;
     }
 
     public void EditCurrentAmmos(int ammoType, int amount)

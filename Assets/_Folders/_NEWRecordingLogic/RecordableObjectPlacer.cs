@@ -1294,7 +1294,7 @@ public class RecordableObjectPlacer : MonoBehaviour
                             continue;
 
                         }
-                        else if (rotationData.startingSteps.Count <= 1)
+                        else if (rotationData.startingSteps.Count <= 1 || calculatedStep <= rotationData.startingSteps[1])
                         {
                             prefab.transform.eulerAngles = new Vector3(0, 0, rotationData.values[0]);
                             continue;
@@ -1303,6 +1303,7 @@ public class RecordableObjectPlacer : MonoBehaviour
 
                         for (int j = 1; j < rotationData.startingSteps.Count; j++)
                         {
+
 
                             if (calculatedStep >= rotationData.startingSteps[j] && calculatedStep < rotationData.endingSteps[j])
                             {

@@ -155,11 +155,13 @@ public class HotAirBalloon : SpawnedPigObject, IRecordableObject
             {
                 switch (balloonType)
                 {
+
                     case 0:
+                        if (!canAttack) return;
                         anim.SetTrigger(DropTrigger);
                         break;
                     case 1:
-                        if (!inRange) return;
+                        if (!inRange || !canAttack) return;
                         Debug.Log("Fire");
                         gun.Fire(false);
                         waitingForDelay = true;
@@ -188,6 +190,7 @@ public class HotAirBalloon : SpawnedPigObject, IRecordableObject
                 switch (balloonType)
                 {
                     case 0:
+                        if (!canAttack) return;
                         anim.SetTrigger(DropTrigger);
                         break;
                     case 1:
@@ -348,6 +351,7 @@ public class HotAirBalloon : SpawnedPigObject, IRecordableObject
 
     public void DropBomb()
     {
+        if (!canAttack) return;
         if (Mathf.Abs(transform.position.x) < BoundariesManager.rightBoundary)
         {
             // pool.GetBalloonBomb(dropPosition.position, new Vector2(-speed, 0));
@@ -383,6 +387,7 @@ public class HotAirBalloon : SpawnedPigObject, IRecordableObject
         gameObject.SetActive(true);
         if (balloonType == 0)
         {
+            anim.speed = 1;
             bombDropSpeed = new Vector2(-speed, 0);
             anim.SetTrigger("SetBomb");
 

@@ -265,20 +265,27 @@ public class LevelImporterWindow : EditorWindow
         string challengePath = AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/Challenges/" + numberString + levelName + "_Challenge.asset");
         AssetDatabase.CreateAsset(asset, levelPath);
         AssetDatabase.CreateAsset(challenges, challengePath);
+
         var Levels = Resources.Load<LevelContainer>("LevelContainer");
         Levels.AddLevel(asset);
         UnityEditor.EditorUtility.SetDirty(Levels);
-        UnityEditor.AssetDatabase.SaveAssets();
-        UnityEditor.AssetDatabase.Refresh();
-        Resources.UnloadAsset(Levels);
+
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
         // Load the data
         asset.SetDefaults(objData, startingStats, playerID, challenges);
+        EditorUtility.SetDirty(asset);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
         asset.LoadLevelSaveData(lds);
+
         arrayAsset.LoadLevelSaveData(lds);
+        EditorUtility.SetDirty(asset);
+        EditorUtility.SetDirty(arrayAsset);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
         asset.LevelName = levelName;
         asset.levelWorldAndNumber = numbers;
 
@@ -288,6 +295,7 @@ public class LevelImporterWindow : EditorWindow
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+        Resources.UnloadAsset(Levels);
 
         // Show success message
         EditorUtility.DisplayDialog("Success",

@@ -12,6 +12,10 @@ using System;
 
 public class LevelPickerManager : MonoBehaviour, INavigationUI
 {
+    public static LevelPickerManager instance;
+    [SerializeField] private bool allowClickAll;
+    [SerializeField] private GameObject steroidButton;
+    [SerializeField] private RectTransform handLevelPick;
     public float xHillMult;
     public float yHillMult;
     public float scaleHillMult;
@@ -34,6 +38,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
     [SerializeField] private GameObject[] levelPickerPathObjects;
     private ILevelPickerPathObject[] levelPickerObjs;
+    [SerializeField] private ILevelPickerPathObject[] baseCamDatas;
     private Sequence adjustHillSeq;
 
     [SerializeField] private float tweenScaleBack;
@@ -101,7 +106,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     private int currentPathIndex;
     private int currentPathRoot = -2;
     private int nextPathRoot;
-    private List<LevelButtonUI> levelButtons = new List<LevelButtonUI>();
+    private List<LevelButtonUI> levelButtons;
 
 
     private Camera cam;
@@ -130,6 +135,15 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         controls = new InputController();
 
         levelUiPopupPrefab.gameObject.SetActive(false);
@@ -266,6 +280,8 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                     yield break;
                 }
             }
+            if (InputSystemSelectionManager.instance != null && InputSystemSelectionManager.instance.tutorialType == 0)
+                firstSelectedUI = steroidButton;
 
             InputSystemSelectionManager.instance.SetNewWindow(this, false);
             PlayerPrefs.SetString("NextLevel", "Menu");
@@ -330,14 +346,21 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
         }
 
 
-
+        levelButtons = new List<LevelButtonUI>();
 
         for (int i = 0; i < levelPickerPathObjects.Length; i++)
         {
             var l = levelPickerPathObjects[i].GetComponent<ILevelPickerPathObject>();
+            l.SetOrder(i);
             var ui = Instantiate(uiButton, levelPopupParent).GetComponent<RectTransform>();
             levelButtons.Add(ui.GetComponent<LevelButtonUI>());
             l.SetButtonRect(ui);
+
+            if (i == 0)
+            {
+                handLevelPick.transform.SetParent(ui);
+                handLevelPick.anchoredPosition = new Vector2(200, 40);
+            }
 
             int beatenType = 0;
 
@@ -369,6 +392,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
             {
                 beatenType = 1;
             }
+            l.SetBeatenType(beatenType);
             l.SetLastSelectable(numberToCheck, beatenType);
             if (l.WorldNumber == lastLevel)
             {
@@ -379,7 +403,9 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                 playerPathFollower.SetInitialPostionAndLayer(paths[data.y], d);
                 currentPathIndex = data.y;
                 currentPathRoot = data.x;
-                firstSelectedUI = ui.gameObject;
+
+                if (InputSystemSelectionManager.instance != null && InputSystemSelectionManager.instance.tutorialType == -1)
+                    firstSelectedUI = ui.gameObject;
                 currentTarget = l;
 
             }
@@ -413,7 +439,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
     public GameObject GetNextSelected()
     {
-        throw new NotImplementedException();
+        return firstSelectedUI;
     }
 
 
@@ -701,8 +727,14 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
     private void HandleClickObject(Vector2 screenPosition, ILevelPickerPathObject manualSelect = null)
     {
-        if (ignoreAll)
+        if (ignoreAll || (InputSystemSelectionManager.instance.tutorialType >= 0 && InputSystemSelectionManager.instance.tutorialType < 3))
             return;
+
+        if (InputSystemSelectionManager.instance.tutorialType == 4)
+        {
+            InputSystemSelectionManager.instance.tutorialType = 5;
+            SteroidTutorial.instance.ShowNextHand(5);
+        }
         ILevelPickerPathObject obj;
         // Debug.LogError("Screen Position: " + screenPosition);
         if (manualSelect == null)
@@ -722,11 +754,18 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
             obj = manualSelect;
         }
 
+        if (obj.beatenType == 0 && !allowClickAll)
+        {
+            HapticFeedbackManager.instance.PlayerButtonFailure();
+            return;
+        }
+
         if (obj != null && (obj != currentTarget || manualSelect != null))
         {
             if (manualSelect == null)
                 HapticFeedbackManager.instance.PressUIButton();
             SendPathDataToPlayer(obj);
+            firstSelectedUI = levelButtons[obj.order].gameObject;
 
         }
         else
@@ -737,6 +776,11 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
 
 
+    }
+
+    public void SetAsCurrentNavigationWindow()
+    {
+        InputSystemSelectionManager.instance.SetNewWindow(this, false);
     }
     private Sequence zoomSeq;
     [SerializeField] private Ease easeType;
@@ -1052,8 +1096,26 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     public void BackOut()
     {
         HapticFeedbackManager.instance.PressUIButton();
+
+        Vector3Int worldNum = currentTarget.WorldNumber;
+        Vector4 camData = Vector4.zero;
+
+        for (int i = baseCamDatas.Length - 1; i >= 0; i--)
+        {
+            Vector3Int check = baseCamDatas[i].WorldNumber;
+            Debug.LogError("Checking base cam data: " + check + " against world num: " + worldNum);
+            if (check.x == worldNum.x && worldNum.y >= check.y)
+            {
+
+                camData = baseCamDatas[i].CameraPositionAndOrhtoSize;
+                break;
+            }
+
+
+        }
+
         // MoveHillSeq(true, Vector2.zero, 0, 0, Vector2.zero, 1.3f);
-        ZoomSeq(Vector4.zero);
+        ZoomSeq(camData);
         currentTarget.SetSelected(false);
         currentTarget = null;
         DoLevelPopupSeq(false, Vector3Int.zero, true);

@@ -215,7 +215,12 @@ public class LevelData : ScriptableObject
             checkPointHasBeenCollected = true;
             usedCheckPoint = true;
             if (levelChallenges != null)
+            {
                 levelChallenges.LoadData(levelWorldAndNumber, difficulty, checkPointData);
+
+
+            }
+
         }
 
         else if (playerID != null)
@@ -437,6 +442,21 @@ public class LevelData : ScriptableObject
         }
 
         playerID.SetDataForLevel(startingStats, levelChallenges);
+
+        if (levelChallenges != null && levelChallenges.cageType > 1)
+        {
+
+
+            var cage = Instantiate(objData.cageObject, playerID._transform.position, Quaternion.identity);
+            // cage.gameObject.SetActive(false);
+            var cageScript = cage.GetComponent<CustomHingeJoint2D>();
+            cageScript.Initialize(levelChallenges, levelChallenges.cageType);
+
+
+
+
+
+        }
 
 
 
@@ -679,8 +699,12 @@ public class LevelData : ScriptableObject
                             var attachedObject = objData.pools[idList[i]].GetCageAttachment();
                             var cage = Instantiate(objData.cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
                             // cage.gameObject.SetActive(false);
-                            cage.GetComponent<CustomHingeJoint2D>().SetAttatchedObject(attachedObject);
+                            var s = cage.GetComponent<CustomHingeJoint2D>();
+                            s.Initialize(levelChallenges, 1);
+                            s.SetAttatchedObject(attachedObject);
                             currentCageIndex++;
+                            if (levelChallenges != null)
+                                levelChallenges.EditCageType(2);
 
                             if (currentCageIndex >= cageAttachments.Length)
                             {
@@ -755,7 +779,13 @@ public class LevelData : ScriptableObject
                         var attachedObject = objData.pools[idList[i]].GetCageAttachment();
                         var cage = Instantiate(objData.cageObject, attachedObject.ReturnPosition(), Quaternion.identity);
                         // cage.gameObject.SetActive(false);
-                        cage.GetComponent<CustomHingeJoint2D>().SetAttatchedObject(attachedObject);
+                        var s = cage.GetComponent<CustomHingeJoint2D>();
+                        s.Initialize(levelChallenges, 1);
+                        s.SetAttatchedObject(attachedObject);
+                        if (levelChallenges != null)
+                        {
+                            levelChallenges.EditCageType(2);
+                        }
                         currentCageIndex++;
 
                         if (currentCageIndex >= cageAttachments.Length)

@@ -14,6 +14,8 @@ public class ILevelPickerPathObject : MonoBehaviour
     [SerializeField] protected Transform arrow;
     protected Sequence arrowSequence;
 
+    public int beatenType { get; protected set; }
+
 
 
     public int layerID = 1;
@@ -34,6 +36,8 @@ public class ILevelPickerPathObject : MonoBehaviour
 
     public Vector3Int RootIndex_PathIndex_Order;
 
+    public int order { get; private set; }
+
 
 
     public Vector3Int WorldNumber;
@@ -45,6 +49,10 @@ public class ILevelPickerPathObject : MonoBehaviour
         arrow.gameObject.SetActive(false);
         blurMain.enabled = false;
         if (blurOther != null) blurOther.enabled = false;
+    }
+    public void SetOrder(int order)
+    {
+        this.order = order;
     }
     void OnDisable()
     {
@@ -102,8 +110,15 @@ public class ILevelPickerPathObject : MonoBehaviour
     public Vector3 PosScaleBackHill;
     public Vector3 PosScaleFrontHill;
 
+    public void SetBeatenType(int type)
+    {
+        beatenType = type;
+
+    }
+
     public virtual void SetLastSelectable(Vector3Int num, int type)
     {
+
 
     }
     public virtual void SetLayerFades(int layer, float dur, DG.Tweening.Ease ease)
@@ -116,6 +131,8 @@ public class ILevelPickerPathObject : MonoBehaviour
         isSelected = selected;
         if (selected)
         {
+           
+                
 
             Color col = new Color(blurMain.color.r, blurMain.color.g, blurMain.color.b, 1f);
             blurMain.color = col;

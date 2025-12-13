@@ -255,7 +255,7 @@ public class TemporaryLevelCheckPointData
     public int[] PlayerInputs;
     public int[] CompletedRings;
     public int[] CurrentEggedBarns;
-    public float TimeAtCheckPoint;
+    public byte cageType;
 
     public TemporaryLevelCheckPointData(LevelChallenges data)
     {
@@ -263,6 +263,7 @@ public class TemporaryLevelCheckPointData
 
         CurrentCheckPoint = data.CurrentCheckPoint;
         CurrentLives = (short)data.Lives;
+        cageType = data.cageType;
 
 
         if (data.Ammos != null)

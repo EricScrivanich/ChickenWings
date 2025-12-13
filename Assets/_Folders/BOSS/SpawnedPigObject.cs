@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SpawnedPigObject : SpawnedObject, IDamageable, IEggable
 {
-    protected bool canAttack = true;
+   
 
 
     public bool CanPerfectScythe => throw new System.NotImplementedException();
