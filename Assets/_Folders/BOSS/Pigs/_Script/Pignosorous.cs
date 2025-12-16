@@ -5,8 +5,8 @@ public class Pignosorous : SpawnedPigBossObject
 {
 
     [SerializeField] private PlayerID player;
-
-    [SerializeField] private ObjectPathFollower pathFollower;
+    [SerializeField] private GameObject pathPrefab;
+    private ObjectPathFollower pathFollower;
     [SerializeField] private AnimationCurveSO phaseDifficultyCurve;
     [SerializeField] private QPool fireballPool;
     [SerializeField] private AudioSource audioSource;
@@ -18,7 +18,7 @@ public class Pignosorous : SpawnedPigBossObject
     [SerializeField] private float rocketThrustVolume;
     [SerializeField] private float rocketPassByVolume;
     [SerializeField] private float fireballEjectVolume;
-    [SerializeField] private RigidboyCircularRotater rotater;
+
     private Animator anim;
 
     [SerializeField] private AimRotationTransform leftJetPack;
@@ -222,6 +222,11 @@ public class Pignosorous : SpawnedPigBossObject
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        if (pathFollower == null)
+        {
+            GameObject pathObj = Instantiate(pathPrefab);
+            pathFollower = pathObj.GetComponentInChildren<ObjectPathFollower>();
+        }
         heartPositioner = heart.gameObject.GetComponentInParent<PigHeartPositioner>();
         attackChances = new float[3];
         SetPhaseVariables(0);
@@ -340,7 +345,7 @@ public class Pignosorous : SpawnedPigBossObject
         ejectSpeed = backForthFireballShootVel;
         // SetFireballEjectSettings(backForthFireballShootVel, Vector2.zero);
 
-        while (Mathf.Abs(rb.position.x) < BoundariesManager.rightBoundary - .5f)
+        while (Mathf.Abs(rb.position.x) < BoundariesManager.rightBoundary)
         {
 
 
@@ -368,6 +373,7 @@ public class Pignosorous : SpawnedPigBossObject
         }
         else
         {
+            yield return new WaitForSeconds(.7f);
             rotationScript.enabled = true;
             DoNextAttack(1);
         }
@@ -396,7 +402,7 @@ public class Pignosorous : SpawnedPigBossObject
         rb.linearVelocity = Vector2.zero;
         Vector2 p = Vector2.zero;
 
-        p.x = BoundariesManager.rightBoundary * flipValue;
+        p.x = (BoundariesManager.rightBoundary + 1) * flipValue;
 
         rotationScript.SetConstantRotation(1, playerTarget);
 
@@ -423,6 +429,7 @@ public class Pignosorous : SpawnedPigBossObject
 
 
         rightJetPack.SetOffset(.3f, -1);
+        yield return new WaitForSeconds(.4f);
 
 
         while (Mathf.Abs(rb.position.x - p.x) > .35f)
@@ -452,6 +459,7 @@ public class Pignosorous : SpawnedPigBossObject
                     skip = true;
                     audioSource.PlayOneShot(rocketThrustSound, rocketThrustVolume);
                     rightJetPack.SetOffset(1, -.3f);
+                    rightJetPack.EditRotationValues(2.5f, .3f);
 
                     rotationScript.SetTargetAngle(player.ReturnFuturePosition(switchToFuturePositionTime));
                     rotationScript.EditRotationValues(1.5f, .8f);
@@ -473,8 +481,10 @@ public class Pignosorous : SpawnedPigBossObject
         }
 
         timer = 0;
+        rightJetPack.EditRotationValues(1, 1);
 
-
+        yield return fixedWait;
+        yield return fixedWait;
 
         rb.linearVelocity = Vector2.left * flipValue * initialForceAmount;
         rotationScript.EditRotationValues(.7f, .7f);

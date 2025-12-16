@@ -537,6 +537,7 @@ public class PlayerStateManager : MonoBehaviour
         AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .3f), PlayerPrefs.GetFloat("SFXVolume", .8f), mutePlayerAudio);
 
         if (mutePlayerAudio) Time.timeScale = .95f;
+        // else AudioManager.instance.PlayMusic(true);
         HapticFeedbackManager.instance.LoadSavedData();
 
         // if (swipeTracker != null)

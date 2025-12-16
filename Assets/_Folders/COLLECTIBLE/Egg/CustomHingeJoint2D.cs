@@ -593,6 +593,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
         ignoreEnemyCollisions = true;
         sr.sprite = animDataSO.sprites[1];
         cageParticles.Play();
+        player.UiEvents.OnCageHit?.Invoke();
         if (!ignoreSound)
         {
             StartCoroutine(ResetEnemyCollision());

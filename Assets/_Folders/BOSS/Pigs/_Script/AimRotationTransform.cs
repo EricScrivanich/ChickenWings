@@ -91,6 +91,8 @@ public class AimRotationTransform : MonoBehaviour
         isFlipped = flipped;
         baseOffset.x *= -1;
         offset = baseOffset;
+        SetTargetAngle((Vector2)target.position + offset);
+
     }
 
     // Update is called once per frame
@@ -99,7 +101,7 @@ public class AimRotationTransform : MonoBehaviour
     {
         Vector2 directionToPlayer = targetPos - (Vector2)transform.position;
         float o = normalOffset;
-        if (isFlipped) o -= 180;
+        // if (isFlipped) o -= 180;
 
 
 

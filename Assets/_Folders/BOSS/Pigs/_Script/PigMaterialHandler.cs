@@ -190,8 +190,13 @@ public class PigMaterialHandler : MonoBehaviour
 
     }
 
+    private bool hasDied = false;
+
     public void KillEnemy(int damageAmount, int type, int id)
     {
+        if (hasDied) return;
+        hasDied = true;
+
         Debug.Log("KillEnemy called");
         if (damageAmount == -1)
         {
@@ -436,6 +441,7 @@ public class PigMaterialHandler : MonoBehaviour
 
 
         }
+        hasDied = false;
 
 
 

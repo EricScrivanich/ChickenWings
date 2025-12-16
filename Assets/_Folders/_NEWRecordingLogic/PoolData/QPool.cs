@@ -5,6 +5,7 @@ public class QPool : ScriptableObject
 {
     private Queue<SpawnedQueuedObject> q;
     [SerializeField] private GameObject prefab;
+    private ushort currentID = 0;
 
     private Vector3 initialSpawnPosition = new Vector3(0, BoundariesManager.GroundPosition - 10, 0);
 
@@ -12,6 +13,7 @@ public class QPool : ScriptableObject
     {
         Debug.Log("Initializing QPool: " + prefab.name);
         q = new Queue<SpawnedQueuedObject>();
+        currentID = 0;
         var obj = Instantiate(prefab, initialSpawnPosition, Quaternion.identity).GetComponent<SpawnedQueuedObject>();
         obj.Initialize(this);
         obj.gameObject.SetActive(false);
@@ -34,6 +36,8 @@ public class QPool : ScriptableObject
             o.gameObject.SetActive(false);
 
         }
+        obj.OnSpawnLogic(currentID);
+        currentID++;
         return obj;
 
     }

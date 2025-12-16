@@ -4,13 +4,15 @@ public class SpawnedQueuedObject : MonoBehaviour
 {
     protected QPool pool;
     protected Rigidbody2D rb;
+    protected ushort id;
 
     public void Initialize(QPool p)
     {
         pool = p;
     }
-    public virtual void OnSpawnLogic()
+    public virtual void OnSpawnLogic(ushort id)
     {
+        this.id = id;
 
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -20,7 +22,7 @@ public class SpawnedQueuedObject : MonoBehaviour
 
 
         gameObject.SetActive(true);
-        OnSpawnLogic();
+        
 
     }
 
@@ -28,7 +30,7 @@ public class SpawnedQueuedObject : MonoBehaviour
     {
         transform.SetPositionAndRotation(pos, Quaternion.Euler(Vector3.forward * r));
         gameObject.SetActive(true);
-        OnSpawnLogic();
+       
 
     }
 
@@ -89,7 +91,7 @@ public class SpawnedQueuedObject : MonoBehaviour
     {
         transform.SetPositionAndRotation(pos, Quaternion.Euler(Vector3.forward * rotation));
         gameObject.SetActive(true);
-        OnSpawnLogic();
+     
         rb.linearVelocity = velocity;
         // rb.rotation = rotation;
         if (angularVelocity != 0) rb.angularVelocity = angularVelocity;

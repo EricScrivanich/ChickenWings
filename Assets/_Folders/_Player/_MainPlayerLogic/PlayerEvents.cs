@@ -104,6 +104,7 @@ public struct UiEvents
     public Action<bool, bool> OnFinishDashAndDropCooldown;
 
     public Action<float, float> SetDashAndDropCooldownDurations;
+    public Action OnCageHit;
 
     public Action OnDropUI;
 }

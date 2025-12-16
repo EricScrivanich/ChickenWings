@@ -33,7 +33,7 @@ public class FireballParticle : SpawnedQueuedObject, IExplodable
 
 
     }
-    public override void OnSpawnLogic()
+    public override void OnSpawnLogic(ushort id = 0)
     {
         sr.color = Color.white;
         sr.enabled = true;

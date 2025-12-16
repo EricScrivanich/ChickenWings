@@ -32,7 +32,7 @@ public class ShotgunBlast : SpawnedQueuedObject
 
     private bool finished = false;
     private bool isChained;
-    private int id;
+
 
     [SerializeField] private ShotgunParticleID data;
     [SerializeField] private GameObject shotgunParticlePrefab;
@@ -66,12 +66,7 @@ public class ShotgunBlast : SpawnedQueuedObject
 
     }
 
-    public void Initialize(bool chained, int iD)
-    {
-        isChained = chained;
-        id = iD;
 
-    }
 
     private void OnEnable()
     {

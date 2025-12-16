@@ -20,10 +20,14 @@ public class AmmoStateManager : MonoBehaviour
     AmmoBaseState currentState;
     private bool scopeOnZeroState;
 
+    [SerializeField] private Sprite cageHitImage;
+
     [SerializeField] private GameObject swipeButton;
 
 
     private bool fromCage = false;
+
+    private bool cageEquipped = false;
 
     [SerializeField] private Image[] normalRaycasts;
 
@@ -252,6 +256,7 @@ public class AmmoStateManager : MonoBehaviour
         if (nextAmmoType == -2)
         {
             EquipCage(true);
+
             return;
         }
 
@@ -429,6 +434,8 @@ public class AmmoStateManager : MonoBehaviour
 
 
     }
+
+
 
     private void OnFinishRotation()
     {
@@ -827,6 +834,7 @@ public class AmmoStateManager : MonoBehaviour
 
     private void EquipCage(bool equiped)
     {
+        cageEquipped = equiped;
         SetRaycasts(!equiped, -2);
         if (hide) hide = false;
 
@@ -888,12 +896,25 @@ public class AmmoStateManager : MonoBehaviour
 
     }
 
+    private void CageHit()
+    {
+
+
+        if (cageEquipped)
+        {
+            cage.rectTransform.DOShakeRotation(.2f, 20, 4);
+        }
+        cage.sprite = cageHitImage;
+
+    }
+
     private void OnEnable()
     {
         player.UiEvents.OnSwitchDisplayedWeapon += SwitchAmmo;
         player.UiEvents.OnPressWeaponButton += PressScope;
         player.UiEvents.ReleaseScope += ResetScope;
         player.UiEvents.OnUseAmmo += UpdateAmmoAmountText;
+        player.UiEvents.OnCageHit += CageHit;
         // player.events.OnAimJoystick += ShowJoystickArrow;
         // player.UiEvents.OnUseJoystick += SetJoystickActive;
         player.UiEvents.OnSetAmmoZero += SetScopeZero;
@@ -914,6 +935,7 @@ public class AmmoStateManager : MonoBehaviour
         player.UiEvents.OnPressWeaponButton -= PressScope;
         player.UiEvents.ReleaseScope -= ResetScope;
         player.UiEvents.OnUseAmmo -= UpdateAmmoAmountText;
+        player.UiEvents.OnCageHit -= CageHit;
         // player.events.OnAimJoystick -= ShowJoystickArrow;
         // player.UiEvents.OnUseJoystick -= SetJoystickActive;
         player.UiEvents.OnSetAmmoZero -= SetScopeZero;

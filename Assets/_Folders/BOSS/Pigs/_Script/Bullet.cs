@@ -20,7 +20,7 @@ public class Bullet : SpawnedQueuedObject
         ReturnToPool();
     }
 
-    public override void OnSpawnLogic()
+    public override void OnSpawnLogic(ushort id = 0)
     {
         trail.emitting = true;
         time = 0;

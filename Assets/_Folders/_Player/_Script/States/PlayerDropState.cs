@@ -31,15 +31,15 @@ public class PlayerDropState : PlayerBaseState
 
     }
 
-   
+
 
     public override void ExitState(PlayerStateManager player)
-
     {
+
         if (!switchedToBounce)
         {
             player.isDropping = false;
-
+            AudioManager.instance.StopPlayerAudio();
         }
 
         // player.anim.SetTrigger(player.FinishDashTrigger);

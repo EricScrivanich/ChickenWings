@@ -4,12 +4,14 @@ using TMPro;
 using DG.Tweening;
 using System.Collections;
 using Febucci.TextAnimatorForUnity.TextMeshPro;
+using Febucci.UI;
 
 
 
 public class TextBox : MonoBehaviour
 {
     private CanvasGroup group;
+    [SerializeField] private Animator anim;
 
     [SerializeField] private TextAnimator_TMP textAnimator;
     [SerializeField] private TextMeshProUGUI text;
@@ -28,6 +30,8 @@ public class TextBox : MonoBehaviour
     [SerializeField] private float flashDurInterval;
     [SerializeField] private float fadeDur;
     private Sequence flashSeq;
+
+    [SerializeField] private bool updateText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -44,7 +48,9 @@ public class TextBox : MonoBehaviour
         if (!gameObject.activeInHierarchy)
         {
             gameObject.SetActive(true);
-            Invoke("DoDelay", .08f);
+            // Invoke("DoDelay", .08f);
+            DoDelay();
+
         }
         else
             DoDelay();
@@ -52,6 +58,22 @@ public class TextBox : MonoBehaviour
 
 
 
+    }
+
+    public void SetAnim(bool play)
+    {
+        if (anim != null)
+            anim.SetBool("Talking", play);
+
+    }
+
+    void OnValidate()
+    {
+        if (updateText)
+        {
+            updateText = false;
+            SetText(text.text);
+        }
     }
 
     private void DoDelay()
@@ -70,15 +92,27 @@ public class TextBox : MonoBehaviour
             flashSeq.Kill();
 
         if (doFade)
-            group.DOFade(0, fadeDur);
+            group.DOFade(0, fadeDur).SetUpdate(true);
         else
             group.alpha = 0;
+    }
+
+    private void FinishTyping()
+    {
+        SetAnim(false);
     }
 
     private void Flash()
     {
         if (textAnimator != null)
+        {
             textAnimator.enabled = true;
+
+
+        }
+
+
+        SetAnim(true);
         if (doFlash)
         {
             if (flashSeq != null && flashSeq.IsPlaying())
@@ -89,7 +123,7 @@ public class TextBox : MonoBehaviour
             flashSeq.Append(group.DOFade(flashAlpha, flashDurIn));
             flashSeq.Append(group.DOFade(1, flashDurOut));
 
-            flashSeq.Play().SetLoops(-1);
+            flashSeq.Play().SetLoops(-1).SetUpdate(true);
         }
 
     }
@@ -106,8 +140,8 @@ public class TextBox : MonoBehaviour
 
         if (doFade)
         {
-            yield return new WaitForSeconds(.8f);
-            group.DOFade(1, fadeDur).OnComplete(() => Flash());
+            yield return new WaitForSecondsRealtime(.8f);
+            group.DOFade(1, fadeDur).SetUpdate(true).OnComplete(() => Flash());
         }
 
         else

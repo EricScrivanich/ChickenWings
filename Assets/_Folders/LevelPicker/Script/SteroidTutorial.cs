@@ -1,10 +1,15 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class SteroidTutorial : MonoBehaviour
 {
     [SerializeField] private TutorialHand[] tutorialHands;
+
+    [SerializeField] private bool isLevelPicker;
+    [SerializeField] private Animator anim;
 
     [SerializeField] private string[] texts;
 
@@ -12,6 +17,11 @@ public class SteroidTutorial : MonoBehaviour
 
     public Action<int, bool> OnShowTutorialHand;
     [SerializeField] private TextBox textBox;
+    [SerializeField] private GameObject colonelCluckCanvas;
+    [SerializeField] private RectTransform colonelCluck;
+    [SerializeField] private RectTransform colonelCluckStartPos;
+    [SerializeField] private RectTransform colonelCluckEndPos;
+    [SerializeField] private float colonelCluckTweenTime;
 
     public bool reset;
 
@@ -37,18 +47,68 @@ public class SteroidTutorial : MonoBehaviour
             Destroy(gameObject);
         }
 
+        if (isLevelPicker && PlayerPrefs.GetInt("CompletedSteroidTutorial", 0) != 0)
+        {
+            Destroy(colonelCluckCanvas);
+            Destroy(this);
+
+        }
+
 
 
     }
     void Start()
     {
-        if (PlayerPrefs.GetInt("CompletedSteroidTutorial", 0) == 0)
-            ShowNextHand(0);
-        else
+        if (isLevelPicker && PlayerPrefs.GetInt("CompletedSteroidTutorial", 0) == 0)
         {
-            Destroy(textBox.gameObject);
+            TweenInColonelCluck();
         }
 
+
+
+
+    }
+
+
+
+    private void TweenInColonelCluck(string Message = "")
+    {
+        colonelCluck.position = colonelCluckStartPos.position;
+        colonelCluck.gameObject.SetActive(true);
+        colonelCluck.DOMove(colonelCluckEndPos.position, colonelCluckTweenTime).SetUpdate(true).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            if (isLevelPicker)
+                ShowNextHand(0);
+            else
+                ShowMessage(Message);
+        });
+    }
+
+    public void PlayAnim(bool play)
+    {
+        anim.SetBool("Talking", play);
+    }
+
+    public void ShowColonelCluck(bool show, string msg)
+    {
+        if (show)
+        {
+            TweenInColonelCluck(msg);
+        }
+        else
+        {
+            textBox.FadeOut();
+            colonelCluck.DOMove(colonelCluckStartPos.position, colonelCluckTweenTime).SetUpdate(true).SetEase(Ease.InQuad).OnComplete(() =>
+            {
+                colonelCluck.gameObject.SetActive(false);
+            });
+        }
+
+    }
+
+    public void ShowMessage(string message)
+    {
+        textBox.SetText(message);
     }
 
     public void ShowNextHand(int index)

@@ -12,7 +12,7 @@ public class FlashGroup : MonoBehaviour
 
     private Sequence fadeOutSeq;
     private Sequence enlargeSeq;
-    [SerializeField] private LevelManagerID lvlID;
+    [SerializeField] private TutorialData lvlID;
     [SerializeField] private TextMeshProUGUI text;
     [SerializeField] private float fullAlphaAmount;
     [SerializeField] private float lowAlphaAmount;
@@ -27,13 +27,19 @@ public class FlashGroup : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        lvlID.outputEvent.SetPressButtonText += SetText;
+        // lvlID.SetPressButtonText += SetText;
 
         group = GetComponent<CanvasGroup>();
     }
+
+    public void Initialize(TutorialData t)
+    {
+        lvlID = t;
+        lvlID.SetPressButtonText += SetText;
+    }
     private void OnDestroy()
     {
-        lvlID.outputEvent.SetPressButtonText -= SetText;
+        lvlID.SetPressButtonText -= SetText;
     }
 
     private void OnEnable()

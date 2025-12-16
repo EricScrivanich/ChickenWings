@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ public class TutorialData : ScriptableObject
     public PlayerID playerID;
     private SpawnStateManager spawnManager;
     [SerializeField] private int buttonType = -1;
+
+    public Action<bool, int, string> SetPressButtonText;
 
     public int ReturnButtonType()
     {
@@ -70,7 +73,8 @@ public class TutorialData : ScriptableObject
         StartDelayedAction,
         ShowHandForSlide,
         HideHandForSlide,
-        Next
+        Next,
+        HideMessage
 
 
 
@@ -79,6 +83,8 @@ public class TutorialData : ScriptableObject
     [SerializeField] private Type[] actionsForEnterBubble;
     [SerializeField] private Type[] actionsForExitBubble;
     [SerializeField] private Type[] actionsForDelays;
+
+    private SteroidTutorial steroidTutorial;
 
     [SerializeField] private Vector2[] vectorValues;
     [SerializeField] private Vector2[] bubbleSuctionAndDelayDurations;
@@ -98,6 +104,7 @@ public class TutorialData : ScriptableObject
         inputSystem = null;
         buttonHandler = null;
         playerID = player;
+        steroidTutorial = GameObject.Find("ColonelCluckCanvas").GetComponent<SteroidTutorial>();
         Debug.Log("Initialize TutorialData with currentStep: " + currentStep);
         if (inputSystem == null)
         {
@@ -282,9 +289,16 @@ public class TutorialData : ScriptableObject
 
                 break;
             case Type.ShowMessage:
+                //steroidTutorial.ShowColonelCluck(true, ReturnMessageForDevice());
                 var obj = Instantiate(messagePrefab, GameObject.Find("Canvas").transform);
+
                 currentFlashMessage = obj.GetComponent<FlashGroup>();
+                currentFlashMessage.Initialize(this);
+
                 currentFlashMessage.ShowMessage(ReturnMessageForDevice());
+                break;
+            case Type.HideMessage:
+                SetPressButtonText?.Invoke(false, 0, "");
                 break;
             case Type.WaitForInput:
                 string[] i = ReturnAllowedInputs();
@@ -383,6 +397,7 @@ public class TutorialData : ScriptableObject
         }
         else
         {
+            //   steroidTutorial.ShowColonelCluck(true, ReturnMessageForDevice());
 
             PauseMenuButton.DisablePause?.Invoke(false);
             if (ID < actionsForExitBubble.Length)

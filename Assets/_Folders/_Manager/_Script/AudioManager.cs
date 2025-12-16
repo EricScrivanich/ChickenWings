@@ -20,6 +20,8 @@ public class AudioManager : MonoBehaviour
 
     public System.Action<float> OnSetAudioPitch;
 
+    private bool playingDownDropSound = false;
+
 
 
     [Header("Audio Sources")]
@@ -264,10 +266,25 @@ public class AudioManager : MonoBehaviour
 
     }
 
+    public void StopPlayerAudio()
+    {
+        chickenSource.Stop();
+
+    }
+
+    public void PlayMusic(bool play)
+    {
+        if (play && !musicSource.isPlaying)
+            musicSource.Play();
+        else
+            musicSource.Stop();
+
+    }
+
     void Start()
     {
-        PlayMusic();
 
+        musicSource.Play();
 
 
     }

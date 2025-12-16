@@ -684,10 +684,10 @@ public class SpecialStateInputSystem : MonoBehaviour
 
             if (!trackingInputs)
             {
-               
-                    ID.events.OnDash?.Invoke(true);
-                    // HapticFeedbackManager.instance.PlayerButtonPress();
-                
+
+                ID.events.OnDash?.Invoke(true);
+                // HapticFeedbackManager.instance.PlayerButtonPress();
+
                 // else if (canDashSlash)
                 // {
                 //     if (cannotUseManaUntilLockedInputCheck)
@@ -908,14 +908,14 @@ public class SpecialStateInputSystem : MonoBehaviour
         //        ID.events.OnPressAmmo?.Invoke(false);
         //    };
 
-        controls.Movement.SwitchAmmoRight.performed += ctx =>
-        {
-            //  if (!eggButtonHidden)
-            //      ID.globalEvents.OnSwitchAmmo?.Invoke(false);
-            if (ID.canPressEggButton)
-                ID.UiEvents.OnSwitchWeapon?.Invoke(1, -1);
+        if (useEgg) controls.Movement.SwitchAmmoRight.performed += ctx =>
+         {
+             //  if (!eggButtonHidden)
+             //      ID.globalEvents.OnSwitchAmmo?.Invoke(false);
 
-        };
+             ID.UiEvents.OnSwitchWeapon?.Invoke(1, -1);
+
+         };
 
 
         fillingManaColor = ColorSO.fillingManaColor;
@@ -1162,7 +1162,7 @@ public class SpecialStateInputSystem : MonoBehaviour
 
     }
 
-   
+
 
 
 

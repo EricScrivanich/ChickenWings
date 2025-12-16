@@ -6,7 +6,7 @@ using System.Collections;
 public class AimRotation : MonoBehaviour
 {
     private float targetAngle;
-    [SerializeField] private DOTweenPath rotatePath;
+
 
 
 
@@ -28,12 +28,9 @@ public class AimRotation : MonoBehaviour
     [SerializeField] private Transform target;
 
     [Header("Rotate Around")]
-    [SerializeField] private float smoothMove;
-    [SerializeField] private float maxMoveSpeed;
-    [SerializeField] private float rotSpeed = 1f;
+
     private bool doingRotateAround = false;
-    [SerializeField] private Transform rotatePoint;
-    [SerializeField] private Transform rotateRef;
+
 
     private float maxRotation = 360;
 
@@ -62,33 +59,33 @@ public class AimRotation : MonoBehaviour
             target = t;
     }
 
-    public void SetRotateAround(bool rotate)
-    {
-        doingRotateAround = rotate;
-        if (isFlipped && rotatePath.fullWps[0].x > 0)
-        {
-            for (int i = 0; i < rotatePath.fullWps.Count; i++)
-            {
-                rotatePath.fullWps[i] = new Vector3(rotatePath.fullWps[i].x * -1, rotatePath.fullWps[i].y, rotatePath.fullWps[i].z);
+    // public void SetRotateAround(bool rotate)
+    // {
+    //     doingRotateAround = rotate;
+    //     if (isFlipped && rotatePath.fullWps[0].x > 0)
+    //     {
+    //         for (int i = 0; i < rotatePath.fullWps.Count; i++)
+    //         {
+    //             rotatePath.fullWps[i] = new Vector3(rotatePath.fullWps[i].x * -1, rotatePath.fullWps[i].y, rotatePath.fullWps[i].z);
 
-            }
-        }
-        else if (!isFlipped && rotatePath.fullWps[0].x < 0)
-        {
-            for (int i = 0; i < rotatePath.wps.Count; i++)
-            {
-                rotatePath.fullWps[i] = new Vector3(rotatePath.fullWps[i].x * -1, rotatePath.fullWps[i].y, rotatePath.fullWps[i].z);
+    //         }
+    //     }
+    //     else if (!isFlipped && rotatePath.fullWps[0].x < 0)
+    //     {
+    //         for (int i = 0; i < rotatePath.wps.Count; i++)
+    //         {
+    //             rotatePath.fullWps[i] = new Vector3(rotatePath.fullWps[i].x * -1, rotatePath.fullWps[i].y, rotatePath.fullWps[i].z);
 
-            }
-        }
-
-
+    //         }
+    //     }
 
 
-        // frameSkips = 0;
-        rotatePath.DOPlay();
 
-    }
+
+    //     // frameSkips = 0;
+    //     rotatePath.DOPlay();
+
+    // }
 
     private IEnumerator RotateAround(Vector2 start, Vector2 end, float time)
     {
@@ -97,13 +94,13 @@ public class AimRotation : MonoBehaviour
             yield return null;
         }
     }
-    public Vector3 GetRotatePoint()
-    {
-        Vector3 pos = rotatePath.fullWps[0];
-        if ((isFlipped && pos.x > 0) || (!isFlipped && pos.x < 0)) pos.x *= -1;
+    // public Vector3 GetRotatePoint()
+    // {
+    //     Vector3 pos = rotatePath.fullWps[0];
+    //     if ((isFlipped && pos.x > 0) || (!isFlipped && pos.x < 0)) pos.x *= -1;
 
-        return pos;
-    }
+    //     return pos;
+    // }
 
     public void EditRotationValues(float speedMult, float smoothMult)
     {

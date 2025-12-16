@@ -859,12 +859,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: -1
   duration: 0.4
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &1797677973674358554
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,12 +1069,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 0
   duration: 0.8
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &1920061167455454981
 GameObject:
   m_ObjectHideFlags: 0
@@ -1538,12 +1526,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 2
   duration: 0.8
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &2488608728894938355
 GameObject:
   m_ObjectHideFlags: 0
@@ -2090,12 +2072,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 0
   duration: 0.8
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &3229985972230854946
 GameObject:
   m_ObjectHideFlags: 0
@@ -2500,6 +2476,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2975,12 +2952,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 2
   duration: 1
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &4224487163751133112
 GameObject:
   m_ObjectHideFlags: 0
@@ -3301,6 +3272,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 6.9
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4258,6 +4230,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0.3
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4450,12 +4423,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 0
   duration: 1
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &6357937599674286292
 GameObject:
   m_ObjectHideFlags: 0
@@ -4595,6 +4562,7 @@ MonoBehaviour:
   scythePowerGroup: {fileID: 360815350675720963}
   mainButton: {fileID: 1723060174410106337}
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
+  cageHitImage: {fileID: 1806299891, guid: 4c45afbb56d054d7ca2ede361b9796ed, type: 3}
   swipeButton: {fileID: 0}
   normalRaycasts: []
   eggSidebar: {fileID: 6709336080320606652}
@@ -4639,7 +4607,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 02e08942a68ef4d688d101e48ece8d38, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 02e08942a68ef4d688d101e48ece8d38, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.75
@@ -4744,12 +4712,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 3
   duration: 0.4
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &6629179832833893686
 GameObject:
   m_ObjectHideFlags: 0
@@ -4990,12 +4952,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 1
   duration: 0.8
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &6734042107332821604
 GameObject:
   m_ObjectHideFlags: 0
@@ -5099,6 +5055,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 6.9
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -5671,12 +5628,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 1
   duration: 1
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &7502350872685370633
 GameObject:
   m_ObjectHideFlags: 0
@@ -6792,12 +6743,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   type: 0
   duration: 1
-  setInitialPos: 0
-  resetToInitial: 0
-  adjustXStartAmount: 0
-  adjustYStartAmount: 0
-  adjustStart: 0
-  adjustCurrent: 0
 --- !u!1 &9043033120927111437
 GameObject:
   m_ObjectHideFlags: 0

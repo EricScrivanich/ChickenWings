@@ -75,6 +75,7 @@ public class TutorialButtonHandler : MonoBehaviour
         else if (type == 2)
         {
             start = handPostionsSwitch.position;
+            handGroup.transform.rotation = handPostionsSwitch.rotation;
 
             tap = true;
 

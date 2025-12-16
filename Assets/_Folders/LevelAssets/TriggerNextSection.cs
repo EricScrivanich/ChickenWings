@@ -165,9 +165,9 @@ public class TriggerNextSection : MonoBehaviour
     {
         Debug.LogError("Tring to show press button");
         yield return new WaitForSecondsRealtime(delayInputsDuration);
-        if (checkAnyInput) lvlID.outputEvent.SetPressButtonText?.Invoke(true, 0, "");
-        else if (mustHoldDuration == 0) lvlID.outputEvent.SetPressButtonText?.Invoke(true, 1, pressButtonText);
-        else lvlID.outputEvent.SetPressButtonText?.Invoke(true, 2, pressButtonText);
+        if (checkAnyInput) tutorialData.SetPressButtonText?.Invoke(true, 0, "");
+        else if (mustHoldDuration == 0) tutorialData.SetPressButtonText?.Invoke(true, 1, pressButtonText);
+        else tutorialData.SetPressButtonText?.Invoke(true, 2, pressButtonText);
 
     }
 
@@ -266,7 +266,7 @@ public class TriggerNextSection : MonoBehaviour
 
 
         Time.timeScale = 0;
-        
+
         StartCoroutine(WaitForAllowedExit());
 
 
@@ -300,7 +300,7 @@ public class TriggerNextSection : MonoBehaviour
             StopAllCoroutines();
             player.globalEvents.OnSetInputs?.Invoke(checkAnyInput, noneInp, 0, 0, false, continueLockedInputs);
 
-            lvlID.outputEvent.SetPressButtonText?.Invoke(false, 0, "");
+            tutorialData.SetPressButtonText?.Invoke(false, 0, "");
 
         }
 
@@ -354,7 +354,7 @@ public class TriggerNextSection : MonoBehaviour
             lvlID.PauseSpawning = false;
             Debug.LogError("Stop spawning is now false");
         }
-        lvlID.outputEvent.SetPressButtonText?.Invoke(false, 0, "");
+        tutorialData.SetPressButtonText?.Invoke(false, 0, "");
         Time.timeScale = FrameRateManager.BaseTimeScale;
         // this.gameObject.SetActive(false);
 

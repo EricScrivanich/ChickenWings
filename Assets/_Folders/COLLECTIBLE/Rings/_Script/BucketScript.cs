@@ -87,13 +87,13 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
         }
 
 
-        if (isExploded)
-        {
-            float angleInRadians = ringTransform.eulerAngles.z * Mathf.Deg2Rad; // Convert degrees to radians
-            Vector3 direction = new Vector3(-Mathf.Cos(angleInRadians), -Mathf.Sin(angleInRadians), 0);
-            ringTransform.localPosition += direction * Time.deltaTime * 40; // Move in the direction based on the rotation
+        // if (isExploded)
+        // {
+        //     float angleInRadians = ringTransform.eulerAngles.z * Mathf.Deg2Rad; // Convert degrees to radians
+        //     Vector3 direction = new Vector3(-Mathf.Cos(angleInRadians), -Mathf.Sin(angleInRadians), 0);
+        //     // Move in the direction based on the rotation
 
-        }
+        // }
 
     }
 
@@ -275,7 +275,14 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
 
     private IEnumerator SetUnactive(float time)
     {
-        yield return new WaitForSeconds(time);
+        float timer = 0;
+
+        while (timer < time)
+        {
+            timer += Time.deltaTime;
+            ringTransform.position -= ringTransform.right * Time.deltaTime * 40f;
+            yield return null;
+        }
         isExploded = false;
 
         anim.SetBool("RestartBool", true);
@@ -349,7 +356,7 @@ public class BucketScript : SpawnedObject, ICollectible, IRecordableObject
             EnableColliders();
             FadeChildren(1f);
             // StartCoroutine(ResetRing());
-           
+
 
             SetCorrectRing();
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pigPoolSizes: 0300020001000000000000000000000000000000
   aiPoolSizes: 00000000
-  buildingPoolSizes: 000000000000
+  buildingPoolSizes: 0000000000000000
   collectablePoolSizes: 00000000
   positionerPoolSizes: 0000
   ringPoolSizes: 04000100
@@ -32,10 +32,10 @@ MonoBehaviour:
   - {x: 16, y: 3.4}
   - {x: -14.8, y: -1.6}
   - {x: 13.6, y: 3.2}
-  - {x: -14.2, y: -0.8}
-  - {x: -16, y: 0.4}
-  - {x: 16.6, y: -3.2}
-  - {x: 20.4, y: 2.2}
+  - {x: -14, y: -0.6}
+  - {x: -16, y: 0.6}
+  - {x: 18.4, y: 3.4}
+  - {x: 20.800001, y: -2.6000001}
   - {x: 19.6, y: 3}
   - {x: 14.2, y: -1.4}
   - {x: 17.2, y: 4.6}
@@ -81,9 +81,9 @@ MonoBehaviour:
   - -3.5
   - 1.13
   - -18
-  - 9.3
-  - 1
   - 9
+  - 1
+  - 9.3
   - 1
   - 5.1
   - 1
@@ -111,7 +111,10 @@ MonoBehaviour:
   typeList: 000000000000020002000200000002000200000000000200020000000000000000000000020002000200000000000000
   posListRand: []
   floatListRand: []
+  usedRNGIndices: 
+  randomSpawnRanges: 
   typeListRand: 
   randomLogicSizes: 
+  randomLogicWaveIndices: 
   spawnStepsRandom: 
   randomSpawnDataTypeObjectTypeAndID: []
