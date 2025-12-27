@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using DG.Tweening;
 
-public class PorkChop : MonoBehaviour
+public class PorkChop : SpawnedPigBossObject
 {
     [SerializeField] private Transform pupil;
     private Vector3 flippedScale;
@@ -18,7 +18,7 @@ public class PorkChop : MonoBehaviour
     [SerializeField] private Vector2 playerOffset;
     private bool attacking;
     private bool hasAttacked;
-    private bool canAttack = true;
+    private bool _canAttack = true;
 
     private bool defendingUp;
     [SerializeField] private Transform playerDistanceCheck;
@@ -427,14 +427,14 @@ public class PorkChop : MonoBehaviour
 
         //attack logic
 
-        if (!doingAttack && !switchingSides && Vector2.Distance(playerDistanceCheck.position, playerTran.position) < attackRange && canAttack)
+        if (!doingAttack && !switchingSides && Vector2.Distance(playerDistanceCheck.position, playerTran.position) < attackRange && _canAttack)
         {
             SwitchGlowColor(true);
 
             if (defendingUp)
             {
                 anim.SetBool("QuickFlap", true);
-                canAttack = false;
+                _canAttack = false;
                 reachedTarget = false;
                 anim.SetTrigger("SwingDown");
 
@@ -446,7 +446,7 @@ public class PorkChop : MonoBehaviour
                 doFlap = false;
                 yTargetForAttack = playerTran.position.y;
                 waitForYTarget = true;
-                canAttack = false;
+                _canAttack = false;
                 // StartCoroutine(TestC());
             }
 
@@ -611,7 +611,7 @@ public class PorkChop : MonoBehaviour
 
 
         hasAttacked = false;
-        canAttack = true;
+        _canAttack = true;
     }
     private bool doingAttack = false;
     public void StopAttack(int type)
@@ -655,7 +655,7 @@ public class PorkChop : MonoBehaviour
 
 
         yield return new WaitForSeconds(3f);
-        canAttack = true;
+        _canAttack = true;
 
 
 
@@ -704,7 +704,7 @@ public class PorkChop : MonoBehaviour
 
     }
 
-    private void OnEnable()
+    public override void OnEnableLogic()
     {
         Ticker.OnTickAction015 += MoveEyesWithTicker;
     }

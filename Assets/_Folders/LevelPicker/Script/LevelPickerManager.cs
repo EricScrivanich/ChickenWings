@@ -13,6 +13,8 @@ using System;
 public class LevelPickerManager : MonoBehaviour, INavigationUI
 {
     public static LevelPickerManager instance;
+
+    [SerializeField] private ButtonTweenFromSide[] topViewObjects;
     [SerializeField] private bool allowClickAll;
     [SerializeField] private GameObject steroidButton;
     [SerializeField] private RectTransform handLevelPick;
@@ -129,6 +131,21 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     {
         controls.LevelCreator.Disable();
         OnLevelPickerObjectSelected -= HandleSelectObject;
+    }
+    private bool topButtonsHidden = true;
+    private void HandleHideTopButtons(bool hide)
+    {
+        if (topButtonsHidden == hide)
+            return;
+        topButtonsHidden = hide;
+        for (int i = 0; i < topViewObjects.Length; i++)
+        {
+            if (hide)
+                topViewObjects[i].ReturnToSide();
+            else
+                topViewObjects[i].DoMove(true, 0, 0);
+
+        }
     }
 
 
@@ -294,6 +311,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
         }
         else if (currentTarget != null)
         {
+            HandleHideTopButtons(false);
             // InputSystemSelectionManager.instance.SetNewWindow(this, false);
 
             ZoomSeq(currentTarget.CameraPositionAndOrhtoSize, currentTarget.layersShownFrom);
@@ -1043,6 +1061,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
         }
         else
         {
+            HandleHideTopButtons(true);
             signYSeq = DOTween.Sequence();
             signYSeq.Append(target.DOAnchorPosY(normalY - overShootY, moveDownDuration));
             signYSeq.Append(target.DOAnchorPosY(normalY, overshootDownDuration));
@@ -1101,6 +1120,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     public void BackOut()
     {
         HapticFeedbackManager.instance.PressUIButton();
+        HandleHideTopButtons(false);
 
         Vector3Int worldNum = currentTarget.WorldNumber;
         Vector4 camData = Vector4.zero;

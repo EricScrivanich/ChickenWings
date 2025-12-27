@@ -20,7 +20,8 @@ public class ButtonTweenFromSide : MonoBehaviour
 
     void Awake()
     {
-        player.UiEvents.OnShowPlayerUI += DoMove;
+        if (player != null)
+            player.UiEvents.OnShowPlayerUI += DoMove;
         var rect = GetComponent<RectTransform>();
         normalPosition = rect.anchoredPosition;
 
@@ -31,7 +32,8 @@ public class ButtonTweenFromSide : MonoBehaviour
     }
     void OnDestroy()
     {
-        player.UiEvents.OnShowPlayerUI -= DoMove;
+        if (player != null)
+            player.UiEvents.OnShowPlayerUI -= DoMove;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -78,6 +80,24 @@ public class ButtonTweenFromSide : MonoBehaviour
             // rect.DOAnchorPos(normalPosition, dur).SetEase(Ease.OutBack).SetUpdate(true);
 
         }
+
+    }
+
+    public void ReturnToSide()
+    {
+        var rect = GetComponent<RectTransform>();
+
+        // gameObject.SetActive(true);
+
+        Vector2 target = normalPosition;
+
+        if (moveX) target.x -= moveAmount;
+        else target.y -= moveAmount;
+
+        Sequence seq = Sequence.Create(useUnscaledTime: true)
+
+        .Chain(Tween.UIAnchoredPosition(rect, target, duration, Ease.InBack));
+        hasTransitioned = false;
 
     }
 

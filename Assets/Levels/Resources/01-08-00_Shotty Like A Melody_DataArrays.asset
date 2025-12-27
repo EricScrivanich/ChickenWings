@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c21eaf85768445e94055229912117c, type: 3}
   m_Name: 01-08-00_Shotty Like A Melody_DataArrays
   m_EditorClassIdentifier: 
-  pigPoolSizes: 0300020001000100010000000000000000000000
+  pigPoolSizes: 0300020001000100010000000000000000000100
   aiPoolSizes: 00000000
   buildingPoolSizes: 0000000000000000
   collectablePoolSizes: 00000100
@@ -37,6 +37,7 @@ MonoBehaviour:
   - {x: 14.400001, y: -2}
   - {x: 15, y: 3.8}
   - {x: 16, y: 2.2}
+  - {x: 14.2, y: 3.2}
   - {x: -14.2, y: -3}
   floatList:
   - 5.3
@@ -86,14 +87,22 @@ MonoBehaviour:
   - 1
   - 9.8
   - 1.01
+  - 2.9
+  - 0
+  - 0
+  - 1.16
+  - 0
   - -3.3
   - 1
   - 0.5
   - 0
-  typeList: 00000100000000000000000000000000010000000000000001000000000000000000
+  typeList: 000001000000000000000000000000000100000000000000010000000000000000000000
   posListRand: []
   floatListRand: []
+  usedRNGIndices: 
+  randomSpawnRanges: 
   typeListRand: 
   randomLogicSizes: 
+  randomLogicWaveIndices: 
   spawnStepsRandom: 
   randomSpawnDataTypeObjectTypeAndID: []
