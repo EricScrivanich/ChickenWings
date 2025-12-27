@@ -9,10 +9,12 @@ public class LevelData : ScriptableObject
     private int currentWave = 1;
     public LevelDataRandomSpawnData[] randomSpawnData;
     private int spawnStepsPerRandom;
+
+    public RandomWaveData[] randomWaveDataArray;
     [field: SerializeField] public short unlockItemOnComplete { get; private set; } = -1;
 
 
-    private int currentSpawnStepCount = 0;
+
     [Header("Starting Stats")]
     [field: SerializeField] public short[] StartingAmmos { get; private set; }
     [field: SerializeField] public short StartingLives { get; private set; }
@@ -104,8 +106,11 @@ public class LevelData : ScriptableObject
 
     public void SetRandomEnemySpawnSteps(int stepsPerSpawn)
     {
-        currentSpawnStepCount = 0;
-        spawnStepsPerRandom = stepsPerSpawn;
+        // currentSpawnStepCount = 0;
+        // spawnStepsPerRandom = stepsPerSpawn;
+        if (stepsPerSpawn <= 0) spawner.SetTrackExtraTime(false);
+        if (randomWaveDataArray == null || randomWaveDataArray.Length <= 0) return;
+        randomWaveDataArray[0].SetRandomEnemySpawnSteps(stepsPerSpawn);
     }
     public void InitializeData(SpawnStateManager s, ushort startingStep, LevelDataArrays dataArrays = null, LevelDataSave lds = null, int difficulty = 1, TemporaryLevelCheckPointData checkPointData = null, bool isLevel = false, bool endlessMode = false)
     {
@@ -113,8 +118,10 @@ public class LevelData : ScriptableObject
             LoadLevelSaveData(lds);
         spawner = s;
         Difficulty = difficulty;
-        currentSpawnStepCount = 0;
+
         spawnStepsPerRandom = 0;
+        if (randomWaveDataArray != null && randomWaveDataArray.Length > 0)
+            randomWaveDataArray[0].SetRandomEnemySpawnSteps(0);
         currentSpecialTriggerIndex = 0;
 
         currentWave = 1;
@@ -216,7 +223,7 @@ public class LevelData : ScriptableObject
             usedCheckPoint = true;
             if (levelChallenges != null)
             {
-                levelChallenges.LoadData(levelWorldAndNumber, difficulty, checkPointData);
+                levelChallenges.LoadData(this, levelWorldAndNumber, difficulty, checkPointData);
 
 
             }
@@ -236,7 +243,7 @@ public class LevelData : ScriptableObject
 
                 // startingStats.SetData(StartingLives, StartingAmmos, shownEgg);
                 if (levelChallenges != null)
-                    levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
+                    levelChallenges.ResetData(this, levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
             }
             else if (difficulty == 2)
             {
@@ -244,7 +251,7 @@ public class LevelData : ScriptableObject
                 ammos = StartingAmmos.Clone() as short[]; ;
                 livesAmount = 1;
                 if (levelChallenges != null)
-                    levelChallenges.ResetData(levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
+                    levelChallenges.ResetData(this, levelWorldAndNumber, difficulty, StartingAmmos, StartingLives);
             }
 
 
@@ -255,7 +262,7 @@ public class LevelData : ScriptableObject
                 // Normal or Hard difficulty, use default values
                 // startingStats.SetData(easyStartingLives, easyStartingAmmos, shownEgg);
                 if (levelChallenges != null)
-                    levelChallenges.ResetData(levelWorldAndNumber, difficulty, easyStartingAmmos, easyStartingLives);
+                    levelChallenges.ResetData(this, levelWorldAndNumber, difficulty, easyStartingAmmos, easyStartingLives);
             }
 
 
@@ -495,6 +502,7 @@ public class LevelData : ScriptableObject
     {
 
         levelChallenges.SetCheckPoint(checkPointIndex);
+        levelChallenges.SetTotalAddedTime(spawner.extraTime);
         LevelDataConverter.instance.SaveTemporaryCheckPointData(levelChallenges);
 
     }
@@ -603,50 +611,58 @@ public class LevelData : ScriptableObject
 
     private bool checkBossAndRandomData = false;
 
+
+
+
     public void CheckRandomSpawnStep()
     {
+        if (randomWaveDataArray == null || randomWaveDataArray.Length <= 0) return;
+        randomWaveDataArray[0].CheckRandomSpawnStep();
 
-        if (spawnStepsPerRandom <= 0) return;
+        // if (spawnStepsPerRandom <= 0) return;
 
-        if (currentSpawnStepCount < spawnStepsPerRandom)
-            currentSpawnStepCount++;
+        // if (currentSpawnStepCount < spawnStepsPerRandom)
+        //     currentSpawnStepCount++;
 
-        else
-        {
+        // else
+        // {
 
-            byte[] rng = new byte[9];
-            for (int i = 0; i < 9; i++)
-            {
-                rng[i] = (byte)UnityEngine.Random.Range(0, 100);
-            }
-            for (int i = 0; i < randomSpawnData.Length; i++)
-            {
-                var rsd = randomSpawnData[i];
-                if (rsd == null || rsd.waveIndex != currentWave)
-                {
-                    Debug.LogError("Skipping Random Spawn Data at index: " + i + " for wave: " + currentWave);
-                    continue;
-                }
+        //     byte[] rng = new byte[9];
+        //     for (int i = 0; i < 9; i++)
+        //     {
+        //         rng[i] = (byte)UnityEngine.Random.Range(0, 100);
+        //     }
+        //     if (randomSpawnData != null && randomSpawnData.Length > 0)
+        //         for (int i = 0; i < randomSpawnData.Length; i++)
+        //         {
+        //             var rsd = randomSpawnData[i];
+        //             if (rsd == null || rsd.waveIndex != currentWave)
+        //             {
+        //                 Debug.LogError("Skipping Random Spawn Data at index: " + i + " for wave: " + currentWave);
+        //                 continue;
+        //             }
 
-                rsd.GenerateRandomEnemySpawn(rng);
-            }
-            currentSpawnStepCount = 0;
+        //             rsd.GenerateRandomEnemySpawn(rng);
+        //         }
+        //     currentSpawnStepCount = 0;
 
-            currentWave++;
+        //     currentWave++;
 
-            if (currentWave > maxWaves)
-            {
-                currentWave = 1;
+        //     if (currentWave > maxWaves)
+        //     {
+        //         currentWave = 1;
 
-            }
+        //     }
 
-        }
+        // }
 
     }
     public void NextSpawnStep(ushort ss)
     {
         currentSpawnStep = ss;
-        currentSpawnStepCount++;
+
+
+
 
 
 
@@ -657,8 +673,10 @@ public class LevelData : ScriptableObject
         {
             objData.SpawnFinishLine();
             spawner.FinishLevel();
+            spawner.SetTrackExtraTime(true);
             return;
         }
+
 
 
 
@@ -896,12 +914,12 @@ public class LevelData : ScriptableObject
 
         if (data == null && loadData)
         {
-            levelChallenges.ResetData(levelWorldAndNumber, Difficulty, StartingAmmos, StartingLives);
+            levelChallenges.ResetData(this, levelWorldAndNumber, Difficulty, StartingAmmos, StartingLives);
             return levelChallenges;
         }
         else if (loadData)
         {
-            levelChallenges.LoadData(levelWorldAndNumber, Difficulty, data);
+            levelChallenges.LoadData(this, levelWorldAndNumber, Difficulty, data);
             levelChallenges.SetCheckPoint(data.CurrentCheckPoint);
 
             // Debug.LogError("Loaded Level Challenges for level: " + levelWorldAndNumber + " with difficulty: " + difficulty);
@@ -909,6 +927,14 @@ public class LevelData : ScriptableObject
         levelChallenges.SetDifficulty(Difficulty);
 
         return levelChallenges;
+    }
+    public bool TrackingExtraTime()
+    {
+        if (levelChallenges != null)
+        {
+            return levelChallenges.trackExtraTime;
+        }
+        return false;
     }
 
     public LevelDataArrays ReturnDataArrays(LevelDataSave lds = null, bool returnDefualt = false)
@@ -1059,84 +1085,90 @@ public class LevelData : ScriptableObject
         }
 
         // do logic if there is random Enemy Spawn Data
-        if (d.randomSpawnDataTypeObjectTypeAndID != null && d.randomSpawnDataTypeObjectTypeAndID.Length > 0)
+
+        if (randomWaveDataArray != null && randomWaveDataArray.Length > 0)
         {
-            Debug.LogError("Creating Random Spawn Data with length: " + d.randomSpawnDataTypeObjectTypeAndID.Length);
-            randomSpawnData = new LevelDataRandomSpawnData[d.randomSpawnDataTypeObjectTypeAndID.Length];
-
-            floatListIndex = 0;
-            int spawnIndex = 0;
-            int usedRngIndex = 0;
-
-            for (int i = 0; i < d.randomSpawnDataTypeObjectTypeAndID.Length; i++)
-            {
-                LevelDataRandomSpawnData newData = new LevelDataRandomSpawnData();
-                List<ISpawnData> spawnDataList = new List<ISpawnData>();
-                List<short> rngUsedList = new List<short>();
-                int nextRNGIndex = 0;
-
-                for (int j = usedRngIndex; j < d.randomSpawnDataTypeObjectTypeAndID[i].x + 3 + usedRngIndex; j++)
-                {
-                    rngUsedList.Add(d.usedRNGIndices[j]);
-                    nextRNGIndex++;
-
-
-
-                }
-                usedRngIndex += nextRNGIndex;
-
-
-                for (int j = 0; j < d.randomLogicSizes[i]; j++)
-                {
-
-                    Debug.LogError("Creating random, spawn index: " + spawnIndex + ", floatListIndex: " + floatListIndex + ", type: " + d.randomSpawnDataTypeObjectTypeAndID[i].x);
-
-
-                    switch (d.randomSpawnDataTypeObjectTypeAndID[i].x)
-                    {
-                        case 0:
-                            spawnDataList.Add(new DataStructSimple(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex]));
-
-                            break;
-                        case 1:
-                            spawnDataList.Add(new DataStructFloatOne(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex]));
-
-                            floatListIndex++;
-                            break;
-                        case 2:
-                            spawnDataList.Add(new DataStructFloatTwo(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1]));
-
-                            floatListIndex += 2;
-                            break;
-                        case 3:
-                            spawnDataList.Add(new DataStructFloatThree(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2]));
-
-                            floatListIndex += 3;
-                            break;
-                        case 4:
-                            spawnDataList.Add(new DataStructFloatFour(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3]));
-                            floatListIndex += 4;
-                            break;
-                        case 5:
-                            spawnDataList.Add(new DataStructFloatFive(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3], d.floatListRand[floatListIndex + 4]));
-                            floatListIndex += 5;
-                            break;
-
-
-                    }
-                    spawnIndex++;
-                }
-
-                Debug.Log("Created Random Spawn Data with wave index: " + d.randomLogicWaveIndices[i]);
-
-
-
-
-                // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
-                newData.Initialize(spawnDataList.ToArray(), rngUsedList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x, d.randomLogicWaveIndices[i], d.randomSpawnRanges[i * 2], d.randomSpawnRanges[(i * 2) + 1]);
-                randomSpawnData[i] = newData;
-            }
+            randomWaveDataArray[0].PopulateData(objData);
         }
+
+        // if (d.randomSpawnDataTypeObjectTypeAndID != null && d.randomSpawnDataTypeObjectTypeAndID.Length > 0)
+        // {
+        //     Debug.LogError("Creating Random Spawn Data with length: " + d.randomSpawnDataTypeObjectTypeAndID.Length);
+        //     randomSpawnData = new LevelDataRandomSpawnData[d.randomSpawnDataTypeObjectTypeAndID.Length];
+
+        //     floatListIndex = 0;
+        //     int spawnIndex = 0;
+        //     int usedRngIndex = 0;
+
+        //     for (int i = 0; i < d.randomSpawnDataTypeObjectTypeAndID.Length; i++)
+        //     {
+        //         LevelDataRandomSpawnData newData = new LevelDataRandomSpawnData();
+        //         List<ISpawnData> spawnDataList = new List<ISpawnData>();
+        //         List<short> rngUsedList = new List<short>();
+        //         int nextRNGIndex = 0;
+
+        //         for (int j = usedRngIndex; j < d.randomSpawnDataTypeObjectTypeAndID[i].x + 3 + usedRngIndex; j++)
+        //         {
+        //             rngUsedList.Add(d.usedRNGIndices[j]);
+        //             nextRNGIndex++;
+
+
+
+        //         }
+        //         usedRngIndex += nextRNGIndex;
+
+
+        //         for (int j = 0; j < d.randomLogicSizes[i]; j++)
+        //         {
+
+        //             Debug.LogError("Creating random, spawn index: " + spawnIndex + ", floatListIndex: " + floatListIndex + ", type: " + d.randomSpawnDataTypeObjectTypeAndID[i].x);
+
+
+        //             switch (d.randomSpawnDataTypeObjectTypeAndID[i].x)
+        //             {
+        //                 case 0:
+        //                     spawnDataList.Add(new DataStructSimple(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex]));
+
+        //                     break;
+        //                 case 1:
+        //                     spawnDataList.Add(new DataStructFloatOne(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex]));
+
+        //                     floatListIndex++;
+        //                     break;
+        //                 case 2:
+        //                     spawnDataList.Add(new DataStructFloatTwo(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1]));
+
+        //                     floatListIndex += 2;
+        //                     break;
+        //                 case 3:
+        //                     spawnDataList.Add(new DataStructFloatThree(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2]));
+
+        //                     floatListIndex += 3;
+        //                     break;
+        //                 case 4:
+        //                     spawnDataList.Add(new DataStructFloatFour(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3]));
+        //                     floatListIndex += 4;
+        //                     break;
+        //                 case 5:
+        //                     spawnDataList.Add(new DataStructFloatFive(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3], d.floatListRand[floatListIndex + 4]));
+        //                     floatListIndex += 5;
+        //                     break;
+
+
+        //             }
+        //             spawnIndex++;
+        //         }
+
+        //         Debug.Log("Created Random Spawn Data with wave index: " + d.randomLogicWaveIndices[i]);
+
+
+
+
+        //         // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
+        //         newData.Initialize(spawnDataList.ToArray(), rngUsedList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x, d.randomLogicWaveIndices[i], d.randomSpawnRanges[i * 2], d.randomSpawnRanges[(i * 2) + 1]);
+        //         randomSpawnData[i] = newData;
+        //     }
+        // }
         Resources.UnloadAsset(d);
     }
 
@@ -1266,88 +1298,107 @@ public class LevelData : ScriptableObject
         }
 
         // do logic if there is random Enemy Spawn Data
+
         if (d.randomSpawnDataTypeObjectTypeAndID != null && d.randomSpawnDataTypeObjectTypeAndID.Length > 0)
         {
-            Debug.LogError("Creating Random Spawn Data with length: " + d.randomSpawnDataTypeObjectTypeAndID.Length);
-            randomSpawnData = new LevelDataRandomSpawnData[d.randomSpawnDataTypeObjectTypeAndID.Length];
+            randomWaveDataArray[0].LoadLevelSaveData(d);
 
-            floatListIndex = 0;
-            int spawnIndex = 0;
-            int usedRngIndex = 0;
-
-            for (int i = 0; i < d.randomSpawnDataTypeObjectTypeAndID.Length; i++)
-            {
-                LevelDataRandomSpawnData newData = new LevelDataRandomSpawnData();
-                List<ISpawnData> spawnDataList = new List<ISpawnData>();
-                List<short> rngUsedList = new List<short>();
-                int nextRNGIndex = 0;
-
-                for (int j = usedRngIndex; j < d.randomSpawnDataTypeObjectTypeAndID[i].x + 3 + usedRngIndex; j++)
-                {
-                    rngUsedList.Add(d.usedRNGIndices[j]);
-                    nextRNGIndex++;
-
-
-
-                }
-                usedRngIndex += nextRNGIndex;
-
-
-                for (int j = 0; j < d.randomLogicSizes[i]; j++)
-                {
-
-                    Debug.LogError("Creating random, spawn index: " + spawnIndex + ", floatListIndex: " + floatListIndex + ", type: " + d.randomSpawnDataTypeObjectTypeAndID[i].x);
-
-
-                    switch (d.randomSpawnDataTypeObjectTypeAndID[i].x)
-                    {
-                        case 0:
-                            spawnDataList.Add(new DataStructSimple(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex]));
-
-                            break;
-                        case 1:
-                            spawnDataList.Add(new DataStructFloatOne(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex]));
-
-                            floatListIndex++;
-                            break;
-                        case 2:
-                            spawnDataList.Add(new DataStructFloatTwo(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1]));
-
-                            floatListIndex += 2;
-                            break;
-                        case 3:
-                            spawnDataList.Add(new DataStructFloatThree(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2]));
-
-                            floatListIndex += 3;
-                            break;
-                        case 4:
-                            spawnDataList.Add(new DataStructFloatFour(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3]));
-                            floatListIndex += 4;
-                            break;
-                        case 5:
-                            spawnDataList.Add(new DataStructFloatFive(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3], d.floatListRand[floatListIndex + 4]));
-                            floatListIndex += 5;
-                            break;
-
-
-                    }
-                    spawnIndex++;
-                }
-
-                Debug.Log("Created Random Spawn Data with wave index: " + d.randomLogicWaveIndices[i]);
-
-
-
-
-                // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
-                newData.Initialize(spawnDataList.ToArray(), rngUsedList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x, d.randomLogicWaveIndices[i], d.randomSpawnRanges[i * 2], d.randomSpawnRanges[(i * 2) + 1]);
-                randomSpawnData[i] = newData;
-            }
+            randomWaveDataArray[0].PopulateData(objData);
         }
+
+
+        // if (d.randomSpawnDataTypeObjectTypeAndID != null && d.randomSpawnDataTypeObjectTypeAndID.Length > 0)
+        // {
+        //     Debug.LogError("Creating Random Spawn Data with length: " + d.randomSpawnDataTypeObjectTypeAndID.Length);
+        //     randomSpawnData = new LevelDataRandomSpawnData[d.randomSpawnDataTypeObjectTypeAndID.Length];
+
+        //     floatListIndex = 0;
+        //     int spawnIndex = 0;
+        //     int usedRngIndex = 0;
+
+        //     for (int i = 0; i < d.randomSpawnDataTypeObjectTypeAndID.Length; i++)
+        //     {
+        //         LevelDataRandomSpawnData newData = new LevelDataRandomSpawnData();
+        //         List<ISpawnData> spawnDataList = new List<ISpawnData>();
+        //         List<short> rngUsedList = new List<short>();
+        //         int nextRNGIndex = 0;
+
+        //         for (int j = usedRngIndex; j < d.randomSpawnDataTypeObjectTypeAndID[i].x + 3 + usedRngIndex; j++)
+        //         {
+        //             rngUsedList.Add(d.usedRNGIndices[j]);
+        //             nextRNGIndex++;
+
+
+
+        //         }
+        //         usedRngIndex += nextRNGIndex;
+
+
+        //         for (int j = 0; j < d.randomLogicSizes[i]; j++)
+        //         {
+
+        //             Debug.LogError("Creating random, spawn index: " + spawnIndex + ", floatListIndex: " + floatListIndex + ", type: " + d.randomSpawnDataTypeObjectTypeAndID[i].x);
+
+
+        //             switch (d.randomSpawnDataTypeObjectTypeAndID[i].x)
+        //             {
+        //                 case 0:
+        //                     spawnDataList.Add(new DataStructSimple(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex]));
+
+        //                     break;
+        //                 case 1:
+        //                     spawnDataList.Add(new DataStructFloatOne(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex]));
+
+        //                     floatListIndex++;
+        //                     break;
+        //                 case 2:
+        //                     spawnDataList.Add(new DataStructFloatTwo(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1]));
+
+        //                     floatListIndex += 2;
+        //                     break;
+        //                 case 3:
+        //                     spawnDataList.Add(new DataStructFloatThree(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2]));
+
+        //                     floatListIndex += 3;
+        //                     break;
+        //                 case 4:
+        //                     spawnDataList.Add(new DataStructFloatFour(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3]));
+        //                     floatListIndex += 4;
+        //                     break;
+        //                 case 5:
+        //                     spawnDataList.Add(new DataStructFloatFive(0, d.typeListRand[spawnIndex], d.posListRand[spawnIndex], d.floatListRand[floatListIndex], d.floatListRand[floatListIndex + 1], d.floatListRand[floatListIndex + 2], d.floatListRand[floatListIndex + 3], d.floatListRand[floatListIndex + 4]));
+        //                     floatListIndex += 5;
+        //                     break;
+
+
+        //             }
+        //             spawnIndex++;
+        //         }
+
+        //         Debug.Log("Created Random Spawn Data with wave index: " + d.randomLogicWaveIndices[i]);
+
+
+
+
+        //         // RecordableObjectPool p = objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z];
+        //         newData.Initialize(spawnDataList.ToArray(), rngUsedList.ToArray(), objData.GetPoolArrayByObjectType(d.randomSpawnDataTypeObjectTypeAndID[i].y)[d.randomSpawnDataTypeObjectTypeAndID[i].z], (ushort)d.randomSpawnDataTypeObjectTypeAndID[i].x, d.randomLogicWaveIndices[i], d.randomSpawnRanges[i * 2], d.randomSpawnRanges[(i * 2) + 1]);
+        //         randomSpawnData[i] = newData;
+        //     }
+        // }
 
         // Resources.UnloadAsset(d);
 
 
+    }
+
+    public float GetTimeAtCheckPoint(ushort checkPointIndex, bool useCheckPoint)
+    {
+        if (useCheckPoint && checkPointSteps != null && checkPointIndex >= 0 && checkPointIndex < checkPointSteps.Length)
+        {
+            ushort step = checkPointSteps[checkPointIndex];
+            return step * (LevelRecordManager.TimePerStep / FrameRateManager.BaseTimeScale);
+        }
+        return 0f;
     }
 
     #endregion

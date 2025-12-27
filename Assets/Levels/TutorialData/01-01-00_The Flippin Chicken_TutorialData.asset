@@ -14,10 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   buttonType: 0
+  useTempMessage: 0
+  colonelCluckIndex: 1
+  colonelCluckScale: 0.9
+  colonelCluckFlipped: 1
   startButtonHidden: 1
   startInputsLocked: 1
   messages:
-  - Press INPUT to Flip Left and Right, don't go too high or you will FREEZE!
+  - Press INPUT to Flip Left and Right, don't go too high or you will <shake><size=120%><color=#7FDFFF>FREEZE!</color></size>
   - HOLD a Flip to fly Further and Faster!
   inputReplaceKeyboard:
   - '"A" and "D"'

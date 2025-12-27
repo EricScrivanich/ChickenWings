@@ -269,12 +269,12 @@ public class BarnAndEggSpawner : MonoBehaviour
     // Update is called once per frame
     public void GetEggCollectable(Vector2 pos, bool isShotgun, bool isThree, float speed)
     {
-        if (speed == 0) speed = Random.Range(4.7f, 5.7f);
-        float _sineFrequency = Random.Range(.25f, .35f);
-        float _sineMagnitude = Random.Range(.05f, .22f);
-        float offset = Random.Range(0, 1);
+        if (speed == 0) speed = SpawnData.RandomLerpedVal(4.7f, 5.7f);
+        float _sineFrequency = SpawnData.RandomLerpedVal(.25f, .35f);
+        float _sineMagnitude = SpawnData.RandomLerpedVal(.05f, .22f);
+        float offset = SpawnData.RandomLerpedVal(0, 1);
         ushort type = (ushort)(isThree ? 1 : 0);
-        bool flipX = (Random.Range(0f, 1f) < (isShotgun ? SpawnData.flipXChanceShotgun : SpawnData.flipXChanceEgg));
+        bool flipX = (SpawnData.RandomLerpedVal(0f, 1f) < (isShotgun ? SpawnData.flipXChanceShotgun : SpawnData.flipXChanceEgg));
         if (flipX)
         {
             pos.x = -pos.x;
@@ -325,7 +325,7 @@ public class BarnAndEggSpawner : MonoBehaviour
     public void GetBarn(int side)
     {
         if (currentBarnIndex >= 2) currentBarnIndex = 0;
-        float chance = Random.Range(0f, 1f);
+        float chance = SpawnData.RandomLerpedVal(0f, 1f);
         // int side = 0;
         // if (chance < barnBigChance) side = 0;
         // else if (chance < barnMidChance) side = Random.Range(1, 3);
@@ -348,7 +348,7 @@ public class BarnAndEggSpawner : MonoBehaviour
         {
             checkEggs = false;
 
-            Vector2 pos = new Vector2(13.5f, Random.Range(-2.2f, 4.2f));
+            Vector2 pos = new Vector2(13.5f, SpawnData.RandomLerpedVal(-2.2f, 4.2f));
             // bool three = Random.Range(0f, 1f) < eggThreeChance;
 
             Vector2 data = SpawnData.ReturnEggTime(player.Ammo);
@@ -386,8 +386,8 @@ public class BarnAndEggSpawner : MonoBehaviour
         while (true)
         {
 
-            Vector2 pos = new Vector2(13.5f, Random.Range(-2.2f, 4.2f));
-            // bool three = Random.Range(0f, 1f) < baseShotgunThreeChance;
+            Vector2 pos = new Vector2(13.5f, SpawnData.RandomLerpedVal(-2.2f, 4.2f));
+            // bool three =SpawnData.RandomLerpedVal(0f, 1f) < baseShotgunThreeChance;
 
             Vector2 data = SpawnData.ReturnShotgunTime(player.ShotgunAmmo);
             checkShotgun = false;

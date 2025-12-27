@@ -9,19 +9,26 @@ public class SteroidTutorial : MonoBehaviour
     [SerializeField] private TutorialHand[] tutorialHands;
 
     [SerializeField] private bool isLevelPicker;
-    [SerializeField] private Animator anim;
+    private int index;
+    [SerializeField] private Transform nameLabel;
 
-    [SerializeField] private string[] texts;
+
+
+    [SerializeField, TextArea(3, 10)] private string[] texts;
 
     public static SteroidTutorial instance;
 
+    private bool isFlipped;
+
     public Action<int, bool> OnShowTutorialHand;
     [SerializeField] private TextBox textBox;
+    [SerializeField] private TextBox textBoxFlipped;
     [SerializeField] private GameObject colonelCluckCanvas;
     [SerializeField] private RectTransform colonelCluck;
-    [SerializeField] private RectTransform colonelCluckStartPos;
-    [SerializeField] private RectTransform colonelCluckEndPos;
-    [SerializeField] private float colonelCluckTweenTime;
+    [SerializeField] private RectTransform[] colonelCluckStartPos;
+    [SerializeField] private RectTransform[] colonelCluckEndPos;
+    [SerializeField] private float colonelCluckTweenTimeIn;
+    [SerializeField] private float colonelCluckTweenTimeOut;
 
     public bool reset;
 
@@ -61,6 +68,7 @@ public class SteroidTutorial : MonoBehaviour
     {
         if (isLevelPicker && PlayerPrefs.GetInt("CompletedSteroidTutorial", 0) == 0)
         {
+            index = 0;
             TweenInColonelCluck();
         }
 
@@ -71,11 +79,23 @@ public class SteroidTutorial : MonoBehaviour
 
 
 
-    private void TweenInColonelCluck(string Message = "")
+    private void TweenInColonelCluck(string Message = "", bool flipped = false, float scale = 1.16f)
     {
-        colonelCluck.position = colonelCluckStartPos.position;
+        colonelCluck.position = colonelCluckStartPos[index].position;
+        if (flipped)
+        {
+            isFlipped = true;
+            nameLabel.localScale = new Vector3(-1, 1, 1);
+            colonelCluck.localScale = new Vector3(-scale, scale, scale);
+        }
+        else if (!flipped)
+        {
+            isFlipped = false;
+            nameLabel.localScale = Vector3.one;
+            colonelCluck.localScale = new Vector3(scale, scale, scale);
+        }
         colonelCluck.gameObject.SetActive(true);
-        colonelCluck.DOMove(colonelCluckEndPos.position, colonelCluckTweenTime).SetUpdate(true).SetEase(Ease.OutQuad).OnComplete(() =>
+        colonelCluck.DOMove(colonelCluckEndPos[index].position, colonelCluckTweenTimeIn).SetUpdate(true).SetEase(Ease.OutSine).OnComplete(() =>
         {
             if (isLevelPicker)
                 ShowNextHand(0);
@@ -84,21 +104,22 @@ public class SteroidTutorial : MonoBehaviour
         });
     }
 
-    public void PlayAnim(bool play)
-    {
-        anim.SetBool("Talking", play);
-    }
 
-    public void ShowColonelCluck(bool show, string msg)
+
+    public void ShowColonelCluck(bool show, int i, string msg, bool flipped = false, float scale = 1.16f)
     {
+        index = i;
         if (show)
         {
-            TweenInColonelCluck(msg);
+            TweenInColonelCluck(msg, flipped, scale);
         }
         else
         {
-            textBox.FadeOut();
-            colonelCluck.DOMove(colonelCluckStartPos.position, colonelCluckTweenTime).SetUpdate(true).SetEase(Ease.InQuad).OnComplete(() =>
+            if (isFlipped)
+                textBoxFlipped.FadeOut();
+            else
+                textBox.FadeOut();
+            colonelCluck.DOMove(colonelCluckStartPos[index].position, colonelCluckTweenTimeOut).SetUpdate(true).SetEase(Ease.InQuad).OnComplete(() =>
             {
                 colonelCluck.gameObject.SetActive(false);
             });
@@ -108,7 +129,10 @@ public class SteroidTutorial : MonoBehaviour
 
     public void ShowMessage(string message)
     {
-        textBox.SetText(message);
+        if (isFlipped)
+            textBoxFlipped.SetText(message);
+        else
+            textBox.SetText(message);
     }
 
     public void ShowNextHand(int index)

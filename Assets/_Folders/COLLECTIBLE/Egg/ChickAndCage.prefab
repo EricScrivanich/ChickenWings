@@ -215,6 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefff2685ecb94ca68aaac1fd484239c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chickNoiseAmount: -1
 --- !u!1 &3811209715142003196
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,15 +686,15 @@ MonoBehaviour:
   slowDownFallBoundary: 0.8
   slowDownFallMultiplier: 1.1
   addForceDownBoundaryOffset: -0.5
-  addRightForce: {x: 9.5, y: 5}
+  addRightForce: {x: 10, y: 5}
   addDownForce: {x: 0, y: -2.5}
-  addLeftForce: {x: -9.5, y: 5}
+  addLeftForce: {x: -10, y: 5}
   leftRightBoundaryOffset: 1
   isActive: 0
   maxDownSpeed: -8
   maxUpSpeed: 15
-  maxLeftSpeed: -8
-  maxRightSpeed: 8
+  maxLeftSpeed: -6.5
+  maxRightSpeed: 6.5
 --- !u!210 &6584947404864290809
 SortingGroup:
   m_ObjectHideFlags: 0

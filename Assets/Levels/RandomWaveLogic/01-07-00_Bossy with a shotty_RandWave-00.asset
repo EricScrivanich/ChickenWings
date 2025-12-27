@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 053ec8d09db7943f2a9f74b17f8bdaf1, type: 3}
+  m_Name: 01-07-00_Bossy with a shotty_RandWave-00
+  m_EditorClassIdentifier: Assembly-CSharp::RandomWaveData
+  spawnStepsPerRandom: 35
+  maxWaves: 1
+  posListRand:
+  - {x: 16.4, y: 3.2}
+  - {x: 16.800001, y: -3}
+  - {x: -15, y: 3}
+  - {x: -14.8, y: -3.4}
+  floatListRand:
+  - 5.3
+  - 1
+  - 5.7
+  - 1
+  - -4.7
+  - 1
+  - -4.1
+  - 1
+  usedRNGIndices: 0000ffffffffffffffff0000ffffffffffffffff
+  randomSpawnRanges: 00505164
+  typeListRand: 0000000000000000
+  randomLogicSizes: 02000200
+  randomLogicWaveIndices: 01000100
+  spawnStepsRandom: 96009600
+  randomSpawnDataTypeObjectTypeAndID:
+  - {x: 2, y: 0, z: 0}
+  - {x: 2, y: 0, z: 0}
+  useFixedSeed: 0
+  useFixedSeedCollectable: 1
+  fixedSeed: 12345
+  fixedSeedCollectable: 5

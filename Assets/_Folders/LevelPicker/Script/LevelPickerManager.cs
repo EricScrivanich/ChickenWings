@@ -238,9 +238,14 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
                 if (unlockableMapItems[i].mapItemID == NextUnlockedItem)
                 {
                     unlockableMapItems[i].UnlockItem(playerPathFollower.unlockableTargetTransform.position);
-                    ignoreAll = true;
 
-                    yield break;
+                    if (unlockableMapItems[i].ignoreNextLevelCheck)
+                    {
+                        ignoreAll = true;
+
+                        yield break;
+                    }
+
 
 
                 }
@@ -308,7 +313,7 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     private void Start()
     {
         playerPathFollower.SetPathManager(this);
-        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .5f), PlayerPrefs.GetFloat("SFXVolume", 1.0f));
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .5f), PlayerPrefs.GetFloat("SFXVolume", .8f));
 
         string s = PlayerPrefs.GetString("LastLevel", "1-1-0");
         Vector3Int lastLevel = ReturnLevelAsVector(s);

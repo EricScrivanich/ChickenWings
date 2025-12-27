@@ -11,6 +11,7 @@ using Febucci.UI;
 public class TextBox : MonoBehaviour
 {
     private CanvasGroup group;
+    [SerializeField] private bool useOldSizeLogic = false;
     [SerializeField] private Animator anim;
 
     [SerializeField] private TextAnimator_TMP textAnimator;
@@ -45,15 +46,26 @@ public class TextBox : MonoBehaviour
     public void SetText(string t)
     {
         text.text = t;
+        text.ForceMeshUpdate();
+
         if (!gameObject.activeInHierarchy)
         {
+            Debug.Log("SetText called with: " + t);
             gameObject.SetActive(true);
-            // Invoke("DoDelay", .08f);
-            DoDelay();
+            if (useOldSizeLogic) // corutine wont start since object unactive
+            {
+                Invoke("DoDelay", .08f);
+            }
+            else
+                DoDelay();
 
         }
         else
+        {
+            Debug.Log("SetText called active with: " + t);
             DoDelay();
+        }
+
 
 
 
@@ -84,6 +96,8 @@ public class TextBox : MonoBehaviour
     {
         if (doFade)
             DOTween.Kill(group);
+
+        FinishFadeOut();
     }
 
     public void FadeOut()
@@ -92,14 +106,21 @@ public class TextBox : MonoBehaviour
             flashSeq.Kill();
 
         if (doFade)
-            group.DOFade(0, fadeDur).SetUpdate(true);
+            group.DOFade(0, fadeDur).SetUpdate(true).OnComplete(() => FinishFadeOut());
         else
-            group.alpha = 0;
+            FinishFadeOut();
     }
 
     private void FinishTyping()
     {
         SetAnim(false);
+    }
+
+    public void FinishFadeOut()
+    {
+        group.alpha = 0;
+        textAnimator.enabled = false;
+        gameObject.SetActive(false);
     }
 
     private void Flash()
@@ -131,21 +152,31 @@ public class TextBox : MonoBehaviour
     private IEnumerator DelayToUpdateBoxSize()
     {
         yield return null;
-        int lineCount = text.textInfo.lineCount;
-        float newHeight = baseHeight + (Mathf.Max(0, lineCount) * addedHeightPerLine);
-        var rect = GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
+        text.ForceMeshUpdate();
+
+        if (useOldSizeLogic)
+        {
+            int lineCount = text.textInfo.lineCount;
+            float newHeight = baseHeight + (Mathf.Max(0, lineCount) * addedHeightPerLine);
+            var rect = GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
+        }
+
 
 
 
         if (doFade)
         {
-            yield return new WaitForSecondsRealtime(.8f);
+            yield return new WaitForSecondsRealtime(.6f);
             group.DOFade(1, fadeDur).SetUpdate(true).OnComplete(() => Flash());
         }
 
         else
+        {
             group.alpha = 1;
+            Debug.Log("Flash called directly");
+        }
+
 
     }
 }

@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: 01-07-00_Bossy with a shotty_Challenge
   m_EditorClassIdentifier: 
   lvlID: {fileID: 0}
-  challenges: 010000000000000002000000
+  challenges: 010000000c00000002000000
   challengeTexts:
   - Complete Level
-  - Egg 5 Pigs
+  - Complete Level in Under 64 Seconds
   - Lose Zero Lives
   challengeDifficulties:
   - 
   - 
   - 
-  LifeTarget: 0
+  totalLevelTimeTarget: 64
+  LifeTarget: 3
   EggAmmoTarget: 0
   ShotgunAmmoTarget: 0
   TrackedPigs: 

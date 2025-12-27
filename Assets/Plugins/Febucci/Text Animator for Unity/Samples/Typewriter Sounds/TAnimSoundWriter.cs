@@ -23,6 +23,8 @@ namespace Febucci.UI.Examples
         [Header("References")]
         public AudioSource source;
 
+        [SerializeField] private bool useUnscaledTime = false;
+
         [Header("Management")]
         [Tooltip("How much time has to pass before playing the next sound"), SerializeField, Attributes.MinValue(0)]
         float minSoundDelay = .07f;
@@ -61,8 +63,18 @@ namespace Febucci.UI.Examples
 
         void OnCharacter(CharacterData character)
         {
-            if (Time.time - latestTimePlayed <= minSoundDelay)
-                return; //Early return if not enough time passed yet
+            if (!useUnscaledTime)
+            {
+                if (Time.time - latestTimePlayed <= minSoundDelay)
+                    return; //Early return if not enough time passed yet
+            }
+
+            else
+            {
+                if (Time.unscaledTime - latestTimePlayed <= minSoundDelay)
+                    return; //Early return if not enough time p
+            }
+            
 
             source.clip = sounds[clipIndex];
 
@@ -84,7 +96,11 @@ namespace Febucci.UI.Examples
                     clipIndex = 0;
             }
 
-            latestTimePlayed = Time.time;
+
+            if (useUnscaledTime)
+                latestTimePlayed = Time.unscaledTime;
+            else
+                latestTimePlayed = Time.time;
 
         }
     }

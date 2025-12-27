@@ -31,10 +31,10 @@ public class AmmoEggState : AmmoBaseState
         if (player.ID.Ammo > 0)
         {
 
-
+            player.ID.AddPlayerInput(5);
             AudioManager.instance.PlayEggDrop();
             HapticFeedbackManager.instance.PlayerButtonPress();
-            
+
             player.GetEgg();
 
             player.ID.Ammo -= 1;

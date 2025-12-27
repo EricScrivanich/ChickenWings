@@ -9,7 +9,7 @@ public class BucketLevelPickObject : ILevelPickerPathObject
     [SerializeField] private Transform linePos;
     [SerializeField] private int type;
     [SerializeField] private int pathIndex;
-    [SerializeField] private int order;
+
 
 
     [SerializeField] private Vector2 backHillPos;
@@ -17,6 +17,12 @@ public class BucketLevelPickObject : ILevelPickerPathObject
     [SerializeField] private Vector2 frontHillPos;
     [SerializeField] private float frontHillScale;
     [SerializeField] private string AnimTrigger;
+
+    [SerializeField] private Color beatenBucketColor;
+    [SerializeField] private Color unbeatenBucketColor;
+    [SerializeField] private SpriteRenderer bucketStripes;
+    [SerializeField] private SpriteRenderer bucketRing;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -46,6 +52,9 @@ public class BucketLevelPickObject : ILevelPickerPathObject
         {
             blurMain.color = beatenColor;
             selectedArrowTransform.GetComponent<SpriteRenderer>().color = beatenColor;
+            bucketStripes.color = beatenBucketColor;
+            bucketRing.color = beatenBucketColor;
+
 
         }
         else
@@ -73,7 +82,7 @@ public class BucketLevelPickObject : ILevelPickerPathObject
 
     //     DoSequence(selected);
     // }
-  
+
 
     // private void DoSequence(bool doSeq)
     // {

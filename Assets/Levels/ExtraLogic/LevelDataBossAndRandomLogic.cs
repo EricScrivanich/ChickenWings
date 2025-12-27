@@ -24,9 +24,12 @@ public class LevelDataBossAndRandomLogic : ScriptableObject
         if (step == spawnStep)
         {
             Debug.Log("Correct Spawn Step: " + step);
+
+
             levelData.spawner.HandleWaveTime(!stopWaveTime, true);
             levelData.spawner.HandleRandomCollectableSpawning(collectableSpawnData);
             levelData.SetRandomEnemySpawnSteps(stepsPerEnemySpawn);
+            levelData.spawner.SetTrackExtraTime(levelData.GetLevelChallenges(false, null).trackExtraTime);
         }
 
     }
@@ -40,6 +43,7 @@ public class LevelDataBossAndRandomLogic : ScriptableObject
             {
                 levelData.spawner.SetCurrentStep((ushort)finishCondition);
 
+
             }
             else
             {
@@ -47,6 +51,8 @@ public class LevelDataBossAndRandomLogic : ScriptableObject
                 {
                     case -1:
                         levelData.spawner.HandleWaveTime(true, true);
+
+
                         break;
                 }
             }

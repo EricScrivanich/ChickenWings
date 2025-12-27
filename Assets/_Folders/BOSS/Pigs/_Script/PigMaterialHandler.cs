@@ -126,10 +126,10 @@ public class PigMaterialHandler : MonoBehaviour
         hasCrossedScreen = false;
         if (isHit)
         {
-            foreach (var pig in sprites)
-            {
-                pig.material = defaultMat;
-            }
+            // foreach (var pig in sprites)
+            // {
+            //     pig.material = defaultMat;
+            // }
             foreach (var col in colls)
             {
                 col.enabled = true;
@@ -261,6 +261,7 @@ public class PigMaterialHandler : MonoBehaviour
                 pig.material = instanceMaterial;
             }
         }
+        AudioManager.instance.PlayPigDeathSound(pigTypeAudio);
         if (totalDamageTime <= .1f) totalDamageTime = .8f;
         StartCoroutine(DamageCor(totalDamageTime));
     }
@@ -431,11 +432,11 @@ public class PigMaterialHandler : MonoBehaviour
             gameObject.SetActive(false);
             transform.localScale = initialScale;
 
-            if (pigType == 2) // solves very odd sprite renderer glitch when destroying mat
-                foreach (var pig in sprites)
-                {
-                    pig.material = defaultMat;
-                }
+            // solves very odd sprite renderer glitch when destroying mat
+            foreach (var pig in sprites)
+            {
+                pig.material = defaultMat;
+            }
 
             Destroy(instanceMaterial);
 

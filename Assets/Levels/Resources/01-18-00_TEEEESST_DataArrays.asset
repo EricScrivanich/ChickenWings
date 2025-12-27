@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c21eaf85768445e94055229912117c, type: 3}
   m_Name: 01-18-00_TEEEESST_DataArrays
   m_EditorClassIdentifier: 
-  pigPoolSizes: 0300030000000000000000000300000000000300
+  pigPoolSizes: 0300000000000000030000000000000000000000
   aiPoolSizes: 00000000
   buildingPoolSizes: 0000000000000000
   collectablePoolSizes: 02000000
-  positionerPoolSizes: 0100
+  positionerPoolSizes: 0000
   ringPoolSizes: 00000000
   cageAttachments: 
   indexAndHealth: 
@@ -24,43 +24,27 @@ MonoBehaviour:
   floatList: []
   typeList: 
   posListRand:
-  - {x: 14.6, y: 4}
-  - {x: 18.2, y: 4}
-  - {x: 16.2, y: 2.6000001}
-  - {x: 16.6, y: -3.2}
-  - {x: 23.800001, y: -2.6000001}
-  - {x: 24, y: 3.2}
-  - {x: -5.2000003, y: 0}
-  - {x: 4.6, y: 0}
+  - {x: 14.8, y: 3.2}
+  - {x: 15.400001, y: -3}
+  - {x: 14.400001, y: 3.6000001}
+  - {x: 14.400001, y: -1.2}
   floatListRand:
-  - 2
-  - 0
-  - 0
-  - 1.08
-  - 0
-  - 2
-  - 0
-  - 0
-  - 1.08
-  - 0
   - 5.5
   - 1
   - 5.5
   - 1
-  - 9.5
+  - 4
+  - 0.19
+  - 0
+  - 4
+  - 0.65
   - 1
-  - 9.5
-  - 1
-  - 1.3
-  - 1.04
-  usedRNGIndices: 0000ffffffffffffffffffffffffffff00000100ffffffffffff00000100ffffffffffffffffffffffffffff
-  randomSpawnRanges: 0032326432640064
-  typeListRand: 00000000000000000000000000000000
-  randomLogicSizes: 0200020002000200
-  randomLogicWaveIndices: 0100010001000200
-  spawnStepsRandom: 9600960096009600
+  usedRNGIndices: 01000000ffffffffffffffff0000ffffffff0000ffff
+  randomSpawnRanges: 5864006400640064006400640064
+  typeListRand: 0000000000000000
+  randomLogicSizes: 02000200
+  randomLogicWaveIndices: 01000200
+  spawnStepsRandom: 96009600
   randomSpawnDataTypeObjectTypeAndID:
-  - {x: 5, y: 0, z: 9}
   - {x: 2, y: 0, z: 0}
-  - {x: 2, y: 0, z: 1}
-  - {x: 1, y: 0, z: 6}
+  - {x: 3, y: 0, z: 4}

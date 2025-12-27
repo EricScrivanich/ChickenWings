@@ -8,9 +8,15 @@ public class TutorialData : ScriptableObject
 {
     private SpecialStateInputSystem inputSystem;
     private TutorialButtonHandler buttonHandler;
+
+
     public PlayerID playerID;
     private SpawnStateManager spawnManager;
     [SerializeField] private int buttonType = -1;
+    [SerializeField] private bool useTempMessage;
+    [SerializeField] private int colonelCluckIndex;
+    [SerializeField] private float colonelCluckScale;
+    [SerializeField] private bool colonelCluckFlipped;
 
     public Action<bool, int, string> SetPressButtonText;
 
@@ -26,10 +32,10 @@ public class TutorialData : ScriptableObject
 
 
     [Header("Message String, replace with INPUT text")]
-    [SerializeField] private string[] messages;
-    [SerializeField] private string[] inputReplaceKeyboard;
-    [SerializeField] private string[] inputReplaceGamepad;
-    [SerializeField] private string[] inputReplaceTouchScreen;
+    [SerializeField, TextArea(3, 10)] private string[] messages;
+    [SerializeField, TextArea(3, 10)] private string[] inputReplaceKeyboard;
+    [SerializeField, TextArea(3, 10)] private string[] inputReplaceGamepad;
+    [SerializeField, TextArea(3, 10)] private string[] inputReplaceTouchScreen;
 
 
     [SerializeField] private string[] allowedInput;
@@ -101,6 +107,8 @@ public class TutorialData : ScriptableObject
 
     public void Initialize(SpawnStateManager m, ushort currentStep, PlayerID player)
     {
+        if (buttonType == -1)
+            buttonType = 10;
         inputSystem = null;
         buttonHandler = null;
         playerID = player;
@@ -289,13 +297,19 @@ public class TutorialData : ScriptableObject
 
                 break;
             case Type.ShowMessage:
-                //steroidTutorial.ShowColonelCluck(true, ReturnMessageForDevice());
-                var obj = Instantiate(messagePrefab, GameObject.Find("Canvas").transform);
+                if (!useTempMessage)
+                    steroidTutorial.ShowColonelCluck(true, colonelCluckIndex, ReturnMessageForDevice(), colonelCluckFlipped, colonelCluckScale);
 
-                currentFlashMessage = obj.GetComponent<FlashGroup>();
-                currentFlashMessage.Initialize(this);
+                else
+                {
+                    var obj = Instantiate(messagePrefab, GameObject.Find("Canvas").transform);
 
-                currentFlashMessage.ShowMessage(ReturnMessageForDevice());
+                    currentFlashMessage = obj.GetComponent<FlashGroup>();
+                    currentFlashMessage.Initialize(this);
+
+                    currentFlashMessage.ShowMessage(ReturnMessageForDevice());
+                }
+
                 break;
             case Type.HideMessage:
                 SetPressButtonText?.Invoke(false, 0, "");
@@ -397,7 +411,7 @@ public class TutorialData : ScriptableObject
         }
         else
         {
-            //   steroidTutorial.ShowColonelCluck(true, ReturnMessageForDevice());
+            steroidTutorial.ShowColonelCluck(false, colonelCluckIndex, "", colonelCluckFlipped, colonelCluckScale);
 
             PauseMenuButton.DisablePause?.Invoke(false);
             if (ID < actionsForExitBubble.Length)

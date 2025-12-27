@@ -7,6 +7,9 @@ public class UnlockableMapItem : MonoBehaviour
     [SerializeField] private short worldNumber;
     [SerializeField] private short subID;
 
+    [field: SerializeField]
+    public bool ignoreNextLevelCheck { get; private set; } = true;
+
     [SerializeField] private UIButton button;
 
     public enum UnlockableItemType
@@ -14,6 +17,8 @@ public class UnlockableMapItem : MonoBehaviour
         Steroid,
         Chest,
         Other,
+
+        Cage
 
     }
 
@@ -23,6 +28,10 @@ public class UnlockableMapItem : MonoBehaviour
     [SerializeField] private float dur = 1.1f;
     [SerializeField] private SpriteRenderer blurSprite;
     [SerializeField] private SpriteRenderer shadowSprite;
+
+    [SerializeField] private GameObject unlockedGameObject;
+    [SerializeField] private Vector2 unlockedGameObjectOffset;
+    [SerializeField] private float unlockedGameObjectScale;
 
     private Sequence unlockSeq;
     private Sequence rotateSeq;
@@ -44,17 +53,63 @@ public class UnlockableMapItem : MonoBehaviour
 
     public void UnlockItem(Vector2 targetPos)
     {
-        DoUnlockedAnimation(targetPos);
+        Debug.Log(" Unlockable Item Unlcoked ");
+
+        switch (itemType)
+        {
+            case UnlockableItemType.Steroid:
+                DoUnlockedAnimation(targetPos);
+                break;
+            case UnlockableItemType.Chest:
+
+                break;
+            case UnlockableItemType.Other:
+
+                break;
+            case UnlockableItemType.Cage:
+                var o = Instantiate(unlockedGameObject, (Vector2)transform.position + unlockedGameObjectOffset, Quaternion.identity, transform.parent);
+                o.transform.localScale = Vector3.one * unlockedGameObjectScale;
+                o.GetComponent<ChicTween>().DoBarnTween(true);
+                gameObject.SetActive(false);
+                FinishUnlock(levelPickerManager);
+
+                break;
+        }
+
 
 
 
     }
     public void Initializeitem(LevelPickerManager l, bool isUnlocked)
     {
+        Debug.Log("Initialize Unlockable Item ID: " + mapItemID + "-" + subID + " | Unlocked: " + isUnlocked);
         levelPickerManager = l;
         if (isUnlocked)
         {
+
+
+            switch (itemType)
+            {
+                case UnlockableItemType.Steroid:
+
+                    break;
+                case UnlockableItemType.Chest:
+
+                    break;
+                case UnlockableItemType.Other:
+
+                    break;
+                case UnlockableItemType.Cage:
+                    var o = Instantiate(unlockedGameObject, (Vector2)transform.position + unlockedGameObjectOffset, Quaternion.identity, transform.parent);
+                    o.transform.localScale = Vector3.one * unlockedGameObjectScale;
+                    o.GetComponent<ChicTween>().DoBarnTween(false);
+
+
+                    break;
+            }
+
             gameObject.SetActive(false);
+
         }
 
     }
@@ -115,7 +170,9 @@ public class UnlockableMapItem : MonoBehaviour
         }
 
         LevelDataConverter.instance.ResetNextUnlockedIndex(worldNumber);
-        levelPickerManager.DoNextLevelAfterUnlock();
+
+        if (ignoreNextLevelCheck)
+            levelPickerManager.DoNextLevelAfterUnlock();
     }
 
 

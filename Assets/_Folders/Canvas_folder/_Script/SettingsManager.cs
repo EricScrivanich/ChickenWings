@@ -13,7 +13,7 @@ public class SettingsManager : MonoBehaviour
     {
         // Initialize sliders with saved PlayerPrefs values or defaults
         sfxSlider.value = PlayerPrefs.GetFloat("SFXVolume", .8f);
-        musicSlider.value = PlayerPrefs.GetFloat("MusicVolume", .3f);
+        musicSlider.value = PlayerPrefs.GetFloat("MusicVolume", .5f);
         vibrationSlider.value = PlayerPrefs.GetInt("VibrationStrength", 2);
 
         // Add listeners to handle slider value changes
@@ -40,14 +40,14 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetFloat("SFXVolume", val);
         Debug.LogError("Setting SFX volume: " + val);
         PlayerPrefs.Save();
-        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), true);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .5f), PlayerPrefs.GetFloat("SFXVolume", .8f), true);
     }
 
     public void SetMusicVolume(float val)
     {
         PlayerPrefs.SetFloat("MusicVolume", val);
         PlayerPrefs.Save();
-        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f), true);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .5f), PlayerPrefs.GetFloat("SFXVolume", .8f), true);
     }
 
     public void SetVibration(int val)

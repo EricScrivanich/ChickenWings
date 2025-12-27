@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 053ec8d09db7943f2a9f74b17f8bdaf1, type: 3}
+  m_Name: 01-18-00_TEEEESST_RandWave-00
+  m_EditorClassIdentifier: Assembly-CSharp::RandomWaveData
+  spawnStepsPerRandom: 2
+  maxWaves: 2
+  posListRand:
+  - {x: 14.8, y: 3.2}
+  - {x: 15.400001, y: -3}
+  - {x: 14.400001, y: 3.6000001}
+  - {x: 14.400001, y: -1.2}
+  floatListRand:
+  - 5.5
+  - 1
+  - 5.5
+  - 1
+  - 4
+  - 0.19
+  - 0
+  - 4
+  - 0.65
+  - 1
+  usedRNGIndices: 01000000ffffffffffffffff0000ffffffff0000ffff
+  randomSpawnRanges: 5864006400640064006400640064
+  typeListRand: 0000000000000000
+  randomLogicSizes: 02000200
+  randomLogicWaveIndices: 01000200
+  spawnStepsRandom: 96009600
+  randomSpawnDataTypeObjectTypeAndID:
+  - {x: 2, y: 0, z: 0}
+  - {x: 3, y: 0, z: 4}
+  useFixedSeed: 1
+  useFixedSeedCollectable: 1
+  fixedSeed: 2
+  fixedSeedCollectable: 2

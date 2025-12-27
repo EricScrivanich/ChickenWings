@@ -4822,7 +4822,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Time Trials
+  m_text: Level Creator
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b9070e7fe90bf42638be3fe753a625de, type: 2}
   m_sharedMaterial: {fileID: -3148394209951168553, guid: b9070e7fe90bf42638be3fe753a625de, type: 2}
@@ -4849,8 +4849,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 67
-  m_fontSizeBase: 67
+  m_fontSize: 69.1
+  m_fontSizeBase: 69.1
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4859,9 +4859,9 @@ MonoBehaviour:
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
-  m_characterSpacing: 6.1
+  m_characterSpacing: 2.1
   m_characterHorizontalScale: 1
-  m_wordSpacing: 0
+  m_wordSpacing: -9.1
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
@@ -4888,7 +4888,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -4.3818817, y: 0, z: -86.17659, w: 0}
+  m_margin: {x: -19.513565, y: 0, z: -116.641785, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -10096,7 +10096,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: 193.4396}
+  m_AnchoredPosition: {x: -0, y: 195.40002}
   m_SizeDelta: {x: 580.68005, y: 150}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &558430835
@@ -20287,7 +20287,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1934951435}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameModeButton, Assembly-CSharp
         m_MethodName: HackTimeTrialLock
         m_Mode: 1
@@ -31338,7 +31338,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1842189094
 RectTransform:
   m_ObjectHideFlags: 0
@@ -33181,9 +33181,8 @@ GameObject:
   - component: {fileID: 1934951438}
   - component: {fileID: 1934951437}
   - component: {fileID: 1934951436}
-  - component: {fileID: 1934951435}
   m_Layer: 5
-  m_Name: TimeTrial
+  m_Name: LevelCreator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33207,27 +33206,8 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -354, y: -77}
-  m_SizeDelta: {x: 442.26, y: 117.6688}
+  m_SizeDelta: {x: 456, y: 117.6688}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1934951435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1934951433}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cfd6ce9a88824c2bbfdb5090aa50c18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  neededUnlockIndex: -1
-  gameModeIndex: 1
-  sceneSO: {fileID: 11400000, guid: 2bde500c0a65740a5b80e6a117dcd274, type: 2}
-  colorSO: {fileID: 11400000, guid: 7a836a64dbff14c31b82277b248b860f, type: 2}
-  text: {fileID: 282002465}
-  ButtonImage: {fileID: 1934951437}
-  Lock: {fileID: 0}
 --- !u!114 &1934951436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33272,14 +33252,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1934951435}
-        m_TargetAssemblyTypeName: GameModeButton, Assembly-CSharp
-        m_MethodName: PressButton
-        m_Mode: 1
+      - m_Target: {fileID: 1136049571}
+        m_TargetAssemblyTypeName: MainMenuScript, Assembly-CSharp
+        m_MethodName: SwitchMenu
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 4
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -33995,7 +33975,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1224682214}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.96573675
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

@@ -22,8 +22,14 @@ public class SceneChanger : MonoBehaviour
 
     public IEnumerator AwaitLoadScene(bool test)
     {
+
+
+        LevelRecordManager.instance.UpdateGameTimeBeforePlaymode();
         LevelRecordManager.instance.SaveAsset();
-        yield return new WaitForSecondsRealtime(.1f);
+        yield return null;
+        yield return null;
+
+
         if (test)
         {
             PlayerPrefs.SetString("LevelType", "Custom");
@@ -48,8 +54,8 @@ public class SceneChanger : MonoBehaviour
     {
 
         // TransitionDirector.instance.GoTo(LoadSceneWithTransition);
-        // if (DoFeedback)
-        //     HapticFeedbackManager.instance.PressUIButton();
+        if (DoFeedback)
+            HapticFeedbackManager.instance.PressUIButton();
         SceneManagerScript.instance.LoadScene(LoadSceneWithTransition);
     }
 

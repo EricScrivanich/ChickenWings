@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ec5cdc658774fadb8730e2026d7251, type: 3}
   m_Name: 01-18-00_TEEEESST
   m_EditorClassIdentifier: 
-  maxWaves: 2
+  maxWaves: 1
+  randomWaveDataArray:
+  - {fileID: 11400000, guid: db741114bcdfc4259bbe0435bb832974, type: 2}
   <unlockItemOnComplete>k__BackingField: -1
   <StartingAmmos>k__BackingField: 03000300000000000000
   <StartingLives>k__BackingField: 3
@@ -27,12 +29,12 @@ MonoBehaviour:
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: TEEEESST
   levelWorldAndNumber: {x: 1, y: 18, z: 0}
-  spawnSteps: 0000
+  spawnSteps: 
   finalSpawnStep: 300
-  objectTypes: 0400
-  idList: 0000
+  objectTypes: 
+  idList: 
   specialTriggerIndexAndType: []
-  dataTypes: feff
+  dataTypes: 
   posList: []
   floatList: []
   typeList: 

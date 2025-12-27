@@ -32,6 +32,11 @@ public class LevelChallenges : ScriptableObject
     public string[] challengeTexts;
     public string[] challengeDifficulties;
 
+    [SerializeField] private float totalLevelTimeTarget;
+
+
+    public bool trackExtraTime { get; private set; }
+
     public int NumberOfChallenges => challenges.Length;
 
     [SerializeField] private int LifeTarget;
@@ -72,14 +77,22 @@ public class LevelChallenges : ScriptableObject
     private bool ignoreAll = false;
 
     public byte cageType { get; private set; } = 0;
+    private float totalAddedTime;
+
+    private LevelData levelData;
 
 
-    public void ResetData(Vector3Int lvlNum, int difficulty, short[] startingAmmos, int startingLives)
+    public void ResetData(LevelData data, Vector3Int lvlNum, int difficulty, short[] startingAmmos, int startingLives)
     {
         Debug.Log("Resetting LevelChallenges data for level: " + lvlNum + " with difficulty: " + difficulty);
+        levelData = data;
+        if (levelData.spawner != null)
+            levelData.spawner.SetCurrentExtraTime(0);
         LevelWorldAndNumber = lvlNum;
         LevelDifficulty = difficulty;
         cageType = 0;
+
+        totalAddedTime = 0;
 
 
 
@@ -99,11 +112,13 @@ public class LevelChallenges : ScriptableObject
 
     }
 
+
     private void SetTrackingBools()
     {
         trackPigs = false;
         trackInputs = false;
         trackRings = false;
+        trackExtraTime = false;
 
         for (int i = 0; i < challenges.Length; i++)
         {
@@ -132,7 +147,9 @@ public class LevelChallenges : ScriptableObject
                     BarnsHitWithEgg = new List<int>();
 
                     break;
-
+                case ChallengeTypes.CheckTime:
+                    trackExtraTime = true;
+                    break;
 
 
                 default:
@@ -145,12 +162,16 @@ public class LevelChallenges : ScriptableObject
         CurrentCheckPoint = checkPoint;
     }
 
-    public void LoadData(Vector3Int lvlWorldNumb, int difficulty, TemporaryLevelCheckPointData tempData)
+    public void LoadData(LevelData data, Vector3Int lvlWorldNumb, int difficulty, TemporaryLevelCheckPointData tempData)
     {
         SetTrackingBools();
+        levelData = data;
+        if (levelData.spawner != null)
+            levelData.spawner.SetCurrentExtraTime(tempData.totalAddedTime);
         LevelWorldAndNumber = lvlWorldNumb;
         LevelDifficulty = difficulty;
 
+        totalAddedTime = tempData.totalAddedTime;
         Lives = tempData.CurrentLives;
         Ammos = tempData.CurrentAmmos;
         cageType = tempData.cageType;
@@ -207,7 +228,7 @@ public class LevelChallenges : ScriptableObject
 
     public void EditCageType(byte newCageType)
     {
-        
+
         cageType = newCageType;
     }
 
@@ -243,6 +264,8 @@ public class LevelChallenges : ScriptableObject
         return challenges.Length;
     }
 
+
+
     public int ReturnAmountOfNeededProgressTexts(int index)
     {
         var c = challenges[index];
@@ -272,6 +295,8 @@ public class LevelChallenges : ScriptableObject
             case ChallengeTypes.CheckTotalBarns:
             case ChallengeTypes.CheckSpecificBarn:
             case ChallengeTypes.CheckEachBarn:
+                return 1;
+            case ChallengeTypes.CheckTime:
                 return 1;
 
 
@@ -393,6 +418,19 @@ public class LevelChallenges : ScriptableObject
                 int p3 = 0;
                 if (BarnsHitWithEgg.Count > 0) p3 = BarnsHitWithEgg.Count(x => x >= eachBarnAmount.y);
                 vect = new Vector2(p3, eachBarnAmount.x);
+                break;
+            case ChallengeTypes.CheckTime:
+                float currentTime = 0;
+                if (levelData.spawner != null)
+                    currentTime = levelData.spawner.GetCurrentLevelTime();
+                else
+                    currentTime = levelData.GetTimeAtCheckPoint(CurrentCheckPoint, UsedCheckpoint) + totalAddedTime; // Set to fail condition if no manager found
+
+
+
+                // set current time to max one decimal 
+                currentTime = Mathf.Round(currentTime * 10f) / 10f;
+                vect = new Vector2(currentTime, totalLevelTimeTarget);
                 break;
                 // check number of indexes in BarnsHitWithEgg that are greater than or equal to eachBarnAmount
 
@@ -572,6 +610,24 @@ public class LevelChallenges : ScriptableObject
                 else if (forFinish) return -1;
                 break;
 
+            case ChallengeTypes.CheckTime:
+                float currentTime = 0;
+                if (levelData.spawner != null)
+                    currentTime = levelData.spawner.GetCurrentLevelTime();
+                else
+                    currentTime = levelData.GetTimeAtCheckPoint(CurrentCheckPoint, UsedCheckpoint) + totalAddedTime;
+                if (currentTime <= totalLevelTimeTarget)
+                {
+                    if (forFinish) return 1;
+                    else return 0;
+                }
+                else
+                {
+                    return -1;
+                }
+
+
+
         }
         return 0;
 
@@ -615,6 +671,12 @@ public class LevelChallenges : ScriptableObject
     //     var challengeType = challenges[challengeIndex];
 
     // }
+
+    public void SetTotalAddedTime(float time)
+    {
+        if (trackExtraTime)
+            totalAddedTime = time;
+    }
 
 #if UNITY_EDITOR
     public void Editor_SetChallenges()

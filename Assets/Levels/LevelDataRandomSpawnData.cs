@@ -18,14 +18,16 @@ public class LevelDataRandomSpawnData
     public int neededRNGAmount { get; private set; }
     private byte minRngSpawnValue = 0;
     private byte maxRngSpawnValue = 100;
+    private RandomWaveData parentData;
 
 
 
 
 
-    public void Initialize(ISpawnData[] spawnDatas, short[] randomDataIndices, RecordableObjectPool pool, ushort dataType, int waveInd, byte min = 0, byte max = 100)
+    public void Initialize(RandomWaveData data, ISpawnData[] spawnDatas, short[] randomDataIndices, RecordableObjectPool pool, ushort dataType, int waveInd, byte min = 0, byte max = 100)
     {
         this.spawnDatas = spawnDatas;
+        this.parentData = data;
         this.usedRNGIndices = randomDataIndices;
         this.pool = pool;
         this.dataType = dataType;
@@ -40,7 +42,7 @@ public class LevelDataRandomSpawnData
     private float GetRNGPercent(short index)
     {
         if (index < 0)
-            return Random.Range(0, 1f);
+            return (float)parentData.GetRNG() / 100f;
         else
         {
             return (float)rngData[index] / 100f;
@@ -54,13 +56,13 @@ public class LevelDataRandomSpawnData
         byte rngValue = 0;
 
         if (usedRNGIndices[0] == -1)
-            rngValue = (byte)Random.Range(0, 101);
+            rngValue = parentData.GetRNG();
         else
             rngValue = _rngData[usedRNGIndices[0]];
 
         if (rngValue > maxRngSpawnValue || rngValue < minRngSpawnValue)
         {
-            // Debug.LogError("RNG Data out of bounds: " + rngData[usedRNGIndices[0]]);
+            Debug.LogError("RNG Data out of bounds: " + rngValue);
             return;
         }
         ushort t = spawnDatas[0].GetType();

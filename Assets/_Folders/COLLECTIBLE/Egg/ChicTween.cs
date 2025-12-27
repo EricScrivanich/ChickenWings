@@ -15,15 +15,37 @@ public class ChicTween : MonoBehaviour
     private Vector2 rightPos;
     private int audioIndex = 0;
 
+    [SerializeField] private int chickNoiseAmount = -1;
 
-    public void DoBarnTween()
+    private bool doSound;
+
+
+    public void DoBarnTween(bool sound = true)
     {
+        this.doSound = sound;
 
-        DoChicHappySound();
+        if (doSound)
+        {
+            DoChicHappySound();
+        }
         originalX = transform.localPosition.x;
-        centerPos = new Vector2(originalX, 0);
-        leftPos = new Vector2(originalX - .3f, .6f);
-        rightPos = new Vector2(originalX + .3f, .6f);
+
+
+        if (chickNoiseAmount > 0)
+        {
+            centerPos = new Vector2(originalX, transform.localPosition.y);
+            leftPos = new Vector2(originalX - .3f, transform.localPosition.y + .6f);
+            rightPos = new Vector2(originalX + .3f, transform.localPosition.y + .6f);
+            FinishSeq();
+            return;
+        }
+        else
+        {
+            centerPos = new Vector2(originalX, 0);
+            leftPos = new Vector2(originalX - .3f, .6f);
+            rightPos = new Vector2(originalX + .3f, .6f);
+        }
+
         float initialDur = .5f;
         float secondDur = .4f;
         BarnSeq = DOTween.Sequence();
@@ -100,9 +122,18 @@ public class ChicTween : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void DoChicHappySound()
     {
+        if (!doSound) return;
         if (audioIndex >= 2) audioIndex = 0;
         AudioManager.instance.PlayChicHappySound(audioIndex);
         audioIndex++;
+        if (chickNoiseAmount > 0)
+        {
+            chickNoiseAmount--;
+            if (chickNoiseAmount == 0)
+            {
+                doSound = false;
+            }
+        }
 
     }
 

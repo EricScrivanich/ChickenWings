@@ -534,7 +534,7 @@ public class PlayerStateManager : MonoBehaviour
         if (invincibleMat != null) invincibleMat.SetFloat("_Alpha", 0);
 
         AudioManager.instance.SlowAudioPitch(FrameRateManager.TargetTimeScale);
-        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .3f), PlayerPrefs.GetFloat("SFXVolume", .8f), mutePlayerAudio);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .5f), PlayerPrefs.GetFloat("SFXVolume", .8f), mutePlayerAudio);
 
         if (mutePlayerAudio) Time.timeScale = .95f;
         // else AudioManager.instance.PlayMusic(true);
@@ -2075,6 +2075,8 @@ public class PlayerStateManager : MonoBehaviour
         bool c = false;
 
         if (useChainedAmmo || justSwitchedUsingChainedShotgun) c = true;
+
+        ID.AddPlayerInput(6);
 
         ammoManager.GetShotgunBlast(blastPoint.position, shotgunObj.transform.eulerAngles.z, chainShot);
         // sdfsadfs

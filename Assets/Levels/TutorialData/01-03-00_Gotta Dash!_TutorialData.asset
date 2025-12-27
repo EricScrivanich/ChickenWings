@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   buttonType: 1
+  colonelCluckIndex: 2
+  colonelCluckScale: 1
+  colonelCluckFlipped: 1
   startButtonHidden: 1
   startInputsLocked: 0
   messages:
@@ -31,15 +34,19 @@ MonoBehaviour:
   allowedInput:
   - Dash
   - Dash
+  shownAmmos: 
   bubblePrefab: {fileID: 5887089433164480942, guid: 41da31ffbbb29419eafe5cc45b25dd2d, type: 3}
   messagePrefab: {fileID: 9156284010655330016, guid: f81248dd664e04cd693cbf1b01a0def4, type: 3}
   stepsForActions: 0f000f00af00af00
   actionsForStep: 01000000040000000100000004000000
   actionsForEnterBubble: 0900000006000000
   actionsForExitBubble: 0600000006000000
+  actionsForDelays: 
   vectorValues:
   - {x: -2, y: 1}
   - {x: -0.5, y: 1}
   bubbleSuctionAndDelayDurations:
   - {x: 2, y: 1}
   - {x: 2.4, y: 1.5}
+  delayValues: []
+  handGestureType: 0

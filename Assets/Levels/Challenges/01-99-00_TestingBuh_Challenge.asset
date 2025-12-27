@@ -22,14 +22,19 @@ MonoBehaviour:
   - 
   - 
   - 
-  LifeTarget: 0
+  totalLevelTimeTarget: 0
+  LifeTarget: 3
   EggAmmoTarget: 0
   ShotgunAmmoTarget: 0
   TrackedPigs: 00000000
   TrackedPigAmounts: 01000000
-  TrackedPigsByBulletTypeWithPigType: []
+  TrackedPigsByBulletType_PigType_Amount: []
   TrackedPigAmountsByBullet: 
   TrackedPigIDWithPigType: 
   TrackedPigAmountsByID: 
   CertainNonAllowedInputs: 
   ringsTypeAndAmount: {x: 2, y: 1}
+  totalBarnEggAmount: 0
+  specificBarnEggAmount: 0
+  eachBarnAmount: {x: 0, y: 0}
+  skipShowChallenges: 0

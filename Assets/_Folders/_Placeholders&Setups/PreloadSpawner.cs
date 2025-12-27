@@ -147,7 +147,7 @@ public class PreloadSpawner : MonoBehaviour
         enabled = false;
         loadingScreen.StopLoad();
         spawnStateManager.FinishPreload(waveTime);
-        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), PlayerPrefs.GetFloat("SFXVolume", 1.0f));
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .5f), PlayerPrefs.GetFloat("SFXVolume", .8f));
 
     }
 }

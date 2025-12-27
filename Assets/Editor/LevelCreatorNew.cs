@@ -20,6 +20,8 @@ public class LevelCreatorNew : Editor
     private string newLevelName;
     private Vector3Int newLevelNumbers;
     private bool dropdownOpen = false;
+
+    private bool randomWaveDropdownOpen = false;
     private bool testCompletionDropdownOpen = false;
     public override void OnInspectorGUI()
     {
@@ -27,6 +29,55 @@ public class LevelCreatorNew : Editor
         recorder = GameObject.Find("SetupRecorderParent");
 
         base.OnInspectorGUI(); // Draw 
+
+
+        randomWaveDropdownOpen = EditorGUILayout.Foldout(randomWaveDropdownOpen, "Edit Random Wave Data");
+        if (randomWaveDropdownOpen)
+        {
+            if (GUILayout.Button("Add Random Wave Data", GUILayout.Height(20)))
+            {
+                string randomWaveNumber = Parent.randomWaveDataArray.Length.ToString("00");
+                RandomWaveData randWaveData = ScriptableObject.CreateInstance<RandomWaveData>();
+                string p = UnityEditor.AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/RandomWaveLogic/" + LevelDataConverter.GetLevelNumberStringFormat(Parent.levelWorldAndNumber) + Parent.LevelName + "_RandWave-" + randomWaveNumber + ".asset");
+                AssetDatabase.CreateAsset(randWaveData, p);
+
+
+
+
+                UnityEditor.EditorUtility.SetDirty(randWaveData);
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
+
+                List<RandomWaveData> randWaveList = Parent.randomWaveDataArray.ToList();
+                randWaveList.Add(randWaveData);
+                Parent.randomWaveDataArray = randWaveList.ToArray();
+
+                UnityEditor.EditorUtility.SetDirty(Parent);
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
+
+
+            }
+
+            if (GUILayout.Button("Copy Random Data", GUILayout.Height(20)))
+            {
+                Parent.randomWaveDataArray[0].CopyFromDataArray(Parent.ReturnDataArrays());
+                UnityEditor.EditorUtility.SetDirty(Parent.randomWaveDataArray[0]);
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
+            }
+            if (GUILayout.Button("Clear Random Data", GUILayout.Height(20)))
+            {
+                Parent.randomWaveDataArray[0].CopyFromDataArray(null);
+                UnityEditor.EditorUtility.SetDirty(Parent.randomWaveDataArray[0]);
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
+            }
+
+
+
+
+        }
 
         // Make this a dropdown that be shown or hidden
 

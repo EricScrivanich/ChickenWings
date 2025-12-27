@@ -121,7 +121,7 @@ public class LevelPickerUIPopup : MonoBehaviour, IButtonListener
 
     public void ShowMessage(string msg)
     {
-        // messageText.gameObject.SetActive(true);
+
         messageText.SetText(msg);
     }
     public void ShowData(LevelData data, LevelPickerManager manager, int levelDifficulty = 1, bool redo = false)

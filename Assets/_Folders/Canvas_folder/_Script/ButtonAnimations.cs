@@ -283,20 +283,25 @@ public class ButtonAnimations : MonoBehaviour
         }
         if (finishDrop)
         {
-            if (dropSeq.isAlive) dropSeq.Stop();
-            dropSeq = Sequence.Create().Group(Tween.Scale(dropImage.rectTransform, 1, 0.15f))
+            if (dropSeq.isAlive)
+            {
+                dropSeq.Stop();
+                dropSeq = Sequence.Create().Group(Tween.Scale(dropImage.rectTransform, 1, 0.15f))
 
-        .Group(Tween.Color(dropImage, colorSO.normalButtonColor, 0.15f))
-         .Group(
-                Tween.Custom(
-                    target: dropCooldownGroup,
-                    1f,
-                    0f,
-                    .15f,
-                    (target, val) => target.alpha = val
-                )
-            );
+       .Group(Tween.Color(dropImage, colorSO.normalButtonColor, 0.15f))
+        .Group(
+
+               Tween.Custom(
+                   target: dropCooldownGroup,
+                   1f,
+                   0f,
+                   .15f,
+                   (target, val) => target.alpha = val
+               )
+           );
+            }
         }
+
 
         if (isColorPicker)
         {

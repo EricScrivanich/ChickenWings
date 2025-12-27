@@ -128,6 +128,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
 
         boundaries = GetComponent<ForceBoundaries>();
         boundaries.Activate(false);
+        player.globalEvents.OnEnterNextSectionTrigger += HandleNextSectionTrigger;
 
         // Ensure Rigidbody2D is set up correctly
         if (rb == null)
@@ -141,6 +142,17 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     private bool ignoreStart = false;
     private bool ignoreLerp = false;
     private bool justSpawnedInitial;
+
+    private void HandleNextSectionTrigger(float duration, float centerDuration, bool isClockwise, Transform trans, Vector2 centPos, bool doTween)
+    {
+        if (!isAttached)
+        {
+            justReleased = false;
+            if (hasAttachment) hasAttachment = false;
+            Collected();
+        }
+
+    }
 
     public void Initialize(LevelChallenges levelChallenges, byte currentType)
     {
@@ -768,6 +780,7 @@ public class CustomHingeJoint2D : MonoBehaviour, ICollectible
     {
         player.globalEvents.SetCageAngle -= SetTargetAngle;
         player.globalEvents.OnReleaseCage -= DetachFromPlayer;
+        player.globalEvents.OnEnterNextSectionTrigger -= HandleNextSectionTrigger;
 
         if (attatchedToObject && !setPositionManually)
         {

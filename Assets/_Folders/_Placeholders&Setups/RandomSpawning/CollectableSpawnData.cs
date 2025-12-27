@@ -21,7 +21,7 @@ public class CollectableSpawnData : ScriptableObject
 
 
     [Header("Shotgun")]
-   
+
     public bool SpawnShotgun;
     public float flipXChanceShotgun = .2f;
     public float BaseShotgunSpawnRate;
@@ -62,17 +62,17 @@ public class CollectableSpawnData : ScriptableObject
 
         if (type == 0)
         {
-            return (InitialEggDelay + Random.Range(InitialEggRandom.x, InitialEggRandom.y));
+            return (InitialEggDelay + RandomLerpedVal(InitialEggRandom));
 
         }
         else if (type == 1)
         {
-            return (InitialShotgunDelay + Random.Range(InitialShotgunRandom.x, InitialShotgunRandom.y));
+            return (InitialShotgunDelay + RandomLerpedVal(InitialShotgunRandom));
 
         }
         else if (type == 2)
         {
-            return (InitialBarnDelay + Random.Range(InitialBarnRandom.x, InitialBarnRandom.y));
+            return (InitialBarnDelay + RandomLerpedVal(InitialBarnRandom));
         }
         else
             return 3;
@@ -90,7 +90,7 @@ public class CollectableSpawnData : ScriptableObject
         if (diff > 0) addedTime = diff * AboveEggTargetTimeChange;
         else if (diff < 0) addedTime = diff * BelowEggTargetTimeChange;
 
-        addedTime += Random.Range(AddedRandomEgg.x, AddedRandomEgg.y);
+        addedTime += RandomLerpedVal(AddedRandomEgg);
         float finalTime = BaseEggSpawnRate + addedTime;
         Debug.LogError("Calcualted egg time is: " + finalTime);
         int isThree = 0;
@@ -114,11 +114,11 @@ public class CollectableSpawnData : ScriptableObject
 
         Debug.LogError("Added time to shotgun is: " + addedTime);
 
-        addedTime += Random.Range(AddedRandomShotgun.x, AddedRandomShotgun.y);
+        addedTime += RandomLerpedVal(AddedRandomShotgun);
         float finalTime = BaseShotgunSpawnRate + addedTime;
         int isThree = 0;
 
-        if (RandomVal() >= ShotgunThreeChance && diff < 0)
+        if (RandomVal() <= ShotgunThreeChance && diff < 0)
             isThree = 1;
 
         return new Vector2(finalTime, isThree);
@@ -139,12 +139,42 @@ public class CollectableSpawnData : ScriptableObject
         return new Vector2(finalTime, barnSize);
 
     }
+    private RandomWaveData randomWaveData;
 
+    public void SetRandomWaveData(RandomWaveData data)
+    {
+        randomWaveData = data;
+    }
     private float RandomVal()
     {
-        return Random.Range(0f, 1f);
+        if (randomWaveData != null)
+        {
+            return (float)randomWaveData.GetCollectableRNG() / 100f;
+        }
+        else
+            return Random.Range(0f, 1f);
     }
 
+    public float RandomLerpedVal(Vector2 range)
+    {
+        if (randomWaveData != null)
+        {
+            return Mathf.Lerp(range.x, range.y, (float)randomWaveData.GetCollectableRNG() / 100f);
+        }
+        else
+            return Random.Range(range.x, range.y);
+    }
+
+
+    public float RandomLerpedVal(float x, float y)
+    {
+        if (randomWaveData != null)
+        {
+            return Mathf.Lerp(x, y, (float)randomWaveData.GetCollectableRNG() / 100f);
+        }
+        else
+            return Random.Range(x, y);
+    }
 
 
 

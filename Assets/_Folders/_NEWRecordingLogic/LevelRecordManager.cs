@@ -16,7 +16,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 {
     public static LevelRecordManager instance;
 
-    
+
 
 
     [SerializeField] private bool testNonEditorMode = false;
@@ -328,7 +328,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     {
         UsingWaveCreator = open;
         WaveIndex = waveIndex;
-        CustomTimeSlider.instance.gameObject.SetActive(!open);
+
 
         List<RecordableObjectPlacer> objects = new List<RecordableObjectPlacer>();
 
@@ -348,9 +348,12 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             }
         }
 
-
+        var group = CustomTimeSlider.instance.gameObject.GetComponent<CanvasGroup>();
         if (open)
         {
+            group.alpha = 0;
+            group.interactable = false;
+            group.blocksRaycasts = false;
             WaveCreator.instance.SendObjects(objects);
             savedTimeStepForEnterWaveCreator = CurrentTimeStep;
             for (int i = activeObjects.Count - 1; i >= 0; i--)
@@ -362,7 +365,12 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         }
         else
         {
-            UpdateTime(savedTimeStepForEnterWaveCreator, false);
+            group.alpha = 1;
+            group.interactable = true;
+            group.blocksRaycasts = true;
+            if (savedTimeStepForEnterWaveCreator >= 0)
+                UpdateTime((ushort)savedTimeStepForEnterWaveCreator, false);
+            savedTimeStepForEnterWaveCreator = -1;
 
         }
 
@@ -551,7 +559,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         RecordedObjects.Clear();
     }
 
-    private ushort savedTimeStepForEnterWaveCreator = 0;
+    private int savedTimeStepForEnterWaveCreator = 0;
 
 
     private bool isEditor = false;
@@ -1288,7 +1296,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     void Start()
     {
         Debug.Log("Left View and Right view boundaries: " + BoundariesManager.leftViewBoundary + " " + BoundariesManager.rightViewBoundary);
-        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", 1.0f), 0);
+        AudioManager.instance.LoadVolume(PlayerPrefs.GetFloat("MusicVolume", .5f), 0);
 
         HandleReleaseClick();
 
@@ -1514,7 +1522,10 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         LevelDataConverter.instance.SetCurrentLevelInstance(levelData.levelWorldAndNumber);
 
         LevelTitleText.text = addedTitleText + levelData.LevelName;
-        var data = LevelDataConverter.instance.ReturnDynamicData(levelData, dataArrays);
+        RandomWaveData randData = null;
+        if (levelData.randomWaveDataArray != null && levelData.randomWaveDataArray.Length > 0)
+            randData = levelData.randomWaveDataArray[0];
+        var data = LevelDataConverter.instance.ReturnDynamicData(levelData, dataArrays, randData);
 
         // logic to set min and max view
         finalSpawnStep = levelData.finalSpawnStep;
@@ -1582,6 +1593,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         SortRandomRecordedObjects();
     }
+
     public void SaveAsset()
     {
         currentSelectedObject = null;
@@ -2130,6 +2142,18 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
         hourHand.eulerAngles = new Vector3(0, 0, -val / 12);
         CheckAllObjectsForNewTimeStep();
     }
+
+    public void UpdateGameTimeBeforePlaymode()
+    {
+        if (UsingWaveCreator)
+        {
+            OpenWaveEditor(false, -1);
+        }
+
+
+    }
+
+
 
 
 

@@ -165,10 +165,13 @@ public class SpawnStateManager : MonoBehaviour
 
     private Vector3 scaleFlip = new Vector3(-1, 1, 1);
 
+    private ushort currentTotalSpawnStep;
+
 
     SpawnBaseState currentState;
 
     private float time = 0;
+    private float totalAddedRandomTime;
 
     public SpawnerPureSetupState pureSetupState = new SpawnerPureSetupState();
     public SpawnerPureRandomEnemyState pureRandomEnemyState = new SpawnerPureRandomEnemyState();
@@ -268,6 +271,7 @@ public class SpawnStateManager : MonoBehaviour
         Time.timeScale = 0f;
 
         currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
+        currentTotalSpawnStep = currentSpawnStep;
         // Camera.main.enabled = true;
         // LevelRecordManager.PreloadedSceneReady = true;
         // yield return new WaitUntil(() => LevelRecordManager.PlayPreloadedScene);
@@ -286,6 +290,7 @@ public class SpawnStateManager : MonoBehaviour
         {
             levelData = LevelDataConverter.instance.ReturnLevelData();
             currentSpawnStep = LevelRecordManager.CurrentPlayTimeStep;
+            currentTotalSpawnStep = currentSpawnStep;
             Debug.Log("Current Spawn Step: " + currentSpawnStep + " with time: " + (currentSpawnStep * LevelRecordManager.TimePerStep) + " at time: " + Time.time);
 
 
@@ -404,7 +409,7 @@ public class SpawnStateManager : MonoBehaviour
 
         }
 
-        
+
         if (!isTestPlayer)
         {
             GameObject.Find("Player").GetComponent<PlayerStateManager>().ID.UiEvents.OnShowPlayerUI?.Invoke(true, 10, 0);
@@ -493,10 +498,30 @@ public class SpawnStateManager : MonoBehaviour
         addWaveTime = true;
 
     }
+
+    private bool trackExtraTime = false;
+    public float extraTime { get; private set; }
+
+    public void SetTrackExtraTime(bool track)
+    {
+
+        trackExtraTime = track;
+
+    }
+    public void SetCurrentExtraTime(float time)
+    {
+        extraTime = time;
+
+    }
     private void Update()
     {
+
         if (!addWaveTime)
         {
+            if (trackExtraTime)
+            {
+                extraTime += Time.deltaTime;
+            }
             waveTime += Time.deltaTime;
             if (waveTime >= timeToWait)
             {
@@ -542,6 +567,8 @@ public class SpawnStateManager : MonoBehaviour
     }
     public void HandleRandomCollectableSpawning(CollectableSpawnData data)
     {
+        if (levelData.randomWaveDataArray != null && levelData.randomWaveDataArray.Length > 0)
+            data.SetRandomWaveData(levelData.randomWaveDataArray[0]);
         GetComponent<BarnAndEggSpawner>().SetNewData(data);
 
     }
@@ -555,6 +582,11 @@ public class SpawnStateManager : MonoBehaviour
     {
         LvlID.outputEvent.SetLevelProgress?.Invoke(2);
         addWaveTime = false;
+    }
+
+    public float GetCurrentLevelTime()
+    {
+        return (currentSpawnStep * (LevelRecordManager.TimePerStep / FrameRateManager.BaseTimeScale)) + waveTime + extraTime;
     }
     private void IterateSpawnStep()
     {

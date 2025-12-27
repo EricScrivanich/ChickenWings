@@ -248,6 +248,8 @@ public class TemporaryLevelCheckPointData
 
     // public int CagesPresent;
     public ushort CurrentCheckPoint;
+    public float totalAddedRandomTime;
+ 
     public short CurrentLives;
     public short[] CurrentAmmos;
 
@@ -256,12 +258,14 @@ public class TemporaryLevelCheckPointData
     public int[] CompletedRings;
     public int[] CurrentEggedBarns;
     public byte cageType;
+    public float totalAddedTime;
 
     public TemporaryLevelCheckPointData(LevelChallenges data)
     {
 
 
         CurrentCheckPoint = data.CurrentCheckPoint;
+       
         CurrentLives = (short)data.Lives;
         cageType = data.cageType;
 

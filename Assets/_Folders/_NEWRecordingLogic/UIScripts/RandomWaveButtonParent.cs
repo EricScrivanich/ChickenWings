@@ -4,6 +4,8 @@ public class RandomWaveButtonParent : MonoBehaviour
 {
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private Transform buttonParent;
+
+    // private int current
     private int currentWaveAmount = 0;
 
 

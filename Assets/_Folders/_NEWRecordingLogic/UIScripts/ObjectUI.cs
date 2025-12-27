@@ -46,6 +46,7 @@ public class ObjectUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void PressWaveButton()
     {
         WaveCreator.instance.Open(randomWaveIndex);
+        
     }
     public void OnPointerDown(PointerEventData eventData)
     {
