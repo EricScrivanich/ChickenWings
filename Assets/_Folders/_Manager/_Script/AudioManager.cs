@@ -288,6 +288,14 @@ public class AudioManager : MonoBehaviour
 
 
     }
+    private IEnumerator ParryNoiseWait()
+    {
+
+        yield return minWindmillWait;
+        canPlayParrySound = true;
+
+
+    }
 
     private IEnumerator JetPackNoiseWait()
     {
@@ -333,10 +341,14 @@ public class AudioManager : MonoBehaviour
         else chickenSource.PlayOneShot(parryStart, parryStartVolume);
     }
 
-
+    private bool canPlayParrySound = true;
     public void PlayParrySound()
     {
-        chickenSource.PlayOneShot(parrySound, parryVolume);
+        if (!canPlayParrySound) return;
+
+        audioSource.PlayOneShot(parrySound, parryVolume);
+        canPlayParrySound = false;
+        StartCoroutine(ParryNoiseWait());
     }
     public void PlayFootStepSound(float volMult)
     {

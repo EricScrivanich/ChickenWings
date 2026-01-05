@@ -231,6 +231,7 @@ public class Pignosorous : SpawnedPigBossObject
         attackChances = new float[3];
         SetPhaseVariables(0);
         lives = startingLives;
+        heartPositioner.enabled = false;
 
 
         rotationScript = GetComponent<AimRotation>();
@@ -314,8 +315,11 @@ public class Pignosorous : SpawnedPigBossObject
     {
 
         currentBackForthY = startBackAndForthY + (changeBackForthY * currentBackForthAmount);
+        heartPositioner.enabled = true;
 
         rb.SetRotation(-.5f * flipValue);
+
+
 
 
 
@@ -325,6 +329,8 @@ public class Pignosorous : SpawnedPigBossObject
 
         if (firstTime)
         {
+            yield return null;
+            heartPositioner.enabled = false;
             leftJetPack.SetConstantRotation(0, leftJetPack.transform);
             rightJetPack.SetConstantRotation(0, rightJetPack.transform);
             leftJetPack.SetOffset(1.5f, -1);
@@ -396,7 +402,7 @@ public class Pignosorous : SpawnedPigBossObject
 
 
 
-
+        heartPositioner.enabled = true;
 
         anim.SetTrigger("Idle");
         rb.linearVelocity = Vector2.zero;
@@ -561,6 +567,7 @@ public class Pignosorous : SpawnedPigBossObject
     private IEnumerator ShootFromPosition()
     {
         float timer = 0;
+        heartPositioner.enabled = true;
         rb.linearVelocity = Vector2.zero;
         pathFollower.InitializePath(flipValue);
         Vector2 p = pathFollower.GetFirstPosition();

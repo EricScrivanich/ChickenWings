@@ -19,6 +19,10 @@ public class ObjectUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     [SerializeField] private int typeOvveride = -1;
 
+    private RandomWaveButtonParent randomWaveButtonParent;
+
+
+
 
 
     private int randomWaveIndex = -1;
@@ -36,22 +40,46 @@ public class ObjectUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
-    public void SetAsRandomWaveButton(int waveIndex)
+    public void SetAsRandomWaveButton(int waveIndex, bool isGroup = false, RandomWaveButtonParent parent = null)
     {
         randomWaveIndex = waveIndex;
-        GetComponentInChildren<TMPro.TextMeshProUGUI>().text = waveIndex.ToString();
+        var text = GetComponentInChildren<TMPro.TextMeshProUGUI>();
+
+        if (isGroup)
+        {
+            // 1 = A, 2 = B, 3 = C ...
+            char letter = (char)('A' + waveIndex - 1);
+            text.text = letter.ToString();
+            randomWaveButtonParent = parent;
+        }
+        else
+        {
+            text.text = waveIndex.ToString();
+        }
 
     }
 
     public void PressWaveButton()
     {
         WaveCreator.instance.Open(randomWaveIndex);
-        
+
+    }
+
+    public void PressWaveGroupButton()
+    {
+        randomWaveButtonParent.OpenWaveGroup(randomWaveIndex);
+
     }
     public void OnPointerDown(PointerEventData eventData)
     {
+
         if (randomWaveIndex > 0)
         {
+            if (randomWaveButtonParent != null)
+            {
+                PressWaveGroupButton();
+                return;
+            }
             PressWaveButton();
 
             return;

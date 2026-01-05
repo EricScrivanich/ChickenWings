@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 01-01-00_The Flippin Chicken
   m_EditorClassIdentifier: 
   maxWaves: 0
+  randomWaveDataArray: []
   <unlockItemOnComplete>k__BackingField: -1
   <StartingAmmos>k__BackingField: 00000000000000000000
   <StartingLives>k__BackingField: 3
@@ -27,8 +28,8 @@ MonoBehaviour:
   playerID: {fileID: 11400000, guid: e7b858e5ee4ef40deb27379e2da9f4d4, type: 2}
   LevelName: The Flippin Chicken
   levelWorldAndNumber: {x: 1, y: 1, z: 0}
-  spawnSteps: 2a0044006e006e009f009f009f009f00bb00bb00cf00d700d800eb00eb00ec00200120012401370137013701
-  finalSpawnStep: 330
+  spawnSteps: 1a003400550055007c007c007c007c0098009800ac00b400b500c800c800c900f400f400f8000b010b010b01
+  finalSpawnStep: 295
   objectTypes: 0000000000000000050005000500050000000000050000000500050005000000000000000000050005000500
   idList: 0000000000000000000000000000000000000000000001000000000000000000000000000000000000000100
   specialTriggerIndexAndType: []
@@ -121,7 +122,7 @@ MonoBehaviour:
   positionerPoolSizes: 0000
   ringPoolSizes: 04000100
   cageAttachments: 
-  checkPointSteps: 7f00
+  checkPointSteps: 6300
   postionerData:
   - ID: 0
     type: 0

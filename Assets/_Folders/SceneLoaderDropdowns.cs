@@ -6,6 +6,8 @@ namespace KingdomOfNight
 #if UNITY_EDITOR
         [MenuItem("Scenes/BrickBoi")]
         public static void LoadBrickBoi() { OpenScene("Assets/scenes/BrickBoi.unity"); }
+        [MenuItem("Scenes/NodeCanvas")]
+        public static void LoadNodeCanvas() { OpenScene("Assets/scenes/NodeCanvas.unity"); }
         [MenuItem("Scenes/Boss/Deviled Egg")]
         public static void LoadDeviledEgg() { OpenScene("Assets/scenes/Boss/Deviled Egg.unity"); }
         [MenuItem("Scenes/Boss/DrumStick")]

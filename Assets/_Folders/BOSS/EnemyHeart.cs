@@ -61,6 +61,8 @@ public class EnemyHeart : MonoBehaviour
         heartText.text = totalLives.ToString();
 
     }
+
+   
     public void Damage(int lives)
     {
         if (lives < 0) return;

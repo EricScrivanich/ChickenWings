@@ -25,6 +25,7 @@ public class SceneChanger : MonoBehaviour
 
 
         LevelRecordManager.instance.UpdateGameTimeBeforePlaymode();
+        yield return null;
         LevelRecordManager.instance.SaveAsset();
         yield return null;
         yield return null;

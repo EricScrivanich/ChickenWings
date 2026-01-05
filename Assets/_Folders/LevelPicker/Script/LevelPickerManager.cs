@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System;
+using TMPro;
 
 
 
@@ -18,6 +19,11 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
     [SerializeField] private bool allowClickAll;
     [SerializeField] private GameObject steroidButton;
     [SerializeField] private RectTransform handLevelPick;
+
+    [SerializeField] private TextMeshProUGUI numberOfStarsText;
+    [SerializeField] private TextMeshProUGUI numberOfBadgesText;
+
+
     public float xHillMult;
     public float yHillMult;
     public float scaleHillMult;
@@ -344,6 +350,10 @@ public class LevelPickerManager : MonoBehaviour, INavigationUI
 
         frontHillParent.localPosition = frontHillStartPos;
         backHillParent.localPosition = backHillStartPos;
+
+        var totalStarsAndBadges = LevelDataConverter.instance.GetStarAndBadgeAmount();
+        numberOfStarsText.text = totalStarsAndBadges.x.ToString() + "/" + totalStarsAndBadges.y.ToString();
+        numberOfBadgesText.text = totalStarsAndBadges.z.ToString() + "/" + totalStarsAndBadges.w.ToString();
         // Camera.main.transform.position = new Vector3(0, 0, -10);
 
 

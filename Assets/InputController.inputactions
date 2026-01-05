@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "InputController",
     "maps": [
         {
@@ -656,6 +657,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "PinchDelta",
+                    "type": "Value",
+                    "id": "6e5c2019-0095-49e6-a333-a8f3b0c7cc22",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Scroll",
+                    "type": "Value",
+                    "id": "e650f1d3-fe85-4cad-aa31-45d096630b9e",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Finger2TrackPad",
+                    "type": "Value",
+                    "id": "edb7b6c7-3201-43b1-89aa-71d93edd3548",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -733,6 +761,39 @@
                     "processors": "",
                     "groups": ";Keyboard",
                     "action": "ShiftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "75e7378b-e830-4bd2-85cb-32a38be9cc5c",
+                    "path": "<Pointer>/scroll",
+                    "interactions": "",
+                    "processors": "ScaleVector2(x=0.01,y=0.01)",
+                    "groups": ";Keyboard",
+                    "action": "PinchDelta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9c6494db-98e6-4637-aa1d-cf26555b4665",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "491883ad-396e-47b7-83df-778f25ddbac1",
+                    "path": "<Pointer>/displayIndex",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Finger2TrackPad",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

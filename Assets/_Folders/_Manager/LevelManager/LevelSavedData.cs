@@ -60,6 +60,37 @@ public class SavedLevelDataByWorld
 
     }
 
+    public Vector4 GetStarAndBadgeAmount()
+    {
+        int totalStarsCompleted = 0;
+        int totalStars = 0;
+        int totalBadges = 0;
+
+        int totalBadgesCompleted = 0;
+        if (levels == null || levels.Length == 0)
+        {
+            Debug.LogError("No levels found in this world: " + LevelWorld);
+            return new Vector4(totalStarsCompleted, totalStars, totalBadgesCompleted, totalBadges);
+        }
+        for (int i = 0; i < levels.Length; i++)
+        {
+            for (int j = 0; j < levels[i].ChallengeCompletion.Length; j++)
+            {
+                totalStars++;
+                if (levels[i].ChallengeCompletion[j])
+                {
+                    totalStarsCompleted++;
+                }
+            }
+            totalBadges++;
+            if (levels[i].MasteredLevel)
+            {
+                totalBadgesCompleted++;
+            }
+        }
+        return new Vector4(totalStarsCompleted, totalStars, totalBadgesCompleted, totalBadges);
+    }
+
     public SavedLevelDataByWorld(short levelWorld)
     {
         LevelWorld = levelWorld;
@@ -249,7 +280,7 @@ public class TemporaryLevelCheckPointData
     // public int CagesPresent;
     public ushort CurrentCheckPoint;
     public float totalAddedRandomTime;
- 
+
     public short CurrentLives;
     public short[] CurrentAmmos;
 
@@ -265,7 +296,7 @@ public class TemporaryLevelCheckPointData
 
 
         CurrentCheckPoint = data.CurrentCheckPoint;
-       
+
         CurrentLives = (short)data.Lives;
         cageType = data.cageType;
 

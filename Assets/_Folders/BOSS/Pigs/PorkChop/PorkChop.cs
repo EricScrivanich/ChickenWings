@@ -59,6 +59,9 @@ public class PorkChop : SpawnedPigBossObject
 
     private float attackCooldown;
     private EnemyPositioningLogic positionLogic;
+    [SerializeField] private Transform heartParent;
+
+    private float heartScale;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private void Awake()
@@ -79,6 +82,7 @@ public class PorkChop : SpawnedPigBossObject
     private void Start()
     {
         positionLogic = GetComponent<EnemyPositioningLogic>();
+        heartScale = heartParent.localScale.y;
         forceDir = normForce;
         SwitchGlowColor(false);
         originalGravityScale = rb.gravityScale;
@@ -691,6 +695,7 @@ public class PorkChop : SpawnedPigBossObject
             transform.localScale = normalScale;
             forceDir = normForce;
             isFlipped = false;
+            heartParent.transform.localScale = Vector3.one * heartScale;
         }
         else
         {
@@ -698,6 +703,8 @@ public class PorkChop : SpawnedPigBossObject
             transform.localScale = flippedScale;
             forceDir = flipForce;
             isFlipped = true;
+            heartParent.transform.localScale = new Vector3(-heartScale, heartScale, heartScale);
+
         }
         anim.SetTrigger("Reverse");
 

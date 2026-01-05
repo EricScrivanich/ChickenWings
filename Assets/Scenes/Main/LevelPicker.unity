@@ -11028,6 +11028,18 @@ PrefabInstance:
       value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 8158371173588333772, guid: 8be83bd8d6e1c4b2887a525175c92efc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 8158371173588333772, guid: 8be83bd8d6e1c4b2887a525175c92efc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 8158371173588333772, guid: 8be83bd8d6e1c4b2887a525175c92efc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 8158371173588333772, guid: 8be83bd8d6e1c4b2887a525175c92efc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.682
       objectReference: {fileID: 0}
@@ -27463,6 +27475,8 @@ MonoBehaviour:
   allowClickAll: 1
   steroidButton: {fileID: 644329778}
   handLevelPick: {fileID: 42442746}
+  numberOfStarsText: {fileID: 1000723180585874758}
+  numberOfBadgesText: {fileID: 1125432756}
   xHillMult: 0.6
   yHillMult: 0.2
   scaleHillMult: 1.07

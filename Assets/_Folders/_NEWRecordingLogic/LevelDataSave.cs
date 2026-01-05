@@ -30,6 +30,7 @@ public class LevelDataSave
     public short[] usedRNGIndices;
     public ushort[] randomLogicSizes;
     public ushort[] randomLogicWaveIndices;
+   
     public Vector3Int[] randomSpawnDataTypeObjectTypeAndID;
     public ushort[] spawnStepsRandom;
 
@@ -58,6 +59,16 @@ public class LevelDataSave
         this.spawnStepsRandom = spawnStepsRandom;
         this.usedRNGIndices = usedRNGIndices;
         this.randomSpawnRanges = randomSpawnRanges;
+
+        for (int i = 0; i < randomLogicSizes.Length; i++)
+        {
+            Debug.Log("Random Logic Size " + i + ": " + randomLogicSizes[i]);
+        }
+        for (int i = 0; i < randomLogicWaveIndices.Length; i++)
+        {
+            Debug.Log("Random Logic Wave Index " + i + ": " + randomLogicWaveIndices[i]);
+        }
+
 
     }
 

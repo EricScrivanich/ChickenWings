@@ -174,7 +174,12 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
 
-
+    public int GetWaveGroupAmount()
+    {
+        if (levelData.randomWaveDataArray != null)
+            return levelData.randomWaveDataArray.Length;
+        return 0;
+    }
 
     public static void ResetStaticParameters()
     {
@@ -323,6 +328,47 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
         }
     }
+    private int currentWaveGroupIndex = -1;
+    public void OpenWaveGroup(int groupIndex, bool open)
+    {
+        if (!open)
+        {
+            LevelDataConverter.instance.SaveRandomData(RandomRecordedObjects, groupIndex, randomSpawnRanges.ToArray(), levelData);
+
+            if (RandomRecordedObjects != null && RandomRecordedObjects.Count > 0)
+            {
+                foreach (var obj in RandomRecordedObjects)
+                {
+                    Destroy(obj.gameObject);
+                }
+
+            }
+        }
+        if (currentWaveGroupIndex == groupIndex && RandomRecordedObjects != null && RandomRecordedObjects.Count > 0)
+        {
+            foreach (var obj in RandomRecordedObjects)
+            {
+                Destroy(obj.gameObject);
+            }
+
+        }
+
+
+        RandomRecordedObjects = new List<RecordableObjectPlacer>();
+        RandomWaveData randData = null;
+
+        if (open)
+        {
+            currentWaveGroupIndex = groupIndex;
+            if (levelData.randomWaveDataArray != null && levelData.randomWaveDataArray.Length > groupIndex)
+                randData = levelData.randomWaveDataArray[groupIndex];
+            if (randData == null) return;
+            randomSpawnRanges = randData.randomSpawnRanges.ToList();
+            SetRandomData(LevelDataConverter.instance.ReturnRandomDynamicData(levelData.randomWaveDataArray[groupIndex]));
+        }
+
+
+    }
 
     public void OpenWaveEditor(bool open, int waveIndex)
     {
@@ -331,6 +377,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
 
 
         List<RecordableObjectPlacer> objects = new List<RecordableObjectPlacer>();
+
 
 
 
@@ -1457,7 +1504,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
     }
 
 
-
+    public int RandomWaveGroupAmount { get; private set; }
     public void LoadAssets()
     {
         RecordedObjects = new List<RecordableObjectPlacer>();
@@ -1473,8 +1520,8 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             {
                 levelData = LevelDataConverter.instance.ReturnLevelData();
                 dataArrays = levelData.ReturnDataArrays();
-                if (dataArrays.randomSpawnRanges != null)
-                    randomSpawnRanges = dataArrays.randomSpawnRanges.ToList();
+                // if (dataArrays.randomSpawnRanges != null)
+                //     randomSpawnRanges = dataArrays.randomSpawnRanges.ToList();
                 dataLoaded = true;
 
                 OpenLevelPicker(false);

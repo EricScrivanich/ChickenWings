@@ -743,6 +743,33 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PinchDelta"",
+                    ""type"": ""Value"",
+                    ""id"": ""6e5c2019-0095-49e6-a333-a8f3b0c7cc22"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""e650f1d3-fe85-4cad-aa31-45d096630b9e"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Finger2TrackPad"",
+                    ""type"": ""Value"",
+                    ""id"": ""edb7b6c7-3201-43b1-89aa-71d93edd3548"",
+                    ""expectedControlType"": ""Integer"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -820,6 +847,39 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard"",
                     ""action"": ""ShiftClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""75e7378b-e830-4bd2-85cb-32a38be9cc5c"",
+                    ""path"": ""<Pointer>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=0.01,y=0.01)"",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""PinchDelta"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9c6494db-98e6-4637-aa1d-cf26555b4665"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""491883ad-396e-47b7-83df-778f25ddbac1"",
+                    ""path"": ""<Pointer>/displayIndex"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Finger2TrackPad"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -933,6 +993,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_LevelCreator_Finger2Press = m_LevelCreator.FindAction("Finger2Press", throwIfNotFound: true);
         m_LevelCreator_Finger2Pos = m_LevelCreator.FindAction("Finger2Pos", throwIfNotFound: true);
         m_LevelCreator_ShiftClick = m_LevelCreator.FindAction("ShiftClick", throwIfNotFound: true);
+        m_LevelCreator_PinchDelta = m_LevelCreator.FindAction("PinchDelta", throwIfNotFound: true);
+        m_LevelCreator_Scroll = m_LevelCreator.FindAction("Scroll", throwIfNotFound: true);
+        m_LevelCreator_Finger2TrackPad = m_LevelCreator.FindAction("Finger2TrackPad", throwIfNotFound: true);
         // GamepadCursor
         m_GamepadCursor = asset.FindActionMap("GamepadCursor", throwIfNotFound: true);
         m_GamepadCursor_MoveCursor = m_GamepadCursor.FindAction("MoveCursor", throwIfNotFound: true);
@@ -1364,6 +1427,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private readonly InputAction m_LevelCreator_Finger2Press;
     private readonly InputAction m_LevelCreator_Finger2Pos;
     private readonly InputAction m_LevelCreator_ShiftClick;
+    private readonly InputAction m_LevelCreator_PinchDelta;
+    private readonly InputAction m_LevelCreator_Scroll;
+    private readonly InputAction m_LevelCreator_Finger2TrackPad;
     /// <summary>
     /// Provides access to input actions defined in input action map "LevelCreator".
     /// </summary>
@@ -1403,6 +1469,18 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "LevelCreator/ShiftClick".
         /// </summary>
         public InputAction @ShiftClick => m_Wrapper.m_LevelCreator_ShiftClick;
+        /// <summary>
+        /// Provides access to the underlying input action "LevelCreator/PinchDelta".
+        /// </summary>
+        public InputAction @PinchDelta => m_Wrapper.m_LevelCreator_PinchDelta;
+        /// <summary>
+        /// Provides access to the underlying input action "LevelCreator/Scroll".
+        /// </summary>
+        public InputAction @Scroll => m_Wrapper.m_LevelCreator_Scroll;
+        /// <summary>
+        /// Provides access to the underlying input action "LevelCreator/Finger2TrackPad".
+        /// </summary>
+        public InputAction @Finger2TrackPad => m_Wrapper.m_LevelCreator_Finger2TrackPad;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1450,6 +1528,15 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @ShiftClick.started += instance.OnShiftClick;
             @ShiftClick.performed += instance.OnShiftClick;
             @ShiftClick.canceled += instance.OnShiftClick;
+            @PinchDelta.started += instance.OnPinchDelta;
+            @PinchDelta.performed += instance.OnPinchDelta;
+            @PinchDelta.canceled += instance.OnPinchDelta;
+            @Scroll.started += instance.OnScroll;
+            @Scroll.performed += instance.OnScroll;
+            @Scroll.canceled += instance.OnScroll;
+            @Finger2TrackPad.started += instance.OnFinger2TrackPad;
+            @Finger2TrackPad.performed += instance.OnFinger2TrackPad;
+            @Finger2TrackPad.canceled += instance.OnFinger2TrackPad;
         }
 
         /// <summary>
@@ -1482,6 +1569,15 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @ShiftClick.started -= instance.OnShiftClick;
             @ShiftClick.performed -= instance.OnShiftClick;
             @ShiftClick.canceled -= instance.OnShiftClick;
+            @PinchDelta.started -= instance.OnPinchDelta;
+            @PinchDelta.performed -= instance.OnPinchDelta;
+            @PinchDelta.canceled -= instance.OnPinchDelta;
+            @Scroll.started -= instance.OnScroll;
+            @Scroll.performed -= instance.OnScroll;
+            @Scroll.canceled -= instance.OnScroll;
+            @Finger2TrackPad.started -= instance.OnFinger2TrackPad;
+            @Finger2TrackPad.performed -= instance.OnFinger2TrackPad;
+            @Finger2TrackPad.canceled -= instance.OnFinger2TrackPad;
         }
 
         /// <summary>
@@ -1873,6 +1969,27 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnShiftClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PinchDelta" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPinchDelta(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Scroll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnScroll(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Finger2TrackPad" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFinger2TrackPad(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "GamepadCursor" which allows adding and removing callbacks.

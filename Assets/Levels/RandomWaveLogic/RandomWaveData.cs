@@ -279,4 +279,34 @@ public class RandomWaveData : ScriptableObject
         }
 
     }
+
+    public void LoadLevelSaveData(RandomWaveGroupSave lds)
+    {
+        if (lds.randomSpawnDataTypeObjectTypeAndID != null && lds.randomSpawnDataTypeObjectTypeAndID.Length > 0)
+        {
+            usedRNGIndices = lds.usedRNGIndices;
+            posListRand = lds.posListRand;
+            floatListRand = lds.floatListRand;
+            typeListRand = lds.typeListRand;
+            randomLogicSizes = lds.randomLogicSizes;
+            randomSpawnDataTypeObjectTypeAndID = lds.randomSpawnDataTypeObjectTypeAndID;
+            spawnStepsRandom = lds.spawnStepsRandom;
+            randomLogicWaveIndices = lds.randomLogicWaveIndices;
+            randomSpawnRanges = lds.randomSpawnRanges;
+        }
+        else
+        {
+            usedRNGIndices = null;
+            posListRand = null;
+            floatListRand = null;
+            typeListRand = null;
+            randomLogicSizes = null;
+            randomSpawnDataTypeObjectTypeAndID = null;
+            spawnStepsRandom = null;
+            randomLogicWaveIndices = null;
+            randomSpawnRanges = null;
+        }
+
+    }
+
 }
