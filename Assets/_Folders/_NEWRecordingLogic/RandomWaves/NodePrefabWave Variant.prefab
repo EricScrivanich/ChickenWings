@@ -12,6 +12,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: NodePrefabWave Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 1043119236638438580, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -144.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1043119236638438580, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -5.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593651628718330908, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 163.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593651628718330908, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.8000336
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939401952659111556, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -141.90002
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939401952659111556, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.50001526
+      objectReference: {fileID: 0}
     - target: {fileID: 4642993764150697272, guid: 335435b2b54ff4519860fc083967b950, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -38,11 +62,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4642993764150697272, guid: 335435b2b54ff4519860fc083967b950, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 248.3
+      value: 221.1
       objectReference: {fileID: 0}
     - target: {fileID: 4642993764150697272, guid: 335435b2b54ff4519860fc083967b950, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 127
+      value: 119.7
       objectReference: {fileID: 0}
     - target: {fileID: 4642993764150697272, guid: 335435b2b54ff4519860fc083967b950, type: 3}
       propertyPath: m_LocalPosition.x
@@ -92,8 +116,58 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7064861202203888147, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 142.59998
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064861202203888147, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.50001526
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 857790920114800351, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7986516021783527996}
   m_SourcePrefab: {fileID: 100100000, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+--- !u!1 &5056431706193265241 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 857790920114800351, guid: 335435b2b54ff4519860fc083967b950, type: 3}
+  m_PrefabInstance: {fileID: 5605699044653630598}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7986516021783527996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5056431706193265241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cfaf9e6956434274a7e7be536171a86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NodeDefaults
+  nodeType: 0
+  waveDefaults:
+    defaultWaveId: 0
+    minWaveId: 0
+    maxWaveId: 5
+  loopDefaults:
+    defaultMinLoops: 1
+    defaultMaxLoops: 3
+    defaultLoopChance: 50
+    minLoopsMin: 0
+    minLoopsMax: 1000
+    maxLoopsMin: 0
+    maxLoopsMax: 1000
+  delayDefaults:
+    defaultMinDelay: 0
+    defaultMaxDelay: 100
+    minDelayMin: 0
+    minDelayMax: 500
+    maxDelayMin: 0
+    maxDelayMax: 500
+  branchDefaults:
+    defaultChance: 50

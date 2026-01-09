@@ -249,6 +249,16 @@ public class WaveCreator : MonoBehaviour, IBoxSliderListener
 
     }
 
+    public void OnBoxSliderTimeValueChanged(int type, ushort valueSliderHorizontal)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnBoxSliderByteValueChanged(int type, byte value)
+    {
+        // Not used in WaveCreator
+    }
+
     // Update is called once per frame
 
 }

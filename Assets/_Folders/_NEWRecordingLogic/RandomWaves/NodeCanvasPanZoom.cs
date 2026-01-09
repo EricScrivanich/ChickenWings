@@ -1,8 +1,9 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class NodeCanvasPanZoom_NewInput : MonoBehaviour
+public class NodeCanvasPanZoom : MonoBehaviour
 {
     [Header("References")]
     public RectTransform windowRect;
@@ -12,11 +13,17 @@ public class NodeCanvasPanZoom_NewInput : MonoBehaviour
     public float panSpeed = 1f;
 
     [Header("Zoom")]
+    public float startZoom;
     public float zoomSpeedMobile = 0.01f;
     public float zoomSpeedComputer = 0.01f;
     public float minZoom = 0.4f;
     public float maxZoom = 2.5f;
-    public float trackpadZoomThreshold = 0.05f;
+
+    [Header("Bounds (max movement at minZoom)")]
+    public Vector2 maxWindowOffsets = new Vector2(800f, 800f);
+    public Vector2 maxWindowOffsetsMaxZoom;
+    public Vector2 maxWindowOffsetsMinZoom;
+
 
     private InputController controls;
 
@@ -31,10 +38,14 @@ public class NodeCanvasPanZoom_NewInput : MonoBehaviour
     private bool finger1Down;
     private bool finger2Down;
     private float lastPinchDistance;
+    private bool canPan = false;
+    private bool initialFingerZoom = false;
 
     void Awake()
     {
         controls = new InputController();
+        currentZoom = startZoom;
+        windowRect.localScale = Vector3.one * currentZoom;
 
         // -------------------------
         // PAN (mouse + single touch)
@@ -55,12 +66,10 @@ public class NodeCanvasPanZoom_NewInput : MonoBehaviour
 
         controls.LevelCreator.Finger1Press.performed += ctx =>
         {
-            if (CanInteract())
-            {
-                finger1Down = true;
-                isPanning = true;
-                lastPanPos = Pointer.current.position.ReadValue();
-            }
+            finger1Down = true;
+            canPan = false;
+            StartCoroutine(CheckFingerOverUI());
+            lastPanPos = Pointer.current.position.ReadValue();
         };
 
         controls.LevelCreator.Finger1Press.canceled += ctx =>
@@ -69,23 +78,36 @@ public class NodeCanvasPanZoom_NewInput : MonoBehaviour
             isPanning = false;
         };
 
+        // -------------------------
+        // MOUSE WHEEL ZOOM
+        // -------------------------
         controls.LevelCreator.Scroll.performed += ctx =>
-       {
-           float scroll = ctx.ReadValue<Vector2>().y;
-           ApplyZoom(scroll * zoomSpeedComputer);
-       };
+        {
+            float scroll = ctx.ReadValue<Vector2>().y;
+            if (mouseOverGameWindow)
+                TryApplyZoom(scroll * zoomSpeedComputer);
+        };
 
-
+        // -------------------------
+        // POINTER MOVE
+        // -------------------------
         controls.LevelCreator.CursorPos.performed += ctx =>
         {
+            Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+            mouseOverGameWindow = screenRect.Contains(ctx.ReadValue<Vector2>());
             if (!isPanning || finger2Down) return;
-            Pan(ctx.ReadValue<Vector2>());
+            TryPan(ctx.ReadValue<Vector2>());
         };
 
         controls.LevelCreator.Finger1Pos.performed += ctx =>
         {
-            if (!isPanning || finger2Down) return;
-            Pan(ctx.ReadValue<Vector2>());
+            if (!canPan || !finger1Down || finger2Down)
+                return;
+
+            if (!isPanning)
+                isPanning = true;
+
+            TryPan(ctx.ReadValue<Vector2>());
         };
 
         // -------------------------
@@ -94,8 +116,8 @@ public class NodeCanvasPanZoom_NewInput : MonoBehaviour
         controls.LevelCreator.Finger2Press.performed += ctx =>
         {
             finger2Down = true;
+            initialFingerZoom = true;
 
-            // Initialize pinch distance
             lastPinchDistance = GetCurrentPinchDistance();
         };
 
@@ -112,35 +134,102 @@ public class NodeCanvasPanZoom_NewInput : MonoBehaviour
             float delta = currentDistance - lastPinchDistance;
             lastPinchDistance = currentDistance;
 
-            ApplyZoom(delta * zoomSpeedMobile);
+            if (initialFingerZoom)
+            {
+                initialFingerZoom = false;
+                return;
+            }
+
+            TryApplyZoom(delta * zoomSpeedMobile);
         };
-
-        // -------------------------
-        // TRACKPAD PINCH ZOOM
-        // -------------------------
-        // controls.LevelCreator.PinchDelta.performed += ctx =>
-        // {
-        //     Vector2 delta = ctx.ReadValue<Vector2>();
-
-        //     if (Mathf.Abs(delta.y) < trackpadZoomThreshold)
-        //         return;
-
-        //     ApplyZoom(delta.y * zoomSpeed);
-        // };
     }
 
     void OnEnable() => controls.Enable();
     void OnDisable() => controls.Disable();
 
     // -------------------------
-    // Helpers
+    //   PAN WITH BOUNDS
     // -------------------------
-    void Pan(Vector2 currentPos)
+
+    void TryPan(Vector2 currentPos)
     {
         Vector2 delta = currentPos - lastPanPos;
         lastPanPos = currentPos;
 
-        windowRect.anchoredPosition += delta / canvas.scaleFactor * panSpeed;
+        Vector2 worldDelta = delta / canvas.scaleFactor * panSpeed;
+
+        windowRect.anchoredPosition += worldDelta;
+
+        ClampWindowToBounds();
+    }
+
+    // -------------------------
+    //   ZOOM WITH BOUNDS
+    // -------------------------
+
+    void TryApplyZoom(float delta)
+    {
+        if (Mathf.Approximately(delta, 0f)) return;
+
+        float proposedZoom = Mathf.Clamp(currentZoom + delta, minZoom, maxZoom);
+
+        currentZoom = proposedZoom;
+        windowRect.localScale = Vector3.one * currentZoom;
+
+        ClampWindowToBounds();
+    }
+
+    // -------------------------
+    // BOUNDS CLAMPING
+    // -------------------------
+
+    void ClampWindowToBounds()
+    {
+        // Define max movement at minZoom, then scale with zoom
+        // At zoom == minZoom  -> allowed = maxWindowOffsets
+        // At zoom >  minZoom  -> allowed grows proportionally
+        // float zoomFactor = currentZoom / minZoom;
+        // if (zoomFactor < 1f) zoomFactor = 1f; // just in case
+
+        // float maxX = maxWindowOffsets.x * zoomFactor;
+        // float maxY = maxWindowOffsets.y * zoomFactor;
+
+        // Vector2 pos = windowRect.anchoredPosition;
+        // pos.x = Mathf.Clamp(pos.x, -maxX, maxX);
+        // pos.y = Mathf.Clamp(pos.y, -maxY, maxY);
+
+        // windowRect.anchoredPosition = pos;
+
+        float l = Mathf.InverseLerp(minZoom, maxZoom, currentZoom);
+        float maxX = Mathf.Lerp(maxWindowOffsetsMinZoom.x, maxWindowOffsetsMaxZoom.x, l);
+        float maxY = Mathf.Lerp(maxWindowOffsetsMinZoom.y, maxWindowOffsetsMaxZoom.y, l);
+        Vector2 pos = windowRect.anchoredPosition;
+        pos.x = Mathf.Clamp(pos.x, -maxX, maxX);
+        pos.y = Mathf.Clamp(pos.y, -maxY, maxY);
+
+        windowRect.anchoredPosition = pos;
+    }
+
+    // -------------------------
+    // HELPERS
+    // -------------------------
+
+    private IEnumerator CheckFingerOverUI()
+    {
+        // small delay so EventSystem can update selection
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        canPan = !IsTouchOverUI();
+    }
+
+    bool IsTouchOverUI()
+    {
+        if (Touchscreen.current == null)
+            return false;
+
+        return EventSystem.current.IsPointerOverGameObject(
+            Touchscreen.current.primaryTouch.touchId.ReadValue()
+        );
     }
 
     float GetCurrentPinchDistance()
@@ -150,16 +239,31 @@ public class NodeCanvasPanZoom_NewInput : MonoBehaviour
         return Vector2.Distance(p1, p2);
     }
 
-    void ApplyZoom(float delta)
-    {
-        if (Mathf.Approximately(delta, 0f)) return;
-
-        currentZoom = Mathf.Clamp(currentZoom + delta, minZoom, maxZoom);
-        windowRect.localScale = Vector3.one * currentZoom;
-    }
-
     bool CanInteract()
     {
         return !EventSystem.current.IsPointerOverGameObject();
+    }
+
+    private bool mouseOverGameWindow = false;
+
+    bool IsCursorOverWindow()
+    {
+        Vector2 screenPos;
+
+        // Mouse present?
+        if (Mouse.current != null)
+            screenPos = Mouse.current.position.ReadValue();
+        else
+        {
+            screenPos = Pointer.current.position.ReadValue(); // fallback
+            Debug.LogWarning("Mouse not found, using generic pointer for screen position.");
+
+        }
+
+        Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay
+            ? null
+            : canvas.worldCamera;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(windowRect, screenPos, cam);
     }
 }

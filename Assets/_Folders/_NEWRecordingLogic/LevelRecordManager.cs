@@ -619,6 +619,7 @@ public class LevelRecordManager : MonoBehaviour, IPointerDownHandler
             instance = this;
         }
         else
+        
         {
             Destroy(this);
         }
